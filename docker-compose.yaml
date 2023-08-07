@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  app:
+    image: harbor.rosabi.cn/library/cephalon
+    #ports:
+    #  - "8080:8080"
+    container_name: "cephalon-ent"
+    environment:
+      - CEPHALON_DB_HOST=postgresql
+      - CEPHALON_DB_PASSWORD=prod123456
+      #- CEPHALON_REDIS_HOST=redis
+      #- CEPHALON_REDIS_PASSWORD=
+    networks:
+      default:
+        aliases:
+          - cephalon-ent
+
+networks:
+  default:
+    name: cephalon
+    external: true
