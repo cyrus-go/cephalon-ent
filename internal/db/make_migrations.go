@@ -12,8 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	// 需要初始化数据库配置
-	"vpay/configs"
-	"vpay/internal/ent/migrate"
+	"cephalon-ent/configs"
+	"cephalon-ent/pkg/ent/migrate"
 )
 
 func main() {
