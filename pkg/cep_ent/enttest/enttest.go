@@ -3,12 +3,12 @@
 package enttest
 
 import (
-	"cephalon-ent/pkg/ent"
+	"cephalon-ent/pkg/cep_ent"
 	"context"
 	// required by schema hooks.
-	_ "cephalon-ent/pkg/ent/runtime"
+	_ "cephalon-ent/pkg/cep_ent/runtime"
 
-	"cephalon-ent/pkg/ent/migrate"
+	"cephalon-ent/pkg/cep_ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
 )
@@ -25,13 +25,13 @@ type (
 	Option func(*options)
 
 	options struct {
-		opts        []ent.Option
+		opts        []cep_ent.Option
 		migrateOpts []schema.MigrateOption
 	}
 )
 
 // WithOptions forwards options to client creation.
-func WithOptions(opts ...ent.Option) Option {
+func WithOptions(opts ...cep_ent.Option) Option {
 	return func(o *options) {
 		o.opts = append(o.opts, opts...)
 	}
@@ -52,10 +52,10 @@ func newOptions(opts []Option) *options {
 	return o
 }
 
-// Open calls ent.Open and auto-run migration.
-func Open(t TestingT, driverName, dataSourceName string, opts ...Option) *ent.Client {
+// Open calls cep_ent.Open and auto-run migration.
+func Open(t TestingT, driverName, dataSourceName string, opts ...Option) *cep_ent.Client {
 	o := newOptions(opts)
-	c, err := ent.Open(driverName, dataSourceName, o.opts...)
+	c, err := cep_ent.Open(driverName, dataSourceName, o.opts...)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()
@@ -64,14 +64,14 @@ func Open(t TestingT, driverName, dataSourceName string, opts ...Option) *ent.Cl
 	return c
 }
 
-// NewClient calls ent.NewClient and auto-run migration.
-func NewClient(t TestingT, opts ...Option) *ent.Client {
+// NewClient calls cep_ent.NewClient and auto-run migration.
+func NewClient(t TestingT, opts ...Option) *cep_ent.Client {
 	o := newOptions(opts)
-	c := ent.NewClient(o.opts...)
+	c := cep_ent.NewClient(o.opts...)
 	migrateSchema(t, c, o)
 	return c
 }
-func migrateSchema(t TestingT, c *ent.Client, o *options) {
+func migrateSchema(t TestingT, c *cep_ent.Client, o *options) {
 	tables, err := schema.CopyTables(migrate.Tables)
 	if err != nil {
 		t.Error(err)

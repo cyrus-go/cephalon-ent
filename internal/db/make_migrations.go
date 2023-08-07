@@ -13,7 +13,7 @@ import (
 	"os"
 	// 需要初始化数据库配置
 	"cephalon-ent/configs"
-	"cephalon-ent/pkg/ent/migrate"
+	"cephalon-ent/pkg/cep_ent/migrate"
 )
 
 func main() {

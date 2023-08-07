@@ -30,7 +30,7 @@ func (BaseMixin) Fields() []ent.Field {
 		field.Int64("updated_by").Default(0).StructTag(`json:"updated_by"`),
 		field.Time("created_at").Immutable().Default(time.Now).StructTag(`json:"created_at"`),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now).StructTag(`json:"updated_at"`),
-		field.Time("deleted_at").Nillable().Optional().StructTag(`json:"deleted_at"`),
+		field.Time("deleted_at").Default(common.ZeroTime).StructTag(`json:"deleted_at"`),
 	}
 }
 

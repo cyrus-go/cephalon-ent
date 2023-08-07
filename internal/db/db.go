@@ -2,7 +2,7 @@ package db
 
 import (
 	"cephalon-ent/configs"
-	"cephalon-ent/pkg/ent"
+	"cephalon-ent/pkg/cep_ent"
 	"database/sql"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
@@ -18,7 +18,7 @@ import (
 )
 
 var url = ""
-var DB *ent.Client
+var DB *cep_ent.Client
 
 func init() {
 	dbConf := configs.Conf.DBConfig
@@ -45,7 +45,7 @@ func migrateWithMigrationFiles() (err error) {
 	return nil
 }
 
-func NewDBClient(dbConf configs.DBConfig) *ent.Client {
+func NewDBClient(dbConf configs.DBConfig) *cep_ent.Client {
 	dataSourceName := fmt.Sprintf("host=%s port=%v user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai", dbConf.Host, dbConf.Port, dbConf.Username, dbConf.Password, dbConf.Database)
 	logrus.Debugf("dsn: %s\n", dataSourceName)
 	db, err := sql.Open("pgx", dataSourceName)
@@ -60,5 +60,5 @@ func NewDBClient(dbConf configs.DBConfig) *ent.Client {
 		panic(fmt.Sprintf("new db client failed: %v", err))
 	}
 	drv := entsql.OpenDB(dialect.Postgres, db)
-	return ent.NewClient(ent.Driver(drv))
+	return cep_ent.NewClient(cep_ent.Driver(drv))
 }
