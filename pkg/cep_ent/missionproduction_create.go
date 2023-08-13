@@ -3,6 +3,7 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/device"
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -232,6 +233,11 @@ func (mpc *MissionProductionCreate) SetHmacKeyPair(h *HmacKeyPair) *MissionProdu
 	return mpc.SetHmacKeyPairID(h.ID)
 }
 
+// SetDevice sets the "device" edge to the Device entity.
+func (mpc *MissionProductionCreate) SetDevice(d *Device) *MissionProductionCreate {
+	return mpc.SetDeviceID(d.ID)
+}
+
 // Mutation returns the MissionProductionMutation object of the builder.
 func (mpc *MissionProductionCreate) Mutation() *MissionProductionMutation {
 	return mpc.mutation
@@ -369,6 +375,9 @@ func (mpc *MissionProductionCreate) check() error {
 	if _, ok := mpc.mutation.HmacKeyPairID(); !ok {
 		return &ValidationError{Name: "hmac_key_pair", err: errors.New(`cep_ent: missing required edge "MissionProduction.hmac_key_pair"`)}
 	}
+	if _, ok := mpc.mutation.DeviceID(); !ok {
+		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "MissionProduction.device"`)}
+	}
 	return nil
 }
 
@@ -433,10 +442,6 @@ func (mpc *MissionProductionCreate) createSpec() (*MissionProduction, *sqlgraph.
 		_spec.SetField(missionproduction.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
-	if value, ok := mpc.mutation.DeviceID(); ok {
-		_spec.SetField(missionproduction.FieldDeviceID, field.TypeInt64, value)
-		_node.DeviceID = value
-	}
 	if value, ok := mpc.mutation.ResultUrls(); ok {
 		_spec.SetField(missionproduction.FieldResultUrls, field.TypeString, value)
 		_node.ResultUrls = value
@@ -493,6 +498,23 @@ func (mpc *MissionProductionCreate) createSpec() (*MissionProduction, *sqlgraph.
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.HmacKeyPairID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mpc.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.DeviceID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

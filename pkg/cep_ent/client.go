@@ -1944,6 +1944,22 @@ func (c *MissionProduceOrderClient) QueryMissionProduction(mpo *MissionProduceOr
 	return query
 }
 
+// QueryMissionBatch queries the mission_batch edge of a MissionProduceOrder.
+func (c *MissionProduceOrderClient) QueryMissionBatch(mpo *MissionProduceOrder) *MissionBatchQuery {
+	query := (&MissionBatchClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mpo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
+			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionproduceorder.MissionBatchTable, missionproduceorder.MissionBatchColumn),
+		)
+		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MissionProduceOrderClient) Hooks() []Hook {
 	return c.hooks.MissionProduceOrder
@@ -2103,6 +2119,22 @@ func (c *MissionProductionClient) QueryHmacKeyPair(mp *MissionProduction) *HmacK
 			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
 			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.HmacKeyPairTable, missionproduction.HmacKeyPairColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDevice queries the device edge of a MissionProduction.
+func (c *MissionProductionClient) QueryDevice(mp *MissionProduction) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.DeviceTable, missionproduction.DeviceColumn),
 		)
 		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
 		return fromV, nil

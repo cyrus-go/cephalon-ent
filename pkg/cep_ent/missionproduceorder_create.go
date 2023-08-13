@@ -6,6 +6,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/bill"
 	"cephalon-ent/pkg/cep_ent/device"
 	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/missionproduction"
@@ -237,6 +238,20 @@ func (mpoc *MissionProduceOrderCreate) SetNillableMissionConsumeOrderID(i *int64
 	return mpoc
 }
 
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (mpoc *MissionProduceOrderCreate) SetMissionBatchID(i int64) *MissionProduceOrderCreate {
+	mpoc.mutation.SetMissionBatchID(i)
+	return mpoc
+}
+
+// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
+func (mpoc *MissionProduceOrderCreate) SetNillableMissionBatchID(i *int64) *MissionProduceOrderCreate {
+	if i != nil {
+		mpoc.SetMissionBatchID(*i)
+	}
+	return mpoc
+}
+
 // SetID sets the "id" field.
 func (mpoc *MissionProduceOrderCreate) SetID(i int64) *MissionProduceOrderCreate {
 	mpoc.mutation.SetID(i)
@@ -289,6 +304,11 @@ func (mpoc *MissionProduceOrderCreate) SetMission(m *Mission) *MissionProduceOrd
 // SetMissionProduction sets the "mission_production" edge to the MissionProduction entity.
 func (mpoc *MissionProduceOrderCreate) SetMissionProduction(m *MissionProduction) *MissionProduceOrderCreate {
 	return mpoc.SetMissionProductionID(m.ID)
+}
+
+// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
+func (mpoc *MissionProduceOrderCreate) SetMissionBatch(m *MissionBatch) *MissionProduceOrderCreate {
+	return mpoc.SetMissionBatchID(m.ID)
 }
 
 // Mutation returns the MissionProduceOrderMutation object of the builder.
@@ -386,6 +406,10 @@ func (mpoc *MissionProduceOrderCreate) defaults() {
 		v := missionproduceorder.DefaultMissionConsumeOrderID
 		mpoc.mutation.SetMissionConsumeOrderID(v)
 	}
+	if _, ok := mpoc.mutation.MissionBatchID(); !ok {
+		v := missionproduceorder.DefaultMissionBatchID
+		mpoc.mutation.SetMissionBatchID(v)
+	}
 	if _, ok := mpoc.mutation.ID(); !ok {
 		v := missionproduceorder.DefaultID()
 		mpoc.mutation.SetID(v)
@@ -449,6 +473,9 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 	if _, ok := mpoc.mutation.MissionConsumeOrderID(); !ok {
 		return &ValidationError{Name: "mission_consume_order_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.mission_consume_order_id"`)}
 	}
+	if _, ok := mpoc.mutation.MissionBatchID(); !ok {
+		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.mission_batch_id"`)}
+	}
 	if _, ok := mpoc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.user"`)}
 	}
@@ -463,6 +490,9 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 	}
 	if _, ok := mpoc.mutation.MissionProductionID(); !ok {
 		return &ValidationError{Name: "mission_production", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.mission_production"`)}
+	}
+	if _, ok := mpoc.mutation.MissionBatchID(); !ok {
+		return &ValidationError{Name: "mission_batch", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.mission_batch"`)}
 	}
 	return nil
 }
@@ -635,6 +665,23 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MissionProductionID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mpoc.mutation.MissionBatchIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduceorder.MissionBatchTable,
+			Columns: []string{missionproduceorder.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionBatchID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

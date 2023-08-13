@@ -637,7 +637,9 @@ func (mbq *MissionBatchQuery) loadMissionProduceOrders(ctx context.Context, quer
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionproduceorder.FieldMissionBatchID)
+	}
 	query.Where(predicate.MissionProduceOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(missionbatch.MissionProduceOrdersColumn), fks...))
 	}))
@@ -646,13 +648,10 @@ func (mbq *MissionBatchQuery) loadMissionProduceOrders(ctx context.Context, quer
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.mission_batch_mission_produce_orders
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "mission_batch_mission_produce_orders" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.MissionBatchID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "mission_batch_mission_produce_orders" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_batch_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

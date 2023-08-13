@@ -14,10 +14,10 @@ type OutputLog struct {
 // Fields of the OutputLog.
 func (OutputLog) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("trace_id").Immutable().StructTag(`json:"trace_id"`).Comment("请求追踪 id"),
-		field.String("headers").StructTag(`json:"headers"`).Comment("请求头"),
+		field.Int64("trace_id").Default(0).Immutable().StructTag(`json:"trace_id"`).Comment("请求追踪 id"),
+		field.String("headers").Default("").StructTag(`json:"headers"`).Comment("请求头"),
 		field.String("body").Default("").Optional().StructTag(`json:"body"`).Comment("请求体"),
-		field.String("url").StructTag(`json:"url"`).Comment("请求地址"),
+		field.String("url").Default("").StructTag(`json:"url"`).Comment("请求地址"),
 		field.String("ip").Default("").Optional().StructTag(`json:"ip"`).Comment("客户端 IP"),
 		field.String("caller").Default("general").StructTag(`json:"caller"`).Comment("调用方"),
 		field.Int16("status").Default(200).Optional().StructTag(`json:"status"`).Comment("状态码"),

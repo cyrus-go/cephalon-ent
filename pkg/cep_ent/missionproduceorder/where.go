@@ -121,6 +121,11 @@ func MissionConsumeOrderID(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldEQ(FieldMissionConsumeOrderID, v))
 }
 
+// MissionBatchID applies equality check predicate on the "mission_batch_id" field. It's identical to MissionBatchIDEQ.
+func MissionBatchID(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldMissionBatchID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -586,6 +591,26 @@ func MissionConsumeOrderIDNotIn(vs ...int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldMissionConsumeOrderID, vs...))
 }
 
+// MissionBatchIDEQ applies the EQ predicate on the "mission_batch_id" field.
+func MissionBatchIDEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldMissionBatchID, v))
+}
+
+// MissionBatchIDNEQ applies the NEQ predicate on the "mission_batch_id" field.
+func MissionBatchIDNEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNEQ(FieldMissionBatchID, v))
+}
+
+// MissionBatchIDIn applies the In predicate on the "mission_batch_id" field.
+func MissionBatchIDIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldIn(FieldMissionBatchID, vs...))
+}
+
+// MissionBatchIDNotIn applies the NotIn predicate on the "mission_batch_id" field.
+func MissionBatchIDNotIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldMissionBatchID, vs...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(func(s *sql.Selector) {
@@ -716,6 +741,29 @@ func HasMissionProduction() predicate.MissionProduceOrder {
 func HasMissionProductionWith(preds ...predicate.MissionProduction) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(func(s *sql.Selector) {
 		step := newMissionProductionStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionBatch applies the HasEdge predicate on the "mission_batch" edge.
+func HasMissionBatch() predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionBatchWith applies the HasEdge predicate on the "mission_batch" edge with a given conditions (other predicates).
+func HasMissionBatchWith(preds ...predicate.MissionBatch) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(func(s *sql.Selector) {
+		step := newMissionBatchStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

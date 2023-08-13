@@ -99,9 +99,25 @@ func (hkpu *HmacKeyPairUpdate) SetKey(s string) *HmacKeyPairUpdate {
 	return hkpu
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (hkpu *HmacKeyPairUpdate) SetNillableKey(s *string) *HmacKeyPairUpdate {
+	if s != nil {
+		hkpu.SetKey(*s)
+	}
+	return hkpu
+}
+
 // SetSecret sets the "secret" field.
 func (hkpu *HmacKeyPairUpdate) SetSecret(s string) *HmacKeyPairUpdate {
 	hkpu.mutation.SetSecret(s)
+	return hkpu
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (hkpu *HmacKeyPairUpdate) SetNillableSecret(s *string) *HmacKeyPairUpdate {
+	if s != nil {
+		hkpu.SetSecret(*s)
+	}
 	return hkpu
 }
 
@@ -530,9 +546,25 @@ func (hkpuo *HmacKeyPairUpdateOne) SetKey(s string) *HmacKeyPairUpdateOne {
 	return hkpuo
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (hkpuo *HmacKeyPairUpdateOne) SetNillableKey(s *string) *HmacKeyPairUpdateOne {
+	if s != nil {
+		hkpuo.SetKey(*s)
+	}
+	return hkpuo
+}
+
 // SetSecret sets the "secret" field.
 func (hkpuo *HmacKeyPairUpdateOne) SetSecret(s string) *HmacKeyPairUpdateOne {
 	hkpuo.mutation.SetSecret(s)
+	return hkpuo
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (hkpuo *HmacKeyPairUpdateOne) SetNillableSecret(s *string) *HmacKeyPairUpdateOne {
+	if s != nil {
+		hkpuo.SetSecret(*s)
+	}
 	return hkpuo
 }
 

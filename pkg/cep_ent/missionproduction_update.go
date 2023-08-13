@@ -3,6 +3,7 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/device"
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -149,7 +150,6 @@ func (mpu *MissionProductionUpdate) SetNillableStatus(m *missionproduction.Statu
 
 // SetDeviceID sets the "device_id" field.
 func (mpu *MissionProductionUpdate) SetDeviceID(i int64) *MissionProductionUpdate {
-	mpu.mutation.ResetDeviceID()
 	mpu.mutation.SetDeviceID(i)
 	return mpu
 }
@@ -159,12 +159,6 @@ func (mpu *MissionProductionUpdate) SetNillableDeviceID(i *int64) *MissionProduc
 	if i != nil {
 		mpu.SetDeviceID(*i)
 	}
-	return mpu
-}
-
-// AddDeviceID adds i to the "device_id" field.
-func (mpu *MissionProductionUpdate) AddDeviceID(i int64) *MissionProductionUpdate {
-	mpu.mutation.AddDeviceID(i)
 	return mpu
 }
 
@@ -225,6 +219,11 @@ func (mpu *MissionProductionUpdate) SetHmacKeyPair(h *HmacKeyPair) *MissionProdu
 	return mpu.SetHmacKeyPairID(h.ID)
 }
 
+// SetDevice sets the "device" edge to the Device entity.
+func (mpu *MissionProductionUpdate) SetDevice(d *Device) *MissionProductionUpdate {
+	return mpu.SetDeviceID(d.ID)
+}
+
 // Mutation returns the MissionProductionMutation object of the builder.
 func (mpu *MissionProductionUpdate) Mutation() *MissionProductionMutation {
 	return mpu.mutation
@@ -245,6 +244,12 @@ func (mpu *MissionProductionUpdate) ClearMission() *MissionProductionUpdate {
 // ClearHmacKeyPair clears the "hmac_key_pair" edge to the HmacKeyPair entity.
 func (mpu *MissionProductionUpdate) ClearHmacKeyPair() *MissionProductionUpdate {
 	mpu.mutation.ClearHmacKeyPair()
+	return mpu
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (mpu *MissionProductionUpdate) ClearDevice() *MissionProductionUpdate {
+	mpu.mutation.ClearDevice()
 	return mpu
 }
 
@@ -297,6 +302,9 @@ func (mpu *MissionProductionUpdate) check() error {
 	if _, ok := mpu.mutation.HmacKeyPairID(); mpu.mutation.HmacKeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.hmac_key_pair"`)
 	}
+	if _, ok := mpu.mutation.DeviceID(); mpu.mutation.DeviceCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.device"`)
+	}
 	return nil
 }
 
@@ -338,12 +346,6 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := mpu.mutation.Status(); ok {
 		_spec.SetField(missionproduction.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := mpu.mutation.DeviceID(); ok {
-		_spec.SetField(missionproduction.FieldDeviceID, field.TypeInt64, value)
-	}
-	if value, ok := mpu.mutation.AddedDeviceID(); ok {
-		_spec.AddField(missionproduction.FieldDeviceID, field.TypeInt64, value)
 	}
 	if value, ok := mpu.mutation.ResultUrls(); ok {
 		_spec.SetField(missionproduction.FieldResultUrls, field.TypeString, value)
@@ -431,6 +433,35 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mpu.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mpu.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -576,7 +607,6 @@ func (mpuo *MissionProductionUpdateOne) SetNillableStatus(m *missionproduction.S
 
 // SetDeviceID sets the "device_id" field.
 func (mpuo *MissionProductionUpdateOne) SetDeviceID(i int64) *MissionProductionUpdateOne {
-	mpuo.mutation.ResetDeviceID()
 	mpuo.mutation.SetDeviceID(i)
 	return mpuo
 }
@@ -586,12 +616,6 @@ func (mpuo *MissionProductionUpdateOne) SetNillableDeviceID(i *int64) *MissionPr
 	if i != nil {
 		mpuo.SetDeviceID(*i)
 	}
-	return mpuo
-}
-
-// AddDeviceID adds i to the "device_id" field.
-func (mpuo *MissionProductionUpdateOne) AddDeviceID(i int64) *MissionProductionUpdateOne {
-	mpuo.mutation.AddDeviceID(i)
 	return mpuo
 }
 
@@ -652,6 +676,11 @@ func (mpuo *MissionProductionUpdateOne) SetHmacKeyPair(h *HmacKeyPair) *MissionP
 	return mpuo.SetHmacKeyPairID(h.ID)
 }
 
+// SetDevice sets the "device" edge to the Device entity.
+func (mpuo *MissionProductionUpdateOne) SetDevice(d *Device) *MissionProductionUpdateOne {
+	return mpuo.SetDeviceID(d.ID)
+}
+
 // Mutation returns the MissionProductionMutation object of the builder.
 func (mpuo *MissionProductionUpdateOne) Mutation() *MissionProductionMutation {
 	return mpuo.mutation
@@ -672,6 +701,12 @@ func (mpuo *MissionProductionUpdateOne) ClearMission() *MissionProductionUpdateO
 // ClearHmacKeyPair clears the "hmac_key_pair" edge to the HmacKeyPair entity.
 func (mpuo *MissionProductionUpdateOne) ClearHmacKeyPair() *MissionProductionUpdateOne {
 	mpuo.mutation.ClearHmacKeyPair()
+	return mpuo
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (mpuo *MissionProductionUpdateOne) ClearDevice() *MissionProductionUpdateOne {
+	mpuo.mutation.ClearDevice()
 	return mpuo
 }
 
@@ -737,6 +772,9 @@ func (mpuo *MissionProductionUpdateOne) check() error {
 	if _, ok := mpuo.mutation.HmacKeyPairID(); mpuo.mutation.HmacKeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.hmac_key_pair"`)
 	}
+	if _, ok := mpuo.mutation.DeviceID(); mpuo.mutation.DeviceCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.device"`)
+	}
 	return nil
 }
 
@@ -795,12 +833,6 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 	}
 	if value, ok := mpuo.mutation.Status(); ok {
 		_spec.SetField(missionproduction.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := mpuo.mutation.DeviceID(); ok {
-		_spec.SetField(missionproduction.FieldDeviceID, field.TypeInt64, value)
-	}
-	if value, ok := mpuo.mutation.AddedDeviceID(); ok {
-		_spec.AddField(missionproduction.FieldDeviceID, field.TypeInt64, value)
 	}
 	if value, ok := mpuo.mutation.ResultUrls(); ok {
 		_spec.SetField(missionproduction.FieldResultUrls, field.TypeString, value)
@@ -888,6 +920,35 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mpuo.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mpuo.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

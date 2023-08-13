@@ -632,7 +632,6 @@ func (mq *MissionQuery) loadMissionProductions(ctx context.Context, query *Missi
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(missionproduction.FieldMissionID)
 	}
@@ -691,7 +690,6 @@ func (mq *MissionQuery) loadMissionProduceOrders(ctx context.Context, query *Mis
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(missionproduceorder.FieldMissionID)
 	}

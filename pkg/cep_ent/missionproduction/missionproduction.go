@@ -47,6 +47,8 @@ const (
 	EdgeMission = "mission"
 	// EdgeHmacKeyPair holds the string denoting the hmac_key_pair edge name in mutations.
 	EdgeHmacKeyPair = "hmac_key_pair"
+	// EdgeDevice holds the string denoting the device edge name in mutations.
+	EdgeDevice = "device"
 	// Table holds the table name of the missionproduction in the database.
 	Table = "mission_productions"
 	// MissionProduceOrderTable is the table that holds the mission_produce_order relation/edge.
@@ -70,6 +72,13 @@ const (
 	HmacKeyPairInverseTable = "hmac_key_pairs"
 	// HmacKeyPairColumn is the table column denoting the hmac_key_pair relation/edge.
 	HmacKeyPairColumn = "hmac_key_pair_id"
+	// DeviceTable is the table that holds the device relation/edge.
+	DeviceTable = "mission_productions"
+	// DeviceInverseTable is the table name for the Device entity.
+	// It exists in this package in order to avoid circular dependency with the "device" package.
+	DeviceInverseTable = "devices"
+	// DeviceColumn is the table column denoting the device relation/edge.
+	DeviceColumn = "device_id"
 )
 
 // Columns holds all SQL columns for missionproduction fields.
@@ -90,21 +99,10 @@ var Columns = []string{
 	FieldAdditionalResult,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "mission_productions"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"device_mission_productions",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -258,6 +256,13 @@ func ByHmacKeyPairField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newHmacKeyPairStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByDeviceField orders the results by device field.
+func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newMissionProduceOrderStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -277,5 +282,12 @@ func newHmacKeyPairStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(HmacKeyPairInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, HmacKeyPairTable, HmacKeyPairColumn),
+	)
+}
+func newDeviceStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, DeviceTable, DeviceColumn),
 	)
 }

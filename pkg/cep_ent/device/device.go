@@ -61,7 +61,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "missionproduction" package.
 	MissionProductionsInverseTable = "mission_productions"
 	// MissionProductionsColumn is the table column denoting the mission_productions relation/edge.
-	MissionProductionsColumn = "device_mission_productions"
+	MissionProductionsColumn = "device_id"
 	// UserDevicesTable is the table that holds the user_devices relation/edge.
 	UserDevicesTable = "user_devices"
 	// UserDevicesInverseTable is the table name for the UserDevice entity.

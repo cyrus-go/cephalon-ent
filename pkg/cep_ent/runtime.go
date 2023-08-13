@@ -202,6 +202,14 @@ func init() {
 	hmackeypairDescDeletedAt := hmackeypairMixinFields0[5].Descriptor()
 	// hmackeypair.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	hmackeypair.DefaultDeletedAt = hmackeypairDescDeletedAt.Default.(time.Time)
+	// hmackeypairDescKey is the schema descriptor for key field.
+	hmackeypairDescKey := hmackeypairFields[0].Descriptor()
+	// hmackeypair.DefaultKey holds the default value on creation for the key field.
+	hmackeypair.DefaultKey = hmackeypairDescKey.Default.(string)
+	// hmackeypairDescSecret is the schema descriptor for secret field.
+	hmackeypairDescSecret := hmackeypairFields[1].Descriptor()
+	// hmackeypair.DefaultSecret holds the default value on creation for the secret field.
+	hmackeypair.DefaultSecret = hmackeypairDescSecret.Default.(string)
 	// hmackeypairDescCaller is the schema descriptor for caller field.
 	hmackeypairDescCaller := hmackeypairFields[2].Descriptor()
 	// hmackeypair.DefaultCaller holds the default value on creation for the caller field.
@@ -241,6 +249,14 @@ func init() {
 	inputlogDescDeletedAt := inputlogMixinFields0[5].Descriptor()
 	// inputlog.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	inputlog.DefaultDeletedAt = inputlogDescDeletedAt.Default.(time.Time)
+	// inputlogDescTraceID is the schema descriptor for trace_id field.
+	inputlogDescTraceID := inputlogFields[0].Descriptor()
+	// inputlog.DefaultTraceID holds the default value on creation for the trace_id field.
+	inputlog.DefaultTraceID = inputlogDescTraceID.Default.(int64)
+	// inputlogDescHeaders is the schema descriptor for headers field.
+	inputlogDescHeaders := inputlogFields[1].Descriptor()
+	// inputlog.DefaultHeaders holds the default value on creation for the headers field.
+	inputlog.DefaultHeaders = inputlogDescHeaders.Default.(string)
 	// inputlogDescBody is the schema descriptor for body field.
 	inputlogDescBody := inputlogFields[2].Descriptor()
 	// inputlog.DefaultBody holds the default value on creation for the body field.
@@ -249,6 +265,10 @@ func init() {
 	inputlogDescQuery := inputlogFields[3].Descriptor()
 	// inputlog.DefaultQuery holds the default value on creation for the query field.
 	inputlog.DefaultQuery = inputlogDescQuery.Default.(string)
+	// inputlogDescURL is the schema descriptor for url field.
+	inputlogDescURL := inputlogFields[4].Descriptor()
+	// inputlog.DefaultURL holds the default value on creation for the url field.
+	inputlog.DefaultURL = inputlogDescURL.Default.(string)
 	// inputlogDescIP is the schema descriptor for ip field.
 	inputlogDescIP := inputlogFields[5].Descriptor()
 	// inputlog.DefaultIP holds the default value on creation for the ip field.
@@ -497,6 +517,10 @@ func init() {
 	missionproduceorderDescMissionConsumeOrderID := missionproduceorderFields[9].Descriptor()
 	// missionproduceorder.DefaultMissionConsumeOrderID holds the default value on creation for the mission_consume_order_id field.
 	missionproduceorder.DefaultMissionConsumeOrderID = missionproduceorderDescMissionConsumeOrderID.Default.(int64)
+	// missionproduceorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
+	missionproduceorderDescMissionBatchID := missionproduceorderFields[10].Descriptor()
+	// missionproduceorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
+	missionproduceorder.DefaultMissionBatchID = missionproduceorderDescMissionBatchID.Default.(int64)
 	// missionproduceorderDescID is the schema descriptor for id field.
 	missionproduceorderDescID := missionproduceorderMixinFields0[0].Descriptor()
 	// missionproduceorder.DefaultID holds the default value on creation for the id field.
@@ -618,10 +642,22 @@ func init() {
 	outputlogDescDeletedAt := outputlogMixinFields0[5].Descriptor()
 	// outputlog.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	outputlog.DefaultDeletedAt = outputlogDescDeletedAt.Default.(time.Time)
+	// outputlogDescTraceID is the schema descriptor for trace_id field.
+	outputlogDescTraceID := outputlogFields[0].Descriptor()
+	// outputlog.DefaultTraceID holds the default value on creation for the trace_id field.
+	outputlog.DefaultTraceID = outputlogDescTraceID.Default.(int64)
+	// outputlogDescHeaders is the schema descriptor for headers field.
+	outputlogDescHeaders := outputlogFields[1].Descriptor()
+	// outputlog.DefaultHeaders holds the default value on creation for the headers field.
+	outputlog.DefaultHeaders = outputlogDescHeaders.Default.(string)
 	// outputlogDescBody is the schema descriptor for body field.
 	outputlogDescBody := outputlogFields[2].Descriptor()
 	// outputlog.DefaultBody holds the default value on creation for the body field.
 	outputlog.DefaultBody = outputlogDescBody.Default.(string)
+	// outputlogDescURL is the schema descriptor for url field.
+	outputlogDescURL := outputlogFields[3].Descriptor()
+	// outputlog.DefaultURL holds the default value on creation for the url field.
+	outputlog.DefaultURL = outputlogDescURL.Default.(string)
 	// outputlogDescIP is the schema descriptor for ip field.
 	outputlogDescIP := outputlogFields[4].Descriptor()
 	// outputlog.DefaultIP holds the default value on creation for the ip field.

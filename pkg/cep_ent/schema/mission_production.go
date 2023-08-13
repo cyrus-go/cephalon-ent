@@ -33,6 +33,7 @@ func (MissionProduction) Edges() []ent.Edge {
 		edge.To("mission_produce_order", MissionProduceOrder.Type).Unique(),
 		edge.From("mission", Mission.Type).Ref("mission_productions").Field("mission_id").Unique().Required(),
 		edge.From("hmac_key_pair", HmacKeyPair.Type).Ref("mission_productions").Field("hmac_key_pair_id").Unique().Required(),
+		edge.From("device", Device.Type).Ref("mission_productions").Field("device_id").Unique().Required(),
 	}
 }
 

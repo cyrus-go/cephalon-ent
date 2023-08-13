@@ -16,8 +16,8 @@ type HmacKeyPair struct {
 // Fields of the HmacKeyPair.
 func (HmacKeyPair) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("key").StructTag(`json:"key"`).Comment("密钥对的 key 值，用于检索密钥"),
-		field.String("secret").StructTag(`json:"secret"`).Comment("加密密钥"),
+		field.String("key").Default("").StructTag(`json:"key"`).Comment("密钥对的 key 值，用于检索密钥"),
+		field.String("secret").Default("").StructTag(`json:"secret"`).Comment("加密密钥"),
 		field.String("caller").Default("").StructTag(`json:"caller"`).Comment("请求方"),
 		field.Int64("user_id").Default(0).StructTag(`json:"user_id"`).Comment("外键用户 ID"),
 	}

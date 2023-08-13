@@ -99,9 +99,25 @@ func (hkpc *HmacKeyPairCreate) SetKey(s string) *HmacKeyPairCreate {
 	return hkpc
 }
 
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (hkpc *HmacKeyPairCreate) SetNillableKey(s *string) *HmacKeyPairCreate {
+	if s != nil {
+		hkpc.SetKey(*s)
+	}
+	return hkpc
+}
+
 // SetSecret sets the "secret" field.
 func (hkpc *HmacKeyPairCreate) SetSecret(s string) *HmacKeyPairCreate {
 	hkpc.mutation.SetSecret(s)
+	return hkpc
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (hkpc *HmacKeyPairCreate) SetNillableSecret(s *string) *HmacKeyPairCreate {
+	if s != nil {
+		hkpc.SetSecret(*s)
+	}
 	return hkpc
 }
 
@@ -242,6 +258,14 @@ func (hkpc *HmacKeyPairCreate) defaults() {
 	if _, ok := hkpc.mutation.DeletedAt(); !ok {
 		v := hmackeypair.DefaultDeletedAt
 		hkpc.mutation.SetDeletedAt(v)
+	}
+	if _, ok := hkpc.mutation.Key(); !ok {
+		v := hmackeypair.DefaultKey
+		hkpc.mutation.SetKey(v)
+	}
+	if _, ok := hkpc.mutation.Secret(); !ok {
+		v := hmackeypair.DefaultSecret
+		hkpc.mutation.SetSecret(v)
 	}
 	if _, ok := hkpc.mutation.Caller(); !ok {
 		v := hmackeypair.DefaultCaller

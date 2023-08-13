@@ -26,6 +26,7 @@ func (MissionProduceOrder) Fields() []ent.Field {
 		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("生产者接该任务用的设备 id"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("订单序列号"),
 		field.Int64("mission_consume_order_id").Default(0).StructTag(`json:"mission_consume_order_id"`).Comment("外键任务消费订单，一个任务消费订单可能会对应多个任务生产订单"),
+		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id"`).Comment("外键任务批次"),
 	}
 }
 
@@ -40,6 +41,7 @@ func (MissionProduceOrder) Edges() []ent.Edge {
 		edge.From("mission", Mission.Type).Ref("mission_produce_orders").Field("mission_id").Unique().Required(),
 		// 和任务生产情况一对一
 		edge.From("mission_production", MissionProduction.Type).Ref("mission_produce_order").Field("mission_production_id").Unique().Required(),
+		edge.From("mission_batch", MissionBatch.Type).Ref("mission_produce_orders").Field("mission_batch_id").Unique().Required(),
 	}
 }
 

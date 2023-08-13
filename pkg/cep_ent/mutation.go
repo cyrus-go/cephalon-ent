@@ -5341,22 +5341,9 @@ func (m *InputLogMutation) OldIP(ctx context.Context) (v string, err error) {
 	return oldValue.IP, nil
 }
 
-// ClearIP clears the value of the "ip" field.
-func (m *InputLogMutation) ClearIP() {
-	m.ip = nil
-	m.clearedFields[inputlog.FieldIP] = struct{}{}
-}
-
-// IPCleared returns if the "ip" field was cleared in this mutation.
-func (m *InputLogMutation) IPCleared() bool {
-	_, ok := m.clearedFields[inputlog.FieldIP]
-	return ok
-}
-
 // ResetIP resets all changes to the "ip" field.
 func (m *InputLogMutation) ResetIP() {
 	m.ip = nil
-	delete(m.clearedFields, inputlog.FieldIP)
 }
 
 // SetCaller sets the "caller" field.
@@ -5799,9 +5786,6 @@ func (m *InputLogMutation) ClearedFields() []string {
 	if m.FieldCleared(inputlog.FieldQuery) {
 		fields = append(fields, inputlog.FieldQuery)
 	}
-	if m.FieldCleared(inputlog.FieldIP) {
-		fields = append(fields, inputlog.FieldIP)
-	}
 	return fields
 }
 
@@ -5821,9 +5805,6 @@ func (m *InputLogMutation) ClearField(name string) error {
 		return nil
 	case inputlog.FieldQuery:
 		m.ClearQuery()
-		return nil
-	case inputlog.FieldIP:
-		m.ClearIP()
 		return nil
 	}
 	return fmt.Errorf("unknown InputLog nullable field %s", name)
@@ -10267,6 +10248,8 @@ type MissionProduceOrderMutation struct {
 	clearedmission               bool
 	mission_production           *int64
 	clearedmission_production    bool
+	mission_batch                *int64
+	clearedmission_batch         bool
 	done                         bool
 	oldValue                     func(context.Context) (*MissionProduceOrder, error)
 	predicates                   []predicate.MissionProduceOrder
@@ -10976,6 +10959,42 @@ func (m *MissionProduceOrderMutation) ResetMissionConsumeOrderID() {
 	m.mission_consume_order = nil
 }
 
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (m *MissionProduceOrderMutation) SetMissionBatchID(i int64) {
+	m.mission_batch = &i
+}
+
+// MissionBatchID returns the value of the "mission_batch_id" field in the mutation.
+func (m *MissionProduceOrderMutation) MissionBatchID() (r int64, exists bool) {
+	v := m.mission_batch
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionBatchID returns the old "mission_batch_id" field's value of the MissionProduceOrder entity.
+// If the MissionProduceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProduceOrderMutation) OldMissionBatchID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionBatchID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionBatchID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionBatchID: %w", err)
+	}
+	return oldValue.MissionBatchID, nil
+}
+
+// ResetMissionBatchID resets all changes to the "mission_batch_id" field.
+func (m *MissionProduceOrderMutation) ResetMissionBatchID() {
+	m.mission_batch = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *MissionProduceOrderMutation) ClearUser() {
 	m.cleareduser = true
@@ -11160,6 +11179,32 @@ func (m *MissionProduceOrderMutation) ResetMissionProduction() {
 	m.clearedmission_production = false
 }
 
+// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
+func (m *MissionProduceOrderMutation) ClearMissionBatch() {
+	m.clearedmission_batch = true
+}
+
+// MissionBatchCleared reports if the "mission_batch" edge to the MissionBatch entity was cleared.
+func (m *MissionProduceOrderMutation) MissionBatchCleared() bool {
+	return m.clearedmission_batch
+}
+
+// MissionBatchIDs returns the "mission_batch" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionBatchID instead. It exists only for internal usage by the builders.
+func (m *MissionProduceOrderMutation) MissionBatchIDs() (ids []int64) {
+	if id := m.mission_batch; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionBatch resets all changes to the "mission_batch" edge.
+func (m *MissionProduceOrderMutation) ResetMissionBatch() {
+	m.mission_batch = nil
+	m.clearedmission_batch = false
+}
+
 // Where appends a list predicates to the MissionProduceOrderMutation builder.
 func (m *MissionProduceOrderMutation) Where(ps ...predicate.MissionProduceOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -11194,7 +11239,7 @@ func (m *MissionProduceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionProduceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, missionproduceorder.FieldCreatedBy)
 	}
@@ -11240,6 +11285,9 @@ func (m *MissionProduceOrderMutation) Fields() []string {
 	if m.mission_consume_order != nil {
 		fields = append(fields, missionproduceorder.FieldMissionConsumeOrderID)
 	}
+	if m.mission_batch != nil {
+		fields = append(fields, missionproduceorder.FieldMissionBatchID)
+	}
 	return fields
 }
 
@@ -11278,6 +11326,8 @@ func (m *MissionProduceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.SerialNumber()
 	case missionproduceorder.FieldMissionConsumeOrderID:
 		return m.MissionConsumeOrderID()
+	case missionproduceorder.FieldMissionBatchID:
+		return m.MissionBatchID()
 	}
 	return nil, false
 }
@@ -11317,6 +11367,8 @@ func (m *MissionProduceOrderMutation) OldField(ctx context.Context, name string)
 		return m.OldSerialNumber(ctx)
 	case missionproduceorder.FieldMissionConsumeOrderID:
 		return m.OldMissionConsumeOrderID(ctx)
+	case missionproduceorder.FieldMissionBatchID:
+		return m.OldMissionBatchID(ctx)
 	}
 	return nil, fmt.Errorf("unknown MissionProduceOrder field %s", name)
 }
@@ -11430,6 +11482,13 @@ func (m *MissionProduceOrderMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionConsumeOrderID(v)
+		return nil
+	case missionproduceorder.FieldMissionBatchID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionBatchID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder field %s", name)
@@ -11564,13 +11623,16 @@ func (m *MissionProduceOrderMutation) ResetField(name string) error {
 	case missionproduceorder.FieldMissionConsumeOrderID:
 		m.ResetMissionConsumeOrderID()
 		return nil
+	case missionproduceorder.FieldMissionBatchID:
+		m.ResetMissionBatchID()
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionProduceOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.user != nil {
 		edges = append(edges, missionproduceorder.EdgeUser)
 	}
@@ -11588,6 +11650,9 @@ func (m *MissionProduceOrderMutation) AddedEdges() []string {
 	}
 	if m.mission_production != nil {
 		edges = append(edges, missionproduceorder.EdgeMissionProduction)
+	}
+	if m.mission_batch != nil {
+		edges = append(edges, missionproduceorder.EdgeMissionBatch)
 	}
 	return edges
 }
@@ -11622,13 +11687,17 @@ func (m *MissionProduceOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.mission_production; id != nil {
 			return []ent.Value{*id}
 		}
+	case missionproduceorder.EdgeMissionBatch:
+		if id := m.mission_batch; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionProduceOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedbills != nil {
 		edges = append(edges, missionproduceorder.EdgeBills)
 	}
@@ -11651,7 +11720,7 @@ func (m *MissionProduceOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionProduceOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.cleareduser {
 		edges = append(edges, missionproduceorder.EdgeUser)
 	}
@@ -11669,6 +11738,9 @@ func (m *MissionProduceOrderMutation) ClearedEdges() []string {
 	}
 	if m.clearedmission_production {
 		edges = append(edges, missionproduceorder.EdgeMissionProduction)
+	}
+	if m.clearedmission_batch {
+		edges = append(edges, missionproduceorder.EdgeMissionBatch)
 	}
 	return edges
 }
@@ -11689,6 +11761,8 @@ func (m *MissionProduceOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedmission
 	case missionproduceorder.EdgeMissionProduction:
 		return m.clearedmission_production
+	case missionproduceorder.EdgeMissionBatch:
+		return m.clearedmission_batch
 	}
 	return false
 }
@@ -11711,6 +11785,9 @@ func (m *MissionProduceOrderMutation) ClearEdge(name string) error {
 		return nil
 	case missionproduceorder.EdgeMissionProduction:
 		m.ClearMissionProduction()
+		return nil
+	case missionproduceorder.EdgeMissionBatch:
+		m.ClearMissionBatch()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder unique edge %s", name)
@@ -11738,6 +11815,9 @@ func (m *MissionProduceOrderMutation) ResetEdge(name string) error {
 	case missionproduceorder.EdgeMissionProduction:
 		m.ResetMissionProduction()
 		return nil
+	case missionproduceorder.EdgeMissionBatch:
+		m.ResetMissionBatch()
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder edge %s", name)
 }
@@ -11758,8 +11838,6 @@ type MissionProductionMutation struct {
 	started_at                   *time.Time
 	finished_at                  *time.Time
 	status                       *missionproduction.Status
-	device_id                    *int64
-	adddevice_id                 *int64
 	result_urls                  *string
 	additional_result            *string
 	clearedFields                map[string]struct{}
@@ -11769,6 +11847,8 @@ type MissionProductionMutation struct {
 	clearedmission               bool
 	hmac_key_pair                *int64
 	clearedhmac_key_pair         bool
+	device                       *int64
+	cleareddevice                bool
 	done                         bool
 	oldValue                     func(context.Context) (*MissionProduction, error)
 	predicates                   []predicate.MissionProduction
@@ -12280,13 +12360,12 @@ func (m *MissionProductionMutation) ResetStatus() {
 
 // SetDeviceID sets the "device_id" field.
 func (m *MissionProductionMutation) SetDeviceID(i int64) {
-	m.device_id = &i
-	m.adddevice_id = nil
+	m.device = &i
 }
 
 // DeviceID returns the value of the "device_id" field in the mutation.
 func (m *MissionProductionMutation) DeviceID() (r int64, exists bool) {
-	v := m.device_id
+	v := m.device
 	if v == nil {
 		return
 	}
@@ -12310,28 +12389,9 @@ func (m *MissionProductionMutation) OldDeviceID(ctx context.Context) (v int64, e
 	return oldValue.DeviceID, nil
 }
 
-// AddDeviceID adds i to the "device_id" field.
-func (m *MissionProductionMutation) AddDeviceID(i int64) {
-	if m.adddevice_id != nil {
-		*m.adddevice_id += i
-	} else {
-		m.adddevice_id = &i
-	}
-}
-
-// AddedDeviceID returns the value that was added to the "device_id" field in this mutation.
-func (m *MissionProductionMutation) AddedDeviceID() (r int64, exists bool) {
-	v := m.adddevice_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetDeviceID resets all changes to the "device_id" field.
 func (m *MissionProductionMutation) ResetDeviceID() {
-	m.device_id = nil
-	m.adddevice_id = nil
+	m.device = nil
 }
 
 // SetResultUrls sets the "result_urls" field.
@@ -12497,6 +12557,32 @@ func (m *MissionProductionMutation) ResetHmacKeyPair() {
 	m.clearedhmac_key_pair = false
 }
 
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *MissionProductionMutation) ClearDevice() {
+	m.cleareddevice = true
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *MissionProductionMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *MissionProductionMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *MissionProductionMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
 // Where appends a list predicates to the MissionProductionMutation builder.
 func (m *MissionProductionMutation) Where(ps ...predicate.MissionProduction) {
 	m.predicates = append(m.predicates, ps...)
@@ -12562,7 +12648,7 @@ func (m *MissionProductionMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, missionproduction.FieldStatus)
 	}
-	if m.device_id != nil {
+	if m.device != nil {
 		fields = append(fields, missionproduction.FieldDeviceID)
 	}
 	if m.result_urls != nil {
@@ -12754,9 +12840,6 @@ func (m *MissionProductionMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, missionproduction.FieldUpdatedBy)
 	}
-	if m.adddevice_id != nil {
-		fields = append(fields, missionproduction.FieldDeviceID)
-	}
 	return fields
 }
 
@@ -12769,8 +12852,6 @@ func (m *MissionProductionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case missionproduction.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case missionproduction.FieldDeviceID:
-		return m.AddedDeviceID()
 	}
 	return nil, false
 }
@@ -12793,13 +12874,6 @@ func (m *MissionProductionMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case missionproduction.FieldDeviceID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDeviceID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionProduction numeric field %s", name)
@@ -12873,7 +12947,7 @@ func (m *MissionProductionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionProductionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.mission_produce_order != nil {
 		edges = append(edges, missionproduction.EdgeMissionProduceOrder)
 	}
@@ -12882,6 +12956,9 @@ func (m *MissionProductionMutation) AddedEdges() []string {
 	}
 	if m.hmac_key_pair != nil {
 		edges = append(edges, missionproduction.EdgeHmacKeyPair)
+	}
+	if m.device != nil {
+		edges = append(edges, missionproduction.EdgeDevice)
 	}
 	return edges
 }
@@ -12902,13 +12979,17 @@ func (m *MissionProductionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.hmac_key_pair; id != nil {
 			return []ent.Value{*id}
 		}
+	case missionproduction.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionProductionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -12920,7 +13001,7 @@ func (m *MissionProductionMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionProductionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedmission_produce_order {
 		edges = append(edges, missionproduction.EdgeMissionProduceOrder)
 	}
@@ -12929,6 +13010,9 @@ func (m *MissionProductionMutation) ClearedEdges() []string {
 	}
 	if m.clearedhmac_key_pair {
 		edges = append(edges, missionproduction.EdgeHmacKeyPair)
+	}
+	if m.cleareddevice {
+		edges = append(edges, missionproduction.EdgeDevice)
 	}
 	return edges
 }
@@ -12943,6 +13027,8 @@ func (m *MissionProductionMutation) EdgeCleared(name string) bool {
 		return m.clearedmission
 	case missionproduction.EdgeHmacKeyPair:
 		return m.clearedhmac_key_pair
+	case missionproduction.EdgeDevice:
+		return m.cleareddevice
 	}
 	return false
 }
@@ -12960,6 +13046,9 @@ func (m *MissionProductionMutation) ClearEdge(name string) error {
 	case missionproduction.EdgeHmacKeyPair:
 		m.ClearHmacKeyPair()
 		return nil
+	case missionproduction.EdgeDevice:
+		m.ClearDevice()
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduction unique edge %s", name)
 }
@@ -12976,6 +13065,9 @@ func (m *MissionProductionMutation) ResetEdge(name string) error {
 		return nil
 	case missionproduction.EdgeHmacKeyPair:
 		m.ResetHmacKeyPair()
+		return nil
+	case missionproduction.EdgeDevice:
+		m.ResetDevice()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionProduction edge %s", name)

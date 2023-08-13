@@ -65,7 +65,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "missionproduceorder" package.
 	MissionProduceOrdersInverseTable = "mission_produce_orders"
 	// MissionProduceOrdersColumn is the table column denoting the mission_produce_orders relation/edge.
-	MissionProduceOrdersColumn = "mission_batch_mission_produce_orders"
+	MissionProduceOrdersColumn = "mission_batch_id"
 )
 
 // Columns holds all SQL columns for missionbatch fields.

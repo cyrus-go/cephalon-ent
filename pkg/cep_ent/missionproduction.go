@@ -3,6 +3,7 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/device"
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -48,9 +49,8 @@ type MissionProduction struct {
 	AdditionalResult string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionProductionQuery when eager-loading is set.
-	Edges                      MissionProductionEdges `json:"edges"`
-	device_mission_productions *int64
-	selectValues               sql.SelectValues
+	Edges        MissionProductionEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // MissionProductionEdges holds the relations/edges for other nodes in the graph.
@@ -61,9 +61,11 @@ type MissionProductionEdges struct {
 	Mission *Mission `json:"mission,omitempty"`
 	// HmacKeyPair holds the value of the hmac_key_pair edge.
 	HmacKeyPair *HmacKeyPair `json:"hmac_key_pair,omitempty"`
+	// Device holds the value of the device edge.
+	Device *Device `json:"device,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // MissionProduceOrderOrErr returns the MissionProduceOrder value or an error if the edge
@@ -105,6 +107,19 @@ func (e MissionProductionEdges) HmacKeyPairOrErr() (*HmacKeyPair, error) {
 	return nil, &NotLoadedError{edge: "hmac_key_pair"}
 }
 
+// DeviceOrErr returns the Device value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionProductionEdges) DeviceOrErr() (*Device, error) {
+	if e.loadedTypes[3] {
+		if e.Device == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: device.Label}
+		}
+		return e.Device, nil
+	}
+	return nil, &NotLoadedError{edge: "device"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*MissionProduction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -116,8 +131,6 @@ func (*MissionProduction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case missionproduction.FieldCreatedAt, missionproduction.FieldUpdatedAt, missionproduction.FieldDeletedAt, missionproduction.FieldStartedAt, missionproduction.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
-		case missionproduction.ForeignKeys[0]: // device_mission_productions
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -217,13 +230,6 @@ func (mp *MissionProduction) assignValues(columns []string, values []any) error 
 			} else if value.Valid {
 				mp.AdditionalResult = value.String
 			}
-		case missionproduction.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field device_mission_productions", value)
-			} else if value.Valid {
-				mp.device_mission_productions = new(int64)
-				*mp.device_mission_productions = int64(value.Int64)
-			}
 		default:
 			mp.selectValues.Set(columns[i], values[i])
 		}
@@ -250,6 +256,11 @@ func (mp *MissionProduction) QueryMission() *MissionQuery {
 // QueryHmacKeyPair queries the "hmac_key_pair" edge of the MissionProduction entity.
 func (mp *MissionProduction) QueryHmacKeyPair() *HmacKeyPairQuery {
 	return NewMissionProductionClient(mp.config).QueryHmacKeyPair(mp)
+}
+
+// QueryDevice queries the "device" edge of the MissionProduction entity.
+func (mp *MissionProduction) QueryDevice() *DeviceQuery {
+	return NewMissionProductionClient(mp.config).QueryDevice(mp)
 }
 
 // Update returns a builder for updating this MissionProduction.

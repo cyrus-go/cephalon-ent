@@ -96,9 +96,25 @@ func (ilc *InputLogCreate) SetTraceID(i int64) *InputLogCreate {
 	return ilc
 }
 
+// SetNillableTraceID sets the "trace_id" field if the given value is not nil.
+func (ilc *InputLogCreate) SetNillableTraceID(i *int64) *InputLogCreate {
+	if i != nil {
+		ilc.SetTraceID(*i)
+	}
+	return ilc
+}
+
 // SetHeaders sets the "headers" field.
 func (ilc *InputLogCreate) SetHeaders(s string) *InputLogCreate {
 	ilc.mutation.SetHeaders(s)
+	return ilc
+}
+
+// SetNillableHeaders sets the "headers" field if the given value is not nil.
+func (ilc *InputLogCreate) SetNillableHeaders(s *string) *InputLogCreate {
+	if s != nil {
+		ilc.SetHeaders(*s)
+	}
 	return ilc
 }
 
@@ -136,6 +152,14 @@ func (ilc *InputLogCreate) SetURL(s string) *InputLogCreate {
 	return ilc
 }
 
+// SetNillableURL sets the "url" field if the given value is not nil.
+func (ilc *InputLogCreate) SetNillableURL(s *string) *InputLogCreate {
+	if s != nil {
+		ilc.SetURL(*s)
+	}
+	return ilc
+}
+
 // SetIP sets the "ip" field.
 func (ilc *InputLogCreate) SetIP(s string) *InputLogCreate {
 	ilc.mutation.SetIP(s)
@@ -167,6 +191,14 @@ func (ilc *InputLogCreate) SetNillableCaller(s *string) *InputLogCreate {
 // SetMethod sets the "method" field.
 func (ilc *InputLogCreate) SetMethod(i inputlog.Method) *InputLogCreate {
 	ilc.mutation.SetMethod(i)
+	return ilc
+}
+
+// SetNillableMethod sets the "method" field if the given value is not nil.
+func (ilc *InputLogCreate) SetNillableMethod(i *inputlog.Method) *InputLogCreate {
+	if i != nil {
+		ilc.SetMethod(*i)
+	}
 	return ilc
 }
 
@@ -253,6 +285,14 @@ func (ilc *InputLogCreate) defaults() {
 		v := inputlog.DefaultDeletedAt
 		ilc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := ilc.mutation.TraceID(); !ok {
+		v := inputlog.DefaultTraceID
+		ilc.mutation.SetTraceID(v)
+	}
+	if _, ok := ilc.mutation.Headers(); !ok {
+		v := inputlog.DefaultHeaders
+		ilc.mutation.SetHeaders(v)
+	}
 	if _, ok := ilc.mutation.Body(); !ok {
 		v := inputlog.DefaultBody
 		ilc.mutation.SetBody(v)
@@ -261,6 +301,10 @@ func (ilc *InputLogCreate) defaults() {
 		v := inputlog.DefaultQuery
 		ilc.mutation.SetQuery(v)
 	}
+	if _, ok := ilc.mutation.URL(); !ok {
+		v := inputlog.DefaultURL
+		ilc.mutation.SetURL(v)
+	}
 	if _, ok := ilc.mutation.IP(); !ok {
 		v := inputlog.DefaultIP
 		ilc.mutation.SetIP(v)
@@ -268,6 +312,10 @@ func (ilc *InputLogCreate) defaults() {
 	if _, ok := ilc.mutation.Caller(); !ok {
 		v := inputlog.DefaultCaller
 		ilc.mutation.SetCaller(v)
+	}
+	if _, ok := ilc.mutation.Method(); !ok {
+		v := inputlog.DefaultMethod
+		ilc.mutation.SetMethod(v)
 	}
 	if _, ok := ilc.mutation.HmacKey(); !ok {
 		v := inputlog.DefaultHmacKey
@@ -304,6 +352,9 @@ func (ilc *InputLogCreate) check() error {
 	}
 	if _, ok := ilc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`cep_ent: missing required field "InputLog.url"`)}
+	}
+	if _, ok := ilc.mutation.IP(); !ok {
+		return &ValidationError{Name: "ip", err: errors.New(`cep_ent: missing required field "InputLog.ip"`)}
 	}
 	if _, ok := ilc.mutation.Caller(); !ok {
 		return &ValidationError{Name: "caller", err: errors.New(`cep_ent: missing required field "InputLog.caller"`)}

@@ -5,6 +5,7 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/device"
 	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/missionproduction"
@@ -53,11 +54,12 @@ type MissionProduceOrder struct {
 	SerialNumber string `json:"serial_number"`
 	// 外键任务消费订单，一个任务消费订单可能会对应多个任务生产订单
 	MissionConsumeOrderID int64 `json:"mission_consume_order_id"`
+	// 外键任务批次
+	MissionBatchID int64 `json:"mission_batch_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionProduceOrderQuery when eager-loading is set.
-	Edges                                MissionProduceOrderEdges `json:"edges"`
-	mission_batch_mission_produce_orders *int64
-	selectValues                         sql.SelectValues
+	Edges        MissionProduceOrderEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // MissionProduceOrderEdges holds the relations/edges for other nodes in the graph.
@@ -74,9 +76,11 @@ type MissionProduceOrderEdges struct {
 	Mission *Mission `json:"mission,omitempty"`
 	// MissionProduction holds the value of the mission_production edge.
 	MissionProduction *MissionProduction `json:"mission_production,omitempty"`
+	// MissionBatch holds the value of the mission_batch edge.
+	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -153,6 +157,19 @@ func (e MissionProduceOrderEdges) MissionProductionOrErr() (*MissionProduction, 
 	return nil, &NotLoadedError{edge: "mission_production"}
 }
 
+// MissionBatchOrErr returns the MissionBatch value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionProduceOrderEdges) MissionBatchOrErr() (*MissionBatch, error) {
+	if e.loadedTypes[6] {
+		if e.MissionBatch == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionbatch.Label}
+		}
+		return e.MissionBatch, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_batch"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*MissionProduceOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -160,14 +177,12 @@ func (*MissionProduceOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionproduceorder.FieldIsTime:
 			values[i] = new(sql.NullBool)
-		case missionproduceorder.FieldID, missionproduceorder.FieldCreatedBy, missionproduceorder.FieldUpdatedBy, missionproduceorder.FieldUserID, missionproduceorder.FieldMissionID, missionproduceorder.FieldMissionProductionID, missionproduceorder.FieldCep, missionproduceorder.FieldDeviceID, missionproduceorder.FieldMissionConsumeOrderID:
+		case missionproduceorder.FieldID, missionproduceorder.FieldCreatedBy, missionproduceorder.FieldUpdatedBy, missionproduceorder.FieldUserID, missionproduceorder.FieldMissionID, missionproduceorder.FieldMissionProductionID, missionproduceorder.FieldCep, missionproduceorder.FieldDeviceID, missionproduceorder.FieldMissionConsumeOrderID, missionproduceorder.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
 		case missionproduceorder.FieldStatus, missionproduceorder.FieldType, missionproduceorder.FieldSerialNumber:
 			values[i] = new(sql.NullString)
 		case missionproduceorder.FieldCreatedAt, missionproduceorder.FieldUpdatedAt, missionproduceorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case missionproduceorder.ForeignKeys[0]: // mission_batch_mission_produce_orders
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -279,12 +294,11 @@ func (mpo *MissionProduceOrder) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				mpo.MissionConsumeOrderID = value.Int64
 			}
-		case missionproduceorder.ForeignKeys[0]:
+		case missionproduceorder.FieldMissionBatchID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field mission_batch_mission_produce_orders", value)
+				return fmt.Errorf("unexpected type %T for field mission_batch_id", values[i])
 			} else if value.Valid {
-				mpo.mission_batch_mission_produce_orders = new(int64)
-				*mpo.mission_batch_mission_produce_orders = int64(value.Int64)
+				mpo.MissionBatchID = value.Int64
 			}
 		default:
 			mpo.selectValues.Set(columns[i], values[i])
@@ -327,6 +341,11 @@ func (mpo *MissionProduceOrder) QueryMission() *MissionQuery {
 // QueryMissionProduction queries the "mission_production" edge of the MissionProduceOrder entity.
 func (mpo *MissionProduceOrder) QueryMissionProduction() *MissionProductionQuery {
 	return NewMissionProduceOrderClient(mpo.config).QueryMissionProduction(mpo)
+}
+
+// QueryMissionBatch queries the "mission_batch" edge of the MissionProduceOrder entity.
+func (mpo *MissionProduceOrder) QueryMissionBatch() *MissionBatchQuery {
+	return NewMissionProduceOrderClient(mpo.config).QueryMissionBatch(mpo)
 }
 
 // Update returns a builder for updating this MissionProduceOrder.
@@ -396,6 +415,9 @@ func (mpo *MissionProduceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_consume_order_id=")
 	builder.WriteString(fmt.Sprintf("%v", mpo.MissionConsumeOrderID))
+	builder.WriteString(", ")
+	builder.WriteString("mission_batch_id=")
+	builder.WriteString(fmt.Sprintf("%v", mpo.MissionBatchID))
 	builder.WriteByte(')')
 	return builder.String()
 }

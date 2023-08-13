@@ -111,6 +111,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
+	// DefaultKey holds the default value on creation for the "key" field.
+	DefaultKey string
+	// DefaultSecret holds the default value on creation for the "secret" field.
+	DefaultSecret string
 	// DefaultCaller holds the default value on creation for the "caller" field.
 	DefaultCaller string
 	// DefaultUserID holds the default value on creation for the "user_id" field.

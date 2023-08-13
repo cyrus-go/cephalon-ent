@@ -46,6 +46,8 @@ const (
 	FieldSerialNumber = "serial_number"
 	// FieldMissionConsumeOrderID holds the string denoting the mission_consume_order_id field in the database.
 	FieldMissionConsumeOrderID = "mission_consume_order_id"
+	// FieldMissionBatchID holds the string denoting the mission_batch_id field in the database.
+	FieldMissionBatchID = "mission_batch_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeBills holds the string denoting the bills edge name in mutations.
@@ -58,6 +60,8 @@ const (
 	EdgeMission = "mission"
 	// EdgeMissionProduction holds the string denoting the mission_production edge name in mutations.
 	EdgeMissionProduction = "mission_production"
+	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
+	EdgeMissionBatch = "mission_batch"
 	// Table holds the table name of the missionproduceorder in the database.
 	Table = "mission_produce_orders"
 	// UserTable is the table that holds the user relation/edge.
@@ -102,6 +106,13 @@ const (
 	MissionProductionInverseTable = "mission_productions"
 	// MissionProductionColumn is the table column denoting the mission_production relation/edge.
 	MissionProductionColumn = "mission_production_id"
+	// MissionBatchTable is the table that holds the mission_batch relation/edge.
+	MissionBatchTable = "mission_produce_orders"
+	// MissionBatchInverseTable is the table name for the MissionBatch entity.
+	// It exists in this package in order to avoid circular dependency with the "missionbatch" package.
+	MissionBatchInverseTable = "mission_batches"
+	// MissionBatchColumn is the table column denoting the mission_batch relation/edge.
+	MissionBatchColumn = "mission_batch_id"
 )
 
 // Columns holds all SQL columns for missionproduceorder fields.
@@ -122,23 +133,13 @@ var Columns = []string{
 	FieldDeviceID,
 	FieldSerialNumber,
 	FieldMissionConsumeOrderID,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "mission_produce_orders"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"mission_batch_mission_produce_orders",
+	FieldMissionBatchID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -174,6 +175,8 @@ var (
 	DefaultSerialNumber string
 	// DefaultMissionConsumeOrderID holds the default value on creation for the "mission_consume_order_id" field.
 	DefaultMissionConsumeOrderID int64
+	// DefaultMissionBatchID holds the default value on creation for the "mission_batch_id" field.
+	DefaultMissionBatchID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -302,6 +305,11 @@ func ByMissionConsumeOrderID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionConsumeOrderID, opts...).ToFunc()
 }
 
+// ByMissionBatchID orders the results by the mission_batch_id field.
+func ByMissionBatchID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMissionBatchID, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -350,6 +358,13 @@ func ByMissionProductionField(field string, opts ...sql.OrderTermOption) OrderOp
 		sqlgraph.OrderByNeighborTerms(s, newMissionProductionStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByMissionBatchField orders the results by mission_batch field.
+func ByMissionBatchField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionBatchStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -390,5 +405,12 @@ func newMissionProductionStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionProductionInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, true, MissionProductionTable, MissionProductionColumn),
+	)
+}
+func newMissionBatchStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionBatchInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
 	)
 }
