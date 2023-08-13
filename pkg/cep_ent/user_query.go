@@ -3,9 +3,23 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/hmackeypair"
+	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/missionbatch"
+	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/cep_ent/profitsetting"
+	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/cep_ent/wallet"
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -17,10 +31,23 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx        *QueryContext
-	order      []user.OrderOption
-	inters     []Interceptor
-	predicates []predicate.User
+	ctx                      *QueryContext
+	order                    []user.OrderOption
+	inters                   []Interceptor
+	predicates               []predicate.User
+	withBills                *BillQuery
+	withHmacKeyPair          *HmacKeyPairQuery
+	withCreatedMissions      *MissionQuery
+	withWallet               *WalletQuery
+	withCollections          *CollectionQuery
+	withDevices              *DeviceQuery
+	withProfitSettings       *ProfitSettingQuery
+	withMissionConsumeOrders *MissionConsumeOrderQuery
+	withMissionProduceOrders *MissionProduceOrderQuery
+	withRechargeOrders       *RechargeOrderQuery
+	withVxSocials            *VXSocialQuery
+	withMissionBatches       *MissionBatchQuery
+	withUserDevices          *UserDeviceQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +82,292 @@ func (uq *UserQuery) Unique(unique bool) *UserQuery {
 func (uq *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	uq.order = append(uq.order, o...)
 	return uq
+}
+
+// QueryBills chains the current query on the "bills" edge.
+func (uq *UserQuery) QueryBills() *BillQuery {
+	query := (&BillClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(bill.Table, bill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.BillsTable, user.BillsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryHmacKeyPair chains the current query on the "hmac_key_pair" edge.
+func (uq *UserQuery) QueryHmacKeyPair() *HmacKeyPairQuery {
+	query := (&HmacKeyPairClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.HmacKeyPairTable, user.HmacKeyPairColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCreatedMissions chains the current query on the "created_missions" edge.
+func (uq *UserQuery) QueryCreatedMissions() *MissionQuery {
+	query := (&MissionClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CreatedMissionsTable, user.CreatedMissionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryWallet chains the current query on the "wallet" edge.
+func (uq *UserQuery) QueryWallet() *WalletQuery {
+	query := (&WalletClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(wallet.Table, wallet.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.WalletTable, user.WalletColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCollections chains the current query on the "collections" edge.
+func (uq *UserQuery) QueryCollections() *CollectionQuery {
+	query := (&CollectionClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(collection.Table, collection.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CollectionsTable, user.CollectionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDevices chains the current query on the "devices" edge.
+func (uq *UserQuery) QueryDevices() *DeviceQuery {
+	query := (&DeviceClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.DevicesTable, user.DevicesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProfitSettings chains the current query on the "profit_settings" edge.
+func (uq *UserQuery) QueryProfitSettings() *ProfitSettingQuery {
+	query := (&ProfitSettingClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(profitsetting.Table, profitsetting.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfitSettingsTable, user.ProfitSettingsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissionConsumeOrders chains the current query on the "mission_consume_orders" edge.
+func (uq *UserQuery) QueryMissionConsumeOrders() *MissionConsumeOrderQuery {
+	query := (&MissionConsumeOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MissionConsumeOrdersTable, user.MissionConsumeOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissionProduceOrders chains the current query on the "mission_produce_orders" edge.
+func (uq *UserQuery) QueryMissionProduceOrders() *MissionProduceOrderQuery {
+	query := (&MissionProduceOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MissionProduceOrdersTable, user.MissionProduceOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRechargeOrders chains the current query on the "recharge_orders" edge.
+func (uq *UserQuery) QueryRechargeOrders() *RechargeOrderQuery {
+	query := (&RechargeOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(rechargeorder.Table, rechargeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RechargeOrdersTable, user.RechargeOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVxSocials chains the current query on the "vx_socials" edge.
+func (uq *UserQuery) QueryVxSocials() *VXSocialQuery {
+	query := (&VXSocialClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(vxsocial.Table, vxsocial.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.VxSocialsTable, user.VxSocialsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissionBatches chains the current query on the "mission_batches" edge.
+func (uq *UserQuery) QueryMissionBatches() *MissionBatchQuery {
+	query := (&MissionBatchClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MissionBatchesTable, user.MissionBatchesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserDevices chains the current query on the "user_devices" edge.
+func (uq *UserQuery) QueryUserDevices() *UserDeviceQuery {
+	query := (&UserDeviceClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(userdevice.Table, userdevice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserDevicesTable, user.UserDevicesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first User entity from the query.
@@ -244,15 +557,171 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:     uq.config,
-		ctx:        uq.ctx.Clone(),
-		order:      append([]user.OrderOption{}, uq.order...),
-		inters:     append([]Interceptor{}, uq.inters...),
-		predicates: append([]predicate.User{}, uq.predicates...),
+		config:                   uq.config,
+		ctx:                      uq.ctx.Clone(),
+		order:                    append([]user.OrderOption{}, uq.order...),
+		inters:                   append([]Interceptor{}, uq.inters...),
+		predicates:               append([]predicate.User{}, uq.predicates...),
+		withBills:                uq.withBills.Clone(),
+		withHmacKeyPair:          uq.withHmacKeyPair.Clone(),
+		withCreatedMissions:      uq.withCreatedMissions.Clone(),
+		withWallet:               uq.withWallet.Clone(),
+		withCollections:          uq.withCollections.Clone(),
+		withDevices:              uq.withDevices.Clone(),
+		withProfitSettings:       uq.withProfitSettings.Clone(),
+		withMissionConsumeOrders: uq.withMissionConsumeOrders.Clone(),
+		withMissionProduceOrders: uq.withMissionProduceOrders.Clone(),
+		withRechargeOrders:       uq.withRechargeOrders.Clone(),
+		withVxSocials:            uq.withVxSocials.Clone(),
+		withMissionBatches:       uq.withMissionBatches.Clone(),
+		withUserDevices:          uq.withUserDevices.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
 	}
+}
+
+// WithBills tells the query-builder to eager-load the nodes that are connected to
+// the "bills" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithBills(opts ...func(*BillQuery)) *UserQuery {
+	query := (&BillClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withBills = query
+	return uq
+}
+
+// WithHmacKeyPair tells the query-builder to eager-load the nodes that are connected to
+// the "hmac_key_pair" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithHmacKeyPair(opts ...func(*HmacKeyPairQuery)) *UserQuery {
+	query := (&HmacKeyPairClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withHmacKeyPair = query
+	return uq
+}
+
+// WithCreatedMissions tells the query-builder to eager-load the nodes that are connected to
+// the "created_missions" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithCreatedMissions(opts ...func(*MissionQuery)) *UserQuery {
+	query := (&MissionClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withCreatedMissions = query
+	return uq
+}
+
+// WithWallet tells the query-builder to eager-load the nodes that are connected to
+// the "wallet" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithWallet(opts ...func(*WalletQuery)) *UserQuery {
+	query := (&WalletClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withWallet = query
+	return uq
+}
+
+// WithCollections tells the query-builder to eager-load the nodes that are connected to
+// the "collections" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithCollections(opts ...func(*CollectionQuery)) *UserQuery {
+	query := (&CollectionClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withCollections = query
+	return uq
+}
+
+// WithDevices tells the query-builder to eager-load the nodes that are connected to
+// the "devices" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithDevices(opts ...func(*DeviceQuery)) *UserQuery {
+	query := (&DeviceClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withDevices = query
+	return uq
+}
+
+// WithProfitSettings tells the query-builder to eager-load the nodes that are connected to
+// the "profit_settings" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithProfitSettings(opts ...func(*ProfitSettingQuery)) *UserQuery {
+	query := (&ProfitSettingClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withProfitSettings = query
+	return uq
+}
+
+// WithMissionConsumeOrders tells the query-builder to eager-load the nodes that are connected to
+// the "mission_consume_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithMissionConsumeOrders(opts ...func(*MissionConsumeOrderQuery)) *UserQuery {
+	query := (&MissionConsumeOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withMissionConsumeOrders = query
+	return uq
+}
+
+// WithMissionProduceOrders tells the query-builder to eager-load the nodes that are connected to
+// the "mission_produce_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithMissionProduceOrders(opts ...func(*MissionProduceOrderQuery)) *UserQuery {
+	query := (&MissionProduceOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withMissionProduceOrders = query
+	return uq
+}
+
+// WithRechargeOrders tells the query-builder to eager-load the nodes that are connected to
+// the "recharge_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithRechargeOrders(opts ...func(*RechargeOrderQuery)) *UserQuery {
+	query := (&RechargeOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withRechargeOrders = query
+	return uq
+}
+
+// WithVxSocials tells the query-builder to eager-load the nodes that are connected to
+// the "vx_socials" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithVxSocials(opts ...func(*VXSocialQuery)) *UserQuery {
+	query := (&VXSocialClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withVxSocials = query
+	return uq
+}
+
+// WithMissionBatches tells the query-builder to eager-load the nodes that are connected to
+// the "mission_batches" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithMissionBatches(opts ...func(*MissionBatchQuery)) *UserQuery {
+	query := (&MissionBatchClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withMissionBatches = query
+	return uq
+}
+
+// WithUserDevices tells the query-builder to eager-load the nodes that are connected to
+// the "user_devices" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserDevices(opts ...func(*UserDeviceQuery)) *UserQuery {
+	query := (&UserDeviceClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUserDevices = query
+	return uq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -331,8 +800,23 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 
 func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
-		nodes = []*User{}
-		_spec = uq.querySpec()
+		nodes       = []*User{}
+		_spec       = uq.querySpec()
+		loadedTypes = [13]bool{
+			uq.withBills != nil,
+			uq.withHmacKeyPair != nil,
+			uq.withCreatedMissions != nil,
+			uq.withWallet != nil,
+			uq.withCollections != nil,
+			uq.withDevices != nil,
+			uq.withProfitSettings != nil,
+			uq.withMissionConsumeOrders != nil,
+			uq.withMissionProduceOrders != nil,
+			uq.withRechargeOrders != nil,
+			uq.withVxSocials != nil,
+			uq.withMissionBatches != nil,
+			uq.withUserDevices != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
@@ -340,6 +824,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &User{config: uq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +836,488 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := uq.withBills; query != nil {
+		if err := uq.loadBills(ctx, query, nodes,
+			func(n *User) { n.Edges.Bills = []*Bill{} },
+			func(n *User, e *Bill) { n.Edges.Bills = append(n.Edges.Bills, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withHmacKeyPair; query != nil {
+		if err := uq.loadHmacKeyPair(ctx, query, nodes, nil,
+			func(n *User, e *HmacKeyPair) { n.Edges.HmacKeyPair = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withCreatedMissions; query != nil {
+		if err := uq.loadCreatedMissions(ctx, query, nodes,
+			func(n *User) { n.Edges.CreatedMissions = []*Mission{} },
+			func(n *User, e *Mission) { n.Edges.CreatedMissions = append(n.Edges.CreatedMissions, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withWallet; query != nil {
+		if err := uq.loadWallet(ctx, query, nodes, nil,
+			func(n *User, e *Wallet) { n.Edges.Wallet = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withCollections; query != nil {
+		if err := uq.loadCollections(ctx, query, nodes,
+			func(n *User) { n.Edges.Collections = []*Collection{} },
+			func(n *User, e *Collection) { n.Edges.Collections = append(n.Edges.Collections, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withDevices; query != nil {
+		if err := uq.loadDevices(ctx, query, nodes,
+			func(n *User) { n.Edges.Devices = []*Device{} },
+			func(n *User, e *Device) { n.Edges.Devices = append(n.Edges.Devices, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withProfitSettings; query != nil {
+		if err := uq.loadProfitSettings(ctx, query, nodes,
+			func(n *User) { n.Edges.ProfitSettings = []*ProfitSetting{} },
+			func(n *User, e *ProfitSetting) { n.Edges.ProfitSettings = append(n.Edges.ProfitSettings, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withMissionConsumeOrders; query != nil {
+		if err := uq.loadMissionConsumeOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.MissionConsumeOrders = []*MissionConsumeOrder{} },
+			func(n *User, e *MissionConsumeOrder) {
+				n.Edges.MissionConsumeOrders = append(n.Edges.MissionConsumeOrders, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withMissionProduceOrders; query != nil {
+		if err := uq.loadMissionProduceOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.MissionProduceOrders = []*MissionProduceOrder{} },
+			func(n *User, e *MissionProduceOrder) {
+				n.Edges.MissionProduceOrders = append(n.Edges.MissionProduceOrders, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withRechargeOrders; query != nil {
+		if err := uq.loadRechargeOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.RechargeOrders = []*RechargeOrder{} },
+			func(n *User, e *RechargeOrder) { n.Edges.RechargeOrders = append(n.Edges.RechargeOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withVxSocials; query != nil {
+		if err := uq.loadVxSocials(ctx, query, nodes,
+			func(n *User) { n.Edges.VxSocials = []*VXSocial{} },
+			func(n *User, e *VXSocial) { n.Edges.VxSocials = append(n.Edges.VxSocials, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withMissionBatches; query != nil {
+		if err := uq.loadMissionBatches(ctx, query, nodes,
+			func(n *User) { n.Edges.MissionBatches = []*MissionBatch{} },
+			func(n *User, e *MissionBatch) { n.Edges.MissionBatches = append(n.Edges.MissionBatches, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withUserDevices; query != nil {
+		if err := uq.loadUserDevices(ctx, query, nodes,
+			func(n *User) { n.Edges.UserDevices = []*UserDevice{} },
+			func(n *User, e *UserDevice) { n.Edges.UserDevices = append(n.Edges.UserDevices, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (uq *UserQuery) loadBills(ctx context.Context, query *BillQuery, nodes []*User, init func(*User), assign func(*User, *Bill)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(bill.FieldUserID)
+	}
+	query.Where(predicate.Bill(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.BillsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadHmacKeyPair(ctx context.Context, query *HmacKeyPairQuery, nodes []*User, init func(*User), assign func(*User, *HmacKeyPair)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.HmacKeyPair(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.HmacKeyPairColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_hmac_key_pair
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_hmac_key_pair" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_hmac_key_pair" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadCreatedMissions(ctx context.Context, query *MissionQuery, nodes []*User, init func(*User), assign func(*User, *Mission)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(mission.FieldUserID)
+	}
+	query.Where(predicate.Mission(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.CreatedMissionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadWallet(ctx context.Context, query *WalletQuery, nodes []*User, init func(*User), assign func(*User, *Wallet)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(wallet.FieldUserID)
+	}
+	query.Where(predicate.Wallet(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.WalletColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadCollections(ctx context.Context, query *CollectionQuery, nodes []*User, init func(*User), assign func(*User, *Collection)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(collection.FieldUserID)
+	}
+	query.Where(predicate.Collection(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.CollectionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadDevices(ctx context.Context, query *DeviceQuery, nodes []*User, init func(*User), assign func(*User, *Device)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(device.FieldUserID)
+	}
+	query.Where(predicate.Device(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.DevicesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadProfitSettings(ctx context.Context, query *ProfitSettingQuery, nodes []*User, init func(*User), assign func(*User, *ProfitSetting)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(profitsetting.FieldUserID)
+	}
+	query.Where(predicate.ProfitSetting(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ProfitSettingsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadMissionConsumeOrders(ctx context.Context, query *MissionConsumeOrderQuery, nodes []*User, init func(*User), assign func(*User, *MissionConsumeOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionconsumeorder.FieldUserID)
+	}
+	query.Where(predicate.MissionConsumeOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.MissionConsumeOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadMissionProduceOrders(ctx context.Context, query *MissionProduceOrderQuery, nodes []*User, init func(*User), assign func(*User, *MissionProduceOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionproduceorder.FieldUserID)
+	}
+	query.Where(predicate.MissionProduceOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.MissionProduceOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadRechargeOrders(ctx context.Context, query *RechargeOrderQuery, nodes []*User, init func(*User), assign func(*User, *RechargeOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(rechargeorder.FieldUserID)
+	}
+	query.Where(predicate.RechargeOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.RechargeOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadVxSocials(ctx context.Context, query *VXSocialQuery, nodes []*User, init func(*User), assign func(*User, *VXSocial)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(vxsocial.FieldUserID)
+	}
+	query.Where(predicate.VXSocial(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.VxSocialsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadMissionBatches(ctx context.Context, query *MissionBatchQuery, nodes []*User, init func(*User), assign func(*User, *MissionBatch)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionbatch.FieldUserID)
+	}
+	query.Where(predicate.MissionBatch(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.MissionBatchesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadUserDevices(ctx context.Context, query *UserDeviceQuery, nodes []*User, init func(*User), assign func(*User, *UserDevice)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(userdevice.FieldUserID)
+	}
+	query.Where(predicate.UserDevice(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.UserDevicesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {

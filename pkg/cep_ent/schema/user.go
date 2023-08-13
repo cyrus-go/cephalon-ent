@@ -4,6 +4,7 @@ import (
 	"cephalon-ent/common"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 )
@@ -31,7 +32,21 @@ func (User) Fields() []ent.Field {
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("bills", Bill.Type),
+		edge.To("hmac_key_pair", HmacKeyPair.Type).Unique(),
+		edge.To("created_missions", Mission.Type),
+		edge.To("wallet", Wallet.Type).Unique(),
+		edge.To("collections", Collection.Type),
+		edge.To("devices", Device.Type),
+		edge.To("profit_settings", ProfitSetting.Type),
+		edge.To("mission_consume_orders", MissionConsumeOrder.Type),
+		edge.To("mission_produce_orders", MissionProduceOrder.Type),
+		edge.To("recharge_orders", RechargeOrder.Type),
+		edge.To("vx_socials", VXSocial.Type),
+		edge.To("mission_batches", MissionBatch.Type),
+		edge.To("user_devices", UserDevice.Type),
+	}
 }
 
 func (User) Indexes() []ent.Index {
@@ -52,6 +67,6 @@ func (User) Mixin() []ent.Mixin {
 // Annotations of the BaseMixin.
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		schema.Comment("用户表，手机号唯一"),
+		schema.Comment("用户表，手机号唯一，用户名唯一，hmac_key 唯一"),
 	}
 }

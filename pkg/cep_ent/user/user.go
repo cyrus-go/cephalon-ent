@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -44,8 +45,125 @@ const (
 	FieldHmacKey = "hmac_key"
 	// FieldHmacSecret holds the string denoting the hmac_secret field in the database.
 	FieldHmacSecret = "hmac_secret"
+	// EdgeBills holds the string denoting the bills edge name in mutations.
+	EdgeBills = "bills"
+	// EdgeHmacKeyPair holds the string denoting the hmac_key_pair edge name in mutations.
+	EdgeHmacKeyPair = "hmac_key_pair"
+	// EdgeCreatedMissions holds the string denoting the created_missions edge name in mutations.
+	EdgeCreatedMissions = "created_missions"
+	// EdgeWallet holds the string denoting the wallet edge name in mutations.
+	EdgeWallet = "wallet"
+	// EdgeCollections holds the string denoting the collections edge name in mutations.
+	EdgeCollections = "collections"
+	// EdgeDevices holds the string denoting the devices edge name in mutations.
+	EdgeDevices = "devices"
+	// EdgeProfitSettings holds the string denoting the profit_settings edge name in mutations.
+	EdgeProfitSettings = "profit_settings"
+	// EdgeMissionConsumeOrders holds the string denoting the mission_consume_orders edge name in mutations.
+	EdgeMissionConsumeOrders = "mission_consume_orders"
+	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
+	EdgeMissionProduceOrders = "mission_produce_orders"
+	// EdgeRechargeOrders holds the string denoting the recharge_orders edge name in mutations.
+	EdgeRechargeOrders = "recharge_orders"
+	// EdgeVxSocials holds the string denoting the vx_socials edge name in mutations.
+	EdgeVxSocials = "vx_socials"
+	// EdgeMissionBatches holds the string denoting the mission_batches edge name in mutations.
+	EdgeMissionBatches = "mission_batches"
+	// EdgeUserDevices holds the string denoting the user_devices edge name in mutations.
+	EdgeUserDevices = "user_devices"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// BillsTable is the table that holds the bills relation/edge.
+	BillsTable = "bills"
+	// BillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	BillsInverseTable = "bills"
+	// BillsColumn is the table column denoting the bills relation/edge.
+	BillsColumn = "user_id"
+	// HmacKeyPairTable is the table that holds the hmac_key_pair relation/edge.
+	HmacKeyPairTable = "hmac_key_pairs"
+	// HmacKeyPairInverseTable is the table name for the HmacKeyPair entity.
+	// It exists in this package in order to avoid circular dependency with the "hmackeypair" package.
+	HmacKeyPairInverseTable = "hmac_key_pairs"
+	// HmacKeyPairColumn is the table column denoting the hmac_key_pair relation/edge.
+	HmacKeyPairColumn = "user_hmac_key_pair"
+	// CreatedMissionsTable is the table that holds the created_missions relation/edge.
+	CreatedMissionsTable = "missions"
+	// CreatedMissionsInverseTable is the table name for the Mission entity.
+	// It exists in this package in order to avoid circular dependency with the "mission" package.
+	CreatedMissionsInverseTable = "missions"
+	// CreatedMissionsColumn is the table column denoting the created_missions relation/edge.
+	CreatedMissionsColumn = "user_id"
+	// WalletTable is the table that holds the wallet relation/edge.
+	WalletTable = "wallets"
+	// WalletInverseTable is the table name for the Wallet entity.
+	// It exists in this package in order to avoid circular dependency with the "wallet" package.
+	WalletInverseTable = "wallets"
+	// WalletColumn is the table column denoting the wallet relation/edge.
+	WalletColumn = "user_id"
+	// CollectionsTable is the table that holds the collections relation/edge.
+	CollectionsTable = "collections"
+	// CollectionsInverseTable is the table name for the Collection entity.
+	// It exists in this package in order to avoid circular dependency with the "collection" package.
+	CollectionsInverseTable = "collections"
+	// CollectionsColumn is the table column denoting the collections relation/edge.
+	CollectionsColumn = "user_id"
+	// DevicesTable is the table that holds the devices relation/edge.
+	DevicesTable = "devices"
+	// DevicesInverseTable is the table name for the Device entity.
+	// It exists in this package in order to avoid circular dependency with the "device" package.
+	DevicesInverseTable = "devices"
+	// DevicesColumn is the table column denoting the devices relation/edge.
+	DevicesColumn = "user_id"
+	// ProfitSettingsTable is the table that holds the profit_settings relation/edge.
+	ProfitSettingsTable = "profit_settings"
+	// ProfitSettingsInverseTable is the table name for the ProfitSetting entity.
+	// It exists in this package in order to avoid circular dependency with the "profitsetting" package.
+	ProfitSettingsInverseTable = "profit_settings"
+	// ProfitSettingsColumn is the table column denoting the profit_settings relation/edge.
+	ProfitSettingsColumn = "user_id"
+	// MissionConsumeOrdersTable is the table that holds the mission_consume_orders relation/edge.
+	MissionConsumeOrdersTable = "mission_consume_orders"
+	// MissionConsumeOrdersInverseTable is the table name for the MissionConsumeOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionconsumeorder" package.
+	MissionConsumeOrdersInverseTable = "mission_consume_orders"
+	// MissionConsumeOrdersColumn is the table column denoting the mission_consume_orders relation/edge.
+	MissionConsumeOrdersColumn = "user_id"
+	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
+	MissionProduceOrdersTable = "mission_produce_orders"
+	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionproduceorder" package.
+	MissionProduceOrdersInverseTable = "mission_produce_orders"
+	// MissionProduceOrdersColumn is the table column denoting the mission_produce_orders relation/edge.
+	MissionProduceOrdersColumn = "user_id"
+	// RechargeOrdersTable is the table that holds the recharge_orders relation/edge.
+	RechargeOrdersTable = "recharge_orders"
+	// RechargeOrdersInverseTable is the table name for the RechargeOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "rechargeorder" package.
+	RechargeOrdersInverseTable = "recharge_orders"
+	// RechargeOrdersColumn is the table column denoting the recharge_orders relation/edge.
+	RechargeOrdersColumn = "user_id"
+	// VxSocialsTable is the table that holds the vx_socials relation/edge.
+	VxSocialsTable = "vx_socials"
+	// VxSocialsInverseTable is the table name for the VXSocial entity.
+	// It exists in this package in order to avoid circular dependency with the "vxsocial" package.
+	VxSocialsInverseTable = "vx_socials"
+	// VxSocialsColumn is the table column denoting the vx_socials relation/edge.
+	VxSocialsColumn = "user_id"
+	// MissionBatchesTable is the table that holds the mission_batches relation/edge.
+	MissionBatchesTable = "mission_batches"
+	// MissionBatchesInverseTable is the table name for the MissionBatch entity.
+	// It exists in this package in order to avoid circular dependency with the "missionbatch" package.
+	MissionBatchesInverseTable = "mission_batches"
+	// MissionBatchesColumn is the table column denoting the mission_batches relation/edge.
+	MissionBatchesColumn = "user_id"
+	// UserDevicesTable is the table that holds the user_devices relation/edge.
+	UserDevicesTable = "user_devices"
+	// UserDevicesInverseTable is the table name for the UserDevice entity.
+	// It exists in this package in order to avoid circular dependency with the "userdevice" package.
+	UserDevicesInverseTable = "user_devices"
+	// UserDevicesColumn is the table column denoting the user_devices relation/edge.
+	UserDevicesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -244,4 +362,263 @@ func ByHmacKey(opts ...sql.OrderTermOption) OrderOption {
 // ByHmacSecret orders the results by the hmac_secret field.
 func ByHmacSecret(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHmacSecret, opts...).ToFunc()
+}
+
+// ByBillsCount orders the results by bills count.
+func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+	}
+}
+
+// ByBills orders the results by bills terms.
+func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByHmacKeyPairField orders the results by hmac_key_pair field.
+func ByHmacKeyPairField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newHmacKeyPairStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByCreatedMissionsCount orders the results by created_missions count.
+func ByCreatedMissionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCreatedMissionsStep(), opts...)
+	}
+}
+
+// ByCreatedMissions orders the results by created_missions terms.
+func ByCreatedMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCreatedMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByWalletField orders the results by wallet field.
+func ByWalletField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWalletStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByCollectionsCount orders the results by collections count.
+func ByCollectionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCollectionsStep(), opts...)
+	}
+}
+
+// ByCollections orders the results by collections terms.
+func ByCollections(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCollectionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByDevicesCount orders the results by devices count.
+func ByDevicesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDevicesStep(), opts...)
+	}
+}
+
+// ByDevices orders the results by devices terms.
+func ByDevices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDevicesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByProfitSettingsCount orders the results by profit_settings count.
+func ByProfitSettingsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProfitSettingsStep(), opts...)
+	}
+}
+
+// ByProfitSettings orders the results by profit_settings terms.
+func ByProfitSettings(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProfitSettingsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMissionConsumeOrdersCount orders the results by mission_consume_orders count.
+func ByMissionConsumeOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionConsumeOrdersStep(), opts...)
+	}
+}
+
+// ByMissionConsumeOrders orders the results by mission_consume_orders terms.
+func ByMissionConsumeOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMissionProduceOrdersCount orders the results by mission_produce_orders count.
+func ByMissionProduceOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionProduceOrdersStep(), opts...)
+	}
+}
+
+// ByMissionProduceOrders orders the results by mission_produce_orders terms.
+func ByMissionProduceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionProduceOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByRechargeOrdersCount orders the results by recharge_orders count.
+func ByRechargeOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRechargeOrdersStep(), opts...)
+	}
+}
+
+// ByRechargeOrders orders the results by recharge_orders terms.
+func ByRechargeOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRechargeOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByVxSocialsCount orders the results by vx_socials count.
+func ByVxSocialsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVxSocialsStep(), opts...)
+	}
+}
+
+// ByVxSocials orders the results by vx_socials terms.
+func ByVxSocials(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVxSocialsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMissionBatchesCount orders the results by mission_batches count.
+func ByMissionBatchesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionBatchesStep(), opts...)
+	}
+}
+
+// ByMissionBatches orders the results by mission_batches terms.
+func ByMissionBatches(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionBatchesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByUserDevicesCount orders the results by user_devices count.
+func ByUserDevicesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserDevicesStep(), opts...)
+	}
+}
+
+// ByUserDevices orders the results by user_devices terms.
+func ByUserDevices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserDevicesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+	)
+}
+func newHmacKeyPairStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(HmacKeyPairInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, HmacKeyPairTable, HmacKeyPairColumn),
+	)
+}
+func newCreatedMissionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CreatedMissionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CreatedMissionsTable, CreatedMissionsColumn),
+	)
+}
+func newWalletStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WalletInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, WalletTable, WalletColumn),
+	)
+}
+func newCollectionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CollectionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CollectionsTable, CollectionsColumn),
+	)
+}
+func newDevicesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DevicesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DevicesTable, DevicesColumn),
+	)
+}
+func newProfitSettingsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProfitSettingsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProfitSettingsTable, ProfitSettingsColumn),
+	)
+}
+func newMissionConsumeOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionConsumeOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionConsumeOrdersTable, MissionConsumeOrdersColumn),
+	)
+}
+func newMissionProduceOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionProduceOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
+	)
+}
+func newRechargeOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RechargeOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RechargeOrdersTable, RechargeOrdersColumn),
+	)
+}
+func newVxSocialsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VxSocialsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VxSocialsTable, VxSocialsColumn),
+	)
+}
+func newMissionBatchesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionBatchesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionBatchesTable, MissionBatchesColumn),
+	)
+}
+func newUserDevicesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserDevicesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserDevicesTable, UserDevicesColumn),
+	)
 }

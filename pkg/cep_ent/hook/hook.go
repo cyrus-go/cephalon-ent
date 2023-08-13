@@ -8,6 +8,186 @@ import (
 	"fmt"
 )
 
+// The BillFunc type is an adapter to allow the use of ordinary
+// function as Bill mutator.
+type BillFunc func(context.Context, *cep_ent.BillMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BillFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.BillMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.BillMutation", m)
+}
+
+// The CollectionFunc type is an adapter to allow the use of ordinary
+// function as Collection mutator.
+type CollectionFunc func(context.Context, *cep_ent.CollectionMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CollectionFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.CollectionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.CollectionMutation", m)
+}
+
+// The DeviceFunc type is an adapter to allow the use of ordinary
+// function as Device mutator.
+type DeviceFunc func(context.Context, *cep_ent.DeviceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DeviceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.DeviceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceMutation", m)
+}
+
+// The HmacKeyPairFunc type is an adapter to allow the use of ordinary
+// function as HmacKeyPair mutator.
+type HmacKeyPairFunc func(context.Context, *cep_ent.HmacKeyPairMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f HmacKeyPairFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.HmacKeyPairMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.HmacKeyPairMutation", m)
+}
+
+// The InputLogFunc type is an adapter to allow the use of ordinary
+// function as InputLog mutator.
+type InputLogFunc func(context.Context, *cep_ent.InputLogMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InputLogFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.InputLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.InputLogMutation", m)
+}
+
+// The MissionFunc type is an adapter to allow the use of ordinary
+// function as Mission mutator.
+type MissionFunc func(context.Context, *cep_ent.MissionMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionMutation", m)
+}
+
+// The MissionBatchFunc type is an adapter to allow the use of ordinary
+// function as MissionBatch mutator.
+type MissionBatchFunc func(context.Context, *cep_ent.MissionBatchMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionBatchFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionBatchMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionBatchMutation", m)
+}
+
+// The MissionConsumeOrderFunc type is an adapter to allow the use of ordinary
+// function as MissionConsumeOrder mutator.
+type MissionConsumeOrderFunc func(context.Context, *cep_ent.MissionConsumeOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionConsumeOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionConsumeOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionConsumeOrderMutation", m)
+}
+
+// The MissionProduceOrderFunc type is an adapter to allow the use of ordinary
+// function as MissionProduceOrder mutator.
+type MissionProduceOrderFunc func(context.Context, *cep_ent.MissionProduceOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionProduceOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionProduceOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionProduceOrderMutation", m)
+}
+
+// The MissionProductionFunc type is an adapter to allow the use of ordinary
+// function as MissionProduction mutator.
+type MissionProductionFunc func(context.Context, *cep_ent.MissionProductionMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionProductionFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionProductionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionProductionMutation", m)
+}
+
+// The MissionTypeFunc type is an adapter to allow the use of ordinary
+// function as MissionType mutator.
+type MissionTypeFunc func(context.Context, *cep_ent.MissionTypeMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionTypeFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionTypeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionTypeMutation", m)
+}
+
+// The OutputLogFunc type is an adapter to allow the use of ordinary
+// function as OutputLog mutator.
+type OutputLogFunc func(context.Context, *cep_ent.OutputLogMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OutputLogFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.OutputLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.OutputLogMutation", m)
+}
+
+// The PlatformWalletFunc type is an adapter to allow the use of ordinary
+// function as PlatformWallet mutator.
+type PlatformWalletFunc func(context.Context, *cep_ent.PlatformWalletMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PlatformWalletFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.PlatformWalletMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.PlatformWalletMutation", m)
+}
+
+// The ProfitSettingFunc type is an adapter to allow the use of ordinary
+// function as ProfitSetting mutator.
+type ProfitSettingFunc func(context.Context, *cep_ent.ProfitSettingMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProfitSettingFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ProfitSettingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ProfitSettingMutation", m)
+}
+
+// The RechargeOrderFunc type is an adapter to allow the use of ordinary
+// function as RechargeOrder mutator.
+type RechargeOrderFunc func(context.Context, *cep_ent.RechargeOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RechargeOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.RechargeOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.RechargeOrderMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *cep_ent.UserMutation) (cep_ent.Value, error)
@@ -18,6 +198,42 @@ func (f UserFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.UserMutation", m)
+}
+
+// The UserDeviceFunc type is an adapter to allow the use of ordinary
+// function as UserDevice mutator.
+type UserDeviceFunc func(context.Context, *cep_ent.UserDeviceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserDeviceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.UserDeviceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.UserDeviceMutation", m)
+}
+
+// The VXSocialFunc type is an adapter to allow the use of ordinary
+// function as VXSocial mutator.
+type VXSocialFunc func(context.Context, *cep_ent.VXSocialMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VXSocialFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.VXSocialMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.VXSocialMutation", m)
+}
+
+// The WalletFunc type is an adapter to allow the use of ordinary
+// function as Wallet mutator.
+type WalletFunc func(context.Context, *cep_ent.WalletMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WalletFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.WalletMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.WalletMutation", m)
 }
 
 // Condition is a hook condition function.

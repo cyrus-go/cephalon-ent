@@ -6,5 +6,59 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Bill is the predicate function for bill builders.
+type Bill func(*sql.Selector)
+
+// Collection is the predicate function for collection builders.
+type Collection func(*sql.Selector)
+
+// Device is the predicate function for device builders.
+type Device func(*sql.Selector)
+
+// HmacKeyPair is the predicate function for hmackeypair builders.
+type HmacKeyPair func(*sql.Selector)
+
+// InputLog is the predicate function for inputlog builders.
+type InputLog func(*sql.Selector)
+
+// Mission is the predicate function for mission builders.
+type Mission func(*sql.Selector)
+
+// MissionBatch is the predicate function for missionbatch builders.
+type MissionBatch func(*sql.Selector)
+
+// MissionConsumeOrder is the predicate function for missionconsumeorder builders.
+type MissionConsumeOrder func(*sql.Selector)
+
+// MissionProduceOrder is the predicate function for missionproduceorder builders.
+type MissionProduceOrder func(*sql.Selector)
+
+// MissionProduction is the predicate function for missionproduction builders.
+type MissionProduction func(*sql.Selector)
+
+// MissionType is the predicate function for missiontype builders.
+type MissionType func(*sql.Selector)
+
+// OutputLog is the predicate function for outputlog builders.
+type OutputLog func(*sql.Selector)
+
+// PlatformWallet is the predicate function for platformwallet builders.
+type PlatformWallet func(*sql.Selector)
+
+// ProfitSetting is the predicate function for profitsetting builders.
+type ProfitSetting func(*sql.Selector)
+
+// RechargeOrder is the predicate function for rechargeorder builders.
+type RechargeOrder func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserDevice is the predicate function for userdevice builders.
+type UserDevice func(*sql.Selector)
+
+// VXSocial is the predicate function for vxsocial builders.
+type VXSocial func(*sql.Selector)
+
+// Wallet is the predicate function for wallet builders.
+type Wallet func(*sql.Selector)

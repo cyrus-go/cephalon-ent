@@ -12,8 +12,44 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Bill is the client for interacting with the Bill builders.
+	Bill *BillClient
+	// Collection is the client for interacting with the Collection builders.
+	Collection *CollectionClient
+	// Device is the client for interacting with the Device builders.
+	Device *DeviceClient
+	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
+	HmacKeyPair *HmacKeyPairClient
+	// InputLog is the client for interacting with the InputLog builders.
+	InputLog *InputLogClient
+	// Mission is the client for interacting with the Mission builders.
+	Mission *MissionClient
+	// MissionBatch is the client for interacting with the MissionBatch builders.
+	MissionBatch *MissionBatchClient
+	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
+	MissionConsumeOrder *MissionConsumeOrderClient
+	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
+	MissionProduceOrder *MissionProduceOrderClient
+	// MissionProduction is the client for interacting with the MissionProduction builders.
+	MissionProduction *MissionProductionClient
+	// MissionType is the client for interacting with the MissionType builders.
+	MissionType *MissionTypeClient
+	// OutputLog is the client for interacting with the OutputLog builders.
+	OutputLog *OutputLogClient
+	// PlatformWallet is the client for interacting with the PlatformWallet builders.
+	PlatformWallet *PlatformWalletClient
+	// ProfitSetting is the client for interacting with the ProfitSetting builders.
+	ProfitSetting *ProfitSettingClient
+	// RechargeOrder is the client for interacting with the RechargeOrder builders.
+	RechargeOrder *RechargeOrderClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserDevice is the client for interacting with the UserDevice builders.
+	UserDevice *UserDeviceClient
+	// VXSocial is the client for interacting with the VXSocial builders.
+	VXSocial *VXSocialClient
+	// Wallet is the client for interacting with the Wallet builders.
+	Wallet *WalletClient
 
 	// lazily loaded.
 	client     *Client
@@ -145,7 +181,25 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Bill = NewBillClient(tx.config)
+	tx.Collection = NewCollectionClient(tx.config)
+	tx.Device = NewDeviceClient(tx.config)
+	tx.HmacKeyPair = NewHmacKeyPairClient(tx.config)
+	tx.InputLog = NewInputLogClient(tx.config)
+	tx.Mission = NewMissionClient(tx.config)
+	tx.MissionBatch = NewMissionBatchClient(tx.config)
+	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)
+	tx.MissionProduceOrder = NewMissionProduceOrderClient(tx.config)
+	tx.MissionProduction = NewMissionProductionClient(tx.config)
+	tx.MissionType = NewMissionTypeClient(tx.config)
+	tx.OutputLog = NewOutputLogClient(tx.config)
+	tx.PlatformWallet = NewPlatformWalletClient(tx.config)
+	tx.ProfitSetting = NewProfitSettingClient(tx.config)
+	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserDevice = NewUserDeviceClient(tx.config)
+	tx.VXSocial = NewVXSocialClient(tx.config)
+	tx.Wallet = NewWalletClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -155,7 +209,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: User.QueryXXX(), the query will be executed
+// applies a query, for example: Bill.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

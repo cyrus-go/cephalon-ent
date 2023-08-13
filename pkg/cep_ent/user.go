@@ -3,7 +3,9 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/cep_ent/wallet"
 	"fmt"
 	"strings"
 	"time"
@@ -12,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 用户表，手机号唯一
+// 用户表，手机号唯一，用户名唯一，hmac_key 唯一
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -46,8 +48,169 @@ type User struct {
 	// 用户使用任务相关功能的密钥对的键，唯一
 	HmacKey string `json:"hmac_key"`
 	// 用户使用任务相关功能的密钥对的值
-	HmacSecret   string `json:"hmac_secret"`
+	HmacSecret string `json:"hmac_secret"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Bills holds the value of the bills edge.
+	Bills []*Bill `json:"bills,omitempty"`
+	// HmacKeyPair holds the value of the hmac_key_pair edge.
+	HmacKeyPair *HmacKeyPair `json:"hmac_key_pair,omitempty"`
+	// CreatedMissions holds the value of the created_missions edge.
+	CreatedMissions []*Mission `json:"created_missions,omitempty"`
+	// Wallet holds the value of the wallet edge.
+	Wallet *Wallet `json:"wallet,omitempty"`
+	// Collections holds the value of the collections edge.
+	Collections []*Collection `json:"collections,omitempty"`
+	// Devices holds the value of the devices edge.
+	Devices []*Device `json:"devices,omitempty"`
+	// ProfitSettings holds the value of the profit_settings edge.
+	ProfitSettings []*ProfitSetting `json:"profit_settings,omitempty"`
+	// MissionConsumeOrders holds the value of the mission_consume_orders edge.
+	MissionConsumeOrders []*MissionConsumeOrder `json:"mission_consume_orders,omitempty"`
+	// MissionProduceOrders holds the value of the mission_produce_orders edge.
+	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
+	// RechargeOrders holds the value of the recharge_orders edge.
+	RechargeOrders []*RechargeOrder `json:"recharge_orders,omitempty"`
+	// VxSocials holds the value of the vx_socials edge.
+	VxSocials []*VXSocial `json:"vx_socials,omitempty"`
+	// MissionBatches holds the value of the mission_batches edge.
+	MissionBatches []*MissionBatch `json:"mission_batches,omitempty"`
+	// UserDevices holds the value of the user_devices edge.
+	UserDevices []*UserDevice `json:"user_devices,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [13]bool
+}
+
+// BillsOrErr returns the Bills value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) BillsOrErr() ([]*Bill, error) {
+	if e.loadedTypes[0] {
+		return e.Bills, nil
+	}
+	return nil, &NotLoadedError{edge: "bills"}
+}
+
+// HmacKeyPairOrErr returns the HmacKeyPair value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) HmacKeyPairOrErr() (*HmacKeyPair, error) {
+	if e.loadedTypes[1] {
+		if e.HmacKeyPair == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: hmackeypair.Label}
+		}
+		return e.HmacKeyPair, nil
+	}
+	return nil, &NotLoadedError{edge: "hmac_key_pair"}
+}
+
+// CreatedMissionsOrErr returns the CreatedMissions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CreatedMissionsOrErr() ([]*Mission, error) {
+	if e.loadedTypes[2] {
+		return e.CreatedMissions, nil
+	}
+	return nil, &NotLoadedError{edge: "created_missions"}
+}
+
+// WalletOrErr returns the Wallet value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) WalletOrErr() (*Wallet, error) {
+	if e.loadedTypes[3] {
+		if e.Wallet == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: wallet.Label}
+		}
+		return e.Wallet, nil
+	}
+	return nil, &NotLoadedError{edge: "wallet"}
+}
+
+// CollectionsOrErr returns the Collections value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CollectionsOrErr() ([]*Collection, error) {
+	if e.loadedTypes[4] {
+		return e.Collections, nil
+	}
+	return nil, &NotLoadedError{edge: "collections"}
+}
+
+// DevicesOrErr returns the Devices value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) DevicesOrErr() ([]*Device, error) {
+	if e.loadedTypes[5] {
+		return e.Devices, nil
+	}
+	return nil, &NotLoadedError{edge: "devices"}
+}
+
+// ProfitSettingsOrErr returns the ProfitSettings value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ProfitSettingsOrErr() ([]*ProfitSetting, error) {
+	if e.loadedTypes[6] {
+		return e.ProfitSettings, nil
+	}
+	return nil, &NotLoadedError{edge: "profit_settings"}
+}
+
+// MissionConsumeOrdersOrErr returns the MissionConsumeOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MissionConsumeOrdersOrErr() ([]*MissionConsumeOrder, error) {
+	if e.loadedTypes[7] {
+		return e.MissionConsumeOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_consume_orders"}
+}
+
+// MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
+	if e.loadedTypes[8] {
+		return e.MissionProduceOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_produce_orders"}
+}
+
+// RechargeOrdersOrErr returns the RechargeOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RechargeOrdersOrErr() ([]*RechargeOrder, error) {
+	if e.loadedTypes[9] {
+		return e.RechargeOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "recharge_orders"}
+}
+
+// VxSocialsOrErr returns the VxSocials value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) VxSocialsOrErr() ([]*VXSocial, error) {
+	if e.loadedTypes[10] {
+		return e.VxSocials, nil
+	}
+	return nil, &NotLoadedError{edge: "vx_socials"}
+}
+
+// MissionBatchesOrErr returns the MissionBatches value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MissionBatchesOrErr() ([]*MissionBatch, error) {
+	if e.loadedTypes[11] {
+		return e.MissionBatches, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_batches"}
+}
+
+// UserDevicesOrErr returns the UserDevices value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserDevicesOrErr() ([]*UserDevice, error) {
+	if e.loadedTypes[12] {
+		return e.UserDevices, nil
+	}
+	return nil, &NotLoadedError{edge: "user_devices"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -183,6 +346,71 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryBills queries the "bills" edge of the User entity.
+func (u *User) QueryBills() *BillQuery {
+	return NewUserClient(u.config).QueryBills(u)
+}
+
+// QueryHmacKeyPair queries the "hmac_key_pair" edge of the User entity.
+func (u *User) QueryHmacKeyPair() *HmacKeyPairQuery {
+	return NewUserClient(u.config).QueryHmacKeyPair(u)
+}
+
+// QueryCreatedMissions queries the "created_missions" edge of the User entity.
+func (u *User) QueryCreatedMissions() *MissionQuery {
+	return NewUserClient(u.config).QueryCreatedMissions(u)
+}
+
+// QueryWallet queries the "wallet" edge of the User entity.
+func (u *User) QueryWallet() *WalletQuery {
+	return NewUserClient(u.config).QueryWallet(u)
+}
+
+// QueryCollections queries the "collections" edge of the User entity.
+func (u *User) QueryCollections() *CollectionQuery {
+	return NewUserClient(u.config).QueryCollections(u)
+}
+
+// QueryDevices queries the "devices" edge of the User entity.
+func (u *User) QueryDevices() *DeviceQuery {
+	return NewUserClient(u.config).QueryDevices(u)
+}
+
+// QueryProfitSettings queries the "profit_settings" edge of the User entity.
+func (u *User) QueryProfitSettings() *ProfitSettingQuery {
+	return NewUserClient(u.config).QueryProfitSettings(u)
+}
+
+// QueryMissionConsumeOrders queries the "mission_consume_orders" edge of the User entity.
+func (u *User) QueryMissionConsumeOrders() *MissionConsumeOrderQuery {
+	return NewUserClient(u.config).QueryMissionConsumeOrders(u)
+}
+
+// QueryMissionProduceOrders queries the "mission_produce_orders" edge of the User entity.
+func (u *User) QueryMissionProduceOrders() *MissionProduceOrderQuery {
+	return NewUserClient(u.config).QueryMissionProduceOrders(u)
+}
+
+// QueryRechargeOrders queries the "recharge_orders" edge of the User entity.
+func (u *User) QueryRechargeOrders() *RechargeOrderQuery {
+	return NewUserClient(u.config).QueryRechargeOrders(u)
+}
+
+// QueryVxSocials queries the "vx_socials" edge of the User entity.
+func (u *User) QueryVxSocials() *VXSocialQuery {
+	return NewUserClient(u.config).QueryVxSocials(u)
+}
+
+// QueryMissionBatches queries the "mission_batches" edge of the User entity.
+func (u *User) QueryMissionBatches() *MissionBatchQuery {
+	return NewUserClient(u.config).QueryMissionBatches(u)
+}
+
+// QueryUserDevices queries the "user_devices" edge of the User entity.
+func (u *User) QueryUserDevices() *UserDeviceQuery {
+	return NewUserClient(u.config).QueryUserDevices(u)
 }
 
 // Update returns a builder for updating this User.

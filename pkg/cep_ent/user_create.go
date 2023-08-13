@@ -3,7 +3,20 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/hmackeypair"
+	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/missionbatch"
+	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"cephalon-ent/pkg/cep_ent/profitsetting"
+	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/cep_ent/wallet"
 	"context"
 	"errors"
 	"fmt"
@@ -242,6 +255,209 @@ func (uc *UserCreate) SetNillableID(i *int64) *UserCreate {
 		uc.SetID(*i)
 	}
 	return uc
+}
+
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (uc *UserCreate) AddBillIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddBillIDs(ids...)
+	return uc
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (uc *UserCreate) AddBills(b ...*Bill) *UserCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uc.AddBillIDs(ids...)
+}
+
+// SetHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID.
+func (uc *UserCreate) SetHmacKeyPairID(id int64) *UserCreate {
+	uc.mutation.SetHmacKeyPairID(id)
+	return uc
+}
+
+// SetNillableHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableHmacKeyPairID(id *int64) *UserCreate {
+	if id != nil {
+		uc = uc.SetHmacKeyPairID(*id)
+	}
+	return uc
+}
+
+// SetHmacKeyPair sets the "hmac_key_pair" edge to the HmacKeyPair entity.
+func (uc *UserCreate) SetHmacKeyPair(h *HmacKeyPair) *UserCreate {
+	return uc.SetHmacKeyPairID(h.ID)
+}
+
+// AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
+func (uc *UserCreate) AddCreatedMissionIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCreatedMissionIDs(ids...)
+	return uc
+}
+
+// AddCreatedMissions adds the "created_missions" edges to the Mission entity.
+func (uc *UserCreate) AddCreatedMissions(m ...*Mission) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddCreatedMissionIDs(ids...)
+}
+
+// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
+func (uc *UserCreate) SetWalletID(id int64) *UserCreate {
+	uc.mutation.SetWalletID(id)
+	return uc
+}
+
+// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableWalletID(id *int64) *UserCreate {
+	if id != nil {
+		uc = uc.SetWalletID(*id)
+	}
+	return uc
+}
+
+// SetWallet sets the "wallet" edge to the Wallet entity.
+func (uc *UserCreate) SetWallet(w *Wallet) *UserCreate {
+	return uc.SetWalletID(w.ID)
+}
+
+// AddCollectionIDs adds the "collections" edge to the Collection entity by IDs.
+func (uc *UserCreate) AddCollectionIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCollectionIDs(ids...)
+	return uc
+}
+
+// AddCollections adds the "collections" edges to the Collection entity.
+func (uc *UserCreate) AddCollections(c ...*Collection) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCollectionIDs(ids...)
+}
+
+// AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
+func (uc *UserCreate) AddDeviceIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddDeviceIDs(ids...)
+	return uc
+}
+
+// AddDevices adds the "devices" edges to the Device entity.
+func (uc *UserCreate) AddDevices(d ...*Device) *UserCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uc.AddDeviceIDs(ids...)
+}
+
+// AddProfitSettingIDs adds the "profit_settings" edge to the ProfitSetting entity by IDs.
+func (uc *UserCreate) AddProfitSettingIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddProfitSettingIDs(ids...)
+	return uc
+}
+
+// AddProfitSettings adds the "profit_settings" edges to the ProfitSetting entity.
+func (uc *UserCreate) AddProfitSettings(p ...*ProfitSetting) *UserCreate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uc.AddProfitSettingIDs(ids...)
+}
+
+// AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
+func (uc *UserCreate) AddMissionConsumeOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddMissionConsumeOrderIDs(ids...)
+	return uc
+}
+
+// AddMissionConsumeOrders adds the "mission_consume_orders" edges to the MissionConsumeOrder entity.
+func (uc *UserCreate) AddMissionConsumeOrders(m ...*MissionConsumeOrder) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddMissionConsumeOrderIDs(ids...)
+}
+
+// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
+func (uc *UserCreate) AddMissionProduceOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddMissionProduceOrderIDs(ids...)
+	return uc
+}
+
+// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
+func (uc *UserCreate) AddMissionProduceOrders(m ...*MissionProduceOrder) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddMissionProduceOrderIDs(ids...)
+}
+
+// AddRechargeOrderIDs adds the "recharge_orders" edge to the RechargeOrder entity by IDs.
+func (uc *UserCreate) AddRechargeOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddRechargeOrderIDs(ids...)
+	return uc
+}
+
+// AddRechargeOrders adds the "recharge_orders" edges to the RechargeOrder entity.
+func (uc *UserCreate) AddRechargeOrders(r ...*RechargeOrder) *UserCreate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRechargeOrderIDs(ids...)
+}
+
+// AddVxSocialIDs adds the "vx_socials" edge to the VXSocial entity by IDs.
+func (uc *UserCreate) AddVxSocialIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddVxSocialIDs(ids...)
+	return uc
+}
+
+// AddVxSocials adds the "vx_socials" edges to the VXSocial entity.
+func (uc *UserCreate) AddVxSocials(v ...*VXSocial) *UserCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uc.AddVxSocialIDs(ids...)
+}
+
+// AddMissionBatchIDs adds the "mission_batches" edge to the MissionBatch entity by IDs.
+func (uc *UserCreate) AddMissionBatchIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddMissionBatchIDs(ids...)
+	return uc
+}
+
+// AddMissionBatches adds the "mission_batches" edges to the MissionBatch entity.
+func (uc *UserCreate) AddMissionBatches(m ...*MissionBatch) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddMissionBatchIDs(ids...)
+}
+
+// AddUserDeviceIDs adds the "user_devices" edge to the UserDevice entity by IDs.
+func (uc *UserCreate) AddUserDeviceIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddUserDeviceIDs(ids...)
+	return uc
+}
+
+// AddUserDevices adds the "user_devices" edges to the UserDevice entity.
+func (uc *UserCreate) AddUserDevices(u ...*UserDevice) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUserDeviceIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -493,6 +709,214 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.HmacSecret(); ok {
 		_spec.SetField(user.FieldHmacSecret, field.TypeString, value)
 		_node.HmacSecret = value
+	}
+	if nodes := uc.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.BillsTable,
+			Columns: []string{user.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.HmacKeyPairIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.HmacKeyPairTable,
+			Columns: []string{user.HmacKeyPairColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CreatedMissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CreatedMissionsTable,
+			Columns: []string{user.CreatedMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.WalletIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.WalletTable,
+			Columns: []string{user.WalletColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CollectionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CollectionsTable,
+			Columns: []string{user.CollectionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.DevicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ProfitSettingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfitSettingsTable,
+			Columns: []string{user.ProfitSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profitsetting.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.MissionConsumeOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionConsumeOrdersTable,
+			Columns: []string{user.MissionConsumeOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProduceOrdersTable,
+			Columns: []string{user.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RechargeOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RechargeOrdersTable,
+			Columns: []string{user.RechargeOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.VxSocialsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VxSocialsTable,
+			Columns: []string{user.VxSocialsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(vxsocial.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.MissionBatchesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionBatchesTable,
+			Columns: []string{user.MissionBatchesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserDevicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserDevicesTable,
+			Columns: []string{user.UserDevicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

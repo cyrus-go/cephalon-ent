@@ -3,8 +3,26 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/hmackeypair"
+	"cephalon-ent/pkg/cep_ent/inputlog"
+	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/missionbatch"
+	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/cep_ent/missiontype"
+	"cephalon-ent/pkg/cep_ent/outputlog"
+	"cephalon-ent/pkg/cep_ent/platformwallet"
+	"cephalon-ent/pkg/cep_ent/profitsetting"
+	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/schema"
 	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/cep_ent/wallet"
 	"time"
 )
 
@@ -12,6 +30,757 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	billMixin := schema.Bill{}.Mixin()
+	billMixinFields0 := billMixin[0].Fields()
+	_ = billMixinFields0
+	billFields := schema.Bill{}.Fields()
+	_ = billFields
+	// billDescCreatedBy is the schema descriptor for created_by field.
+	billDescCreatedBy := billMixinFields0[1].Descriptor()
+	// bill.DefaultCreatedBy holds the default value on creation for the created_by field.
+	bill.DefaultCreatedBy = billDescCreatedBy.Default.(int64)
+	// billDescUpdatedBy is the schema descriptor for updated_by field.
+	billDescUpdatedBy := billMixinFields0[2].Descriptor()
+	// bill.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	bill.DefaultUpdatedBy = billDescUpdatedBy.Default.(int64)
+	// billDescCreatedAt is the schema descriptor for created_at field.
+	billDescCreatedAt := billMixinFields0[3].Descriptor()
+	// bill.DefaultCreatedAt holds the default value on creation for the created_at field.
+	bill.DefaultCreatedAt = billDescCreatedAt.Default.(func() time.Time)
+	// billDescUpdatedAt is the schema descriptor for updated_at field.
+	billDescUpdatedAt := billMixinFields0[4].Descriptor()
+	// bill.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	bill.DefaultUpdatedAt = billDescUpdatedAt.Default.(func() time.Time)
+	// bill.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	bill.UpdateDefaultUpdatedAt = billDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// billDescDeletedAt is the schema descriptor for deleted_at field.
+	billDescDeletedAt := billMixinFields0[5].Descriptor()
+	// bill.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	bill.DefaultDeletedAt = billDescDeletedAt.Default.(time.Time)
+	// billDescIsAdd is the schema descriptor for is_add field.
+	billDescIsAdd := billFields[1].Descriptor()
+	// bill.DefaultIsAdd holds the default value on creation for the is_add field.
+	bill.DefaultIsAdd = billDescIsAdd.Default.(bool)
+	// billDescUserID is the schema descriptor for user_id field.
+	billDescUserID := billFields[2].Descriptor()
+	// bill.DefaultUserID holds the default value on creation for the user_id field.
+	bill.DefaultUserID = billDescUserID.Default.(int64)
+	// billDescSerialNumber is the schema descriptor for serial_number field.
+	billDescSerialNumber := billFields[3].Descriptor()
+	// bill.DefaultSerialNumber holds the default value on creation for the serial_number field.
+	bill.DefaultSerialNumber = billDescSerialNumber.Default.(string)
+	// billDescWalletID is the schema descriptor for wallet_id field.
+	billDescWalletID := billFields[4].Descriptor()
+	// bill.DefaultWalletID holds the default value on creation for the wallet_id field.
+	bill.DefaultWalletID = billDescWalletID.Default.(int64)
+	// billDescCep is the schema descriptor for cep field.
+	billDescCep := billFields[5].Descriptor()
+	// bill.DefaultCep holds the default value on creation for the cep field.
+	bill.DefaultCep = billDescCep.Default.(int64)
+	// billDescReasonID is the schema descriptor for reason_id field.
+	billDescReasonID := billFields[6].Descriptor()
+	// bill.DefaultReasonID holds the default value on creation for the reason_id field.
+	bill.DefaultReasonID = billDescReasonID.Default.(int64)
+	// billDescMarketBillID is the schema descriptor for market_bill_id field.
+	billDescMarketBillID := billFields[8].Descriptor()
+	// bill.DefaultMarketBillID holds the default value on creation for the market_bill_id field.
+	bill.DefaultMarketBillID = billDescMarketBillID.Default.(int64)
+	// billDescPlatformWalletID is the schema descriptor for platform_wallet_id field.
+	billDescPlatformWalletID := billFields[9].Descriptor()
+	// bill.DefaultPlatformWalletID holds the default value on creation for the platform_wallet_id field.
+	bill.DefaultPlatformWalletID = billDescPlatformWalletID.Default.(int64)
+	// billDescPlatformCep is the schema descriptor for platform_cep field.
+	billDescPlatformCep := billFields[10].Descriptor()
+	// bill.DefaultPlatformCep holds the default value on creation for the platform_cep field.
+	bill.DefaultPlatformCep = billDescPlatformCep.Default.(int64)
+	// billDescID is the schema descriptor for id field.
+	billDescID := billMixinFields0[0].Descriptor()
+	// bill.DefaultID holds the default value on creation for the id field.
+	bill.DefaultID = billDescID.Default.(func() int64)
+	collectionMixin := schema.Collection{}.Mixin()
+	collectionMixinFields0 := collectionMixin[0].Fields()
+	_ = collectionMixinFields0
+	collectionFields := schema.Collection{}.Fields()
+	_ = collectionFields
+	// collectionDescCreatedBy is the schema descriptor for created_by field.
+	collectionDescCreatedBy := collectionMixinFields0[1].Descriptor()
+	// collection.DefaultCreatedBy holds the default value on creation for the created_by field.
+	collection.DefaultCreatedBy = collectionDescCreatedBy.Default.(int64)
+	// collectionDescUpdatedBy is the schema descriptor for updated_by field.
+	collectionDescUpdatedBy := collectionMixinFields0[2].Descriptor()
+	// collection.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	collection.DefaultUpdatedBy = collectionDescUpdatedBy.Default.(int64)
+	// collectionDescCreatedAt is the schema descriptor for created_at field.
+	collectionDescCreatedAt := collectionMixinFields0[3].Descriptor()
+	// collection.DefaultCreatedAt holds the default value on creation for the created_at field.
+	collection.DefaultCreatedAt = collectionDescCreatedAt.Default.(func() time.Time)
+	// collectionDescUpdatedAt is the schema descriptor for updated_at field.
+	collectionDescUpdatedAt := collectionMixinFields0[4].Descriptor()
+	// collection.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	collection.DefaultUpdatedAt = collectionDescUpdatedAt.Default.(func() time.Time)
+	// collection.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	collection.UpdateDefaultUpdatedAt = collectionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// collectionDescDeletedAt is the schema descriptor for deleted_at field.
+	collectionDescDeletedAt := collectionMixinFields0[5].Descriptor()
+	// collection.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	collection.DefaultDeletedAt = collectionDescDeletedAt.Default.(time.Time)
+	// collectionDescURL is the schema descriptor for url field.
+	collectionDescURL := collectionFields[0].Descriptor()
+	// collection.DefaultURL holds the default value on creation for the url field.
+	collection.DefaultURL = collectionDescURL.Default.(string)
+	// collectionDescUserID is the schema descriptor for user_id field.
+	collectionDescUserID := collectionFields[1].Descriptor()
+	// collection.DefaultUserID holds the default value on creation for the user_id field.
+	collection.DefaultUserID = collectionDescUserID.Default.(int64)
+	// collectionDescPictureName is the schema descriptor for picture_name field.
+	collectionDescPictureName := collectionFields[2].Descriptor()
+	// collection.DefaultPictureName holds the default value on creation for the picture_name field.
+	collection.DefaultPictureName = collectionDescPictureName.Default.(string)
+	// collectionDescID is the schema descriptor for id field.
+	collectionDescID := collectionMixinFields0[0].Descriptor()
+	// collection.DefaultID holds the default value on creation for the id field.
+	collection.DefaultID = collectionDescID.Default.(func() int64)
+	deviceMixin := schema.Device{}.Mixin()
+	deviceMixinFields0 := deviceMixin[0].Fields()
+	_ = deviceMixinFields0
+	deviceFields := schema.Device{}.Fields()
+	_ = deviceFields
+	// deviceDescCreatedBy is the schema descriptor for created_by field.
+	deviceDescCreatedBy := deviceMixinFields0[1].Descriptor()
+	// device.DefaultCreatedBy holds the default value on creation for the created_by field.
+	device.DefaultCreatedBy = deviceDescCreatedBy.Default.(int64)
+	// deviceDescUpdatedBy is the schema descriptor for updated_by field.
+	deviceDescUpdatedBy := deviceMixinFields0[2].Descriptor()
+	// device.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	device.DefaultUpdatedBy = deviceDescUpdatedBy.Default.(int64)
+	// deviceDescCreatedAt is the schema descriptor for created_at field.
+	deviceDescCreatedAt := deviceMixinFields0[3].Descriptor()
+	// device.DefaultCreatedAt holds the default value on creation for the created_at field.
+	device.DefaultCreatedAt = deviceDescCreatedAt.Default.(func() time.Time)
+	// deviceDescUpdatedAt is the schema descriptor for updated_at field.
+	deviceDescUpdatedAt := deviceMixinFields0[4].Descriptor()
+	// device.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	device.DefaultUpdatedAt = deviceDescUpdatedAt.Default.(func() time.Time)
+	// device.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	device.UpdateDefaultUpdatedAt = deviceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// deviceDescDeletedAt is the schema descriptor for deleted_at field.
+	deviceDescDeletedAt := deviceMixinFields0[5].Descriptor()
+	// device.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	device.DefaultDeletedAt = deviceDescDeletedAt.Default.(time.Time)
+	// deviceDescUserID is the schema descriptor for user_id field.
+	deviceDescUserID := deviceFields[0].Descriptor()
+	// device.DefaultUserID holds the default value on creation for the user_id field.
+	device.DefaultUserID = deviceDescUserID.Default.(int64)
+	// deviceDescID is the schema descriptor for id field.
+	deviceDescID := deviceMixinFields0[0].Descriptor()
+	// device.DefaultID holds the default value on creation for the id field.
+	device.DefaultID = deviceDescID.Default.(func() int64)
+	hmackeypairMixin := schema.HmacKeyPair{}.Mixin()
+	hmackeypairMixinFields0 := hmackeypairMixin[0].Fields()
+	_ = hmackeypairMixinFields0
+	hmackeypairFields := schema.HmacKeyPair{}.Fields()
+	_ = hmackeypairFields
+	// hmackeypairDescCreatedBy is the schema descriptor for created_by field.
+	hmackeypairDescCreatedBy := hmackeypairMixinFields0[1].Descriptor()
+	// hmackeypair.DefaultCreatedBy holds the default value on creation for the created_by field.
+	hmackeypair.DefaultCreatedBy = hmackeypairDescCreatedBy.Default.(int64)
+	// hmackeypairDescUpdatedBy is the schema descriptor for updated_by field.
+	hmackeypairDescUpdatedBy := hmackeypairMixinFields0[2].Descriptor()
+	// hmackeypair.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	hmackeypair.DefaultUpdatedBy = hmackeypairDescUpdatedBy.Default.(int64)
+	// hmackeypairDescCreatedAt is the schema descriptor for created_at field.
+	hmackeypairDescCreatedAt := hmackeypairMixinFields0[3].Descriptor()
+	// hmackeypair.DefaultCreatedAt holds the default value on creation for the created_at field.
+	hmackeypair.DefaultCreatedAt = hmackeypairDescCreatedAt.Default.(func() time.Time)
+	// hmackeypairDescUpdatedAt is the schema descriptor for updated_at field.
+	hmackeypairDescUpdatedAt := hmackeypairMixinFields0[4].Descriptor()
+	// hmackeypair.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	hmackeypair.DefaultUpdatedAt = hmackeypairDescUpdatedAt.Default.(func() time.Time)
+	// hmackeypair.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	hmackeypair.UpdateDefaultUpdatedAt = hmackeypairDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// hmackeypairDescDeletedAt is the schema descriptor for deleted_at field.
+	hmackeypairDescDeletedAt := hmackeypairMixinFields0[5].Descriptor()
+	// hmackeypair.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	hmackeypair.DefaultDeletedAt = hmackeypairDescDeletedAt.Default.(time.Time)
+	// hmackeypairDescCaller is the schema descriptor for caller field.
+	hmackeypairDescCaller := hmackeypairFields[2].Descriptor()
+	// hmackeypair.DefaultCaller holds the default value on creation for the caller field.
+	hmackeypair.DefaultCaller = hmackeypairDescCaller.Default.(string)
+	// hmackeypairDescUserID is the schema descriptor for user_id field.
+	hmackeypairDescUserID := hmackeypairFields[3].Descriptor()
+	// hmackeypair.DefaultUserID holds the default value on creation for the user_id field.
+	hmackeypair.DefaultUserID = hmackeypairDescUserID.Default.(int64)
+	// hmackeypairDescID is the schema descriptor for id field.
+	hmackeypairDescID := hmackeypairMixinFields0[0].Descriptor()
+	// hmackeypair.DefaultID holds the default value on creation for the id field.
+	hmackeypair.DefaultID = hmackeypairDescID.Default.(func() int64)
+	inputlogMixin := schema.InputLog{}.Mixin()
+	inputlogMixinFields0 := inputlogMixin[0].Fields()
+	_ = inputlogMixinFields0
+	inputlogFields := schema.InputLog{}.Fields()
+	_ = inputlogFields
+	// inputlogDescCreatedBy is the schema descriptor for created_by field.
+	inputlogDescCreatedBy := inputlogMixinFields0[1].Descriptor()
+	// inputlog.DefaultCreatedBy holds the default value on creation for the created_by field.
+	inputlog.DefaultCreatedBy = inputlogDescCreatedBy.Default.(int64)
+	// inputlogDescUpdatedBy is the schema descriptor for updated_by field.
+	inputlogDescUpdatedBy := inputlogMixinFields0[2].Descriptor()
+	// inputlog.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	inputlog.DefaultUpdatedBy = inputlogDescUpdatedBy.Default.(int64)
+	// inputlogDescCreatedAt is the schema descriptor for created_at field.
+	inputlogDescCreatedAt := inputlogMixinFields0[3].Descriptor()
+	// inputlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	inputlog.DefaultCreatedAt = inputlogDescCreatedAt.Default.(func() time.Time)
+	// inputlogDescUpdatedAt is the schema descriptor for updated_at field.
+	inputlogDescUpdatedAt := inputlogMixinFields0[4].Descriptor()
+	// inputlog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	inputlog.DefaultUpdatedAt = inputlogDescUpdatedAt.Default.(func() time.Time)
+	// inputlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	inputlog.UpdateDefaultUpdatedAt = inputlogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// inputlogDescDeletedAt is the schema descriptor for deleted_at field.
+	inputlogDescDeletedAt := inputlogMixinFields0[5].Descriptor()
+	// inputlog.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	inputlog.DefaultDeletedAt = inputlogDescDeletedAt.Default.(time.Time)
+	// inputlogDescBody is the schema descriptor for body field.
+	inputlogDescBody := inputlogFields[2].Descriptor()
+	// inputlog.DefaultBody holds the default value on creation for the body field.
+	inputlog.DefaultBody = inputlogDescBody.Default.(string)
+	// inputlogDescQuery is the schema descriptor for query field.
+	inputlogDescQuery := inputlogFields[3].Descriptor()
+	// inputlog.DefaultQuery holds the default value on creation for the query field.
+	inputlog.DefaultQuery = inputlogDescQuery.Default.(string)
+	// inputlogDescIP is the schema descriptor for ip field.
+	inputlogDescIP := inputlogFields[5].Descriptor()
+	// inputlog.DefaultIP holds the default value on creation for the ip field.
+	inputlog.DefaultIP = inputlogDescIP.Default.(string)
+	// inputlogDescCaller is the schema descriptor for caller field.
+	inputlogDescCaller := inputlogFields[6].Descriptor()
+	// inputlog.DefaultCaller holds the default value on creation for the caller field.
+	inputlog.DefaultCaller = inputlogDescCaller.Default.(string)
+	// inputlogDescHmacKey is the schema descriptor for hmac_key field.
+	inputlogDescHmacKey := inputlogFields[8].Descriptor()
+	// inputlog.DefaultHmacKey holds the default value on creation for the hmac_key field.
+	inputlog.DefaultHmacKey = inputlogDescHmacKey.Default.(string)
+	// inputlogDescID is the schema descriptor for id field.
+	inputlogDescID := inputlogMixinFields0[0].Descriptor()
+	// inputlog.DefaultID holds the default value on creation for the id field.
+	inputlog.DefaultID = inputlogDescID.Default.(func() int64)
+	missionMixin := schema.Mission{}.Mixin()
+	missionMixinFields0 := missionMixin[0].Fields()
+	_ = missionMixinFields0
+	missionFields := schema.Mission{}.Fields()
+	_ = missionFields
+	// missionDescCreatedBy is the schema descriptor for created_by field.
+	missionDescCreatedBy := missionMixinFields0[1].Descriptor()
+	// mission.DefaultCreatedBy holds the default value on creation for the created_by field.
+	mission.DefaultCreatedBy = missionDescCreatedBy.Default.(int64)
+	// missionDescUpdatedBy is the schema descriptor for updated_by field.
+	missionDescUpdatedBy := missionMixinFields0[2].Descriptor()
+	// mission.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	mission.DefaultUpdatedBy = missionDescUpdatedBy.Default.(int64)
+	// missionDescCreatedAt is the schema descriptor for created_at field.
+	missionDescCreatedAt := missionMixinFields0[3].Descriptor()
+	// mission.DefaultCreatedAt holds the default value on creation for the created_at field.
+	mission.DefaultCreatedAt = missionDescCreatedAt.Default.(func() time.Time)
+	// missionDescUpdatedAt is the schema descriptor for updated_at field.
+	missionDescUpdatedAt := missionMixinFields0[4].Descriptor()
+	// mission.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	mission.DefaultUpdatedAt = missionDescUpdatedAt.Default.(func() time.Time)
+	// mission.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	mission.UpdateDefaultUpdatedAt = missionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionDescDeletedAt is the schema descriptor for deleted_at field.
+	missionDescDeletedAt := missionMixinFields0[5].Descriptor()
+	// mission.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	mission.DefaultDeletedAt = missionDescDeletedAt.Default.(time.Time)
+	// missionDescIsTime is the schema descriptor for is_time field.
+	missionDescIsTime := missionFields[1].Descriptor()
+	// mission.DefaultIsTime holds the default value on creation for the is_time field.
+	mission.DefaultIsTime = missionDescIsTime.Default.(bool)
+	// missionDescBody is the schema descriptor for body field.
+	missionDescBody := missionFields[2].Descriptor()
+	// mission.DefaultBody holds the default value on creation for the body field.
+	mission.DefaultBody = missionDescBody.Default.(string)
+	// missionDescCallBackURL is the schema descriptor for call_back_url field.
+	missionDescCallBackURL := missionFields[3].Descriptor()
+	// mission.DefaultCallBackURL holds the default value on creation for the call_back_url field.
+	mission.DefaultCallBackURL = missionDescCallBackURL.Default.(string)
+	// missionDescResultUrls is the schema descriptor for result_urls field.
+	missionDescResultUrls := missionFields[5].Descriptor()
+	// mission.DefaultResultUrls holds the default value on creation for the result_urls field.
+	mission.DefaultResultUrls = missionDescResultUrls.Default.(string)
+	// missionDescAdditionalResult is the schema descriptor for additional_result field.
+	missionDescAdditionalResult := missionFields[6].Descriptor()
+	// mission.DefaultAdditionalResult holds the default value on creation for the additional_result field.
+	mission.DefaultAdditionalResult = missionDescAdditionalResult.Default.(string)
+	// missionDescHmacKeyPairID is the schema descriptor for hmac_key_pair_id field.
+	missionDescHmacKeyPairID := missionFields[7].Descriptor()
+	// mission.DefaultHmacKeyPairID holds the default value on creation for the hmac_key_pair_id field.
+	mission.DefaultHmacKeyPairID = missionDescHmacKeyPairID.Default.(int64)
+	// missionDescUserID is the schema descriptor for user_id field.
+	missionDescUserID := missionFields[8].Descriptor()
+	// mission.DefaultUserID holds the default value on creation for the user_id field.
+	mission.DefaultUserID = missionDescUserID.Default.(int64)
+	// missionDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
+	missionDescMissionBatchNumber := missionFields[9].Descriptor()
+	// mission.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
+	mission.DefaultMissionBatchNumber = missionDescMissionBatchNumber.Default.(string)
+	// missionDescMissionBatchID is the schema descriptor for mission_batch_id field.
+	missionDescMissionBatchID := missionFields[10].Descriptor()
+	// mission.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
+	mission.DefaultMissionBatchID = missionDescMissionBatchID.Default.(int64)
+	// missionDescID is the schema descriptor for id field.
+	missionDescID := missionMixinFields0[0].Descriptor()
+	// mission.DefaultID holds the default value on creation for the id field.
+	mission.DefaultID = missionDescID.Default.(func() int64)
+	missionbatchMixin := schema.MissionBatch{}.Mixin()
+	missionbatchMixinFields0 := missionbatchMixin[0].Fields()
+	_ = missionbatchMixinFields0
+	missionbatchFields := schema.MissionBatch{}.Fields()
+	_ = missionbatchFields
+	// missionbatchDescCreatedBy is the schema descriptor for created_by field.
+	missionbatchDescCreatedBy := missionbatchMixinFields0[1].Descriptor()
+	// missionbatch.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionbatch.DefaultCreatedBy = missionbatchDescCreatedBy.Default.(int64)
+	// missionbatchDescUpdatedBy is the schema descriptor for updated_by field.
+	missionbatchDescUpdatedBy := missionbatchMixinFields0[2].Descriptor()
+	// missionbatch.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionbatch.DefaultUpdatedBy = missionbatchDescUpdatedBy.Default.(int64)
+	// missionbatchDescCreatedAt is the schema descriptor for created_at field.
+	missionbatchDescCreatedAt := missionbatchMixinFields0[3].Descriptor()
+	// missionbatch.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionbatch.DefaultCreatedAt = missionbatchDescCreatedAt.Default.(func() time.Time)
+	// missionbatchDescUpdatedAt is the schema descriptor for updated_at field.
+	missionbatchDescUpdatedAt := missionbatchMixinFields0[4].Descriptor()
+	// missionbatch.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionbatch.DefaultUpdatedAt = missionbatchDescUpdatedAt.Default.(func() time.Time)
+	// missionbatch.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionbatch.UpdateDefaultUpdatedAt = missionbatchDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionbatchDescDeletedAt is the schema descriptor for deleted_at field.
+	missionbatchDescDeletedAt := missionbatchMixinFields0[5].Descriptor()
+	// missionbatch.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionbatch.DefaultDeletedAt = missionbatchDescDeletedAt.Default.(time.Time)
+	// missionbatchDescNumber is the schema descriptor for number field.
+	missionbatchDescNumber := missionbatchFields[0].Descriptor()
+	// missionbatch.DefaultNumber holds the default value on creation for the number field.
+	missionbatch.DefaultNumber = missionbatchDescNumber.Default.(string)
+	// missionbatchDescUserID is the schema descriptor for user_id field.
+	missionbatchDescUserID := missionbatchFields[1].Descriptor()
+	// missionbatch.DefaultUserID holds the default value on creation for the user_id field.
+	missionbatch.DefaultUserID = missionbatchDescUserID.Default.(int64)
+	// missionbatchDescID is the schema descriptor for id field.
+	missionbatchDescID := missionbatchMixinFields0[0].Descriptor()
+	// missionbatch.DefaultID holds the default value on creation for the id field.
+	missionbatch.DefaultID = missionbatchDescID.Default.(func() int64)
+	missionconsumeorderMixin := schema.MissionConsumeOrder{}.Mixin()
+	missionconsumeorderMixinFields0 := missionconsumeorderMixin[0].Fields()
+	_ = missionconsumeorderMixinFields0
+	missionconsumeorderFields := schema.MissionConsumeOrder{}.Fields()
+	_ = missionconsumeorderFields
+	// missionconsumeorderDescCreatedBy is the schema descriptor for created_by field.
+	missionconsumeorderDescCreatedBy := missionconsumeorderMixinFields0[1].Descriptor()
+	// missionconsumeorder.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionconsumeorder.DefaultCreatedBy = missionconsumeorderDescCreatedBy.Default.(int64)
+	// missionconsumeorderDescUpdatedBy is the schema descriptor for updated_by field.
+	missionconsumeorderDescUpdatedBy := missionconsumeorderMixinFields0[2].Descriptor()
+	// missionconsumeorder.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionconsumeorder.DefaultUpdatedBy = missionconsumeorderDescUpdatedBy.Default.(int64)
+	// missionconsumeorderDescCreatedAt is the schema descriptor for created_at field.
+	missionconsumeorderDescCreatedAt := missionconsumeorderMixinFields0[3].Descriptor()
+	// missionconsumeorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionconsumeorder.DefaultCreatedAt = missionconsumeorderDescCreatedAt.Default.(func() time.Time)
+	// missionconsumeorderDescUpdatedAt is the schema descriptor for updated_at field.
+	missionconsumeorderDescUpdatedAt := missionconsumeorderMixinFields0[4].Descriptor()
+	// missionconsumeorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionconsumeorder.DefaultUpdatedAt = missionconsumeorderDescUpdatedAt.Default.(func() time.Time)
+	// missionconsumeorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionconsumeorder.UpdateDefaultUpdatedAt = missionconsumeorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionconsumeorderDescDeletedAt is the schema descriptor for deleted_at field.
+	missionconsumeorderDescDeletedAt := missionconsumeorderMixinFields0[5].Descriptor()
+	// missionconsumeorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionconsumeorder.DefaultDeletedAt = missionconsumeorderDescDeletedAt.Default.(time.Time)
+	// missionconsumeorderDescUserID is the schema descriptor for user_id field.
+	missionconsumeorderDescUserID := missionconsumeorderFields[0].Descriptor()
+	// missionconsumeorder.DefaultUserID holds the default value on creation for the user_id field.
+	missionconsumeorder.DefaultUserID = missionconsumeorderDescUserID.Default.(int64)
+	// missionconsumeorderDescMissionID is the schema descriptor for mission_id field.
+	missionconsumeorderDescMissionID := missionconsumeorderFields[1].Descriptor()
+	// missionconsumeorder.DefaultMissionID holds the default value on creation for the mission_id field.
+	missionconsumeorder.DefaultMissionID = missionconsumeorderDescMissionID.Default.(int64)
+	// missionconsumeorderDescCep is the schema descriptor for cep field.
+	missionconsumeorderDescCep := missionconsumeorderFields[3].Descriptor()
+	// missionconsumeorder.DefaultCep holds the default value on creation for the cep field.
+	missionconsumeorder.DefaultCep = missionconsumeorderDescCep.Default.(int64)
+	// missionconsumeorderDescIsTime is the schema descriptor for is_time field.
+	missionconsumeorderDescIsTime := missionconsumeorderFields[5].Descriptor()
+	// missionconsumeorder.DefaultIsTime holds the default value on creation for the is_time field.
+	missionconsumeorder.DefaultIsTime = missionconsumeorderDescIsTime.Default.(bool)
+	// missionconsumeorderDescSerialNumber is the schema descriptor for serial_number field.
+	missionconsumeorderDescSerialNumber := missionconsumeorderFields[7].Descriptor()
+	// missionconsumeorder.DefaultSerialNumber holds the default value on creation for the serial_number field.
+	missionconsumeorder.DefaultSerialNumber = missionconsumeorderDescSerialNumber.Default.(string)
+	// missionconsumeorderDescStartedAt is the schema descriptor for started_at field.
+	missionconsumeorderDescStartedAt := missionconsumeorderFields[8].Descriptor()
+	// missionconsumeorder.DefaultStartedAt holds the default value on creation for the started_at field.
+	missionconsumeorder.DefaultStartedAt = missionconsumeorderDescStartedAt.Default.(time.Time)
+	// missionconsumeorderDescFinishedAt is the schema descriptor for finished_at field.
+	missionconsumeorderDescFinishedAt := missionconsumeorderFields[9].Descriptor()
+	// missionconsumeorder.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	missionconsumeorder.DefaultFinishedAt = missionconsumeorderDescFinishedAt.Default.(time.Time)
+	// missionconsumeorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
+	missionconsumeorderDescMissionBatchID := missionconsumeorderFields[10].Descriptor()
+	// missionconsumeorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
+	missionconsumeorder.DefaultMissionBatchID = missionconsumeorderDescMissionBatchID.Default.(int64)
+	// missionconsumeorderDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
+	missionconsumeorderDescMissionBatchNumber := missionconsumeorderFields[11].Descriptor()
+	// missionconsumeorder.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
+	missionconsumeorder.DefaultMissionBatchNumber = missionconsumeorderDescMissionBatchNumber.Default.(string)
+	// missionconsumeorderDescID is the schema descriptor for id field.
+	missionconsumeorderDescID := missionconsumeorderMixinFields0[0].Descriptor()
+	// missionconsumeorder.DefaultID holds the default value on creation for the id field.
+	missionconsumeorder.DefaultID = missionconsumeorderDescID.Default.(func() int64)
+	missionproduceorderMixin := schema.MissionProduceOrder{}.Mixin()
+	missionproduceorderMixinFields0 := missionproduceorderMixin[0].Fields()
+	_ = missionproduceorderMixinFields0
+	missionproduceorderFields := schema.MissionProduceOrder{}.Fields()
+	_ = missionproduceorderFields
+	// missionproduceorderDescCreatedBy is the schema descriptor for created_by field.
+	missionproduceorderDescCreatedBy := missionproduceorderMixinFields0[1].Descriptor()
+	// missionproduceorder.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionproduceorder.DefaultCreatedBy = missionproduceorderDescCreatedBy.Default.(int64)
+	// missionproduceorderDescUpdatedBy is the schema descriptor for updated_by field.
+	missionproduceorderDescUpdatedBy := missionproduceorderMixinFields0[2].Descriptor()
+	// missionproduceorder.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionproduceorder.DefaultUpdatedBy = missionproduceorderDescUpdatedBy.Default.(int64)
+	// missionproduceorderDescCreatedAt is the schema descriptor for created_at field.
+	missionproduceorderDescCreatedAt := missionproduceorderMixinFields0[3].Descriptor()
+	// missionproduceorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionproduceorder.DefaultCreatedAt = missionproduceorderDescCreatedAt.Default.(func() time.Time)
+	// missionproduceorderDescUpdatedAt is the schema descriptor for updated_at field.
+	missionproduceorderDescUpdatedAt := missionproduceorderMixinFields0[4].Descriptor()
+	// missionproduceorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionproduceorder.DefaultUpdatedAt = missionproduceorderDescUpdatedAt.Default.(func() time.Time)
+	// missionproduceorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionproduceorder.UpdateDefaultUpdatedAt = missionproduceorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionproduceorderDescDeletedAt is the schema descriptor for deleted_at field.
+	missionproduceorderDescDeletedAt := missionproduceorderMixinFields0[5].Descriptor()
+	// missionproduceorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionproduceorder.DefaultDeletedAt = missionproduceorderDescDeletedAt.Default.(time.Time)
+	// missionproduceorderDescUserID is the schema descriptor for user_id field.
+	missionproduceorderDescUserID := missionproduceorderFields[0].Descriptor()
+	// missionproduceorder.DefaultUserID holds the default value on creation for the user_id field.
+	missionproduceorder.DefaultUserID = missionproduceorderDescUserID.Default.(int64)
+	// missionproduceorderDescMissionID is the schema descriptor for mission_id field.
+	missionproduceorderDescMissionID := missionproduceorderFields[1].Descriptor()
+	// missionproduceorder.DefaultMissionID holds the default value on creation for the mission_id field.
+	missionproduceorder.DefaultMissionID = missionproduceorderDescMissionID.Default.(int64)
+	// missionproduceorderDescMissionProductionID is the schema descriptor for mission_production_id field.
+	missionproduceorderDescMissionProductionID := missionproduceorderFields[2].Descriptor()
+	// missionproduceorder.DefaultMissionProductionID holds the default value on creation for the mission_production_id field.
+	missionproduceorder.DefaultMissionProductionID = missionproduceorderDescMissionProductionID.Default.(int64)
+	// missionproduceorderDescCep is the schema descriptor for cep field.
+	missionproduceorderDescCep := missionproduceorderFields[4].Descriptor()
+	// missionproduceorder.DefaultCep holds the default value on creation for the cep field.
+	missionproduceorder.DefaultCep = missionproduceorderDescCep.Default.(int64)
+	// missionproduceorderDescIsTime is the schema descriptor for is_time field.
+	missionproduceorderDescIsTime := missionproduceorderFields[6].Descriptor()
+	// missionproduceorder.DefaultIsTime holds the default value on creation for the is_time field.
+	missionproduceorder.DefaultIsTime = missionproduceorderDescIsTime.Default.(bool)
+	// missionproduceorderDescDeviceID is the schema descriptor for device_id field.
+	missionproduceorderDescDeviceID := missionproduceorderFields[7].Descriptor()
+	// missionproduceorder.DefaultDeviceID holds the default value on creation for the device_id field.
+	missionproduceorder.DefaultDeviceID = missionproduceorderDescDeviceID.Default.(int64)
+	// missionproduceorderDescSerialNumber is the schema descriptor for serial_number field.
+	missionproduceorderDescSerialNumber := missionproduceorderFields[8].Descriptor()
+	// missionproduceorder.DefaultSerialNumber holds the default value on creation for the serial_number field.
+	missionproduceorder.DefaultSerialNumber = missionproduceorderDescSerialNumber.Default.(string)
+	// missionproduceorderDescMissionConsumeOrderID is the schema descriptor for mission_consume_order_id field.
+	missionproduceorderDescMissionConsumeOrderID := missionproduceorderFields[9].Descriptor()
+	// missionproduceorder.DefaultMissionConsumeOrderID holds the default value on creation for the mission_consume_order_id field.
+	missionproduceorder.DefaultMissionConsumeOrderID = missionproduceorderDescMissionConsumeOrderID.Default.(int64)
+	// missionproduceorderDescID is the schema descriptor for id field.
+	missionproduceorderDescID := missionproduceorderMixinFields0[0].Descriptor()
+	// missionproduceorder.DefaultID holds the default value on creation for the id field.
+	missionproduceorder.DefaultID = missionproduceorderDescID.Default.(func() int64)
+	missionproductionMixin := schema.MissionProduction{}.Mixin()
+	missionproductionMixinFields0 := missionproductionMixin[0].Fields()
+	_ = missionproductionMixinFields0
+	missionproductionFields := schema.MissionProduction{}.Fields()
+	_ = missionproductionFields
+	// missionproductionDescCreatedBy is the schema descriptor for created_by field.
+	missionproductionDescCreatedBy := missionproductionMixinFields0[1].Descriptor()
+	// missionproduction.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionproduction.DefaultCreatedBy = missionproductionDescCreatedBy.Default.(int64)
+	// missionproductionDescUpdatedBy is the schema descriptor for updated_by field.
+	missionproductionDescUpdatedBy := missionproductionMixinFields0[2].Descriptor()
+	// missionproduction.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionproduction.DefaultUpdatedBy = missionproductionDescUpdatedBy.Default.(int64)
+	// missionproductionDescCreatedAt is the schema descriptor for created_at field.
+	missionproductionDescCreatedAt := missionproductionMixinFields0[3].Descriptor()
+	// missionproduction.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionproduction.DefaultCreatedAt = missionproductionDescCreatedAt.Default.(func() time.Time)
+	// missionproductionDescUpdatedAt is the schema descriptor for updated_at field.
+	missionproductionDescUpdatedAt := missionproductionMixinFields0[4].Descriptor()
+	// missionproduction.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionproduction.DefaultUpdatedAt = missionproductionDescUpdatedAt.Default.(func() time.Time)
+	// missionproduction.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionproduction.UpdateDefaultUpdatedAt = missionproductionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionproductionDescDeletedAt is the schema descriptor for deleted_at field.
+	missionproductionDescDeletedAt := missionproductionMixinFields0[5].Descriptor()
+	// missionproduction.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionproduction.DefaultDeletedAt = missionproductionDescDeletedAt.Default.(time.Time)
+	// missionproductionDescStartedAt is the schema descriptor for started_at field.
+	missionproductionDescStartedAt := missionproductionFields[2].Descriptor()
+	// missionproduction.DefaultStartedAt holds the default value on creation for the started_at field.
+	missionproduction.DefaultStartedAt = missionproductionDescStartedAt.Default.(time.Time)
+	// missionproductionDescFinishedAt is the schema descriptor for finished_at field.
+	missionproductionDescFinishedAt := missionproductionFields[3].Descriptor()
+	// missionproduction.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	missionproduction.DefaultFinishedAt = missionproductionDescFinishedAt.Default.(time.Time)
+	// missionproductionDescDeviceID is the schema descriptor for device_id field.
+	missionproductionDescDeviceID := missionproductionFields[5].Descriptor()
+	// missionproduction.DefaultDeviceID holds the default value on creation for the device_id field.
+	missionproduction.DefaultDeviceID = missionproductionDescDeviceID.Default.(int64)
+	// missionproductionDescResultUrls is the schema descriptor for result_urls field.
+	missionproductionDescResultUrls := missionproductionFields[6].Descriptor()
+	// missionproduction.DefaultResultUrls holds the default value on creation for the result_urls field.
+	missionproduction.DefaultResultUrls = missionproductionDescResultUrls.Default.(string)
+	// missionproductionDescAdditionalResult is the schema descriptor for additional_result field.
+	missionproductionDescAdditionalResult := missionproductionFields[7].Descriptor()
+	// missionproduction.DefaultAdditionalResult holds the default value on creation for the additional_result field.
+	missionproduction.DefaultAdditionalResult = missionproductionDescAdditionalResult.Default.(string)
+	// missionproductionDescID is the schema descriptor for id field.
+	missionproductionDescID := missionproductionMixinFields0[0].Descriptor()
+	// missionproduction.DefaultID holds the default value on creation for the id field.
+	missionproduction.DefaultID = missionproductionDescID.Default.(func() int64)
+	missiontypeMixin := schema.MissionType{}.Mixin()
+	missiontypeMixinFields0 := missiontypeMixin[0].Fields()
+	_ = missiontypeMixinFields0
+	missiontypeFields := schema.MissionType{}.Fields()
+	_ = missiontypeFields
+	// missiontypeDescCreatedBy is the schema descriptor for created_by field.
+	missiontypeDescCreatedBy := missiontypeMixinFields0[1].Descriptor()
+	// missiontype.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missiontype.DefaultCreatedBy = missiontypeDescCreatedBy.Default.(int64)
+	// missiontypeDescUpdatedBy is the schema descriptor for updated_by field.
+	missiontypeDescUpdatedBy := missiontypeMixinFields0[2].Descriptor()
+	// missiontype.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missiontype.DefaultUpdatedBy = missiontypeDescUpdatedBy.Default.(int64)
+	// missiontypeDescCreatedAt is the schema descriptor for created_at field.
+	missiontypeDescCreatedAt := missiontypeMixinFields0[3].Descriptor()
+	// missiontype.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missiontype.DefaultCreatedAt = missiontypeDescCreatedAt.Default.(func() time.Time)
+	// missiontypeDescUpdatedAt is the schema descriptor for updated_at field.
+	missiontypeDescUpdatedAt := missiontypeMixinFields0[4].Descriptor()
+	// missiontype.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missiontype.DefaultUpdatedAt = missiontypeDescUpdatedAt.Default.(func() time.Time)
+	// missiontype.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missiontype.UpdateDefaultUpdatedAt = missiontypeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missiontypeDescDeletedAt is the schema descriptor for deleted_at field.
+	missiontypeDescDeletedAt := missiontypeMixinFields0[5].Descriptor()
+	// missiontype.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missiontype.DefaultDeletedAt = missiontypeDescDeletedAt.Default.(time.Time)
+	// missiontypeDescCep is the schema descriptor for cep field.
+	missiontypeDescCep := missiontypeFields[2].Descriptor()
+	// missiontype.DefaultCep holds the default value on creation for the cep field.
+	missiontype.DefaultCep = missiontypeDescCep.Default.(int64)
+	// missiontypeDescIsTime is the schema descriptor for is_time field.
+	missiontypeDescIsTime := missiontypeFields[3].Descriptor()
+	// missiontype.DefaultIsTime holds the default value on creation for the is_time field.
+	missiontype.DefaultIsTime = missiontypeDescIsTime.Default.(bool)
+	// missiontypeDescID is the schema descriptor for id field.
+	missiontypeDescID := missiontypeMixinFields0[0].Descriptor()
+	// missiontype.DefaultID holds the default value on creation for the id field.
+	missiontype.DefaultID = missiontypeDescID.Default.(func() int64)
+	outputlogMixin := schema.OutputLog{}.Mixin()
+	outputlogMixinFields0 := outputlogMixin[0].Fields()
+	_ = outputlogMixinFields0
+	outputlogFields := schema.OutputLog{}.Fields()
+	_ = outputlogFields
+	// outputlogDescCreatedBy is the schema descriptor for created_by field.
+	outputlogDescCreatedBy := outputlogMixinFields0[1].Descriptor()
+	// outputlog.DefaultCreatedBy holds the default value on creation for the created_by field.
+	outputlog.DefaultCreatedBy = outputlogDescCreatedBy.Default.(int64)
+	// outputlogDescUpdatedBy is the schema descriptor for updated_by field.
+	outputlogDescUpdatedBy := outputlogMixinFields0[2].Descriptor()
+	// outputlog.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	outputlog.DefaultUpdatedBy = outputlogDescUpdatedBy.Default.(int64)
+	// outputlogDescCreatedAt is the schema descriptor for created_at field.
+	outputlogDescCreatedAt := outputlogMixinFields0[3].Descriptor()
+	// outputlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	outputlog.DefaultCreatedAt = outputlogDescCreatedAt.Default.(func() time.Time)
+	// outputlogDescUpdatedAt is the schema descriptor for updated_at field.
+	outputlogDescUpdatedAt := outputlogMixinFields0[4].Descriptor()
+	// outputlog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	outputlog.DefaultUpdatedAt = outputlogDescUpdatedAt.Default.(func() time.Time)
+	// outputlog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	outputlog.UpdateDefaultUpdatedAt = outputlogDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// outputlogDescDeletedAt is the schema descriptor for deleted_at field.
+	outputlogDescDeletedAt := outputlogMixinFields0[5].Descriptor()
+	// outputlog.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	outputlog.DefaultDeletedAt = outputlogDescDeletedAt.Default.(time.Time)
+	// outputlogDescBody is the schema descriptor for body field.
+	outputlogDescBody := outputlogFields[2].Descriptor()
+	// outputlog.DefaultBody holds the default value on creation for the body field.
+	outputlog.DefaultBody = outputlogDescBody.Default.(string)
+	// outputlogDescIP is the schema descriptor for ip field.
+	outputlogDescIP := outputlogFields[4].Descriptor()
+	// outputlog.DefaultIP holds the default value on creation for the ip field.
+	outputlog.DefaultIP = outputlogDescIP.Default.(string)
+	// outputlogDescCaller is the schema descriptor for caller field.
+	outputlogDescCaller := outputlogFields[5].Descriptor()
+	// outputlog.DefaultCaller holds the default value on creation for the caller field.
+	outputlog.DefaultCaller = outputlogDescCaller.Default.(string)
+	// outputlogDescStatus is the schema descriptor for status field.
+	outputlogDescStatus := outputlogFields[6].Descriptor()
+	// outputlog.DefaultStatus holds the default value on creation for the status field.
+	outputlog.DefaultStatus = outputlogDescStatus.Default.(int16)
+	// outputlogDescHmacKey is the schema descriptor for hmac_key field.
+	outputlogDescHmacKey := outputlogFields[7].Descriptor()
+	// outputlog.DefaultHmacKey holds the default value on creation for the hmac_key field.
+	outputlog.DefaultHmacKey = outputlogDescHmacKey.Default.(string)
+	// outputlogDescID is the schema descriptor for id field.
+	outputlogDescID := outputlogMixinFields0[0].Descriptor()
+	// outputlog.DefaultID holds the default value on creation for the id field.
+	outputlog.DefaultID = outputlogDescID.Default.(func() int64)
+	platformwalletMixin := schema.PlatformWallet{}.Mixin()
+	platformwalletMixinFields0 := platformwalletMixin[0].Fields()
+	_ = platformwalletMixinFields0
+	platformwalletFields := schema.PlatformWallet{}.Fields()
+	_ = platformwalletFields
+	// platformwalletDescCreatedBy is the schema descriptor for created_by field.
+	platformwalletDescCreatedBy := platformwalletMixinFields0[1].Descriptor()
+	// platformwallet.DefaultCreatedBy holds the default value on creation for the created_by field.
+	platformwallet.DefaultCreatedBy = platformwalletDescCreatedBy.Default.(int64)
+	// platformwalletDescUpdatedBy is the schema descriptor for updated_by field.
+	platformwalletDescUpdatedBy := platformwalletMixinFields0[2].Descriptor()
+	// platformwallet.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	platformwallet.DefaultUpdatedBy = platformwalletDescUpdatedBy.Default.(int64)
+	// platformwalletDescCreatedAt is the schema descriptor for created_at field.
+	platformwalletDescCreatedAt := platformwalletMixinFields0[3].Descriptor()
+	// platformwallet.DefaultCreatedAt holds the default value on creation for the created_at field.
+	platformwallet.DefaultCreatedAt = platformwalletDescCreatedAt.Default.(func() time.Time)
+	// platformwalletDescUpdatedAt is the schema descriptor for updated_at field.
+	platformwalletDescUpdatedAt := platformwalletMixinFields0[4].Descriptor()
+	// platformwallet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	platformwallet.DefaultUpdatedAt = platformwalletDescUpdatedAt.Default.(func() time.Time)
+	// platformwallet.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	platformwallet.UpdateDefaultUpdatedAt = platformwalletDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// platformwalletDescDeletedAt is the schema descriptor for deleted_at field.
+	platformwalletDescDeletedAt := platformwalletMixinFields0[5].Descriptor()
+	// platformwallet.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	platformwallet.DefaultDeletedAt = platformwalletDescDeletedAt.Default.(time.Time)
+	// platformwalletDescSumCep is the schema descriptor for sum_cep field.
+	platformwalletDescSumCep := platformwalletFields[1].Descriptor()
+	// platformwallet.DefaultSumCep holds the default value on creation for the sum_cep field.
+	platformwallet.DefaultSumCep = platformwalletDescSumCep.Default.(int64)
+	// platformwalletDescCep is the schema descriptor for cep field.
+	platformwalletDescCep := platformwalletFields[2].Descriptor()
+	// platformwallet.DefaultCep holds the default value on creation for the cep field.
+	platformwallet.DefaultCep = platformwalletDescCep.Default.(int64)
+	// platformwalletDescID is the schema descriptor for id field.
+	platformwalletDescID := platformwalletMixinFields0[0].Descriptor()
+	// platformwallet.DefaultID holds the default value on creation for the id field.
+	platformwallet.DefaultID = platformwalletDescID.Default.(func() int64)
+	profitsettingMixin := schema.ProfitSetting{}.Mixin()
+	profitsettingMixinFields0 := profitsettingMixin[0].Fields()
+	_ = profitsettingMixinFields0
+	profitsettingFields := schema.ProfitSetting{}.Fields()
+	_ = profitsettingFields
+	// profitsettingDescCreatedBy is the schema descriptor for created_by field.
+	profitsettingDescCreatedBy := profitsettingMixinFields0[1].Descriptor()
+	// profitsetting.DefaultCreatedBy holds the default value on creation for the created_by field.
+	profitsetting.DefaultCreatedBy = profitsettingDescCreatedBy.Default.(int64)
+	// profitsettingDescUpdatedBy is the schema descriptor for updated_by field.
+	profitsettingDescUpdatedBy := profitsettingMixinFields0[2].Descriptor()
+	// profitsetting.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	profitsetting.DefaultUpdatedBy = profitsettingDescUpdatedBy.Default.(int64)
+	// profitsettingDescCreatedAt is the schema descriptor for created_at field.
+	profitsettingDescCreatedAt := profitsettingMixinFields0[3].Descriptor()
+	// profitsetting.DefaultCreatedAt holds the default value on creation for the created_at field.
+	profitsetting.DefaultCreatedAt = profitsettingDescCreatedAt.Default.(func() time.Time)
+	// profitsettingDescUpdatedAt is the schema descriptor for updated_at field.
+	profitsettingDescUpdatedAt := profitsettingMixinFields0[4].Descriptor()
+	// profitsetting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	profitsetting.DefaultUpdatedAt = profitsettingDescUpdatedAt.Default.(func() time.Time)
+	// profitsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	profitsetting.UpdateDefaultUpdatedAt = profitsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// profitsettingDescDeletedAt is the schema descriptor for deleted_at field.
+	profitsettingDescDeletedAt := profitsettingMixinFields0[5].Descriptor()
+	// profitsetting.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	profitsetting.DefaultDeletedAt = profitsettingDescDeletedAt.Default.(time.Time)
+	// profitsettingDescUserID is the schema descriptor for user_id field.
+	profitsettingDescUserID := profitsettingFields[0].Descriptor()
+	// profitsetting.DefaultUserID holds the default value on creation for the user_id field.
+	profitsetting.DefaultUserID = profitsettingDescUserID.Default.(int64)
+	// profitsettingDescRatio is the schema descriptor for ratio field.
+	profitsettingDescRatio := profitsettingFields[1].Descriptor()
+	// profitsetting.DefaultRatio holds the default value on creation for the ratio field.
+	profitsetting.DefaultRatio = profitsettingDescRatio.Default.(int64)
+	// profitsettingDescID is the schema descriptor for id field.
+	profitsettingDescID := profitsettingMixinFields0[0].Descriptor()
+	// profitsetting.DefaultID holds the default value on creation for the id field.
+	profitsetting.DefaultID = profitsettingDescID.Default.(func() int64)
+	rechargeorderMixin := schema.RechargeOrder{}.Mixin()
+	rechargeorderMixinFields0 := rechargeorderMixin[0].Fields()
+	_ = rechargeorderMixinFields0
+	rechargeorderFields := schema.RechargeOrder{}.Fields()
+	_ = rechargeorderFields
+	// rechargeorderDescCreatedBy is the schema descriptor for created_by field.
+	rechargeorderDescCreatedBy := rechargeorderMixinFields0[1].Descriptor()
+	// rechargeorder.DefaultCreatedBy holds the default value on creation for the created_by field.
+	rechargeorder.DefaultCreatedBy = rechargeorderDescCreatedBy.Default.(int64)
+	// rechargeorderDescUpdatedBy is the schema descriptor for updated_by field.
+	rechargeorderDescUpdatedBy := rechargeorderMixinFields0[2].Descriptor()
+	// rechargeorder.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	rechargeorder.DefaultUpdatedBy = rechargeorderDescUpdatedBy.Default.(int64)
+	// rechargeorderDescCreatedAt is the schema descriptor for created_at field.
+	rechargeorderDescCreatedAt := rechargeorderMixinFields0[3].Descriptor()
+	// rechargeorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	rechargeorder.DefaultCreatedAt = rechargeorderDescCreatedAt.Default.(func() time.Time)
+	// rechargeorderDescUpdatedAt is the schema descriptor for updated_at field.
+	rechargeorderDescUpdatedAt := rechargeorderMixinFields0[4].Descriptor()
+	// rechargeorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	rechargeorder.DefaultUpdatedAt = rechargeorderDescUpdatedAt.Default.(func() time.Time)
+	// rechargeorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	rechargeorder.UpdateDefaultUpdatedAt = rechargeorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// rechargeorderDescDeletedAt is the schema descriptor for deleted_at field.
+	rechargeorderDescDeletedAt := rechargeorderMixinFields0[5].Descriptor()
+	// rechargeorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	rechargeorder.DefaultDeletedAt = rechargeorderDescDeletedAt.Default.(time.Time)
+	// rechargeorderDescUserID is the schema descriptor for user_id field.
+	rechargeorderDescUserID := rechargeorderFields[0].Descriptor()
+	// rechargeorder.DefaultUserID holds the default value on creation for the user_id field.
+	rechargeorder.DefaultUserID = rechargeorderDescUserID.Default.(int64)
+	// rechargeorderDescCep is the schema descriptor for cep field.
+	rechargeorderDescCep := rechargeorderFields[2].Descriptor()
+	// rechargeorder.DefaultCep holds the default value on creation for the cep field.
+	rechargeorder.DefaultCep = rechargeorderDescCep.Default.(int64)
+	// rechargeorder.CepValidator is a validator for the "cep" field. It is called by the builders before save.
+	rechargeorder.CepValidator = rechargeorderDescCep.Validators[0].(func(int64) error)
+	// rechargeorderDescSocialID is the schema descriptor for social_id field.
+	rechargeorderDescSocialID := rechargeorderFields[3].Descriptor()
+	// rechargeorder.DefaultSocialID holds the default value on creation for the social_id field.
+	rechargeorder.DefaultSocialID = rechargeorderDescSocialID.Default.(int64)
+	// rechargeorderDescSerialNumber is the schema descriptor for serial_number field.
+	rechargeorderDescSerialNumber := rechargeorderFields[5].Descriptor()
+	// rechargeorder.DefaultSerialNumber holds the default value on creation for the serial_number field.
+	rechargeorder.DefaultSerialNumber = rechargeorderDescSerialNumber.Default.(string)
+	// rechargeorderDescThirdAPIResp is the schema descriptor for third_api_resp field.
+	rechargeorderDescThirdAPIResp := rechargeorderFields[6].Descriptor()
+	// rechargeorder.DefaultThirdAPIResp holds the default value on creation for the third_api_resp field.
+	rechargeorder.DefaultThirdAPIResp = rechargeorderDescThirdAPIResp.Default.(string)
+	// rechargeorderDescFromUserID is the schema descriptor for from_user_id field.
+	rechargeorderDescFromUserID := rechargeorderFields[7].Descriptor()
+	// rechargeorder.DefaultFromUserID holds the default value on creation for the from_user_id field.
+	rechargeorder.DefaultFromUserID = rechargeorderDescFromUserID.Default.(int64)
+	// rechargeorderDescOutTransactionID is the schema descriptor for out_transaction_id field.
+	rechargeorderDescOutTransactionID := rechargeorderFields[8].Descriptor()
+	// rechargeorder.DefaultOutTransactionID holds the default value on creation for the out_transaction_id field.
+	rechargeorder.DefaultOutTransactionID = rechargeorderDescOutTransactionID.Default.(string)
+	// rechargeorderDescID is the schema descriptor for id field.
+	rechargeorderDescID := rechargeorderMixinFields0[0].Descriptor()
+	// rechargeorder.DefaultID holds the default value on creation for the id field.
+	rechargeorder.DefaultID = rechargeorderDescID.Default.(func() int64)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
@@ -75,4 +844,145 @@ func init() {
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() int64)
+	userdeviceMixin := schema.UserDevice{}.Mixin()
+	userdeviceMixinFields0 := userdeviceMixin[0].Fields()
+	_ = userdeviceMixinFields0
+	userdeviceFields := schema.UserDevice{}.Fields()
+	_ = userdeviceFields
+	// userdeviceDescCreatedBy is the schema descriptor for created_by field.
+	userdeviceDescCreatedBy := userdeviceMixinFields0[1].Descriptor()
+	// userdevice.DefaultCreatedBy holds the default value on creation for the created_by field.
+	userdevice.DefaultCreatedBy = userdeviceDescCreatedBy.Default.(int64)
+	// userdeviceDescUpdatedBy is the schema descriptor for updated_by field.
+	userdeviceDescUpdatedBy := userdeviceMixinFields0[2].Descriptor()
+	// userdevice.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	userdevice.DefaultUpdatedBy = userdeviceDescUpdatedBy.Default.(int64)
+	// userdeviceDescCreatedAt is the schema descriptor for created_at field.
+	userdeviceDescCreatedAt := userdeviceMixinFields0[3].Descriptor()
+	// userdevice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userdevice.DefaultCreatedAt = userdeviceDescCreatedAt.Default.(func() time.Time)
+	// userdeviceDescUpdatedAt is the schema descriptor for updated_at field.
+	userdeviceDescUpdatedAt := userdeviceMixinFields0[4].Descriptor()
+	// userdevice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userdevice.DefaultUpdatedAt = userdeviceDescUpdatedAt.Default.(func() time.Time)
+	// userdevice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userdevice.UpdateDefaultUpdatedAt = userdeviceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userdeviceDescDeletedAt is the schema descriptor for deleted_at field.
+	userdeviceDescDeletedAt := userdeviceMixinFields0[5].Descriptor()
+	// userdevice.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	userdevice.DefaultDeletedAt = userdeviceDescDeletedAt.Default.(time.Time)
+	// userdeviceDescUserID is the schema descriptor for user_id field.
+	userdeviceDescUserID := userdeviceFields[0].Descriptor()
+	// userdevice.DefaultUserID holds the default value on creation for the user_id field.
+	userdevice.DefaultUserID = userdeviceDescUserID.Default.(int64)
+	// userdeviceDescDeviceID is the schema descriptor for device_id field.
+	userdeviceDescDeviceID := userdeviceFields[1].Descriptor()
+	// userdevice.DefaultDeviceID holds the default value on creation for the device_id field.
+	userdevice.DefaultDeviceID = userdeviceDescDeviceID.Default.(int64)
+	// userdeviceDescID is the schema descriptor for id field.
+	userdeviceDescID := userdeviceMixinFields0[0].Descriptor()
+	// userdevice.DefaultID holds the default value on creation for the id field.
+	userdevice.DefaultID = userdeviceDescID.Default.(func() int64)
+	vxsocialMixin := schema.VXSocial{}.Mixin()
+	vxsocialMixinFields0 := vxsocialMixin[0].Fields()
+	_ = vxsocialMixinFields0
+	vxsocialFields := schema.VXSocial{}.Fields()
+	_ = vxsocialFields
+	// vxsocialDescCreatedBy is the schema descriptor for created_by field.
+	vxsocialDescCreatedBy := vxsocialMixinFields0[1].Descriptor()
+	// vxsocial.DefaultCreatedBy holds the default value on creation for the created_by field.
+	vxsocial.DefaultCreatedBy = vxsocialDescCreatedBy.Default.(int64)
+	// vxsocialDescUpdatedBy is the schema descriptor for updated_by field.
+	vxsocialDescUpdatedBy := vxsocialMixinFields0[2].Descriptor()
+	// vxsocial.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	vxsocial.DefaultUpdatedBy = vxsocialDescUpdatedBy.Default.(int64)
+	// vxsocialDescCreatedAt is the schema descriptor for created_at field.
+	vxsocialDescCreatedAt := vxsocialMixinFields0[3].Descriptor()
+	// vxsocial.DefaultCreatedAt holds the default value on creation for the created_at field.
+	vxsocial.DefaultCreatedAt = vxsocialDescCreatedAt.Default.(func() time.Time)
+	// vxsocialDescUpdatedAt is the schema descriptor for updated_at field.
+	vxsocialDescUpdatedAt := vxsocialMixinFields0[4].Descriptor()
+	// vxsocial.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	vxsocial.DefaultUpdatedAt = vxsocialDescUpdatedAt.Default.(func() time.Time)
+	// vxsocial.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	vxsocial.UpdateDefaultUpdatedAt = vxsocialDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// vxsocialDescDeletedAt is the schema descriptor for deleted_at field.
+	vxsocialDescDeletedAt := vxsocialMixinFields0[5].Descriptor()
+	// vxsocial.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	vxsocial.DefaultDeletedAt = vxsocialDescDeletedAt.Default.(time.Time)
+	// vxsocialDescAppID is the schema descriptor for app_id field.
+	vxsocialDescAppID := vxsocialFields[0].Descriptor()
+	// vxsocial.DefaultAppID holds the default value on creation for the app_id field.
+	vxsocial.DefaultAppID = vxsocialDescAppID.Default.(string)
+	// vxsocialDescOpenID is the schema descriptor for open_id field.
+	vxsocialDescOpenID := vxsocialFields[1].Descriptor()
+	// vxsocial.DefaultOpenID holds the default value on creation for the open_id field.
+	vxsocial.DefaultOpenID = vxsocialDescOpenID.Default.(string)
+	// vxsocialDescUnionID is the schema descriptor for union_id field.
+	vxsocialDescUnionID := vxsocialFields[2].Descriptor()
+	// vxsocial.DefaultUnionID holds the default value on creation for the union_id field.
+	vxsocial.DefaultUnionID = vxsocialDescUnionID.Default.(string)
+	// vxsocialDescSessionKey is the schema descriptor for session_key field.
+	vxsocialDescSessionKey := vxsocialFields[4].Descriptor()
+	// vxsocial.DefaultSessionKey holds the default value on creation for the session_key field.
+	vxsocial.DefaultSessionKey = vxsocialDescSessionKey.Default.(string)
+	// vxsocialDescAccessToken is the schema descriptor for access_token field.
+	vxsocialDescAccessToken := vxsocialFields[5].Descriptor()
+	// vxsocial.DefaultAccessToken holds the default value on creation for the access_token field.
+	vxsocial.DefaultAccessToken = vxsocialDescAccessToken.Default.(string)
+	// vxsocialDescRefreshToken is the schema descriptor for refresh_token field.
+	vxsocialDescRefreshToken := vxsocialFields[6].Descriptor()
+	// vxsocial.DefaultRefreshToken holds the default value on creation for the refresh_token field.
+	vxsocial.DefaultRefreshToken = vxsocialDescRefreshToken.Default.(string)
+	// vxsocialDescUserID is the schema descriptor for user_id field.
+	vxsocialDescUserID := vxsocialFields[7].Descriptor()
+	// vxsocial.DefaultUserID holds the default value on creation for the user_id field.
+	vxsocial.DefaultUserID = vxsocialDescUserID.Default.(int64)
+	// vxsocialDescID is the schema descriptor for id field.
+	vxsocialDescID := vxsocialMixinFields0[0].Descriptor()
+	// vxsocial.DefaultID holds the default value on creation for the id field.
+	vxsocial.DefaultID = vxsocialDescID.Default.(func() int64)
+	walletMixin := schema.Wallet{}.Mixin()
+	walletMixinFields0 := walletMixin[0].Fields()
+	_ = walletMixinFields0
+	walletFields := schema.Wallet{}.Fields()
+	_ = walletFields
+	// walletDescCreatedBy is the schema descriptor for created_by field.
+	walletDescCreatedBy := walletMixinFields0[1].Descriptor()
+	// wallet.DefaultCreatedBy holds the default value on creation for the created_by field.
+	wallet.DefaultCreatedBy = walletDescCreatedBy.Default.(int64)
+	// walletDescUpdatedBy is the schema descriptor for updated_by field.
+	walletDescUpdatedBy := walletMixinFields0[2].Descriptor()
+	// wallet.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	wallet.DefaultUpdatedBy = walletDescUpdatedBy.Default.(int64)
+	// walletDescCreatedAt is the schema descriptor for created_at field.
+	walletDescCreatedAt := walletMixinFields0[3].Descriptor()
+	// wallet.DefaultCreatedAt holds the default value on creation for the created_at field.
+	wallet.DefaultCreatedAt = walletDescCreatedAt.Default.(func() time.Time)
+	// walletDescUpdatedAt is the schema descriptor for updated_at field.
+	walletDescUpdatedAt := walletMixinFields0[4].Descriptor()
+	// wallet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	wallet.DefaultUpdatedAt = walletDescUpdatedAt.Default.(func() time.Time)
+	// wallet.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	wallet.UpdateDefaultUpdatedAt = walletDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// walletDescDeletedAt is the schema descriptor for deleted_at field.
+	walletDescDeletedAt := walletMixinFields0[5].Descriptor()
+	// wallet.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	wallet.DefaultDeletedAt = walletDescDeletedAt.Default.(time.Time)
+	// walletDescUserID is the schema descriptor for user_id field.
+	walletDescUserID := walletFields[0].Descriptor()
+	// wallet.DefaultUserID holds the default value on creation for the user_id field.
+	wallet.DefaultUserID = walletDescUserID.Default.(int64)
+	// walletDescCep is the schema descriptor for cep field.
+	walletDescCep := walletFields[1].Descriptor()
+	// wallet.DefaultCep holds the default value on creation for the cep field.
+	wallet.DefaultCep = walletDescCep.Default.(int64)
+	// walletDescSumCep is the schema descriptor for sum_cep field.
+	walletDescSumCep := walletFields[2].Descriptor()
+	// wallet.DefaultSumCep holds the default value on creation for the sum_cep field.
+	wallet.DefaultSumCep = walletDescSumCep.Default.(int64)
+	// walletDescID is the schema descriptor for id field.
+	walletDescID := walletMixinFields0[0].Descriptor()
+	// wallet.DefaultID holds the default value on creation for the id field.
+	wallet.DefaultID = walletDescID.Default.(func() int64)
 }

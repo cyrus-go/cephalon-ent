@@ -3,7 +3,25 @@
 package cep_ent
 
 import (
+	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/hmackeypair"
+	"cephalon-ent/pkg/cep_ent/inputlog"
+	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/missionbatch"
+	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/cep_ent/missiontype"
+	"cephalon-ent/pkg/cep_ent/outputlog"
+	"cephalon-ent/pkg/cep_ent/platformwallet"
+	"cephalon-ent/pkg/cep_ent/profitsetting"
+	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/cep_ent/wallet"
 	"context"
 	"errors"
 	"fmt"
@@ -73,7 +91,25 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			user.Table: user.ValidColumn,
+			bill.Table:                bill.ValidColumn,
+			collection.Table:          collection.ValidColumn,
+			device.Table:              device.ValidColumn,
+			hmackeypair.Table:         hmackeypair.ValidColumn,
+			inputlog.Table:            inputlog.ValidColumn,
+			mission.Table:             mission.ValidColumn,
+			missionbatch.Table:        missionbatch.ValidColumn,
+			missionconsumeorder.Table: missionconsumeorder.ValidColumn,
+			missionproduceorder.Table: missionproduceorder.ValidColumn,
+			missionproduction.Table:   missionproduction.ValidColumn,
+			missiontype.Table:         missiontype.ValidColumn,
+			outputlog.Table:           outputlog.ValidColumn,
+			platformwallet.Table:      platformwallet.ValidColumn,
+			profitsetting.Table:       profitsetting.ValidColumn,
+			rechargeorder.Table:       rechargeorder.ValidColumn,
+			user.Table:                user.ValidColumn,
+			userdevice.Table:          userdevice.ValidColumn,
+			vxsocial.Table:            vxsocial.ValidColumn,
+			wallet.Table:              wallet.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)
