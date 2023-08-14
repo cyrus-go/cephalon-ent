@@ -7,6 +7,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -108,15 +109,15 @@ func (roc *RechargeOrderCreate) SetNillableUserID(i *int64) *RechargeOrderCreate
 }
 
 // SetStatus sets the "status" field.
-func (roc *RechargeOrderCreate) SetStatus(r rechargeorder.Status) *RechargeOrderCreate {
-	roc.mutation.SetStatus(r)
+func (roc *RechargeOrderCreate) SetStatus(es enums.MissionStatus) *RechargeOrderCreate {
+	roc.mutation.SetStatus(es)
 	return roc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (roc *RechargeOrderCreate) SetNillableStatus(r *rechargeorder.Status) *RechargeOrderCreate {
-	if r != nil {
-		roc.SetStatus(*r)
+func (roc *RechargeOrderCreate) SetNillableStatus(es *enums.MissionStatus) *RechargeOrderCreate {
+	if es != nil {
+		roc.SetStatus(*es)
 	}
 	return roc
 }
@@ -150,15 +151,15 @@ func (roc *RechargeOrderCreate) SetNillableSocialID(i *int64) *RechargeOrderCrea
 }
 
 // SetType sets the "type" field.
-func (roc *RechargeOrderCreate) SetType(r rechargeorder.Type) *RechargeOrderCreate {
-	roc.mutation.SetType(r)
+func (roc *RechargeOrderCreate) SetType(eot enums.RechargeOrderType) *RechargeOrderCreate {
+	roc.mutation.SetType(eot)
 	return roc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (roc *RechargeOrderCreate) SetNillableType(r *rechargeorder.Type) *RechargeOrderCreate {
-	if r != nil {
-		roc.SetType(*r)
+func (roc *RechargeOrderCreate) SetNillableType(eot *enums.RechargeOrderType) *RechargeOrderCreate {
+	if eot != nil {
+		roc.SetType(*eot)
 	}
 	return roc
 }

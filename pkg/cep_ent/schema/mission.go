@@ -19,7 +19,7 @@ func (Mission) Fields() []ent.Field {
 		field.Bool("is_time").Default(false).StructTag(`json:"is_time"`).Comment("是否为计时类型任务"),
 		field.String("body").Default("").StructTag(`json:"body"`).Comment("任务的请求参数体"),
 		field.String("call_back_url").Default("").StructTag(`json:"call_back_url"`).Comment("回调地址，空字符串表示不回调"),
-		field.Enum("status").Values("waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed").Default("waiting").StructTag(`json:"status"`).Comment("任务状态"),
+		field.Enum("status").GoType(enums.MissionStatusWaiting).Default(string(enums.MissionStatusWaiting)).StructTag(`json:"status"`).Comment("任务状态"),
 		field.String("result_urls").Default("").Sensitive().Comment("任务结果资源位置列表序列化"),
 		field.String("additional_result").Default("").Sensitive().Comment("有的任务除了链接外还有其他有用的结果，都塞在这个字段，比如 sd 的实际入参"),
 		field.Int64("hmac_key_pair_id").Default(0).StructTag(`json:"hmac_key_pair_id"`).Comment("外键任务创建者的密钥对 ID"),

@@ -4,6 +4,7 @@ package missionproduction
 
 import (
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/enums"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -436,23 +437,33 @@ func FinishedAtLTE(v time.Time) predicate.MissionProduction {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.MissionProduction {
-	return predicate.MissionProduction(sql.FieldEQ(FieldStatus, v))
+func StatusEQ(v enums.MissionStatus) predicate.MissionProduction {
+	vc := v
+	return predicate.MissionProduction(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.MissionProduction {
-	return predicate.MissionProduction(sql.FieldNEQ(FieldStatus, v))
+func StatusNEQ(v enums.MissionStatus) predicate.MissionProduction {
+	vc := v
+	return predicate.MissionProduction(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.MissionProduction {
-	return predicate.MissionProduction(sql.FieldIn(FieldStatus, vs...))
+func StatusIn(vs ...enums.MissionStatus) predicate.MissionProduction {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionProduction(sql.FieldIn(FieldStatus, v...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.MissionProduction {
-	return predicate.MissionProduction(sql.FieldNotIn(FieldStatus, vs...))
+func StatusNotIn(vs ...enums.MissionStatus) predicate.MissionProduction {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionProduction(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // DeviceIDEQ applies the EQ predicate on the "device_id" field.

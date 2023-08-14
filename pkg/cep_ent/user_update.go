@@ -18,6 +18,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/userdevice"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
 	"cephalon-ent/pkg/cep_ent/wallet"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -174,29 +175,29 @@ func (uu *UserUpdate) SetNillableAvatarURL(s *string) *UserUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (uu *UserUpdate) SetStatus(u user.Status) *UserUpdate {
-	uu.mutation.SetStatus(u)
+func (uu *UserUpdate) SetStatus(es enums.UserStatus) *UserUpdate {
+	uu.mutation.SetStatus(es)
 	return uu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableStatus(u *user.Status) *UserUpdate {
-	if u != nil {
-		uu.SetStatus(*u)
+func (uu *UserUpdate) SetNillableStatus(es *enums.UserStatus) *UserUpdate {
+	if es != nil {
+		uu.SetStatus(*es)
 	}
 	return uu
 }
 
 // SetType sets the "type" field.
-func (uu *UserUpdate) SetType(u user.Type) *UserUpdate {
-	uu.mutation.SetType(u)
+func (uu *UserUpdate) SetType(et enums.UserType) *UserUpdate {
+	uu.mutation.SetType(et)
 	return uu
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableType(u *user.Type) *UserUpdate {
-	if u != nil {
-		uu.SetType(*u)
+func (uu *UserUpdate) SetNillableType(et *enums.UserType) *UserUpdate {
+	if et != nil {
+		uu.SetType(*et)
 	}
 	return uu
 }
@@ -1521,29 +1522,29 @@ func (uuo *UserUpdateOne) SetNillableAvatarURL(s *string) *UserUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (uuo *UserUpdateOne) SetStatus(u user.Status) *UserUpdateOne {
-	uuo.mutation.SetStatus(u)
+func (uuo *UserUpdateOne) SetStatus(es enums.UserStatus) *UserUpdateOne {
+	uuo.mutation.SetStatus(es)
 	return uuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableStatus(u *user.Status) *UserUpdateOne {
-	if u != nil {
-		uuo.SetStatus(*u)
+func (uuo *UserUpdateOne) SetNillableStatus(es *enums.UserStatus) *UserUpdateOne {
+	if es != nil {
+		uuo.SetStatus(*es)
 	}
 	return uuo
 }
 
 // SetType sets the "type" field.
-func (uuo *UserUpdateOne) SetType(u user.Type) *UserUpdateOne {
-	uuo.mutation.SetType(u)
+func (uuo *UserUpdateOne) SetType(et enums.UserType) *UserUpdateOne {
+	uuo.mutation.SetType(et)
 	return uuo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableType(u *user.Type) *UserUpdateOne {
-	if u != nil {
-		uuo.SetType(*u)
+func (uuo *UserUpdateOne) SetNillableType(et *enums.UserType) *UserUpdateOne {
+	if et != nil {
+		uuo.SetType(*et)
 	}
 	return uuo
 }

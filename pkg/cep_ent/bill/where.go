@@ -4,6 +4,7 @@ package bill
 
 import (
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/enums"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -326,23 +327,33 @@ func DeletedAtLTE(v time.Time) predicate.Bill {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.Bill {
-	return predicate.Bill(sql.FieldEQ(FieldType, v))
+func TypeEQ(v enums.BillType) predicate.Bill {
+	vc := v
+	return predicate.Bill(sql.FieldEQ(FieldType, vc))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.Bill {
-	return predicate.Bill(sql.FieldNEQ(FieldType, v))
+func TypeNEQ(v enums.BillType) predicate.Bill {
+	vc := v
+	return predicate.Bill(sql.FieldNEQ(FieldType, vc))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.Bill {
-	return predicate.Bill(sql.FieldIn(FieldType, vs...))
+func TypeIn(vs ...enums.BillType) predicate.Bill {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Bill(sql.FieldIn(FieldType, v...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.Bill {
-	return predicate.Bill(sql.FieldNotIn(FieldType, vs...))
+func TypeNotIn(vs ...enums.BillType) predicate.Bill {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Bill(sql.FieldNotIn(FieldType, v...))
 }
 
 // IsAddEQ applies the EQ predicate on the "is_add" field.
@@ -531,23 +542,33 @@ func ReasonIDNotNil() predicate.Bill {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.Bill {
-	return predicate.Bill(sql.FieldEQ(FieldStatus, v))
+func StatusEQ(v enums.BillStatus) predicate.Bill {
+	vc := v
+	return predicate.Bill(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.Bill {
-	return predicate.Bill(sql.FieldNEQ(FieldStatus, v))
+func StatusNEQ(v enums.BillStatus) predicate.Bill {
+	vc := v
+	return predicate.Bill(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.Bill {
-	return predicate.Bill(sql.FieldIn(FieldStatus, vs...))
+func StatusIn(vs ...enums.BillStatus) predicate.Bill {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Bill(sql.FieldIn(FieldStatus, v...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.Bill {
-	return predicate.Bill(sql.FieldNotIn(FieldStatus, vs...))
+func StatusNotIn(vs ...enums.BillStatus) predicate.Bill {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Bill(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // MarketBillIDEQ applies the EQ predicate on the "market_bill_id" field.

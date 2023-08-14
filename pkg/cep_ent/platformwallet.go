@@ -4,6 +4,7 @@ package cep_ent
 
 import (
 	"cephalon-ent/pkg/cep_ent/platformwallet"
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -28,7 +29,7 @@ type PlatformWallet struct {
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at"`
 	// Type holds the value of the "type" field.
-	Type platformwallet.Type `json:"type"`
+	Type enums.PlatformWalletType `json:"type"`
 	// 累计总余额
 	SumCep int64 `json:"sum_total_cep"`
 	// 剩余总余额
@@ -123,7 +124,7 @@ func (pw *PlatformWallet) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				pw.Type = platformwallet.Type(value.String)
+				pw.Type = enums.PlatformWalletType(value.String)
 			}
 		case platformwallet.FieldSumCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

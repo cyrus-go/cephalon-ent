@@ -17,7 +17,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Comment: "次级账单流水的类型，充值或者任务消耗或任务收益", Enums: []string{"mission_consume", "mission_produce", "recharge"}, Default: "mission_consume"},
+		{Name: "type", Type: field.TypeEnum, Comment: "次级账单流水的类型，充值或者任务消耗或任务收益", Enums: []string{"recharge", "mission_consume", "mission_produce"}, Default: "mission_consume"},
 		{Name: "is_add", Type: field.TypeBool, Comment: "是否增加余额，布尔值默认为否", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "账单序列号", Default: ""},
 		{Name: "cep", Type: field.TypeInt64, Comment: "消费或收益多少 cep", Default: 0},
@@ -109,13 +109,14 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "busy", "free", "offline"}, Default: "online"},
+		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy", "free"}, Default: "online"},
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
 	DevicesTable = &schema.Table{
 		Name:       "devices",
+		Comment:    "设备表，与用户一对多",
 		Columns:    DevicesColumns,
 		PrimaryKey: []*schema.Column{DevicesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -269,7 +270,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "外键任务 id，关联任务", Default: 0},
-		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "succeed", "failed"}, Default: "waiting"},
+		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "waiting"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "发布任务需消耗的 cep 量", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time"}, Default: "txt2img"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
@@ -317,7 +318,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "succeed", "failed"}, Default: "waiting"},
+		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "waiting"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "完成任务收益的 cep 量", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time"}, Default: "txt2img"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
@@ -384,7 +385,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务完成时刻"},
-		{Name: "status", Type: field.TypeEnum, Comment: "任务结果", Enums: []string{"pending", "failed", "succeed"}, Default: "pending"},
+		{Name: "status", Type: field.TypeEnum, Comment: "任务结果", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "doing"},
 		{Name: "result_urls", Type: field.TypeString, Comment: "任务结果资源位置列表序列化", Default: ""},
 		{Name: "additional_result", Type: field.TypeString, Comment: "额外需要返回的结果数据，格式不定", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "领到任务的设备 ID", Default: 0},
@@ -430,7 +431,7 @@ var (
 		{Name: "gpu", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"3070", "3070Ti", "3080", "3080Ti", "3090", "3090Ti", "4070", "4070Ti", "4080", "4080Ti", "4090", "4090Ti", "A100", "V100"}, Default: "3070"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "单价消耗 cep", Default: 0},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否计时任务", Default: false},
-		{Name: "category", Type: field.TypeEnum, Comment: "任务种类，SD，Jupyter 等", Enums: []string{"SD", "Jupyter", "WeTTY"}, Default: "SD"},
+		{Name: "category", Type: field.TypeEnum, Comment: "任务种类，SD，Jupyter 等", Enums: []string{"SD", "Jupyter", "WeTTy"}, Default: "SD"},
 	}
 	// MissionTypesTable holds the schema information for the "mission_types" table.
 	MissionTypesTable = &schema.Table{
@@ -523,9 +524,9 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Comment: "充值订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
+		{Name: "status", Type: field.TypeEnum, Comment: "充值订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "doing"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "充值多少 cep", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"vx", "alipay", "manual"}, Default: "vx"},
+		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"manual", "vx", "alipay"}, Default: "manual"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
 		{Name: "from_user_id", Type: field.TypeInt64, Comment: "由谁发起的充值", Default: 0},

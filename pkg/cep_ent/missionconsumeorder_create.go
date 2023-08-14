@@ -125,15 +125,15 @@ func (mcoc *MissionConsumeOrderCreate) SetNillableMissionID(i *int64) *MissionCo
 }
 
 // SetStatus sets the "status" field.
-func (mcoc *MissionConsumeOrderCreate) SetStatus(m missionconsumeorder.Status) *MissionConsumeOrderCreate {
-	mcoc.mutation.SetStatus(m)
+func (mcoc *MissionConsumeOrderCreate) SetStatus(es enums.MissionStatus) *MissionConsumeOrderCreate {
+	mcoc.mutation.SetStatus(es)
 	return mcoc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mcoc *MissionConsumeOrderCreate) SetNillableStatus(m *missionconsumeorder.Status) *MissionConsumeOrderCreate {
-	if m != nil {
-		mcoc.SetStatus(*m)
+func (mcoc *MissionConsumeOrderCreate) SetNillableStatus(es *enums.MissionStatus) *MissionConsumeOrderCreate {
+	if es != nil {
+		mcoc.SetStatus(*es)
 	}
 	return mcoc
 }
@@ -181,15 +181,15 @@ func (mcoc *MissionConsumeOrderCreate) SetNillableIsTime(b *bool) *MissionConsum
 }
 
 // SetCallWay sets the "call_way" field.
-func (mcoc *MissionConsumeOrderCreate) SetCallWay(mw missionconsumeorder.CallWay) *MissionConsumeOrderCreate {
-	mcoc.mutation.SetCallWay(mw)
+func (mcoc *MissionConsumeOrderCreate) SetCallWay(ecw enums.MissionCallWay) *MissionConsumeOrderCreate {
+	mcoc.mutation.SetCallWay(ecw)
 	return mcoc
 }
 
 // SetNillableCallWay sets the "call_way" field if the given value is not nil.
-func (mcoc *MissionConsumeOrderCreate) SetNillableCallWay(mw *missionconsumeorder.CallWay) *MissionConsumeOrderCreate {
-	if mw != nil {
-		mcoc.SetCallWay(*mw)
+func (mcoc *MissionConsumeOrderCreate) SetNillableCallWay(ecw *enums.MissionCallWay) *MissionConsumeOrderCreate {
+	if ecw != nil {
+		mcoc.SetCallWay(*ecw)
 	}
 	return mcoc
 }

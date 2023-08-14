@@ -4,6 +4,7 @@ package device
 
 import (
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/enums"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -306,43 +307,63 @@ func UserIDNotIn(vs ...int64) predicate.Device {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.Device {
-	return predicate.Device(sql.FieldEQ(FieldStatus, v))
+func StatusEQ(v enums.DeviceStatus) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.Device {
-	return predicate.Device(sql.FieldNEQ(FieldStatus, v))
+func StatusNEQ(v enums.DeviceStatus) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.Device {
-	return predicate.Device(sql.FieldIn(FieldStatus, vs...))
+func StatusIn(vs ...enums.DeviceStatus) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldStatus, v...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.Device {
-	return predicate.Device(sql.FieldNotIn(FieldStatus, vs...))
+func StatusNotIn(vs ...enums.DeviceStatus) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // BindingStatusEQ applies the EQ predicate on the "binding_status" field.
-func BindingStatusEQ(v BindingStatus) predicate.Device {
-	return predicate.Device(sql.FieldEQ(FieldBindingStatus, v))
+func BindingStatusEQ(v enums.DeviceBindingStatus) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldBindingStatus, vc))
 }
 
 // BindingStatusNEQ applies the NEQ predicate on the "binding_status" field.
-func BindingStatusNEQ(v BindingStatus) predicate.Device {
-	return predicate.Device(sql.FieldNEQ(FieldBindingStatus, v))
+func BindingStatusNEQ(v enums.DeviceBindingStatus) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldBindingStatus, vc))
 }
 
 // BindingStatusIn applies the In predicate on the "binding_status" field.
-func BindingStatusIn(vs ...BindingStatus) predicate.Device {
-	return predicate.Device(sql.FieldIn(FieldBindingStatus, vs...))
+func BindingStatusIn(vs ...enums.DeviceBindingStatus) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldBindingStatus, v...))
 }
 
 // BindingStatusNotIn applies the NotIn predicate on the "binding_status" field.
-func BindingStatusNotIn(vs ...BindingStatus) predicate.Device {
-	return predicate.Device(sql.FieldNotIn(FieldBindingStatus, vs...))
+func BindingStatusNotIn(vs ...enums.DeviceBindingStatus) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldBindingStatus, v...))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

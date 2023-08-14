@@ -41,7 +41,7 @@ type Mission struct {
 	// 回调地址，空字符串表示不回调
 	CallBackURL string `json:"call_back_url"`
 	// 任务状态
-	Status mission.Status `json:"status"`
+	Status enums.MissionStatus `json:"status"`
 	// 任务结果资源位置列表序列化
 	ResultUrls string `json:"-"`
 	// 有的任务除了链接外还有其他有用的结果，都塞在这个字段，比如 sd 的实际入参
@@ -241,7 +241,7 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				m.Status = mission.Status(value.String)
+				m.Status = enums.MissionStatus(value.String)
 			}
 		case mission.FieldResultUrls:
 			if value, ok := values[i].(*sql.NullString); !ok {

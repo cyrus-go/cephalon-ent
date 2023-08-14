@@ -36,7 +36,7 @@ type MissionConsumeOrder struct {
 	// 外键任务 id，关联任务
 	MissionID int64 `json:"mission_id"`
 	// 任务订单的状态，注意不强关联任务的状态
-	Status missionconsumeorder.Status `json:"status"`
+	Status enums.MissionStatus `json:"status"`
 	// 发布任务需消耗的 cep 量
 	Cep int64 `json:"cep"`
 	// 任务类型，等于任务表的类型字段
@@ -44,7 +44,7 @@ type MissionConsumeOrder struct {
 	// 是否为计时类型任务
 	IsTime bool `json:"is_time"`
 	// 调用方式，API 调用或者微信小程序调用
-	CallWay missionconsumeorder.CallWay `json:"call_way"`
+	CallWay enums.MissionCallWay `json:"call_way"`
 	// 订单序列号
 	SerialNumber string `json:"serial_number"`
 	// 任务开始执行时刻
@@ -218,7 +218,7 @@ func (mco *MissionConsumeOrder) assignValues(columns []string, values []any) err
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				mco.Status = missionconsumeorder.Status(value.String)
+				mco.Status = enums.MissionStatus(value.String)
 			}
 		case missionconsumeorder.FieldCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -242,7 +242,7 @@ func (mco *MissionConsumeOrder) assignValues(columns []string, values []any) err
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field call_way", values[i])
 			} else if value.Valid {
-				mco.CallWay = missionconsumeorder.CallWay(value.String)
+				mco.CallWay = enums.MissionCallWay(value.String)
 			}
 		case missionconsumeorder.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {

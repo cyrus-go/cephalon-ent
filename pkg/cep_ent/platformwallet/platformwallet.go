@@ -3,6 +3,7 @@
 package platformwallet
 
 import (
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -88,25 +89,12 @@ var (
 	DefaultID func() int64
 )
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeProfit is the default value of the Type enum.
-const DefaultType = TypeProfit
-
-// Type values.
-const (
-	TypeProfit Type = "profit"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
+const DefaultType enums.PlatformWalletType = "profit"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
+func TypeValidator(_type enums.PlatformWalletType) error {
 	switch _type {
-	case TypeProfit:
+	case "profit":
 		return nil
 	default:
 		return fmt.Errorf("platformwallet: invalid enum value for type field: %q", _type)

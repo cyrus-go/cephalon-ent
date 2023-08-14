@@ -5,6 +5,7 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/device"
 	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -13,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Device is the model entity for the Device schema.
+// 设备表，与用户一对多
 type Device struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -31,9 +32,9 @@ type Device struct {
 	// 外键用户 id
 	UserID int64 `json:"user_id"`
 	// 设备状态
-	Status device.Status `json:"status,omitempty"`
+	Status enums.DeviceStatus `json:"status,omitempty"`
 	// 设备的绑定状态
-	BindingStatus device.BindingStatus `json:"binding_status"`
+	BindingStatus enums.DeviceBindingStatus `json:"binding_status"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -167,13 +168,13 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				d.Status = device.Status(value.String)
+				d.Status = enums.DeviceStatus(value.String)
 			}
 		case device.FieldBindingStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field binding_status", values[i])
 			} else if value.Valid {
-				d.BindingStatus = device.BindingStatus(value.String)
+				d.BindingStatus = enums.DeviceBindingStatus(value.String)
 			}
 		default:
 			d.selectValues.Set(columns[i], values[i])

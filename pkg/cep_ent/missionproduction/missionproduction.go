@@ -3,6 +3,7 @@
 package missionproduction
 
 import (
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -136,27 +137,12 @@ var (
 	DefaultID func() int64
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusPending is the default value of the Status enum.
-const DefaultStatus = StatusPending
-
-// Status values.
-const (
-	StatusPending Status = "pending"
-	StatusFailed  Status = "failed"
-	StatusSucceed Status = "succeed"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.MissionStatus = "doing"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.MissionStatus) error {
 	switch s {
-	case StatusPending, StatusFailed, StatusSucceed:
+	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
 		return nil
 	default:
 		return fmt.Errorf("missionproduction: invalid enum value for status field: %q", s)

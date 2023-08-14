@@ -10,6 +10,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/wallet"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -97,15 +98,15 @@ func (bc *BillCreate) SetNillableDeletedAt(t *time.Time) *BillCreate {
 }
 
 // SetType sets the "type" field.
-func (bc *BillCreate) SetType(b bill.Type) *BillCreate {
-	bc.mutation.SetType(b)
+func (bc *BillCreate) SetType(et enums.BillType) *BillCreate {
+	bc.mutation.SetType(et)
 	return bc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (bc *BillCreate) SetNillableType(b *bill.Type) *BillCreate {
-	if b != nil {
-		bc.SetType(*b)
+func (bc *BillCreate) SetNillableType(et *enums.BillType) *BillCreate {
+	if et != nil {
+		bc.SetType(*et)
 	}
 	return bc
 }
@@ -195,15 +196,15 @@ func (bc *BillCreate) SetNillableReasonID(i *int64) *BillCreate {
 }
 
 // SetStatus sets the "status" field.
-func (bc *BillCreate) SetStatus(b bill.Status) *BillCreate {
-	bc.mutation.SetStatus(b)
+func (bc *BillCreate) SetStatus(es enums.BillStatus) *BillCreate {
+	bc.mutation.SetStatus(es)
 	return bc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (bc *BillCreate) SetNillableStatus(b *bill.Status) *BillCreate {
-	if b != nil {
-		bc.SetStatus(*b)
+func (bc *BillCreate) SetNillableStatus(es *enums.BillStatus) *BillCreate {
+	if es != nil {
+		bc.SetStatus(*es)
 	}
 	return bc
 }

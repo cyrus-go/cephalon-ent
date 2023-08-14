@@ -401,23 +401,33 @@ func IsTimeNEQ(v bool) predicate.MissionType {
 }
 
 // CategoryEQ applies the EQ predicate on the "category" field.
-func CategoryEQ(v Category) predicate.MissionType {
-	return predicate.MissionType(sql.FieldEQ(FieldCategory, v))
+func CategoryEQ(v enums.MissionCategory) predicate.MissionType {
+	vc := v
+	return predicate.MissionType(sql.FieldEQ(FieldCategory, vc))
 }
 
 // CategoryNEQ applies the NEQ predicate on the "category" field.
-func CategoryNEQ(v Category) predicate.MissionType {
-	return predicate.MissionType(sql.FieldNEQ(FieldCategory, v))
+func CategoryNEQ(v enums.MissionCategory) predicate.MissionType {
+	vc := v
+	return predicate.MissionType(sql.FieldNEQ(FieldCategory, vc))
 }
 
 // CategoryIn applies the In predicate on the "category" field.
-func CategoryIn(vs ...Category) predicate.MissionType {
-	return predicate.MissionType(sql.FieldIn(FieldCategory, vs...))
+func CategoryIn(vs ...enums.MissionCategory) predicate.MissionType {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionType(sql.FieldIn(FieldCategory, v...))
 }
 
 // CategoryNotIn applies the NotIn predicate on the "category" field.
-func CategoryNotIn(vs ...Category) predicate.MissionType {
-	return predicate.MissionType(sql.FieldNotIn(FieldCategory, vs...))
+func CategoryNotIn(vs ...enums.MissionCategory) predicate.MissionType {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionType(sql.FieldNotIn(FieldCategory, v...))
 }
 
 // And groups predicates with the AND operator between them.

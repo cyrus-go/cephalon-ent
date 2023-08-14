@@ -6,6 +6,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/bill"
 	"cephalon-ent/pkg/cep_ent/platformwallet"
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -92,15 +93,15 @@ func (pwu *PlatformWalletUpdate) SetNillableDeletedAt(t *time.Time) *PlatformWal
 }
 
 // SetType sets the "type" field.
-func (pwu *PlatformWalletUpdate) SetType(pl platformwallet.Type) *PlatformWalletUpdate {
-	pwu.mutation.SetType(pl)
+func (pwu *PlatformWalletUpdate) SetType(ewt enums.PlatformWalletType) *PlatformWalletUpdate {
+	pwu.mutation.SetType(ewt)
 	return pwu
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (pwu *PlatformWalletUpdate) SetNillableType(pl *platformwallet.Type) *PlatformWalletUpdate {
-	if pl != nil {
-		pwu.SetType(*pl)
+func (pwu *PlatformWalletUpdate) SetNillableType(ewt *enums.PlatformWalletType) *PlatformWalletUpdate {
+	if ewt != nil {
+		pwu.SetType(*ewt)
 	}
 	return pwu
 }
@@ -407,15 +408,15 @@ func (pwuo *PlatformWalletUpdateOne) SetNillableDeletedAt(t *time.Time) *Platfor
 }
 
 // SetType sets the "type" field.
-func (pwuo *PlatformWalletUpdateOne) SetType(pl platformwallet.Type) *PlatformWalletUpdateOne {
-	pwuo.mutation.SetType(pl)
+func (pwuo *PlatformWalletUpdateOne) SetType(ewt enums.PlatformWalletType) *PlatformWalletUpdateOne {
+	pwuo.mutation.SetType(ewt)
 	return pwuo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (pwuo *PlatformWalletUpdateOne) SetNillableType(pl *platformwallet.Type) *PlatformWalletUpdateOne {
-	if pl != nil {
-		pwuo.SetType(*pl)
+func (pwuo *PlatformWalletUpdateOne) SetNillableType(ewt *enums.PlatformWalletType) *PlatformWalletUpdateOne {
+	if ewt != nil {
+		pwuo.SetType(*ewt)
 	}
 	return pwuo
 }

@@ -9,6 +9,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/missionproduction"
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -135,15 +136,15 @@ func (mpu *MissionProductionUpdate) SetNillableFinishedAt(t *time.Time) *Mission
 }
 
 // SetStatus sets the "status" field.
-func (mpu *MissionProductionUpdate) SetStatus(m missionproduction.Status) *MissionProductionUpdate {
-	mpu.mutation.SetStatus(m)
+func (mpu *MissionProductionUpdate) SetStatus(es enums.MissionStatus) *MissionProductionUpdate {
+	mpu.mutation.SetStatus(es)
 	return mpu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpu *MissionProductionUpdate) SetNillableStatus(m *missionproduction.Status) *MissionProductionUpdate {
-	if m != nil {
-		mpu.SetStatus(*m)
+func (mpu *MissionProductionUpdate) SetNillableStatus(es *enums.MissionStatus) *MissionProductionUpdate {
+	if es != nil {
+		mpu.SetStatus(*es)
 	}
 	return mpu
 }
@@ -592,15 +593,15 @@ func (mpuo *MissionProductionUpdateOne) SetNillableFinishedAt(t *time.Time) *Mis
 }
 
 // SetStatus sets the "status" field.
-func (mpuo *MissionProductionUpdateOne) SetStatus(m missionproduction.Status) *MissionProductionUpdateOne {
-	mpuo.mutation.SetStatus(m)
+func (mpuo *MissionProductionUpdateOne) SetStatus(es enums.MissionStatus) *MissionProductionUpdateOne {
+	mpuo.mutation.SetStatus(es)
 	return mpuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpuo *MissionProductionUpdateOne) SetNillableStatus(m *missionproduction.Status) *MissionProductionUpdateOne {
-	if m != nil {
-		mpuo.SetStatus(*m)
+func (mpuo *MissionProductionUpdateOne) SetNillableStatus(es *enums.MissionStatus) *MissionProductionUpdateOne {
+	if es != nil {
+		mpuo.SetStatus(*es)
 	}
 	return mpuo
 }

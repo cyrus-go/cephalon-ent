@@ -3,6 +3,7 @@
 package rechargeorder
 
 import (
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -136,55 +137,24 @@ var (
 	DefaultID func() int64
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusPending is the default value of the Status enum.
-const DefaultStatus = StatusPending
-
-// Status values.
-const (
-	StatusPending  Status = "pending"
-	StatusCanceled Status = "canceled"
-	StatusSucceed  Status = "succeed"
-	StatusFailed   Status = "failed"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.MissionStatus = "doing"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.MissionStatus) error {
 	switch s {
-	case StatusPending, StatusCanceled, StatusSucceed, StatusFailed:
+	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
 		return nil
 	default:
 		return fmt.Errorf("rechargeorder: invalid enum value for status field: %q", s)
 	}
 }
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeVx is the default value of the Type enum.
-const DefaultType = TypeVx
-
-// Type values.
-const (
-	TypeVx     Type = "vx"
-	TypeAlipay Type = "alipay"
-	TypeManual Type = "manual"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
+const DefaultType enums.RechargeOrderType = "manual"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
+func TypeValidator(_type enums.RechargeOrderType) error {
 	switch _type {
-	case TypeVx, TypeAlipay, TypeManual:
+	case "manual", "vx", "alipay":
 		return nil
 	default:
 		return fmt.Errorf("rechargeorder: invalid enum value for type field: %q", _type)

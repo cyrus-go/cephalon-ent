@@ -8,6 +8,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -108,15 +109,15 @@ func (rou *RechargeOrderUpdate) SetNillableUserID(i *int64) *RechargeOrderUpdate
 }
 
 // SetStatus sets the "status" field.
-func (rou *RechargeOrderUpdate) SetStatus(r rechargeorder.Status) *RechargeOrderUpdate {
-	rou.mutation.SetStatus(r)
+func (rou *RechargeOrderUpdate) SetStatus(es enums.MissionStatus) *RechargeOrderUpdate {
+	rou.mutation.SetStatus(es)
 	return rou
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (rou *RechargeOrderUpdate) SetNillableStatus(r *rechargeorder.Status) *RechargeOrderUpdate {
-	if r != nil {
-		rou.SetStatus(*r)
+func (rou *RechargeOrderUpdate) SetNillableStatus(es *enums.MissionStatus) *RechargeOrderUpdate {
+	if es != nil {
+		rou.SetStatus(*es)
 	}
 	return rou
 }
@@ -163,15 +164,15 @@ func (rou *RechargeOrderUpdate) ClearSocialID() *RechargeOrderUpdate {
 }
 
 // SetType sets the "type" field.
-func (rou *RechargeOrderUpdate) SetType(r rechargeorder.Type) *RechargeOrderUpdate {
-	rou.mutation.SetType(r)
+func (rou *RechargeOrderUpdate) SetType(eot enums.RechargeOrderType) *RechargeOrderUpdate {
+	rou.mutation.SetType(eot)
 	return rou
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rou *RechargeOrderUpdate) SetNillableType(r *rechargeorder.Type) *RechargeOrderUpdate {
-	if r != nil {
-		rou.SetType(*r)
+func (rou *RechargeOrderUpdate) SetNillableType(eot *enums.RechargeOrderType) *RechargeOrderUpdate {
+	if eot != nil {
+		rou.SetType(*eot)
 	}
 	return rou
 }
@@ -632,15 +633,15 @@ func (rouo *RechargeOrderUpdateOne) SetNillableUserID(i *int64) *RechargeOrderUp
 }
 
 // SetStatus sets the "status" field.
-func (rouo *RechargeOrderUpdateOne) SetStatus(r rechargeorder.Status) *RechargeOrderUpdateOne {
-	rouo.mutation.SetStatus(r)
+func (rouo *RechargeOrderUpdateOne) SetStatus(es enums.MissionStatus) *RechargeOrderUpdateOne {
+	rouo.mutation.SetStatus(es)
 	return rouo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (rouo *RechargeOrderUpdateOne) SetNillableStatus(r *rechargeorder.Status) *RechargeOrderUpdateOne {
-	if r != nil {
-		rouo.SetStatus(*r)
+func (rouo *RechargeOrderUpdateOne) SetNillableStatus(es *enums.MissionStatus) *RechargeOrderUpdateOne {
+	if es != nil {
+		rouo.SetStatus(*es)
 	}
 	return rouo
 }
@@ -687,15 +688,15 @@ func (rouo *RechargeOrderUpdateOne) ClearSocialID() *RechargeOrderUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (rouo *RechargeOrderUpdateOne) SetType(r rechargeorder.Type) *RechargeOrderUpdateOne {
-	rouo.mutation.SetType(r)
+func (rouo *RechargeOrderUpdateOne) SetType(eot enums.RechargeOrderType) *RechargeOrderUpdateOne {
+	rouo.mutation.SetType(eot)
 	return rouo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rouo *RechargeOrderUpdateOne) SetNillableType(r *rechargeorder.Type) *RechargeOrderUpdateOne {
-	if r != nil {
-		rouo.SetType(*r)
+func (rouo *RechargeOrderUpdateOne) SetNillableType(eot *enums.RechargeOrderType) *RechargeOrderUpdateOne {
+	if eot != nil {
+		rouo.SetType(*eot)
 	}
 	return rouo
 }

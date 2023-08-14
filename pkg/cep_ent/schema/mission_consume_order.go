@@ -19,11 +19,11 @@ func (MissionConsumeOrder) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键关联用户 id"),
 		field.Int64("mission_id").Default(0).StructTag(`json:"mission_id"`).Comment("外键任务 id，关联任务"),
-		field.Enum("status").Values("waiting", "canceled", "doing", "succeed", "failed").Default("waiting").StructTag(`json:"status"`).Comment("任务订单的状态，注意不强关联任务的状态"),
+		field.Enum("status").GoType(enums.MissionStatusWaiting).Default(string(enums.MissionStatusWaiting)).StructTag(`json:"status"`).Comment("任务订单的状态，注意不强关联任务的状态"),
 		field.Int64("cep").Default(0).StructTag(`json:"cep"`).Comment("发布任务需消耗的 cep 量"),
 		field.Enum("type").GoType(enums.MissionTypeSdTxt2Img).Default(string(enums.MissionTypeSdTxt2Img)).StructTag(`json:"type"`).Comment("任务类型，等于任务表的类型字段"),
 		field.Bool("is_time").Default(false).StructTag(`json:"is_time"`).Comment("是否为计时类型任务"),
-		field.Enum("call_way").Values("api", "yuan_hui", "dev_platform").Default("api").StructTag(`json:"call_way"`).Comment("调用方式，API 调用或者微信小程序调用"),
+		field.Enum("call_way").GoType(enums.MissionCallWayApi).Default(string(enums.MissionCallWayApi)).StructTag(`json:"call_way"`).Comment("调用方式，API 调用或者微信小程序调用"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("订单序列号"),
 		field.Time("started_at").Default(common.ZeroTime).Optional().Nillable().StructTag(`json:"started_at"`).Comment("任务开始执行时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).Optional().Nillable().StructTag(`json:"finished_at"`).Comment("任务结束执行时刻"),

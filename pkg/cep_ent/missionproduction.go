@@ -8,6 +8,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -40,7 +41,7 @@ type MissionProduction struct {
 	// 任务完成时刻
 	FinishedAt time.Time `json:"finished_at"`
 	// 任务结果
-	Status missionproduction.Status `json:"result"`
+	Status enums.MissionStatus `json:"result"`
 	// 领到任务的设备 ID
 	DeviceID int64 `json:"device_id"`
 	// 任务结果资源位置列表序列化
@@ -210,7 +211,7 @@ func (mp *MissionProduction) assignValues(columns []string, values []any) error 
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				mp.Status = missionproduction.Status(value.String)
+				mp.Status = enums.MissionStatus(value.String)
 			}
 		case missionproduction.FieldDeviceID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

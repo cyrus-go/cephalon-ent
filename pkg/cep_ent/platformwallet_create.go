@@ -5,6 +5,7 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/bill"
 	"cephalon-ent/pkg/cep_ent/platformwallet"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -92,15 +93,15 @@ func (pwc *PlatformWalletCreate) SetNillableDeletedAt(t *time.Time) *PlatformWal
 }
 
 // SetType sets the "type" field.
-func (pwc *PlatformWalletCreate) SetType(pl platformwallet.Type) *PlatformWalletCreate {
-	pwc.mutation.SetType(pl)
+func (pwc *PlatformWalletCreate) SetType(ewt enums.PlatformWalletType) *PlatformWalletCreate {
+	pwc.mutation.SetType(ewt)
 	return pwc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (pwc *PlatformWalletCreate) SetNillableType(pl *platformwallet.Type) *PlatformWalletCreate {
-	if pl != nil {
-		pwc.SetType(*pl)
+func (pwc *PlatformWalletCreate) SetNillableType(ewt *enums.PlatformWalletType) *PlatformWalletCreate {
+	if ewt != nil {
+		pwc.SetType(*ewt)
 	}
 	return pwc
 }

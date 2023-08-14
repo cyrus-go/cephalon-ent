@@ -37,7 +37,7 @@ type MissionType struct {
 	// 是否计时任务
 	IsTime bool `json:"is_time"`
 	// 任务种类，SD，Jupyter 等
-	Category     missiontype.Category `json:"category"`
+	Category     enums.MissionCategory `json:"category"`
 	selectValues sql.SelectValues
 }
 
@@ -133,7 +133,7 @@ func (mt *MissionType) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field category", values[i])
 			} else if value.Valid {
-				mt.Category = missiontype.Category(value.String)
+				mt.Category = enums.MissionCategory(value.String)
 			}
 		default:
 			mt.selectValues.Set(columns[i], values[i])

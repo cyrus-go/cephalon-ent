@@ -184,31 +184,12 @@ func TypeValidator(_type enums.MissionType) error {
 	}
 }
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusWaiting is the default value of the Status enum.
-const DefaultStatus = StatusWaiting
-
-// Status values.
-const (
-	StatusWaiting   Status = "waiting"
-	StatusCanceled  Status = "canceled"
-	StatusDoing     Status = "doing"
-	StatusSupplying Status = "supplying"
-	StatusClosing   Status = "closing"
-	StatusSucceed   Status = "succeed"
-	StatusFailed    Status = "failed"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.MissionStatus = "waiting"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.MissionStatus) error {
 	switch s {
-	case StatusWaiting, StatusCanceled, StatusDoing, StatusSupplying, StatusClosing, StatusSucceed, StatusFailed:
+	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for status field: %q", s)

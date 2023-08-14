@@ -8,6 +8,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -135,15 +136,15 @@ func (mpc *MissionProductionCreate) SetNillableFinishedAt(t *time.Time) *Mission
 }
 
 // SetStatus sets the "status" field.
-func (mpc *MissionProductionCreate) SetStatus(m missionproduction.Status) *MissionProductionCreate {
-	mpc.mutation.SetStatus(m)
+func (mpc *MissionProductionCreate) SetStatus(es enums.MissionStatus) *MissionProductionCreate {
+	mpc.mutation.SetStatus(es)
 	return mpc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpc *MissionProductionCreate) SetNillableStatus(m *missionproduction.Status) *MissionProductionCreate {
-	if m != nil {
-		mpc.SetStatus(*m)
+func (mpc *MissionProductionCreate) SetNillableStatus(es *enums.MissionStatus) *MissionProductionCreate {
+	if es != nil {
+		mpc.SetStatus(*es)
 	}
 	return mpc
 }

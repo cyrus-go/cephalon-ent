@@ -141,15 +141,15 @@ func (mpou *MissionProduceOrderUpdate) SetNillableMissionProductionID(i *int64) 
 }
 
 // SetStatus sets the "status" field.
-func (mpou *MissionProduceOrderUpdate) SetStatus(m missionproduceorder.Status) *MissionProduceOrderUpdate {
-	mpou.mutation.SetStatus(m)
+func (mpou *MissionProduceOrderUpdate) SetStatus(es enums.MissionStatus) *MissionProduceOrderUpdate {
+	mpou.mutation.SetStatus(es)
 	return mpou
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpou *MissionProduceOrderUpdate) SetNillableStatus(m *missionproduceorder.Status) *MissionProduceOrderUpdate {
-	if m != nil {
-		mpou.SetStatus(*m)
+func (mpou *MissionProduceOrderUpdate) SetNillableStatus(es *enums.MissionStatus) *MissionProduceOrderUpdate {
+	if es != nil {
+		mpou.SetStatus(*es)
 	}
 	return mpou
 }
@@ -827,15 +827,15 @@ func (mpouo *MissionProduceOrderUpdateOne) SetNillableMissionProductionID(i *int
 }
 
 // SetStatus sets the "status" field.
-func (mpouo *MissionProduceOrderUpdateOne) SetStatus(m missionproduceorder.Status) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.SetStatus(m)
+func (mpouo *MissionProduceOrderUpdateOne) SetStatus(es enums.MissionStatus) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.SetStatus(es)
 	return mpouo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpouo *MissionProduceOrderUpdateOne) SetNillableStatus(m *missionproduceorder.Status) *MissionProduceOrderUpdateOne {
-	if m != nil {
-		mpouo.SetStatus(*m)
+func (mpouo *MissionProduceOrderUpdateOne) SetNillableStatus(es *enums.MissionStatus) *MissionProduceOrderUpdateOne {
+	if es != nil {
+		mpouo.SetStatus(*es)
 	}
 	return mpouo
 }

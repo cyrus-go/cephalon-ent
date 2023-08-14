@@ -154,15 +154,15 @@ func (mc *MissionCreate) SetNillableCallBackURL(s *string) *MissionCreate {
 }
 
 // SetStatus sets the "status" field.
-func (mc *MissionCreate) SetStatus(m mission.Status) *MissionCreate {
-	mc.mutation.SetStatus(m)
+func (mc *MissionCreate) SetStatus(es enums.MissionStatus) *MissionCreate {
+	mc.mutation.SetStatus(es)
 	return mc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mc *MissionCreate) SetNillableStatus(m *mission.Status) *MissionCreate {
-	if m != nil {
-		mc.SetStatus(*m)
+func (mc *MissionCreate) SetNillableStatus(es *enums.MissionStatus) *MissionCreate {
+	if es != nil {
+		mc.SetStatus(*es)
 	}
 	return mc
 }

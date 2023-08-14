@@ -41,7 +41,7 @@ type MissionProduceOrder struct {
 	// 外键任务生产情况 id
 	MissionProductionID int64 `json:"mission_production_id"`
 	// 任务订单的状态，注意不强关联任务的状态
-	Status missionproduceorder.Status `json:"status"`
+	Status enums.MissionStatus `json:"status"`
 	// 完成任务收益的 cep 量
 	Cep int64 `json:"cep"`
 	// 任务类型，计时或者次数任务
@@ -256,7 +256,7 @@ func (mpo *MissionProduceOrder) assignValues(columns []string, values []any) err
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				mpo.Status = missionproduceorder.Status(value.String)
+				mpo.Status = enums.MissionStatus(value.String)
 			}
 		case missionproduceorder.FieldCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

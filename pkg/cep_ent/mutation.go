@@ -77,12 +77,12 @@ type BillMutation struct {
 	created_at                   *time.Time
 	updated_at                   *time.Time
 	deleted_at                   *time.Time
-	_type                        *bill.Type
+	_type                        *enums.BillType
 	is_add                       *bool
 	serial_number                *string
 	cep                          *int64
 	addcep                       *int64
-	status                       *bill.Status
+	status                       *enums.BillStatus
 	market_bill_id               *int64
 	addmarket_bill_id            *int64
 	platform_cep                 *int64
@@ -430,12 +430,12 @@ func (m *BillMutation) ResetDeletedAt() {
 }
 
 // SetType sets the "type" field.
-func (m *BillMutation) SetType(b bill.Type) {
-	m._type = &b
+func (m *BillMutation) SetType(et enums.BillType) {
+	m._type = &et
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *BillMutation) GetType() (r bill.Type, exists bool) {
+func (m *BillMutation) GetType() (r enums.BillType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -446,7 +446,7 @@ func (m *BillMutation) GetType() (r bill.Type, exists bool) {
 // OldType returns the old "type" field's value of the Bill entity.
 // If the Bill object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillMutation) OldType(ctx context.Context) (v bill.Type, err error) {
+func (m *BillMutation) OldType(ctx context.Context) (v enums.BillType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -715,12 +715,12 @@ func (m *BillMutation) ResetReasonID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *BillMutation) SetStatus(b bill.Status) {
-	m.status = &b
+func (m *BillMutation) SetStatus(es enums.BillStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *BillMutation) Status() (r bill.Status, exists bool) {
+func (m *BillMutation) Status() (r enums.BillStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -731,7 +731,7 @@ func (m *BillMutation) Status() (r bill.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the Bill entity.
 // If the Bill object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillMutation) OldStatus(ctx context.Context) (v bill.Status, err error) {
+func (m *BillMutation) OldStatus(ctx context.Context) (v enums.BillStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -1302,7 +1302,7 @@ func (m *BillMutation) SetField(name string, value ent.Value) error {
 		m.SetDeletedAt(v)
 		return nil
 	case bill.FieldType:
-		v, ok := value.(bill.Type)
+		v, ok := value.(enums.BillType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1351,7 +1351,7 @@ func (m *BillMutation) SetField(name string, value ent.Value) error {
 		m.SetReasonID(v)
 		return nil
 	case bill.FieldStatus:
-		v, ok := value.(bill.Status)
+		v, ok := value.(enums.BillStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2560,8 +2560,8 @@ type DeviceMutation struct {
 	created_at                    *time.Time
 	updated_at                    *time.Time
 	deleted_at                    *time.Time
-	status                        *device.Status
-	binding_status                *device.BindingStatus
+	status                        *enums.DeviceStatus
+	binding_status                *enums.DeviceBindingStatus
 	clearedFields                 map[string]struct{}
 	user                          *int64
 	cleareduser                   bool
@@ -2940,12 +2940,12 @@ func (m *DeviceMutation) ResetUserID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *DeviceMutation) SetStatus(d device.Status) {
-	m.status = &d
+func (m *DeviceMutation) SetStatus(es enums.DeviceStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *DeviceMutation) Status() (r device.Status, exists bool) {
+func (m *DeviceMutation) Status() (r enums.DeviceStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -2956,7 +2956,7 @@ func (m *DeviceMutation) Status() (r device.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldStatus(ctx context.Context) (v device.Status, err error) {
+func (m *DeviceMutation) OldStatus(ctx context.Context) (v enums.DeviceStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -2976,12 +2976,12 @@ func (m *DeviceMutation) ResetStatus() {
 }
 
 // SetBindingStatus sets the "binding_status" field.
-func (m *DeviceMutation) SetBindingStatus(ds device.BindingStatus) {
-	m.binding_status = &ds
+func (m *DeviceMutation) SetBindingStatus(ebs enums.DeviceBindingStatus) {
+	m.binding_status = &ebs
 }
 
 // BindingStatus returns the value of the "binding_status" field in the mutation.
-func (m *DeviceMutation) BindingStatus() (r device.BindingStatus, exists bool) {
+func (m *DeviceMutation) BindingStatus() (r enums.DeviceBindingStatus, exists bool) {
 	v := m.binding_status
 	if v == nil {
 		return
@@ -2992,7 +2992,7 @@ func (m *DeviceMutation) BindingStatus() (r device.BindingStatus, exists bool) {
 // OldBindingStatus returns the old "binding_status" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldBindingStatus(ctx context.Context) (v device.BindingStatus, err error) {
+func (m *DeviceMutation) OldBindingStatus(ctx context.Context) (v enums.DeviceBindingStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBindingStatus is only allowed on UpdateOne operations")
 	}
@@ -3359,14 +3359,14 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		m.SetUserID(v)
 		return nil
 	case device.FieldStatus:
-		v, ok := value.(device.Status)
+		v, ok := value.(enums.DeviceStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
 		return nil
 	case device.FieldBindingStatus:
-		v, ok := value.(device.BindingStatus)
+		v, ok := value.(enums.DeviceBindingStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5925,7 +5925,7 @@ type MissionMutation struct {
 	is_time                       *bool
 	body                          *string
 	call_back_url                 *string
-	status                        *mission.Status
+	status                        *enums.MissionStatus
 	result_urls                   *string
 	additional_result             *string
 	mission_batch_number          *string
@@ -6418,12 +6418,12 @@ func (m *MissionMutation) ResetCallBackURL() {
 }
 
 // SetStatus sets the "status" field.
-func (m *MissionMutation) SetStatus(value mission.Status) {
-	m.status = &value
+func (m *MissionMutation) SetStatus(es enums.MissionStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MissionMutation) Status() (r mission.Status, exists bool) {
+func (m *MissionMutation) Status() (r enums.MissionStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -6434,7 +6434,7 @@ func (m *MissionMutation) Status() (r mission.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the Mission entity.
 // If the Mission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionMutation) OldStatus(ctx context.Context) (v mission.Status, err error) {
+func (m *MissionMutation) OldStatus(ctx context.Context) (v enums.MissionStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -7131,7 +7131,7 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		m.SetCallBackURL(v)
 		return nil
 	case mission.FieldStatus:
-		v, ok := value.(mission.Status)
+		v, ok := value.(enums.MissionStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -8533,12 +8533,12 @@ type MissionConsumeOrderMutation struct {
 	deleted_at                    *time.Time
 	mission_id                    *int64
 	addmission_id                 *int64
-	status                        *missionconsumeorder.Status
+	status                        *enums.MissionStatus
 	cep                           *int64
 	addcep                        *int64
 	_type                         *enums.MissionType
 	is_time                       *bool
-	call_way                      *missionconsumeorder.CallWay
+	call_way                      *enums.MissionCallWay
 	serial_number                 *string
 	started_at                    *time.Time
 	finished_at                   *time.Time
@@ -8978,12 +8978,12 @@ func (m *MissionConsumeOrderMutation) ResetMissionID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *MissionConsumeOrderMutation) SetStatus(value missionconsumeorder.Status) {
-	m.status = &value
+func (m *MissionConsumeOrderMutation) SetStatus(es enums.MissionStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MissionConsumeOrderMutation) Status() (r missionconsumeorder.Status, exists bool) {
+func (m *MissionConsumeOrderMutation) Status() (r enums.MissionStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -8994,7 +8994,7 @@ func (m *MissionConsumeOrderMutation) Status() (r missionconsumeorder.Status, ex
 // OldStatus returns the old "status" field's value of the MissionConsumeOrder entity.
 // If the MissionConsumeOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionConsumeOrderMutation) OldStatus(ctx context.Context) (v missionconsumeorder.Status, err error) {
+func (m *MissionConsumeOrderMutation) OldStatus(ctx context.Context) (v enums.MissionStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -9142,12 +9142,12 @@ func (m *MissionConsumeOrderMutation) ResetIsTime() {
 }
 
 // SetCallWay sets the "call_way" field.
-func (m *MissionConsumeOrderMutation) SetCallWay(mw missionconsumeorder.CallWay) {
-	m.call_way = &mw
+func (m *MissionConsumeOrderMutation) SetCallWay(ecw enums.MissionCallWay) {
+	m.call_way = &ecw
 }
 
 // CallWay returns the value of the "call_way" field in the mutation.
-func (m *MissionConsumeOrderMutation) CallWay() (r missionconsumeorder.CallWay, exists bool) {
+func (m *MissionConsumeOrderMutation) CallWay() (r enums.MissionCallWay, exists bool) {
 	v := m.call_way
 	if v == nil {
 		return
@@ -9158,7 +9158,7 @@ func (m *MissionConsumeOrderMutation) CallWay() (r missionconsumeorder.CallWay, 
 // OldCallWay returns the old "call_way" field's value of the MissionConsumeOrder entity.
 // If the MissionConsumeOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionConsumeOrderMutation) OldCallWay(ctx context.Context) (v missionconsumeorder.CallWay, err error) {
+func (m *MissionConsumeOrderMutation) OldCallWay(ctx context.Context) (v enums.MissionCallWay, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCallWay is only allowed on UpdateOne operations")
 	}
@@ -9812,7 +9812,7 @@ func (m *MissionConsumeOrderMutation) SetField(name string, value ent.Value) err
 		m.SetMissionID(v)
 		return nil
 	case missionconsumeorder.FieldStatus:
-		v, ok := value.(missionconsumeorder.Status)
+		v, ok := value.(enums.MissionStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -9840,7 +9840,7 @@ func (m *MissionConsumeOrderMutation) SetField(name string, value ent.Value) err
 		m.SetIsTime(v)
 		return nil
 	case missionconsumeorder.FieldCallWay:
-		v, ok := value.(missionconsumeorder.CallWay)
+		v, ok := value.(enums.MissionCallWay)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -10228,7 +10228,7 @@ type MissionProduceOrderMutation struct {
 	created_at                   *time.Time
 	updated_at                   *time.Time
 	deleted_at                   *time.Time
-	status                       *missionproduceorder.Status
+	status                       *enums.MissionStatus
 	cep                          *int64
 	addcep                       *int64
 	_type                        *enums.MissionType
@@ -10688,12 +10688,12 @@ func (m *MissionProduceOrderMutation) ResetMissionProductionID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *MissionProduceOrderMutation) SetStatus(value missionproduceorder.Status) {
-	m.status = &value
+func (m *MissionProduceOrderMutation) SetStatus(es enums.MissionStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MissionProduceOrderMutation) Status() (r missionproduceorder.Status, exists bool) {
+func (m *MissionProduceOrderMutation) Status() (r enums.MissionStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -10704,7 +10704,7 @@ func (m *MissionProduceOrderMutation) Status() (r missionproduceorder.Status, ex
 // OldStatus returns the old "status" field's value of the MissionProduceOrder entity.
 // If the MissionProduceOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionProduceOrderMutation) OldStatus(ctx context.Context) (v missionproduceorder.Status, err error) {
+func (m *MissionProduceOrderMutation) OldStatus(ctx context.Context) (v enums.MissionStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -11435,7 +11435,7 @@ func (m *MissionProduceOrderMutation) SetField(name string, value ent.Value) err
 		m.SetMissionProductionID(v)
 		return nil
 	case missionproduceorder.FieldStatus:
-		v, ok := value.(missionproduceorder.Status)
+		v, ok := value.(enums.MissionStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -11837,7 +11837,7 @@ type MissionProductionMutation struct {
 	deleted_at                   *time.Time
 	started_at                   *time.Time
 	finished_at                  *time.Time
-	status                       *missionproduction.Status
+	status                       *enums.MissionStatus
 	result_urls                  *string
 	additional_result            *string
 	clearedFields                map[string]struct{}
@@ -12323,12 +12323,12 @@ func (m *MissionProductionMutation) ResetFinishedAt() {
 }
 
 // SetStatus sets the "status" field.
-func (m *MissionProductionMutation) SetStatus(value missionproduction.Status) {
-	m.status = &value
+func (m *MissionProductionMutation) SetStatus(es enums.MissionStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MissionProductionMutation) Status() (r missionproduction.Status, exists bool) {
+func (m *MissionProductionMutation) Status() (r enums.MissionStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -12339,7 +12339,7 @@ func (m *MissionProductionMutation) Status() (r missionproduction.Status, exists
 // OldStatus returns the old "status" field's value of the MissionProduction entity.
 // If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionProductionMutation) OldStatus(ctx context.Context) (v missionproduction.Status, err error) {
+func (m *MissionProductionMutation) OldStatus(ctx context.Context) (v enums.MissionStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -12799,7 +12799,7 @@ func (m *MissionProductionMutation) SetField(name string, value ent.Value) error
 		m.SetFinishedAt(v)
 		return nil
 	case missionproduction.FieldStatus:
-		v, ok := value.(missionproduction.Status)
+		v, ok := value.(enums.MissionStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -13091,7 +13091,7 @@ type MissionTypeMutation struct {
 	cep           *int64
 	addcep        *int64
 	is_time       *bool
-	category      *missiontype.Category
+	category      *enums.MissionCategory
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*MissionType, error)
@@ -13587,12 +13587,12 @@ func (m *MissionTypeMutation) ResetIsTime() {
 }
 
 // SetCategory sets the "category" field.
-func (m *MissionTypeMutation) SetCategory(value missiontype.Category) {
-	m.category = &value
+func (m *MissionTypeMutation) SetCategory(ec enums.MissionCategory) {
+	m.category = &ec
 }
 
 // Category returns the value of the "category" field in the mutation.
-func (m *MissionTypeMutation) Category() (r missiontype.Category, exists bool) {
+func (m *MissionTypeMutation) Category() (r enums.MissionCategory, exists bool) {
 	v := m.category
 	if v == nil {
 		return
@@ -13603,7 +13603,7 @@ func (m *MissionTypeMutation) Category() (r missiontype.Category, exists bool) {
 // OldCategory returns the old "category" field's value of the MissionType entity.
 // If the MissionType object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionTypeMutation) OldCategory(ctx context.Context) (v missiontype.Category, err error) {
+func (m *MissionTypeMutation) OldCategory(ctx context.Context) (v enums.MissionCategory, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCategory is only allowed on UpdateOne operations")
 	}
@@ -13817,7 +13817,7 @@ func (m *MissionTypeMutation) SetField(name string, value ent.Value) error {
 		m.SetIsTime(v)
 		return nil
 	case missiontype.FieldCategory:
-		v, ok := value.(missiontype.Category)
+		v, ok := value.(enums.MissionCategory)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -15182,7 +15182,7 @@ type PlatformWalletMutation struct {
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
-	_type         *platformwallet.Type
+	_type         *enums.PlatformWalletType
 	sum_cep       *int64
 	addsum_cep    *int64
 	cep           *int64
@@ -15521,12 +15521,12 @@ func (m *PlatformWalletMutation) ResetDeletedAt() {
 }
 
 // SetType sets the "type" field.
-func (m *PlatformWalletMutation) SetType(pl platformwallet.Type) {
-	m._type = &pl
+func (m *PlatformWalletMutation) SetType(ewt enums.PlatformWalletType) {
+	m._type = &ewt
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *PlatformWalletMutation) GetType() (r platformwallet.Type, exists bool) {
+func (m *PlatformWalletMutation) GetType() (r enums.PlatformWalletType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -15537,7 +15537,7 @@ func (m *PlatformWalletMutation) GetType() (r platformwallet.Type, exists bool) 
 // OldType returns the old "type" field's value of the PlatformWallet entity.
 // If the PlatformWallet object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PlatformWalletMutation) OldType(ctx context.Context) (v platformwallet.Type, err error) {
+func (m *PlatformWalletMutation) OldType(ctx context.Context) (v enums.PlatformWalletType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -15875,7 +15875,7 @@ func (m *PlatformWalletMutation) SetField(name string, value ent.Value) error {
 		m.SetDeletedAt(v)
 		return nil
 	case platformwallet.FieldType:
-		v, ok := value.(platformwallet.Type)
+		v, ok := value.(enums.PlatformWalletType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -16931,10 +16931,10 @@ type RechargeOrderMutation struct {
 	created_at         *time.Time
 	updated_at         *time.Time
 	deleted_at         *time.Time
-	status             *rechargeorder.Status
+	status             *enums.MissionStatus
 	cep                *int64
 	addcep             *int64
-	_type              *rechargeorder.Type
+	_type              *enums.RechargeOrderType
 	serial_number      *string
 	third_api_resp     *string
 	from_user_id       *int64
@@ -17314,12 +17314,12 @@ func (m *RechargeOrderMutation) ResetUserID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *RechargeOrderMutation) SetStatus(r rechargeorder.Status) {
-	m.status = &r
+func (m *RechargeOrderMutation) SetStatus(es enums.MissionStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *RechargeOrderMutation) Status() (r rechargeorder.Status, exists bool) {
+func (m *RechargeOrderMutation) Status() (r enums.MissionStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -17330,7 +17330,7 @@ func (m *RechargeOrderMutation) Status() (r rechargeorder.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the RechargeOrder entity.
 // If the RechargeOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RechargeOrderMutation) OldStatus(ctx context.Context) (v rechargeorder.Status, err error) {
+func (m *RechargeOrderMutation) OldStatus(ctx context.Context) (v enums.MissionStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -17455,12 +17455,12 @@ func (m *RechargeOrderMutation) ResetSocialID() {
 }
 
 // SetType sets the "type" field.
-func (m *RechargeOrderMutation) SetType(r rechargeorder.Type) {
-	m._type = &r
+func (m *RechargeOrderMutation) SetType(eot enums.RechargeOrderType) {
+	m._type = &eot
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *RechargeOrderMutation) GetType() (r rechargeorder.Type, exists bool) {
+func (m *RechargeOrderMutation) GetType() (r enums.RechargeOrderType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -17471,7 +17471,7 @@ func (m *RechargeOrderMutation) GetType() (r rechargeorder.Type, exists bool) {
 // OldType returns the old "type" field's value of the RechargeOrder entity.
 // If the RechargeOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RechargeOrderMutation) OldType(ctx context.Context) (v rechargeorder.Type, err error) {
+func (m *RechargeOrderMutation) OldType(ctx context.Context) (v enums.RechargeOrderType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -17975,7 +17975,7 @@ func (m *RechargeOrderMutation) SetField(name string, value ent.Value) error {
 		m.SetUserID(v)
 		return nil
 	case rechargeorder.FieldStatus:
-		v, ok := value.(rechargeorder.Status)
+		v, ok := value.(enums.MissionStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -17996,7 +17996,7 @@ func (m *RechargeOrderMutation) SetField(name string, value ent.Value) error {
 		m.SetSocialID(v)
 		return nil
 	case rechargeorder.FieldType:
-		v, ok := value.(rechargeorder.Type)
+		v, ok := value.(enums.RechargeOrderType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -18323,8 +18323,8 @@ type UserMutation struct {
 	phone                         *string
 	password                      *string
 	avatar_url                    *string
-	status                        *user.Status
-	_type                         *user.Type
+	status                        *enums.UserStatus
+	_type                         *enums.UserType
 	platform                      *int
 	addplatform                   *int
 	hmac_key                      *string
@@ -18877,12 +18877,12 @@ func (m *UserMutation) ResetAvatarURL() {
 }
 
 // SetStatus sets the "status" field.
-func (m *UserMutation) SetStatus(u user.Status) {
-	m.status = &u
+func (m *UserMutation) SetStatus(es enums.UserStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *UserMutation) Status() (r user.Status, exists bool) {
+func (m *UserMutation) Status() (r enums.UserStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -18893,7 +18893,7 @@ func (m *UserMutation) Status() (r user.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldStatus(ctx context.Context) (v user.Status, err error) {
+func (m *UserMutation) OldStatus(ctx context.Context) (v enums.UserStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -18913,12 +18913,12 @@ func (m *UserMutation) ResetStatus() {
 }
 
 // SetType sets the "type" field.
-func (m *UserMutation) SetType(u user.Type) {
-	m._type = &u
+func (m *UserMutation) SetType(et enums.UserType) {
+	m._type = &et
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *UserMutation) GetType() (r user.Type, exists bool) {
+func (m *UserMutation) GetType() (r enums.UserType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -18929,7 +18929,7 @@ func (m *UserMutation) GetType() (r user.Type, exists bool) {
 // OldType returns the old "type" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldType(ctx context.Context) (v user.Type, err error) {
+func (m *UserMutation) OldType(ctx context.Context) (v enums.UserType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -19985,14 +19985,14 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetAvatarURL(v)
 		return nil
 	case user.FieldStatus:
-		v, ok := value.(user.Status)
+		v, ok := value.(enums.UserStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
 		return nil
 	case user.FieldType:
-		v, ok := value.(user.Type)
+		v, ok := value.(enums.UserType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

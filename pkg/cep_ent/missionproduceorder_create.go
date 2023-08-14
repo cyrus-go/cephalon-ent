@@ -141,15 +141,15 @@ func (mpoc *MissionProduceOrderCreate) SetNillableMissionProductionID(i *int64) 
 }
 
 // SetStatus sets the "status" field.
-func (mpoc *MissionProduceOrderCreate) SetStatus(m missionproduceorder.Status) *MissionProduceOrderCreate {
-	mpoc.mutation.SetStatus(m)
+func (mpoc *MissionProduceOrderCreate) SetStatus(es enums.MissionStatus) *MissionProduceOrderCreate {
+	mpoc.mutation.SetStatus(es)
 	return mpoc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpoc *MissionProduceOrderCreate) SetNillableStatus(m *missionproduceorder.Status) *MissionProduceOrderCreate {
-	if m != nil {
-		mpoc.SetStatus(*m)
+func (mpoc *MissionProduceOrderCreate) SetNillableStatus(es *enums.MissionStatus) *MissionProduceOrderCreate {
+	if es != nil {
+		mpoc.SetStatus(*es)
 	}
 	return mpoc
 }

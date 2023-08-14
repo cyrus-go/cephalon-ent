@@ -2,6 +2,7 @@ package schema
 
 import (
 	"cephalon-ent/common"
+	"cephalon-ent/pkg/enums"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -20,7 +21,7 @@ func (MissionProduction) Fields() []ent.Field {
 		field.Int64("hmac_key_pair_id").StructTag(`json:"hmac_key_pair_id"`).Comment("密钥对 ID"),
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("任务开始时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("任务完成时刻"),
-		field.Enum("status").Values("pending", "failed", "succeed").Default("pending").StructTag(`json:"result"`).Comment("任务结果"),
+		field.Enum("status").GoType(enums.MissionStatusDoing).Default(string(enums.MissionStatusDoing)).StructTag(`json:"result"`).Comment("任务结果"),
 		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("领到任务的设备 ID"),
 		field.String("result_urls").Default("").Sensitive().Comment("任务结果资源位置列表序列化"),
 		field.String("additional_result").Default("").Sensitive().Comment("额外需要返回的结果数据，格式不定"),

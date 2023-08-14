@@ -155,15 +155,15 @@ func (mtu *MissionTypeUpdate) SetNillableIsTime(b *bool) *MissionTypeUpdate {
 }
 
 // SetCategory sets the "category" field.
-func (mtu *MissionTypeUpdate) SetCategory(m missiontype.Category) *MissionTypeUpdate {
-	mtu.mutation.SetCategory(m)
+func (mtu *MissionTypeUpdate) SetCategory(ec enums.MissionCategory) *MissionTypeUpdate {
+	mtu.mutation.SetCategory(ec)
 	return mtu
 }
 
 // SetNillableCategory sets the "category" field if the given value is not nil.
-func (mtu *MissionTypeUpdate) SetNillableCategory(m *missiontype.Category) *MissionTypeUpdate {
-	if m != nil {
-		mtu.SetCategory(*m)
+func (mtu *MissionTypeUpdate) SetNillableCategory(ec *enums.MissionCategory) *MissionTypeUpdate {
+	if ec != nil {
+		mtu.SetCategory(*ec)
 	}
 	return mtu
 }
@@ -423,15 +423,15 @@ func (mtuo *MissionTypeUpdateOne) SetNillableIsTime(b *bool) *MissionTypeUpdateO
 }
 
 // SetCategory sets the "category" field.
-func (mtuo *MissionTypeUpdateOne) SetCategory(m missiontype.Category) *MissionTypeUpdateOne {
-	mtuo.mutation.SetCategory(m)
+func (mtuo *MissionTypeUpdateOne) SetCategory(ec enums.MissionCategory) *MissionTypeUpdateOne {
+	mtuo.mutation.SetCategory(ec)
 	return mtuo
 }
 
 // SetNillableCategory sets the "category" field if the given value is not nil.
-func (mtuo *MissionTypeUpdateOne) SetNillableCategory(m *missiontype.Category) *MissionTypeUpdateOne {
-	if m != nil {
-		mtuo.SetCategory(*m)
+func (mtuo *MissionTypeUpdateOne) SetNillableCategory(ec *enums.MissionCategory) *MissionTypeUpdateOne {
+	if ec != nil {
+		mtuo.SetCategory(*ec)
 	}
 	return mtuo
 }

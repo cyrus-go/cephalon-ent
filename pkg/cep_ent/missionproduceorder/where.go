@@ -387,23 +387,33 @@ func MissionProductionIDNotIn(vs ...int64) predicate.MissionProduceOrder {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.MissionProduceOrder {
-	return predicate.MissionProduceOrder(sql.FieldEQ(FieldStatus, v))
+func StatusEQ(v enums.MissionStatus) predicate.MissionProduceOrder {
+	vc := v
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.MissionProduceOrder {
-	return predicate.MissionProduceOrder(sql.FieldNEQ(FieldStatus, v))
+func StatusNEQ(v enums.MissionStatus) predicate.MissionProduceOrder {
+	vc := v
+	return predicate.MissionProduceOrder(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.MissionProduceOrder {
-	return predicate.MissionProduceOrder(sql.FieldIn(FieldStatus, vs...))
+func StatusIn(vs ...enums.MissionStatus) predicate.MissionProduceOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionProduceOrder(sql.FieldIn(FieldStatus, v...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.MissionProduceOrder {
-	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldStatus, vs...))
+func StatusNotIn(vs ...enums.MissionStatus) predicate.MissionProduceOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // CepEQ applies the EQ predicate on the "cep" field.

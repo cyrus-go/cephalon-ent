@@ -148,15 +148,15 @@ func (mtc *MissionTypeCreate) SetNillableIsTime(b *bool) *MissionTypeCreate {
 }
 
 // SetCategory sets the "category" field.
-func (mtc *MissionTypeCreate) SetCategory(m missiontype.Category) *MissionTypeCreate {
-	mtc.mutation.SetCategory(m)
+func (mtc *MissionTypeCreate) SetCategory(ec enums.MissionCategory) *MissionTypeCreate {
+	mtc.mutation.SetCategory(ec)
 	return mtc
 }
 
 // SetNillableCategory sets the "category" field if the given value is not nil.
-func (mtc *MissionTypeCreate) SetNillableCategory(m *missiontype.Category) *MissionTypeCreate {
-	if m != nil {
-		mtc.SetCategory(*m)
+func (mtc *MissionTypeCreate) SetNillableCategory(ec *enums.MissionCategory) *MissionTypeCreate {
+	if ec != nil {
+		mtc.SetCategory(*ec)
 	}
 	return mtc
 }

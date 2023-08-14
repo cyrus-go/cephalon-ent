@@ -3,6 +3,7 @@
 package bill
 
 import (
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -171,54 +172,24 @@ var (
 	DefaultID func() int64
 )
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeMissionConsume is the default value of the Type enum.
-const DefaultType = TypeMissionConsume
-
-// Type values.
-const (
-	TypeMissionConsume Type = "mission_consume"
-	TypeMissionProduce Type = "mission_produce"
-	TypeRecharge       Type = "recharge"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
+const DefaultType enums.BillType = "mission_consume"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
+func TypeValidator(_type enums.BillType) error {
 	switch _type {
-	case TypeMissionConsume, TypeMissionProduce, TypeRecharge:
+	case "recharge", "mission_consume", "mission_produce":
 		return nil
 	default:
 		return fmt.Errorf("bill: invalid enum value for type field: %q", _type)
 	}
 }
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusPending is the default value of the Status enum.
-const DefaultStatus = StatusPending
-
-// Status values.
-const (
-	StatusPending  Status = "pending"
-	StatusCanceled Status = "canceled"
-	StatusDone     Status = "done"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.BillStatus = "pending"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.BillStatus) error {
 	switch s {
-	case StatusPending, StatusCanceled, StatusDone:
+	case "pending", "canceled", "done":
 		return nil
 	default:
 		return fmt.Errorf("bill: invalid enum value for status field: %q", s)

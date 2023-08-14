@@ -154,15 +154,15 @@ func (mu *MissionUpdate) SetNillableCallBackURL(s *string) *MissionUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (mu *MissionUpdate) SetStatus(m mission.Status) *MissionUpdate {
-	mu.mutation.SetStatus(m)
+func (mu *MissionUpdate) SetStatus(es enums.MissionStatus) *MissionUpdate {
+	mu.mutation.SetStatus(es)
 	return mu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mu *MissionUpdate) SetNillableStatus(m *mission.Status) *MissionUpdate {
-	if m != nil {
-		mu.SetStatus(*m)
+func (mu *MissionUpdate) SetNillableStatus(es *enums.MissionStatus) *MissionUpdate {
+	if es != nil {
+		mu.SetStatus(*es)
 	}
 	return mu
 }
@@ -845,15 +845,15 @@ func (muo *MissionUpdateOne) SetNillableCallBackURL(s *string) *MissionUpdateOne
 }
 
 // SetStatus sets the "status" field.
-func (muo *MissionUpdateOne) SetStatus(m mission.Status) *MissionUpdateOne {
-	muo.mutation.SetStatus(m)
+func (muo *MissionUpdateOne) SetStatus(es enums.MissionStatus) *MissionUpdateOne {
+	muo.mutation.SetStatus(es)
 	return muo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (muo *MissionUpdateOne) SetNillableStatus(m *mission.Status) *MissionUpdateOne {
-	if m != nil {
-		muo.SetStatus(*m)
+func (muo *MissionUpdateOne) SetNillableStatus(es *enums.MissionStatus) *MissionUpdateOne {
+	if es != nil {
+		muo.SetStatus(*es)
 	}
 	return muo
 }

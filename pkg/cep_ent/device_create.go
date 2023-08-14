@@ -8,6 +8,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/missionproduction"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -109,29 +110,29 @@ func (dc *DeviceCreate) SetNillableUserID(i *int64) *DeviceCreate {
 }
 
 // SetStatus sets the "status" field.
-func (dc *DeviceCreate) SetStatus(d device.Status) *DeviceCreate {
-	dc.mutation.SetStatus(d)
+func (dc *DeviceCreate) SetStatus(es enums.DeviceStatus) *DeviceCreate {
+	dc.mutation.SetStatus(es)
 	return dc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableStatus(d *device.Status) *DeviceCreate {
-	if d != nil {
-		dc.SetStatus(*d)
+func (dc *DeviceCreate) SetNillableStatus(es *enums.DeviceStatus) *DeviceCreate {
+	if es != nil {
+		dc.SetStatus(*es)
 	}
 	return dc
 }
 
 // SetBindingStatus sets the "binding_status" field.
-func (dc *DeviceCreate) SetBindingStatus(ds device.BindingStatus) *DeviceCreate {
-	dc.mutation.SetBindingStatus(ds)
+func (dc *DeviceCreate) SetBindingStatus(ebs enums.DeviceBindingStatus) *DeviceCreate {
+	dc.mutation.SetBindingStatus(ebs)
 	return dc
 }
 
 // SetNillableBindingStatus sets the "binding_status" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableBindingStatus(ds *device.BindingStatus) *DeviceCreate {
-	if ds != nil {
-		dc.SetBindingStatus(*ds)
+func (dc *DeviceCreate) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus) *DeviceCreate {
+	if ebs != nil {
+		dc.SetBindingStatus(*ebs)
 	}
 	return dc
 }

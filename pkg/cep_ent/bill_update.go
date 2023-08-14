@@ -11,6 +11,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/wallet"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -97,15 +98,15 @@ func (bu *BillUpdate) SetNillableDeletedAt(t *time.Time) *BillUpdate {
 }
 
 // SetType sets the "type" field.
-func (bu *BillUpdate) SetType(b bill.Type) *BillUpdate {
-	bu.mutation.SetType(b)
+func (bu *BillUpdate) SetType(et enums.BillType) *BillUpdate {
+	bu.mutation.SetType(et)
 	return bu
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (bu *BillUpdate) SetNillableType(b *bill.Type) *BillUpdate {
-	if b != nil {
-		bu.SetType(*b)
+func (bu *BillUpdate) SetNillableType(et *enums.BillType) *BillUpdate {
+	if et != nil {
+		bu.SetType(*et)
 	}
 	return bu
 }
@@ -208,15 +209,15 @@ func (bu *BillUpdate) ClearReasonID() *BillUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (bu *BillUpdate) SetStatus(b bill.Status) *BillUpdate {
-	bu.mutation.SetStatus(b)
+func (bu *BillUpdate) SetStatus(es enums.BillStatus) *BillUpdate {
+	bu.mutation.SetStatus(es)
 	return bu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (bu *BillUpdate) SetNillableStatus(b *bill.Status) *BillUpdate {
-	if b != nil {
-		bu.SetStatus(*b)
+func (bu *BillUpdate) SetNillableStatus(es *enums.BillStatus) *BillUpdate {
+	if es != nil {
+		bu.SetStatus(*es)
 	}
 	return bu
 }
@@ -767,15 +768,15 @@ func (buo *BillUpdateOne) SetNillableDeletedAt(t *time.Time) *BillUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (buo *BillUpdateOne) SetType(b bill.Type) *BillUpdateOne {
-	buo.mutation.SetType(b)
+func (buo *BillUpdateOne) SetType(et enums.BillType) *BillUpdateOne {
+	buo.mutation.SetType(et)
 	return buo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableType(b *bill.Type) *BillUpdateOne {
-	if b != nil {
-		buo.SetType(*b)
+func (buo *BillUpdateOne) SetNillableType(et *enums.BillType) *BillUpdateOne {
+	if et != nil {
+		buo.SetType(*et)
 	}
 	return buo
 }
@@ -878,15 +879,15 @@ func (buo *BillUpdateOne) ClearReasonID() *BillUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (buo *BillUpdateOne) SetStatus(b bill.Status) *BillUpdateOne {
-	buo.mutation.SetStatus(b)
+func (buo *BillUpdateOne) SetStatus(es enums.BillStatus) *BillUpdateOne {
+	buo.mutation.SetStatus(es)
 	return buo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableStatus(b *bill.Status) *BillUpdateOne {
-	if b != nil {
-		buo.SetStatus(*b)
+func (buo *BillUpdateOne) SetNillableStatus(es *enums.BillStatus) *BillUpdateOne {
+	if es != nil {
+		buo.SetStatus(*es)
 	}
 	return buo
 }

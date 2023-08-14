@@ -6,6 +6,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -32,13 +33,13 @@ type RechargeOrder struct {
 	// 充值的用户 id
 	UserID int64 `json:"user_id"`
 	// 充值订单的状态，比如微信发起支付后可能没完成支付
-	Status rechargeorder.Status `json:"status"`
+	Status enums.MissionStatus `json:"status"`
 	// 充值多少 cep
 	Cep int64 `json:"cep"`
 	// 关联充值来源的身份源 id
 	SocialID int64 `json:"social_id"`
 	// 充值订单的类型
-	Type rechargeorder.Type `json:"type"`
+	Type enums.RechargeOrderType `json:"type"`
 	// 充值订单的序列号
 	SerialNumber string `json:"serial_number"`
 	// 第三方平台的返回，给到前端才能发起支付
@@ -173,7 +174,7 @@ func (ro *RechargeOrder) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				ro.Status = rechargeorder.Status(value.String)
+				ro.Status = enums.MissionStatus(value.String)
 			}
 		case rechargeorder.FieldCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -191,7 +192,7 @@ func (ro *RechargeOrder) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				ro.Type = rechargeorder.Type(value.String)
+				ro.Type = enums.RechargeOrderType(value.String)
 			}
 		case rechargeorder.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {

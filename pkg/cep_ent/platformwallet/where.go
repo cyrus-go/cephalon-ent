@@ -4,6 +4,7 @@ package platformwallet
 
 import (
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/enums"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -291,23 +292,33 @@ func DeletedAtLTE(v time.Time) predicate.PlatformWallet {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.PlatformWallet {
-	return predicate.PlatformWallet(sql.FieldEQ(FieldType, v))
+func TypeEQ(v enums.PlatformWalletType) predicate.PlatformWallet {
+	vc := v
+	return predicate.PlatformWallet(sql.FieldEQ(FieldType, vc))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.PlatformWallet {
-	return predicate.PlatformWallet(sql.FieldNEQ(FieldType, v))
+func TypeNEQ(v enums.PlatformWalletType) predicate.PlatformWallet {
+	vc := v
+	return predicate.PlatformWallet(sql.FieldNEQ(FieldType, vc))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.PlatformWallet {
-	return predicate.PlatformWallet(sql.FieldIn(FieldType, vs...))
+func TypeIn(vs ...enums.PlatformWalletType) predicate.PlatformWallet {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PlatformWallet(sql.FieldIn(FieldType, v...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.PlatformWallet {
-	return predicate.PlatformWallet(sql.FieldNotIn(FieldType, vs...))
+func TypeNotIn(vs ...enums.PlatformWalletType) predicate.PlatformWallet {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.PlatformWallet(sql.FieldNotIn(FieldType, v...))
 }
 
 // SumCepEQ applies the EQ predicate on the "sum_cep" field.

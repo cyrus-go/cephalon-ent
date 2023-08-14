@@ -3,6 +3,7 @@
 package device
 
 import (
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -113,56 +114,24 @@ var (
 	DefaultID func() int64
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusOnline is the default value of the Status enum.
-const DefaultStatus = StatusOnline
-
-// Status values.
-const (
-	StatusOnline  Status = "online"
-	StatusBusy    Status = "busy"
-	StatusFree    Status = "free"
-	StatusOffline Status = "offline"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.DeviceStatus = "online"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.DeviceStatus) error {
 	switch s {
-	case StatusOnline, StatusBusy, StatusFree, StatusOffline:
+	case "online", "offline", "busy", "free":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for status field: %q", s)
 	}
 }
 
-// BindingStatus defines the type for the "binding_status" enum field.
-type BindingStatus string
-
-// BindingStatusInit is the default value of the BindingStatus enum.
-const DefaultBindingStatus = BindingStatusInit
-
-// BindingStatus values.
-const (
-	BindingStatusInit      BindingStatus = "init"
-	BindingStatusBound     BindingStatus = "bound"
-	BindingStatusUnbound   BindingStatus = "unbound"
-	BindingStatusRebinding BindingStatus = "rebinding"
-)
-
-func (bs BindingStatus) String() string {
-	return string(bs)
-}
+const DefaultBindingStatus enums.DeviceBindingStatus = "init"
 
 // BindingStatusValidator is a validator for the "binding_status" field enum values. It is called by the builders before save.
-func BindingStatusValidator(bs BindingStatus) error {
+func BindingStatusValidator(bs enums.DeviceBindingStatus) error {
 	switch bs {
-	case BindingStatusInit, BindingStatusBound, BindingStatusUnbound, BindingStatusRebinding:
+	case "init", "bound", "unbound", "rebinding":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for binding_status field: %q", bs)

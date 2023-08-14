@@ -9,6 +9,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/predicate"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -109,29 +110,29 @@ func (du *DeviceUpdate) SetNillableUserID(i *int64) *DeviceUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (du *DeviceUpdate) SetStatus(d device.Status) *DeviceUpdate {
-	du.mutation.SetStatus(d)
+func (du *DeviceUpdate) SetStatus(es enums.DeviceStatus) *DeviceUpdate {
+	du.mutation.SetStatus(es)
 	return du
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableStatus(d *device.Status) *DeviceUpdate {
-	if d != nil {
-		du.SetStatus(*d)
+func (du *DeviceUpdate) SetNillableStatus(es *enums.DeviceStatus) *DeviceUpdate {
+	if es != nil {
+		du.SetStatus(*es)
 	}
 	return du
 }
 
 // SetBindingStatus sets the "binding_status" field.
-func (du *DeviceUpdate) SetBindingStatus(ds device.BindingStatus) *DeviceUpdate {
-	du.mutation.SetBindingStatus(ds)
+func (du *DeviceUpdate) SetBindingStatus(ebs enums.DeviceBindingStatus) *DeviceUpdate {
+	du.mutation.SetBindingStatus(ebs)
 	return du
 }
 
 // SetNillableBindingStatus sets the "binding_status" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableBindingStatus(ds *device.BindingStatus) *DeviceUpdate {
-	if ds != nil {
-		du.SetBindingStatus(*ds)
+func (du *DeviceUpdate) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus) *DeviceUpdate {
+	if ebs != nil {
+		du.SetBindingStatus(*ebs)
 	}
 	return du
 }
@@ -611,29 +612,29 @@ func (duo *DeviceUpdateOne) SetNillableUserID(i *int64) *DeviceUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (duo *DeviceUpdateOne) SetStatus(d device.Status) *DeviceUpdateOne {
-	duo.mutation.SetStatus(d)
+func (duo *DeviceUpdateOne) SetStatus(es enums.DeviceStatus) *DeviceUpdateOne {
+	duo.mutation.SetStatus(es)
 	return duo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableStatus(d *device.Status) *DeviceUpdateOne {
-	if d != nil {
-		duo.SetStatus(*d)
+func (duo *DeviceUpdateOne) SetNillableStatus(es *enums.DeviceStatus) *DeviceUpdateOne {
+	if es != nil {
+		duo.SetStatus(*es)
 	}
 	return duo
 }
 
 // SetBindingStatus sets the "binding_status" field.
-func (duo *DeviceUpdateOne) SetBindingStatus(ds device.BindingStatus) *DeviceUpdateOne {
-	duo.mutation.SetBindingStatus(ds)
+func (duo *DeviceUpdateOne) SetBindingStatus(ebs enums.DeviceBindingStatus) *DeviceUpdateOne {
+	duo.mutation.SetBindingStatus(ebs)
 	return duo
 }
 
 // SetNillableBindingStatus sets the "binding_status" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableBindingStatus(ds *device.BindingStatus) *DeviceUpdateOne {
-	if ds != nil {
-		duo.SetBindingStatus(*ds)
+func (duo *DeviceUpdateOne) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus) *DeviceUpdateOne {
+	if ebs != nil {
+		duo.SetBindingStatus(*ebs)
 	}
 	return duo
 }

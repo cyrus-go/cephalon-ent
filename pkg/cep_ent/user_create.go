@@ -17,6 +17,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/userdevice"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
 	"cephalon-ent/pkg/cep_ent/wallet"
+	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -174,29 +175,29 @@ func (uc *UserCreate) SetNillableAvatarURL(s *string) *UserCreate {
 }
 
 // SetStatus sets the "status" field.
-func (uc *UserCreate) SetStatus(u user.Status) *UserCreate {
-	uc.mutation.SetStatus(u)
+func (uc *UserCreate) SetStatus(es enums.UserStatus) *UserCreate {
+	uc.mutation.SetStatus(es)
 	return uc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (uc *UserCreate) SetNillableStatus(u *user.Status) *UserCreate {
-	if u != nil {
-		uc.SetStatus(*u)
+func (uc *UserCreate) SetNillableStatus(es *enums.UserStatus) *UserCreate {
+	if es != nil {
+		uc.SetStatus(*es)
 	}
 	return uc
 }
 
 // SetType sets the "type" field.
-func (uc *UserCreate) SetType(u user.Type) *UserCreate {
-	uc.mutation.SetType(u)
+func (uc *UserCreate) SetType(et enums.UserType) *UserCreate {
+	uc.mutation.SetType(et)
 	return uc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (uc *UserCreate) SetNillableType(u *user.Type) *UserCreate {
-	if u != nil {
-		uc.SetType(*u)
+func (uc *UserCreate) SetNillableType(et *enums.UserType) *UserCreate {
+	if et != nil {
+		uc.SetType(*et)
 	}
 	return uc
 }

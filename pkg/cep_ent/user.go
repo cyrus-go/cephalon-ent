@@ -6,6 +6,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/wallet"
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -40,9 +41,9 @@ type User struct {
 	// 头像路径
 	AvatarURL string `json:"avatar_url"`
 	// 用户状态
-	Status user.Status `json:"status"`
+	Status enums.UserStatus `json:"status"`
 	// 用户类型
-	Type user.Type `json:"type"`
+	Type enums.UserType `json:"type"`
 	// 用户可以在什么平台登录，二进制开关数据
 	Platform int `json:"platform"`
 	// 用户使用任务相关功能的密钥对的键，唯一
@@ -309,13 +310,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				u.Status = user.Status(value.String)
+				u.Status = enums.UserStatus(value.String)
 			}
 		case user.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				u.Type = user.Type(value.String)
+				u.Type = enums.UserType(value.String)
 			}
 		case user.FieldPlatform:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

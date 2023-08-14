@@ -109,27 +109,12 @@ func GpuValidator(gp enums.GPU) error {
 	}
 }
 
-// Category defines the type for the "category" enum field.
-type Category string
-
-// CategorySD is the default value of the Category enum.
-const DefaultCategory = CategorySD
-
-// Category values.
-const (
-	CategorySD      Category = "SD"
-	CategoryJupyter Category = "Jupyter"
-	CategoryWeTTY   Category = "WeTTY"
-)
-
-func (c Category) String() string {
-	return string(c)
-}
+const DefaultCategory enums.MissionCategory = "SD"
 
 // CategoryValidator is a validator for the "category" field enum values. It is called by the builders before save.
-func CategoryValidator(c Category) error {
+func CategoryValidator(c enums.MissionCategory) error {
 	switch c {
-	case CategorySD, CategoryJupyter, CategoryWeTTY:
+	case "SD", "Jupyter", "WeTTy":
 		return nil
 	default:
 		return fmt.Errorf("missiontype: invalid enum value for category field: %q", c)

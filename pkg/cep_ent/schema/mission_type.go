@@ -19,7 +19,7 @@ func (MissionType) Fields() []ent.Field {
 		field.Enum("gpu").GoType(enums.GPU3070).Default(string(enums.GPU3070)).StructTag(`json:"gpu"`).Comment("显卡型号"),
 		field.Int64("cep").Default(0).StructTag(`json:"cep"`).Comment("单价消耗 cep"),
 		field.Bool("is_time").Default(false).StructTag(`json:"is_time"`).Comment("是否计时任务"),
-		field.Enum("category").Values("SD", "Jupyter", "WeTTY").Default("SD").StructTag(`json:"category"`).Comment("任务种类，SD，Jupyter 等"),
+		field.Enum("category").GoType(enums.MissionCategorySD).Default(string(enums.MissionCategorySD)).StructTag(`json:"category"`).Comment("任务种类，SD，Jupyter 等"),
 	}
 }
 

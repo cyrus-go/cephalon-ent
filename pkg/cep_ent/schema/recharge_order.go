@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"cephalon-ent/pkg/enums"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -16,10 +17,10 @@ type RechargeOrder struct {
 func (RechargeOrder) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("充值的用户 id"),
-		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("充值订单的状态，比如微信发起支付后可能没完成支付"),
+		field.Enum("status").GoType(enums.MissionStatusDoing).Default(string(enums.MissionStatusDoing)).StructTag(`json:"status"`).Comment("充值订单的状态，比如微信发起支付后可能没完成支付"),
 		field.Int64("cep").Default(0).Positive().StructTag(`json:"cep"`).Comment("充值多少 cep"),
 		field.Int64("social_id").Default(0).Optional().StructTag(`json:"social_id"`).Comment("关联充值来源的身份源 id"),
-		field.Enum("type").Values("vx", "alipay", "manual").Default("vx").StructTag(`json:"type"`).Comment("充值订单的类型"),
+		field.Enum("type").GoType(enums.RechargeOrderTypeManual).Default(string(enums.RechargeOrderTypeManual)).StructTag(`json:"type"`).Comment("充值订单的类型"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("充值订单的序列号"),
 		field.String("third_api_resp").Default("").StructTag(`json:"third_api_resp"`).Comment("第三方平台的返回，给到前端才能发起支付"),
 		field.Int64("from_user_id").Default(0).StructTag(`json:"from_user_id"`).Comment("由谁发起的充值"),

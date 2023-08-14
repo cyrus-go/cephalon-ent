@@ -177,29 +177,12 @@ var (
 	DefaultID func() int64
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusWaiting is the default value of the Status enum.
-const DefaultStatus = StatusWaiting
-
-// Status values.
-const (
-	StatusWaiting  Status = "waiting"
-	StatusCanceled Status = "canceled"
-	StatusDoing    Status = "doing"
-	StatusSucceed  Status = "succeed"
-	StatusFailed   Status = "failed"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.MissionStatus = "waiting"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.MissionStatus) error {
 	switch s {
-	case StatusWaiting, StatusCanceled, StatusDoing, StatusSucceed, StatusFailed:
+	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for status field: %q", s)
@@ -218,27 +201,12 @@ func TypeValidator(_type enums.MissionType) error {
 	}
 }
 
-// CallWay defines the type for the "call_way" enum field.
-type CallWay string
-
-// CallWayAPI is the default value of the CallWay enum.
-const DefaultCallWay = CallWayAPI
-
-// CallWay values.
-const (
-	CallWayAPI         CallWay = "api"
-	CallWayYuanHui     CallWay = "yuan_hui"
-	CallWayDevPlatform CallWay = "dev_platform"
-)
-
-func (cw CallWay) String() string {
-	return string(cw)
-}
+const DefaultCallWay enums.MissionCallWay = "api"
 
 // CallWayValidator is a validator for the "call_way" field enum values. It is called by the builders before save.
-func CallWayValidator(cw CallWay) error {
+func CallWayValidator(cw enums.MissionCallWay) error {
 	switch cw {
-	case CallWayAPI, CallWayYuanHui, CallWayDevPlatform:
+	case "api", "yuan_hui", "dev_platform":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for call_way field: %q", cw)

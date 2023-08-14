@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"cephalon-ent/pkg/enums"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -16,7 +17,7 @@ type PlatformWallet struct {
 // Fields of the PlatformWallet.
 func (PlatformWallet) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("type").Values("profit").Default("profit").StructTag(`json:"type"`),
+		field.Enum("type").GoType(enums.PlatformWalletTypeProfit).Default(string(enums.PlatformWalletTypeProfit)).StructTag(`json:"type"`),
 		field.Int64("sum_cep").Default(0).StructTag(`json:"sum_total_cep"`).Comment("累计总余额"),
 		field.Int64("cep").Default(0).StructTag(`json:"total_cep"`).Comment("剩余总余额"),
 	}

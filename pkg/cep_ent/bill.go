@@ -10,6 +10,7 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/wallet"
+	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -34,7 +35,7 @@ type Bill struct {
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at"`
 	// 次级账单流水的类型，充值或者任务消耗或任务收益
-	Type bill.Type `json:"type"`
+	Type enums.BillType `json:"type"`
 	// 是否增加余额，布尔值默认为否
 	IsAdd bool `json:"is_add"`
 	// 外键用户 id
@@ -48,7 +49,7 @@ type Bill struct {
 	// 关联消耗产生的来源外键 id，比如 type 为 mission 时关联任务订单
 	ReasonID int64 `json:"reason_id"`
 	// 消耗流水一开始不能直接生效，确定关联的消耗时间成功后才可以扣费
-	Status bill.Status `json:"status"`
+	Status enums.BillStatus `json:"status"`
 	// 营销流水 id
 	MarketBillID int64 `json:"market_bill_id"`
 	// 平台分润钱包 id
@@ -226,7 +227,7 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				b.Type = bill.Type(value.String)
+				b.Type = enums.BillType(value.String)
 			}
 		case bill.FieldIsAdd:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -268,7 +269,7 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				b.Status = bill.Status(value.String)
+				b.Status = enums.BillStatus(value.String)
 			}
 		case bill.FieldMarketBillID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
