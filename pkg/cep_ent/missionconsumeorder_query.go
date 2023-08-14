@@ -32,7 +32,6 @@ type MissionConsumeOrderQuery struct {
 	withMission              *MissionQuery
 	withMissionProduceOrders *MissionProduceOrderQuery
 	withMissionBatch         *MissionBatchQuery
-	withFKs                  bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -514,7 +513,6 @@ func (mcoq *MissionConsumeOrderQuery) prepareQuery(ctx context.Context) error {
 func (mcoq *MissionConsumeOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*MissionConsumeOrder, error) {
 	var (
 		nodes       = []*MissionConsumeOrder{}
-		withFKs     = mcoq.withFKs
 		_spec       = mcoq.querySpec()
 		loadedTypes = [5]bool{
 			mcoq.withUser != nil,
@@ -524,12 +522,6 @@ func (mcoq *MissionConsumeOrderQuery) sqlAll(ctx context.Context, hooks ...query
 			mcoq.withMissionBatch != nil,
 		}
 	)
-	if mcoq.withMission != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, missionconsumeorder.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*MissionConsumeOrder).scanValues(nil, columns)
 	}
@@ -648,10 +640,7 @@ func (mcoq *MissionConsumeOrderQuery) loadMission(ctx context.Context, query *Mi
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*MissionConsumeOrder)
 	for i := range nodes {
-		if nodes[i].mission_mission_consume_order == nil {
-			continue
-		}
-		fk := *nodes[i].mission_mission_consume_order
+		fk := nodes[i].MissionID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -668,7 +657,7 @@ func (mcoq *MissionConsumeOrderQuery) loadMission(ctx context.Context, query *Mi
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "mission_mission_consume_order" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "mission_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -763,6 +752,9 @@ func (mcoq *MissionConsumeOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if mcoq.withUser != nil {
 			_spec.Node.AddColumnOnce(missionconsumeorder.FieldUserID)
+		}
+		if mcoq.withMission != nil {
+			_spec.Node.AddColumnOnce(missionconsumeorder.FieldMissionID)
 		}
 		if mcoq.withMissionBatch != nil {
 			_spec.Node.AddColumnOnce(missionconsumeorder.FieldMissionBatchID)

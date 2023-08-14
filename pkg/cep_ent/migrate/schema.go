@@ -139,8 +139,7 @@ var (
 		{Name: "key", Type: field.TypeString, Comment: "密钥对的 key 值，用于检索密钥", Default: ""},
 		{Name: "secret", Type: field.TypeString, Comment: "加密密钥", Default: ""},
 		{Name: "caller", Type: field.TypeString, Comment: "请求方", Default: ""},
-		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 ID", Default: 0},
-		{Name: "user_hmac_key_pair", Type: field.TypeInt64, Unique: true},
+		{Name: "user_id", Type: field.TypeInt64, Unique: true, Comment: "外键用户 ID", Default: 0},
 	}
 	// HmacKeyPairsTable holds the schema information for the "hmac_key_pairs" table.
 	HmacKeyPairsTable = &schema.Table{
@@ -151,7 +150,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "hmac_key_pairs_users_hmac_key_pair",
-				Columns:    []*schema.Column{HmacKeyPairsColumns[10]},
+				Columns:    []*schema.Column{HmacKeyPairsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -269,7 +268,6 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "mission_id", Type: field.TypeInt64, Comment: "外键任务 id，关联任务", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "waiting"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "发布任务需消耗的 cep 量", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time"}, Default: "txt2img"},
@@ -279,7 +277,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "任务开始执行时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务结束执行时刻"},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号，用于方便检索", Default: ""},
-		{Name: "mission_mission_consume_order", Type: field.TypeInt64, Unique: true},
+		{Name: "mission_id", Type: field.TypeInt64, Unique: true, Comment: "外键任务 id，关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键任务批次 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键关联用户 id", Default: 0},
 	}
@@ -292,19 +290,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "mission_consume_orders_missions_mission_consume_order",
-				Columns:    []*schema.Column{MissionConsumeOrdersColumns[16]},
+				Columns:    []*schema.Column{MissionConsumeOrdersColumns[15]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_consume_orders_mission_batches_mission_consume_orders",
-				Columns:    []*schema.Column{MissionConsumeOrdersColumns[17]},
+				Columns:    []*schema.Column{MissionConsumeOrdersColumns[16]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_consume_orders_users_mission_consume_orders",
-				Columns:    []*schema.Column{MissionConsumeOrdersColumns[18]},
+				Columns:    []*schema.Column{MissionConsumeOrdersColumns[17]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

@@ -112,7 +112,6 @@ func (mcou *MissionConsumeOrderUpdate) SetNillableUserID(i *int64) *MissionConsu
 
 // SetMissionID sets the "mission_id" field.
 func (mcou *MissionConsumeOrderUpdate) SetMissionID(i int64) *MissionConsumeOrderUpdate {
-	mcou.mutation.ResetMissionID()
 	mcou.mutation.SetMissionID(i)
 	return mcou
 }
@@ -122,12 +121,6 @@ func (mcou *MissionConsumeOrderUpdate) SetNillableMissionID(i *int64) *MissionCo
 	if i != nil {
 		mcou.SetMissionID(*i)
 	}
-	return mcou
-}
-
-// AddMissionID adds i to the "mission_id" field.
-func (mcou *MissionConsumeOrderUpdate) AddMissionID(i int64) *MissionConsumeOrderUpdate {
-	mcou.mutation.AddMissionID(i)
 	return mcou
 }
 
@@ -308,12 +301,6 @@ func (mcou *MissionConsumeOrderUpdate) AddBills(b ...*Bill) *MissionConsumeOrder
 		ids[i] = b[i].ID
 	}
 	return mcou.AddBillIDs(ids...)
-}
-
-// SetMissionID sets the "mission" edge to the Mission entity by ID.
-func (mcou *MissionConsumeOrderUpdate) SetMissionID(id int64) *MissionConsumeOrderUpdate {
-	mcou.mutation.SetMissionID(id)
-	return mcou
 }
 
 // SetMission sets the "mission" edge to the Mission entity.
@@ -500,12 +487,6 @@ func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if value, ok := mcou.mutation.DeletedAt(); ok {
 		_spec.SetField(missionconsumeorder.FieldDeletedAt, field.TypeTime, value)
-	}
-	if value, ok := mcou.mutation.MissionID(); ok {
-		_spec.SetField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
-	}
-	if value, ok := mcou.mutation.AddedMissionID(); ok {
-		_spec.AddField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
 	}
 	if value, ok := mcou.mutation.Status(); ok {
 		_spec.SetField(missionconsumeorder.FieldStatus, field.TypeEnum, value)
@@ -818,7 +799,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) SetNillableUserID(i *int64) *MissionC
 
 // SetMissionID sets the "mission_id" field.
 func (mcouo *MissionConsumeOrderUpdateOne) SetMissionID(i int64) *MissionConsumeOrderUpdateOne {
-	mcouo.mutation.ResetMissionID()
 	mcouo.mutation.SetMissionID(i)
 	return mcouo
 }
@@ -828,12 +808,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) SetNillableMissionID(i *int64) *Missi
 	if i != nil {
 		mcouo.SetMissionID(*i)
 	}
-	return mcouo
-}
-
-// AddMissionID adds i to the "mission_id" field.
-func (mcouo *MissionConsumeOrderUpdateOne) AddMissionID(i int64) *MissionConsumeOrderUpdateOne {
-	mcouo.mutation.AddMissionID(i)
 	return mcouo
 }
 
@@ -1014,12 +988,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) AddBills(b ...*Bill) *MissionConsumeO
 		ids[i] = b[i].ID
 	}
 	return mcouo.AddBillIDs(ids...)
-}
-
-// SetMissionID sets the "mission" edge to the Mission entity by ID.
-func (mcouo *MissionConsumeOrderUpdateOne) SetMissionID(id int64) *MissionConsumeOrderUpdateOne {
-	mcouo.mutation.SetMissionID(id)
-	return mcouo
 }
 
 // SetMission sets the "mission" edge to the Mission entity.
@@ -1236,12 +1204,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := mcouo.mutation.DeletedAt(); ok {
 		_spec.SetField(missionconsumeorder.FieldDeletedAt, field.TypeTime, value)
-	}
-	if value, ok := mcouo.mutation.MissionID(); ok {
-		_spec.SetField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
-	}
-	if value, ok := mcouo.mutation.AddedMissionID(); ok {
-		_spec.AddField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
 	}
 	if value, ok := mcouo.mutation.Status(); ok {
 		_spec.SetField(missionconsumeorder.FieldStatus, field.TypeEnum, value)

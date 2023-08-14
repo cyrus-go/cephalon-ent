@@ -38,9 +38,8 @@ type HmacKeyPair struct {
 	UserID int64 `json:"user_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HmacKeyPairQuery when eager-loading is set.
-	Edges              HmacKeyPairEdges `json:"edges"`
-	user_hmac_key_pair *int64
-	selectValues       sql.SelectValues
+	Edges        HmacKeyPairEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // HmacKeyPairEdges holds the relations/edges for other nodes in the graph.
@@ -98,8 +97,6 @@ func (*HmacKeyPair) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case hmackeypair.FieldCreatedAt, hmackeypair.FieldUpdatedAt, hmackeypair.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case hmackeypair.ForeignKeys[0]: // user_hmac_key_pair
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -174,13 +171,6 @@ func (hkp *HmacKeyPair) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				hkp.UserID = value.Int64
-			}
-		case hmackeypair.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_hmac_key_pair", value)
-			} else if value.Valid {
-				hkp.user_hmac_key_pair = new(int64)
-				*hkp.user_hmac_key_pair = int64(value.Int64)
 			}
 		default:
 			hkp.selectValues.Set(columns[i], values[i])

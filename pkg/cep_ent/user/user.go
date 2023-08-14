@@ -87,7 +87,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "hmackeypair" package.
 	HmacKeyPairInverseTable = "hmac_key_pairs"
 	// HmacKeyPairColumn is the table column denoting the hmac_key_pair relation/edge.
-	HmacKeyPairColumn = "user_hmac_key_pair"
+	HmacKeyPairColumn = "user_id"
 	// CreatedMissionsTable is the table that holds the created_missions relation/edge.
 	CreatedMissionsTable = "missions"
 	// CreatedMissionsInverseTable is the table name for the Mission entity.

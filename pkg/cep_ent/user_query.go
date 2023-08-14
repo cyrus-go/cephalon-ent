@@ -969,7 +969,9 @@ func (uq *UserQuery) loadHmacKeyPair(ctx context.Context, query *HmacKeyPairQuer
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(hmackeypair.FieldUserID)
+	}
 	query.Where(predicate.HmacKeyPair(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.HmacKeyPairColumn), fks...))
 	}))
@@ -978,13 +980,10 @@ func (uq *UserQuery) loadHmacKeyPair(ctx context.Context, query *HmacKeyPairQuer
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_hmac_key_pair
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_hmac_key_pair" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.UserID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_hmac_key_pair" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -1147,7 +1146,6 @@ func (uq *UserQuery) loadMissionConsumeOrders(ctx context.Context, query *Missio
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(missionconsumeorder.FieldUserID)
 	}

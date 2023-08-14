@@ -75,7 +75,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "missionconsumeorder" package.
 	MissionConsumeOrderInverseTable = "mission_consume_orders"
 	// MissionConsumeOrderColumn is the table column denoting the mission_consume_order relation/edge.
-	MissionConsumeOrderColumn = "mission_mission_consume_order"
+	MissionConsumeOrderColumn = "mission_id"
 	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
 	MissionProduceOrdersTable = "mission_produce_orders"
 	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.

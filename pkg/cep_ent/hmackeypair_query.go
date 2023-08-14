@@ -28,7 +28,6 @@ type HmacKeyPairQuery struct {
 	withMissionProductions *MissionProductionQuery
 	withCreatedMissions    *MissionQuery
 	withUser               *UserQuery
-	withFKs                bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -442,7 +441,6 @@ func (hkpq *HmacKeyPairQuery) prepareQuery(ctx context.Context) error {
 func (hkpq *HmacKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*HmacKeyPair, error) {
 	var (
 		nodes       = []*HmacKeyPair{}
-		withFKs     = hkpq.withFKs
 		_spec       = hkpq.querySpec()
 		loadedTypes = [3]bool{
 			hkpq.withMissionProductions != nil,
@@ -450,12 +448,6 @@ func (hkpq *HmacKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 			hkpq.withUser != nil,
 		}
 	)
-	if hkpq.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, hmackeypair.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*HmacKeyPair).scanValues(nil, columns)
 	}
@@ -563,10 +555,7 @@ func (hkpq *HmacKeyPairQuery) loadUser(ctx context.Context, query *UserQuery, no
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*HmacKeyPair)
 	for i := range nodes {
-		if nodes[i].user_hmac_key_pair == nil {
-			continue
-		}
-		fk := *nodes[i].user_hmac_key_pair
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -583,7 +572,7 @@ func (hkpq *HmacKeyPairQuery) loadUser(ctx context.Context, query *UserQuery, no
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_hmac_key_pair" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -616,6 +605,9 @@ func (hkpq *HmacKeyPairQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != hmackeypair.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if hkpq.withUser != nil {
+			_spec.Node.AddColumnOnce(hmackeypair.FieldUserID)
 		}
 	}
 	if ps := hkpq.predicates; len(ps) > 0 {

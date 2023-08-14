@@ -82,7 +82,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "mission" package.
 	MissionInverseTable = "missions"
 	// MissionColumn is the table column denoting the mission relation/edge.
-	MissionColumn = "mission_mission_consume_order"
+	MissionColumn = "mission_id"
 	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
 	MissionProduceOrdersTable = "mission_produce_orders"
 	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.
@@ -121,21 +121,10 @@ var Columns = []string{
 	FieldMissionBatchNumber,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "mission_consume_orders"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"mission_mission_consume_order",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

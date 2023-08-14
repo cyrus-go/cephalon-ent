@@ -298,12 +298,6 @@ func (mcoc *MissionConsumeOrderCreate) AddBills(b ...*Bill) *MissionConsumeOrder
 	return mcoc.AddBillIDs(ids...)
 }
 
-// SetMissionID sets the "mission" edge to the Mission entity by ID.
-func (mcoc *MissionConsumeOrderCreate) SetMissionID(id int64) *MissionConsumeOrderCreate {
-	mcoc.mutation.SetMissionID(id)
-	return mcoc
-}
-
 // SetMission sets the "mission" edge to the Mission entity.
 func (mcoc *MissionConsumeOrderCreate) SetMission(m *Mission) *MissionConsumeOrderCreate {
 	return mcoc.SetMissionID(m.ID)
@@ -561,10 +555,6 @@ func (mcoc *MissionConsumeOrderCreate) createSpec() (*MissionConsumeOrder, *sqlg
 		_spec.SetField(missionconsumeorder.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
-	if value, ok := mcoc.mutation.MissionID(); ok {
-		_spec.SetField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
-		_node.MissionID = value
-	}
 	if value, ok := mcoc.mutation.Status(); ok {
 		_spec.SetField(missionconsumeorder.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
@@ -648,7 +638,7 @@ func (mcoc *MissionConsumeOrderCreate) createSpec() (*MissionConsumeOrder, *sqlg
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.mission_mission_consume_order = &nodes[0]
+		_node.MissionID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mcoc.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {

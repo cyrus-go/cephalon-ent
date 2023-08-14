@@ -193,12 +193,6 @@ func (hkpc *HmacKeyPairCreate) AddCreatedMissions(m ...*Mission) *HmacKeyPairCre
 	return hkpc.AddCreatedMissionIDs(ids...)
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (hkpc *HmacKeyPairCreate) SetUserID(id int64) *HmacKeyPairCreate {
-	hkpc.mutation.SetUserID(id)
-	return hkpc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (hkpc *HmacKeyPairCreate) SetUser(u *User) *HmacKeyPairCreate {
 	return hkpc.SetUserID(u.ID)
@@ -377,10 +371,6 @@ func (hkpc *HmacKeyPairCreate) createSpec() (*HmacKeyPair, *sqlgraph.CreateSpec)
 		_spec.SetField(hmackeypair.FieldCaller, field.TypeString, value)
 		_node.Caller = value
 	}
-	if value, ok := hkpc.mutation.UserID(); ok {
-		_spec.SetField(hmackeypair.FieldUserID, field.TypeInt64, value)
-		_node.UserID = value
-	}
 	if nodes := hkpc.mutation.MissionProductionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -427,7 +417,7 @@ func (hkpc *HmacKeyPairCreate) createSpec() (*HmacKeyPair, *sqlgraph.CreateSpec)
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_hmac_key_pair = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

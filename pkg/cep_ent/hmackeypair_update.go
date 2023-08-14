@@ -137,7 +137,6 @@ func (hkpu *HmacKeyPairUpdate) SetNillableCaller(s *string) *HmacKeyPairUpdate {
 
 // SetUserID sets the "user_id" field.
 func (hkpu *HmacKeyPairUpdate) SetUserID(i int64) *HmacKeyPairUpdate {
-	hkpu.mutation.ResetUserID()
 	hkpu.mutation.SetUserID(i)
 	return hkpu
 }
@@ -147,12 +146,6 @@ func (hkpu *HmacKeyPairUpdate) SetNillableUserID(i *int64) *HmacKeyPairUpdate {
 	if i != nil {
 		hkpu.SetUserID(*i)
 	}
-	return hkpu
-}
-
-// AddUserID adds i to the "user_id" field.
-func (hkpu *HmacKeyPairUpdate) AddUserID(i int64) *HmacKeyPairUpdate {
-	hkpu.mutation.AddUserID(i)
 	return hkpu
 }
 
@@ -184,12 +177,6 @@ func (hkpu *HmacKeyPairUpdate) AddCreatedMissions(m ...*Mission) *HmacKeyPairUpd
 		ids[i] = m[i].ID
 	}
 	return hkpu.AddCreatedMissionIDs(ids...)
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (hkpu *HmacKeyPairUpdate) SetUserID(id int64) *HmacKeyPairUpdate {
-	hkpu.mutation.SetUserID(id)
-	return hkpu
 }
 
 // SetUser sets the "user" edge to the User entity.
@@ -332,12 +319,6 @@ func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := hkpu.mutation.Caller(); ok {
 		_spec.SetField(hmackeypair.FieldCaller, field.TypeString, value)
-	}
-	if value, ok := hkpu.mutation.UserID(); ok {
-		_spec.SetField(hmackeypair.FieldUserID, field.TypeInt64, value)
-	}
-	if value, ok := hkpu.mutation.AddedUserID(); ok {
-		_spec.AddField(hmackeypair.FieldUserID, field.TypeInt64, value)
 	}
 	if hkpu.mutation.MissionProductionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -584,7 +565,6 @@ func (hkpuo *HmacKeyPairUpdateOne) SetNillableCaller(s *string) *HmacKeyPairUpda
 
 // SetUserID sets the "user_id" field.
 func (hkpuo *HmacKeyPairUpdateOne) SetUserID(i int64) *HmacKeyPairUpdateOne {
-	hkpuo.mutation.ResetUserID()
 	hkpuo.mutation.SetUserID(i)
 	return hkpuo
 }
@@ -594,12 +574,6 @@ func (hkpuo *HmacKeyPairUpdateOne) SetNillableUserID(i *int64) *HmacKeyPairUpdat
 	if i != nil {
 		hkpuo.SetUserID(*i)
 	}
-	return hkpuo
-}
-
-// AddUserID adds i to the "user_id" field.
-func (hkpuo *HmacKeyPairUpdateOne) AddUserID(i int64) *HmacKeyPairUpdateOne {
-	hkpuo.mutation.AddUserID(i)
 	return hkpuo
 }
 
@@ -631,12 +605,6 @@ func (hkpuo *HmacKeyPairUpdateOne) AddCreatedMissions(m ...*Mission) *HmacKeyPai
 		ids[i] = m[i].ID
 	}
 	return hkpuo.AddCreatedMissionIDs(ids...)
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (hkpuo *HmacKeyPairUpdateOne) SetUserID(id int64) *HmacKeyPairUpdateOne {
-	hkpuo.mutation.SetUserID(id)
-	return hkpuo
 }
 
 // SetUser sets the "user" edge to the User entity.
@@ -809,12 +777,6 @@ func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyP
 	}
 	if value, ok := hkpuo.mutation.Caller(); ok {
 		_spec.SetField(hmackeypair.FieldCaller, field.TypeString, value)
-	}
-	if value, ok := hkpuo.mutation.UserID(); ok {
-		_spec.SetField(hmackeypair.FieldUserID, field.TypeInt64, value)
-	}
-	if value, ok := hkpuo.mutation.AddedUserID(); ok {
-		_spec.AddField(hmackeypair.FieldUserID, field.TypeInt64, value)
 	}
 	if hkpuo.mutation.MissionProductionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -39,7 +39,7 @@ func (MissionConsumeOrder) Edges() []ent.Edge {
 		edge.From("user", User.Type).Ref("mission_consume_orders").Field("user_id").Unique().Required(),
 		edge.To("bills", Bill.Type),
 		// 和任务一对一
-		edge.From("mission", Mission.Type).Ref("mission_consume_order").Unique().Required(),
+		edge.From("mission", Mission.Type).Ref("mission_consume_order").Field("mission_id").Unique().Required(),
 		edge.To("mission_produce_orders", MissionProduceOrder.Type),
 		edge.From("mission_batch", MissionBatch.Type).Ref("mission_consume_orders").Field("mission_batch_id").Unique().Required(),
 	}

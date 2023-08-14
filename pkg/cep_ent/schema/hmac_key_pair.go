@@ -28,7 +28,7 @@ func (HmacKeyPair) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("mission_productions", MissionProduction.Type),
 		edge.To("created_missions", Mission.Type),
-		edge.From("user", User.Type).Ref("hmac_key_pair").Unique().Required(),
+		edge.From("user", User.Type).Ref("hmac_key_pair").Field("user_id").Unique().Required(),
 	}
 }
 

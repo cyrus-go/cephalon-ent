@@ -3646,8 +3646,6 @@ type HmacKeyPairMutation struct {
 	key                        *string
 	secret                     *string
 	caller                     *string
-	user_id                    *int64
-	adduser_id                 *int64
 	clearedFields              map[string]struct{}
 	mission_productions        map[int64]struct{}
 	removedmission_productions map[int64]struct{}
@@ -4096,13 +4094,12 @@ func (m *HmacKeyPairMutation) ResetCaller() {
 
 // SetUserID sets the "user_id" field.
 func (m *HmacKeyPairMutation) SetUserID(i int64) {
-	m.user_id = &i
-	m.adduser_id = nil
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
 func (m *HmacKeyPairMutation) UserID() (r int64, exists bool) {
-	v := m.user_id
+	v := m.user
 	if v == nil {
 		return
 	}
@@ -4126,28 +4123,9 @@ func (m *HmacKeyPairMutation) OldUserID(ctx context.Context) (v int64, err error
 	return oldValue.UserID, nil
 }
 
-// AddUserID adds i to the "user_id" field.
-func (m *HmacKeyPairMutation) AddUserID(i int64) {
-	if m.adduser_id != nil {
-		*m.adduser_id += i
-	} else {
-		m.adduser_id = &i
-	}
-}
-
-// AddedUserID returns the value that was added to the "user_id" field in this mutation.
-func (m *HmacKeyPairMutation) AddedUserID() (r int64, exists bool) {
-	v := m.adduser_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *HmacKeyPairMutation) ResetUserID() {
-	m.user_id = nil
-	m.adduser_id = nil
+	m.user = nil
 }
 
 // AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by ids.
@@ -4258,11 +4236,6 @@ func (m *HmacKeyPairMutation) ResetCreatedMissions() {
 	m.removedcreated_missions = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *HmacKeyPairMutation) SetUserID(id int64) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *HmacKeyPairMutation) ClearUser() {
 	m.cleareduser = true
@@ -4271,14 +4244,6 @@ func (m *HmacKeyPairMutation) ClearUser() {
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *HmacKeyPairMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *HmacKeyPairMutation) UserID() (id int64, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -4356,7 +4321,7 @@ func (m *HmacKeyPairMutation) Fields() []string {
 	if m.caller != nil {
 		fields = append(fields, hmackeypair.FieldCaller)
 	}
-	if m.user_id != nil {
+	if m.user != nil {
 		fields = append(fields, hmackeypair.FieldUserID)
 	}
 	return fields
@@ -4498,9 +4463,6 @@ func (m *HmacKeyPairMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, hmackeypair.FieldUpdatedBy)
 	}
-	if m.adduser_id != nil {
-		fields = append(fields, hmackeypair.FieldUserID)
-	}
 	return fields
 }
 
@@ -4513,8 +4475,6 @@ func (m *HmacKeyPairMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case hmackeypair.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case hmackeypair.FieldUserID:
-		return m.AddedUserID()
 	}
 	return nil, false
 }
@@ -4537,13 +4497,6 @@ func (m *HmacKeyPairMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case hmackeypair.FieldUserID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUserID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown HmacKeyPair numeric field %s", name)
@@ -8531,8 +8484,6 @@ type MissionConsumeOrderMutation struct {
 	created_at                    *time.Time
 	updated_at                    *time.Time
 	deleted_at                    *time.Time
-	mission_id                    *int64
-	addmission_id                 *int64
 	status                        *enums.MissionStatus
 	cep                           *int64
 	addcep                        *int64
@@ -8923,13 +8874,12 @@ func (m *MissionConsumeOrderMutation) ResetUserID() {
 
 // SetMissionID sets the "mission_id" field.
 func (m *MissionConsumeOrderMutation) SetMissionID(i int64) {
-	m.mission_id = &i
-	m.addmission_id = nil
+	m.mission = &i
 }
 
 // MissionID returns the value of the "mission_id" field in the mutation.
 func (m *MissionConsumeOrderMutation) MissionID() (r int64, exists bool) {
-	v := m.mission_id
+	v := m.mission
 	if v == nil {
 		return
 	}
@@ -8953,28 +8903,9 @@ func (m *MissionConsumeOrderMutation) OldMissionID(ctx context.Context) (v int64
 	return oldValue.MissionID, nil
 }
 
-// AddMissionID adds i to the "mission_id" field.
-func (m *MissionConsumeOrderMutation) AddMissionID(i int64) {
-	if m.addmission_id != nil {
-		*m.addmission_id += i
-	} else {
-		m.addmission_id = &i
-	}
-}
-
-// AddedMissionID returns the value that was added to the "mission_id" field in this mutation.
-func (m *MissionConsumeOrderMutation) AddedMissionID() (r int64, exists bool) {
-	v := m.addmission_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetMissionID resets all changes to the "mission_id" field.
 func (m *MissionConsumeOrderMutation) ResetMissionID() {
-	m.mission_id = nil
-	m.addmission_id = nil
+	m.mission = nil
 }
 
 // SetStatus sets the "status" field.
@@ -9463,11 +9394,6 @@ func (m *MissionConsumeOrderMutation) ResetBills() {
 	m.removedbills = nil
 }
 
-// SetMissionID sets the "mission" edge to the Mission entity by id.
-func (m *MissionConsumeOrderMutation) SetMissionID(id int64) {
-	m.mission = &id
-}
-
 // ClearMission clears the "mission" edge to the Mission entity.
 func (m *MissionConsumeOrderMutation) ClearMission() {
 	m.clearedmission = true
@@ -9476,14 +9402,6 @@ func (m *MissionConsumeOrderMutation) ClearMission() {
 // MissionCleared reports if the "mission" edge to the Mission entity was cleared.
 func (m *MissionConsumeOrderMutation) MissionCleared() bool {
 	return m.clearedmission
-}
-
-// MissionID returns the "mission" edge ID in the mutation.
-func (m *MissionConsumeOrderMutation) MissionID() (id int64, exists bool) {
-	if m.mission != nil {
-		return *m.mission, true
-	}
-	return
 }
 
 // MissionIDs returns the "mission" edge IDs in the mutation.
@@ -9635,7 +9553,7 @@ func (m *MissionConsumeOrderMutation) Fields() []string {
 	if m.user != nil {
 		fields = append(fields, missionconsumeorder.FieldUserID)
 	}
-	if m.mission_id != nil {
+	if m.mission != nil {
 		fields = append(fields, missionconsumeorder.FieldMissionID)
 	}
 	if m.status != nil {
@@ -9895,9 +9813,6 @@ func (m *MissionConsumeOrderMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, missionconsumeorder.FieldUpdatedBy)
 	}
-	if m.addmission_id != nil {
-		fields = append(fields, missionconsumeorder.FieldMissionID)
-	}
 	if m.addcep != nil {
 		fields = append(fields, missionconsumeorder.FieldCep)
 	}
@@ -9913,8 +9828,6 @@ func (m *MissionConsumeOrderMutation) AddedField(name string) (ent.Value, bool) 
 		return m.AddedCreatedBy()
 	case missionconsumeorder.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case missionconsumeorder.FieldMissionID:
-		return m.AddedMissionID()
 	case missionconsumeorder.FieldCep:
 		return m.AddedCep()
 	}
@@ -9939,13 +9852,6 @@ func (m *MissionConsumeOrderMutation) AddField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case missionconsumeorder.FieldMissionID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddMissionID(v)
 		return nil
 	case missionconsumeorder.FieldCep:
 		v, ok := value.(int64)

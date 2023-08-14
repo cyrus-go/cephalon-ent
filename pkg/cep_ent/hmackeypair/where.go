@@ -515,26 +515,6 @@ func UserIDNotIn(vs ...int64) predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(sql.FieldNotIn(FieldUserID, vs...))
 }
 
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldLTE(FieldUserID, v))
-}
-
 // HasMissionProductions applies the HasEdge predicate on the "mission_productions" edge.
 func HasMissionProductions() predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(func(s *sql.Selector) {

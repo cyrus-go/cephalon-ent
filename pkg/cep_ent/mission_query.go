@@ -659,7 +659,9 @@ func (mq *MissionQuery) loadMissionConsumeOrder(ctx context.Context, query *Miss
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionconsumeorder.FieldMissionID)
+	}
 	query.Where(predicate.MissionConsumeOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(mission.MissionConsumeOrderColumn), fks...))
 	}))
@@ -668,13 +670,10 @@ func (mq *MissionQuery) loadMissionConsumeOrder(ctx context.Context, query *Miss
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.mission_mission_consume_order
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "mission_mission_consume_order" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.MissionID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "mission_mission_consume_order" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

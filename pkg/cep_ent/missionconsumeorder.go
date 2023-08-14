@@ -57,9 +57,8 @@ type MissionConsumeOrder struct {
 	MissionBatchNumber string `json:"mission_batch_number"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionConsumeOrderQuery when eager-loading is set.
-	Edges                         MissionConsumeOrderEdges `json:"edges"`
-	mission_mission_consume_order *int64
-	selectValues                  sql.SelectValues
+	Edges        MissionConsumeOrderEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // MissionConsumeOrderEdges holds the relations/edges for other nodes in the graph.
@@ -149,8 +148,6 @@ func (*MissionConsumeOrder) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case missionconsumeorder.FieldCreatedAt, missionconsumeorder.FieldUpdatedAt, missionconsumeorder.FieldDeletedAt, missionconsumeorder.FieldStartedAt, missionconsumeorder.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
-		case missionconsumeorder.ForeignKeys[0]: // mission_mission_consume_order
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -275,13 +272,6 @@ func (mco *MissionConsumeOrder) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field mission_batch_number", values[i])
 			} else if value.Valid {
 				mco.MissionBatchNumber = value.String
-			}
-		case missionconsumeorder.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field mission_mission_consume_order", value)
-			} else if value.Valid {
-				mco.mission_mission_consume_order = new(int64)
-				*mco.mission_mission_consume_order = int64(value.Int64)
 			}
 		default:
 			mco.selectValues.Set(columns[i], values[i])

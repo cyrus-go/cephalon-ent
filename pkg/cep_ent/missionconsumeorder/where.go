@@ -366,26 +366,6 @@ func MissionIDNotIn(vs ...int64) predicate.MissionConsumeOrder {
 	return predicate.MissionConsumeOrder(sql.FieldNotIn(FieldMissionID, vs...))
 }
 
-// MissionIDGT applies the GT predicate on the "mission_id" field.
-func MissionIDGT(v int64) predicate.MissionConsumeOrder {
-	return predicate.MissionConsumeOrder(sql.FieldGT(FieldMissionID, v))
-}
-
-// MissionIDGTE applies the GTE predicate on the "mission_id" field.
-func MissionIDGTE(v int64) predicate.MissionConsumeOrder {
-	return predicate.MissionConsumeOrder(sql.FieldGTE(FieldMissionID, v))
-}
-
-// MissionIDLT applies the LT predicate on the "mission_id" field.
-func MissionIDLT(v int64) predicate.MissionConsumeOrder {
-	return predicate.MissionConsumeOrder(sql.FieldLT(FieldMissionID, v))
-}
-
-// MissionIDLTE applies the LTE predicate on the "mission_id" field.
-func MissionIDLTE(v int64) predicate.MissionConsumeOrder {
-	return predicate.MissionConsumeOrder(sql.FieldLTE(FieldMissionID, v))
-}
-
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v enums.MissionStatus) predicate.MissionConsumeOrder {
 	vc := v
