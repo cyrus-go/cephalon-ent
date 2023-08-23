@@ -3,25 +3,32 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
-	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/collect"
+	"cephalon-ent/pkg/cep_ent/costaccount"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/devicegpumission"
+	"cephalon-ent/pkg/cep_ent/earnbill"
+	"cephalon-ent/pkg/cep_ent/enumcondition"
+	"cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"cephalon-ent/pkg/cep_ent/gpu"
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/inputlog"
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"cephalon-ent/pkg/cep_ent/missionkeypair"
+	"cephalon-ent/pkg/cep_ent/missionkind"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
-	"cephalon-ent/pkg/cep_ent/missiontype"
 	"cephalon-ent/pkg/cep_ent/outputlog"
-	"cephalon-ent/pkg/cep_ent/platformwallet"
+	"cephalon-ent/pkg/cep_ent/platformaccount"
+	"cephalon-ent/pkg/cep_ent/profitaccount"
 	"cephalon-ent/pkg/cep_ent/profitsetting"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxaccount"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/cep_ent/wallet"
 	"context"
 	"errors"
 	"fmt"
@@ -91,25 +98,32 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			bill.Table:                bill.ValidColumn,
-			collection.Table:          collection.ValidColumn,
+			collect.Table:             collect.ValidColumn,
+			costaccount.Table:         costaccount.ValidColumn,
+			costbill.Table:            costbill.ValidColumn,
 			device.Table:              device.ValidColumn,
+			devicegpumission.Table:    devicegpumission.ValidColumn,
+			earnbill.Table:            earnbill.ValidColumn,
+			enumcondition.Table:       enumcondition.ValidColumn,
+			enummissionstatus.Table:   enummissionstatus.ValidColumn,
+			gpu.Table:                 gpu.ValidColumn,
 			hmackeypair.Table:         hmackeypair.ValidColumn,
 			inputlog.Table:            inputlog.ValidColumn,
 			mission.Table:             mission.ValidColumn,
 			missionbatch.Table:        missionbatch.ValidColumn,
 			missionconsumeorder.Table: missionconsumeorder.ValidColumn,
+			missionkeypair.Table:      missionkeypair.ValidColumn,
+			missionkind.Table:         missionkind.ValidColumn,
 			missionproduceorder.Table: missionproduceorder.ValidColumn,
-			missionproduction.Table:   missionproduction.ValidColumn,
-			missiontype.Table:         missiontype.ValidColumn,
 			outputlog.Table:           outputlog.ValidColumn,
-			platformwallet.Table:      platformwallet.ValidColumn,
+			platformaccount.Table:     platformaccount.ValidColumn,
+			profitaccount.Table:       profitaccount.ValidColumn,
 			profitsetting.Table:       profitsetting.ValidColumn,
 			rechargeorder.Table:       rechargeorder.ValidColumn,
 			user.Table:                user.ValidColumn,
 			userdevice.Table:          userdevice.ValidColumn,
+			vxaccount.Table:           vxaccount.ValidColumn,
 			vxsocial.Table:            vxsocial.ValidColumn,
-			wallet.Table:              wallet.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

@@ -95,11 +95,6 @@ func Caller(v string) predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(sql.FieldEQ(FieldCaller, v))
 }
 
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldEQ(FieldUserID, v))
-}
-
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(sql.FieldEQ(FieldCreatedBy, v))
@@ -495,41 +490,21 @@ func CallerContainsFold(v string) predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(sql.FieldContainsFold(FieldCaller, v))
 }
 
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldEQ(FieldUserID, v))
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...int64) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// HasMissionProductions applies the HasEdge predicate on the "mission_productions" edge.
-func HasMissionProductions() predicate.HmacKeyPair {
+// HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.
+func HasMissionKeyPairs() predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasMissionProductionsWith applies the HasEdge predicate on the "mission_productions" edge with a given conditions (other predicates).
-func HasMissionProductionsWith(preds ...predicate.MissionProduction) predicate.HmacKeyPair {
+// HasMissionKeyPairsWith applies the HasEdge predicate on the "mission_key_pairs" edge with a given conditions (other predicates).
+func HasMissionKeyPairsWith(preds ...predicate.MissionKeyPair) predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(func(s *sql.Selector) {
-		step := newMissionProductionsStep()
+		step := newMissionKeyPairsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -553,29 +528,6 @@ func HasCreatedMissions() predicate.HmacKeyPair {
 func HasCreatedMissionsWith(preds ...predicate.Mission) predicate.HmacKeyPair {
 	return predicate.HmacKeyPair(func(s *sql.Selector) {
 		step := newCreatedMissionsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, UserTable, UserColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.User) predicate.HmacKeyPair {
-	return predicate.HmacKeyPair(func(s *sql.Selector) {
-		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

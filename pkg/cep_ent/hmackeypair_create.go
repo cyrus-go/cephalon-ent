@@ -5,8 +5,7 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
-	"cephalon-ent/pkg/cep_ent/user"
+	"cephalon-ent/pkg/cep_ent/missionkeypair"
 	"context"
 	"errors"
 	"fmt"
@@ -99,25 +98,9 @@ func (hkpc *HmacKeyPairCreate) SetKey(s string) *HmacKeyPairCreate {
 	return hkpc
 }
 
-// SetNillableKey sets the "key" field if the given value is not nil.
-func (hkpc *HmacKeyPairCreate) SetNillableKey(s *string) *HmacKeyPairCreate {
-	if s != nil {
-		hkpc.SetKey(*s)
-	}
-	return hkpc
-}
-
 // SetSecret sets the "secret" field.
 func (hkpc *HmacKeyPairCreate) SetSecret(s string) *HmacKeyPairCreate {
 	hkpc.mutation.SetSecret(s)
-	return hkpc
-}
-
-// SetNillableSecret sets the "secret" field if the given value is not nil.
-func (hkpc *HmacKeyPairCreate) SetNillableSecret(s *string) *HmacKeyPairCreate {
-	if s != nil {
-		hkpc.SetSecret(*s)
-	}
 	return hkpc
 }
 
@@ -131,20 +114,6 @@ func (hkpc *HmacKeyPairCreate) SetCaller(s string) *HmacKeyPairCreate {
 func (hkpc *HmacKeyPairCreate) SetNillableCaller(s *string) *HmacKeyPairCreate {
 	if s != nil {
 		hkpc.SetCaller(*s)
-	}
-	return hkpc
-}
-
-// SetUserID sets the "user_id" field.
-func (hkpc *HmacKeyPairCreate) SetUserID(i int64) *HmacKeyPairCreate {
-	hkpc.mutation.SetUserID(i)
-	return hkpc
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (hkpc *HmacKeyPairCreate) SetNillableUserID(i *int64) *HmacKeyPairCreate {
-	if i != nil {
-		hkpc.SetUserID(*i)
 	}
 	return hkpc
 }
@@ -163,19 +132,19 @@ func (hkpc *HmacKeyPairCreate) SetNillableID(i *int64) *HmacKeyPairCreate {
 	return hkpc
 }
 
-// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
-func (hkpc *HmacKeyPairCreate) AddMissionProductionIDs(ids ...int64) *HmacKeyPairCreate {
-	hkpc.mutation.AddMissionProductionIDs(ids...)
+// AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
+func (hkpc *HmacKeyPairCreate) AddMissionKeyPairIDs(ids ...int64) *HmacKeyPairCreate {
+	hkpc.mutation.AddMissionKeyPairIDs(ids...)
 	return hkpc
 }
 
-// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
-func (hkpc *HmacKeyPairCreate) AddMissionProductions(m ...*MissionProduction) *HmacKeyPairCreate {
+// AddMissionKeyPairs adds the "mission_key_pairs" edges to the MissionKeyPair entity.
+func (hkpc *HmacKeyPairCreate) AddMissionKeyPairs(m ...*MissionKeyPair) *HmacKeyPairCreate {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return hkpc.AddMissionProductionIDs(ids...)
+	return hkpc.AddMissionKeyPairIDs(ids...)
 }
 
 // AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
@@ -191,11 +160,6 @@ func (hkpc *HmacKeyPairCreate) AddCreatedMissions(m ...*Mission) *HmacKeyPairCre
 		ids[i] = m[i].ID
 	}
 	return hkpc.AddCreatedMissionIDs(ids...)
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (hkpc *HmacKeyPairCreate) SetUser(u *User) *HmacKeyPairCreate {
-	return hkpc.SetUserID(u.ID)
 }
 
 // Mutation returns the HmacKeyPairMutation object of the builder.
@@ -253,21 +217,9 @@ func (hkpc *HmacKeyPairCreate) defaults() {
 		v := hmackeypair.DefaultDeletedAt
 		hkpc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := hkpc.mutation.Key(); !ok {
-		v := hmackeypair.DefaultKey
-		hkpc.mutation.SetKey(v)
-	}
-	if _, ok := hkpc.mutation.Secret(); !ok {
-		v := hmackeypair.DefaultSecret
-		hkpc.mutation.SetSecret(v)
-	}
 	if _, ok := hkpc.mutation.Caller(); !ok {
 		v := hmackeypair.DefaultCaller
 		hkpc.mutation.SetCaller(v)
-	}
-	if _, ok := hkpc.mutation.UserID(); !ok {
-		v := hmackeypair.DefaultUserID
-		hkpc.mutation.SetUserID(v)
 	}
 	if _, ok := hkpc.mutation.ID(); !ok {
 		v := hmackeypair.DefaultID()
@@ -300,12 +252,6 @@ func (hkpc *HmacKeyPairCreate) check() error {
 	}
 	if _, ok := hkpc.mutation.Caller(); !ok {
 		return &ValidationError{Name: "caller", err: errors.New(`cep_ent: missing required field "HmacKeyPair.caller"`)}
-	}
-	if _, ok := hkpc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "HmacKeyPair.user_id"`)}
-	}
-	if _, ok := hkpc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "HmacKeyPair.user"`)}
 	}
 	return nil
 }
@@ -371,15 +317,15 @@ func (hkpc *HmacKeyPairCreate) createSpec() (*HmacKeyPair, *sqlgraph.CreateSpec)
 		_spec.SetField(hmackeypair.FieldCaller, field.TypeString, value)
 		_node.Caller = value
 	}
-	if nodes := hkpc.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+	if nodes := hkpc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -401,23 +347,6 @@ func (hkpc *HmacKeyPairCreate) createSpec() (*HmacKeyPair, *sqlgraph.CreateSpec)
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := hkpc.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   hmackeypair.UserTable,
-			Columns: []string{hmackeypair.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -4,8 +4,8 @@ package cep_ent
 
 import (
 	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/devicegpumission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
 	"cephalon-ent/pkg/enums"
@@ -109,16 +109,58 @@ func (dc *DeviceCreate) SetNillableUserID(i *int64) *DeviceCreate {
 	return dc
 }
 
-// SetStatus sets the "status" field.
-func (dc *DeviceCreate) SetStatus(es enums.DeviceStatus) *DeviceCreate {
-	dc.mutation.SetStatus(es)
+// SetSerialNumber sets the "serial_number" field.
+func (dc *DeviceCreate) SetSerialNumber(s string) *DeviceCreate {
+	dc.mutation.SetSerialNumber(s)
 	return dc
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableStatus(es *enums.DeviceStatus) *DeviceCreate {
-	if es != nil {
-		dc.SetStatus(*es)
+// SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableSerialNumber(s *string) *DeviceCreate {
+	if s != nil {
+		dc.SetSerialNumber(*s)
+	}
+	return dc
+}
+
+// SetState sets the "state" field.
+func (dc *DeviceCreate) SetState(d device.State) *DeviceCreate {
+	dc.mutation.SetState(d)
+	return dc
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableState(d *device.State) *DeviceCreate {
+	if d != nil {
+		dc.SetState(*d)
+	}
+	return dc
+}
+
+// SetSumCep sets the "sum_cep" field.
+func (dc *DeviceCreate) SetSumCep(i int64) *DeviceCreate {
+	dc.mutation.SetSumCep(i)
+	return dc
+}
+
+// SetNillableSumCep sets the "sum_cep" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableSumCep(i *int64) *DeviceCreate {
+	if i != nil {
+		dc.SetSumCep(*i)
+	}
+	return dc
+}
+
+// SetLinking sets the "linking" field.
+func (dc *DeviceCreate) SetLinking(b bool) *DeviceCreate {
+	dc.mutation.SetLinking(b)
+	return dc
+}
+
+// SetNillableLinking sets the "linking" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableLinking(b *bool) *DeviceCreate {
+	if b != nil {
+		dc.SetLinking(*b)
 	}
 	return dc
 }
@@ -133,6 +175,20 @@ func (dc *DeviceCreate) SetBindingStatus(ebs enums.DeviceBindingStatus) *DeviceC
 func (dc *DeviceCreate) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus) *DeviceCreate {
 	if ebs != nil {
 		dc.SetBindingStatus(*ebs)
+	}
+	return dc
+}
+
+// SetStatus sets the "status" field.
+func (dc *DeviceCreate) SetStatus(d device.Status) *DeviceCreate {
+	dc.mutation.SetStatus(d)
+	return dc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableStatus(d *device.Status) *DeviceCreate {
+	if d != nil {
+		dc.SetStatus(*d)
 	}
 	return dc
 }
@@ -171,21 +227,6 @@ func (dc *DeviceCreate) AddMissionProduceOrders(m ...*MissionProduceOrder) *Devi
 	return dc.AddMissionProduceOrderIDs(ids...)
 }
 
-// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
-func (dc *DeviceCreate) AddMissionProductionIDs(ids ...int64) *DeviceCreate {
-	dc.mutation.AddMissionProductionIDs(ids...)
-	return dc
-}
-
-// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
-func (dc *DeviceCreate) AddMissionProductions(m ...*MissionProduction) *DeviceCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return dc.AddMissionProductionIDs(ids...)
-}
-
 // AddUserDeviceIDs adds the "user_devices" edge to the UserDevice entity by IDs.
 func (dc *DeviceCreate) AddUserDeviceIDs(ids ...int64) *DeviceCreate {
 	dc.mutation.AddUserDeviceIDs(ids...)
@@ -199,6 +240,21 @@ func (dc *DeviceCreate) AddUserDevices(u ...*UserDevice) *DeviceCreate {
 		ids[i] = u[i].ID
 	}
 	return dc.AddUserDeviceIDs(ids...)
+}
+
+// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
+func (dc *DeviceCreate) AddDeviceGpuMissionIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddDeviceGpuMissionIDs(ids...)
+	return dc
+}
+
+// AddDeviceGpuMissions adds the "device_gpu_missions" edges to the DeviceGpuMission entity.
+func (dc *DeviceCreate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return dc.AddDeviceGpuMissionIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -260,13 +316,29 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultUserID
 		dc.mutation.SetUserID(v)
 	}
-	if _, ok := dc.mutation.Status(); !ok {
-		v := device.DefaultStatus
-		dc.mutation.SetStatus(v)
+	if _, ok := dc.mutation.SerialNumber(); !ok {
+		v := device.DefaultSerialNumber
+		dc.mutation.SetSerialNumber(v)
+	}
+	if _, ok := dc.mutation.State(); !ok {
+		v := device.DefaultState
+		dc.mutation.SetState(v)
+	}
+	if _, ok := dc.mutation.SumCep(); !ok {
+		v := device.DefaultSumCep
+		dc.mutation.SetSumCep(v)
+	}
+	if _, ok := dc.mutation.Linking(); !ok {
+		v := device.DefaultLinking
+		dc.mutation.SetLinking(v)
 	}
 	if _, ok := dc.mutation.BindingStatus(); !ok {
 		v := device.DefaultBindingStatus
 		dc.mutation.SetBindingStatus(v)
+	}
+	if _, ok := dc.mutation.Status(); !ok {
+		v := device.DefaultStatus
+		dc.mutation.SetStatus(v)
 	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
@@ -294,13 +366,22 @@ func (dc *DeviceCreate) check() error {
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "Device.user_id"`)}
 	}
-	if _, ok := dc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "Device.status"`)}
+	if _, ok := dc.mutation.SerialNumber(); !ok {
+		return &ValidationError{Name: "serial_number", err: errors.New(`cep_ent: missing required field "Device.serial_number"`)}
 	}
-	if v, ok := dc.mutation.Status(); ok {
-		if err := device.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
+	if _, ok := dc.mutation.State(); !ok {
+		return &ValidationError{Name: "state", err: errors.New(`cep_ent: missing required field "Device.state"`)}
+	}
+	if v, ok := dc.mutation.State(); ok {
+		if err := device.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "Device.state": %w`, err)}
 		}
+	}
+	if _, ok := dc.mutation.SumCep(); !ok {
+		return &ValidationError{Name: "sum_cep", err: errors.New(`cep_ent: missing required field "Device.sum_cep"`)}
+	}
+	if _, ok := dc.mutation.Linking(); !ok {
+		return &ValidationError{Name: "linking", err: errors.New(`cep_ent: missing required field "Device.linking"`)}
 	}
 	if _, ok := dc.mutation.BindingStatus(); !ok {
 		return &ValidationError{Name: "binding_status", err: errors.New(`cep_ent: missing required field "Device.binding_status"`)}
@@ -308,6 +389,14 @@ func (dc *DeviceCreate) check() error {
 	if v, ok := dc.mutation.BindingStatus(); ok {
 		if err := device.BindingStatusValidator(v); err != nil {
 			return &ValidationError{Name: "binding_status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.binding_status": %w`, err)}
+		}
+	}
+	if _, ok := dc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "Device.status"`)}
+	}
+	if v, ok := dc.mutation.Status(); ok {
+		if err := device.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
 		}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
@@ -365,13 +454,29 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 		_spec.SetField(device.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
-	if value, ok := dc.mutation.Status(); ok {
-		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
-		_node.Status = value
+	if value, ok := dc.mutation.SerialNumber(); ok {
+		_spec.SetField(device.FieldSerialNumber, field.TypeString, value)
+		_node.SerialNumber = value
+	}
+	if value, ok := dc.mutation.State(); ok {
+		_spec.SetField(device.FieldState, field.TypeEnum, value)
+		_node.State = value
+	}
+	if value, ok := dc.mutation.SumCep(); ok {
+		_spec.SetField(device.FieldSumCep, field.TypeInt64, value)
+		_node.SumCep = value
+	}
+	if value, ok := dc.mutation.Linking(); ok {
+		_spec.SetField(device.FieldLinking, field.TypeBool, value)
+		_node.Linking = value
 	}
 	if value, ok := dc.mutation.BindingStatus(); ok {
 		_spec.SetField(device.FieldBindingStatus, field.TypeEnum, value)
 		_node.BindingStatus = value
+	}
+	if value, ok := dc.mutation.Status(); ok {
+		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -406,22 +511,6 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := dc.mutation.MissionProductionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := dc.mutation.UserDevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -431,6 +520,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

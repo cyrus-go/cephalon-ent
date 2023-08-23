@@ -96,25 +96,9 @@ func (olc *OutputLogCreate) SetTraceID(i int64) *OutputLogCreate {
 	return olc
 }
 
-// SetNillableTraceID sets the "trace_id" field if the given value is not nil.
-func (olc *OutputLogCreate) SetNillableTraceID(i *int64) *OutputLogCreate {
-	if i != nil {
-		olc.SetTraceID(*i)
-	}
-	return olc
-}
-
 // SetHeaders sets the "headers" field.
 func (olc *OutputLogCreate) SetHeaders(s string) *OutputLogCreate {
 	olc.mutation.SetHeaders(s)
-	return olc
-}
-
-// SetNillableHeaders sets the "headers" field if the given value is not nil.
-func (olc *OutputLogCreate) SetNillableHeaders(s *string) *OutputLogCreate {
-	if s != nil {
-		olc.SetHeaders(*s)
-	}
 	return olc
 }
 
@@ -135,14 +119,6 @@ func (olc *OutputLogCreate) SetNillableBody(s *string) *OutputLogCreate {
 // SetURL sets the "url" field.
 func (olc *OutputLogCreate) SetURL(s string) *OutputLogCreate {
 	olc.mutation.SetURL(s)
-	return olc
-}
-
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (olc *OutputLogCreate) SetNillableURL(s *string) *OutputLogCreate {
-	if s != nil {
-		olc.SetURL(*s)
-	}
 	return olc
 }
 
@@ -271,21 +247,9 @@ func (olc *OutputLogCreate) defaults() {
 		v := outputlog.DefaultDeletedAt
 		olc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := olc.mutation.TraceID(); !ok {
-		v := outputlog.DefaultTraceID
-		olc.mutation.SetTraceID(v)
-	}
-	if _, ok := olc.mutation.Headers(); !ok {
-		v := outputlog.DefaultHeaders
-		olc.mutation.SetHeaders(v)
-	}
 	if _, ok := olc.mutation.Body(); !ok {
 		v := outputlog.DefaultBody
 		olc.mutation.SetBody(v)
-	}
-	if _, ok := olc.mutation.URL(); !ok {
-		v := outputlog.DefaultURL
-		olc.mutation.SetURL(v)
 	}
 	if _, ok := olc.mutation.IP(); !ok {
 		v := outputlog.DefaultIP

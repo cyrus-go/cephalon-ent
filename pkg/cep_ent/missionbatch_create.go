@@ -3,10 +3,8 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"errors"
@@ -141,21 +139,6 @@ func (mbc *MissionBatchCreate) SetUser(u *User) *MissionBatchCreate {
 	return mbc.SetUserID(u.ID)
 }
 
-// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
-func (mbc *MissionBatchCreate) AddMissionIDs(ids ...int64) *MissionBatchCreate {
-	mbc.mutation.AddMissionIDs(ids...)
-	return mbc
-}
-
-// AddMissions adds the "missions" edges to the Mission entity.
-func (mbc *MissionBatchCreate) AddMissions(m ...*Mission) *MissionBatchCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbc.AddMissionIDs(ids...)
-}
-
 // AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
 func (mbc *MissionBatchCreate) AddMissionConsumeOrderIDs(ids ...int64) *MissionBatchCreate {
 	mbc.mutation.AddMissionConsumeOrderIDs(ids...)
@@ -169,21 +152,6 @@ func (mbc *MissionBatchCreate) AddMissionConsumeOrders(m ...*MissionConsumeOrder
 		ids[i] = m[i].ID
 	}
 	return mbc.AddMissionConsumeOrderIDs(ids...)
-}
-
-// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
-func (mbc *MissionBatchCreate) AddMissionProduceOrderIDs(ids ...int64) *MissionBatchCreate {
-	mbc.mutation.AddMissionProduceOrderIDs(ids...)
-	return mbc
-}
-
-// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
-func (mbc *MissionBatchCreate) AddMissionProduceOrders(m ...*MissionProduceOrder) *MissionBatchCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbc.AddMissionProduceOrderIDs(ids...)
 }
 
 // Mutation returns the MissionBatchMutation object of the builder.
@@ -354,22 +322,6 @@ func (mbc *MissionBatchCreate) createSpec() (*MissionBatch, *sqlgraph.CreateSpec
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := mbc.mutation.MissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := mbc.mutation.MissionConsumeOrdersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -379,22 +331,6 @@ func (mbc *MissionBatchCreate) createSpec() (*MissionBatch, *sqlgraph.CreateSpec
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mbc.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

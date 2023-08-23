@@ -3,10 +3,8 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/predicate"
 	"cephalon-ent/pkg/cep_ent/user"
 	"context"
@@ -127,21 +125,6 @@ func (mbu *MissionBatchUpdate) SetUser(u *User) *MissionBatchUpdate {
 	return mbu.SetUserID(u.ID)
 }
 
-// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
-func (mbu *MissionBatchUpdate) AddMissionIDs(ids ...int64) *MissionBatchUpdate {
-	mbu.mutation.AddMissionIDs(ids...)
-	return mbu
-}
-
-// AddMissions adds the "missions" edges to the Mission entity.
-func (mbu *MissionBatchUpdate) AddMissions(m ...*Mission) *MissionBatchUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbu.AddMissionIDs(ids...)
-}
-
 // AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
 func (mbu *MissionBatchUpdate) AddMissionConsumeOrderIDs(ids ...int64) *MissionBatchUpdate {
 	mbu.mutation.AddMissionConsumeOrderIDs(ids...)
@@ -157,21 +140,6 @@ func (mbu *MissionBatchUpdate) AddMissionConsumeOrders(m ...*MissionConsumeOrder
 	return mbu.AddMissionConsumeOrderIDs(ids...)
 }
 
-// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
-func (mbu *MissionBatchUpdate) AddMissionProduceOrderIDs(ids ...int64) *MissionBatchUpdate {
-	mbu.mutation.AddMissionProduceOrderIDs(ids...)
-	return mbu
-}
-
-// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
-func (mbu *MissionBatchUpdate) AddMissionProduceOrders(m ...*MissionProduceOrder) *MissionBatchUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbu.AddMissionProduceOrderIDs(ids...)
-}
-
 // Mutation returns the MissionBatchMutation object of the builder.
 func (mbu *MissionBatchUpdate) Mutation() *MissionBatchMutation {
 	return mbu.mutation
@@ -181,27 +149,6 @@ func (mbu *MissionBatchUpdate) Mutation() *MissionBatchMutation {
 func (mbu *MissionBatchUpdate) ClearUser() *MissionBatchUpdate {
 	mbu.mutation.ClearUser()
 	return mbu
-}
-
-// ClearMissions clears all "missions" edges to the Mission entity.
-func (mbu *MissionBatchUpdate) ClearMissions() *MissionBatchUpdate {
-	mbu.mutation.ClearMissions()
-	return mbu
-}
-
-// RemoveMissionIDs removes the "missions" edge to Mission entities by IDs.
-func (mbu *MissionBatchUpdate) RemoveMissionIDs(ids ...int64) *MissionBatchUpdate {
-	mbu.mutation.RemoveMissionIDs(ids...)
-	return mbu
-}
-
-// RemoveMissions removes "missions" edges to Mission entities.
-func (mbu *MissionBatchUpdate) RemoveMissions(m ...*Mission) *MissionBatchUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbu.RemoveMissionIDs(ids...)
 }
 
 // ClearMissionConsumeOrders clears all "mission_consume_orders" edges to the MissionConsumeOrder entity.
@@ -223,27 +170,6 @@ func (mbu *MissionBatchUpdate) RemoveMissionConsumeOrders(m ...*MissionConsumeOr
 		ids[i] = m[i].ID
 	}
 	return mbu.RemoveMissionConsumeOrderIDs(ids...)
-}
-
-// ClearMissionProduceOrders clears all "mission_produce_orders" edges to the MissionProduceOrder entity.
-func (mbu *MissionBatchUpdate) ClearMissionProduceOrders() *MissionBatchUpdate {
-	mbu.mutation.ClearMissionProduceOrders()
-	return mbu
-}
-
-// RemoveMissionProduceOrderIDs removes the "mission_produce_orders" edge to MissionProduceOrder entities by IDs.
-func (mbu *MissionBatchUpdate) RemoveMissionProduceOrderIDs(ids ...int64) *MissionBatchUpdate {
-	mbu.mutation.RemoveMissionProduceOrderIDs(ids...)
-	return mbu
-}
-
-// RemoveMissionProduceOrders removes "mission_produce_orders" edges to MissionProduceOrder entities.
-func (mbu *MissionBatchUpdate) RemoveMissionProduceOrders(m ...*MissionProduceOrder) *MissionBatchUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbu.RemoveMissionProduceOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -352,51 +278,6 @@ func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if mbu.mutation.MissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbu.mutation.RemovedMissionsIDs(); len(nodes) > 0 && !mbu.mutation.MissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbu.mutation.MissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if mbu.mutation.MissionConsumeOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -435,51 +316,6 @@ func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mbu.mutation.MissionProduceOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbu.mutation.RemovedMissionProduceOrdersIDs(); len(nodes) > 0 && !mbu.mutation.MissionProduceOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbu.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -602,21 +438,6 @@ func (mbuo *MissionBatchUpdateOne) SetUser(u *User) *MissionBatchUpdateOne {
 	return mbuo.SetUserID(u.ID)
 }
 
-// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
-func (mbuo *MissionBatchUpdateOne) AddMissionIDs(ids ...int64) *MissionBatchUpdateOne {
-	mbuo.mutation.AddMissionIDs(ids...)
-	return mbuo
-}
-
-// AddMissions adds the "missions" edges to the Mission entity.
-func (mbuo *MissionBatchUpdateOne) AddMissions(m ...*Mission) *MissionBatchUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbuo.AddMissionIDs(ids...)
-}
-
 // AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
 func (mbuo *MissionBatchUpdateOne) AddMissionConsumeOrderIDs(ids ...int64) *MissionBatchUpdateOne {
 	mbuo.mutation.AddMissionConsumeOrderIDs(ids...)
@@ -632,21 +453,6 @@ func (mbuo *MissionBatchUpdateOne) AddMissionConsumeOrders(m ...*MissionConsumeO
 	return mbuo.AddMissionConsumeOrderIDs(ids...)
 }
 
-// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
-func (mbuo *MissionBatchUpdateOne) AddMissionProduceOrderIDs(ids ...int64) *MissionBatchUpdateOne {
-	mbuo.mutation.AddMissionProduceOrderIDs(ids...)
-	return mbuo
-}
-
-// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
-func (mbuo *MissionBatchUpdateOne) AddMissionProduceOrders(m ...*MissionProduceOrder) *MissionBatchUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbuo.AddMissionProduceOrderIDs(ids...)
-}
-
 // Mutation returns the MissionBatchMutation object of the builder.
 func (mbuo *MissionBatchUpdateOne) Mutation() *MissionBatchMutation {
 	return mbuo.mutation
@@ -656,27 +462,6 @@ func (mbuo *MissionBatchUpdateOne) Mutation() *MissionBatchMutation {
 func (mbuo *MissionBatchUpdateOne) ClearUser() *MissionBatchUpdateOne {
 	mbuo.mutation.ClearUser()
 	return mbuo
-}
-
-// ClearMissions clears all "missions" edges to the Mission entity.
-func (mbuo *MissionBatchUpdateOne) ClearMissions() *MissionBatchUpdateOne {
-	mbuo.mutation.ClearMissions()
-	return mbuo
-}
-
-// RemoveMissionIDs removes the "missions" edge to Mission entities by IDs.
-func (mbuo *MissionBatchUpdateOne) RemoveMissionIDs(ids ...int64) *MissionBatchUpdateOne {
-	mbuo.mutation.RemoveMissionIDs(ids...)
-	return mbuo
-}
-
-// RemoveMissions removes "missions" edges to Mission entities.
-func (mbuo *MissionBatchUpdateOne) RemoveMissions(m ...*Mission) *MissionBatchUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbuo.RemoveMissionIDs(ids...)
 }
 
 // ClearMissionConsumeOrders clears all "mission_consume_orders" edges to the MissionConsumeOrder entity.
@@ -698,27 +483,6 @@ func (mbuo *MissionBatchUpdateOne) RemoveMissionConsumeOrders(m ...*MissionConsu
 		ids[i] = m[i].ID
 	}
 	return mbuo.RemoveMissionConsumeOrderIDs(ids...)
-}
-
-// ClearMissionProduceOrders clears all "mission_produce_orders" edges to the MissionProduceOrder entity.
-func (mbuo *MissionBatchUpdateOne) ClearMissionProduceOrders() *MissionBatchUpdateOne {
-	mbuo.mutation.ClearMissionProduceOrders()
-	return mbuo
-}
-
-// RemoveMissionProduceOrderIDs removes the "mission_produce_orders" edge to MissionProduceOrder entities by IDs.
-func (mbuo *MissionBatchUpdateOne) RemoveMissionProduceOrderIDs(ids ...int64) *MissionBatchUpdateOne {
-	mbuo.mutation.RemoveMissionProduceOrderIDs(ids...)
-	return mbuo
-}
-
-// RemoveMissionProduceOrders removes "mission_produce_orders" edges to MissionProduceOrder entities.
-func (mbuo *MissionBatchUpdateOne) RemoveMissionProduceOrders(m ...*MissionProduceOrder) *MissionBatchUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return mbuo.RemoveMissionProduceOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionBatchUpdate builder.
@@ -857,51 +621,6 @@ func (mbuo *MissionBatchUpdateOne) sqlSave(ctx context.Context) (_node *MissionB
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if mbuo.mutation.MissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbuo.mutation.RemovedMissionsIDs(); len(nodes) > 0 && !mbuo.mutation.MissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbuo.mutation.MissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionsTable,
-			Columns: []string{missionbatch.MissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if mbuo.mutation.MissionConsumeOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -940,51 +659,6 @@ func (mbuo *MissionBatchUpdateOne) sqlSave(ctx context.Context) (_node *MissionB
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mbuo.mutation.MissionProduceOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbuo.mutation.RemovedMissionProduceOrdersIDs(); len(nodes) > 0 && !mbuo.mutation.MissionProduceOrdersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mbuo.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionbatch.MissionProduceOrdersTable,
-			Columns: []string{missionbatch.MissionProduceOrdersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

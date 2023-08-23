@@ -5,9 +5,8 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/cep_ent/missionkeypair"
 	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"errors"
 	"fmt"
@@ -99,25 +98,9 @@ func (hkpu *HmacKeyPairUpdate) SetKey(s string) *HmacKeyPairUpdate {
 	return hkpu
 }
 
-// SetNillableKey sets the "key" field if the given value is not nil.
-func (hkpu *HmacKeyPairUpdate) SetNillableKey(s *string) *HmacKeyPairUpdate {
-	if s != nil {
-		hkpu.SetKey(*s)
-	}
-	return hkpu
-}
-
 // SetSecret sets the "secret" field.
 func (hkpu *HmacKeyPairUpdate) SetSecret(s string) *HmacKeyPairUpdate {
 	hkpu.mutation.SetSecret(s)
-	return hkpu
-}
-
-// SetNillableSecret sets the "secret" field if the given value is not nil.
-func (hkpu *HmacKeyPairUpdate) SetNillableSecret(s *string) *HmacKeyPairUpdate {
-	if s != nil {
-		hkpu.SetSecret(*s)
-	}
 	return hkpu
 }
 
@@ -135,33 +118,19 @@ func (hkpu *HmacKeyPairUpdate) SetNillableCaller(s *string) *HmacKeyPairUpdate {
 	return hkpu
 }
 
-// SetUserID sets the "user_id" field.
-func (hkpu *HmacKeyPairUpdate) SetUserID(i int64) *HmacKeyPairUpdate {
-	hkpu.mutation.SetUserID(i)
+// AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
+func (hkpu *HmacKeyPairUpdate) AddMissionKeyPairIDs(ids ...int64) *HmacKeyPairUpdate {
+	hkpu.mutation.AddMissionKeyPairIDs(ids...)
 	return hkpu
 }
 
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (hkpu *HmacKeyPairUpdate) SetNillableUserID(i *int64) *HmacKeyPairUpdate {
-	if i != nil {
-		hkpu.SetUserID(*i)
-	}
-	return hkpu
-}
-
-// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
-func (hkpu *HmacKeyPairUpdate) AddMissionProductionIDs(ids ...int64) *HmacKeyPairUpdate {
-	hkpu.mutation.AddMissionProductionIDs(ids...)
-	return hkpu
-}
-
-// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
-func (hkpu *HmacKeyPairUpdate) AddMissionProductions(m ...*MissionProduction) *HmacKeyPairUpdate {
+// AddMissionKeyPairs adds the "mission_key_pairs" edges to the MissionKeyPair entity.
+func (hkpu *HmacKeyPairUpdate) AddMissionKeyPairs(m ...*MissionKeyPair) *HmacKeyPairUpdate {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return hkpu.AddMissionProductionIDs(ids...)
+	return hkpu.AddMissionKeyPairIDs(ids...)
 }
 
 // AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
@@ -179,35 +148,30 @@ func (hkpu *HmacKeyPairUpdate) AddCreatedMissions(m ...*Mission) *HmacKeyPairUpd
 	return hkpu.AddCreatedMissionIDs(ids...)
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (hkpu *HmacKeyPairUpdate) SetUser(u *User) *HmacKeyPairUpdate {
-	return hkpu.SetUserID(u.ID)
-}
-
 // Mutation returns the HmacKeyPairMutation object of the builder.
 func (hkpu *HmacKeyPairUpdate) Mutation() *HmacKeyPairMutation {
 	return hkpu.mutation
 }
 
-// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
-func (hkpu *HmacKeyPairUpdate) ClearMissionProductions() *HmacKeyPairUpdate {
-	hkpu.mutation.ClearMissionProductions()
+// ClearMissionKeyPairs clears all "mission_key_pairs" edges to the MissionKeyPair entity.
+func (hkpu *HmacKeyPairUpdate) ClearMissionKeyPairs() *HmacKeyPairUpdate {
+	hkpu.mutation.ClearMissionKeyPairs()
 	return hkpu
 }
 
-// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
-func (hkpu *HmacKeyPairUpdate) RemoveMissionProductionIDs(ids ...int64) *HmacKeyPairUpdate {
-	hkpu.mutation.RemoveMissionProductionIDs(ids...)
+// RemoveMissionKeyPairIDs removes the "mission_key_pairs" edge to MissionKeyPair entities by IDs.
+func (hkpu *HmacKeyPairUpdate) RemoveMissionKeyPairIDs(ids ...int64) *HmacKeyPairUpdate {
+	hkpu.mutation.RemoveMissionKeyPairIDs(ids...)
 	return hkpu
 }
 
-// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
-func (hkpu *HmacKeyPairUpdate) RemoveMissionProductions(m ...*MissionProduction) *HmacKeyPairUpdate {
+// RemoveMissionKeyPairs removes "mission_key_pairs" edges to MissionKeyPair entities.
+func (hkpu *HmacKeyPairUpdate) RemoveMissionKeyPairs(m ...*MissionKeyPair) *HmacKeyPairUpdate {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return hkpu.RemoveMissionProductionIDs(ids...)
+	return hkpu.RemoveMissionKeyPairIDs(ids...)
 }
 
 // ClearCreatedMissions clears all "created_missions" edges to the Mission entity.
@@ -229,12 +193,6 @@ func (hkpu *HmacKeyPairUpdate) RemoveCreatedMissions(m ...*Mission) *HmacKeyPair
 		ids[i] = m[i].ID
 	}
 	return hkpu.RemoveCreatedMissionIDs(ids...)
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (hkpu *HmacKeyPairUpdate) ClearUser() *HmacKeyPairUpdate {
-	hkpu.mutation.ClearUser()
-	return hkpu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -273,18 +231,7 @@ func (hkpu *HmacKeyPairUpdate) defaults() {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (hkpu *HmacKeyPairUpdate) check() error {
-	if _, ok := hkpu.mutation.UserID(); hkpu.mutation.UserCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "HmacKeyPair.user"`)
-	}
-	return nil
-}
-
 func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := hkpu.check(); err != nil {
-		return n, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(hmackeypair.Table, hmackeypair.Columns, sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64))
 	if ps := hkpu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -320,28 +267,28 @@ func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := hkpu.mutation.Caller(); ok {
 		_spec.SetField(hmackeypair.FieldCaller, field.TypeString, value)
 	}
-	if hkpu.mutation.MissionProductionsCleared() {
+	if hkpu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := hkpu.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !hkpu.mutation.MissionProductionsCleared() {
+	if nodes := hkpu.mutation.RemovedMissionKeyPairsIDs(); len(nodes) > 0 && !hkpu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -349,15 +296,15 @@ func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := hkpu.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+	if nodes := hkpu.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -403,35 +350,6 @@ func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if hkpu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   hmackeypair.UserTable,
-			Columns: []string{hmackeypair.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := hkpu.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   hmackeypair.UserTable,
-			Columns: []string{hmackeypair.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -527,25 +445,9 @@ func (hkpuo *HmacKeyPairUpdateOne) SetKey(s string) *HmacKeyPairUpdateOne {
 	return hkpuo
 }
 
-// SetNillableKey sets the "key" field if the given value is not nil.
-func (hkpuo *HmacKeyPairUpdateOne) SetNillableKey(s *string) *HmacKeyPairUpdateOne {
-	if s != nil {
-		hkpuo.SetKey(*s)
-	}
-	return hkpuo
-}
-
 // SetSecret sets the "secret" field.
 func (hkpuo *HmacKeyPairUpdateOne) SetSecret(s string) *HmacKeyPairUpdateOne {
 	hkpuo.mutation.SetSecret(s)
-	return hkpuo
-}
-
-// SetNillableSecret sets the "secret" field if the given value is not nil.
-func (hkpuo *HmacKeyPairUpdateOne) SetNillableSecret(s *string) *HmacKeyPairUpdateOne {
-	if s != nil {
-		hkpuo.SetSecret(*s)
-	}
 	return hkpuo
 }
 
@@ -563,33 +465,19 @@ func (hkpuo *HmacKeyPairUpdateOne) SetNillableCaller(s *string) *HmacKeyPairUpda
 	return hkpuo
 }
 
-// SetUserID sets the "user_id" field.
-func (hkpuo *HmacKeyPairUpdateOne) SetUserID(i int64) *HmacKeyPairUpdateOne {
-	hkpuo.mutation.SetUserID(i)
+// AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
+func (hkpuo *HmacKeyPairUpdateOne) AddMissionKeyPairIDs(ids ...int64) *HmacKeyPairUpdateOne {
+	hkpuo.mutation.AddMissionKeyPairIDs(ids...)
 	return hkpuo
 }
 
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (hkpuo *HmacKeyPairUpdateOne) SetNillableUserID(i *int64) *HmacKeyPairUpdateOne {
-	if i != nil {
-		hkpuo.SetUserID(*i)
-	}
-	return hkpuo
-}
-
-// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
-func (hkpuo *HmacKeyPairUpdateOne) AddMissionProductionIDs(ids ...int64) *HmacKeyPairUpdateOne {
-	hkpuo.mutation.AddMissionProductionIDs(ids...)
-	return hkpuo
-}
-
-// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
-func (hkpuo *HmacKeyPairUpdateOne) AddMissionProductions(m ...*MissionProduction) *HmacKeyPairUpdateOne {
+// AddMissionKeyPairs adds the "mission_key_pairs" edges to the MissionKeyPair entity.
+func (hkpuo *HmacKeyPairUpdateOne) AddMissionKeyPairs(m ...*MissionKeyPair) *HmacKeyPairUpdateOne {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return hkpuo.AddMissionProductionIDs(ids...)
+	return hkpuo.AddMissionKeyPairIDs(ids...)
 }
 
 // AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
@@ -607,35 +495,30 @@ func (hkpuo *HmacKeyPairUpdateOne) AddCreatedMissions(m ...*Mission) *HmacKeyPai
 	return hkpuo.AddCreatedMissionIDs(ids...)
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (hkpuo *HmacKeyPairUpdateOne) SetUser(u *User) *HmacKeyPairUpdateOne {
-	return hkpuo.SetUserID(u.ID)
-}
-
 // Mutation returns the HmacKeyPairMutation object of the builder.
 func (hkpuo *HmacKeyPairUpdateOne) Mutation() *HmacKeyPairMutation {
 	return hkpuo.mutation
 }
 
-// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
-func (hkpuo *HmacKeyPairUpdateOne) ClearMissionProductions() *HmacKeyPairUpdateOne {
-	hkpuo.mutation.ClearMissionProductions()
+// ClearMissionKeyPairs clears all "mission_key_pairs" edges to the MissionKeyPair entity.
+func (hkpuo *HmacKeyPairUpdateOne) ClearMissionKeyPairs() *HmacKeyPairUpdateOne {
+	hkpuo.mutation.ClearMissionKeyPairs()
 	return hkpuo
 }
 
-// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
-func (hkpuo *HmacKeyPairUpdateOne) RemoveMissionProductionIDs(ids ...int64) *HmacKeyPairUpdateOne {
-	hkpuo.mutation.RemoveMissionProductionIDs(ids...)
+// RemoveMissionKeyPairIDs removes the "mission_key_pairs" edge to MissionKeyPair entities by IDs.
+func (hkpuo *HmacKeyPairUpdateOne) RemoveMissionKeyPairIDs(ids ...int64) *HmacKeyPairUpdateOne {
+	hkpuo.mutation.RemoveMissionKeyPairIDs(ids...)
 	return hkpuo
 }
 
-// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
-func (hkpuo *HmacKeyPairUpdateOne) RemoveMissionProductions(m ...*MissionProduction) *HmacKeyPairUpdateOne {
+// RemoveMissionKeyPairs removes "mission_key_pairs" edges to MissionKeyPair entities.
+func (hkpuo *HmacKeyPairUpdateOne) RemoveMissionKeyPairs(m ...*MissionKeyPair) *HmacKeyPairUpdateOne {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return hkpuo.RemoveMissionProductionIDs(ids...)
+	return hkpuo.RemoveMissionKeyPairIDs(ids...)
 }
 
 // ClearCreatedMissions clears all "created_missions" edges to the Mission entity.
@@ -657,12 +540,6 @@ func (hkpuo *HmacKeyPairUpdateOne) RemoveCreatedMissions(m ...*Mission) *HmacKey
 		ids[i] = m[i].ID
 	}
 	return hkpuo.RemoveCreatedMissionIDs(ids...)
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (hkpuo *HmacKeyPairUpdateOne) ClearUser() *HmacKeyPairUpdateOne {
-	hkpuo.mutation.ClearUser()
-	return hkpuo
 }
 
 // Where appends a list predicates to the HmacKeyPairUpdate builder.
@@ -714,18 +591,7 @@ func (hkpuo *HmacKeyPairUpdateOne) defaults() {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (hkpuo *HmacKeyPairUpdateOne) check() error {
-	if _, ok := hkpuo.mutation.UserID(); hkpuo.mutation.UserCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "HmacKeyPair.user"`)
-	}
-	return nil
-}
-
 func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyPair, err error) {
-	if err := hkpuo.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(hmackeypair.Table, hmackeypair.Columns, sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64))
 	id, ok := hkpuo.mutation.ID()
 	if !ok {
@@ -778,28 +644,28 @@ func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyP
 	if value, ok := hkpuo.mutation.Caller(); ok {
 		_spec.SetField(hmackeypair.FieldCaller, field.TypeString, value)
 	}
-	if hkpuo.mutation.MissionProductionsCleared() {
+	if hkpuo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := hkpuo.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !hkpuo.mutation.MissionProductionsCleared() {
+	if nodes := hkpuo.mutation.RemovedMissionKeyPairsIDs(); len(nodes) > 0 && !hkpuo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -807,15 +673,15 @@ func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyP
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := hkpuo.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+	if nodes := hkpuo.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   hmackeypair.MissionProductionsTable,
-			Columns: []string{hmackeypair.MissionProductionsColumn},
+			Table:   hmackeypair.MissionKeyPairsTable,
+			Columns: []string{hmackeypair.MissionKeyPairsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -861,35 +727,6 @@ func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyP
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if hkpuo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   hmackeypair.UserTable,
-			Columns: []string{hmackeypair.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := hkpuo.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   hmackeypair.UserTable,
-			Columns: []string{hmackeypair.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

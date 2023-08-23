@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 微信身份源，与用户一对多，微信订单依赖于它
+// VXSocial is the model entity for the VXSocial schema.
 type VXSocial struct {
 	config `json:"-"`
 	// ID of the ent.

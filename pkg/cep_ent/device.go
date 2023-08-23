@@ -14,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 设备表，与用户一对多
+// Device is the model entity for the Device schema.
 type Device struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -30,11 +30,19 @@ type Device struct {
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键用户 id
-	UserID int64 `json:"user_id"`
+	UserID int64 `json:"user_id,omitempty"`
+	// 设备唯一序列号
+	SerialNumber string `json:"serial_number"`
 	// 设备状态
-	Status enums.DeviceStatus `json:"status,omitempty"`
+	State device.State `json:"state,omitempty"`
+	// 该设备总获得利润
+	SumCep int64 `json:"sum_cep"`
+	// 设备是否正在对接中
+	Linking bool `json:"linking"`
 	// 设备的绑定状态
 	BindingStatus enums.DeviceBindingStatus `json:"binding_status"`
+	// 设备状态
+	Status device.Status `json:"status"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -47,10 +55,10 @@ type DeviceEdges struct {
 	User *User `json:"user,omitempty"`
 	// MissionProduceOrders holds the value of the mission_produce_orders edge.
 	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
-	// MissionProductions holds the value of the mission_productions edge.
-	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
 	// UserDevices holds the value of the user_devices edge.
 	UserDevices []*UserDevice `json:"user_devices,omitempty"`
+	// DeviceGpuMissions holds the value of the device_gpu_missions edge.
+	DeviceGpuMissions []*DeviceGpuMission `json:"device_gpu_missions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
@@ -78,22 +86,22 @@ func (e DeviceEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error)
 	return nil, &NotLoadedError{edge: "mission_produce_orders"}
 }
 
-// MissionProductionsOrErr returns the MissionProductions value or an error if the edge
-// was not loaded in eager-loading.
-func (e DeviceEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
-	if e.loadedTypes[2] {
-		return e.MissionProductions, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_productions"}
-}
-
 // UserDevicesOrErr returns the UserDevices value or an error if the edge
 // was not loaded in eager-loading.
 func (e DeviceEdges) UserDevicesOrErr() ([]*UserDevice, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.UserDevices, nil
 	}
 	return nil, &NotLoadedError{edge: "user_devices"}
+}
+
+// DeviceGpuMissionsOrErr returns the DeviceGpuMissions value or an error if the edge
+// was not loaded in eager-loading.
+func (e DeviceEdges) DeviceGpuMissionsOrErr() ([]*DeviceGpuMission, error) {
+	if e.loadedTypes[3] {
+		return e.DeviceGpuMissions, nil
+	}
+	return nil, &NotLoadedError{edge: "device_gpu_missions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -101,9 +109,11 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID:
+		case device.FieldLinking:
+			values[i] = new(sql.NullBool)
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep:
 			values[i] = new(sql.NullInt64)
-		case device.FieldStatus, device.FieldBindingStatus:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -164,17 +174,41 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.UserID = value.Int64
 			}
-		case device.FieldStatus:
+		case device.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field status", values[i])
+				return fmt.Errorf("unexpected type %T for field serial_number", values[i])
 			} else if value.Valid {
-				d.Status = enums.DeviceStatus(value.String)
+				d.SerialNumber = value.String
+			}
+		case device.FieldState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field state", values[i])
+			} else if value.Valid {
+				d.State = device.State(value.String)
+			}
+		case device.FieldSumCep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sum_cep", values[i])
+			} else if value.Valid {
+				d.SumCep = value.Int64
+			}
+		case device.FieldLinking:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field linking", values[i])
+			} else if value.Valid {
+				d.Linking = value.Bool
 			}
 		case device.FieldBindingStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field binding_status", values[i])
 			} else if value.Valid {
 				d.BindingStatus = enums.DeviceBindingStatus(value.String)
+			}
+		case device.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				d.Status = device.Status(value.String)
 			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
@@ -199,14 +233,14 @@ func (d *Device) QueryMissionProduceOrders() *MissionProduceOrderQuery {
 	return NewDeviceClient(d.config).QueryMissionProduceOrders(d)
 }
 
-// QueryMissionProductions queries the "mission_productions" edge of the Device entity.
-func (d *Device) QueryMissionProductions() *MissionProductionQuery {
-	return NewDeviceClient(d.config).QueryMissionProductions(d)
-}
-
 // QueryUserDevices queries the "user_devices" edge of the Device entity.
 func (d *Device) QueryUserDevices() *UserDeviceQuery {
 	return NewDeviceClient(d.config).QueryUserDevices(d)
+}
+
+// QueryDeviceGpuMissions queries the "device_gpu_missions" edge of the Device entity.
+func (d *Device) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
+	return NewDeviceClient(d.config).QueryDeviceGpuMissions(d)
 }
 
 // Update returns a builder for updating this Device.
@@ -250,11 +284,23 @@ func (d *Device) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", d.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("status=")
-	builder.WriteString(fmt.Sprintf("%v", d.Status))
+	builder.WriteString("serial_number=")
+	builder.WriteString(d.SerialNumber)
+	builder.WriteString(", ")
+	builder.WriteString("state=")
+	builder.WriteString(fmt.Sprintf("%v", d.State))
+	builder.WriteString(", ")
+	builder.WriteString("sum_cep=")
+	builder.WriteString(fmt.Sprintf("%v", d.SumCep))
+	builder.WriteString(", ")
+	builder.WriteString("linking=")
+	builder.WriteString(fmt.Sprintf("%v", d.Linking))
 	builder.WriteString(", ")
 	builder.WriteString("binding_status=")
 	builder.WriteString(fmt.Sprintf("%v", d.BindingStatus))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", d.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }

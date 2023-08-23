@@ -3,7 +3,6 @@
 package user
 
 import (
-	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -28,38 +27,38 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldNickName holds the string denoting the nick_name field in the database.
-	FieldNickName = "nick_name"
+	// FieldJpgURL holds the string denoting the jpg_url field in the database.
+	FieldJpgURL = "jpg_url"
+	// FieldKey holds the string denoting the key field in the database.
+	FieldKey = "key"
+	// FieldSecret holds the string denoting the secret field in the database.
+	FieldSecret = "secret"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
-	// FieldAvatarURL holds the string denoting the avatar_url field in the database.
-	FieldAvatarURL = "avatar_url"
-	// FieldStatus holds the string denoting the status field in the database.
-	FieldStatus = "status"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
-	// FieldPlatform holds the string denoting the platform field in the database.
-	FieldPlatform = "platform"
-	// FieldHmacKey holds the string denoting the hmac_key field in the database.
-	FieldHmacKey = "hmac_key"
-	// FieldHmacSecret holds the string denoting the hmac_secret field in the database.
-	FieldHmacSecret = "hmac_secret"
-	// EdgeBills holds the string denoting the bills edge name in mutations.
-	EdgeBills = "bills"
-	// EdgeHmacKeyPair holds the string denoting the hmac_key_pair edge name in mutations.
-	EdgeHmacKeyPair = "hmac_key_pair"
-	// EdgeCreatedMissions holds the string denoting the created_missions edge name in mutations.
-	EdgeCreatedMissions = "created_missions"
-	// EdgeWallet holds the string denoting the wallet edge name in mutations.
-	EdgeWallet = "wallet"
-	// EdgeCollections holds the string denoting the collections edge name in mutations.
-	EdgeCollections = "collections"
+	// FieldIsFrozen holds the string denoting the is_frozen field in the database.
+	FieldIsFrozen = "is_frozen"
+	// FieldUserType holds the string denoting the user_type field in the database.
+	FieldUserType = "user_type"
+	// FieldParentID holds the string denoting the parent_id field in the database.
+	FieldParentID = "parent_id"
+	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
+	EdgeVxAccounts = "vx_accounts"
+	// EdgeCollects holds the string denoting the collects edge name in mutations.
+	EdgeCollects = "collects"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
 	EdgeDevices = "devices"
 	// EdgeProfitSettings holds the string denoting the profit_settings edge name in mutations.
 	EdgeProfitSettings = "profit_settings"
+	// EdgeCostAccount holds the string denoting the cost_account edge name in mutations.
+	EdgeCostAccount = "cost_account"
+	// EdgeProfitAccount holds the string denoting the profit_account edge name in mutations.
+	EdgeProfitAccount = "profit_account"
+	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
+	EdgeCostBills = "cost_bills"
+	// EdgeEarnBills holds the string denoting the earn_bills edge name in mutations.
+	EdgeEarnBills = "earn_bills"
 	// EdgeMissionConsumeOrders holds the string denoting the mission_consume_orders edge name in mutations.
 	EdgeMissionConsumeOrders = "mission_consume_orders"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -72,43 +71,26 @@ const (
 	EdgeMissionBatches = "mission_batches"
 	// EdgeUserDevices holds the string denoting the user_devices edge name in mutations.
 	EdgeUserDevices = "user_devices"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// BillsTable is the table that holds the bills relation/edge.
-	BillsTable = "bills"
-	// BillsInverseTable is the table name for the Bill entity.
-	// It exists in this package in order to avoid circular dependency with the "bill" package.
-	BillsInverseTable = "bills"
-	// BillsColumn is the table column denoting the bills relation/edge.
-	BillsColumn = "user_id"
-	// HmacKeyPairTable is the table that holds the hmac_key_pair relation/edge.
-	HmacKeyPairTable = "hmac_key_pairs"
-	// HmacKeyPairInverseTable is the table name for the HmacKeyPair entity.
-	// It exists in this package in order to avoid circular dependency with the "hmackeypair" package.
-	HmacKeyPairInverseTable = "hmac_key_pairs"
-	// HmacKeyPairColumn is the table column denoting the hmac_key_pair relation/edge.
-	HmacKeyPairColumn = "user_id"
-	// CreatedMissionsTable is the table that holds the created_missions relation/edge.
-	CreatedMissionsTable = "missions"
-	// CreatedMissionsInverseTable is the table name for the Mission entity.
-	// It exists in this package in order to avoid circular dependency with the "mission" package.
-	CreatedMissionsInverseTable = "missions"
-	// CreatedMissionsColumn is the table column denoting the created_missions relation/edge.
-	CreatedMissionsColumn = "user_id"
-	// WalletTable is the table that holds the wallet relation/edge.
-	WalletTable = "wallets"
-	// WalletInverseTable is the table name for the Wallet entity.
-	// It exists in this package in order to avoid circular dependency with the "wallet" package.
-	WalletInverseTable = "wallets"
-	// WalletColumn is the table column denoting the wallet relation/edge.
-	WalletColumn = "user_id"
-	// CollectionsTable is the table that holds the collections relation/edge.
-	CollectionsTable = "collections"
-	// CollectionsInverseTable is the table name for the Collection entity.
-	// It exists in this package in order to avoid circular dependency with the "collection" package.
-	CollectionsInverseTable = "collections"
-	// CollectionsColumn is the table column denoting the collections relation/edge.
-	CollectionsColumn = "user_id"
+	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
+	VxAccountsTable = "vx_accounts"
+	// VxAccountsInverseTable is the table name for the VXAccount entity.
+	// It exists in this package in order to avoid circular dependency with the "vxaccount" package.
+	VxAccountsInverseTable = "vx_accounts"
+	// VxAccountsColumn is the table column denoting the vx_accounts relation/edge.
+	VxAccountsColumn = "user_id"
+	// CollectsTable is the table that holds the collects relation/edge.
+	CollectsTable = "collects"
+	// CollectsInverseTable is the table name for the Collect entity.
+	// It exists in this package in order to avoid circular dependency with the "collect" package.
+	CollectsInverseTable = "collects"
+	// CollectsColumn is the table column denoting the collects relation/edge.
+	CollectsColumn = "user_id"
 	// DevicesTable is the table that holds the devices relation/edge.
 	DevicesTable = "devices"
 	// DevicesInverseTable is the table name for the Device entity.
@@ -123,6 +105,34 @@ const (
 	ProfitSettingsInverseTable = "profit_settings"
 	// ProfitSettingsColumn is the table column denoting the profit_settings relation/edge.
 	ProfitSettingsColumn = "user_id"
+	// CostAccountTable is the table that holds the cost_account relation/edge.
+	CostAccountTable = "cost_accounts"
+	// CostAccountInverseTable is the table name for the CostAccount entity.
+	// It exists in this package in order to avoid circular dependency with the "costaccount" package.
+	CostAccountInverseTable = "cost_accounts"
+	// CostAccountColumn is the table column denoting the cost_account relation/edge.
+	CostAccountColumn = "user_id"
+	// ProfitAccountTable is the table that holds the profit_account relation/edge.
+	ProfitAccountTable = "profit_accounts"
+	// ProfitAccountInverseTable is the table name for the ProfitAccount entity.
+	// It exists in this package in order to avoid circular dependency with the "profitaccount" package.
+	ProfitAccountInverseTable = "profit_accounts"
+	// ProfitAccountColumn is the table column denoting the profit_account relation/edge.
+	ProfitAccountColumn = "user_id"
+	// CostBillsTable is the table that holds the cost_bills relation/edge.
+	CostBillsTable = "cost_bills"
+	// CostBillsInverseTable is the table name for the CostBill entity.
+	// It exists in this package in order to avoid circular dependency with the "costbill" package.
+	CostBillsInverseTable = "cost_bills"
+	// CostBillsColumn is the table column denoting the cost_bills relation/edge.
+	CostBillsColumn = "user_id"
+	// EarnBillsTable is the table that holds the earn_bills relation/edge.
+	EarnBillsTable = "earn_bills"
+	// EarnBillsInverseTable is the table name for the EarnBill entity.
+	// It exists in this package in order to avoid circular dependency with the "earnbill" package.
+	EarnBillsInverseTable = "earn_bills"
+	// EarnBillsColumn is the table column denoting the earn_bills relation/edge.
+	EarnBillsColumn = "user_id"
 	// MissionConsumeOrdersTable is the table that holds the mission_consume_orders relation/edge.
 	MissionConsumeOrdersTable = "mission_consume_orders"
 	// MissionConsumeOrdersInverseTable is the table name for the MissionConsumeOrder entity.
@@ -165,6 +175,14 @@ const (
 	UserDevicesInverseTable = "user_devices"
 	// UserDevicesColumn is the table column denoting the user_devices relation/edge.
 	UserDevicesColumn = "user_id"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "users"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "parent_id"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "users"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "parent_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -176,15 +194,14 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldName,
-	FieldNickName,
+	FieldJpgURL,
+	FieldKey,
+	FieldSecret,
 	FieldPhone,
 	FieldPassword,
-	FieldAvatarURL,
-	FieldStatus,
-	FieldType,
-	FieldPlatform,
-	FieldHmacKey,
-	FieldHmacSecret,
+	FieldIsFrozen,
+	FieldUserType,
+	FieldParentID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -211,46 +228,48 @@ var (
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
 	// DefaultName holds the default value on creation for the "name" field.
-	DefaultName func() string
-	// DefaultNickName holds the default value on creation for the "nick_name" field.
-	DefaultNickName string
+	DefaultName string
+	// DefaultJpgURL holds the default value on creation for the "jpg_url" field.
+	DefaultJpgURL string
+	// DefaultKey holds the default value on creation for the "key" field.
+	DefaultKey string
+	// DefaultSecret holds the default value on creation for the "secret" field.
+	DefaultSecret string
 	// DefaultPhone holds the default value on creation for the "phone" field.
 	DefaultPhone string
 	// DefaultPassword holds the default value on creation for the "password" field.
 	DefaultPassword string
-	// DefaultAvatarURL holds the default value on creation for the "avatar_url" field.
-	DefaultAvatarURL string
-	// DefaultPlatform holds the default value on creation for the "platform" field.
-	DefaultPlatform int
-	// DefaultHmacKey holds the default value on creation for the "hmac_key" field.
-	DefaultHmacKey string
-	// DefaultHmacSecret holds the default value on creation for the "hmac_secret" field.
-	DefaultHmacSecret string
+	// DefaultIsFrozen holds the default value on creation for the "is_frozen" field.
+	DefaultIsFrozen bool
+	// DefaultParentID holds the default value on creation for the "parent_id" field.
+	DefaultParentID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.UserStatus = "normal"
+// UserType defines the type for the "user_type" enum field.
+type UserType string
 
-// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s enums.UserStatus) error {
-	switch s {
-	case "normal", "frozen":
-		return nil
-	default:
-		return fmt.Errorf("user: invalid enum value for status field: %q", s)
-	}
+// UserTypePersonal is the default value of the UserType enum.
+const DefaultUserType = UserTypePersonal
+
+// UserType values.
+const (
+	UserTypePersonal   UserType = "personal"
+	UserTypeEnterprise UserType = "enterprise"
+)
+
+func (ut UserType) String() string {
+	return string(ut)
 }
 
-const DefaultType enums.UserType = "personal"
-
-// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type enums.UserType) error {
-	switch _type {
-	case "personal", "enterprise":
+// UserTypeValidator is a validator for the "user_type" field enum values. It is called by the builders before save.
+func UserTypeValidator(ut UserType) error {
+	switch ut {
+	case UserTypePersonal, UserTypeEnterprise:
 		return nil
 	default:
-		return fmt.Errorf("user: invalid enum value for type field: %q", _type)
+		return fmt.Errorf("user: invalid enum value for user_type field: %q", ut)
 	}
 }
 
@@ -292,9 +311,19 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByNickName orders the results by the nick_name field.
-func ByNickName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNickName, opts...).ToFunc()
+// ByJpgURL orders the results by the jpg_url field.
+func ByJpgURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldJpgURL, opts...).ToFunc()
+}
+
+// ByKey orders the results by the key field.
+func ByKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKey, opts...).ToFunc()
+}
+
+// BySecret orders the results by the secret field.
+func BySecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSecret, opts...).ToFunc()
 }
 
 // ByPhone orders the results by the phone field.
@@ -307,89 +336,46 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
 }
 
-// ByAvatarURL orders the results by the avatar_url field.
-func ByAvatarURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAvatarURL, opts...).ToFunc()
+// ByIsFrozen orders the results by the is_frozen field.
+func ByIsFrozen(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsFrozen, opts...).ToFunc()
 }
 
-// ByStatus orders the results by the status field.
-func ByStatus(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+// ByUserType orders the results by the user_type field.
+func ByUserType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserType, opts...).ToFunc()
 }
 
-// ByType orders the results by the type field.
-func ByType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldType, opts...).ToFunc()
+// ByParentID orders the results by the parent_id field.
+func ByParentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldParentID, opts...).ToFunc()
 }
 
-// ByPlatform orders the results by the platform field.
-func ByPlatform(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPlatform, opts...).ToFunc()
-}
-
-// ByHmacKey orders the results by the hmac_key field.
-func ByHmacKey(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldHmacKey, opts...).ToFunc()
-}
-
-// ByHmacSecret orders the results by the hmac_secret field.
-func ByHmacSecret(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldHmacSecret, opts...).ToFunc()
-}
-
-// ByBillsCount orders the results by bills count.
-func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByVxAccountsCount orders the results by vx_accounts count.
+func ByVxAccountsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newVxAccountsStep(), opts...)
 	}
 }
 
-// ByBills orders the results by bills terms.
-func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByVxAccounts orders the results by vx_accounts terms.
+func ByVxAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newVxAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
-// ByHmacKeyPairField orders the results by hmac_key_pair field.
-func ByHmacKeyPairField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByCollectsCount orders the results by collects count.
+func ByCollectsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newHmacKeyPairStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newCollectsStep(), opts...)
 	}
 }
 
-// ByCreatedMissionsCount orders the results by created_missions count.
-func ByCreatedMissionsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByCollects orders the results by collects terms.
+func ByCollects(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newCreatedMissionsStep(), opts...)
-	}
-}
-
-// ByCreatedMissions orders the results by created_missions terms.
-func ByCreatedMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newCreatedMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByWalletField orders the results by wallet field.
-func ByWalletField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newWalletStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByCollectionsCount orders the results by collections count.
-func ByCollectionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newCollectionsStep(), opts...)
-	}
-}
-
-// ByCollections orders the results by collections terms.
-func ByCollections(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newCollectionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newCollectsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -418,6 +404,48 @@ func ByProfitSettingsCount(opts ...sql.OrderTermOption) OrderOption {
 func ByProfitSettings(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newProfitSettingsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByCostAccountField orders the results by cost_account field.
+func ByCostAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCostAccountStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByProfitAccountField orders the results by profit_account field.
+func ByProfitAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProfitAccountStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByCostBillsCount orders the results by cost_bills count.
+func ByCostBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCostBillsStep(), opts...)
+	}
+}
+
+// ByCostBills orders the results by cost_bills terms.
+func ByCostBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCostBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEarnBillsCount orders the results by earn_bills count.
+func ByEarnBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEarnBillsStep(), opts...)
+	}
+}
+
+// ByEarnBills orders the results by earn_bills terms.
+func ByEarnBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEarnBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -504,39 +532,39 @@ func ByUserDevices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUserDevicesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-func newBillsStep() *sqlgraph.Step {
+
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BillsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+		sqlgraph.To(VxAccountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VxAccountsTable, VxAccountsColumn),
 	)
 }
-func newHmacKeyPairStep() *sqlgraph.Step {
+func newCollectsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(HmacKeyPairInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, HmacKeyPairTable, HmacKeyPairColumn),
-	)
-}
-func newCreatedMissionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(CreatedMissionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, CreatedMissionsTable, CreatedMissionsColumn),
-	)
-}
-func newWalletStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(WalletInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, WalletTable, WalletColumn),
-	)
-}
-func newCollectionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(CollectionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, CollectionsTable, CollectionsColumn),
+		sqlgraph.To(CollectsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CollectsTable, CollectsColumn),
 	)
 }
 func newDevicesStep() *sqlgraph.Step {
@@ -551,6 +579,34 @@ func newProfitSettingsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfitSettingsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ProfitSettingsTable, ProfitSettingsColumn),
+	)
+}
+func newCostAccountStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CostAccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, CostAccountTable, CostAccountColumn),
+	)
+}
+func newProfitAccountStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProfitAccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, ProfitAccountTable, ProfitAccountColumn),
+	)
+}
+func newCostBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CostBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
+	)
+}
+func newEarnBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EarnBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EarnBillsTable, EarnBillsColumn),
 	)
 }
 func newMissionConsumeOrdersStep() *sqlgraph.Step {
@@ -593,5 +649,19 @@ func newUserDevicesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserDevicesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, UserDevicesTable, UserDevicesColumn),
+	)
+}
+func newParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
 	)
 }

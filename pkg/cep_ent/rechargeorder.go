@@ -6,7 +6,6 @@ import (
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -15,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 充值订单，微信订单、支付宝订单、手动充值都在一张表
+// RechargeOrder is the model entity for the RechargeOrder schema.
 type RechargeOrder struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -33,13 +32,13 @@ type RechargeOrder struct {
 	// 充值的用户 id
 	UserID int64 `json:"user_id"`
 	// 充值订单的状态，比如微信发起支付后可能没完成支付
-	Status enums.MissionStatus `json:"status"`
-	// 充值多少 cep
-	Cep int64 `json:"cep"`
+	Status rechargeorder.Status `json:"status"`
+	// 充值多少本金
+	PureCep int64 `json:"pure_cep"`
 	// 关联充值来源的身份源 id
 	SocialID int64 `json:"social_id"`
 	// 充值订单的类型
-	Type enums.RechargeOrderType `json:"type"`
+	Type rechargeorder.Type `json:"type"`
 	// 充值订单的序列号
 	SerialNumber string `json:"serial_number"`
 	// 第三方平台的返回，给到前端才能发起支付
@@ -58,8 +57,8 @@ type RechargeOrder struct {
 type RechargeOrderEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// Bills holds the value of the bills edge.
-	Bills []*Bill `json:"bills,omitempty"`
+	// CostBills holds the value of the cost_bills edge.
+	CostBills []*CostBill `json:"cost_bills,omitempty"`
 	// VxSocial holds the value of the vx_social edge.
 	VxSocial *VXSocial `json:"vx_social,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -80,13 +79,13 @@ func (e RechargeOrderEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// BillsOrErr returns the Bills value or an error if the edge
+// CostBillsOrErr returns the CostBills value or an error if the edge
 // was not loaded in eager-loading.
-func (e RechargeOrderEdges) BillsOrErr() ([]*Bill, error) {
+func (e RechargeOrderEdges) CostBillsOrErr() ([]*CostBill, error) {
 	if e.loadedTypes[1] {
-		return e.Bills, nil
+		return e.CostBills, nil
 	}
-	return nil, &NotLoadedError{edge: "bills"}
+	return nil, &NotLoadedError{edge: "cost_bills"}
 }
 
 // VxSocialOrErr returns the VxSocial value or an error if the edge
@@ -107,7 +106,7 @@ func (*RechargeOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case rechargeorder.FieldID, rechargeorder.FieldCreatedBy, rechargeorder.FieldUpdatedBy, rechargeorder.FieldUserID, rechargeorder.FieldCep, rechargeorder.FieldSocialID, rechargeorder.FieldFromUserID:
+		case rechargeorder.FieldID, rechargeorder.FieldCreatedBy, rechargeorder.FieldUpdatedBy, rechargeorder.FieldUserID, rechargeorder.FieldPureCep, rechargeorder.FieldSocialID, rechargeorder.FieldFromUserID:
 			values[i] = new(sql.NullInt64)
 		case rechargeorder.FieldStatus, rechargeorder.FieldType, rechargeorder.FieldSerialNumber, rechargeorder.FieldThirdAPIResp, rechargeorder.FieldOutTransactionID:
 			values[i] = new(sql.NullString)
@@ -174,13 +173,13 @@ func (ro *RechargeOrder) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				ro.Status = enums.MissionStatus(value.String)
+				ro.Status = rechargeorder.Status(value.String)
 			}
-		case rechargeorder.FieldCep:
+		case rechargeorder.FieldPureCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field cep", values[i])
+				return fmt.Errorf("unexpected type %T for field pure_cep", values[i])
 			} else if value.Valid {
-				ro.Cep = value.Int64
+				ro.PureCep = value.Int64
 			}
 		case rechargeorder.FieldSocialID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -192,7 +191,7 @@ func (ro *RechargeOrder) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				ro.Type = enums.RechargeOrderType(value.String)
+				ro.Type = rechargeorder.Type(value.String)
 			}
 		case rechargeorder.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -236,9 +235,9 @@ func (ro *RechargeOrder) QueryUser() *UserQuery {
 	return NewRechargeOrderClient(ro.config).QueryUser(ro)
 }
 
-// QueryBills queries the "bills" edge of the RechargeOrder entity.
-func (ro *RechargeOrder) QueryBills() *BillQuery {
-	return NewRechargeOrderClient(ro.config).QueryBills(ro)
+// QueryCostBills queries the "cost_bills" edge of the RechargeOrder entity.
+func (ro *RechargeOrder) QueryCostBills() *CostBillQuery {
+	return NewRechargeOrderClient(ro.config).QueryCostBills(ro)
 }
 
 // QueryVxSocial queries the "vx_social" edge of the RechargeOrder entity.
@@ -290,8 +289,8 @@ func (ro *RechargeOrder) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", ro.Status))
 	builder.WriteString(", ")
-	builder.WriteString("cep=")
-	builder.WriteString(fmt.Sprintf("%v", ro.Cep))
+	builder.WriteString("pure_cep=")
+	builder.WriteString(fmt.Sprintf("%v", ro.PureCep))
 	builder.WriteString(", ")
 	builder.WriteString("social_id=")
 	builder.WriteString(fmt.Sprintf("%v", ro.SocialID))

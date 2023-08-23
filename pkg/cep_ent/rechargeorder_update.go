@@ -3,12 +3,11 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/predicate"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -109,37 +108,37 @@ func (rou *RechargeOrderUpdate) SetNillableUserID(i *int64) *RechargeOrderUpdate
 }
 
 // SetStatus sets the "status" field.
-func (rou *RechargeOrderUpdate) SetStatus(es enums.MissionStatus) *RechargeOrderUpdate {
-	rou.mutation.SetStatus(es)
+func (rou *RechargeOrderUpdate) SetStatus(r rechargeorder.Status) *RechargeOrderUpdate {
+	rou.mutation.SetStatus(r)
 	return rou
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (rou *RechargeOrderUpdate) SetNillableStatus(es *enums.MissionStatus) *RechargeOrderUpdate {
-	if es != nil {
-		rou.SetStatus(*es)
+func (rou *RechargeOrderUpdate) SetNillableStatus(r *rechargeorder.Status) *RechargeOrderUpdate {
+	if r != nil {
+		rou.SetStatus(*r)
 	}
 	return rou
 }
 
-// SetCep sets the "cep" field.
-func (rou *RechargeOrderUpdate) SetCep(i int64) *RechargeOrderUpdate {
-	rou.mutation.ResetCep()
-	rou.mutation.SetCep(i)
+// SetPureCep sets the "pure_cep" field.
+func (rou *RechargeOrderUpdate) SetPureCep(i int64) *RechargeOrderUpdate {
+	rou.mutation.ResetPureCep()
+	rou.mutation.SetPureCep(i)
 	return rou
 }
 
-// SetNillableCep sets the "cep" field if the given value is not nil.
-func (rou *RechargeOrderUpdate) SetNillableCep(i *int64) *RechargeOrderUpdate {
+// SetNillablePureCep sets the "pure_cep" field if the given value is not nil.
+func (rou *RechargeOrderUpdate) SetNillablePureCep(i *int64) *RechargeOrderUpdate {
 	if i != nil {
-		rou.SetCep(*i)
+		rou.SetPureCep(*i)
 	}
 	return rou
 }
 
-// AddCep adds i to the "cep" field.
-func (rou *RechargeOrderUpdate) AddCep(i int64) *RechargeOrderUpdate {
-	rou.mutation.AddCep(i)
+// AddPureCep adds i to the "pure_cep" field.
+func (rou *RechargeOrderUpdate) AddPureCep(i int64) *RechargeOrderUpdate {
+	rou.mutation.AddPureCep(i)
 	return rou
 }
 
@@ -164,15 +163,15 @@ func (rou *RechargeOrderUpdate) ClearSocialID() *RechargeOrderUpdate {
 }
 
 // SetType sets the "type" field.
-func (rou *RechargeOrderUpdate) SetType(eot enums.RechargeOrderType) *RechargeOrderUpdate {
-	rou.mutation.SetType(eot)
+func (rou *RechargeOrderUpdate) SetType(r rechargeorder.Type) *RechargeOrderUpdate {
+	rou.mutation.SetType(r)
 	return rou
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rou *RechargeOrderUpdate) SetNillableType(eot *enums.RechargeOrderType) *RechargeOrderUpdate {
-	if eot != nil {
-		rou.SetType(*eot)
+func (rou *RechargeOrderUpdate) SetNillableType(r *rechargeorder.Type) *RechargeOrderUpdate {
+	if r != nil {
+		rou.SetType(*r)
 	}
 	return rou
 }
@@ -245,19 +244,19 @@ func (rou *RechargeOrderUpdate) SetUser(u *User) *RechargeOrderUpdate {
 	return rou.SetUserID(u.ID)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (rou *RechargeOrderUpdate) AddBillIDs(ids ...int64) *RechargeOrderUpdate {
-	rou.mutation.AddBillIDs(ids...)
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (rou *RechargeOrderUpdate) AddCostBillIDs(ids ...int64) *RechargeOrderUpdate {
+	rou.mutation.AddCostBillIDs(ids...)
 	return rou
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (rou *RechargeOrderUpdate) AddBills(b ...*Bill) *RechargeOrderUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (rou *RechargeOrderUpdate) AddCostBills(c ...*CostBill) *RechargeOrderUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return rou.AddBillIDs(ids...)
+	return rou.AddCostBillIDs(ids...)
 }
 
 // SetVxSocialID sets the "vx_social" edge to the VXSocial entity by ID.
@@ -290,25 +289,25 @@ func (rou *RechargeOrderUpdate) ClearUser() *RechargeOrderUpdate {
 	return rou
 }
 
-// ClearBills clears all "bills" edges to the Bill entity.
-func (rou *RechargeOrderUpdate) ClearBills() *RechargeOrderUpdate {
-	rou.mutation.ClearBills()
+// ClearCostBills clears all "cost_bills" edges to the CostBill entity.
+func (rou *RechargeOrderUpdate) ClearCostBills() *RechargeOrderUpdate {
+	rou.mutation.ClearCostBills()
 	return rou
 }
 
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (rou *RechargeOrderUpdate) RemoveBillIDs(ids ...int64) *RechargeOrderUpdate {
-	rou.mutation.RemoveBillIDs(ids...)
+// RemoveCostBillIDs removes the "cost_bills" edge to CostBill entities by IDs.
+func (rou *RechargeOrderUpdate) RemoveCostBillIDs(ids ...int64) *RechargeOrderUpdate {
+	rou.mutation.RemoveCostBillIDs(ids...)
 	return rou
 }
 
-// RemoveBills removes "bills" edges to Bill entities.
-func (rou *RechargeOrderUpdate) RemoveBills(b ...*Bill) *RechargeOrderUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// RemoveCostBills removes "cost_bills" edges to CostBill entities.
+func (rou *RechargeOrderUpdate) RemoveCostBills(c ...*CostBill) *RechargeOrderUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return rou.RemoveBillIDs(ids...)
+	return rou.RemoveCostBillIDs(ids...)
 }
 
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
@@ -360,9 +359,9 @@ func (rou *RechargeOrderUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.status": %w`, err)}
 		}
 	}
-	if v, ok := rou.mutation.Cep(); ok {
-		if err := rechargeorder.CepValidator(v); err != nil {
-			return &ValidationError{Name: "cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.cep": %w`, err)}
+	if v, ok := rou.mutation.PureCep(); ok {
+		if err := rechargeorder.PureCepValidator(v); err != nil {
+			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
 		}
 	}
 	if v, ok := rou.mutation.GetType(); ok {
@@ -409,11 +408,11 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := rou.mutation.Status(); ok {
 		_spec.SetField(rechargeorder.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := rou.mutation.Cep(); ok {
-		_spec.SetField(rechargeorder.FieldCep, field.TypeInt64, value)
+	if value, ok := rou.mutation.PureCep(); ok {
+		_spec.SetField(rechargeorder.FieldPureCep, field.TypeInt64, value)
 	}
-	if value, ok := rou.mutation.AddedCep(); ok {
-		_spec.AddField(rechargeorder.FieldCep, field.TypeInt64, value)
+	if value, ok := rou.mutation.AddedPureCep(); ok {
+		_spec.AddField(rechargeorder.FieldPureCep, field.TypeInt64, value)
 	}
 	if value, ok := rou.mutation.GetType(); ok {
 		_spec.SetField(rechargeorder.FieldType, field.TypeEnum, value)
@@ -462,28 +461,28 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rou.mutation.BillsCleared() {
+	if rou.mutation.CostBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rou.mutation.RemovedBillsIDs(); len(nodes) > 0 && !rou.mutation.BillsCleared() {
+	if nodes := rou.mutation.RemovedCostBillsIDs(); len(nodes) > 0 && !rou.mutation.CostBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -491,15 +490,15 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rou.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := rou.mutation.CostBillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -633,37 +632,37 @@ func (rouo *RechargeOrderUpdateOne) SetNillableUserID(i *int64) *RechargeOrderUp
 }
 
 // SetStatus sets the "status" field.
-func (rouo *RechargeOrderUpdateOne) SetStatus(es enums.MissionStatus) *RechargeOrderUpdateOne {
-	rouo.mutation.SetStatus(es)
+func (rouo *RechargeOrderUpdateOne) SetStatus(r rechargeorder.Status) *RechargeOrderUpdateOne {
+	rouo.mutation.SetStatus(r)
 	return rouo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (rouo *RechargeOrderUpdateOne) SetNillableStatus(es *enums.MissionStatus) *RechargeOrderUpdateOne {
-	if es != nil {
-		rouo.SetStatus(*es)
+func (rouo *RechargeOrderUpdateOne) SetNillableStatus(r *rechargeorder.Status) *RechargeOrderUpdateOne {
+	if r != nil {
+		rouo.SetStatus(*r)
 	}
 	return rouo
 }
 
-// SetCep sets the "cep" field.
-func (rouo *RechargeOrderUpdateOne) SetCep(i int64) *RechargeOrderUpdateOne {
-	rouo.mutation.ResetCep()
-	rouo.mutation.SetCep(i)
+// SetPureCep sets the "pure_cep" field.
+func (rouo *RechargeOrderUpdateOne) SetPureCep(i int64) *RechargeOrderUpdateOne {
+	rouo.mutation.ResetPureCep()
+	rouo.mutation.SetPureCep(i)
 	return rouo
 }
 
-// SetNillableCep sets the "cep" field if the given value is not nil.
-func (rouo *RechargeOrderUpdateOne) SetNillableCep(i *int64) *RechargeOrderUpdateOne {
+// SetNillablePureCep sets the "pure_cep" field if the given value is not nil.
+func (rouo *RechargeOrderUpdateOne) SetNillablePureCep(i *int64) *RechargeOrderUpdateOne {
 	if i != nil {
-		rouo.SetCep(*i)
+		rouo.SetPureCep(*i)
 	}
 	return rouo
 }
 
-// AddCep adds i to the "cep" field.
-func (rouo *RechargeOrderUpdateOne) AddCep(i int64) *RechargeOrderUpdateOne {
-	rouo.mutation.AddCep(i)
+// AddPureCep adds i to the "pure_cep" field.
+func (rouo *RechargeOrderUpdateOne) AddPureCep(i int64) *RechargeOrderUpdateOne {
+	rouo.mutation.AddPureCep(i)
 	return rouo
 }
 
@@ -688,15 +687,15 @@ func (rouo *RechargeOrderUpdateOne) ClearSocialID() *RechargeOrderUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (rouo *RechargeOrderUpdateOne) SetType(eot enums.RechargeOrderType) *RechargeOrderUpdateOne {
-	rouo.mutation.SetType(eot)
+func (rouo *RechargeOrderUpdateOne) SetType(r rechargeorder.Type) *RechargeOrderUpdateOne {
+	rouo.mutation.SetType(r)
 	return rouo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rouo *RechargeOrderUpdateOne) SetNillableType(eot *enums.RechargeOrderType) *RechargeOrderUpdateOne {
-	if eot != nil {
-		rouo.SetType(*eot)
+func (rouo *RechargeOrderUpdateOne) SetNillableType(r *rechargeorder.Type) *RechargeOrderUpdateOne {
+	if r != nil {
+		rouo.SetType(*r)
 	}
 	return rouo
 }
@@ -769,19 +768,19 @@ func (rouo *RechargeOrderUpdateOne) SetUser(u *User) *RechargeOrderUpdateOne {
 	return rouo.SetUserID(u.ID)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (rouo *RechargeOrderUpdateOne) AddBillIDs(ids ...int64) *RechargeOrderUpdateOne {
-	rouo.mutation.AddBillIDs(ids...)
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (rouo *RechargeOrderUpdateOne) AddCostBillIDs(ids ...int64) *RechargeOrderUpdateOne {
+	rouo.mutation.AddCostBillIDs(ids...)
 	return rouo
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (rouo *RechargeOrderUpdateOne) AddBills(b ...*Bill) *RechargeOrderUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (rouo *RechargeOrderUpdateOne) AddCostBills(c ...*CostBill) *RechargeOrderUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return rouo.AddBillIDs(ids...)
+	return rouo.AddCostBillIDs(ids...)
 }
 
 // SetVxSocialID sets the "vx_social" edge to the VXSocial entity by ID.
@@ -814,25 +813,25 @@ func (rouo *RechargeOrderUpdateOne) ClearUser() *RechargeOrderUpdateOne {
 	return rouo
 }
 
-// ClearBills clears all "bills" edges to the Bill entity.
-func (rouo *RechargeOrderUpdateOne) ClearBills() *RechargeOrderUpdateOne {
-	rouo.mutation.ClearBills()
+// ClearCostBills clears all "cost_bills" edges to the CostBill entity.
+func (rouo *RechargeOrderUpdateOne) ClearCostBills() *RechargeOrderUpdateOne {
+	rouo.mutation.ClearCostBills()
 	return rouo
 }
 
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (rouo *RechargeOrderUpdateOne) RemoveBillIDs(ids ...int64) *RechargeOrderUpdateOne {
-	rouo.mutation.RemoveBillIDs(ids...)
+// RemoveCostBillIDs removes the "cost_bills" edge to CostBill entities by IDs.
+func (rouo *RechargeOrderUpdateOne) RemoveCostBillIDs(ids ...int64) *RechargeOrderUpdateOne {
+	rouo.mutation.RemoveCostBillIDs(ids...)
 	return rouo
 }
 
-// RemoveBills removes "bills" edges to Bill entities.
-func (rouo *RechargeOrderUpdateOne) RemoveBills(b ...*Bill) *RechargeOrderUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// RemoveCostBills removes "cost_bills" edges to CostBill entities.
+func (rouo *RechargeOrderUpdateOne) RemoveCostBills(c ...*CostBill) *RechargeOrderUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return rouo.RemoveBillIDs(ids...)
+	return rouo.RemoveCostBillIDs(ids...)
 }
 
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
@@ -897,9 +896,9 @@ func (rouo *RechargeOrderUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.status": %w`, err)}
 		}
 	}
-	if v, ok := rouo.mutation.Cep(); ok {
-		if err := rechargeorder.CepValidator(v); err != nil {
-			return &ValidationError{Name: "cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.cep": %w`, err)}
+	if v, ok := rouo.mutation.PureCep(); ok {
+		if err := rechargeorder.PureCepValidator(v); err != nil {
+			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
 		}
 	}
 	if v, ok := rouo.mutation.GetType(); ok {
@@ -963,11 +962,11 @@ func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *Recharg
 	if value, ok := rouo.mutation.Status(); ok {
 		_spec.SetField(rechargeorder.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := rouo.mutation.Cep(); ok {
-		_spec.SetField(rechargeorder.FieldCep, field.TypeInt64, value)
+	if value, ok := rouo.mutation.PureCep(); ok {
+		_spec.SetField(rechargeorder.FieldPureCep, field.TypeInt64, value)
 	}
-	if value, ok := rouo.mutation.AddedCep(); ok {
-		_spec.AddField(rechargeorder.FieldCep, field.TypeInt64, value)
+	if value, ok := rouo.mutation.AddedPureCep(); ok {
+		_spec.AddField(rechargeorder.FieldPureCep, field.TypeInt64, value)
 	}
 	if value, ok := rouo.mutation.GetType(); ok {
 		_spec.SetField(rechargeorder.FieldType, field.TypeEnum, value)
@@ -1016,28 +1015,28 @@ func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *Recharg
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if rouo.mutation.BillsCleared() {
+	if rouo.mutation.CostBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rouo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !rouo.mutation.BillsCleared() {
+	if nodes := rouo.mutation.RemovedCostBillsIDs(); len(nodes) > 0 && !rouo.mutation.CostBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1045,15 +1044,15 @@ func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *Recharg
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := rouo.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := rouo.mutation.CostBillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

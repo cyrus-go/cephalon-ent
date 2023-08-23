@@ -96,14 +96,6 @@ func (olu *OutputLogUpdate) SetHeaders(s string) *OutputLogUpdate {
 	return olu
 }
 
-// SetNillableHeaders sets the "headers" field if the given value is not nil.
-func (olu *OutputLogUpdate) SetNillableHeaders(s *string) *OutputLogUpdate {
-	if s != nil {
-		olu.SetHeaders(*s)
-	}
-	return olu
-}
-
 // SetBody sets the "body" field.
 func (olu *OutputLogUpdate) SetBody(s string) *OutputLogUpdate {
 	olu.mutation.SetBody(s)
@@ -127,14 +119,6 @@ func (olu *OutputLogUpdate) ClearBody() *OutputLogUpdate {
 // SetURL sets the "url" field.
 func (olu *OutputLogUpdate) SetURL(s string) *OutputLogUpdate {
 	olu.mutation.SetURL(s)
-	return olu
-}
-
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (olu *OutputLogUpdate) SetNillableURL(s *string) *OutputLogUpdate {
-	if s != nil {
-		olu.SetURL(*s)
-	}
 	return olu
 }
 
@@ -402,14 +386,6 @@ func (oluo *OutputLogUpdateOne) SetHeaders(s string) *OutputLogUpdateOne {
 	return oluo
 }
 
-// SetNillableHeaders sets the "headers" field if the given value is not nil.
-func (oluo *OutputLogUpdateOne) SetNillableHeaders(s *string) *OutputLogUpdateOne {
-	if s != nil {
-		oluo.SetHeaders(*s)
-	}
-	return oluo
-}
-
 // SetBody sets the "body" field.
 func (oluo *OutputLogUpdateOne) SetBody(s string) *OutputLogUpdateOne {
 	oluo.mutation.SetBody(s)
@@ -433,14 +409,6 @@ func (oluo *OutputLogUpdateOne) ClearBody() *OutputLogUpdateOne {
 // SetURL sets the "url" field.
 func (oluo *OutputLogUpdateOne) SetURL(s string) *OutputLogUpdateOne {
 	oluo.mutation.SetURL(s)
-	return oluo
-}
-
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (oluo *OutputLogUpdateOne) SetNillableURL(s *string) *OutputLogUpdateOne {
-	if s != nil {
-		oluo.SetURL(*s)
-	}
 	return oluo
 }
 

@@ -32,8 +32,10 @@ const (
 	FieldMissionID = "mission_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldCep holds the string denoting the cep field in the database.
-	FieldCep = "cep"
+	// FieldPureCep holds the string denoting the pure_cep field in the database.
+	FieldPureCep = "pure_cep"
+	// FieldGiftCep holds the string denoting the gift_cep field in the database.
+	FieldGiftCep = "gift_cep"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldIsTime holds the string denoting the is_time field in the database.
@@ -52,10 +54,8 @@ const (
 	FieldMissionBatchNumber = "mission_batch_number"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeBills holds the string denoting the bills edge name in mutations.
-	EdgeBills = "bills"
-	// EdgeMission holds the string denoting the mission edge name in mutations.
-	EdgeMission = "mission"
+	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
+	EdgeCostBills = "cost_bills"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
 	EdgeMissionProduceOrders = "mission_produce_orders"
 	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
@@ -69,20 +69,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// BillsTable is the table that holds the bills relation/edge.
-	BillsTable = "bills"
-	// BillsInverseTable is the table name for the Bill entity.
-	// It exists in this package in order to avoid circular dependency with the "bill" package.
-	BillsInverseTable = "bills"
-	// BillsColumn is the table column denoting the bills relation/edge.
-	BillsColumn = "reason_id"
-	// MissionTable is the table that holds the mission relation/edge.
-	MissionTable = "mission_consume_orders"
-	// MissionInverseTable is the table name for the Mission entity.
-	// It exists in this package in order to avoid circular dependency with the "mission" package.
-	MissionInverseTable = "missions"
-	// MissionColumn is the table column denoting the mission relation/edge.
-	MissionColumn = "mission_id"
+	// CostBillsTable is the table that holds the cost_bills relation/edge.
+	CostBillsTable = "cost_bills"
+	// CostBillsInverseTable is the table name for the CostBill entity.
+	// It exists in this package in order to avoid circular dependency with the "costbill" package.
+	CostBillsInverseTable = "cost_bills"
+	// CostBillsColumn is the table column denoting the cost_bills relation/edge.
+	CostBillsColumn = "reason_id"
 	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
 	MissionProduceOrdersTable = "mission_produce_orders"
 	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.
@@ -110,7 +103,8 @@ var Columns = []string{
 	FieldUserID,
 	FieldMissionID,
 	FieldStatus,
-	FieldCep,
+	FieldPureCep,
+	FieldGiftCep,
 	FieldType,
 	FieldIsTime,
 	FieldCallWay,
@@ -148,8 +142,10 @@ var (
 	DefaultUserID int64
 	// DefaultMissionID holds the default value on creation for the "mission_id" field.
 	DefaultMissionID int64
-	// DefaultCep holds the default value on creation for the "cep" field.
-	DefaultCep int64
+	// DefaultPureCep holds the default value on creation for the "pure_cep" field.
+	DefaultPureCep int64
+	// DefaultGiftCep holds the default value on creation for the "gift_cep" field.
+	DefaultGiftCep int64
 	// DefaultIsTime holds the default value on creation for the "is_time" field.
 	DefaultIsTime bool
 	// DefaultSerialNumber holds the default value on creation for the "serial_number" field.
@@ -166,12 +162,30 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.MissionStatus = "waiting"
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusWaiting is the default value of the Status enum.
+const DefaultStatus = StatusWaiting
+
+// Status values.
+const (
+	StatusWaiting   Status = "waiting"
+	StatusCanceled  Status = "canceled"
+	StatusDoing     Status = "doing"
+	StatusSucceed   Status = "succeed"
+	StatusFailed    Status = "failed"
+	StatusSupplying Status = "supplying"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s enums.MissionStatus) error {
+func StatusValidator(s Status) error {
 	switch s {
-	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
+	case StatusWaiting, StatusCanceled, StatusDoing, StatusSucceed, StatusFailed, StatusSupplying:
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for status field: %q", s)
@@ -183,7 +197,7 @@ const DefaultType enums.MissionType = "txt2img"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time":
+	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for type field: %q", _type)
@@ -250,9 +264,14 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByCep orders the results by the cep field.
-func ByCep(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCep, opts...).ToFunc()
+// ByPureCep orders the results by the pure_cep field.
+func ByPureCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPureCep, opts...).ToFunc()
+}
+
+// ByGiftCep orders the results by the gift_cep field.
+func ByGiftCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftCep, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.
@@ -302,24 +321,17 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByBillsCount orders the results by bills count.
-func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByCostBillsCount orders the results by cost_bills count.
+func ByCostBillsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newCostBillsStep(), opts...)
 	}
 }
 
-// ByBills orders the results by bills terms.
-func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByCostBills orders the results by cost_bills terms.
+func ByCostBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByMissionField orders the results by mission field.
-func ByMissionField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newCostBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -350,18 +362,11 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newBillsStep() *sqlgraph.Step {
+func newCostBillsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BillsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
-	)
-}
-func newMissionStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, MissionTable, MissionColumn),
+		sqlgraph.To(CostBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
 	)
 }
 func newMissionProduceOrdersStep() *sqlgraph.Step {

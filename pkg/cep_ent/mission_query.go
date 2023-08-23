@@ -5,12 +5,8 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionbatch"
-	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/cep_ent/missionkeypair"
 	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"database/sql/driver"
 	"fmt"
@@ -24,16 +20,12 @@ import (
 // MissionQuery is the builder for querying Mission entities.
 type MissionQuery struct {
 	config
-	ctx                      *QueryContext
-	order                    []mission.OrderOption
-	inters                   []Interceptor
-	predicates               []predicate.Mission
-	withMissionProductions   *MissionProductionQuery
-	withMissionConsumeOrder  *MissionConsumeOrderQuery
-	withMissionProduceOrders *MissionProduceOrderQuery
-	withHmacKeyPair          *HmacKeyPairQuery
-	withUser                 *UserQuery
-	withMissionBatch         *MissionBatchQuery
+	ctx                 *QueryContext
+	order               []mission.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.Mission
+	withMissionKeyPairs *MissionKeyPairQuery
+	withKeyPair         *HmacKeyPairQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -70,9 +62,9 @@ func (mq *MissionQuery) Order(o ...mission.OrderOption) *MissionQuery {
 	return mq
 }
 
-// QueryMissionProductions chains the current query on the "mission_productions" edge.
-func (mq *MissionQuery) QueryMissionProductions() *MissionProductionQuery {
-	query := (&MissionProductionClient{config: mq.config}).Query()
+// QueryMissionKeyPairs chains the current query on the "mission_key_pairs" edge.
+func (mq *MissionQuery) QueryMissionKeyPairs() *MissionKeyPairQuery {
+	query := (&MissionKeyPairClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -83,8 +75,8 @@ func (mq *MissionQuery) QueryMissionProductions() *MissionProductionQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(mission.Table, mission.FieldID, selector),
-			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionProductionsTable, mission.MissionProductionsColumn),
+			sqlgraph.To(missionkeypair.Table, missionkeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionKeyPairsTable, mission.MissionKeyPairsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -92,52 +84,8 @@ func (mq *MissionQuery) QueryMissionProductions() *MissionProductionQuery {
 	return query
 }
 
-// QueryMissionConsumeOrder chains the current query on the "mission_consume_order" edge.
-func (mq *MissionQuery) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
-	query := (&MissionConsumeOrderClient{config: mq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, selector),
-			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, mission.MissionConsumeOrderTable, mission.MissionConsumeOrderColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryMissionProduceOrders chains the current query on the "mission_produce_orders" edge.
-func (mq *MissionQuery) QueryMissionProduceOrders() *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: mq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, selector),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionProduceOrdersTable, mission.MissionProduceOrdersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryHmacKeyPair chains the current query on the "hmac_key_pair" edge.
-func (mq *MissionQuery) QueryHmacKeyPair() *HmacKeyPairQuery {
+// QueryKeyPair chains the current query on the "key_pair" edge.
+func (mq *MissionQuery) QueryKeyPair() *HmacKeyPairQuery {
 	query := (&HmacKeyPairClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
@@ -150,51 +98,7 @@ func (mq *MissionQuery) QueryHmacKeyPair() *HmacKeyPairQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(mission.Table, mission.FieldID, selector),
 			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.HmacKeyPairTable, mission.HmacKeyPairColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryUser chains the current query on the "user" edge.
-func (mq *MissionQuery) QueryUser() *UserQuery {
-	query := (&UserClient{config: mq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.UserTable, mission.UserColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryMissionBatch chains the current query on the "mission_batch" edge.
-func (mq *MissionQuery) QueryMissionBatch() *MissionBatchQuery {
-	query := (&MissionBatchClient{config: mq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, selector),
-			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.MissionBatchTable, mission.MissionBatchColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, mission.KeyPairTable, mission.KeyPairColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -389,86 +293,38 @@ func (mq *MissionQuery) Clone() *MissionQuery {
 		return nil
 	}
 	return &MissionQuery{
-		config:                   mq.config,
-		ctx:                      mq.ctx.Clone(),
-		order:                    append([]mission.OrderOption{}, mq.order...),
-		inters:                   append([]Interceptor{}, mq.inters...),
-		predicates:               append([]predicate.Mission{}, mq.predicates...),
-		withMissionProductions:   mq.withMissionProductions.Clone(),
-		withMissionConsumeOrder:  mq.withMissionConsumeOrder.Clone(),
-		withMissionProduceOrders: mq.withMissionProduceOrders.Clone(),
-		withHmacKeyPair:          mq.withHmacKeyPair.Clone(),
-		withUser:                 mq.withUser.Clone(),
-		withMissionBatch:         mq.withMissionBatch.Clone(),
+		config:              mq.config,
+		ctx:                 mq.ctx.Clone(),
+		order:               append([]mission.OrderOption{}, mq.order...),
+		inters:              append([]Interceptor{}, mq.inters...),
+		predicates:          append([]predicate.Mission{}, mq.predicates...),
+		withMissionKeyPairs: mq.withMissionKeyPairs.Clone(),
+		withKeyPair:         mq.withKeyPair.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
 	}
 }
 
-// WithMissionProductions tells the query-builder to eager-load the nodes that are connected to
-// the "mission_productions" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MissionQuery) WithMissionProductions(opts ...func(*MissionProductionQuery)) *MissionQuery {
-	query := (&MissionProductionClient{config: mq.config}).Query()
+// WithMissionKeyPairs tells the query-builder to eager-load the nodes that are connected to
+// the "mission_key_pairs" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithMissionKeyPairs(opts ...func(*MissionKeyPairQuery)) *MissionQuery {
+	query := (&MissionKeyPairClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	mq.withMissionProductions = query
+	mq.withMissionKeyPairs = query
 	return mq
 }
 
-// WithMissionConsumeOrder tells the query-builder to eager-load the nodes that are connected to
-// the "mission_consume_order" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MissionQuery) WithMissionConsumeOrder(opts ...func(*MissionConsumeOrderQuery)) *MissionQuery {
-	query := (&MissionConsumeOrderClient{config: mq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mq.withMissionConsumeOrder = query
-	return mq
-}
-
-// WithMissionProduceOrders tells the query-builder to eager-load the nodes that are connected to
-// the "mission_produce_orders" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MissionQuery) WithMissionProduceOrders(opts ...func(*MissionProduceOrderQuery)) *MissionQuery {
-	query := (&MissionProduceOrderClient{config: mq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mq.withMissionProduceOrders = query
-	return mq
-}
-
-// WithHmacKeyPair tells the query-builder to eager-load the nodes that are connected to
-// the "hmac_key_pair" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MissionQuery) WithHmacKeyPair(opts ...func(*HmacKeyPairQuery)) *MissionQuery {
+// WithKeyPair tells the query-builder to eager-load the nodes that are connected to
+// the "key_pair" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithKeyPair(opts ...func(*HmacKeyPairQuery)) *MissionQuery {
 	query := (&HmacKeyPairClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	mq.withHmacKeyPair = query
-	return mq
-}
-
-// WithUser tells the query-builder to eager-load the nodes that are connected to
-// the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MissionQuery) WithUser(opts ...func(*UserQuery)) *MissionQuery {
-	query := (&UserClient{config: mq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mq.withUser = query
-	return mq
-}
-
-// WithMissionBatch tells the query-builder to eager-load the nodes that are connected to
-// the "mission_batch" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *MissionQuery) WithMissionBatch(opts ...func(*MissionBatchQuery)) *MissionQuery {
-	query := (&MissionBatchClient{config: mq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mq.withMissionBatch = query
+	mq.withKeyPair = query
 	return mq
 }
 
@@ -550,13 +406,9 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 	var (
 		nodes       = []*Mission{}
 		_spec       = mq.querySpec()
-		loadedTypes = [6]bool{
-			mq.withMissionProductions != nil,
-			mq.withMissionConsumeOrder != nil,
-			mq.withMissionProduceOrders != nil,
-			mq.withHmacKeyPair != nil,
-			mq.withUser != nil,
-			mq.withMissionBatch != nil,
+		loadedTypes = [2]bool{
+			mq.withMissionKeyPairs != nil,
+			mq.withKeyPair != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -577,52 +429,23 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := mq.withMissionProductions; query != nil {
-		if err := mq.loadMissionProductions(ctx, query, nodes,
-			func(n *Mission) { n.Edges.MissionProductions = []*MissionProduction{} },
-			func(n *Mission, e *MissionProduction) {
-				n.Edges.MissionProductions = append(n.Edges.MissionProductions, e)
-			}); err != nil {
+	if query := mq.withMissionKeyPairs; query != nil {
+		if err := mq.loadMissionKeyPairs(ctx, query, nodes,
+			func(n *Mission) { n.Edges.MissionKeyPairs = []*MissionKeyPair{} },
+			func(n *Mission, e *MissionKeyPair) { n.Edges.MissionKeyPairs = append(n.Edges.MissionKeyPairs, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := mq.withMissionConsumeOrder; query != nil {
-		if err := mq.loadMissionConsumeOrder(ctx, query, nodes, nil,
-			func(n *Mission, e *MissionConsumeOrder) { n.Edges.MissionConsumeOrder = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := mq.withMissionProduceOrders; query != nil {
-		if err := mq.loadMissionProduceOrders(ctx, query, nodes,
-			func(n *Mission) { n.Edges.MissionProduceOrders = []*MissionProduceOrder{} },
-			func(n *Mission, e *MissionProduceOrder) {
-				n.Edges.MissionProduceOrders = append(n.Edges.MissionProduceOrders, e)
-			}); err != nil {
-			return nil, err
-		}
-	}
-	if query := mq.withHmacKeyPair; query != nil {
-		if err := mq.loadHmacKeyPair(ctx, query, nodes, nil,
-			func(n *Mission, e *HmacKeyPair) { n.Edges.HmacKeyPair = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := mq.withUser; query != nil {
-		if err := mq.loadUser(ctx, query, nodes, nil,
-			func(n *Mission, e *User) { n.Edges.User = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := mq.withMissionBatch; query != nil {
-		if err := mq.loadMissionBatch(ctx, query, nodes, nil,
-			func(n *Mission, e *MissionBatch) { n.Edges.MissionBatch = e }); err != nil {
+	if query := mq.withKeyPair; query != nil {
+		if err := mq.loadKeyPair(ctx, query, nodes, nil,
+			func(n *Mission, e *HmacKeyPair) { n.Edges.KeyPair = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (mq *MissionQuery) loadMissionProductions(ctx context.Context, query *MissionProductionQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionProduction)) error {
+func (mq *MissionQuery) loadMissionKeyPairs(ctx context.Context, query *MissionKeyPairQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionKeyPair)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Mission)
 	for i := range nodes {
@@ -633,10 +456,10 @@ func (mq *MissionQuery) loadMissionProductions(ctx context.Context, query *Missi
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(missionproduction.FieldMissionID)
+		query.ctx.AppendFieldOnce(missionkeypair.FieldMissionID)
 	}
-	query.Where(predicate.MissionProduction(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(mission.MissionProductionsColumn), fks...))
+	query.Where(predicate.MissionKeyPair(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.MissionKeyPairsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -652,68 +475,11 @@ func (mq *MissionQuery) loadMissionProductions(ctx context.Context, query *Missi
 	}
 	return nil
 }
-func (mq *MissionQuery) loadMissionConsumeOrder(ctx context.Context, query *MissionConsumeOrderQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionConsumeOrder)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*Mission)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(missionconsumeorder.FieldMissionID)
-	}
-	query.Where(predicate.MissionConsumeOrder(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(mission.MissionConsumeOrderColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.MissionID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (mq *MissionQuery) loadMissionProduceOrders(ctx context.Context, query *MissionProduceOrderQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionProduceOrder)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*Mission)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(missionproduceorder.FieldMissionID)
-	}
-	query.Where(predicate.MissionProduceOrder(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(mission.MissionProduceOrdersColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.MissionID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (mq *MissionQuery) loadHmacKeyPair(ctx context.Context, query *HmacKeyPairQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *HmacKeyPair)) error {
+func (mq *MissionQuery) loadKeyPair(ctx context.Context, query *HmacKeyPairQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *HmacKeyPair)) error {
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*Mission)
 	for i := range nodes {
-		fk := nodes[i].HmacKeyPairID
+		fk := nodes[i].KeyPairID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -730,65 +496,7 @@ func (mq *MissionQuery) loadHmacKeyPair(ctx context.Context, query *HmacKeyPairQ
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "hmac_key_pair_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (mq *MissionQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *User)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*Mission)
-	for i := range nodes {
-		fk := nodes[i].UserID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(user.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (mq *MissionQuery) loadMissionBatch(ctx context.Context, query *MissionBatchQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionBatch)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*Mission)
-	for i := range nodes {
-		fk := nodes[i].MissionBatchID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(missionbatch.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "mission_batch_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "key_pair_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -822,14 +530,8 @@ func (mq *MissionQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if mq.withHmacKeyPair != nil {
-			_spec.Node.AddColumnOnce(mission.FieldHmacKeyPairID)
-		}
-		if mq.withUser != nil {
-			_spec.Node.AddColumnOnce(mission.FieldUserID)
-		}
-		if mq.withMissionBatch != nil {
-			_spec.Node.AddColumnOnce(mission.FieldMissionBatchID)
+		if mq.withKeyPair != nil {
+			_spec.Node.AddColumnOnce(mission.FieldKeyPairID)
 		}
 	}
 	if ps := mq.predicates; len(ps) > 0 {

@@ -4,8 +4,8 @@ package cep_ent
 
 import (
 	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/devicegpumission"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
 	"cephalon-ent/pkg/cep_ent/predicate"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
@@ -109,16 +109,65 @@ func (du *DeviceUpdate) SetNillableUserID(i *int64) *DeviceUpdate {
 	return du
 }
 
-// SetStatus sets the "status" field.
-func (du *DeviceUpdate) SetStatus(es enums.DeviceStatus) *DeviceUpdate {
-	du.mutation.SetStatus(es)
+// SetSerialNumber sets the "serial_number" field.
+func (du *DeviceUpdate) SetSerialNumber(s string) *DeviceUpdate {
+	du.mutation.SetSerialNumber(s)
 	return du
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableStatus(es *enums.DeviceStatus) *DeviceUpdate {
-	if es != nil {
-		du.SetStatus(*es)
+// SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableSerialNumber(s *string) *DeviceUpdate {
+	if s != nil {
+		du.SetSerialNumber(*s)
+	}
+	return du
+}
+
+// SetState sets the "state" field.
+func (du *DeviceUpdate) SetState(d device.State) *DeviceUpdate {
+	du.mutation.SetState(d)
+	return du
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableState(d *device.State) *DeviceUpdate {
+	if d != nil {
+		du.SetState(*d)
+	}
+	return du
+}
+
+// SetSumCep sets the "sum_cep" field.
+func (du *DeviceUpdate) SetSumCep(i int64) *DeviceUpdate {
+	du.mutation.ResetSumCep()
+	du.mutation.SetSumCep(i)
+	return du
+}
+
+// SetNillableSumCep sets the "sum_cep" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableSumCep(i *int64) *DeviceUpdate {
+	if i != nil {
+		du.SetSumCep(*i)
+	}
+	return du
+}
+
+// AddSumCep adds i to the "sum_cep" field.
+func (du *DeviceUpdate) AddSumCep(i int64) *DeviceUpdate {
+	du.mutation.AddSumCep(i)
+	return du
+}
+
+// SetLinking sets the "linking" field.
+func (du *DeviceUpdate) SetLinking(b bool) *DeviceUpdate {
+	du.mutation.SetLinking(b)
+	return du
+}
+
+// SetNillableLinking sets the "linking" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableLinking(b *bool) *DeviceUpdate {
+	if b != nil {
+		du.SetLinking(*b)
 	}
 	return du
 }
@@ -133,6 +182,20 @@ func (du *DeviceUpdate) SetBindingStatus(ebs enums.DeviceBindingStatus) *DeviceU
 func (du *DeviceUpdate) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus) *DeviceUpdate {
 	if ebs != nil {
 		du.SetBindingStatus(*ebs)
+	}
+	return du
+}
+
+// SetStatus sets the "status" field.
+func (du *DeviceUpdate) SetStatus(d device.Status) *DeviceUpdate {
+	du.mutation.SetStatus(d)
+	return du
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableStatus(d *device.Status) *DeviceUpdate {
+	if d != nil {
+		du.SetStatus(*d)
 	}
 	return du
 }
@@ -157,21 +220,6 @@ func (du *DeviceUpdate) AddMissionProduceOrders(m ...*MissionProduceOrder) *Devi
 	return du.AddMissionProduceOrderIDs(ids...)
 }
 
-// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
-func (du *DeviceUpdate) AddMissionProductionIDs(ids ...int64) *DeviceUpdate {
-	du.mutation.AddMissionProductionIDs(ids...)
-	return du
-}
-
-// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
-func (du *DeviceUpdate) AddMissionProductions(m ...*MissionProduction) *DeviceUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return du.AddMissionProductionIDs(ids...)
-}
-
 // AddUserDeviceIDs adds the "user_devices" edge to the UserDevice entity by IDs.
 func (du *DeviceUpdate) AddUserDeviceIDs(ids ...int64) *DeviceUpdate {
 	du.mutation.AddUserDeviceIDs(ids...)
@@ -185,6 +233,21 @@ func (du *DeviceUpdate) AddUserDevices(u ...*UserDevice) *DeviceUpdate {
 		ids[i] = u[i].ID
 	}
 	return du.AddUserDeviceIDs(ids...)
+}
+
+// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
+func (du *DeviceUpdate) AddDeviceGpuMissionIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddDeviceGpuMissionIDs(ids...)
+	return du
+}
+
+// AddDeviceGpuMissions adds the "device_gpu_missions" edges to the DeviceGpuMission entity.
+func (du *DeviceUpdate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.AddDeviceGpuMissionIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -219,27 +282,6 @@ func (du *DeviceUpdate) RemoveMissionProduceOrders(m ...*MissionProduceOrder) *D
 	return du.RemoveMissionProduceOrderIDs(ids...)
 }
 
-// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
-func (du *DeviceUpdate) ClearMissionProductions() *DeviceUpdate {
-	du.mutation.ClearMissionProductions()
-	return du
-}
-
-// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
-func (du *DeviceUpdate) RemoveMissionProductionIDs(ids ...int64) *DeviceUpdate {
-	du.mutation.RemoveMissionProductionIDs(ids...)
-	return du
-}
-
-// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
-func (du *DeviceUpdate) RemoveMissionProductions(m ...*MissionProduction) *DeviceUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return du.RemoveMissionProductionIDs(ids...)
-}
-
 // ClearUserDevices clears all "user_devices" edges to the UserDevice entity.
 func (du *DeviceUpdate) ClearUserDevices() *DeviceUpdate {
 	du.mutation.ClearUserDevices()
@@ -259,6 +301,27 @@ func (du *DeviceUpdate) RemoveUserDevices(u ...*UserDevice) *DeviceUpdate {
 		ids[i] = u[i].ID
 	}
 	return du.RemoveUserDeviceIDs(ids...)
+}
+
+// ClearDeviceGpuMissions clears all "device_gpu_missions" edges to the DeviceGpuMission entity.
+func (du *DeviceUpdate) ClearDeviceGpuMissions() *DeviceUpdate {
+	du.mutation.ClearDeviceGpuMissions()
+	return du
+}
+
+// RemoveDeviceGpuMissionIDs removes the "device_gpu_missions" edge to DeviceGpuMission entities by IDs.
+func (du *DeviceUpdate) RemoveDeviceGpuMissionIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveDeviceGpuMissionIDs(ids...)
+	return du
+}
+
+// RemoveDeviceGpuMissions removes "device_gpu_missions" edges to DeviceGpuMission entities.
+func (du *DeviceUpdate) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.RemoveDeviceGpuMissionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -299,14 +362,19 @@ func (du *DeviceUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (du *DeviceUpdate) check() error {
-	if v, ok := du.mutation.Status(); ok {
-		if err := device.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
+	if v, ok := du.mutation.State(); ok {
+		if err := device.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "Device.state": %w`, err)}
 		}
 	}
 	if v, ok := du.mutation.BindingStatus(); ok {
 		if err := device.BindingStatusValidator(v); err != nil {
 			return &ValidationError{Name: "binding_status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.binding_status": %w`, err)}
+		}
+	}
+	if v, ok := du.mutation.Status(); ok {
+		if err := device.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
 		}
 	}
 	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
@@ -345,11 +413,26 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := du.mutation.DeletedAt(); ok {
 		_spec.SetField(device.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := du.mutation.Status(); ok {
-		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
+	if value, ok := du.mutation.SerialNumber(); ok {
+		_spec.SetField(device.FieldSerialNumber, field.TypeString, value)
+	}
+	if value, ok := du.mutation.State(); ok {
+		_spec.SetField(device.FieldState, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.SumCep(); ok {
+		_spec.SetField(device.FieldSumCep, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.AddedSumCep(); ok {
+		_spec.AddField(device.FieldSumCep, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.Linking(); ok {
+		_spec.SetField(device.FieldLinking, field.TypeBool, value)
 	}
 	if value, ok := du.mutation.BindingStatus(); ok {
 		_spec.SetField(device.FieldBindingStatus, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.Status(); ok {
+		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -425,51 +508,6 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if du.mutation.MissionProductionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := du.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !du.mutation.MissionProductionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := du.mutation.MissionProductionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if du.mutation.UserDevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -508,6 +546,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if du.mutation.DeviceGpuMissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedDeviceGpuMissionsIDs(); len(nodes) > 0 && !du.mutation.DeviceGpuMissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -611,16 +694,65 @@ func (duo *DeviceUpdateOne) SetNillableUserID(i *int64) *DeviceUpdateOne {
 	return duo
 }
 
-// SetStatus sets the "status" field.
-func (duo *DeviceUpdateOne) SetStatus(es enums.DeviceStatus) *DeviceUpdateOne {
-	duo.mutation.SetStatus(es)
+// SetSerialNumber sets the "serial_number" field.
+func (duo *DeviceUpdateOne) SetSerialNumber(s string) *DeviceUpdateOne {
+	duo.mutation.SetSerialNumber(s)
 	return duo
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableStatus(es *enums.DeviceStatus) *DeviceUpdateOne {
-	if es != nil {
-		duo.SetStatus(*es)
+// SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableSerialNumber(s *string) *DeviceUpdateOne {
+	if s != nil {
+		duo.SetSerialNumber(*s)
+	}
+	return duo
+}
+
+// SetState sets the "state" field.
+func (duo *DeviceUpdateOne) SetState(d device.State) *DeviceUpdateOne {
+	duo.mutation.SetState(d)
+	return duo
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableState(d *device.State) *DeviceUpdateOne {
+	if d != nil {
+		duo.SetState(*d)
+	}
+	return duo
+}
+
+// SetSumCep sets the "sum_cep" field.
+func (duo *DeviceUpdateOne) SetSumCep(i int64) *DeviceUpdateOne {
+	duo.mutation.ResetSumCep()
+	duo.mutation.SetSumCep(i)
+	return duo
+}
+
+// SetNillableSumCep sets the "sum_cep" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableSumCep(i *int64) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetSumCep(*i)
+	}
+	return duo
+}
+
+// AddSumCep adds i to the "sum_cep" field.
+func (duo *DeviceUpdateOne) AddSumCep(i int64) *DeviceUpdateOne {
+	duo.mutation.AddSumCep(i)
+	return duo
+}
+
+// SetLinking sets the "linking" field.
+func (duo *DeviceUpdateOne) SetLinking(b bool) *DeviceUpdateOne {
+	duo.mutation.SetLinking(b)
+	return duo
+}
+
+// SetNillableLinking sets the "linking" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableLinking(b *bool) *DeviceUpdateOne {
+	if b != nil {
+		duo.SetLinking(*b)
 	}
 	return duo
 }
@@ -635,6 +767,20 @@ func (duo *DeviceUpdateOne) SetBindingStatus(ebs enums.DeviceBindingStatus) *Dev
 func (duo *DeviceUpdateOne) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus) *DeviceUpdateOne {
 	if ebs != nil {
 		duo.SetBindingStatus(*ebs)
+	}
+	return duo
+}
+
+// SetStatus sets the "status" field.
+func (duo *DeviceUpdateOne) SetStatus(d device.Status) *DeviceUpdateOne {
+	duo.mutation.SetStatus(d)
+	return duo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableStatus(d *device.Status) *DeviceUpdateOne {
+	if d != nil {
+		duo.SetStatus(*d)
 	}
 	return duo
 }
@@ -659,21 +805,6 @@ func (duo *DeviceUpdateOne) AddMissionProduceOrders(m ...*MissionProduceOrder) *
 	return duo.AddMissionProduceOrderIDs(ids...)
 }
 
-// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
-func (duo *DeviceUpdateOne) AddMissionProductionIDs(ids ...int64) *DeviceUpdateOne {
-	duo.mutation.AddMissionProductionIDs(ids...)
-	return duo
-}
-
-// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
-func (duo *DeviceUpdateOne) AddMissionProductions(m ...*MissionProduction) *DeviceUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return duo.AddMissionProductionIDs(ids...)
-}
-
 // AddUserDeviceIDs adds the "user_devices" edge to the UserDevice entity by IDs.
 func (duo *DeviceUpdateOne) AddUserDeviceIDs(ids ...int64) *DeviceUpdateOne {
 	duo.mutation.AddUserDeviceIDs(ids...)
@@ -687,6 +818,21 @@ func (duo *DeviceUpdateOne) AddUserDevices(u ...*UserDevice) *DeviceUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return duo.AddUserDeviceIDs(ids...)
+}
+
+// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
+func (duo *DeviceUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddDeviceGpuMissionIDs(ids...)
+	return duo
+}
+
+// AddDeviceGpuMissions adds the "device_gpu_missions" edges to the DeviceGpuMission entity.
+func (duo *DeviceUpdateOne) AddDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.AddDeviceGpuMissionIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -721,27 +867,6 @@ func (duo *DeviceUpdateOne) RemoveMissionProduceOrders(m ...*MissionProduceOrder
 	return duo.RemoveMissionProduceOrderIDs(ids...)
 }
 
-// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
-func (duo *DeviceUpdateOne) ClearMissionProductions() *DeviceUpdateOne {
-	duo.mutation.ClearMissionProductions()
-	return duo
-}
-
-// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
-func (duo *DeviceUpdateOne) RemoveMissionProductionIDs(ids ...int64) *DeviceUpdateOne {
-	duo.mutation.RemoveMissionProductionIDs(ids...)
-	return duo
-}
-
-// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
-func (duo *DeviceUpdateOne) RemoveMissionProductions(m ...*MissionProduction) *DeviceUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return duo.RemoveMissionProductionIDs(ids...)
-}
-
 // ClearUserDevices clears all "user_devices" edges to the UserDevice entity.
 func (duo *DeviceUpdateOne) ClearUserDevices() *DeviceUpdateOne {
 	duo.mutation.ClearUserDevices()
@@ -761,6 +886,27 @@ func (duo *DeviceUpdateOne) RemoveUserDevices(u ...*UserDevice) *DeviceUpdateOne
 		ids[i] = u[i].ID
 	}
 	return duo.RemoveUserDeviceIDs(ids...)
+}
+
+// ClearDeviceGpuMissions clears all "device_gpu_missions" edges to the DeviceGpuMission entity.
+func (duo *DeviceUpdateOne) ClearDeviceGpuMissions() *DeviceUpdateOne {
+	duo.mutation.ClearDeviceGpuMissions()
+	return duo
+}
+
+// RemoveDeviceGpuMissionIDs removes the "device_gpu_missions" edge to DeviceGpuMission entities by IDs.
+func (duo *DeviceUpdateOne) RemoveDeviceGpuMissionIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveDeviceGpuMissionIDs(ids...)
+	return duo
+}
+
+// RemoveDeviceGpuMissions removes "device_gpu_missions" edges to DeviceGpuMission entities.
+func (duo *DeviceUpdateOne) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.RemoveDeviceGpuMissionIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -814,14 +960,19 @@ func (duo *DeviceUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (duo *DeviceUpdateOne) check() error {
-	if v, ok := duo.mutation.Status(); ok {
-		if err := device.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
+	if v, ok := duo.mutation.State(); ok {
+		if err := device.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "Device.state": %w`, err)}
 		}
 	}
 	if v, ok := duo.mutation.BindingStatus(); ok {
 		if err := device.BindingStatusValidator(v); err != nil {
 			return &ValidationError{Name: "binding_status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.binding_status": %w`, err)}
+		}
+	}
+	if v, ok := duo.mutation.Status(); ok {
+		if err := device.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
 		}
 	}
 	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
@@ -877,11 +1028,26 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	if value, ok := duo.mutation.DeletedAt(); ok {
 		_spec.SetField(device.FieldDeletedAt, field.TypeTime, value)
 	}
-	if value, ok := duo.mutation.Status(); ok {
-		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
+	if value, ok := duo.mutation.SerialNumber(); ok {
+		_spec.SetField(device.FieldSerialNumber, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.State(); ok {
+		_spec.SetField(device.FieldState, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.SumCep(); ok {
+		_spec.SetField(device.FieldSumCep, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.AddedSumCep(); ok {
+		_spec.AddField(device.FieldSumCep, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.Linking(); ok {
+		_spec.SetField(device.FieldLinking, field.TypeBool, value)
 	}
 	if value, ok := duo.mutation.BindingStatus(); ok {
 		_spec.SetField(device.FieldBindingStatus, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.Status(); ok {
+		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -957,51 +1123,6 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if duo.mutation.MissionProductionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := duo.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !duo.mutation.MissionProductionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := duo.mutation.MissionProductionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   device.MissionProductionsTable,
-			Columns: []string{device.MissionProductionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if duo.mutation.UserDevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1040,6 +1161,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.DeviceGpuMissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedDeviceGpuMissionsIDs(); len(nodes) > 0 && !duo.mutation.DeviceGpuMissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceGpuMissionsTable,
+			Columns: []string{device.DeviceGpuMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -30,12 +30,12 @@ const (
 	FieldUserID = "user_id"
 	// FieldMissionID holds the string denoting the mission_id field in the database.
 	FieldMissionID = "mission_id"
-	// FieldMissionProductionID holds the string denoting the mission_production_id field in the database.
-	FieldMissionProductionID = "mission_production_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldCep holds the string denoting the cep field in the database.
-	FieldCep = "cep"
+	// FieldPureCep holds the string denoting the pure_cep field in the database.
+	FieldPureCep = "pure_cep"
+	// FieldGiftCep holds the string denoting the gift_cep field in the database.
+	FieldGiftCep = "gift_cep"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldIsTime holds the string denoting the is_time field in the database.
@@ -46,22 +46,14 @@ const (
 	FieldSerialNumber = "serial_number"
 	// FieldMissionConsumeOrderID holds the string denoting the mission_consume_order_id field in the database.
 	FieldMissionConsumeOrderID = "mission_consume_order_id"
-	// FieldMissionBatchID holds the string denoting the mission_batch_id field in the database.
-	FieldMissionBatchID = "mission_batch_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeBills holds the string denoting the bills edge name in mutations.
-	EdgeBills = "bills"
+	// EdgeEarnBills holds the string denoting the earn_bills edge name in mutations.
+	EdgeEarnBills = "earn_bills"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
 	EdgeMissionConsumeOrder = "mission_consume_order"
-	// EdgeMission holds the string denoting the mission edge name in mutations.
-	EdgeMission = "mission"
-	// EdgeMissionProduction holds the string denoting the mission_production edge name in mutations.
-	EdgeMissionProduction = "mission_production"
-	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
-	EdgeMissionBatch = "mission_batch"
 	// Table holds the table name of the missionproduceorder in the database.
 	Table = "mission_produce_orders"
 	// UserTable is the table that holds the user relation/edge.
@@ -71,13 +63,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// BillsTable is the table that holds the bills relation/edge.
-	BillsTable = "bills"
-	// BillsInverseTable is the table name for the Bill entity.
-	// It exists in this package in order to avoid circular dependency with the "bill" package.
-	BillsInverseTable = "bills"
-	// BillsColumn is the table column denoting the bills relation/edge.
-	BillsColumn = "reason_id"
+	// EarnBillsTable is the table that holds the earn_bills relation/edge.
+	EarnBillsTable = "earn_bills"
+	// EarnBillsInverseTable is the table name for the EarnBill entity.
+	// It exists in this package in order to avoid circular dependency with the "earnbill" package.
+	EarnBillsInverseTable = "earn_bills"
+	// EarnBillsColumn is the table column denoting the earn_bills relation/edge.
+	EarnBillsColumn = "reason_id"
 	// DeviceTable is the table that holds the device relation/edge.
 	DeviceTable = "mission_produce_orders"
 	// DeviceInverseTable is the table name for the Device entity.
@@ -92,27 +84,6 @@ const (
 	MissionConsumeOrderInverseTable = "mission_consume_orders"
 	// MissionConsumeOrderColumn is the table column denoting the mission_consume_order relation/edge.
 	MissionConsumeOrderColumn = "mission_consume_order_id"
-	// MissionTable is the table that holds the mission relation/edge.
-	MissionTable = "mission_produce_orders"
-	// MissionInverseTable is the table name for the Mission entity.
-	// It exists in this package in order to avoid circular dependency with the "mission" package.
-	MissionInverseTable = "missions"
-	// MissionColumn is the table column denoting the mission relation/edge.
-	MissionColumn = "mission_id"
-	// MissionProductionTable is the table that holds the mission_production relation/edge.
-	MissionProductionTable = "mission_produce_orders"
-	// MissionProductionInverseTable is the table name for the MissionProduction entity.
-	// It exists in this package in order to avoid circular dependency with the "missionproduction" package.
-	MissionProductionInverseTable = "mission_productions"
-	// MissionProductionColumn is the table column denoting the mission_production relation/edge.
-	MissionProductionColumn = "mission_production_id"
-	// MissionBatchTable is the table that holds the mission_batch relation/edge.
-	MissionBatchTable = "mission_produce_orders"
-	// MissionBatchInverseTable is the table name for the MissionBatch entity.
-	// It exists in this package in order to avoid circular dependency with the "missionbatch" package.
-	MissionBatchInverseTable = "mission_batches"
-	// MissionBatchColumn is the table column denoting the mission_batch relation/edge.
-	MissionBatchColumn = "mission_batch_id"
 )
 
 // Columns holds all SQL columns for missionproduceorder fields.
@@ -125,15 +96,14 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldMissionID,
-	FieldMissionProductionID,
 	FieldStatus,
-	FieldCep,
+	FieldPureCep,
+	FieldGiftCep,
 	FieldType,
 	FieldIsTime,
 	FieldDeviceID,
 	FieldSerialNumber,
 	FieldMissionConsumeOrderID,
-	FieldMissionBatchID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -163,10 +133,10 @@ var (
 	DefaultUserID int64
 	// DefaultMissionID holds the default value on creation for the "mission_id" field.
 	DefaultMissionID int64
-	// DefaultMissionProductionID holds the default value on creation for the "mission_production_id" field.
-	DefaultMissionProductionID int64
-	// DefaultCep holds the default value on creation for the "cep" field.
-	DefaultCep int64
+	// DefaultPureCep holds the default value on creation for the "pure_cep" field.
+	DefaultPureCep int64
+	// DefaultGiftCep holds the default value on creation for the "gift_cep" field.
+	DefaultGiftCep int64
 	// DefaultIsTime holds the default value on creation for the "is_time" field.
 	DefaultIsTime bool
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
@@ -175,18 +145,34 @@ var (
 	DefaultSerialNumber string
 	// DefaultMissionConsumeOrderID holds the default value on creation for the "mission_consume_order_id" field.
 	DefaultMissionConsumeOrderID int64
-	// DefaultMissionBatchID holds the default value on creation for the "mission_batch_id" field.
-	DefaultMissionBatchID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.MissionStatus = "waiting"
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusWaiting is the default value of the Status enum.
+const DefaultStatus = StatusWaiting
+
+// Status values.
+const (
+	StatusWaiting   Status = "waiting"
+	StatusCanceled  Status = "canceled"
+	StatusDoing     Status = "doing"
+	StatusSucceed   Status = "succeed"
+	StatusFailed    Status = "failed"
+	StatusSupplying Status = "supplying"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s enums.MissionStatus) error {
+func StatusValidator(s Status) error {
 	switch s {
-	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
+	case StatusWaiting, StatusCanceled, StatusDoing, StatusSucceed, StatusFailed, StatusSupplying:
 		return nil
 	default:
 		return fmt.Errorf("missionproduceorder: invalid enum value for status field: %q", s)
@@ -198,7 +184,7 @@ const DefaultType enums.MissionType = "txt2img"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time":
+	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image":
 		return nil
 	default:
 		return fmt.Errorf("missionproduceorder: invalid enum value for type field: %q", _type)
@@ -248,19 +234,19 @@ func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionID, opts...).ToFunc()
 }
 
-// ByMissionProductionID orders the results by the mission_production_id field.
-func ByMissionProductionID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMissionProductionID, opts...).ToFunc()
-}
-
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByCep orders the results by the cep field.
-func ByCep(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCep, opts...).ToFunc()
+// ByPureCep orders the results by the pure_cep field.
+func ByPureCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPureCep, opts...).ToFunc()
+}
+
+// ByGiftCep orders the results by the gift_cep field.
+func ByGiftCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftCep, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.
@@ -288,11 +274,6 @@ func ByMissionConsumeOrderID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionConsumeOrderID, opts...).ToFunc()
 }
 
-// ByMissionBatchID orders the results by the mission_batch_id field.
-func ByMissionBatchID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMissionBatchID, opts...).ToFunc()
-}
-
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -300,17 +281,17 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByBillsCount orders the results by bills count.
-func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByEarnBillsCount orders the results by earn_bills count.
+func ByEarnBillsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newEarnBillsStep(), opts...)
 	}
 }
 
-// ByBills orders the results by bills terms.
-func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByEarnBills orders the results by earn_bills terms.
+func ByEarnBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newEarnBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -327,27 +308,6 @@ func ByMissionConsumeOrderField(field string, opts ...sql.OrderTermOption) Order
 		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrderStep(), sql.OrderByField(field, opts...))
 	}
 }
-
-// ByMissionField orders the results by mission field.
-func ByMissionField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByMissionProductionField orders the results by mission_production field.
-func ByMissionProductionField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionProductionStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByMissionBatchField orders the results by mission_batch field.
-func ByMissionBatchField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionBatchStep(), sql.OrderByField(field, opts...))
-	}
-}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -355,11 +315,11 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newBillsStep() *sqlgraph.Step {
+func newEarnBillsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BillsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+		sqlgraph.To(EarnBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EarnBillsTable, EarnBillsColumn),
 	)
 }
 func newDeviceStep() *sqlgraph.Step {
@@ -374,26 +334,5 @@ func newMissionConsumeOrderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionConsumeOrderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionConsumeOrderTable, MissionConsumeOrderColumn),
-	)
-}
-func newMissionStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionTable, MissionColumn),
-	)
-}
-func newMissionProductionStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionProductionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, MissionProductionTable, MissionProductionColumn),
-	)
-}
-func newMissionBatchStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionBatchInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
 	)
 }

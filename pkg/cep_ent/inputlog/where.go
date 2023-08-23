@@ -694,6 +694,16 @@ func IPHasSuffix(v string) predicate.InputLog {
 	return predicate.InputLog(sql.FieldHasSuffix(FieldIP, v))
 }
 
+// IPIsNil applies the IsNil predicate on the "ip" field.
+func IPIsNil() predicate.InputLog {
+	return predicate.InputLog(sql.FieldIsNull(FieldIP))
+}
+
+// IPNotNil applies the NotNil predicate on the "ip" field.
+func IPNotNil() predicate.InputLog {
+	return predicate.InputLog(sql.FieldNotNull(FieldIP))
+}
+
 // IPEqualFold applies the EqualFold predicate on the "ip" field.
 func IPEqualFold(v string) predicate.InputLog {
 	return predicate.InputLog(sql.FieldEqualFold(FieldIP, v))

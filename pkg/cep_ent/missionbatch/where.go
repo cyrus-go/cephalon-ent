@@ -398,29 +398,6 @@ func HasUserWith(preds ...predicate.User) predicate.MissionBatch {
 	})
 }
 
-// HasMissions applies the HasEdge predicate on the "missions" edge.
-func HasMissions() predicate.MissionBatch {
-	return predicate.MissionBatch(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MissionsTable, MissionsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionsWith applies the HasEdge predicate on the "missions" edge with a given conditions (other predicates).
-func HasMissionsWith(preds ...predicate.Mission) predicate.MissionBatch {
-	return predicate.MissionBatch(func(s *sql.Selector) {
-		step := newMissionsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasMissionConsumeOrders applies the HasEdge predicate on the "mission_consume_orders" edge.
 func HasMissionConsumeOrders() predicate.MissionBatch {
 	return predicate.MissionBatch(func(s *sql.Selector) {
@@ -436,29 +413,6 @@ func HasMissionConsumeOrders() predicate.MissionBatch {
 func HasMissionConsumeOrdersWith(preds ...predicate.MissionConsumeOrder) predicate.MissionBatch {
 	return predicate.MissionBatch(func(s *sql.Selector) {
 		step := newMissionConsumeOrdersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasMissionProduceOrders applies the HasEdge predicate on the "mission_produce_orders" edge.
-func HasMissionProduceOrders() predicate.MissionBatch {
-	return predicate.MissionBatch(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionProduceOrdersWith applies the HasEdge predicate on the "mission_produce_orders" edge with a given conditions (other predicates).
-func HasMissionProduceOrdersWith(preds ...predicate.MissionProduceOrder) predicate.MissionBatch {
-	return predicate.MissionBatch(func(s *sql.Selector) {
-		step := newMissionProduceOrdersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

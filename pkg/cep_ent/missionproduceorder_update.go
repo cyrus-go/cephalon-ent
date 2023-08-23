@@ -3,13 +3,10 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
 	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionbatch"
+	"cephalon-ent/pkg/cep_ent/earnbill"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
 	"cephalon-ent/pkg/cep_ent/predicate"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/enums"
@@ -114,6 +111,7 @@ func (mpou *MissionProduceOrderUpdate) SetNillableUserID(i *int64) *MissionProdu
 
 // SetMissionID sets the "mission_id" field.
 func (mpou *MissionProduceOrderUpdate) SetMissionID(i int64) *MissionProduceOrderUpdate {
+	mpou.mutation.ResetMissionID()
 	mpou.mutation.SetMissionID(i)
 	return mpou
 }
@@ -126,52 +124,65 @@ func (mpou *MissionProduceOrderUpdate) SetNillableMissionID(i *int64) *MissionPr
 	return mpou
 }
 
-// SetMissionProductionID sets the "mission_production_id" field.
-func (mpou *MissionProduceOrderUpdate) SetMissionProductionID(i int64) *MissionProduceOrderUpdate {
-	mpou.mutation.SetMissionProductionID(i)
-	return mpou
-}
-
-// SetNillableMissionProductionID sets the "mission_production_id" field if the given value is not nil.
-func (mpou *MissionProduceOrderUpdate) SetNillableMissionProductionID(i *int64) *MissionProduceOrderUpdate {
-	if i != nil {
-		mpou.SetMissionProductionID(*i)
-	}
+// AddMissionID adds i to the "mission_id" field.
+func (mpou *MissionProduceOrderUpdate) AddMissionID(i int64) *MissionProduceOrderUpdate {
+	mpou.mutation.AddMissionID(i)
 	return mpou
 }
 
 // SetStatus sets the "status" field.
-func (mpou *MissionProduceOrderUpdate) SetStatus(es enums.MissionStatus) *MissionProduceOrderUpdate {
-	mpou.mutation.SetStatus(es)
+func (mpou *MissionProduceOrderUpdate) SetStatus(m missionproduceorder.Status) *MissionProduceOrderUpdate {
+	mpou.mutation.SetStatus(m)
 	return mpou
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpou *MissionProduceOrderUpdate) SetNillableStatus(es *enums.MissionStatus) *MissionProduceOrderUpdate {
-	if es != nil {
-		mpou.SetStatus(*es)
+func (mpou *MissionProduceOrderUpdate) SetNillableStatus(m *missionproduceorder.Status) *MissionProduceOrderUpdate {
+	if m != nil {
+		mpou.SetStatus(*m)
 	}
 	return mpou
 }
 
-// SetCep sets the "cep" field.
-func (mpou *MissionProduceOrderUpdate) SetCep(i int64) *MissionProduceOrderUpdate {
-	mpou.mutation.ResetCep()
-	mpou.mutation.SetCep(i)
+// SetPureCep sets the "pure_cep" field.
+func (mpou *MissionProduceOrderUpdate) SetPureCep(i int64) *MissionProduceOrderUpdate {
+	mpou.mutation.ResetPureCep()
+	mpou.mutation.SetPureCep(i)
 	return mpou
 }
 
-// SetNillableCep sets the "cep" field if the given value is not nil.
-func (mpou *MissionProduceOrderUpdate) SetNillableCep(i *int64) *MissionProduceOrderUpdate {
+// SetNillablePureCep sets the "pure_cep" field if the given value is not nil.
+func (mpou *MissionProduceOrderUpdate) SetNillablePureCep(i *int64) *MissionProduceOrderUpdate {
 	if i != nil {
-		mpou.SetCep(*i)
+		mpou.SetPureCep(*i)
 	}
 	return mpou
 }
 
-// AddCep adds i to the "cep" field.
-func (mpou *MissionProduceOrderUpdate) AddCep(i int64) *MissionProduceOrderUpdate {
-	mpou.mutation.AddCep(i)
+// AddPureCep adds i to the "pure_cep" field.
+func (mpou *MissionProduceOrderUpdate) AddPureCep(i int64) *MissionProduceOrderUpdate {
+	mpou.mutation.AddPureCep(i)
+	return mpou
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (mpou *MissionProduceOrderUpdate) SetGiftCep(i int64) *MissionProduceOrderUpdate {
+	mpou.mutation.ResetGiftCep()
+	mpou.mutation.SetGiftCep(i)
+	return mpou
+}
+
+// SetNillableGiftCep sets the "gift_cep" field if the given value is not nil.
+func (mpou *MissionProduceOrderUpdate) SetNillableGiftCep(i *int64) *MissionProduceOrderUpdate {
+	if i != nil {
+		mpou.SetGiftCep(*i)
+	}
+	return mpou
+}
+
+// AddGiftCep adds i to the "gift_cep" field.
+func (mpou *MissionProduceOrderUpdate) AddGiftCep(i int64) *MissionProduceOrderUpdate {
+	mpou.mutation.AddGiftCep(i)
 	return mpou
 }
 
@@ -245,38 +256,24 @@ func (mpou *MissionProduceOrderUpdate) SetNillableMissionConsumeOrderID(i *int64
 	return mpou
 }
 
-// SetMissionBatchID sets the "mission_batch_id" field.
-func (mpou *MissionProduceOrderUpdate) SetMissionBatchID(i int64) *MissionProduceOrderUpdate {
-	mpou.mutation.SetMissionBatchID(i)
-	return mpou
-}
-
-// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
-func (mpou *MissionProduceOrderUpdate) SetNillableMissionBatchID(i *int64) *MissionProduceOrderUpdate {
-	if i != nil {
-		mpou.SetMissionBatchID(*i)
-	}
-	return mpou
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (mpou *MissionProduceOrderUpdate) SetUser(u *User) *MissionProduceOrderUpdate {
 	return mpou.SetUserID(u.ID)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (mpou *MissionProduceOrderUpdate) AddBillIDs(ids ...int64) *MissionProduceOrderUpdate {
-	mpou.mutation.AddBillIDs(ids...)
+// AddEarnBillIDs adds the "earn_bills" edge to the EarnBill entity by IDs.
+func (mpou *MissionProduceOrderUpdate) AddEarnBillIDs(ids ...int64) *MissionProduceOrderUpdate {
+	mpou.mutation.AddEarnBillIDs(ids...)
 	return mpou
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (mpou *MissionProduceOrderUpdate) AddBills(b ...*Bill) *MissionProduceOrderUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddEarnBills adds the "earn_bills" edges to the EarnBill entity.
+func (mpou *MissionProduceOrderUpdate) AddEarnBills(e ...*EarnBill) *MissionProduceOrderUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return mpou.AddBillIDs(ids...)
+	return mpou.AddEarnBillIDs(ids...)
 }
 
 // SetDevice sets the "device" edge to the Device entity.
@@ -287,21 +284,6 @@ func (mpou *MissionProduceOrderUpdate) SetDevice(d *Device) *MissionProduceOrder
 // SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mpou *MissionProduceOrderUpdate) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionProduceOrderUpdate {
 	return mpou.SetMissionConsumeOrderID(m.ID)
-}
-
-// SetMission sets the "mission" edge to the Mission entity.
-func (mpou *MissionProduceOrderUpdate) SetMission(m *Mission) *MissionProduceOrderUpdate {
-	return mpou.SetMissionID(m.ID)
-}
-
-// SetMissionProduction sets the "mission_production" edge to the MissionProduction entity.
-func (mpou *MissionProduceOrderUpdate) SetMissionProduction(m *MissionProduction) *MissionProduceOrderUpdate {
-	return mpou.SetMissionProductionID(m.ID)
-}
-
-// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
-func (mpou *MissionProduceOrderUpdate) SetMissionBatch(m *MissionBatch) *MissionProduceOrderUpdate {
-	return mpou.SetMissionBatchID(m.ID)
 }
 
 // Mutation returns the MissionProduceOrderMutation object of the builder.
@@ -315,25 +297,25 @@ func (mpou *MissionProduceOrderUpdate) ClearUser() *MissionProduceOrderUpdate {
 	return mpou
 }
 
-// ClearBills clears all "bills" edges to the Bill entity.
-func (mpou *MissionProduceOrderUpdate) ClearBills() *MissionProduceOrderUpdate {
-	mpou.mutation.ClearBills()
+// ClearEarnBills clears all "earn_bills" edges to the EarnBill entity.
+func (mpou *MissionProduceOrderUpdate) ClearEarnBills() *MissionProduceOrderUpdate {
+	mpou.mutation.ClearEarnBills()
 	return mpou
 }
 
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (mpou *MissionProduceOrderUpdate) RemoveBillIDs(ids ...int64) *MissionProduceOrderUpdate {
-	mpou.mutation.RemoveBillIDs(ids...)
+// RemoveEarnBillIDs removes the "earn_bills" edge to EarnBill entities by IDs.
+func (mpou *MissionProduceOrderUpdate) RemoveEarnBillIDs(ids ...int64) *MissionProduceOrderUpdate {
+	mpou.mutation.RemoveEarnBillIDs(ids...)
 	return mpou
 }
 
-// RemoveBills removes "bills" edges to Bill entities.
-func (mpou *MissionProduceOrderUpdate) RemoveBills(b ...*Bill) *MissionProduceOrderUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// RemoveEarnBills removes "earn_bills" edges to EarnBill entities.
+func (mpou *MissionProduceOrderUpdate) RemoveEarnBills(e ...*EarnBill) *MissionProduceOrderUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return mpou.RemoveBillIDs(ids...)
+	return mpou.RemoveEarnBillIDs(ids...)
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -345,24 +327,6 @@ func (mpou *MissionProduceOrderUpdate) ClearDevice() *MissionProduceOrderUpdate 
 // ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mpou *MissionProduceOrderUpdate) ClearMissionConsumeOrder() *MissionProduceOrderUpdate {
 	mpou.mutation.ClearMissionConsumeOrder()
-	return mpou
-}
-
-// ClearMission clears the "mission" edge to the Mission entity.
-func (mpou *MissionProduceOrderUpdate) ClearMission() *MissionProduceOrderUpdate {
-	mpou.mutation.ClearMission()
-	return mpou
-}
-
-// ClearMissionProduction clears the "mission_production" edge to the MissionProduction entity.
-func (mpou *MissionProduceOrderUpdate) ClearMissionProduction() *MissionProduceOrderUpdate {
-	mpou.mutation.ClearMissionProduction()
-	return mpou
-}
-
-// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
-func (mpou *MissionProduceOrderUpdate) ClearMissionBatch() *MissionProduceOrderUpdate {
-	mpou.mutation.ClearMissionBatch()
 	return mpou
 }
 
@@ -423,15 +387,6 @@ func (mpou *MissionProduceOrderUpdate) check() error {
 	if _, ok := mpou.mutation.MissionConsumeOrderID(); mpou.mutation.MissionConsumeOrderCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission_consume_order"`)
 	}
-	if _, ok := mpou.mutation.MissionID(); mpou.mutation.MissionCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission"`)
-	}
-	if _, ok := mpou.mutation.MissionProductionID(); mpou.mutation.MissionProductionCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission_production"`)
-	}
-	if _, ok := mpou.mutation.MissionBatchID(); mpou.mutation.MissionBatchCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission_batch"`)
-	}
 	return nil
 }
 
@@ -465,14 +420,26 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 	if value, ok := mpou.mutation.DeletedAt(); ok {
 		_spec.SetField(missionproduceorder.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := mpou.mutation.MissionID(); ok {
+		_spec.SetField(missionproduceorder.FieldMissionID, field.TypeInt64, value)
+	}
+	if value, ok := mpou.mutation.AddedMissionID(); ok {
+		_spec.AddField(missionproduceorder.FieldMissionID, field.TypeInt64, value)
+	}
 	if value, ok := mpou.mutation.Status(); ok {
 		_spec.SetField(missionproduceorder.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := mpou.mutation.Cep(); ok {
-		_spec.SetField(missionproduceorder.FieldCep, field.TypeInt64, value)
+	if value, ok := mpou.mutation.PureCep(); ok {
+		_spec.SetField(missionproduceorder.FieldPureCep, field.TypeInt64, value)
 	}
-	if value, ok := mpou.mutation.AddedCep(); ok {
-		_spec.AddField(missionproduceorder.FieldCep, field.TypeInt64, value)
+	if value, ok := mpou.mutation.AddedPureCep(); ok {
+		_spec.AddField(missionproduceorder.FieldPureCep, field.TypeInt64, value)
+	}
+	if value, ok := mpou.mutation.GiftCep(); ok {
+		_spec.SetField(missionproduceorder.FieldGiftCep, field.TypeInt64, value)
+	}
+	if value, ok := mpou.mutation.AddedGiftCep(); ok {
+		_spec.AddField(missionproduceorder.FieldGiftCep, field.TypeInt64, value)
 	}
 	if value, ok := mpou.mutation.GetType(); ok {
 		_spec.SetField(missionproduceorder.FieldType, field.TypeEnum, value)
@@ -512,28 +479,28 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if mpou.mutation.BillsCleared() {
+	if mpou.mutation.EarnBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mpou.mutation.RemovedBillsIDs(); len(nodes) > 0 && !mpou.mutation.BillsCleared() {
+	if nodes := mpou.mutation.RemovedEarnBillsIDs(); len(nodes) > 0 && !mpou.mutation.EarnBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -541,15 +508,15 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mpou.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := mpou.mutation.EarnBillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -608,93 +575,6 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpou.mutation.MissionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionTable,
-			Columns: []string{missionproduceorder.MissionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpou.mutation.MissionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionTable,
-			Columns: []string{missionproduceorder.MissionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpou.mutation.MissionProductionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionProductionTable,
-			Columns: []string{missionproduceorder.MissionProductionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpou.mutation.MissionProductionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionProductionTable,
-			Columns: []string{missionproduceorder.MissionProductionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpou.mutation.MissionBatchCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionBatchTable,
-			Columns: []string{missionproduceorder.MissionBatchColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpou.mutation.MissionBatchIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionBatchTable,
-			Columns: []string{missionproduceorder.MissionBatchColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -800,6 +680,7 @@ func (mpouo *MissionProduceOrderUpdateOne) SetNillableUserID(i *int64) *MissionP
 
 // SetMissionID sets the "mission_id" field.
 func (mpouo *MissionProduceOrderUpdateOne) SetMissionID(i int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.ResetMissionID()
 	mpouo.mutation.SetMissionID(i)
 	return mpouo
 }
@@ -812,52 +693,65 @@ func (mpouo *MissionProduceOrderUpdateOne) SetNillableMissionID(i *int64) *Missi
 	return mpouo
 }
 
-// SetMissionProductionID sets the "mission_production_id" field.
-func (mpouo *MissionProduceOrderUpdateOne) SetMissionProductionID(i int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.SetMissionProductionID(i)
-	return mpouo
-}
-
-// SetNillableMissionProductionID sets the "mission_production_id" field if the given value is not nil.
-func (mpouo *MissionProduceOrderUpdateOne) SetNillableMissionProductionID(i *int64) *MissionProduceOrderUpdateOne {
-	if i != nil {
-		mpouo.SetMissionProductionID(*i)
-	}
+// AddMissionID adds i to the "mission_id" field.
+func (mpouo *MissionProduceOrderUpdateOne) AddMissionID(i int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.AddMissionID(i)
 	return mpouo
 }
 
 // SetStatus sets the "status" field.
-func (mpouo *MissionProduceOrderUpdateOne) SetStatus(es enums.MissionStatus) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.SetStatus(es)
+func (mpouo *MissionProduceOrderUpdateOne) SetStatus(m missionproduceorder.Status) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.SetStatus(m)
 	return mpouo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpouo *MissionProduceOrderUpdateOne) SetNillableStatus(es *enums.MissionStatus) *MissionProduceOrderUpdateOne {
-	if es != nil {
-		mpouo.SetStatus(*es)
+func (mpouo *MissionProduceOrderUpdateOne) SetNillableStatus(m *missionproduceorder.Status) *MissionProduceOrderUpdateOne {
+	if m != nil {
+		mpouo.SetStatus(*m)
 	}
 	return mpouo
 }
 
-// SetCep sets the "cep" field.
-func (mpouo *MissionProduceOrderUpdateOne) SetCep(i int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.ResetCep()
-	mpouo.mutation.SetCep(i)
+// SetPureCep sets the "pure_cep" field.
+func (mpouo *MissionProduceOrderUpdateOne) SetPureCep(i int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.ResetPureCep()
+	mpouo.mutation.SetPureCep(i)
 	return mpouo
 }
 
-// SetNillableCep sets the "cep" field if the given value is not nil.
-func (mpouo *MissionProduceOrderUpdateOne) SetNillableCep(i *int64) *MissionProduceOrderUpdateOne {
+// SetNillablePureCep sets the "pure_cep" field if the given value is not nil.
+func (mpouo *MissionProduceOrderUpdateOne) SetNillablePureCep(i *int64) *MissionProduceOrderUpdateOne {
 	if i != nil {
-		mpouo.SetCep(*i)
+		mpouo.SetPureCep(*i)
 	}
 	return mpouo
 }
 
-// AddCep adds i to the "cep" field.
-func (mpouo *MissionProduceOrderUpdateOne) AddCep(i int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.AddCep(i)
+// AddPureCep adds i to the "pure_cep" field.
+func (mpouo *MissionProduceOrderUpdateOne) AddPureCep(i int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.AddPureCep(i)
+	return mpouo
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (mpouo *MissionProduceOrderUpdateOne) SetGiftCep(i int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.ResetGiftCep()
+	mpouo.mutation.SetGiftCep(i)
+	return mpouo
+}
+
+// SetNillableGiftCep sets the "gift_cep" field if the given value is not nil.
+func (mpouo *MissionProduceOrderUpdateOne) SetNillableGiftCep(i *int64) *MissionProduceOrderUpdateOne {
+	if i != nil {
+		mpouo.SetGiftCep(*i)
+	}
+	return mpouo
+}
+
+// AddGiftCep adds i to the "gift_cep" field.
+func (mpouo *MissionProduceOrderUpdateOne) AddGiftCep(i int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.AddGiftCep(i)
 	return mpouo
 }
 
@@ -931,38 +825,24 @@ func (mpouo *MissionProduceOrderUpdateOne) SetNillableMissionConsumeOrderID(i *i
 	return mpouo
 }
 
-// SetMissionBatchID sets the "mission_batch_id" field.
-func (mpouo *MissionProduceOrderUpdateOne) SetMissionBatchID(i int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.SetMissionBatchID(i)
-	return mpouo
-}
-
-// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
-func (mpouo *MissionProduceOrderUpdateOne) SetNillableMissionBatchID(i *int64) *MissionProduceOrderUpdateOne {
-	if i != nil {
-		mpouo.SetMissionBatchID(*i)
-	}
-	return mpouo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (mpouo *MissionProduceOrderUpdateOne) SetUser(u *User) *MissionProduceOrderUpdateOne {
 	return mpouo.SetUserID(u.ID)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (mpouo *MissionProduceOrderUpdateOne) AddBillIDs(ids ...int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.AddBillIDs(ids...)
+// AddEarnBillIDs adds the "earn_bills" edge to the EarnBill entity by IDs.
+func (mpouo *MissionProduceOrderUpdateOne) AddEarnBillIDs(ids ...int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.AddEarnBillIDs(ids...)
 	return mpouo
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (mpouo *MissionProduceOrderUpdateOne) AddBills(b ...*Bill) *MissionProduceOrderUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddEarnBills adds the "earn_bills" edges to the EarnBill entity.
+func (mpouo *MissionProduceOrderUpdateOne) AddEarnBills(e ...*EarnBill) *MissionProduceOrderUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return mpouo.AddBillIDs(ids...)
+	return mpouo.AddEarnBillIDs(ids...)
 }
 
 // SetDevice sets the "device" edge to the Device entity.
@@ -973,21 +853,6 @@ func (mpouo *MissionProduceOrderUpdateOne) SetDevice(d *Device) *MissionProduceO
 // SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mpouo *MissionProduceOrderUpdateOne) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionProduceOrderUpdateOne {
 	return mpouo.SetMissionConsumeOrderID(m.ID)
-}
-
-// SetMission sets the "mission" edge to the Mission entity.
-func (mpouo *MissionProduceOrderUpdateOne) SetMission(m *Mission) *MissionProduceOrderUpdateOne {
-	return mpouo.SetMissionID(m.ID)
-}
-
-// SetMissionProduction sets the "mission_production" edge to the MissionProduction entity.
-func (mpouo *MissionProduceOrderUpdateOne) SetMissionProduction(m *MissionProduction) *MissionProduceOrderUpdateOne {
-	return mpouo.SetMissionProductionID(m.ID)
-}
-
-// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
-func (mpouo *MissionProduceOrderUpdateOne) SetMissionBatch(m *MissionBatch) *MissionProduceOrderUpdateOne {
-	return mpouo.SetMissionBatchID(m.ID)
 }
 
 // Mutation returns the MissionProduceOrderMutation object of the builder.
@@ -1001,25 +866,25 @@ func (mpouo *MissionProduceOrderUpdateOne) ClearUser() *MissionProduceOrderUpdat
 	return mpouo
 }
 
-// ClearBills clears all "bills" edges to the Bill entity.
-func (mpouo *MissionProduceOrderUpdateOne) ClearBills() *MissionProduceOrderUpdateOne {
-	mpouo.mutation.ClearBills()
+// ClearEarnBills clears all "earn_bills" edges to the EarnBill entity.
+func (mpouo *MissionProduceOrderUpdateOne) ClearEarnBills() *MissionProduceOrderUpdateOne {
+	mpouo.mutation.ClearEarnBills()
 	return mpouo
 }
 
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (mpouo *MissionProduceOrderUpdateOne) RemoveBillIDs(ids ...int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.RemoveBillIDs(ids...)
+// RemoveEarnBillIDs removes the "earn_bills" edge to EarnBill entities by IDs.
+func (mpouo *MissionProduceOrderUpdateOne) RemoveEarnBillIDs(ids ...int64) *MissionProduceOrderUpdateOne {
+	mpouo.mutation.RemoveEarnBillIDs(ids...)
 	return mpouo
 }
 
-// RemoveBills removes "bills" edges to Bill entities.
-func (mpouo *MissionProduceOrderUpdateOne) RemoveBills(b ...*Bill) *MissionProduceOrderUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// RemoveEarnBills removes "earn_bills" edges to EarnBill entities.
+func (mpouo *MissionProduceOrderUpdateOne) RemoveEarnBills(e ...*EarnBill) *MissionProduceOrderUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return mpouo.RemoveBillIDs(ids...)
+	return mpouo.RemoveEarnBillIDs(ids...)
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -1031,24 +896,6 @@ func (mpouo *MissionProduceOrderUpdateOne) ClearDevice() *MissionProduceOrderUpd
 // ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mpouo *MissionProduceOrderUpdateOne) ClearMissionConsumeOrder() *MissionProduceOrderUpdateOne {
 	mpouo.mutation.ClearMissionConsumeOrder()
-	return mpouo
-}
-
-// ClearMission clears the "mission" edge to the Mission entity.
-func (mpouo *MissionProduceOrderUpdateOne) ClearMission() *MissionProduceOrderUpdateOne {
-	mpouo.mutation.ClearMission()
-	return mpouo
-}
-
-// ClearMissionProduction clears the "mission_production" edge to the MissionProduction entity.
-func (mpouo *MissionProduceOrderUpdateOne) ClearMissionProduction() *MissionProduceOrderUpdateOne {
-	mpouo.mutation.ClearMissionProduction()
-	return mpouo
-}
-
-// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
-func (mpouo *MissionProduceOrderUpdateOne) ClearMissionBatch() *MissionProduceOrderUpdateOne {
-	mpouo.mutation.ClearMissionBatch()
 	return mpouo
 }
 
@@ -1122,15 +969,6 @@ func (mpouo *MissionProduceOrderUpdateOne) check() error {
 	if _, ok := mpouo.mutation.MissionConsumeOrderID(); mpouo.mutation.MissionConsumeOrderCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission_consume_order"`)
 	}
-	if _, ok := mpouo.mutation.MissionID(); mpouo.mutation.MissionCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission"`)
-	}
-	if _, ok := mpouo.mutation.MissionProductionID(); mpouo.mutation.MissionProductionCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission_production"`)
-	}
-	if _, ok := mpouo.mutation.MissionBatchID(); mpouo.mutation.MissionBatchCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "MissionProduceOrder.mission_batch"`)
-	}
 	return nil
 }
 
@@ -1181,14 +1019,26 @@ func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 	if value, ok := mpouo.mutation.DeletedAt(); ok {
 		_spec.SetField(missionproduceorder.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := mpouo.mutation.MissionID(); ok {
+		_spec.SetField(missionproduceorder.FieldMissionID, field.TypeInt64, value)
+	}
+	if value, ok := mpouo.mutation.AddedMissionID(); ok {
+		_spec.AddField(missionproduceorder.FieldMissionID, field.TypeInt64, value)
+	}
 	if value, ok := mpouo.mutation.Status(); ok {
 		_spec.SetField(missionproduceorder.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := mpouo.mutation.Cep(); ok {
-		_spec.SetField(missionproduceorder.FieldCep, field.TypeInt64, value)
+	if value, ok := mpouo.mutation.PureCep(); ok {
+		_spec.SetField(missionproduceorder.FieldPureCep, field.TypeInt64, value)
 	}
-	if value, ok := mpouo.mutation.AddedCep(); ok {
-		_spec.AddField(missionproduceorder.FieldCep, field.TypeInt64, value)
+	if value, ok := mpouo.mutation.AddedPureCep(); ok {
+		_spec.AddField(missionproduceorder.FieldPureCep, field.TypeInt64, value)
+	}
+	if value, ok := mpouo.mutation.GiftCep(); ok {
+		_spec.SetField(missionproduceorder.FieldGiftCep, field.TypeInt64, value)
+	}
+	if value, ok := mpouo.mutation.AddedGiftCep(); ok {
+		_spec.AddField(missionproduceorder.FieldGiftCep, field.TypeInt64, value)
 	}
 	if value, ok := mpouo.mutation.GetType(); ok {
 		_spec.SetField(missionproduceorder.FieldType, field.TypeEnum, value)
@@ -1228,28 +1078,28 @@ func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if mpouo.mutation.BillsCleared() {
+	if mpouo.mutation.EarnBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mpouo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !mpouo.mutation.BillsCleared() {
+	if nodes := mpouo.mutation.RemovedEarnBillsIDs(); len(nodes) > 0 && !mpouo.mutation.EarnBillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1257,15 +1107,15 @@ func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := mpouo.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := mpouo.mutation.EarnBillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1324,93 +1174,6 @@ func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpouo.mutation.MissionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionTable,
-			Columns: []string{missionproduceorder.MissionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpouo.mutation.MissionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionTable,
-			Columns: []string{missionproduceorder.MissionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpouo.mutation.MissionProductionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionProductionTable,
-			Columns: []string{missionproduceorder.MissionProductionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpouo.mutation.MissionProductionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionProductionTable,
-			Columns: []string{missionproduceorder.MissionProductionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpouo.mutation.MissionBatchCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionBatchTable,
-			Columns: []string{missionproduceorder.MissionBatchColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpouo.mutation.MissionBatchIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionBatchTable,
-			Columns: []string{missionproduceorder.MissionBatchColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -12,12 +12,24 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// Bill is the client for interacting with the Bill builders.
-	Bill *BillClient
-	// Collection is the client for interacting with the Collection builders.
-	Collection *CollectionClient
+	// Collect is the client for interacting with the Collect builders.
+	Collect *CollectClient
+	// CostAccount is the client for interacting with the CostAccount builders.
+	CostAccount *CostAccountClient
+	// CostBill is the client for interacting with the CostBill builders.
+	CostBill *CostBillClient
 	// Device is the client for interacting with the Device builders.
 	Device *DeviceClient
+	// DeviceGpuMission is the client for interacting with the DeviceGpuMission builders.
+	DeviceGpuMission *DeviceGpuMissionClient
+	// EarnBill is the client for interacting with the EarnBill builders.
+	EarnBill *EarnBillClient
+	// EnumCondition is the client for interacting with the EnumCondition builders.
+	EnumCondition *EnumConditionClient
+	// EnumMissionStatus is the client for interacting with the EnumMissionStatus builders.
+	EnumMissionStatus *EnumMissionStatusClient
+	// Gpu is the client for interacting with the Gpu builders.
+	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
 	HmacKeyPair *HmacKeyPairClient
 	// InputLog is the client for interacting with the InputLog builders.
@@ -28,16 +40,18 @@ type Tx struct {
 	MissionBatch *MissionBatchClient
 	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
 	MissionConsumeOrder *MissionConsumeOrderClient
+	// MissionKeyPair is the client for interacting with the MissionKeyPair builders.
+	MissionKeyPair *MissionKeyPairClient
+	// MissionKind is the client for interacting with the MissionKind builders.
+	MissionKind *MissionKindClient
 	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
 	MissionProduceOrder *MissionProduceOrderClient
-	// MissionProduction is the client for interacting with the MissionProduction builders.
-	MissionProduction *MissionProductionClient
-	// MissionType is the client for interacting with the MissionType builders.
-	MissionType *MissionTypeClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
-	// PlatformWallet is the client for interacting with the PlatformWallet builders.
-	PlatformWallet *PlatformWalletClient
+	// PlatformAccount is the client for interacting with the PlatformAccount builders.
+	PlatformAccount *PlatformAccountClient
+	// ProfitAccount is the client for interacting with the ProfitAccount builders.
+	ProfitAccount *ProfitAccountClient
 	// ProfitSetting is the client for interacting with the ProfitSetting builders.
 	ProfitSetting *ProfitSettingClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
@@ -46,10 +60,10 @@ type Tx struct {
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
 	UserDevice *UserDeviceClient
+	// VXAccount is the client for interacting with the VXAccount builders.
+	VXAccount *VXAccountClient
 	// VXSocial is the client for interacting with the VXSocial builders.
 	VXSocial *VXSocialClient
-	// Wallet is the client for interacting with the Wallet builders.
-	Wallet *WalletClient
 
 	// lazily loaded.
 	client     *Client
@@ -181,25 +195,32 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.Bill = NewBillClient(tx.config)
-	tx.Collection = NewCollectionClient(tx.config)
+	tx.Collect = NewCollectClient(tx.config)
+	tx.CostAccount = NewCostAccountClient(tx.config)
+	tx.CostBill = NewCostBillClient(tx.config)
 	tx.Device = NewDeviceClient(tx.config)
+	tx.DeviceGpuMission = NewDeviceGpuMissionClient(tx.config)
+	tx.EarnBill = NewEarnBillClient(tx.config)
+	tx.EnumCondition = NewEnumConditionClient(tx.config)
+	tx.EnumMissionStatus = NewEnumMissionStatusClient(tx.config)
+	tx.Gpu = NewGpuClient(tx.config)
 	tx.HmacKeyPair = NewHmacKeyPairClient(tx.config)
 	tx.InputLog = NewInputLogClient(tx.config)
 	tx.Mission = NewMissionClient(tx.config)
 	tx.MissionBatch = NewMissionBatchClient(tx.config)
 	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)
+	tx.MissionKeyPair = NewMissionKeyPairClient(tx.config)
+	tx.MissionKind = NewMissionKindClient(tx.config)
 	tx.MissionProduceOrder = NewMissionProduceOrderClient(tx.config)
-	tx.MissionProduction = NewMissionProductionClient(tx.config)
-	tx.MissionType = NewMissionTypeClient(tx.config)
 	tx.OutputLog = NewOutputLogClient(tx.config)
-	tx.PlatformWallet = NewPlatformWalletClient(tx.config)
+	tx.PlatformAccount = NewPlatformAccountClient(tx.config)
+	tx.ProfitAccount = NewProfitAccountClient(tx.config)
 	tx.ProfitSetting = NewProfitSettingClient(tx.config)
 	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)
+	tx.VXAccount = NewVXAccountClient(tx.config)
 	tx.VXSocial = NewVXSocialClient(tx.config)
-	tx.Wallet = NewWalletClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -209,7 +230,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Bill.QueryXXX(), the query will be executed
+// applies a query, for example: Collect.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

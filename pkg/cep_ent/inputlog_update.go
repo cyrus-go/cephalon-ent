@@ -96,14 +96,6 @@ func (ilu *InputLogUpdate) SetHeaders(s string) *InputLogUpdate {
 	return ilu
 }
 
-// SetNillableHeaders sets the "headers" field if the given value is not nil.
-func (ilu *InputLogUpdate) SetNillableHeaders(s *string) *InputLogUpdate {
-	if s != nil {
-		ilu.SetHeaders(*s)
-	}
-	return ilu
-}
-
 // SetBody sets the "body" field.
 func (ilu *InputLogUpdate) SetBody(s string) *InputLogUpdate {
 	ilu.mutation.SetBody(s)
@@ -150,14 +142,6 @@ func (ilu *InputLogUpdate) SetURL(s string) *InputLogUpdate {
 	return ilu
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (ilu *InputLogUpdate) SetNillableURL(s *string) *InputLogUpdate {
-	if s != nil {
-		ilu.SetURL(*s)
-	}
-	return ilu
-}
-
 // SetIP sets the "ip" field.
 func (ilu *InputLogUpdate) SetIP(s string) *InputLogUpdate {
 	ilu.mutation.SetIP(s)
@@ -169,6 +153,12 @@ func (ilu *InputLogUpdate) SetNillableIP(s *string) *InputLogUpdate {
 	if s != nil {
 		ilu.SetIP(*s)
 	}
+	return ilu
+}
+
+// ClearIP clears the value of the "ip" field.
+func (ilu *InputLogUpdate) ClearIP() *InputLogUpdate {
+	ilu.mutation.ClearIP()
 	return ilu
 }
 
@@ -189,14 +179,6 @@ func (ilu *InputLogUpdate) SetNillableCaller(s *string) *InputLogUpdate {
 // SetMethod sets the "method" field.
 func (ilu *InputLogUpdate) SetMethod(i inputlog.Method) *InputLogUpdate {
 	ilu.mutation.SetMethod(i)
-	return ilu
-}
-
-// SetNillableMethod sets the "method" field if the given value is not nil.
-func (ilu *InputLogUpdate) SetNillableMethod(i *inputlog.Method) *InputLogUpdate {
-	if i != nil {
-		ilu.SetMethod(*i)
-	}
 	return ilu
 }
 
@@ -316,6 +298,9 @@ func (ilu *InputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ilu.mutation.IP(); ok {
 		_spec.SetField(inputlog.FieldIP, field.TypeString, value)
 	}
+	if ilu.mutation.IPCleared() {
+		_spec.ClearField(inputlog.FieldIP, field.TypeString)
+	}
 	if value, ok := ilu.mutation.Caller(); ok {
 		_spec.SetField(inputlog.FieldCaller, field.TypeString, value)
 	}
@@ -413,14 +398,6 @@ func (iluo *InputLogUpdateOne) SetHeaders(s string) *InputLogUpdateOne {
 	return iluo
 }
 
-// SetNillableHeaders sets the "headers" field if the given value is not nil.
-func (iluo *InputLogUpdateOne) SetNillableHeaders(s *string) *InputLogUpdateOne {
-	if s != nil {
-		iluo.SetHeaders(*s)
-	}
-	return iluo
-}
-
 // SetBody sets the "body" field.
 func (iluo *InputLogUpdateOne) SetBody(s string) *InputLogUpdateOne {
 	iluo.mutation.SetBody(s)
@@ -467,14 +444,6 @@ func (iluo *InputLogUpdateOne) SetURL(s string) *InputLogUpdateOne {
 	return iluo
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (iluo *InputLogUpdateOne) SetNillableURL(s *string) *InputLogUpdateOne {
-	if s != nil {
-		iluo.SetURL(*s)
-	}
-	return iluo
-}
-
 // SetIP sets the "ip" field.
 func (iluo *InputLogUpdateOne) SetIP(s string) *InputLogUpdateOne {
 	iluo.mutation.SetIP(s)
@@ -486,6 +455,12 @@ func (iluo *InputLogUpdateOne) SetNillableIP(s *string) *InputLogUpdateOne {
 	if s != nil {
 		iluo.SetIP(*s)
 	}
+	return iluo
+}
+
+// ClearIP clears the value of the "ip" field.
+func (iluo *InputLogUpdateOne) ClearIP() *InputLogUpdateOne {
+	iluo.mutation.ClearIP()
 	return iluo
 }
 
@@ -506,14 +481,6 @@ func (iluo *InputLogUpdateOne) SetNillableCaller(s *string) *InputLogUpdateOne {
 // SetMethod sets the "method" field.
 func (iluo *InputLogUpdateOne) SetMethod(i inputlog.Method) *InputLogUpdateOne {
 	iluo.mutation.SetMethod(i)
-	return iluo
-}
-
-// SetNillableMethod sets the "method" field if the given value is not nil.
-func (iluo *InputLogUpdateOne) SetNillableMethod(i *inputlog.Method) *InputLogUpdateOne {
-	if i != nil {
-		iluo.SetMethod(*i)
-	}
 	return iluo
 }
 
@@ -662,6 +629,9 @@ func (iluo *InputLogUpdateOne) sqlSave(ctx context.Context) (_node *InputLog, er
 	}
 	if value, ok := iluo.mutation.IP(); ok {
 		_spec.SetField(inputlog.FieldIP, field.TypeString, value)
+	}
+	if iluo.mutation.IPCleared() {
+		_spec.ClearField(inputlog.FieldIP, field.TypeString)
 	}
 	if value, ok := iluo.mutation.Caller(); ok {
 		_spec.SetField(inputlog.FieldCaller, field.TypeString, value)

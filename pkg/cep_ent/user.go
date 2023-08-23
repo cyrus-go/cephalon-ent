@@ -3,10 +3,9 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/hmackeypair"
+	"cephalon-ent/pkg/cep_ent/costaccount"
+	"cephalon-ent/pkg/cep_ent/profitaccount"
 	"cephalon-ent/pkg/cep_ent/user"
-	"cephalon-ent/pkg/cep_ent/wallet"
-	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
@@ -15,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 用户表，手机号唯一，用户名唯一，hmac_key 唯一
+// User is the model entity for the User schema.
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -32,24 +31,22 @@ type User struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 用户名
 	Name string `json:"name"`
-	// 用户昵称
-	NickName string `json:"nick_name"`
-	// 手机号
+	// 头像
+	JpgURL string `json:"jpg_url"`
+	// 用户在任务中枢密钥对的键
+	Key string `json:"key"`
+	// 用户在任务中枢的密钥对的值
+	Secret string `json:"-"`
+	// 用户的手机号
 	Phone string `json:"phone"`
 	// 密码
 	Password string `json:"-"`
-	// 头像路径
-	AvatarURL string `json:"avatar_url"`
-	// 用户状态
-	Status enums.UserStatus `json:"status"`
+	// 是否冻结
+	IsFrozen bool `json:"is_frozen"`
 	// 用户类型
-	Type enums.UserType `json:"type"`
-	// 用户可以在什么平台登录，二进制开关数据
-	Platform int `json:"platform"`
-	// 用户使用任务相关功能的密钥对的键，唯一
-	HmacKey string `json:"hmac_key"`
-	// 用户使用任务相关功能的密钥对的值
-	HmacSecret string `json:"hmac_secret"`
+	UserType user.UserType `json:"user_type"`
+	// 邀请人用户 id
+	ParentID int64 `json:"parent_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -58,20 +55,22 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Bills holds the value of the bills edge.
-	Bills []*Bill `json:"bills,omitempty"`
-	// HmacKeyPair holds the value of the hmac_key_pair edge.
-	HmacKeyPair *HmacKeyPair `json:"hmac_key_pair,omitempty"`
-	// CreatedMissions holds the value of the created_missions edge.
-	CreatedMissions []*Mission `json:"created_missions,omitempty"`
-	// Wallet holds the value of the wallet edge.
-	Wallet *Wallet `json:"wallet,omitempty"`
-	// Collections holds the value of the collections edge.
-	Collections []*Collection `json:"collections,omitempty"`
+	// VxAccounts holds the value of the vx_accounts edge.
+	VxAccounts []*VXAccount `json:"vx_accounts,omitempty"`
+	// Collects holds the value of the collects edge.
+	Collects []*Collect `json:"collects,omitempty"`
 	// Devices holds the value of the devices edge.
 	Devices []*Device `json:"devices,omitempty"`
 	// ProfitSettings holds the value of the profit_settings edge.
 	ProfitSettings []*ProfitSetting `json:"profit_settings,omitempty"`
+	// CostAccount holds the value of the cost_account edge.
+	CostAccount *CostAccount `json:"cost_account,omitempty"`
+	// ProfitAccount holds the value of the profit_account edge.
+	ProfitAccount *ProfitAccount `json:"profit_account,omitempty"`
+	// CostBills holds the value of the cost_bills edge.
+	CostBills []*CostBill `json:"cost_bills,omitempty"`
+	// EarnBills holds the value of the earn_bills edge.
+	EarnBills []*EarnBill `json:"earn_bills,omitempty"`
 	// MissionConsumeOrders holds the value of the mission_consume_orders edge.
 	MissionConsumeOrders []*MissionConsumeOrder `json:"mission_consume_orders,omitempty"`
 	// MissionProduceOrders holds the value of the mission_produce_orders edge.
@@ -84,68 +83,37 @@ type UserEdges struct {
 	MissionBatches []*MissionBatch `json:"mission_batches,omitempty"`
 	// UserDevices holds the value of the user_devices edge.
 	UserDevices []*UserDevice `json:"user_devices,omitempty"`
+	// Parent holds the value of the parent edge.
+	Parent *User `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*User `json:"children,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [13]bool
+	loadedTypes [16]bool
 }
 
-// BillsOrErr returns the Bills value or an error if the edge
+// VxAccountsOrErr returns the VxAccounts value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) BillsOrErr() ([]*Bill, error) {
+func (e UserEdges) VxAccountsOrErr() ([]*VXAccount, error) {
 	if e.loadedTypes[0] {
-		return e.Bills, nil
+		return e.VxAccounts, nil
 	}
-	return nil, &NotLoadedError{edge: "bills"}
+	return nil, &NotLoadedError{edge: "vx_accounts"}
 }
 
-// HmacKeyPairOrErr returns the HmacKeyPair value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e UserEdges) HmacKeyPairOrErr() (*HmacKeyPair, error) {
+// CollectsOrErr returns the Collects value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CollectsOrErr() ([]*Collect, error) {
 	if e.loadedTypes[1] {
-		if e.HmacKeyPair == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: hmackeypair.Label}
-		}
-		return e.HmacKeyPair, nil
+		return e.Collects, nil
 	}
-	return nil, &NotLoadedError{edge: "hmac_key_pair"}
-}
-
-// CreatedMissionsOrErr returns the CreatedMissions value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) CreatedMissionsOrErr() ([]*Mission, error) {
-	if e.loadedTypes[2] {
-		return e.CreatedMissions, nil
-	}
-	return nil, &NotLoadedError{edge: "created_missions"}
-}
-
-// WalletOrErr returns the Wallet value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e UserEdges) WalletOrErr() (*Wallet, error) {
-	if e.loadedTypes[3] {
-		if e.Wallet == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: wallet.Label}
-		}
-		return e.Wallet, nil
-	}
-	return nil, &NotLoadedError{edge: "wallet"}
-}
-
-// CollectionsOrErr returns the Collections value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) CollectionsOrErr() ([]*Collection, error) {
-	if e.loadedTypes[4] {
-		return e.Collections, nil
-	}
-	return nil, &NotLoadedError{edge: "collections"}
+	return nil, &NotLoadedError{edge: "collects"}
 }
 
 // DevicesOrErr returns the Devices value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) DevicesOrErr() ([]*Device, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[2] {
 		return e.Devices, nil
 	}
 	return nil, &NotLoadedError{edge: "devices"}
@@ -154,16 +122,60 @@ func (e UserEdges) DevicesOrErr() ([]*Device, error) {
 // ProfitSettingsOrErr returns the ProfitSettings value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ProfitSettingsOrErr() ([]*ProfitSetting, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[3] {
 		return e.ProfitSettings, nil
 	}
 	return nil, &NotLoadedError{edge: "profit_settings"}
 }
 
+// CostAccountOrErr returns the CostAccount value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) CostAccountOrErr() (*CostAccount, error) {
+	if e.loadedTypes[4] {
+		if e.CostAccount == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: costaccount.Label}
+		}
+		return e.CostAccount, nil
+	}
+	return nil, &NotLoadedError{edge: "cost_account"}
+}
+
+// ProfitAccountOrErr returns the ProfitAccount value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) ProfitAccountOrErr() (*ProfitAccount, error) {
+	if e.loadedTypes[5] {
+		if e.ProfitAccount == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: profitaccount.Label}
+		}
+		return e.ProfitAccount, nil
+	}
+	return nil, &NotLoadedError{edge: "profit_account"}
+}
+
+// CostBillsOrErr returns the CostBills value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CostBillsOrErr() ([]*CostBill, error) {
+	if e.loadedTypes[6] {
+		return e.CostBills, nil
+	}
+	return nil, &NotLoadedError{edge: "cost_bills"}
+}
+
+// EarnBillsOrErr returns the EarnBills value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) EarnBillsOrErr() ([]*EarnBill, error) {
+	if e.loadedTypes[7] {
+		return e.EarnBills, nil
+	}
+	return nil, &NotLoadedError{edge: "earn_bills"}
+}
+
 // MissionConsumeOrdersOrErr returns the MissionConsumeOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionConsumeOrdersOrErr() ([]*MissionConsumeOrder, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.MissionConsumeOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_consume_orders"}
@@ -172,7 +184,7 @@ func (e UserEdges) MissionConsumeOrdersOrErr() ([]*MissionConsumeOrder, error) {
 // MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.MissionProduceOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_produce_orders"}
@@ -181,7 +193,7 @@ func (e UserEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
 // RechargeOrdersOrErr returns the RechargeOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) RechargeOrdersOrErr() ([]*RechargeOrder, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.RechargeOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "recharge_orders"}
@@ -190,7 +202,7 @@ func (e UserEdges) RechargeOrdersOrErr() ([]*RechargeOrder, error) {
 // VxSocialsOrErr returns the VxSocials value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) VxSocialsOrErr() ([]*VXSocial, error) {
-	if e.loadedTypes[10] {
+	if e.loadedTypes[11] {
 		return e.VxSocials, nil
 	}
 	return nil, &NotLoadedError{edge: "vx_socials"}
@@ -199,7 +211,7 @@ func (e UserEdges) VxSocialsOrErr() ([]*VXSocial, error) {
 // MissionBatchesOrErr returns the MissionBatches value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionBatchesOrErr() ([]*MissionBatch, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[12] {
 		return e.MissionBatches, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_batches"}
@@ -208,10 +220,32 @@ func (e UserEdges) MissionBatchesOrErr() ([]*MissionBatch, error) {
 // UserDevicesOrErr returns the UserDevices value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserDevicesOrErr() ([]*UserDevice, error) {
-	if e.loadedTypes[12] {
+	if e.loadedTypes[13] {
 		return e.UserDevices, nil
 	}
 	return nil, &NotLoadedError{edge: "user_devices"}
+}
+
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) ParentOrErr() (*User, error) {
+	if e.loadedTypes[14] {
+		if e.Parent == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.Parent, nil
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ChildrenOrErr() ([]*User, error) {
+	if e.loadedTypes[15] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -219,9 +253,11 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldPlatform:
+		case user.FieldIsFrozen:
+			values[i] = new(sql.NullBool)
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldNickName, user.FieldPhone, user.FieldPassword, user.FieldAvatarURL, user.FieldStatus, user.FieldType, user.FieldHmacKey, user.FieldHmacSecret:
+		case user.FieldName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -282,11 +318,23 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Name = value.String
 			}
-		case user.FieldNickName:
+		case user.FieldJpgURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field nick_name", values[i])
+				return fmt.Errorf("unexpected type %T for field jpg_url", values[i])
 			} else if value.Valid {
-				u.NickName = value.String
+				u.JpgURL = value.String
+			}
+		case user.FieldKey:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field key", values[i])
+			} else if value.Valid {
+				u.Key = value.String
+			}
+		case user.FieldSecret:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field secret", values[i])
+			} else if value.Valid {
+				u.Secret = value.String
 			}
 		case user.FieldPhone:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -300,41 +348,23 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Password = value.String
 			}
-		case user.FieldAvatarURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field avatar_url", values[i])
+		case user.FieldIsFrozen:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_frozen", values[i])
 			} else if value.Valid {
-				u.AvatarURL = value.String
+				u.IsFrozen = value.Bool
 			}
-		case user.FieldStatus:
+		case user.FieldUserType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field status", values[i])
+				return fmt.Errorf("unexpected type %T for field user_type", values[i])
 			} else if value.Valid {
-				u.Status = enums.UserStatus(value.String)
+				u.UserType = user.UserType(value.String)
 			}
-		case user.FieldType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value.Valid {
-				u.Type = enums.UserType(value.String)
-			}
-		case user.FieldPlatform:
+		case user.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field platform", values[i])
+				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				u.Platform = int(value.Int64)
-			}
-		case user.FieldHmacKey:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field hmac_key", values[i])
-			} else if value.Valid {
-				u.HmacKey = value.String
-			}
-		case user.FieldHmacSecret:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field hmac_secret", values[i])
-			} else if value.Valid {
-				u.HmacSecret = value.String
+				u.ParentID = value.Int64
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -349,29 +379,14 @@ func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
 }
 
-// QueryBills queries the "bills" edge of the User entity.
-func (u *User) QueryBills() *BillQuery {
-	return NewUserClient(u.config).QueryBills(u)
+// QueryVxAccounts queries the "vx_accounts" edge of the User entity.
+func (u *User) QueryVxAccounts() *VXAccountQuery {
+	return NewUserClient(u.config).QueryVxAccounts(u)
 }
 
-// QueryHmacKeyPair queries the "hmac_key_pair" edge of the User entity.
-func (u *User) QueryHmacKeyPair() *HmacKeyPairQuery {
-	return NewUserClient(u.config).QueryHmacKeyPair(u)
-}
-
-// QueryCreatedMissions queries the "created_missions" edge of the User entity.
-func (u *User) QueryCreatedMissions() *MissionQuery {
-	return NewUserClient(u.config).QueryCreatedMissions(u)
-}
-
-// QueryWallet queries the "wallet" edge of the User entity.
-func (u *User) QueryWallet() *WalletQuery {
-	return NewUserClient(u.config).QueryWallet(u)
-}
-
-// QueryCollections queries the "collections" edge of the User entity.
-func (u *User) QueryCollections() *CollectionQuery {
-	return NewUserClient(u.config).QueryCollections(u)
+// QueryCollects queries the "collects" edge of the User entity.
+func (u *User) QueryCollects() *CollectQuery {
+	return NewUserClient(u.config).QueryCollects(u)
 }
 
 // QueryDevices queries the "devices" edge of the User entity.
@@ -382,6 +397,26 @@ func (u *User) QueryDevices() *DeviceQuery {
 // QueryProfitSettings queries the "profit_settings" edge of the User entity.
 func (u *User) QueryProfitSettings() *ProfitSettingQuery {
 	return NewUserClient(u.config).QueryProfitSettings(u)
+}
+
+// QueryCostAccount queries the "cost_account" edge of the User entity.
+func (u *User) QueryCostAccount() *CostAccountQuery {
+	return NewUserClient(u.config).QueryCostAccount(u)
+}
+
+// QueryProfitAccount queries the "profit_account" edge of the User entity.
+func (u *User) QueryProfitAccount() *ProfitAccountQuery {
+	return NewUserClient(u.config).QueryProfitAccount(u)
+}
+
+// QueryCostBills queries the "cost_bills" edge of the User entity.
+func (u *User) QueryCostBills() *CostBillQuery {
+	return NewUserClient(u.config).QueryCostBills(u)
+}
+
+// QueryEarnBills queries the "earn_bills" edge of the User entity.
+func (u *User) QueryEarnBills() *EarnBillQuery {
+	return NewUserClient(u.config).QueryEarnBills(u)
 }
 
 // QueryMissionConsumeOrders queries the "mission_consume_orders" edge of the User entity.
@@ -412,6 +447,16 @@ func (u *User) QueryMissionBatches() *MissionBatchQuery {
 // QueryUserDevices queries the "user_devices" edge of the User entity.
 func (u *User) QueryUserDevices() *UserDeviceQuery {
 	return NewUserClient(u.config).QueryUserDevices(u)
+}
+
+// QueryParent queries the "parent" edge of the User entity.
+func (u *User) QueryParent() *UserQuery {
+	return NewUserClient(u.config).QueryParent(u)
+}
+
+// QueryChildren queries the "children" edge of the User entity.
+func (u *User) QueryChildren() *UserQuery {
+	return NewUserClient(u.config).QueryChildren(u)
 }
 
 // Update returns a builder for updating this User.
@@ -455,31 +500,27 @@ func (u *User) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(u.Name)
 	builder.WriteString(", ")
-	builder.WriteString("nick_name=")
-	builder.WriteString(u.NickName)
+	builder.WriteString("jpg_url=")
+	builder.WriteString(u.JpgURL)
+	builder.WriteString(", ")
+	builder.WriteString("key=")
+	builder.WriteString(u.Key)
+	builder.WriteString(", ")
+	builder.WriteString("secret=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("phone=")
 	builder.WriteString(u.Phone)
 	builder.WriteString(", ")
 	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("avatar_url=")
-	builder.WriteString(u.AvatarURL)
+	builder.WriteString("is_frozen=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsFrozen))
 	builder.WriteString(", ")
-	builder.WriteString("status=")
-	builder.WriteString(fmt.Sprintf("%v", u.Status))
+	builder.WriteString("user_type=")
+	builder.WriteString(fmt.Sprintf("%v", u.UserType))
 	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", u.Type))
-	builder.WriteString(", ")
-	builder.WriteString("platform=")
-	builder.WriteString(fmt.Sprintf("%v", u.Platform))
-	builder.WriteString(", ")
-	builder.WriteString("hmac_key=")
-	builder.WriteString(u.HmacKey)
-	builder.WriteString(", ")
-	builder.WriteString("hmac_secret=")
-	builder.WriteString(u.HmacSecret)
+	builder.WriteString("parent_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.ParentID))
 	builder.WriteByte(')')
 	return builder.String()
 }

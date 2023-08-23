@@ -3,13 +3,10 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
 	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionbatch"
+	"cephalon-ent/pkg/cep_ent/earnbill"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/enums"
 	"context"
@@ -126,44 +123,44 @@ func (mpoc *MissionProduceOrderCreate) SetNillableMissionID(i *int64) *MissionPr
 	return mpoc
 }
 
-// SetMissionProductionID sets the "mission_production_id" field.
-func (mpoc *MissionProduceOrderCreate) SetMissionProductionID(i int64) *MissionProduceOrderCreate {
-	mpoc.mutation.SetMissionProductionID(i)
-	return mpoc
-}
-
-// SetNillableMissionProductionID sets the "mission_production_id" field if the given value is not nil.
-func (mpoc *MissionProduceOrderCreate) SetNillableMissionProductionID(i *int64) *MissionProduceOrderCreate {
-	if i != nil {
-		mpoc.SetMissionProductionID(*i)
-	}
-	return mpoc
-}
-
 // SetStatus sets the "status" field.
-func (mpoc *MissionProduceOrderCreate) SetStatus(es enums.MissionStatus) *MissionProduceOrderCreate {
-	mpoc.mutation.SetStatus(es)
+func (mpoc *MissionProduceOrderCreate) SetStatus(m missionproduceorder.Status) *MissionProduceOrderCreate {
+	mpoc.mutation.SetStatus(m)
 	return mpoc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mpoc *MissionProduceOrderCreate) SetNillableStatus(es *enums.MissionStatus) *MissionProduceOrderCreate {
-	if es != nil {
-		mpoc.SetStatus(*es)
+func (mpoc *MissionProduceOrderCreate) SetNillableStatus(m *missionproduceorder.Status) *MissionProduceOrderCreate {
+	if m != nil {
+		mpoc.SetStatus(*m)
 	}
 	return mpoc
 }
 
-// SetCep sets the "cep" field.
-func (mpoc *MissionProduceOrderCreate) SetCep(i int64) *MissionProduceOrderCreate {
-	mpoc.mutation.SetCep(i)
+// SetPureCep sets the "pure_cep" field.
+func (mpoc *MissionProduceOrderCreate) SetPureCep(i int64) *MissionProduceOrderCreate {
+	mpoc.mutation.SetPureCep(i)
 	return mpoc
 }
 
-// SetNillableCep sets the "cep" field if the given value is not nil.
-func (mpoc *MissionProduceOrderCreate) SetNillableCep(i *int64) *MissionProduceOrderCreate {
+// SetNillablePureCep sets the "pure_cep" field if the given value is not nil.
+func (mpoc *MissionProduceOrderCreate) SetNillablePureCep(i *int64) *MissionProduceOrderCreate {
 	if i != nil {
-		mpoc.SetCep(*i)
+		mpoc.SetPureCep(*i)
+	}
+	return mpoc
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (mpoc *MissionProduceOrderCreate) SetGiftCep(i int64) *MissionProduceOrderCreate {
+	mpoc.mutation.SetGiftCep(i)
+	return mpoc
+}
+
+// SetNillableGiftCep sets the "gift_cep" field if the given value is not nil.
+func (mpoc *MissionProduceOrderCreate) SetNillableGiftCep(i *int64) *MissionProduceOrderCreate {
+	if i != nil {
+		mpoc.SetGiftCep(*i)
 	}
 	return mpoc
 }
@@ -238,20 +235,6 @@ func (mpoc *MissionProduceOrderCreate) SetNillableMissionConsumeOrderID(i *int64
 	return mpoc
 }
 
-// SetMissionBatchID sets the "mission_batch_id" field.
-func (mpoc *MissionProduceOrderCreate) SetMissionBatchID(i int64) *MissionProduceOrderCreate {
-	mpoc.mutation.SetMissionBatchID(i)
-	return mpoc
-}
-
-// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
-func (mpoc *MissionProduceOrderCreate) SetNillableMissionBatchID(i *int64) *MissionProduceOrderCreate {
-	if i != nil {
-		mpoc.SetMissionBatchID(*i)
-	}
-	return mpoc
-}
-
 // SetID sets the "id" field.
 func (mpoc *MissionProduceOrderCreate) SetID(i int64) *MissionProduceOrderCreate {
 	mpoc.mutation.SetID(i)
@@ -271,19 +254,19 @@ func (mpoc *MissionProduceOrderCreate) SetUser(u *User) *MissionProduceOrderCrea
 	return mpoc.SetUserID(u.ID)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (mpoc *MissionProduceOrderCreate) AddBillIDs(ids ...int64) *MissionProduceOrderCreate {
-	mpoc.mutation.AddBillIDs(ids...)
+// AddEarnBillIDs adds the "earn_bills" edge to the EarnBill entity by IDs.
+func (mpoc *MissionProduceOrderCreate) AddEarnBillIDs(ids ...int64) *MissionProduceOrderCreate {
+	mpoc.mutation.AddEarnBillIDs(ids...)
 	return mpoc
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (mpoc *MissionProduceOrderCreate) AddBills(b ...*Bill) *MissionProduceOrderCreate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddEarnBills adds the "earn_bills" edges to the EarnBill entity.
+func (mpoc *MissionProduceOrderCreate) AddEarnBills(e ...*EarnBill) *MissionProduceOrderCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return mpoc.AddBillIDs(ids...)
+	return mpoc.AddEarnBillIDs(ids...)
 }
 
 // SetDevice sets the "device" edge to the Device entity.
@@ -294,21 +277,6 @@ func (mpoc *MissionProduceOrderCreate) SetDevice(d *Device) *MissionProduceOrder
 // SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mpoc *MissionProduceOrderCreate) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionProduceOrderCreate {
 	return mpoc.SetMissionConsumeOrderID(m.ID)
-}
-
-// SetMission sets the "mission" edge to the Mission entity.
-func (mpoc *MissionProduceOrderCreate) SetMission(m *Mission) *MissionProduceOrderCreate {
-	return mpoc.SetMissionID(m.ID)
-}
-
-// SetMissionProduction sets the "mission_production" edge to the MissionProduction entity.
-func (mpoc *MissionProduceOrderCreate) SetMissionProduction(m *MissionProduction) *MissionProduceOrderCreate {
-	return mpoc.SetMissionProductionID(m.ID)
-}
-
-// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
-func (mpoc *MissionProduceOrderCreate) SetMissionBatch(m *MissionBatch) *MissionProduceOrderCreate {
-	return mpoc.SetMissionBatchID(m.ID)
 }
 
 // Mutation returns the MissionProduceOrderMutation object of the builder.
@@ -374,17 +342,17 @@ func (mpoc *MissionProduceOrderCreate) defaults() {
 		v := missionproduceorder.DefaultMissionID
 		mpoc.mutation.SetMissionID(v)
 	}
-	if _, ok := mpoc.mutation.MissionProductionID(); !ok {
-		v := missionproduceorder.DefaultMissionProductionID
-		mpoc.mutation.SetMissionProductionID(v)
-	}
 	if _, ok := mpoc.mutation.Status(); !ok {
 		v := missionproduceorder.DefaultStatus
 		mpoc.mutation.SetStatus(v)
 	}
-	if _, ok := mpoc.mutation.Cep(); !ok {
-		v := missionproduceorder.DefaultCep
-		mpoc.mutation.SetCep(v)
+	if _, ok := mpoc.mutation.PureCep(); !ok {
+		v := missionproduceorder.DefaultPureCep
+		mpoc.mutation.SetPureCep(v)
+	}
+	if _, ok := mpoc.mutation.GiftCep(); !ok {
+		v := missionproduceorder.DefaultGiftCep
+		mpoc.mutation.SetGiftCep(v)
 	}
 	if _, ok := mpoc.mutation.GetType(); !ok {
 		v := missionproduceorder.DefaultType
@@ -405,10 +373,6 @@ func (mpoc *MissionProduceOrderCreate) defaults() {
 	if _, ok := mpoc.mutation.MissionConsumeOrderID(); !ok {
 		v := missionproduceorder.DefaultMissionConsumeOrderID
 		mpoc.mutation.SetMissionConsumeOrderID(v)
-	}
-	if _, ok := mpoc.mutation.MissionBatchID(); !ok {
-		v := missionproduceorder.DefaultMissionBatchID
-		mpoc.mutation.SetMissionBatchID(v)
 	}
 	if _, ok := mpoc.mutation.ID(); !ok {
 		v := missionproduceorder.DefaultID()
@@ -439,9 +403,6 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 	if _, ok := mpoc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.mission_id"`)}
 	}
-	if _, ok := mpoc.mutation.MissionProductionID(); !ok {
-		return &ValidationError{Name: "mission_production_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.mission_production_id"`)}
-	}
 	if _, ok := mpoc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.status"`)}
 	}
@@ -450,8 +411,11 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionProduceOrder.status": %w`, err)}
 		}
 	}
-	if _, ok := mpoc.mutation.Cep(); !ok {
-		return &ValidationError{Name: "cep", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.cep"`)}
+	if _, ok := mpoc.mutation.PureCep(); !ok {
+		return &ValidationError{Name: "pure_cep", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.pure_cep"`)}
+	}
+	if _, ok := mpoc.mutation.GiftCep(); !ok {
+		return &ValidationError{Name: "gift_cep", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.gift_cep"`)}
 	}
 	if _, ok := mpoc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.type"`)}
@@ -473,9 +437,6 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 	if _, ok := mpoc.mutation.MissionConsumeOrderID(); !ok {
 		return &ValidationError{Name: "mission_consume_order_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.mission_consume_order_id"`)}
 	}
-	if _, ok := mpoc.mutation.MissionBatchID(); !ok {
-		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.mission_batch_id"`)}
-	}
 	if _, ok := mpoc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.user"`)}
 	}
@@ -484,15 +445,6 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 	}
 	if _, ok := mpoc.mutation.MissionConsumeOrderID(); !ok {
 		return &ValidationError{Name: "mission_consume_order", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.mission_consume_order"`)}
-	}
-	if _, ok := mpoc.mutation.MissionID(); !ok {
-		return &ValidationError{Name: "mission", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.mission"`)}
-	}
-	if _, ok := mpoc.mutation.MissionProductionID(); !ok {
-		return &ValidationError{Name: "mission_production", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.mission_production"`)}
-	}
-	if _, ok := mpoc.mutation.MissionBatchID(); !ok {
-		return &ValidationError{Name: "mission_batch", err: errors.New(`cep_ent: missing required edge "MissionProduceOrder.mission_batch"`)}
 	}
 	return nil
 }
@@ -546,13 +498,21 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 		_spec.SetField(missionproduceorder.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
+	if value, ok := mpoc.mutation.MissionID(); ok {
+		_spec.SetField(missionproduceorder.FieldMissionID, field.TypeInt64, value)
+		_node.MissionID = value
+	}
 	if value, ok := mpoc.mutation.Status(); ok {
 		_spec.SetField(missionproduceorder.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
-	if value, ok := mpoc.mutation.Cep(); ok {
-		_spec.SetField(missionproduceorder.FieldCep, field.TypeInt64, value)
-		_node.Cep = value
+	if value, ok := mpoc.mutation.PureCep(); ok {
+		_spec.SetField(missionproduceorder.FieldPureCep, field.TypeInt64, value)
+		_node.PureCep = value
+	}
+	if value, ok := mpoc.mutation.GiftCep(); ok {
+		_spec.SetField(missionproduceorder.FieldGiftCep, field.TypeInt64, value)
+		_node.GiftCep = value
 	}
 	if value, ok := mpoc.mutation.GetType(); ok {
 		_spec.SetField(missionproduceorder.FieldType, field.TypeEnum, value)
@@ -583,15 +543,15 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := mpoc.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := mpoc.mutation.EarnBillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
+			Table:   missionproduceorder.EarnBillsTable,
+			Columns: []string{missionproduceorder.EarnBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -631,57 +591,6 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MissionConsumeOrderID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mpoc.mutation.MissionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionTable,
-			Columns: []string{missionproduceorder.MissionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.MissionID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mpoc.mutation.MissionProductionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionProductionTable,
-			Columns: []string{missionproduceorder.MissionProductionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.MissionProductionID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mpoc.mutation.MissionBatchIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   missionproduceorder.MissionBatchTable,
-			Columns: []string{missionproduceorder.MissionBatchColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.MissionBatchID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

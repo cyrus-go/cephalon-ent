@@ -10,25 +10,32 @@ import (
 
 	"cephalon-ent/pkg/cep_ent/migrate"
 
-	"cephalon-ent/pkg/cep_ent/bill"
-	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/collect"
+	"cephalon-ent/pkg/cep_ent/costaccount"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/device"
+	"cephalon-ent/pkg/cep_ent/devicegpumission"
+	"cephalon-ent/pkg/cep_ent/earnbill"
+	"cephalon-ent/pkg/cep_ent/enumcondition"
+	"cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"cephalon-ent/pkg/cep_ent/gpu"
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/inputlog"
 	"cephalon-ent/pkg/cep_ent/mission"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"cephalon-ent/pkg/cep_ent/missionkeypair"
+	"cephalon-ent/pkg/cep_ent/missionkind"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
-	"cephalon-ent/pkg/cep_ent/missiontype"
 	"cephalon-ent/pkg/cep_ent/outputlog"
-	"cephalon-ent/pkg/cep_ent/platformwallet"
+	"cephalon-ent/pkg/cep_ent/platformaccount"
+	"cephalon-ent/pkg/cep_ent/profitaccount"
 	"cephalon-ent/pkg/cep_ent/profitsetting"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxaccount"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/cep_ent/wallet"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -41,12 +48,24 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Bill is the client for interacting with the Bill builders.
-	Bill *BillClient
-	// Collection is the client for interacting with the Collection builders.
-	Collection *CollectionClient
+	// Collect is the client for interacting with the Collect builders.
+	Collect *CollectClient
+	// CostAccount is the client for interacting with the CostAccount builders.
+	CostAccount *CostAccountClient
+	// CostBill is the client for interacting with the CostBill builders.
+	CostBill *CostBillClient
 	// Device is the client for interacting with the Device builders.
 	Device *DeviceClient
+	// DeviceGpuMission is the client for interacting with the DeviceGpuMission builders.
+	DeviceGpuMission *DeviceGpuMissionClient
+	// EarnBill is the client for interacting with the EarnBill builders.
+	EarnBill *EarnBillClient
+	// EnumCondition is the client for interacting with the EnumCondition builders.
+	EnumCondition *EnumConditionClient
+	// EnumMissionStatus is the client for interacting with the EnumMissionStatus builders.
+	EnumMissionStatus *EnumMissionStatusClient
+	// Gpu is the client for interacting with the Gpu builders.
+	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
 	HmacKeyPair *HmacKeyPairClient
 	// InputLog is the client for interacting with the InputLog builders.
@@ -57,16 +76,18 @@ type Client struct {
 	MissionBatch *MissionBatchClient
 	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
 	MissionConsumeOrder *MissionConsumeOrderClient
+	// MissionKeyPair is the client for interacting with the MissionKeyPair builders.
+	MissionKeyPair *MissionKeyPairClient
+	// MissionKind is the client for interacting with the MissionKind builders.
+	MissionKind *MissionKindClient
 	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
 	MissionProduceOrder *MissionProduceOrderClient
-	// MissionProduction is the client for interacting with the MissionProduction builders.
-	MissionProduction *MissionProductionClient
-	// MissionType is the client for interacting with the MissionType builders.
-	MissionType *MissionTypeClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
-	// PlatformWallet is the client for interacting with the PlatformWallet builders.
-	PlatformWallet *PlatformWalletClient
+	// PlatformAccount is the client for interacting with the PlatformAccount builders.
+	PlatformAccount *PlatformAccountClient
+	// ProfitAccount is the client for interacting with the ProfitAccount builders.
+	ProfitAccount *ProfitAccountClient
 	// ProfitSetting is the client for interacting with the ProfitSetting builders.
 	ProfitSetting *ProfitSettingClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
@@ -75,10 +96,10 @@ type Client struct {
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
 	UserDevice *UserDeviceClient
+	// VXAccount is the client for interacting with the VXAccount builders.
+	VXAccount *VXAccountClient
 	// VXSocial is the client for interacting with the VXSocial builders.
 	VXSocial *VXSocialClient
-	// Wallet is the client for interacting with the Wallet builders.
-	Wallet *WalletClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -92,25 +113,32 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Bill = NewBillClient(c.config)
-	c.Collection = NewCollectionClient(c.config)
+	c.Collect = NewCollectClient(c.config)
+	c.CostAccount = NewCostAccountClient(c.config)
+	c.CostBill = NewCostBillClient(c.config)
 	c.Device = NewDeviceClient(c.config)
+	c.DeviceGpuMission = NewDeviceGpuMissionClient(c.config)
+	c.EarnBill = NewEarnBillClient(c.config)
+	c.EnumCondition = NewEnumConditionClient(c.config)
+	c.EnumMissionStatus = NewEnumMissionStatusClient(c.config)
+	c.Gpu = NewGpuClient(c.config)
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
 	c.Mission = NewMissionClient(c.config)
 	c.MissionBatch = NewMissionBatchClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
+	c.MissionKeyPair = NewMissionKeyPairClient(c.config)
+	c.MissionKind = NewMissionKindClient(c.config)
 	c.MissionProduceOrder = NewMissionProduceOrderClient(c.config)
-	c.MissionProduction = NewMissionProductionClient(c.config)
-	c.MissionType = NewMissionTypeClient(c.config)
 	c.OutputLog = NewOutputLogClient(c.config)
-	c.PlatformWallet = NewPlatformWalletClient(c.config)
+	c.PlatformAccount = NewPlatformAccountClient(c.config)
+	c.ProfitAccount = NewProfitAccountClient(c.config)
 	c.ProfitSetting = NewProfitSettingClient(c.config)
 	c.RechargeOrder = NewRechargeOrderClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserDevice = NewUserDeviceClient(c.config)
+	c.VXAccount = NewVXAccountClient(c.config)
 	c.VXSocial = NewVXSocialClient(c.config)
-	c.Wallet = NewWalletClient(c.config)
 }
 
 type (
@@ -193,25 +221,32 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
-		Bill:                NewBillClient(cfg),
-		Collection:          NewCollectionClient(cfg),
+		Collect:             NewCollectClient(cfg),
+		CostAccount:         NewCostAccountClient(cfg),
+		CostBill:            NewCostBillClient(cfg),
 		Device:              NewDeviceClient(cfg),
+		DeviceGpuMission:    NewDeviceGpuMissionClient(cfg),
+		EarnBill:            NewEarnBillClient(cfg),
+		EnumCondition:       NewEnumConditionClient(cfg),
+		EnumMissionStatus:   NewEnumMissionStatusClient(cfg),
+		Gpu:                 NewGpuClient(cfg),
 		HmacKeyPair:         NewHmacKeyPairClient(cfg),
 		InputLog:            NewInputLogClient(cfg),
 		Mission:             NewMissionClient(cfg),
 		MissionBatch:        NewMissionBatchClient(cfg),
 		MissionConsumeOrder: NewMissionConsumeOrderClient(cfg),
+		MissionKeyPair:      NewMissionKeyPairClient(cfg),
+		MissionKind:         NewMissionKindClient(cfg),
 		MissionProduceOrder: NewMissionProduceOrderClient(cfg),
-		MissionProduction:   NewMissionProductionClient(cfg),
-		MissionType:         NewMissionTypeClient(cfg),
 		OutputLog:           NewOutputLogClient(cfg),
-		PlatformWallet:      NewPlatformWalletClient(cfg),
+		PlatformAccount:     NewPlatformAccountClient(cfg),
+		ProfitAccount:       NewProfitAccountClient(cfg),
 		ProfitSetting:       NewProfitSettingClient(cfg),
 		RechargeOrder:       NewRechargeOrderClient(cfg),
 		User:                NewUserClient(cfg),
 		UserDevice:          NewUserDeviceClient(cfg),
+		VXAccount:           NewVXAccountClient(cfg),
 		VXSocial:            NewVXSocialClient(cfg),
-		Wallet:              NewWalletClient(cfg),
 	}, nil
 }
 
@@ -231,32 +266,39 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
-		Bill:                NewBillClient(cfg),
-		Collection:          NewCollectionClient(cfg),
+		Collect:             NewCollectClient(cfg),
+		CostAccount:         NewCostAccountClient(cfg),
+		CostBill:            NewCostBillClient(cfg),
 		Device:              NewDeviceClient(cfg),
+		DeviceGpuMission:    NewDeviceGpuMissionClient(cfg),
+		EarnBill:            NewEarnBillClient(cfg),
+		EnumCondition:       NewEnumConditionClient(cfg),
+		EnumMissionStatus:   NewEnumMissionStatusClient(cfg),
+		Gpu:                 NewGpuClient(cfg),
 		HmacKeyPair:         NewHmacKeyPairClient(cfg),
 		InputLog:            NewInputLogClient(cfg),
 		Mission:             NewMissionClient(cfg),
 		MissionBatch:        NewMissionBatchClient(cfg),
 		MissionConsumeOrder: NewMissionConsumeOrderClient(cfg),
+		MissionKeyPair:      NewMissionKeyPairClient(cfg),
+		MissionKind:         NewMissionKindClient(cfg),
 		MissionProduceOrder: NewMissionProduceOrderClient(cfg),
-		MissionProduction:   NewMissionProductionClient(cfg),
-		MissionType:         NewMissionTypeClient(cfg),
 		OutputLog:           NewOutputLogClient(cfg),
-		PlatformWallet:      NewPlatformWalletClient(cfg),
+		PlatformAccount:     NewPlatformAccountClient(cfg),
+		ProfitAccount:       NewProfitAccountClient(cfg),
 		ProfitSetting:       NewProfitSettingClient(cfg),
 		RechargeOrder:       NewRechargeOrderClient(cfg),
 		User:                NewUserClient(cfg),
 		UserDevice:          NewUserDeviceClient(cfg),
+		VXAccount:           NewVXAccountClient(cfg),
 		VXSocial:            NewVXSocialClient(cfg),
-		Wallet:              NewWalletClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Bill.
+//		Collect.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -279,10 +321,12 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Bill, c.Collection, c.Device, c.HmacKeyPair, c.InputLog, c.Mission,
-		c.MissionBatch, c.MissionConsumeOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.MissionType, c.OutputLog, c.PlatformWallet,
-		c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice, c.VXSocial, c.Wallet,
+		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.EnumCondition, c.EnumMissionStatus, c.Gpu, c.HmacKeyPair, c.InputLog,
+		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair,
+		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount,
+		c.ProfitAccount, c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice,
+		c.VXAccount, c.VXSocial,
 	} {
 		n.Use(hooks...)
 	}
@@ -292,10 +336,12 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Bill, c.Collection, c.Device, c.HmacKeyPair, c.InputLog, c.Mission,
-		c.MissionBatch, c.MissionConsumeOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.MissionType, c.OutputLog, c.PlatformWallet,
-		c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice, c.VXSocial, c.Wallet,
+		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.EnumCondition, c.EnumMissionStatus, c.Gpu, c.HmacKeyPair, c.InputLog,
+		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair,
+		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount,
+		c.ProfitAccount, c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice,
+		c.VXAccount, c.VXSocial,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -304,12 +350,24 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
-	case *BillMutation:
-		return c.Bill.mutate(ctx, m)
-	case *CollectionMutation:
-		return c.Collection.mutate(ctx, m)
+	case *CollectMutation:
+		return c.Collect.mutate(ctx, m)
+	case *CostAccountMutation:
+		return c.CostAccount.mutate(ctx, m)
+	case *CostBillMutation:
+		return c.CostBill.mutate(ctx, m)
 	case *DeviceMutation:
 		return c.Device.mutate(ctx, m)
+	case *DeviceGpuMissionMutation:
+		return c.DeviceGpuMission.mutate(ctx, m)
+	case *EarnBillMutation:
+		return c.EarnBill.mutate(ctx, m)
+	case *EnumConditionMutation:
+		return c.EnumCondition.mutate(ctx, m)
+	case *EnumMissionStatusMutation:
+		return c.EnumMissionStatus.mutate(ctx, m)
+	case *GpuMutation:
+		return c.Gpu.mutate(ctx, m)
 	case *HmacKeyPairMutation:
 		return c.HmacKeyPair.mutate(ctx, m)
 	case *InputLogMutation:
@@ -320,16 +378,18 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MissionBatch.mutate(ctx, m)
 	case *MissionConsumeOrderMutation:
 		return c.MissionConsumeOrder.mutate(ctx, m)
+	case *MissionKeyPairMutation:
+		return c.MissionKeyPair.mutate(ctx, m)
+	case *MissionKindMutation:
+		return c.MissionKind.mutate(ctx, m)
 	case *MissionProduceOrderMutation:
 		return c.MissionProduceOrder.mutate(ctx, m)
-	case *MissionProductionMutation:
-		return c.MissionProduction.mutate(ctx, m)
-	case *MissionTypeMutation:
-		return c.MissionType.mutate(ctx, m)
 	case *OutputLogMutation:
 		return c.OutputLog.mutate(ctx, m)
-	case *PlatformWalletMutation:
-		return c.PlatformWallet.mutate(ctx, m)
+	case *PlatformAccountMutation:
+		return c.PlatformAccount.mutate(ctx, m)
+	case *ProfitAccountMutation:
+		return c.ProfitAccount.mutate(ctx, m)
 	case *ProfitSettingMutation:
 		return c.ProfitSetting.mutate(ctx, m)
 	case *RechargeOrderMutation:
@@ -338,315 +398,101 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	case *UserDeviceMutation:
 		return c.UserDevice.mutate(ctx, m)
+	case *VXAccountMutation:
+		return c.VXAccount.mutate(ctx, m)
 	case *VXSocialMutation:
 		return c.VXSocial.mutate(ctx, m)
-	case *WalletMutation:
-		return c.Wallet.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown mutation type %T", m)
 	}
 }
 
-// BillClient is a client for the Bill schema.
-type BillClient struct {
+// CollectClient is a client for the Collect schema.
+type CollectClient struct {
 	config
 }
 
-// NewBillClient returns a client for the Bill from the given config.
-func NewBillClient(c config) *BillClient {
-	return &BillClient{config: c}
+// NewCollectClient returns a client for the Collect from the given config.
+func NewCollectClient(c config) *CollectClient {
+	return &CollectClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `bill.Hooks(f(g(h())))`.
-func (c *BillClient) Use(hooks ...Hook) {
-	c.hooks.Bill = append(c.hooks.Bill, hooks...)
+// A call to `Use(f, g, h)` equals to `collect.Hooks(f(g(h())))`.
+func (c *CollectClient) Use(hooks ...Hook) {
+	c.hooks.Collect = append(c.hooks.Collect, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `bill.Intercept(f(g(h())))`.
-func (c *BillClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Bill = append(c.inters.Bill, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `collect.Intercept(f(g(h())))`.
+func (c *CollectClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Collect = append(c.inters.Collect, interceptors...)
 }
 
-// Create returns a builder for creating a Bill entity.
-func (c *BillClient) Create() *BillCreate {
-	mutation := newBillMutation(c.config, OpCreate)
-	return &BillCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Collect entity.
+func (c *CollectClient) Create() *CollectCreate {
+	mutation := newCollectMutation(c.config, OpCreate)
+	return &CollectCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Bill entities.
-func (c *BillClient) CreateBulk(builders ...*BillCreate) *BillCreateBulk {
-	return &BillCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Collect entities.
+func (c *CollectClient) CreateBulk(builders ...*CollectCreate) *CollectCreateBulk {
+	return &CollectCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Bill.
-func (c *BillClient) Update() *BillUpdate {
-	mutation := newBillMutation(c.config, OpUpdate)
-	return &BillUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *BillClient) UpdateOne(b *Bill) *BillUpdateOne {
-	mutation := newBillMutation(c.config, OpUpdateOne, withBill(b))
-	return &BillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *BillClient) UpdateOneID(id int64) *BillUpdateOne {
-	mutation := newBillMutation(c.config, OpUpdateOne, withBillID(id))
-	return &BillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Bill.
-func (c *BillClient) Delete() *BillDelete {
-	mutation := newBillMutation(c.config, OpDelete)
-	return &BillDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *BillClient) DeleteOne(b *Bill) *BillDeleteOne {
-	return c.DeleteOneID(b.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *BillClient) DeleteOneID(id int64) *BillDeleteOne {
-	builder := c.Delete().Where(bill.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &BillDeleteOne{builder}
-}
-
-// Query returns a query builder for Bill.
-func (c *BillClient) Query() *BillQuery {
-	return &BillQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeBill},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Bill entity by its id.
-func (c *BillClient) Get(ctx context.Context, id int64) (*Bill, error) {
-	return c.Query().Where(bill.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *BillClient) GetX(ctx context.Context, id int64) *Bill {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUser queries the user edge of a Bill.
-func (c *BillClient) QueryUser(b *Bill) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.UserTable, bill.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryWallet queries the wallet edge of a Bill.
-func (c *BillClient) QueryWallet(b *Bill) *WalletQuery {
-	query := (&WalletClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(wallet.Table, wallet.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.WalletTable, bill.WalletColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryPlatformWallet queries the platform_wallet edge of a Bill.
-func (c *BillClient) QueryPlatformWallet(b *Bill) *PlatformWalletQuery {
-	query := (&PlatformWalletClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(platformwallet.Table, platformwallet.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.PlatformWalletTable, bill.PlatformWalletColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRechargeOrder queries the recharge_order edge of a Bill.
-func (c *BillClient) QueryRechargeOrder(b *Bill) *RechargeOrderQuery {
-	query := (&RechargeOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(rechargeorder.Table, rechargeorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.RechargeOrderTable, bill.RechargeOrderColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionConsumeOrder queries the mission_consume_order edge of a Bill.
-func (c *BillClient) QueryMissionConsumeOrder(b *Bill) *MissionConsumeOrderQuery {
-	query := (&MissionConsumeOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionConsumeOrderTable, bill.MissionConsumeOrderColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionProduceOrder queries the mission_produce_order edge of a Bill.
-func (c *BillClient) QueryMissionProduceOrder(b *Bill) *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionProduceOrderTable, bill.MissionProduceOrderColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *BillClient) Hooks() []Hook {
-	return c.hooks.Bill
-}
-
-// Interceptors returns the client interceptors.
-func (c *BillClient) Interceptors() []Interceptor {
-	return c.inters.Bill
-}
-
-func (c *BillClient) mutate(ctx context.Context, m *BillMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&BillCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&BillUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&BillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&BillDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("cep_ent: unknown Bill mutation op: %q", m.Op())
-	}
-}
-
-// CollectionClient is a client for the Collection schema.
-type CollectionClient struct {
-	config
-}
-
-// NewCollectionClient returns a client for the Collection from the given config.
-func NewCollectionClient(c config) *CollectionClient {
-	return &CollectionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `collection.Hooks(f(g(h())))`.
-func (c *CollectionClient) Use(hooks ...Hook) {
-	c.hooks.Collection = append(c.hooks.Collection, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `collection.Intercept(f(g(h())))`.
-func (c *CollectionClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Collection = append(c.inters.Collection, interceptors...)
-}
-
-// Create returns a builder for creating a Collection entity.
-func (c *CollectionClient) Create() *CollectionCreate {
-	mutation := newCollectionMutation(c.config, OpCreate)
-	return &CollectionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Collection entities.
-func (c *CollectionClient) CreateBulk(builders ...*CollectionCreate) *CollectionCreateBulk {
-	return &CollectionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Collection.
-func (c *CollectionClient) Update() *CollectionUpdate {
-	mutation := newCollectionMutation(c.config, OpUpdate)
-	return &CollectionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Collect.
+func (c *CollectClient) Update() *CollectUpdate {
+	mutation := newCollectMutation(c.config, OpUpdate)
+	return &CollectUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *CollectionClient) UpdateOne(co *Collection) *CollectionUpdateOne {
-	mutation := newCollectionMutation(c.config, OpUpdateOne, withCollection(co))
-	return &CollectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CollectClient) UpdateOne(co *Collect) *CollectUpdateOne {
+	mutation := newCollectMutation(c.config, OpUpdateOne, withCollect(co))
+	return &CollectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CollectionClient) UpdateOneID(id int64) *CollectionUpdateOne {
-	mutation := newCollectionMutation(c.config, OpUpdateOne, withCollectionID(id))
-	return &CollectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *CollectClient) UpdateOneID(id int64) *CollectUpdateOne {
+	mutation := newCollectMutation(c.config, OpUpdateOne, withCollectID(id))
+	return &CollectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Collection.
-func (c *CollectionClient) Delete() *CollectionDelete {
-	mutation := newCollectionMutation(c.config, OpDelete)
-	return &CollectionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Collect.
+func (c *CollectClient) Delete() *CollectDelete {
+	mutation := newCollectMutation(c.config, OpDelete)
+	return &CollectDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *CollectionClient) DeleteOne(co *Collection) *CollectionDeleteOne {
+func (c *CollectClient) DeleteOne(co *Collect) *CollectDeleteOne {
 	return c.DeleteOneID(co.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *CollectionClient) DeleteOneID(id int64) *CollectionDeleteOne {
-	builder := c.Delete().Where(collection.ID(id))
+func (c *CollectClient) DeleteOneID(id int64) *CollectDeleteOne {
+	builder := c.Delete().Where(collect.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &CollectionDeleteOne{builder}
+	return &CollectDeleteOne{builder}
 }
 
-// Query returns a query builder for Collection.
-func (c *CollectionClient) Query() *CollectionQuery {
-	return &CollectionQuery{
+// Query returns a query builder for Collect.
+func (c *CollectClient) Query() *CollectQuery {
+	return &CollectQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeCollection},
+		ctx:    &QueryContext{Type: TypeCollect},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a Collection entity by its id.
-func (c *CollectionClient) Get(ctx context.Context, id int64) (*Collection, error) {
-	return c.Query().Where(collection.ID(id)).Only(ctx)
+// Get returns a Collect entity by its id.
+func (c *CollectClient) Get(ctx context.Context, id int64) (*Collect, error) {
+	return c.Query().Where(collect.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CollectionClient) GetX(ctx context.Context, id int64) *Collection {
+func (c *CollectClient) GetX(ctx context.Context, id int64) *Collect {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -654,15 +500,15 @@ func (c *CollectionClient) GetX(ctx context.Context, id int64) *Collection {
 	return obj
 }
 
-// QueryUser queries the user edge of a Collection.
-func (c *CollectionClient) QueryUser(co *Collection) *UserQuery {
+// QueryUser queries the user edge of a Collect.
+func (c *CollectClient) QueryUser(co *Collect) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := co.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(collection.Table, collection.FieldID, id),
+			sqlgraph.From(collect.Table, collect.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, collection.UserTable, collection.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, collect.UserTable, collect.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -671,27 +517,359 @@ func (c *CollectionClient) QueryUser(co *Collection) *UserQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *CollectionClient) Hooks() []Hook {
-	return c.hooks.Collection
+func (c *CollectClient) Hooks() []Hook {
+	return c.hooks.Collect
 }
 
 // Interceptors returns the client interceptors.
-func (c *CollectionClient) Interceptors() []Interceptor {
-	return c.inters.Collection
+func (c *CollectClient) Interceptors() []Interceptor {
+	return c.inters.Collect
 }
 
-func (c *CollectionClient) mutate(ctx context.Context, m *CollectionMutation) (Value, error) {
+func (c *CollectClient) mutate(ctx context.Context, m *CollectMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&CollectionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&CollectCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&CollectionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&CollectUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&CollectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&CollectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&CollectionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&CollectDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("cep_ent: unknown Collection mutation op: %q", m.Op())
+		return nil, fmt.Errorf("cep_ent: unknown Collect mutation op: %q", m.Op())
+	}
+}
+
+// CostAccountClient is a client for the CostAccount schema.
+type CostAccountClient struct {
+	config
+}
+
+// NewCostAccountClient returns a client for the CostAccount from the given config.
+func NewCostAccountClient(c config) *CostAccountClient {
+	return &CostAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `costaccount.Hooks(f(g(h())))`.
+func (c *CostAccountClient) Use(hooks ...Hook) {
+	c.hooks.CostAccount = append(c.hooks.CostAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `costaccount.Intercept(f(g(h())))`.
+func (c *CostAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CostAccount = append(c.inters.CostAccount, interceptors...)
+}
+
+// Create returns a builder for creating a CostAccount entity.
+func (c *CostAccountClient) Create() *CostAccountCreate {
+	mutation := newCostAccountMutation(c.config, OpCreate)
+	return &CostAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CostAccount entities.
+func (c *CostAccountClient) CreateBulk(builders ...*CostAccountCreate) *CostAccountCreateBulk {
+	return &CostAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CostAccount.
+func (c *CostAccountClient) Update() *CostAccountUpdate {
+	mutation := newCostAccountMutation(c.config, OpUpdate)
+	return &CostAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CostAccountClient) UpdateOne(ca *CostAccount) *CostAccountUpdateOne {
+	mutation := newCostAccountMutation(c.config, OpUpdateOne, withCostAccount(ca))
+	return &CostAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CostAccountClient) UpdateOneID(id int64) *CostAccountUpdateOne {
+	mutation := newCostAccountMutation(c.config, OpUpdateOne, withCostAccountID(id))
+	return &CostAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CostAccount.
+func (c *CostAccountClient) Delete() *CostAccountDelete {
+	mutation := newCostAccountMutation(c.config, OpDelete)
+	return &CostAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CostAccountClient) DeleteOne(ca *CostAccount) *CostAccountDeleteOne {
+	return c.DeleteOneID(ca.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CostAccountClient) DeleteOneID(id int64) *CostAccountDeleteOne {
+	builder := c.Delete().Where(costaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CostAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for CostAccount.
+func (c *CostAccountClient) Query() *CostAccountQuery {
+	return &CostAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCostAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CostAccount entity by its id.
+func (c *CostAccountClient) Get(ctx context.Context, id int64) (*CostAccount, error) {
+	return c.Query().Where(costaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CostAccountClient) GetX(ctx context.Context, id int64) *CostAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a CostAccount.
+func (c *CostAccountClient) QueryUser(ca *CostAccount) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ca.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costaccount.Table, costaccount.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, costaccount.UserTable, costaccount.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCostBills queries the cost_bills edge of a CostAccount.
+func (c *CostAccountClient) QueryCostBills(ca *CostAccount) *CostBillQuery {
+	query := (&CostBillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ca.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costaccount.Table, costaccount.FieldID, id),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, costaccount.CostBillsTable, costaccount.CostBillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CostAccountClient) Hooks() []Hook {
+	return c.hooks.CostAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *CostAccountClient) Interceptors() []Interceptor {
+	return c.inters.CostAccount
+}
+
+func (c *CostAccountClient) mutate(ctx context.Context, m *CostAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CostAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CostAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CostAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CostAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown CostAccount mutation op: %q", m.Op())
+	}
+}
+
+// CostBillClient is a client for the CostBill schema.
+type CostBillClient struct {
+	config
+}
+
+// NewCostBillClient returns a client for the CostBill from the given config.
+func NewCostBillClient(c config) *CostBillClient {
+	return &CostBillClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `costbill.Hooks(f(g(h())))`.
+func (c *CostBillClient) Use(hooks ...Hook) {
+	c.hooks.CostBill = append(c.hooks.CostBill, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `costbill.Intercept(f(g(h())))`.
+func (c *CostBillClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CostBill = append(c.inters.CostBill, interceptors...)
+}
+
+// Create returns a builder for creating a CostBill entity.
+func (c *CostBillClient) Create() *CostBillCreate {
+	mutation := newCostBillMutation(c.config, OpCreate)
+	return &CostBillCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CostBill entities.
+func (c *CostBillClient) CreateBulk(builders ...*CostBillCreate) *CostBillCreateBulk {
+	return &CostBillCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CostBill.
+func (c *CostBillClient) Update() *CostBillUpdate {
+	mutation := newCostBillMutation(c.config, OpUpdate)
+	return &CostBillUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CostBillClient) UpdateOne(cb *CostBill) *CostBillUpdateOne {
+	mutation := newCostBillMutation(c.config, OpUpdateOne, withCostBill(cb))
+	return &CostBillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CostBillClient) UpdateOneID(id int64) *CostBillUpdateOne {
+	mutation := newCostBillMutation(c.config, OpUpdateOne, withCostBillID(id))
+	return &CostBillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CostBill.
+func (c *CostBillClient) Delete() *CostBillDelete {
+	mutation := newCostBillMutation(c.config, OpDelete)
+	return &CostBillDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CostBillClient) DeleteOne(cb *CostBill) *CostBillDeleteOne {
+	return c.DeleteOneID(cb.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CostBillClient) DeleteOneID(id int64) *CostBillDeleteOne {
+	builder := c.Delete().Where(costbill.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CostBillDeleteOne{builder}
+}
+
+// Query returns a query builder for CostBill.
+func (c *CostBillClient) Query() *CostBillQuery {
+	return &CostBillQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCostBill},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CostBill entity by its id.
+func (c *CostBillClient) Get(ctx context.Context, id int64) (*CostBill, error) {
+	return c.Query().Where(costbill.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CostBillClient) GetX(ctx context.Context, id int64) *CostBill {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a CostBill.
+func (c *CostBillClient) QueryUser(cb *CostBill) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.UserTable, costbill.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCostAccount queries the cost_account edge of a CostBill.
+func (c *CostBillClient) QueryCostAccount(cb *CostBill) *CostAccountQuery {
+	query := (&CostAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, id),
+			sqlgraph.To(costaccount.Table, costaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.CostAccountTable, costbill.CostAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRechargeOrder queries the recharge_order edge of a CostBill.
+func (c *CostBillClient) QueryRechargeOrder(cb *CostBill) *RechargeOrderQuery {
+	query := (&RechargeOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, id),
+			sqlgraph.To(rechargeorder.Table, rechargeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.RechargeOrderTable, costbill.RechargeOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionConsumeOrder queries the mission_consume_order edge of a CostBill.
+func (c *CostBillClient) QueryMissionConsumeOrder(cb *CostBill) *MissionConsumeOrderQuery {
+	query := (&MissionConsumeOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, id),
+			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.MissionConsumeOrderTable, costbill.MissionConsumeOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CostBillClient) Hooks() []Hook {
+	return c.hooks.CostBill
+}
+
+// Interceptors returns the client interceptors.
+func (c *CostBillClient) Interceptors() []Interceptor {
+	return c.inters.CostBill
+}
+
+func (c *CostBillClient) mutate(ctx context.Context, m *CostBillMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CostBillCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CostBillUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CostBillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CostBillDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown CostBill mutation op: %q", m.Op())
 	}
 }
 
@@ -820,22 +998,6 @@ func (c *DeviceClient) QueryMissionProduceOrders(d *Device) *MissionProduceOrder
 	return query
 }
 
-// QueryMissionProductions queries the mission_productions edge of a Device.
-func (c *DeviceClient) QueryMissionProductions(d *Device) *MissionProductionQuery {
-	query := (&MissionProductionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := d.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(device.Table, device.FieldID, id),
-			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionProductionsTable, device.MissionProductionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryUserDevices queries the user_devices edge of a Device.
 func (c *DeviceClient) QueryUserDevices(d *Device) *UserDeviceQuery {
 	query := (&UserDeviceClient{config: c.config}).Query()
@@ -845,6 +1007,22 @@ func (c *DeviceClient) QueryUserDevices(d *Device) *UserDeviceQuery {
 			sqlgraph.From(device.Table, device.FieldID, id),
 			sqlgraph.To(userdevice.Table, userdevice.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, device.UserDevicesTable, device.UserDevicesColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDeviceGpuMissions queries the device_gpu_missions edge of a Device.
+func (c *DeviceClient) QueryDeviceGpuMissions(d *Device) *DeviceGpuMissionQuery {
+	query := (&DeviceGpuMissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceGpuMissionsTable, device.DeviceGpuMissionsColumn),
 		)
 		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
 		return fromV, nil
@@ -874,6 +1052,724 @@ func (c *DeviceClient) mutate(ctx context.Context, m *DeviceMutation) (Value, er
 		return (&DeviceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Device mutation op: %q", m.Op())
+	}
+}
+
+// DeviceGpuMissionClient is a client for the DeviceGpuMission schema.
+type DeviceGpuMissionClient struct {
+	config
+}
+
+// NewDeviceGpuMissionClient returns a client for the DeviceGpuMission from the given config.
+func NewDeviceGpuMissionClient(c config) *DeviceGpuMissionClient {
+	return &DeviceGpuMissionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `devicegpumission.Hooks(f(g(h())))`.
+func (c *DeviceGpuMissionClient) Use(hooks ...Hook) {
+	c.hooks.DeviceGpuMission = append(c.hooks.DeviceGpuMission, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `devicegpumission.Intercept(f(g(h())))`.
+func (c *DeviceGpuMissionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DeviceGpuMission = append(c.inters.DeviceGpuMission, interceptors...)
+}
+
+// Create returns a builder for creating a DeviceGpuMission entity.
+func (c *DeviceGpuMissionClient) Create() *DeviceGpuMissionCreate {
+	mutation := newDeviceGpuMissionMutation(c.config, OpCreate)
+	return &DeviceGpuMissionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DeviceGpuMission entities.
+func (c *DeviceGpuMissionClient) CreateBulk(builders ...*DeviceGpuMissionCreate) *DeviceGpuMissionCreateBulk {
+	return &DeviceGpuMissionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DeviceGpuMission.
+func (c *DeviceGpuMissionClient) Update() *DeviceGpuMissionUpdate {
+	mutation := newDeviceGpuMissionMutation(c.config, OpUpdate)
+	return &DeviceGpuMissionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DeviceGpuMissionClient) UpdateOne(dgm *DeviceGpuMission) *DeviceGpuMissionUpdateOne {
+	mutation := newDeviceGpuMissionMutation(c.config, OpUpdateOne, withDeviceGpuMission(dgm))
+	return &DeviceGpuMissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DeviceGpuMissionClient) UpdateOneID(id int64) *DeviceGpuMissionUpdateOne {
+	mutation := newDeviceGpuMissionMutation(c.config, OpUpdateOne, withDeviceGpuMissionID(id))
+	return &DeviceGpuMissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DeviceGpuMission.
+func (c *DeviceGpuMissionClient) Delete() *DeviceGpuMissionDelete {
+	mutation := newDeviceGpuMissionMutation(c.config, OpDelete)
+	return &DeviceGpuMissionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DeviceGpuMissionClient) DeleteOne(dgm *DeviceGpuMission) *DeviceGpuMissionDeleteOne {
+	return c.DeleteOneID(dgm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DeviceGpuMissionClient) DeleteOneID(id int64) *DeviceGpuMissionDeleteOne {
+	builder := c.Delete().Where(devicegpumission.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DeviceGpuMissionDeleteOne{builder}
+}
+
+// Query returns a query builder for DeviceGpuMission.
+func (c *DeviceGpuMissionClient) Query() *DeviceGpuMissionQuery {
+	return &DeviceGpuMissionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDeviceGpuMission},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DeviceGpuMission entity by its id.
+func (c *DeviceGpuMissionClient) Get(ctx context.Context, id int64) (*DeviceGpuMission, error) {
+	return c.Query().Where(devicegpumission.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DeviceGpuMissionClient) GetX(ctx context.Context, id int64) *DeviceGpuMission {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDevice queries the device edge of a DeviceGpuMission.
+func (c *DeviceGpuMissionClient) QueryDevice(dgm *DeviceGpuMission) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dgm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(devicegpumission.Table, devicegpumission.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, devicegpumission.DeviceTable, devicegpumission.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(dgm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionKind queries the mission_kind edge of a DeviceGpuMission.
+func (c *DeviceGpuMissionClient) QueryMissionKind(dgm *DeviceGpuMission) *MissionKindQuery {
+	query := (&MissionKindClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dgm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(devicegpumission.Table, devicegpumission.FieldID, id),
+			sqlgraph.To(missionkind.Table, missionkind.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, devicegpumission.MissionKindTable, devicegpumission.MissionKindColumn),
+		)
+		fromV = sqlgraph.Neighbors(dgm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGpu queries the gpu edge of a DeviceGpuMission.
+func (c *DeviceGpuMissionClient) QueryGpu(dgm *DeviceGpuMission) *GpuQuery {
+	query := (&GpuClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dgm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(devicegpumission.Table, devicegpumission.FieldID, id),
+			sqlgraph.To(gpu.Table, gpu.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, devicegpumission.GpuTable, devicegpumission.GpuColumn),
+		)
+		fromV = sqlgraph.Neighbors(dgm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DeviceGpuMissionClient) Hooks() []Hook {
+	return c.hooks.DeviceGpuMission
+}
+
+// Interceptors returns the client interceptors.
+func (c *DeviceGpuMissionClient) Interceptors() []Interceptor {
+	return c.inters.DeviceGpuMission
+}
+
+func (c *DeviceGpuMissionClient) mutate(ctx context.Context, m *DeviceGpuMissionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DeviceGpuMissionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DeviceGpuMissionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DeviceGpuMissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DeviceGpuMissionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown DeviceGpuMission mutation op: %q", m.Op())
+	}
+}
+
+// EarnBillClient is a client for the EarnBill schema.
+type EarnBillClient struct {
+	config
+}
+
+// NewEarnBillClient returns a client for the EarnBill from the given config.
+func NewEarnBillClient(c config) *EarnBillClient {
+	return &EarnBillClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `earnbill.Hooks(f(g(h())))`.
+func (c *EarnBillClient) Use(hooks ...Hook) {
+	c.hooks.EarnBill = append(c.hooks.EarnBill, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `earnbill.Intercept(f(g(h())))`.
+func (c *EarnBillClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EarnBill = append(c.inters.EarnBill, interceptors...)
+}
+
+// Create returns a builder for creating a EarnBill entity.
+func (c *EarnBillClient) Create() *EarnBillCreate {
+	mutation := newEarnBillMutation(c.config, OpCreate)
+	return &EarnBillCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EarnBill entities.
+func (c *EarnBillClient) CreateBulk(builders ...*EarnBillCreate) *EarnBillCreateBulk {
+	return &EarnBillCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EarnBill.
+func (c *EarnBillClient) Update() *EarnBillUpdate {
+	mutation := newEarnBillMutation(c.config, OpUpdate)
+	return &EarnBillUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EarnBillClient) UpdateOne(eb *EarnBill) *EarnBillUpdateOne {
+	mutation := newEarnBillMutation(c.config, OpUpdateOne, withEarnBill(eb))
+	return &EarnBillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EarnBillClient) UpdateOneID(id int64) *EarnBillUpdateOne {
+	mutation := newEarnBillMutation(c.config, OpUpdateOne, withEarnBillID(id))
+	return &EarnBillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EarnBill.
+func (c *EarnBillClient) Delete() *EarnBillDelete {
+	mutation := newEarnBillMutation(c.config, OpDelete)
+	return &EarnBillDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EarnBillClient) DeleteOne(eb *EarnBill) *EarnBillDeleteOne {
+	return c.DeleteOneID(eb.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EarnBillClient) DeleteOneID(id int64) *EarnBillDeleteOne {
+	builder := c.Delete().Where(earnbill.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EarnBillDeleteOne{builder}
+}
+
+// Query returns a query builder for EarnBill.
+func (c *EarnBillClient) Query() *EarnBillQuery {
+	return &EarnBillQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEarnBill},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EarnBill entity by its id.
+func (c *EarnBillClient) Get(ctx context.Context, id int64) (*EarnBill, error) {
+	return c.Query().Where(earnbill.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EarnBillClient) GetX(ctx context.Context, id int64) *EarnBill {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a EarnBill.
+func (c *EarnBillClient) QueryUser(eb *EarnBill) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(earnbill.Table, earnbill.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, earnbill.UserTable, earnbill.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(eb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProfitAccount queries the profit_account edge of a EarnBill.
+func (c *EarnBillClient) QueryProfitAccount(eb *EarnBill) *ProfitAccountQuery {
+	query := (&ProfitAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(earnbill.Table, earnbill.FieldID, id),
+			sqlgraph.To(profitaccount.Table, profitaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, earnbill.ProfitAccountTable, earnbill.ProfitAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(eb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPlatformAccount queries the platform_account edge of a EarnBill.
+func (c *EarnBillClient) QueryPlatformAccount(eb *EarnBill) *PlatformAccountQuery {
+	query := (&PlatformAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(earnbill.Table, earnbill.FieldID, id),
+			sqlgraph.To(platformaccount.Table, platformaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, earnbill.PlatformAccountTable, earnbill.PlatformAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(eb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionProduceOrders queries the mission_produce_orders edge of a EarnBill.
+func (c *EarnBillClient) QueryMissionProduceOrders(eb *EarnBill) *MissionProduceOrderQuery {
+	query := (&MissionProduceOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(earnbill.Table, earnbill.FieldID, id),
+			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, earnbill.MissionProduceOrdersTable, earnbill.MissionProduceOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(eb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EarnBillClient) Hooks() []Hook {
+	return c.hooks.EarnBill
+}
+
+// Interceptors returns the client interceptors.
+func (c *EarnBillClient) Interceptors() []Interceptor {
+	return c.inters.EarnBill
+}
+
+func (c *EarnBillClient) mutate(ctx context.Context, m *EarnBillMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EarnBillCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EarnBillUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EarnBillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EarnBillDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown EarnBill mutation op: %q", m.Op())
+	}
+}
+
+// EnumConditionClient is a client for the EnumCondition schema.
+type EnumConditionClient struct {
+	config
+}
+
+// NewEnumConditionClient returns a client for the EnumCondition from the given config.
+func NewEnumConditionClient(c config) *EnumConditionClient {
+	return &EnumConditionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `enumcondition.Hooks(f(g(h())))`.
+func (c *EnumConditionClient) Use(hooks ...Hook) {
+	c.hooks.EnumCondition = append(c.hooks.EnumCondition, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `enumcondition.Intercept(f(g(h())))`.
+func (c *EnumConditionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EnumCondition = append(c.inters.EnumCondition, interceptors...)
+}
+
+// Create returns a builder for creating a EnumCondition entity.
+func (c *EnumConditionClient) Create() *EnumConditionCreate {
+	mutation := newEnumConditionMutation(c.config, OpCreate)
+	return &EnumConditionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EnumCondition entities.
+func (c *EnumConditionClient) CreateBulk(builders ...*EnumConditionCreate) *EnumConditionCreateBulk {
+	return &EnumConditionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EnumCondition.
+func (c *EnumConditionClient) Update() *EnumConditionUpdate {
+	mutation := newEnumConditionMutation(c.config, OpUpdate)
+	return &EnumConditionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EnumConditionClient) UpdateOne(ec *EnumCondition) *EnumConditionUpdateOne {
+	mutation := newEnumConditionMutation(c.config, OpUpdateOne, withEnumCondition(ec))
+	return &EnumConditionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EnumConditionClient) UpdateOneID(id int64) *EnumConditionUpdateOne {
+	mutation := newEnumConditionMutation(c.config, OpUpdateOne, withEnumConditionID(id))
+	return &EnumConditionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EnumCondition.
+func (c *EnumConditionClient) Delete() *EnumConditionDelete {
+	mutation := newEnumConditionMutation(c.config, OpDelete)
+	return &EnumConditionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EnumConditionClient) DeleteOne(ec *EnumCondition) *EnumConditionDeleteOne {
+	return c.DeleteOneID(ec.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EnumConditionClient) DeleteOneID(id int64) *EnumConditionDeleteOne {
+	builder := c.Delete().Where(enumcondition.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EnumConditionDeleteOne{builder}
+}
+
+// Query returns a query builder for EnumCondition.
+func (c *EnumConditionClient) Query() *EnumConditionQuery {
+	return &EnumConditionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEnumCondition},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EnumCondition entity by its id.
+func (c *EnumConditionClient) Get(ctx context.Context, id int64) (*EnumCondition, error) {
+	return c.Query().Where(enumcondition.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EnumConditionClient) GetX(ctx context.Context, id int64) *EnumCondition {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EnumConditionClient) Hooks() []Hook {
+	return c.hooks.EnumCondition
+}
+
+// Interceptors returns the client interceptors.
+func (c *EnumConditionClient) Interceptors() []Interceptor {
+	return c.inters.EnumCondition
+}
+
+func (c *EnumConditionClient) mutate(ctx context.Context, m *EnumConditionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EnumConditionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EnumConditionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EnumConditionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EnumConditionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown EnumCondition mutation op: %q", m.Op())
+	}
+}
+
+// EnumMissionStatusClient is a client for the EnumMissionStatus schema.
+type EnumMissionStatusClient struct {
+	config
+}
+
+// NewEnumMissionStatusClient returns a client for the EnumMissionStatus from the given config.
+func NewEnumMissionStatusClient(c config) *EnumMissionStatusClient {
+	return &EnumMissionStatusClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `enummissionstatus.Hooks(f(g(h())))`.
+func (c *EnumMissionStatusClient) Use(hooks ...Hook) {
+	c.hooks.EnumMissionStatus = append(c.hooks.EnumMissionStatus, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `enummissionstatus.Intercept(f(g(h())))`.
+func (c *EnumMissionStatusClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EnumMissionStatus = append(c.inters.EnumMissionStatus, interceptors...)
+}
+
+// Create returns a builder for creating a EnumMissionStatus entity.
+func (c *EnumMissionStatusClient) Create() *EnumMissionStatusCreate {
+	mutation := newEnumMissionStatusMutation(c.config, OpCreate)
+	return &EnumMissionStatusCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EnumMissionStatus entities.
+func (c *EnumMissionStatusClient) CreateBulk(builders ...*EnumMissionStatusCreate) *EnumMissionStatusCreateBulk {
+	return &EnumMissionStatusCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EnumMissionStatus.
+func (c *EnumMissionStatusClient) Update() *EnumMissionStatusUpdate {
+	mutation := newEnumMissionStatusMutation(c.config, OpUpdate)
+	return &EnumMissionStatusUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EnumMissionStatusClient) UpdateOne(ems *EnumMissionStatus) *EnumMissionStatusUpdateOne {
+	mutation := newEnumMissionStatusMutation(c.config, OpUpdateOne, withEnumMissionStatus(ems))
+	return &EnumMissionStatusUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EnumMissionStatusClient) UpdateOneID(id int64) *EnumMissionStatusUpdateOne {
+	mutation := newEnumMissionStatusMutation(c.config, OpUpdateOne, withEnumMissionStatusID(id))
+	return &EnumMissionStatusUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EnumMissionStatus.
+func (c *EnumMissionStatusClient) Delete() *EnumMissionStatusDelete {
+	mutation := newEnumMissionStatusMutation(c.config, OpDelete)
+	return &EnumMissionStatusDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EnumMissionStatusClient) DeleteOne(ems *EnumMissionStatus) *EnumMissionStatusDeleteOne {
+	return c.DeleteOneID(ems.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EnumMissionStatusClient) DeleteOneID(id int64) *EnumMissionStatusDeleteOne {
+	builder := c.Delete().Where(enummissionstatus.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EnumMissionStatusDeleteOne{builder}
+}
+
+// Query returns a query builder for EnumMissionStatus.
+func (c *EnumMissionStatusClient) Query() *EnumMissionStatusQuery {
+	return &EnumMissionStatusQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEnumMissionStatus},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EnumMissionStatus entity by its id.
+func (c *EnumMissionStatusClient) Get(ctx context.Context, id int64) (*EnumMissionStatus, error) {
+	return c.Query().Where(enummissionstatus.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EnumMissionStatusClient) GetX(ctx context.Context, id int64) *EnumMissionStatus {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EnumMissionStatusClient) Hooks() []Hook {
+	return c.hooks.EnumMissionStatus
+}
+
+// Interceptors returns the client interceptors.
+func (c *EnumMissionStatusClient) Interceptors() []Interceptor {
+	return c.inters.EnumMissionStatus
+}
+
+func (c *EnumMissionStatusClient) mutate(ctx context.Context, m *EnumMissionStatusMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EnumMissionStatusCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EnumMissionStatusUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EnumMissionStatusUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EnumMissionStatusDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown EnumMissionStatus mutation op: %q", m.Op())
+	}
+}
+
+// GpuClient is a client for the Gpu schema.
+type GpuClient struct {
+	config
+}
+
+// NewGpuClient returns a client for the Gpu from the given config.
+func NewGpuClient(c config) *GpuClient {
+	return &GpuClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `gpu.Hooks(f(g(h())))`.
+func (c *GpuClient) Use(hooks ...Hook) {
+	c.hooks.Gpu = append(c.hooks.Gpu, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `gpu.Intercept(f(g(h())))`.
+func (c *GpuClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Gpu = append(c.inters.Gpu, interceptors...)
+}
+
+// Create returns a builder for creating a Gpu entity.
+func (c *GpuClient) Create() *GpuCreate {
+	mutation := newGpuMutation(c.config, OpCreate)
+	return &GpuCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Gpu entities.
+func (c *GpuClient) CreateBulk(builders ...*GpuCreate) *GpuCreateBulk {
+	return &GpuCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Gpu.
+func (c *GpuClient) Update() *GpuUpdate {
+	mutation := newGpuMutation(c.config, OpUpdate)
+	return &GpuUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GpuClient) UpdateOne(gp *Gpu) *GpuUpdateOne {
+	mutation := newGpuMutation(c.config, OpUpdateOne, withGpu(gp))
+	return &GpuUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GpuClient) UpdateOneID(id int64) *GpuUpdateOne {
+	mutation := newGpuMutation(c.config, OpUpdateOne, withGpuID(id))
+	return &GpuUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Gpu.
+func (c *GpuClient) Delete() *GpuDelete {
+	mutation := newGpuMutation(c.config, OpDelete)
+	return &GpuDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GpuClient) DeleteOne(gp *Gpu) *GpuDeleteOne {
+	return c.DeleteOneID(gp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GpuClient) DeleteOneID(id int64) *GpuDeleteOne {
+	builder := c.Delete().Where(gpu.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GpuDeleteOne{builder}
+}
+
+// Query returns a query builder for Gpu.
+func (c *GpuClient) Query() *GpuQuery {
+	return &GpuQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGpu},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Gpu entity by its id.
+func (c *GpuClient) Get(ctx context.Context, id int64) (*Gpu, error) {
+	return c.Query().Where(gpu.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GpuClient) GetX(ctx context.Context, id int64) *Gpu {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDeviceGpuMissions queries the device_gpu_missions edge of a Gpu.
+func (c *GpuClient) QueryDeviceGpuMissions(gp *Gpu) *DeviceGpuMissionQuery {
+	query := (&DeviceGpuMissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := gp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(gpu.Table, gpu.FieldID, id),
+			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, gpu.DeviceGpuMissionsTable, gpu.DeviceGpuMissionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(gp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *GpuClient) Hooks() []Hook {
+	return c.hooks.Gpu
+}
+
+// Interceptors returns the client interceptors.
+func (c *GpuClient) Interceptors() []Interceptor {
+	return c.inters.Gpu
+}
+
+func (c *GpuClient) mutate(ctx context.Context, m *GpuMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GpuCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GpuUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GpuUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GpuDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Gpu mutation op: %q", m.Op())
 	}
 }
 
@@ -970,15 +1866,15 @@ func (c *HmacKeyPairClient) GetX(ctx context.Context, id int64) *HmacKeyPair {
 	return obj
 }
 
-// QueryMissionProductions queries the mission_productions edge of a HmacKeyPair.
-func (c *HmacKeyPairClient) QueryMissionProductions(hkp *HmacKeyPair) *MissionProductionQuery {
-	query := (&MissionProductionClient{config: c.config}).Query()
+// QueryMissionKeyPairs queries the mission_key_pairs edge of a HmacKeyPair.
+func (c *HmacKeyPairClient) QueryMissionKeyPairs(hkp *HmacKeyPair) *MissionKeyPairQuery {
+	query := (&MissionKeyPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := hkp.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(hmackeypair.Table, hmackeypair.FieldID, id),
-			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, hmackeypair.MissionProductionsTable, hmackeypair.MissionProductionsColumn),
+			sqlgraph.To(missionkeypair.Table, missionkeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, hmackeypair.MissionKeyPairsTable, hmackeypair.MissionKeyPairsColumn),
 		)
 		fromV = sqlgraph.Neighbors(hkp.driver.Dialect(), step)
 		return fromV, nil
@@ -995,22 +1891,6 @@ func (c *HmacKeyPairClient) QueryCreatedMissions(hkp *HmacKeyPair) *MissionQuery
 			sqlgraph.From(hmackeypair.Table, hmackeypair.FieldID, id),
 			sqlgraph.To(mission.Table, mission.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, hmackeypair.CreatedMissionsTable, hmackeypair.CreatedMissionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(hkp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUser queries the user edge of a HmacKeyPair.
-func (c *HmacKeyPairClient) QueryUser(hkp *HmacKeyPair) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := hkp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(hmackeypair.Table, hmackeypair.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, hmackeypair.UserTable, hmackeypair.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(hkp.driver.Dialect(), step)
 		return fromV, nil
@@ -1254,15 +2134,15 @@ func (c *MissionClient) GetX(ctx context.Context, id int64) *Mission {
 	return obj
 }
 
-// QueryMissionProductions queries the mission_productions edge of a Mission.
-func (c *MissionClient) QueryMissionProductions(m *Mission) *MissionProductionQuery {
-	query := (&MissionProductionClient{config: c.config}).Query()
+// QueryMissionKeyPairs queries the mission_key_pairs edge of a Mission.
+func (c *MissionClient) QueryMissionKeyPairs(m *Mission) *MissionKeyPairQuery {
+	query := (&MissionKeyPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionProductionsTable, mission.MissionProductionsColumn),
+			sqlgraph.To(missionkeypair.Table, missionkeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionKeyPairsTable, mission.MissionKeyPairsColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -1270,79 +2150,15 @@ func (c *MissionClient) QueryMissionProductions(m *Mission) *MissionProductionQu
 	return query
 }
 
-// QueryMissionConsumeOrder queries the mission_consume_order edge of a Mission.
-func (c *MissionClient) QueryMissionConsumeOrder(m *Mission) *MissionConsumeOrderQuery {
-	query := (&MissionConsumeOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, mission.MissionConsumeOrderTable, mission.MissionConsumeOrderColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionProduceOrders queries the mission_produce_orders edge of a Mission.
-func (c *MissionClient) QueryMissionProduceOrders(m *Mission) *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionProduceOrdersTable, mission.MissionProduceOrdersColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryHmacKeyPair queries the hmac_key_pair edge of a Mission.
-func (c *MissionClient) QueryHmacKeyPair(m *Mission) *HmacKeyPairQuery {
+// QueryKeyPair queries the key_pair edge of a Mission.
+func (c *MissionClient) QueryKeyPair(m *Mission) *HmacKeyPairQuery {
 	query := (&HmacKeyPairClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(mission.Table, mission.FieldID, id),
 			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.HmacKeyPairTable, mission.HmacKeyPairColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUser queries the user edge of a Mission.
-func (c *MissionClient) QueryUser(m *Mission) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.UserTable, mission.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionBatch queries the mission_batch edge of a Mission.
-func (c *MissionClient) QueryMissionBatch(m *Mission) *MissionBatchQuery {
-	query := (&MissionBatchClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.MissionBatchTable, mission.MissionBatchColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, mission.KeyPairTable, mission.KeyPairColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -1484,22 +2300,6 @@ func (c *MissionBatchClient) QueryUser(mb *MissionBatch) *UserQuery {
 	return query
 }
 
-// QueryMissions queries the missions edge of a MissionBatch.
-func (c *MissionBatchClient) QueryMissions(mb *MissionBatch) *MissionQuery {
-	query := (&MissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mb.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
-			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.MissionsTable, missionbatch.MissionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryMissionConsumeOrders queries the mission_consume_orders edge of a MissionBatch.
 func (c *MissionBatchClient) QueryMissionConsumeOrders(mb *MissionBatch) *MissionConsumeOrderQuery {
 	query := (&MissionConsumeOrderClient{config: c.config}).Query()
@@ -1509,22 +2309,6 @@ func (c *MissionBatchClient) QueryMissionConsumeOrders(mb *MissionBatch) *Missio
 			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
 			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.MissionConsumeOrdersTable, missionbatch.MissionConsumeOrdersColumn),
-		)
-		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionProduceOrders queries the mission_produce_orders edge of a MissionBatch.
-func (c *MissionBatchClient) QueryMissionProduceOrders(mb *MissionBatch) *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mb.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.MissionProduceOrdersTable, missionbatch.MissionProduceOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
 		return fromV, nil
@@ -1666,31 +2450,15 @@ func (c *MissionConsumeOrderClient) QueryUser(mco *MissionConsumeOrder) *UserQue
 	return query
 }
 
-// QueryBills queries the bills edge of a MissionConsumeOrder.
-func (c *MissionConsumeOrderClient) QueryBills(mco *MissionConsumeOrder) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
+// QueryCostBills queries the cost_bills edge of a MissionConsumeOrder.
+func (c *MissionConsumeOrderClient) QueryCostBills(mco *MissionConsumeOrder) *CostBillQuery {
+	query := (&CostBillClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := mco.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionconsumeorder.BillsTable, missionconsumeorder.BillsColumn),
-		)
-		fromV = sqlgraph.Neighbors(mco.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMission queries the mission edge of a MissionConsumeOrder.
-func (c *MissionConsumeOrderClient) QueryMission(mco *MissionConsumeOrder) *MissionQuery {
-	query := (&MissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mco.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, id),
-			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, missionconsumeorder.MissionTable, missionconsumeorder.MissionColumn),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionconsumeorder.CostBillsTable, missionconsumeorder.CostBillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(mco.driver.Dialect(), step)
 		return fromV, nil
@@ -1752,6 +2520,290 @@ func (c *MissionConsumeOrderClient) mutate(ctx context.Context, m *MissionConsum
 		return (&MissionConsumeOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown MissionConsumeOrder mutation op: %q", m.Op())
+	}
+}
+
+// MissionKeyPairClient is a client for the MissionKeyPair schema.
+type MissionKeyPairClient struct {
+	config
+}
+
+// NewMissionKeyPairClient returns a client for the MissionKeyPair from the given config.
+func NewMissionKeyPairClient(c config) *MissionKeyPairClient {
+	return &MissionKeyPairClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionkeypair.Hooks(f(g(h())))`.
+func (c *MissionKeyPairClient) Use(hooks ...Hook) {
+	c.hooks.MissionKeyPair = append(c.hooks.MissionKeyPair, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionkeypair.Intercept(f(g(h())))`.
+func (c *MissionKeyPairClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionKeyPair = append(c.inters.MissionKeyPair, interceptors...)
+}
+
+// Create returns a builder for creating a MissionKeyPair entity.
+func (c *MissionKeyPairClient) Create() *MissionKeyPairCreate {
+	mutation := newMissionKeyPairMutation(c.config, OpCreate)
+	return &MissionKeyPairCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionKeyPair entities.
+func (c *MissionKeyPairClient) CreateBulk(builders ...*MissionKeyPairCreate) *MissionKeyPairCreateBulk {
+	return &MissionKeyPairCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionKeyPair.
+func (c *MissionKeyPairClient) Update() *MissionKeyPairUpdate {
+	mutation := newMissionKeyPairMutation(c.config, OpUpdate)
+	return &MissionKeyPairUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionKeyPairClient) UpdateOne(mkp *MissionKeyPair) *MissionKeyPairUpdateOne {
+	mutation := newMissionKeyPairMutation(c.config, OpUpdateOne, withMissionKeyPair(mkp))
+	return &MissionKeyPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionKeyPairClient) UpdateOneID(id int64) *MissionKeyPairUpdateOne {
+	mutation := newMissionKeyPairMutation(c.config, OpUpdateOne, withMissionKeyPairID(id))
+	return &MissionKeyPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionKeyPair.
+func (c *MissionKeyPairClient) Delete() *MissionKeyPairDelete {
+	mutation := newMissionKeyPairMutation(c.config, OpDelete)
+	return &MissionKeyPairDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionKeyPairClient) DeleteOne(mkp *MissionKeyPair) *MissionKeyPairDeleteOne {
+	return c.DeleteOneID(mkp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionKeyPairClient) DeleteOneID(id int64) *MissionKeyPairDeleteOne {
+	builder := c.Delete().Where(missionkeypair.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionKeyPairDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionKeyPair.
+func (c *MissionKeyPairClient) Query() *MissionKeyPairQuery {
+	return &MissionKeyPairQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionKeyPair},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionKeyPair entity by its id.
+func (c *MissionKeyPairClient) Get(ctx context.Context, id int64) (*MissionKeyPair, error) {
+	return c.Query().Where(missionkeypair.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionKeyPairClient) GetX(ctx context.Context, id int64) *MissionKeyPair {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMission queries the mission edge of a MissionKeyPair.
+func (c *MissionKeyPairClient) QueryMission(mkp *MissionKeyPair) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mkp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionkeypair.Table, missionkeypair.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionkeypair.MissionTable, missionkeypair.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(mkp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryKeyPair queries the key_pair edge of a MissionKeyPair.
+func (c *MissionKeyPairClient) QueryKeyPair(mkp *MissionKeyPair) *HmacKeyPairQuery {
+	query := (&HmacKeyPairClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mkp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionkeypair.Table, missionkeypair.FieldID, id),
+			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionkeypair.KeyPairTable, missionkeypair.KeyPairColumn),
+		)
+		fromV = sqlgraph.Neighbors(mkp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MissionKeyPairClient) Hooks() []Hook {
+	return c.hooks.MissionKeyPair
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionKeyPairClient) Interceptors() []Interceptor {
+	return c.inters.MissionKeyPair
+}
+
+func (c *MissionKeyPairClient) mutate(ctx context.Context, m *MissionKeyPairMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionKeyPairCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionKeyPairUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionKeyPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionKeyPairDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionKeyPair mutation op: %q", m.Op())
+	}
+}
+
+// MissionKindClient is a client for the MissionKind schema.
+type MissionKindClient struct {
+	config
+}
+
+// NewMissionKindClient returns a client for the MissionKind from the given config.
+func NewMissionKindClient(c config) *MissionKindClient {
+	return &MissionKindClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionkind.Hooks(f(g(h())))`.
+func (c *MissionKindClient) Use(hooks ...Hook) {
+	c.hooks.MissionKind = append(c.hooks.MissionKind, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionkind.Intercept(f(g(h())))`.
+func (c *MissionKindClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionKind = append(c.inters.MissionKind, interceptors...)
+}
+
+// Create returns a builder for creating a MissionKind entity.
+func (c *MissionKindClient) Create() *MissionKindCreate {
+	mutation := newMissionKindMutation(c.config, OpCreate)
+	return &MissionKindCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionKind entities.
+func (c *MissionKindClient) CreateBulk(builders ...*MissionKindCreate) *MissionKindCreateBulk {
+	return &MissionKindCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionKind.
+func (c *MissionKindClient) Update() *MissionKindUpdate {
+	mutation := newMissionKindMutation(c.config, OpUpdate)
+	return &MissionKindUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionKindClient) UpdateOne(mk *MissionKind) *MissionKindUpdateOne {
+	mutation := newMissionKindMutation(c.config, OpUpdateOne, withMissionKind(mk))
+	return &MissionKindUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionKindClient) UpdateOneID(id int64) *MissionKindUpdateOne {
+	mutation := newMissionKindMutation(c.config, OpUpdateOne, withMissionKindID(id))
+	return &MissionKindUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionKind.
+func (c *MissionKindClient) Delete() *MissionKindDelete {
+	mutation := newMissionKindMutation(c.config, OpDelete)
+	return &MissionKindDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionKindClient) DeleteOne(mk *MissionKind) *MissionKindDeleteOne {
+	return c.DeleteOneID(mk.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionKindClient) DeleteOneID(id int64) *MissionKindDeleteOne {
+	builder := c.Delete().Where(missionkind.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionKindDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionKind.
+func (c *MissionKindClient) Query() *MissionKindQuery {
+	return &MissionKindQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionKind},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionKind entity by its id.
+func (c *MissionKindClient) Get(ctx context.Context, id int64) (*MissionKind, error) {
+	return c.Query().Where(missionkind.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionKindClient) GetX(ctx context.Context, id int64) *MissionKind {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDeviceGpuMissions queries the device_gpu_missions edge of a MissionKind.
+func (c *MissionKindClient) QueryDeviceGpuMissions(mk *MissionKind) *DeviceGpuMissionQuery {
+	query := (&DeviceGpuMissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mk.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionkind.Table, missionkind.FieldID, id),
+			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionkind.DeviceGpuMissionsTable, missionkind.DeviceGpuMissionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(mk.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MissionKindClient) Hooks() []Hook {
+	return c.hooks.MissionKind
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionKindClient) Interceptors() []Interceptor {
+	return c.inters.MissionKind
+}
+
+func (c *MissionKindClient) mutate(ctx context.Context, m *MissionKindMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionKindCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionKindUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionKindUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionKindDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionKind mutation op: %q", m.Op())
 	}
 }
 
@@ -1864,15 +2916,15 @@ func (c *MissionProduceOrderClient) QueryUser(mpo *MissionProduceOrder) *UserQue
 	return query
 }
 
-// QueryBills queries the bills edge of a MissionProduceOrder.
-func (c *MissionProduceOrderClient) QueryBills(mpo *MissionProduceOrder) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
+// QueryEarnBills queries the earn_bills edge of a MissionProduceOrder.
+func (c *MissionProduceOrderClient) QueryEarnBills(mpo *MissionProduceOrder) *EarnBillQuery {
+	query := (&EarnBillClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := mpo.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionproduceorder.BillsTable, missionproduceorder.BillsColumn),
+			sqlgraph.To(earnbill.Table, earnbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionproduceorder.EarnBillsTable, missionproduceorder.EarnBillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
 		return fromV, nil
@@ -1912,54 +2964,6 @@ func (c *MissionProduceOrderClient) QueryMissionConsumeOrder(mpo *MissionProduce
 	return query
 }
 
-// QueryMission queries the mission edge of a MissionProduceOrder.
-func (c *MissionProduceOrderClient) QueryMission(mpo *MissionProduceOrder) *MissionQuery {
-	query := (&MissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mpo.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
-			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, missionproduceorder.MissionTable, missionproduceorder.MissionColumn),
-		)
-		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionProduction queries the mission_production edge of a MissionProduceOrder.
-func (c *MissionProduceOrderClient) QueryMissionProduction(mpo *MissionProduceOrder) *MissionProductionQuery {
-	query := (&MissionProductionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mpo.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
-			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, missionproduceorder.MissionProductionTable, missionproduceorder.MissionProductionColumn),
-		)
-		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionBatch queries the mission_batch edge of a MissionProduceOrder.
-func (c *MissionProduceOrderClient) QueryMissionBatch(mpo *MissionProduceOrder) *MissionBatchQuery {
-	query := (&MissionBatchClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mpo.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
-			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, missionproduceorder.MissionBatchTable, missionproduceorder.MissionBatchColumn),
-		)
-		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *MissionProduceOrderClient) Hooks() []Hook {
 	return c.hooks.MissionProduceOrder
@@ -1982,306 +2986,6 @@ func (c *MissionProduceOrderClient) mutate(ctx context.Context, m *MissionProduc
 		return (&MissionProduceOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown MissionProduceOrder mutation op: %q", m.Op())
-	}
-}
-
-// MissionProductionClient is a client for the MissionProduction schema.
-type MissionProductionClient struct {
-	config
-}
-
-// NewMissionProductionClient returns a client for the MissionProduction from the given config.
-func NewMissionProductionClient(c config) *MissionProductionClient {
-	return &MissionProductionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `missionproduction.Hooks(f(g(h())))`.
-func (c *MissionProductionClient) Use(hooks ...Hook) {
-	c.hooks.MissionProduction = append(c.hooks.MissionProduction, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `missionproduction.Intercept(f(g(h())))`.
-func (c *MissionProductionClient) Intercept(interceptors ...Interceptor) {
-	c.inters.MissionProduction = append(c.inters.MissionProduction, interceptors...)
-}
-
-// Create returns a builder for creating a MissionProduction entity.
-func (c *MissionProductionClient) Create() *MissionProductionCreate {
-	mutation := newMissionProductionMutation(c.config, OpCreate)
-	return &MissionProductionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of MissionProduction entities.
-func (c *MissionProductionClient) CreateBulk(builders ...*MissionProductionCreate) *MissionProductionCreateBulk {
-	return &MissionProductionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for MissionProduction.
-func (c *MissionProductionClient) Update() *MissionProductionUpdate {
-	mutation := newMissionProductionMutation(c.config, OpUpdate)
-	return &MissionProductionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *MissionProductionClient) UpdateOne(mp *MissionProduction) *MissionProductionUpdateOne {
-	mutation := newMissionProductionMutation(c.config, OpUpdateOne, withMissionProduction(mp))
-	return &MissionProductionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *MissionProductionClient) UpdateOneID(id int64) *MissionProductionUpdateOne {
-	mutation := newMissionProductionMutation(c.config, OpUpdateOne, withMissionProductionID(id))
-	return &MissionProductionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for MissionProduction.
-func (c *MissionProductionClient) Delete() *MissionProductionDelete {
-	mutation := newMissionProductionMutation(c.config, OpDelete)
-	return &MissionProductionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *MissionProductionClient) DeleteOne(mp *MissionProduction) *MissionProductionDeleteOne {
-	return c.DeleteOneID(mp.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MissionProductionClient) DeleteOneID(id int64) *MissionProductionDeleteOne {
-	builder := c.Delete().Where(missionproduction.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &MissionProductionDeleteOne{builder}
-}
-
-// Query returns a query builder for MissionProduction.
-func (c *MissionProductionClient) Query() *MissionProductionQuery {
-	return &MissionProductionQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeMissionProduction},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a MissionProduction entity by its id.
-func (c *MissionProductionClient) Get(ctx context.Context, id int64) (*MissionProduction, error) {
-	return c.Query().Where(missionproduction.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *MissionProductionClient) GetX(ctx context.Context, id int64) *MissionProduction {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryMissionProduceOrder queries the mission_produce_order edge of a MissionProduction.
-func (c *MissionProductionClient) QueryMissionProduceOrder(mp *MissionProduction) *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, missionproduction.MissionProduceOrderTable, missionproduction.MissionProduceOrderColumn),
-		)
-		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMission queries the mission edge of a MissionProduction.
-func (c *MissionProductionClient) QueryMission(mp *MissionProduction) *MissionQuery {
-	query := (&MissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
-			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.MissionTable, missionproduction.MissionColumn),
-		)
-		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryHmacKeyPair queries the hmac_key_pair edge of a MissionProduction.
-func (c *MissionProductionClient) QueryHmacKeyPair(mp *MissionProduction) *HmacKeyPairQuery {
-	query := (&HmacKeyPairClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
-			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.HmacKeyPairTable, missionproduction.HmacKeyPairColumn),
-		)
-		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryDevice queries the device edge of a MissionProduction.
-func (c *MissionProductionClient) QueryDevice(mp *MissionProduction) *DeviceQuery {
-	query := (&DeviceClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
-			sqlgraph.To(device.Table, device.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.DeviceTable, missionproduction.DeviceColumn),
-		)
-		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *MissionProductionClient) Hooks() []Hook {
-	return c.hooks.MissionProduction
-}
-
-// Interceptors returns the client interceptors.
-func (c *MissionProductionClient) Interceptors() []Interceptor {
-	return c.inters.MissionProduction
-}
-
-func (c *MissionProductionClient) mutate(ctx context.Context, m *MissionProductionMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&MissionProductionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&MissionProductionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&MissionProductionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&MissionProductionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("cep_ent: unknown MissionProduction mutation op: %q", m.Op())
-	}
-}
-
-// MissionTypeClient is a client for the MissionType schema.
-type MissionTypeClient struct {
-	config
-}
-
-// NewMissionTypeClient returns a client for the MissionType from the given config.
-func NewMissionTypeClient(c config) *MissionTypeClient {
-	return &MissionTypeClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `missiontype.Hooks(f(g(h())))`.
-func (c *MissionTypeClient) Use(hooks ...Hook) {
-	c.hooks.MissionType = append(c.hooks.MissionType, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `missiontype.Intercept(f(g(h())))`.
-func (c *MissionTypeClient) Intercept(interceptors ...Interceptor) {
-	c.inters.MissionType = append(c.inters.MissionType, interceptors...)
-}
-
-// Create returns a builder for creating a MissionType entity.
-func (c *MissionTypeClient) Create() *MissionTypeCreate {
-	mutation := newMissionTypeMutation(c.config, OpCreate)
-	return &MissionTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of MissionType entities.
-func (c *MissionTypeClient) CreateBulk(builders ...*MissionTypeCreate) *MissionTypeCreateBulk {
-	return &MissionTypeCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for MissionType.
-func (c *MissionTypeClient) Update() *MissionTypeUpdate {
-	mutation := newMissionTypeMutation(c.config, OpUpdate)
-	return &MissionTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *MissionTypeClient) UpdateOne(mt *MissionType) *MissionTypeUpdateOne {
-	mutation := newMissionTypeMutation(c.config, OpUpdateOne, withMissionType(mt))
-	return &MissionTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *MissionTypeClient) UpdateOneID(id int64) *MissionTypeUpdateOne {
-	mutation := newMissionTypeMutation(c.config, OpUpdateOne, withMissionTypeID(id))
-	return &MissionTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for MissionType.
-func (c *MissionTypeClient) Delete() *MissionTypeDelete {
-	mutation := newMissionTypeMutation(c.config, OpDelete)
-	return &MissionTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *MissionTypeClient) DeleteOne(mt *MissionType) *MissionTypeDeleteOne {
-	return c.DeleteOneID(mt.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MissionTypeClient) DeleteOneID(id int64) *MissionTypeDeleteOne {
-	builder := c.Delete().Where(missiontype.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &MissionTypeDeleteOne{builder}
-}
-
-// Query returns a query builder for MissionType.
-func (c *MissionTypeClient) Query() *MissionTypeQuery {
-	return &MissionTypeQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeMissionType},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a MissionType entity by its id.
-func (c *MissionTypeClient) Get(ctx context.Context, id int64) (*MissionType, error) {
-	return c.Query().Where(missiontype.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *MissionTypeClient) GetX(ctx context.Context, id int64) *MissionType {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *MissionTypeClient) Hooks() []Hook {
-	return c.hooks.MissionType
-}
-
-// Interceptors returns the client interceptors.
-func (c *MissionTypeClient) Interceptors() []Interceptor {
-	return c.inters.MissionType
-}
-
-func (c *MissionTypeClient) mutate(ctx context.Context, m *MissionTypeMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&MissionTypeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&MissionTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&MissionTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&MissionTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("cep_ent: unknown MissionType mutation op: %q", m.Op())
 	}
 }
 
@@ -2403,92 +3107,92 @@ func (c *OutputLogClient) mutate(ctx context.Context, m *OutputLogMutation) (Val
 	}
 }
 
-// PlatformWalletClient is a client for the PlatformWallet schema.
-type PlatformWalletClient struct {
+// PlatformAccountClient is a client for the PlatformAccount schema.
+type PlatformAccountClient struct {
 	config
 }
 
-// NewPlatformWalletClient returns a client for the PlatformWallet from the given config.
-func NewPlatformWalletClient(c config) *PlatformWalletClient {
-	return &PlatformWalletClient{config: c}
+// NewPlatformAccountClient returns a client for the PlatformAccount from the given config.
+func NewPlatformAccountClient(c config) *PlatformAccountClient {
+	return &PlatformAccountClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `platformwallet.Hooks(f(g(h())))`.
-func (c *PlatformWalletClient) Use(hooks ...Hook) {
-	c.hooks.PlatformWallet = append(c.hooks.PlatformWallet, hooks...)
+// A call to `Use(f, g, h)` equals to `platformaccount.Hooks(f(g(h())))`.
+func (c *PlatformAccountClient) Use(hooks ...Hook) {
+	c.hooks.PlatformAccount = append(c.hooks.PlatformAccount, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `platformwallet.Intercept(f(g(h())))`.
-func (c *PlatformWalletClient) Intercept(interceptors ...Interceptor) {
-	c.inters.PlatformWallet = append(c.inters.PlatformWallet, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `platformaccount.Intercept(f(g(h())))`.
+func (c *PlatformAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PlatformAccount = append(c.inters.PlatformAccount, interceptors...)
 }
 
-// Create returns a builder for creating a PlatformWallet entity.
-func (c *PlatformWalletClient) Create() *PlatformWalletCreate {
-	mutation := newPlatformWalletMutation(c.config, OpCreate)
-	return &PlatformWalletCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a PlatformAccount entity.
+func (c *PlatformAccountClient) Create() *PlatformAccountCreate {
+	mutation := newPlatformAccountMutation(c.config, OpCreate)
+	return &PlatformAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of PlatformWallet entities.
-func (c *PlatformWalletClient) CreateBulk(builders ...*PlatformWalletCreate) *PlatformWalletCreateBulk {
-	return &PlatformWalletCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of PlatformAccount entities.
+func (c *PlatformAccountClient) CreateBulk(builders ...*PlatformAccountCreate) *PlatformAccountCreateBulk {
+	return &PlatformAccountCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for PlatformWallet.
-func (c *PlatformWalletClient) Update() *PlatformWalletUpdate {
-	mutation := newPlatformWalletMutation(c.config, OpUpdate)
-	return &PlatformWalletUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for PlatformAccount.
+func (c *PlatformAccountClient) Update() *PlatformAccountUpdate {
+	mutation := newPlatformAccountMutation(c.config, OpUpdate)
+	return &PlatformAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *PlatformWalletClient) UpdateOne(pw *PlatformWallet) *PlatformWalletUpdateOne {
-	mutation := newPlatformWalletMutation(c.config, OpUpdateOne, withPlatformWallet(pw))
-	return &PlatformWalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *PlatformAccountClient) UpdateOne(pa *PlatformAccount) *PlatformAccountUpdateOne {
+	mutation := newPlatformAccountMutation(c.config, OpUpdateOne, withPlatformAccount(pa))
+	return &PlatformAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *PlatformWalletClient) UpdateOneID(id int64) *PlatformWalletUpdateOne {
-	mutation := newPlatformWalletMutation(c.config, OpUpdateOne, withPlatformWalletID(id))
-	return &PlatformWalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *PlatformAccountClient) UpdateOneID(id int64) *PlatformAccountUpdateOne {
+	mutation := newPlatformAccountMutation(c.config, OpUpdateOne, withPlatformAccountID(id))
+	return &PlatformAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for PlatformWallet.
-func (c *PlatformWalletClient) Delete() *PlatformWalletDelete {
-	mutation := newPlatformWalletMutation(c.config, OpDelete)
-	return &PlatformWalletDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for PlatformAccount.
+func (c *PlatformAccountClient) Delete() *PlatformAccountDelete {
+	mutation := newPlatformAccountMutation(c.config, OpDelete)
+	return &PlatformAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *PlatformWalletClient) DeleteOne(pw *PlatformWallet) *PlatformWalletDeleteOne {
-	return c.DeleteOneID(pw.ID)
+func (c *PlatformAccountClient) DeleteOne(pa *PlatformAccount) *PlatformAccountDeleteOne {
+	return c.DeleteOneID(pa.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *PlatformWalletClient) DeleteOneID(id int64) *PlatformWalletDeleteOne {
-	builder := c.Delete().Where(platformwallet.ID(id))
+func (c *PlatformAccountClient) DeleteOneID(id int64) *PlatformAccountDeleteOne {
+	builder := c.Delete().Where(platformaccount.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &PlatformWalletDeleteOne{builder}
+	return &PlatformAccountDeleteOne{builder}
 }
 
-// Query returns a query builder for PlatformWallet.
-func (c *PlatformWalletClient) Query() *PlatformWalletQuery {
-	return &PlatformWalletQuery{
+// Query returns a query builder for PlatformAccount.
+func (c *PlatformAccountClient) Query() *PlatformAccountQuery {
+	return &PlatformAccountQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypePlatformWallet},
+		ctx:    &QueryContext{Type: TypePlatformAccount},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a PlatformWallet entity by its id.
-func (c *PlatformWalletClient) Get(ctx context.Context, id int64) (*PlatformWallet, error) {
-	return c.Query().Where(platformwallet.ID(id)).Only(ctx)
+// Get returns a PlatformAccount entity by its id.
+func (c *PlatformAccountClient) Get(ctx context.Context, id int64) (*PlatformAccount, error) {
+	return c.Query().Where(platformaccount.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *PlatformWalletClient) GetX(ctx context.Context, id int64) *PlatformWallet {
+func (c *PlatformAccountClient) GetX(ctx context.Context, id int64) *PlatformAccount {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -2496,44 +3200,194 @@ func (c *PlatformWalletClient) GetX(ctx context.Context, id int64) *PlatformWall
 	return obj
 }
 
-// QueryBills queries the bills edge of a PlatformWallet.
-func (c *PlatformWalletClient) QueryBills(pw *PlatformWallet) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
+// QueryEarnBills queries the earn_bills edge of a PlatformAccount.
+func (c *PlatformAccountClient) QueryEarnBills(pa *PlatformAccount) *EarnBillQuery {
+	query := (&EarnBillClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := pw.ID
+		id := pa.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(platformwallet.Table, platformwallet.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, platformwallet.BillsTable, platformwallet.BillsColumn),
+			sqlgraph.From(platformaccount.Table, platformaccount.FieldID, id),
+			sqlgraph.To(earnbill.Table, earnbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, platformaccount.EarnBillsTable, platformaccount.EarnBillsColumn),
 		)
-		fromV = sqlgraph.Neighbors(pw.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(pa.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *PlatformWalletClient) Hooks() []Hook {
-	return c.hooks.PlatformWallet
+func (c *PlatformAccountClient) Hooks() []Hook {
+	return c.hooks.PlatformAccount
 }
 
 // Interceptors returns the client interceptors.
-func (c *PlatformWalletClient) Interceptors() []Interceptor {
-	return c.inters.PlatformWallet
+func (c *PlatformAccountClient) Interceptors() []Interceptor {
+	return c.inters.PlatformAccount
 }
 
-func (c *PlatformWalletClient) mutate(ctx context.Context, m *PlatformWalletMutation) (Value, error) {
+func (c *PlatformAccountClient) mutate(ctx context.Context, m *PlatformAccountMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&PlatformWalletCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&PlatformAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&PlatformWalletUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&PlatformAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&PlatformWalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&PlatformAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&PlatformWalletDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&PlatformAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("cep_ent: unknown PlatformWallet mutation op: %q", m.Op())
+		return nil, fmt.Errorf("cep_ent: unknown PlatformAccount mutation op: %q", m.Op())
+	}
+}
+
+// ProfitAccountClient is a client for the ProfitAccount schema.
+type ProfitAccountClient struct {
+	config
+}
+
+// NewProfitAccountClient returns a client for the ProfitAccount from the given config.
+func NewProfitAccountClient(c config) *ProfitAccountClient {
+	return &ProfitAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `profitaccount.Hooks(f(g(h())))`.
+func (c *ProfitAccountClient) Use(hooks ...Hook) {
+	c.hooks.ProfitAccount = append(c.hooks.ProfitAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `profitaccount.Intercept(f(g(h())))`.
+func (c *ProfitAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProfitAccount = append(c.inters.ProfitAccount, interceptors...)
+}
+
+// Create returns a builder for creating a ProfitAccount entity.
+func (c *ProfitAccountClient) Create() *ProfitAccountCreate {
+	mutation := newProfitAccountMutation(c.config, OpCreate)
+	return &ProfitAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProfitAccount entities.
+func (c *ProfitAccountClient) CreateBulk(builders ...*ProfitAccountCreate) *ProfitAccountCreateBulk {
+	return &ProfitAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProfitAccount.
+func (c *ProfitAccountClient) Update() *ProfitAccountUpdate {
+	mutation := newProfitAccountMutation(c.config, OpUpdate)
+	return &ProfitAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProfitAccountClient) UpdateOne(pa *ProfitAccount) *ProfitAccountUpdateOne {
+	mutation := newProfitAccountMutation(c.config, OpUpdateOne, withProfitAccount(pa))
+	return &ProfitAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProfitAccountClient) UpdateOneID(id int64) *ProfitAccountUpdateOne {
+	mutation := newProfitAccountMutation(c.config, OpUpdateOne, withProfitAccountID(id))
+	return &ProfitAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProfitAccount.
+func (c *ProfitAccountClient) Delete() *ProfitAccountDelete {
+	mutation := newProfitAccountMutation(c.config, OpDelete)
+	return &ProfitAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProfitAccountClient) DeleteOne(pa *ProfitAccount) *ProfitAccountDeleteOne {
+	return c.DeleteOneID(pa.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProfitAccountClient) DeleteOneID(id int64) *ProfitAccountDeleteOne {
+	builder := c.Delete().Where(profitaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProfitAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for ProfitAccount.
+func (c *ProfitAccountClient) Query() *ProfitAccountQuery {
+	return &ProfitAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProfitAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProfitAccount entity by its id.
+func (c *ProfitAccountClient) Get(ctx context.Context, id int64) (*ProfitAccount, error) {
+	return c.Query().Where(profitaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProfitAccountClient) GetX(ctx context.Context, id int64) *ProfitAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a ProfitAccount.
+func (c *ProfitAccountClient) QueryUser(pa *ProfitAccount) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profitaccount.Table, profitaccount.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, profitaccount.UserTable, profitaccount.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(pa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEarnBills queries the earn_bills edge of a ProfitAccount.
+func (c *ProfitAccountClient) QueryEarnBills(pa *ProfitAccount) *EarnBillQuery {
+	query := (&EarnBillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profitaccount.Table, profitaccount.FieldID, id),
+			sqlgraph.To(earnbill.Table, earnbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profitaccount.EarnBillsTable, profitaccount.EarnBillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(pa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProfitAccountClient) Hooks() []Hook {
+	return c.hooks.ProfitAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProfitAccountClient) Interceptors() []Interceptor {
+	return c.inters.ProfitAccount
+}
+
+func (c *ProfitAccountClient) mutate(ctx context.Context, m *ProfitAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProfitAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProfitAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProfitAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProfitAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown ProfitAccount mutation op: %q", m.Op())
 	}
 }
 
@@ -2780,15 +3634,15 @@ func (c *RechargeOrderClient) QueryUser(ro *RechargeOrder) *UserQuery {
 	return query
 }
 
-// QueryBills queries the bills edge of a RechargeOrder.
-func (c *RechargeOrderClient) QueryBills(ro *RechargeOrder) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
+// QueryCostBills queries the cost_bills edge of a RechargeOrder.
+func (c *RechargeOrderClient) QueryCostBills(ro *RechargeOrder) *CostBillQuery {
+	query := (&CostBillClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ro.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(rechargeorder.Table, rechargeorder.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, rechargeorder.BillsTable, rechargeorder.BillsColumn),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, rechargeorder.CostBillsTable, rechargeorder.CostBillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(ro.driver.Dialect(), step)
 		return fromV, nil
@@ -2930,15 +3784,15 @@ func (c *UserClient) GetX(ctx context.Context, id int64) *User {
 	return obj
 }
 
-// QueryBills queries the bills edge of a User.
-func (c *UserClient) QueryBills(u *User) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
+// QueryVxAccounts queries the vx_accounts edge of a User.
+func (c *UserClient) QueryVxAccounts(u *User) *VXAccountQuery {
+	query := (&VXAccountClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.BillsTable, user.BillsColumn),
+			sqlgraph.To(vxaccount.Table, vxaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.VxAccountsTable, user.VxAccountsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -2946,63 +3800,15 @@ func (c *UserClient) QueryBills(u *User) *BillQuery {
 	return query
 }
 
-// QueryHmacKeyPair queries the hmac_key_pair edge of a User.
-func (c *UserClient) QueryHmacKeyPair(u *User) *HmacKeyPairQuery {
-	query := (&HmacKeyPairClient{config: c.config}).Query()
+// QueryCollects queries the collects edge of a User.
+func (c *UserClient) QueryCollects(u *User) *CollectQuery {
+	query := (&CollectClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.HmacKeyPairTable, user.HmacKeyPairColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryCreatedMissions queries the created_missions edge of a User.
-func (c *UserClient) QueryCreatedMissions(u *User) *MissionQuery {
-	query := (&MissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.CreatedMissionsTable, user.CreatedMissionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryWallet queries the wallet edge of a User.
-func (c *UserClient) QueryWallet(u *User) *WalletQuery {
-	query := (&WalletClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(wallet.Table, wallet.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.WalletTable, user.WalletColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryCollections queries the collections edge of a User.
-func (c *UserClient) QueryCollections(u *User) *CollectionQuery {
-	query := (&CollectionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(collection.Table, collection.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.CollectionsTable, user.CollectionsColumn),
+			sqlgraph.To(collect.Table, collect.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CollectsTable, user.CollectsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -3035,6 +3841,70 @@ func (c *UserClient) QueryProfitSettings(u *User) *ProfitSettingQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(profitsetting.Table, profitsetting.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfitSettingsTable, user.ProfitSettingsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCostAccount queries the cost_account edge of a User.
+func (c *UserClient) QueryCostAccount(u *User) *CostAccountQuery {
+	query := (&CostAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(costaccount.Table, costaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.CostAccountTable, user.CostAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProfitAccount queries the profit_account edge of a User.
+func (c *UserClient) QueryProfitAccount(u *User) *ProfitAccountQuery {
+	query := (&ProfitAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(profitaccount.Table, profitaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.ProfitAccountTable, user.ProfitAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCostBills queries the cost_bills edge of a User.
+func (c *UserClient) QueryCostBills(u *User) *CostBillQuery {
+	query := (&CostBillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CostBillsTable, user.CostBillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEarnBills queries the earn_bills edge of a User.
+func (c *UserClient) QueryEarnBills(u *User) *EarnBillQuery {
+	query := (&EarnBillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(earnbill.Table, earnbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.EarnBillsTable, user.EarnBillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -3131,6 +4001,38 @@ func (c *UserClient) QueryUserDevices(u *User) *UserDeviceQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(userdevice.Table, userdevice.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserDevicesTable, user.UserDevicesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParent queries the parent edge of a User.
+func (c *UserClient) QueryParent(u *User) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.ParentTable, user.ParentColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryChildren queries the children edge of a User.
+func (c *UserClient) QueryChildren(u *User) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ChildrenTable, user.ChildrenColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -3313,6 +4215,140 @@ func (c *UserDeviceClient) mutate(ctx context.Context, m *UserDeviceMutation) (V
 	}
 }
 
+// VXAccountClient is a client for the VXAccount schema.
+type VXAccountClient struct {
+	config
+}
+
+// NewVXAccountClient returns a client for the VXAccount from the given config.
+func NewVXAccountClient(c config) *VXAccountClient {
+	return &VXAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `vxaccount.Hooks(f(g(h())))`.
+func (c *VXAccountClient) Use(hooks ...Hook) {
+	c.hooks.VXAccount = append(c.hooks.VXAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `vxaccount.Intercept(f(g(h())))`.
+func (c *VXAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VXAccount = append(c.inters.VXAccount, interceptors...)
+}
+
+// Create returns a builder for creating a VXAccount entity.
+func (c *VXAccountClient) Create() *VXAccountCreate {
+	mutation := newVXAccountMutation(c.config, OpCreate)
+	return &VXAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VXAccount entities.
+func (c *VXAccountClient) CreateBulk(builders ...*VXAccountCreate) *VXAccountCreateBulk {
+	return &VXAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VXAccount.
+func (c *VXAccountClient) Update() *VXAccountUpdate {
+	mutation := newVXAccountMutation(c.config, OpUpdate)
+	return &VXAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VXAccountClient) UpdateOne(va *VXAccount) *VXAccountUpdateOne {
+	mutation := newVXAccountMutation(c.config, OpUpdateOne, withVXAccount(va))
+	return &VXAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VXAccountClient) UpdateOneID(id int64) *VXAccountUpdateOne {
+	mutation := newVXAccountMutation(c.config, OpUpdateOne, withVXAccountID(id))
+	return &VXAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VXAccount.
+func (c *VXAccountClient) Delete() *VXAccountDelete {
+	mutation := newVXAccountMutation(c.config, OpDelete)
+	return &VXAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VXAccountClient) DeleteOne(va *VXAccount) *VXAccountDeleteOne {
+	return c.DeleteOneID(va.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VXAccountClient) DeleteOneID(id int64) *VXAccountDeleteOne {
+	builder := c.Delete().Where(vxaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VXAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for VXAccount.
+func (c *VXAccountClient) Query() *VXAccountQuery {
+	return &VXAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVXAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VXAccount entity by its id.
+func (c *VXAccountClient) Get(ctx context.Context, id int64) (*VXAccount, error) {
+	return c.Query().Where(vxaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VXAccountClient) GetX(ctx context.Context, id int64) *VXAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a VXAccount.
+func (c *VXAccountClient) QueryUser(va *VXAccount) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := va.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vxaccount.Table, vxaccount.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, vxaccount.UserTable, vxaccount.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(va.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VXAccountClient) Hooks() []Hook {
+	return c.hooks.VXAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *VXAccountClient) Interceptors() []Interceptor {
+	return c.inters.VXAccount
+}
+
+func (c *VXAccountClient) mutate(ctx context.Context, m *VXAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VXAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VXAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VXAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VXAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown VXAccount mutation op: %q", m.Op())
+	}
+}
+
 // VXSocialClient is a client for the VXSocial schema.
 type VXSocialClient struct {
 	config
@@ -3463,168 +4499,20 @@ func (c *VXSocialClient) mutate(ctx context.Context, m *VXSocialMutation) (Value
 	}
 }
 
-// WalletClient is a client for the Wallet schema.
-type WalletClient struct {
-	config
-}
-
-// NewWalletClient returns a client for the Wallet from the given config.
-func NewWalletClient(c config) *WalletClient {
-	return &WalletClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `wallet.Hooks(f(g(h())))`.
-func (c *WalletClient) Use(hooks ...Hook) {
-	c.hooks.Wallet = append(c.hooks.Wallet, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `wallet.Intercept(f(g(h())))`.
-func (c *WalletClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Wallet = append(c.inters.Wallet, interceptors...)
-}
-
-// Create returns a builder for creating a Wallet entity.
-func (c *WalletClient) Create() *WalletCreate {
-	mutation := newWalletMutation(c.config, OpCreate)
-	return &WalletCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Wallet entities.
-func (c *WalletClient) CreateBulk(builders ...*WalletCreate) *WalletCreateBulk {
-	return &WalletCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Wallet.
-func (c *WalletClient) Update() *WalletUpdate {
-	mutation := newWalletMutation(c.config, OpUpdate)
-	return &WalletUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *WalletClient) UpdateOne(w *Wallet) *WalletUpdateOne {
-	mutation := newWalletMutation(c.config, OpUpdateOne, withWallet(w))
-	return &WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *WalletClient) UpdateOneID(id int64) *WalletUpdateOne {
-	mutation := newWalletMutation(c.config, OpUpdateOne, withWalletID(id))
-	return &WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Wallet.
-func (c *WalletClient) Delete() *WalletDelete {
-	mutation := newWalletMutation(c.config, OpDelete)
-	return &WalletDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *WalletClient) DeleteOne(w *Wallet) *WalletDeleteOne {
-	return c.DeleteOneID(w.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *WalletClient) DeleteOneID(id int64) *WalletDeleteOne {
-	builder := c.Delete().Where(wallet.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &WalletDeleteOne{builder}
-}
-
-// Query returns a query builder for Wallet.
-func (c *WalletClient) Query() *WalletQuery {
-	return &WalletQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeWallet},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Wallet entity by its id.
-func (c *WalletClient) Get(ctx context.Context, id int64) (*Wallet, error) {
-	return c.Query().Where(wallet.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *WalletClient) GetX(ctx context.Context, id int64) *Wallet {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUser queries the user edge of a Wallet.
-func (c *WalletClient) QueryUser(w *Wallet) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := w.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(wallet.Table, wallet.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, wallet.UserTable, wallet.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(w.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryBills queries the bills edge of a Wallet.
-func (c *WalletClient) QueryBills(w *Wallet) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := w.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(wallet.Table, wallet.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, wallet.BillsTable, wallet.BillsColumn),
-		)
-		fromV = sqlgraph.Neighbors(w.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *WalletClient) Hooks() []Hook {
-	return c.hooks.Wallet
-}
-
-// Interceptors returns the client interceptors.
-func (c *WalletClient) Interceptors() []Interceptor {
-	return c.inters.Wallet
-}
-
-func (c *WalletClient) mutate(ctx context.Context, m *WalletMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&WalletCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&WalletUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&WalletUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&WalletDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("cep_ent: unknown Wallet mutation op: %q", m.Op())
-	}
-}
-
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Bill, Collection, Device, HmacKeyPair, InputLog, Mission, MissionBatch,
-		MissionConsumeOrder, MissionProduceOrder, MissionProduction, MissionType,
-		OutputLog, PlatformWallet, ProfitSetting, RechargeOrder, User, UserDevice,
-		VXSocial, Wallet []ent.Hook
+		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
+		EnumCondition, EnumMissionStatus, Gpu, HmacKeyPair, InputLog, Mission,
+		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind,
+		MissionProduceOrder, OutputLog, PlatformAccount, ProfitAccount, ProfitSetting,
+		RechargeOrder, User, UserDevice, VXAccount, VXSocial []ent.Hook
 	}
 	inters struct {
-		Bill, Collection, Device, HmacKeyPair, InputLog, Mission, MissionBatch,
-		MissionConsumeOrder, MissionProduceOrder, MissionProduction, MissionType,
-		OutputLog, PlatformWallet, ProfitSetting, RechargeOrder, User, UserDevice,
-		VXSocial, Wallet []ent.Interceptor
+		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
+		EnumCondition, EnumMissionStatus, Gpu, HmacKeyPair, InputLog, Mission,
+		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind,
+		MissionProduceOrder, OutputLog, PlatformAccount, ProfitAccount, ProfitSetting,
+		RechargeOrder, User, UserDevice, VXAccount, VXSocial []ent.Interceptor
 	}
 )

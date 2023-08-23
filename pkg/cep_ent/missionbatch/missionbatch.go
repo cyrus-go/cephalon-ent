@@ -30,12 +30,8 @@ const (
 	FieldUserID = "user_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeMissions holds the string denoting the missions edge name in mutations.
-	EdgeMissions = "missions"
 	// EdgeMissionConsumeOrders holds the string denoting the mission_consume_orders edge name in mutations.
 	EdgeMissionConsumeOrders = "mission_consume_orders"
-	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
-	EdgeMissionProduceOrders = "mission_produce_orders"
 	// Table holds the table name of the missionbatch in the database.
 	Table = "mission_batches"
 	// UserTable is the table that holds the user relation/edge.
@@ -45,13 +41,6 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// MissionsTable is the table that holds the missions relation/edge.
-	MissionsTable = "missions"
-	// MissionsInverseTable is the table name for the Mission entity.
-	// It exists in this package in order to avoid circular dependency with the "mission" package.
-	MissionsInverseTable = "missions"
-	// MissionsColumn is the table column denoting the missions relation/edge.
-	MissionsColumn = "mission_batch_id"
 	// MissionConsumeOrdersTable is the table that holds the mission_consume_orders relation/edge.
 	MissionConsumeOrdersTable = "mission_consume_orders"
 	// MissionConsumeOrdersInverseTable is the table name for the MissionConsumeOrder entity.
@@ -59,13 +48,6 @@ const (
 	MissionConsumeOrdersInverseTable = "mission_consume_orders"
 	// MissionConsumeOrdersColumn is the table column denoting the mission_consume_orders relation/edge.
 	MissionConsumeOrdersColumn = "mission_batch_id"
-	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
-	MissionProduceOrdersTable = "mission_produce_orders"
-	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.
-	// It exists in this package in order to avoid circular dependency with the "missionproduceorder" package.
-	MissionProduceOrdersInverseTable = "mission_produce_orders"
-	// MissionProduceOrdersColumn is the table column denoting the mission_produce_orders relation/edge.
-	MissionProduceOrdersColumn = "mission_batch_id"
 )
 
 // Columns holds all SQL columns for missionbatch fields.
@@ -161,20 +143,6 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByMissionsCount orders the results by missions count.
-func ByMissionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMissionsStep(), opts...)
-	}
-}
-
-// ByMissions orders the results by missions terms.
-func ByMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByMissionConsumeOrdersCount orders the results by mission_consume_orders count.
 func ByMissionConsumeOrdersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -188,20 +156,6 @@ func ByMissionConsumeOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByMissionProduceOrdersCount orders the results by mission_produce_orders count.
-func ByMissionProduceOrdersCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMissionProduceOrdersStep(), opts...)
-	}
-}
-
-// ByMissionProduceOrders orders the results by mission_produce_orders terms.
-func ByMissionProduceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionProduceOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -209,24 +163,10 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newMissionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MissionsTable, MissionsColumn),
-	)
-}
 func newMissionConsumeOrdersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionConsumeOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionConsumeOrdersTable, MissionConsumeOrdersColumn),
-	)
-}
-func newMissionProduceOrdersStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionProduceOrdersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
 	)
 }

@@ -3,8 +3,7 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
-	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -28,8 +27,7 @@ type MissionConsumeOrderQuery struct {
 	inters                   []Interceptor
 	predicates               []predicate.MissionConsumeOrder
 	withUser                 *UserQuery
-	withBills                *BillQuery
-	withMission              *MissionQuery
+	withCostBills            *CostBillQuery
 	withMissionProduceOrders *MissionProduceOrderQuery
 	withMissionBatch         *MissionBatchQuery
 	// intermediate query (i.e. traversal path).
@@ -90,9 +88,9 @@ func (mcoq *MissionConsumeOrderQuery) QueryUser() *UserQuery {
 	return query
 }
 
-// QueryBills chains the current query on the "bills" edge.
-func (mcoq *MissionConsumeOrderQuery) QueryBills() *BillQuery {
-	query := (&BillClient{config: mcoq.config}).Query()
+// QueryCostBills chains the current query on the "cost_bills" edge.
+func (mcoq *MissionConsumeOrderQuery) QueryCostBills() *CostBillQuery {
+	query := (&CostBillClient{config: mcoq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mcoq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -103,30 +101,8 @@ func (mcoq *MissionConsumeOrderQuery) QueryBills() *BillQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, selector),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionconsumeorder.BillsTable, missionconsumeorder.BillsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mcoq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryMission chains the current query on the "mission" edge.
-func (mcoq *MissionConsumeOrderQuery) QueryMission() *MissionQuery {
-	query := (&MissionClient{config: mcoq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mcoq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mcoq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, selector),
-			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, missionconsumeorder.MissionTable, missionconsumeorder.MissionColumn),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionconsumeorder.CostBillsTable, missionconsumeorder.CostBillsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mcoq.driver.Dialect(), step)
 		return fromU, nil
@@ -371,8 +347,7 @@ func (mcoq *MissionConsumeOrderQuery) Clone() *MissionConsumeOrderQuery {
 		inters:                   append([]Interceptor{}, mcoq.inters...),
 		predicates:               append([]predicate.MissionConsumeOrder{}, mcoq.predicates...),
 		withUser:                 mcoq.withUser.Clone(),
-		withBills:                mcoq.withBills.Clone(),
-		withMission:              mcoq.withMission.Clone(),
+		withCostBills:            mcoq.withCostBills.Clone(),
 		withMissionProduceOrders: mcoq.withMissionProduceOrders.Clone(),
 		withMissionBatch:         mcoq.withMissionBatch.Clone(),
 		// clone intermediate query.
@@ -392,25 +367,14 @@ func (mcoq *MissionConsumeOrderQuery) WithUser(opts ...func(*UserQuery)) *Missio
 	return mcoq
 }
 
-// WithBills tells the query-builder to eager-load the nodes that are connected to
-// the "bills" edge. The optional arguments are used to configure the query builder of the edge.
-func (mcoq *MissionConsumeOrderQuery) WithBills(opts ...func(*BillQuery)) *MissionConsumeOrderQuery {
-	query := (&BillClient{config: mcoq.config}).Query()
+// WithCostBills tells the query-builder to eager-load the nodes that are connected to
+// the "cost_bills" edge. The optional arguments are used to configure the query builder of the edge.
+func (mcoq *MissionConsumeOrderQuery) WithCostBills(opts ...func(*CostBillQuery)) *MissionConsumeOrderQuery {
+	query := (&CostBillClient{config: mcoq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	mcoq.withBills = query
-	return mcoq
-}
-
-// WithMission tells the query-builder to eager-load the nodes that are connected to
-// the "mission" edge. The optional arguments are used to configure the query builder of the edge.
-func (mcoq *MissionConsumeOrderQuery) WithMission(opts ...func(*MissionQuery)) *MissionConsumeOrderQuery {
-	query := (&MissionClient{config: mcoq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mcoq.withMission = query
+	mcoq.withCostBills = query
 	return mcoq
 }
 
@@ -514,10 +478,9 @@ func (mcoq *MissionConsumeOrderQuery) sqlAll(ctx context.Context, hooks ...query
 	var (
 		nodes       = []*MissionConsumeOrder{}
 		_spec       = mcoq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [4]bool{
 			mcoq.withUser != nil,
-			mcoq.withBills != nil,
-			mcoq.withMission != nil,
+			mcoq.withCostBills != nil,
 			mcoq.withMissionProduceOrders != nil,
 			mcoq.withMissionBatch != nil,
 		}
@@ -546,16 +509,10 @@ func (mcoq *MissionConsumeOrderQuery) sqlAll(ctx context.Context, hooks ...query
 			return nil, err
 		}
 	}
-	if query := mcoq.withBills; query != nil {
-		if err := mcoq.loadBills(ctx, query, nodes,
-			func(n *MissionConsumeOrder) { n.Edges.Bills = []*Bill{} },
-			func(n *MissionConsumeOrder, e *Bill) { n.Edges.Bills = append(n.Edges.Bills, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := mcoq.withMission; query != nil {
-		if err := mcoq.loadMission(ctx, query, nodes, nil,
-			func(n *MissionConsumeOrder, e *Mission) { n.Edges.Mission = e }); err != nil {
+	if query := mcoq.withCostBills; query != nil {
+		if err := mcoq.loadCostBills(ctx, query, nodes,
+			func(n *MissionConsumeOrder) { n.Edges.CostBills = []*CostBill{} },
+			func(n *MissionConsumeOrder, e *CostBill) { n.Edges.CostBills = append(n.Edges.CostBills, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -606,7 +563,7 @@ func (mcoq *MissionConsumeOrderQuery) loadUser(ctx context.Context, query *UserQ
 	}
 	return nil
 }
-func (mcoq *MissionConsumeOrderQuery) loadBills(ctx context.Context, query *BillQuery, nodes []*MissionConsumeOrder, init func(*MissionConsumeOrder), assign func(*MissionConsumeOrder, *Bill)) error {
+func (mcoq *MissionConsumeOrderQuery) loadCostBills(ctx context.Context, query *CostBillQuery, nodes []*MissionConsumeOrder, init func(*MissionConsumeOrder), assign func(*MissionConsumeOrder, *CostBill)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*MissionConsumeOrder)
 	for i := range nodes {
@@ -617,10 +574,10 @@ func (mcoq *MissionConsumeOrderQuery) loadBills(ctx context.Context, query *Bill
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(bill.FieldReasonID)
+		query.ctx.AppendFieldOnce(costbill.FieldReasonID)
 	}
-	query.Where(predicate.Bill(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(missionconsumeorder.BillsColumn), fks...))
+	query.Where(predicate.CostBill(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(missionconsumeorder.CostBillsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -633,35 +590,6 @@ func (mcoq *MissionConsumeOrderQuery) loadBills(ctx context.Context, query *Bill
 			return fmt.Errorf(`unexpected referenced foreign-key "reason_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
-	}
-	return nil
-}
-func (mcoq *MissionConsumeOrderQuery) loadMission(ctx context.Context, query *MissionQuery, nodes []*MissionConsumeOrder, init func(*MissionConsumeOrder), assign func(*MissionConsumeOrder, *Mission)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*MissionConsumeOrder)
-	for i := range nodes {
-		fk := nodes[i].MissionID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(mission.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "mission_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
 	}
 	return nil
 }
@@ -752,9 +680,6 @@ func (mcoq *MissionConsumeOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if mcoq.withUser != nil {
 			_spec.Node.AddColumnOnce(missionconsumeorder.FieldUserID)
-		}
-		if mcoq.withMission != nil {
-			_spec.Node.AddColumnOnce(missionconsumeorder.FieldMissionID)
 		}
 		if mcoq.withMissionBatch != nil {
 			_spec.Node.AddColumnOnce(missionconsumeorder.FieldMissionBatchID)

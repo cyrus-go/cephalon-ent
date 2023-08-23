@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -31,12 +30,5 @@ func (ProfitSetting) Edges() []ent.Edge {
 func (ProfitSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
-	}
-}
-
-// Annotations of the BaseMixin.
-func (ProfitSetting) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		schema.Comment("用户的分润配置，与用户一对多，但逻辑上主要是一对一"),
 	}
 }

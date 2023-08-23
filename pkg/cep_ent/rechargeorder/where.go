@@ -4,7 +4,6 @@ package rechargeorder
 
 import (
 	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/enums"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -86,9 +85,9 @@ func UserID(v int64) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldEQ(FieldUserID, v))
 }
 
-// Cep applies equality check predicate on the "cep" field. It's identical to CepEQ.
-func Cep(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldEQ(FieldCep, v))
+// PureCep applies equality check predicate on the "pure_cep" field. It's identical to PureCepEQ.
+func PureCep(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldPureCep, v))
 }
 
 // SocialID applies equality check predicate on the "social_id" field. It's identical to SocialIDEQ.
@@ -337,73 +336,63 @@ func UserIDNotIn(vs ...int64) predicate.RechargeOrder {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v enums.MissionStatus) predicate.RechargeOrder {
-	vc := v
-	return predicate.RechargeOrder(sql.FieldEQ(FieldStatus, vc))
+func StatusEQ(v Status) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldStatus, v))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v enums.MissionStatus) predicate.RechargeOrder {
-	vc := v
-	return predicate.RechargeOrder(sql.FieldNEQ(FieldStatus, vc))
+func StatusNEQ(v Status) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNEQ(FieldStatus, v))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...enums.MissionStatus) predicate.RechargeOrder {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.RechargeOrder(sql.FieldIn(FieldStatus, v...))
+func StatusIn(vs ...Status) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldIn(FieldStatus, vs...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...enums.MissionStatus) predicate.RechargeOrder {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.RechargeOrder(sql.FieldNotIn(FieldStatus, v...))
+func StatusNotIn(vs ...Status) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNotIn(FieldStatus, vs...))
 }
 
-// CepEQ applies the EQ predicate on the "cep" field.
-func CepEQ(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldEQ(FieldCep, v))
+// PureCepEQ applies the EQ predicate on the "pure_cep" field.
+func PureCepEQ(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldPureCep, v))
 }
 
-// CepNEQ applies the NEQ predicate on the "cep" field.
-func CepNEQ(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldNEQ(FieldCep, v))
+// PureCepNEQ applies the NEQ predicate on the "pure_cep" field.
+func PureCepNEQ(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNEQ(FieldPureCep, v))
 }
 
-// CepIn applies the In predicate on the "cep" field.
-func CepIn(vs ...int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldIn(FieldCep, vs...))
+// PureCepIn applies the In predicate on the "pure_cep" field.
+func PureCepIn(vs ...int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldIn(FieldPureCep, vs...))
 }
 
-// CepNotIn applies the NotIn predicate on the "cep" field.
-func CepNotIn(vs ...int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldNotIn(FieldCep, vs...))
+// PureCepNotIn applies the NotIn predicate on the "pure_cep" field.
+func PureCepNotIn(vs ...int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNotIn(FieldPureCep, vs...))
 }
 
-// CepGT applies the GT predicate on the "cep" field.
-func CepGT(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldGT(FieldCep, v))
+// PureCepGT applies the GT predicate on the "pure_cep" field.
+func PureCepGT(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldGT(FieldPureCep, v))
 }
 
-// CepGTE applies the GTE predicate on the "cep" field.
-func CepGTE(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldGTE(FieldCep, v))
+// PureCepGTE applies the GTE predicate on the "pure_cep" field.
+func PureCepGTE(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldGTE(FieldPureCep, v))
 }
 
-// CepLT applies the LT predicate on the "cep" field.
-func CepLT(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldLT(FieldCep, v))
+// PureCepLT applies the LT predicate on the "pure_cep" field.
+func PureCepLT(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldLT(FieldPureCep, v))
 }
 
-// CepLTE applies the LTE predicate on the "cep" field.
-func CepLTE(v int64) predicate.RechargeOrder {
-	return predicate.RechargeOrder(sql.FieldLTE(FieldCep, v))
+// PureCepLTE applies the LTE predicate on the "pure_cep" field.
+func PureCepLTE(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldLTE(FieldPureCep, v))
 }
 
 // SocialIDEQ applies the EQ predicate on the "social_id" field.
@@ -437,33 +426,23 @@ func SocialIDNotNil() predicate.RechargeOrder {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v enums.RechargeOrderType) predicate.RechargeOrder {
-	vc := v
-	return predicate.RechargeOrder(sql.FieldEQ(FieldType, vc))
+func TypeEQ(v Type) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldType, v))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v enums.RechargeOrderType) predicate.RechargeOrder {
-	vc := v
-	return predicate.RechargeOrder(sql.FieldNEQ(FieldType, vc))
+func TypeNEQ(v Type) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNEQ(FieldType, v))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...enums.RechargeOrderType) predicate.RechargeOrder {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.RechargeOrder(sql.FieldIn(FieldType, v...))
+func TypeIn(vs ...Type) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldIn(FieldType, vs...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...enums.RechargeOrderType) predicate.RechargeOrder {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.RechargeOrder(sql.FieldNotIn(FieldType, v...))
+func TypeNotIn(vs ...Type) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNotIn(FieldType, vs...))
 }
 
 // SerialNumberEQ applies the EQ predicate on the "serial_number" field.
@@ -724,21 +703,21 @@ func HasUserWith(preds ...predicate.User) predicate.RechargeOrder {
 	})
 }
 
-// HasBills applies the HasEdge predicate on the "bills" edge.
-func HasBills() predicate.RechargeOrder {
+// HasCostBills applies the HasEdge predicate on the "cost_bills" edge.
+func HasCostBills() predicate.RechargeOrder {
 	return predicate.RechargeOrder(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasBillsWith applies the HasEdge predicate on the "bills" edge with a given conditions (other predicates).
-func HasBillsWith(preds ...predicate.Bill) predicate.RechargeOrder {
+// HasCostBillsWith applies the HasEdge predicate on the "cost_bills" edge with a given conditions (other predicates).
+func HasCostBillsWith(preds ...predicate.CostBill) predicate.RechargeOrder {
 	return predicate.RechargeOrder(func(s *sql.Selector) {
-		step := newBillsStep()
+		step := newCostBillsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

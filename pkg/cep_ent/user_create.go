@@ -3,21 +3,21 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
-	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/collect"
+	"cephalon-ent/pkg/cep_ent/costaccount"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/hmackeypair"
-	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/earnbill"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"cephalon-ent/pkg/cep_ent/profitaccount"
 	"cephalon-ent/pkg/cep_ent/profitsetting"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxaccount"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/cep_ent/wallet"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -118,16 +118,44 @@ func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
 	return uc
 }
 
-// SetNickName sets the "nick_name" field.
-func (uc *UserCreate) SetNickName(s string) *UserCreate {
-	uc.mutation.SetNickName(s)
+// SetJpgURL sets the "jpg_url" field.
+func (uc *UserCreate) SetJpgURL(s string) *UserCreate {
+	uc.mutation.SetJpgURL(s)
 	return uc
 }
 
-// SetNillableNickName sets the "nick_name" field if the given value is not nil.
-func (uc *UserCreate) SetNillableNickName(s *string) *UserCreate {
+// SetNillableJpgURL sets the "jpg_url" field if the given value is not nil.
+func (uc *UserCreate) SetNillableJpgURL(s *string) *UserCreate {
 	if s != nil {
-		uc.SetNickName(*s)
+		uc.SetJpgURL(*s)
+	}
+	return uc
+}
+
+// SetKey sets the "key" field.
+func (uc *UserCreate) SetKey(s string) *UserCreate {
+	uc.mutation.SetKey(s)
+	return uc
+}
+
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (uc *UserCreate) SetNillableKey(s *string) *UserCreate {
+	if s != nil {
+		uc.SetKey(*s)
+	}
+	return uc
+}
+
+// SetSecret sets the "secret" field.
+func (uc *UserCreate) SetSecret(s string) *UserCreate {
+	uc.mutation.SetSecret(s)
+	return uc
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (uc *UserCreate) SetNillableSecret(s *string) *UserCreate {
+	if s != nil {
+		uc.SetSecret(*s)
 	}
 	return uc
 }
@@ -160,86 +188,44 @@ func (uc *UserCreate) SetNillablePassword(s *string) *UserCreate {
 	return uc
 }
 
-// SetAvatarURL sets the "avatar_url" field.
-func (uc *UserCreate) SetAvatarURL(s string) *UserCreate {
-	uc.mutation.SetAvatarURL(s)
+// SetIsFrozen sets the "is_frozen" field.
+func (uc *UserCreate) SetIsFrozen(b bool) *UserCreate {
+	uc.mutation.SetIsFrozen(b)
 	return uc
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (uc *UserCreate) SetNillableAvatarURL(s *string) *UserCreate {
-	if s != nil {
-		uc.SetAvatarURL(*s)
+// SetNillableIsFrozen sets the "is_frozen" field if the given value is not nil.
+func (uc *UserCreate) SetNillableIsFrozen(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetIsFrozen(*b)
 	}
 	return uc
 }
 
-// SetStatus sets the "status" field.
-func (uc *UserCreate) SetStatus(es enums.UserStatus) *UserCreate {
-	uc.mutation.SetStatus(es)
+// SetUserType sets the "user_type" field.
+func (uc *UserCreate) SetUserType(ut user.UserType) *UserCreate {
+	uc.mutation.SetUserType(ut)
 	return uc
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (uc *UserCreate) SetNillableStatus(es *enums.UserStatus) *UserCreate {
-	if es != nil {
-		uc.SetStatus(*es)
+// SetNillableUserType sets the "user_type" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUserType(ut *user.UserType) *UserCreate {
+	if ut != nil {
+		uc.SetUserType(*ut)
 	}
 	return uc
 }
 
-// SetType sets the "type" field.
-func (uc *UserCreate) SetType(et enums.UserType) *UserCreate {
-	uc.mutation.SetType(et)
+// SetParentID sets the "parent_id" field.
+func (uc *UserCreate) SetParentID(i int64) *UserCreate {
+	uc.mutation.SetParentID(i)
 	return uc
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (uc *UserCreate) SetNillableType(et *enums.UserType) *UserCreate {
-	if et != nil {
-		uc.SetType(*et)
-	}
-	return uc
-}
-
-// SetPlatform sets the "platform" field.
-func (uc *UserCreate) SetPlatform(i int) *UserCreate {
-	uc.mutation.SetPlatform(i)
-	return uc
-}
-
-// SetNillablePlatform sets the "platform" field if the given value is not nil.
-func (uc *UserCreate) SetNillablePlatform(i *int) *UserCreate {
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableParentID(i *int64) *UserCreate {
 	if i != nil {
-		uc.SetPlatform(*i)
-	}
-	return uc
-}
-
-// SetHmacKey sets the "hmac_key" field.
-func (uc *UserCreate) SetHmacKey(s string) *UserCreate {
-	uc.mutation.SetHmacKey(s)
-	return uc
-}
-
-// SetNillableHmacKey sets the "hmac_key" field if the given value is not nil.
-func (uc *UserCreate) SetNillableHmacKey(s *string) *UserCreate {
-	if s != nil {
-		uc.SetHmacKey(*s)
-	}
-	return uc
-}
-
-// SetHmacSecret sets the "hmac_secret" field.
-func (uc *UserCreate) SetHmacSecret(s string) *UserCreate {
-	uc.mutation.SetHmacSecret(s)
-	return uc
-}
-
-// SetNillableHmacSecret sets the "hmac_secret" field if the given value is not nil.
-func (uc *UserCreate) SetNillableHmacSecret(s *string) *UserCreate {
-	if s != nil {
-		uc.SetHmacSecret(*s)
+		uc.SetParentID(*i)
 	}
 	return uc
 }
@@ -258,87 +244,34 @@ func (uc *UserCreate) SetNillableID(i *int64) *UserCreate {
 	return uc
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (uc *UserCreate) AddBillIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddBillIDs(ids...)
+// AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
+func (uc *UserCreate) AddVxAccountIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddVxAccountIDs(ids...)
 	return uc
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (uc *UserCreate) AddBills(b ...*Bill) *UserCreate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddVxAccounts adds the "vx_accounts" edges to the VXAccount entity.
+func (uc *UserCreate) AddVxAccounts(v ...*VXAccount) *UserCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uc.AddBillIDs(ids...)
+	return uc.AddVxAccountIDs(ids...)
 }
 
-// SetHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID.
-func (uc *UserCreate) SetHmacKeyPairID(id int64) *UserCreate {
-	uc.mutation.SetHmacKeyPairID(id)
+// AddCollectIDs adds the "collects" edge to the Collect entity by IDs.
+func (uc *UserCreate) AddCollectIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCollectIDs(ids...)
 	return uc
 }
 
-// SetNillableHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID if the given value is not nil.
-func (uc *UserCreate) SetNillableHmacKeyPairID(id *int64) *UserCreate {
-	if id != nil {
-		uc = uc.SetHmacKeyPairID(*id)
-	}
-	return uc
-}
-
-// SetHmacKeyPair sets the "hmac_key_pair" edge to the HmacKeyPair entity.
-func (uc *UserCreate) SetHmacKeyPair(h *HmacKeyPair) *UserCreate {
-	return uc.SetHmacKeyPairID(h.ID)
-}
-
-// AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
-func (uc *UserCreate) AddCreatedMissionIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddCreatedMissionIDs(ids...)
-	return uc
-}
-
-// AddCreatedMissions adds the "created_missions" edges to the Mission entity.
-func (uc *UserCreate) AddCreatedMissions(m ...*Mission) *UserCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return uc.AddCreatedMissionIDs(ids...)
-}
-
-// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
-func (uc *UserCreate) SetWalletID(id int64) *UserCreate {
-	uc.mutation.SetWalletID(id)
-	return uc
-}
-
-// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
-func (uc *UserCreate) SetNillableWalletID(id *int64) *UserCreate {
-	if id != nil {
-		uc = uc.SetWalletID(*id)
-	}
-	return uc
-}
-
-// SetWallet sets the "wallet" edge to the Wallet entity.
-func (uc *UserCreate) SetWallet(w *Wallet) *UserCreate {
-	return uc.SetWalletID(w.ID)
-}
-
-// AddCollectionIDs adds the "collections" edge to the Collection entity by IDs.
-func (uc *UserCreate) AddCollectionIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddCollectionIDs(ids...)
-	return uc
-}
-
-// AddCollections adds the "collections" edges to the Collection entity.
-func (uc *UserCreate) AddCollections(c ...*Collection) *UserCreate {
+// AddCollects adds the "collects" edges to the Collect entity.
+func (uc *UserCreate) AddCollects(c ...*Collect) *UserCreate {
 	ids := make([]int64, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return uc.AddCollectionIDs(ids...)
+	return uc.AddCollectIDs(ids...)
 }
 
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
@@ -369,6 +302,74 @@ func (uc *UserCreate) AddProfitSettings(p ...*ProfitSetting) *UserCreate {
 		ids[i] = p[i].ID
 	}
 	return uc.AddProfitSettingIDs(ids...)
+}
+
+// SetCostAccountID sets the "cost_account" edge to the CostAccount entity by ID.
+func (uc *UserCreate) SetCostAccountID(id int64) *UserCreate {
+	uc.mutation.SetCostAccountID(id)
+	return uc
+}
+
+// SetNillableCostAccountID sets the "cost_account" edge to the CostAccount entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableCostAccountID(id *int64) *UserCreate {
+	if id != nil {
+		uc = uc.SetCostAccountID(*id)
+	}
+	return uc
+}
+
+// SetCostAccount sets the "cost_account" edge to the CostAccount entity.
+func (uc *UserCreate) SetCostAccount(c *CostAccount) *UserCreate {
+	return uc.SetCostAccountID(c.ID)
+}
+
+// SetProfitAccountID sets the "profit_account" edge to the ProfitAccount entity by ID.
+func (uc *UserCreate) SetProfitAccountID(id int64) *UserCreate {
+	uc.mutation.SetProfitAccountID(id)
+	return uc
+}
+
+// SetNillableProfitAccountID sets the "profit_account" edge to the ProfitAccount entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableProfitAccountID(id *int64) *UserCreate {
+	if id != nil {
+		uc = uc.SetProfitAccountID(*id)
+	}
+	return uc
+}
+
+// SetProfitAccount sets the "profit_account" edge to the ProfitAccount entity.
+func (uc *UserCreate) SetProfitAccount(p *ProfitAccount) *UserCreate {
+	return uc.SetProfitAccountID(p.ID)
+}
+
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (uc *UserCreate) AddCostBillIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCostBillIDs(ids...)
+	return uc
+}
+
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (uc *UserCreate) AddCostBills(c ...*CostBill) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCostBillIDs(ids...)
+}
+
+// AddEarnBillIDs adds the "earn_bills" edge to the EarnBill entity by IDs.
+func (uc *UserCreate) AddEarnBillIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddEarnBillIDs(ids...)
+	return uc
+}
+
+// AddEarnBills adds the "earn_bills" edges to the EarnBill entity.
+func (uc *UserCreate) AddEarnBills(e ...*EarnBill) *UserCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uc.AddEarnBillIDs(ids...)
 }
 
 // AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
@@ -461,6 +462,26 @@ func (uc *UserCreate) AddUserDevices(u ...*UserDevice) *UserCreate {
 	return uc.AddUserDeviceIDs(ids...)
 }
 
+// SetParent sets the "parent" edge to the User entity.
+func (uc *UserCreate) SetParent(u *User) *UserCreate {
+	return uc.SetParentID(u.ID)
+}
+
+// AddChildIDs adds the "children" edge to the User entity by IDs.
+func (uc *UserCreate) AddChildIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddChildIDs(ids...)
+	return uc
+}
+
+// AddChildren adds the "children" edges to the User entity.
+func (uc *UserCreate) AddChildren(u ...*User) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddChildIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -517,12 +538,20 @@ func (uc *UserCreate) defaults() {
 		uc.mutation.SetDeletedAt(v)
 	}
 	if _, ok := uc.mutation.Name(); !ok {
-		v := user.DefaultName()
+		v := user.DefaultName
 		uc.mutation.SetName(v)
 	}
-	if _, ok := uc.mutation.NickName(); !ok {
-		v := user.DefaultNickName
-		uc.mutation.SetNickName(v)
+	if _, ok := uc.mutation.JpgURL(); !ok {
+		v := user.DefaultJpgURL
+		uc.mutation.SetJpgURL(v)
+	}
+	if _, ok := uc.mutation.Key(); !ok {
+		v := user.DefaultKey
+		uc.mutation.SetKey(v)
+	}
+	if _, ok := uc.mutation.Secret(); !ok {
+		v := user.DefaultSecret
+		uc.mutation.SetSecret(v)
 	}
 	if _, ok := uc.mutation.Phone(); !ok {
 		v := user.DefaultPhone
@@ -532,29 +561,17 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultPassword
 		uc.mutation.SetPassword(v)
 	}
-	if _, ok := uc.mutation.AvatarURL(); !ok {
-		v := user.DefaultAvatarURL
-		uc.mutation.SetAvatarURL(v)
+	if _, ok := uc.mutation.IsFrozen(); !ok {
+		v := user.DefaultIsFrozen
+		uc.mutation.SetIsFrozen(v)
 	}
-	if _, ok := uc.mutation.Status(); !ok {
-		v := user.DefaultStatus
-		uc.mutation.SetStatus(v)
+	if _, ok := uc.mutation.UserType(); !ok {
+		v := user.DefaultUserType
+		uc.mutation.SetUserType(v)
 	}
-	if _, ok := uc.mutation.GetType(); !ok {
-		v := user.DefaultType
-		uc.mutation.SetType(v)
-	}
-	if _, ok := uc.mutation.Platform(); !ok {
-		v := user.DefaultPlatform
-		uc.mutation.SetPlatform(v)
-	}
-	if _, ok := uc.mutation.HmacKey(); !ok {
-		v := user.DefaultHmacKey
-		uc.mutation.SetHmacKey(v)
-	}
-	if _, ok := uc.mutation.HmacSecret(); !ok {
-		v := user.DefaultHmacSecret
-		uc.mutation.SetHmacSecret(v)
+	if _, ok := uc.mutation.ParentID(); !ok {
+		v := user.DefaultParentID
+		uc.mutation.SetParentID(v)
 	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
@@ -582,8 +599,14 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`cep_ent: missing required field "User.name"`)}
 	}
-	if _, ok := uc.mutation.NickName(); !ok {
-		return &ValidationError{Name: "nick_name", err: errors.New(`cep_ent: missing required field "User.nick_name"`)}
+	if _, ok := uc.mutation.JpgURL(); !ok {
+		return &ValidationError{Name: "jpg_url", err: errors.New(`cep_ent: missing required field "User.jpg_url"`)}
+	}
+	if _, ok := uc.mutation.Key(); !ok {
+		return &ValidationError{Name: "key", err: errors.New(`cep_ent: missing required field "User.key"`)}
+	}
+	if _, ok := uc.mutation.Secret(); !ok {
+		return &ValidationError{Name: "secret", err: errors.New(`cep_ent: missing required field "User.secret"`)}
 	}
 	if _, ok := uc.mutation.Phone(); !ok {
 		return &ValidationError{Name: "phone", err: errors.New(`cep_ent: missing required field "User.phone"`)}
@@ -591,33 +614,22 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`cep_ent: missing required field "User.password"`)}
 	}
-	if _, ok := uc.mutation.AvatarURL(); !ok {
-		return &ValidationError{Name: "avatar_url", err: errors.New(`cep_ent: missing required field "User.avatar_url"`)}
+	if _, ok := uc.mutation.IsFrozen(); !ok {
+		return &ValidationError{Name: "is_frozen", err: errors.New(`cep_ent: missing required field "User.is_frozen"`)}
 	}
-	if _, ok := uc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "User.status"`)}
+	if _, ok := uc.mutation.UserType(); !ok {
+		return &ValidationError{Name: "user_type", err: errors.New(`cep_ent: missing required field "User.user_type"`)}
 	}
-	if v, ok := uc.mutation.Status(); ok {
-		if err := user.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "User.status": %w`, err)}
+	if v, ok := uc.mutation.UserType(); ok {
+		if err := user.UserTypeValidator(v); err != nil {
+			return &ValidationError{Name: "user_type", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_type": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "User.type"`)}
+	if _, ok := uc.mutation.ParentID(); !ok {
+		return &ValidationError{Name: "parent_id", err: errors.New(`cep_ent: missing required field "User.parent_id"`)}
 	}
-	if v, ok := uc.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "User.type": %w`, err)}
-		}
-	}
-	if _, ok := uc.mutation.Platform(); !ok {
-		return &ValidationError{Name: "platform", err: errors.New(`cep_ent: missing required field "User.platform"`)}
-	}
-	if _, ok := uc.mutation.HmacKey(); !ok {
-		return &ValidationError{Name: "hmac_key", err: errors.New(`cep_ent: missing required field "User.hmac_key"`)}
-	}
-	if _, ok := uc.mutation.HmacSecret(); !ok {
-		return &ValidationError{Name: "hmac_secret", err: errors.New(`cep_ent: missing required field "User.hmac_secret"`)}
+	if _, ok := uc.mutation.ParentID(); !ok {
+		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
 	}
 	return nil
 }
@@ -675,9 +687,17 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := uc.mutation.NickName(); ok {
-		_spec.SetField(user.FieldNickName, field.TypeString, value)
-		_node.NickName = value
+	if value, ok := uc.mutation.JpgURL(); ok {
+		_spec.SetField(user.FieldJpgURL, field.TypeString, value)
+		_node.JpgURL = value
+	}
+	if value, ok := uc.mutation.Key(); ok {
+		_spec.SetField(user.FieldKey, field.TypeString, value)
+		_node.Key = value
+	}
+	if value, ok := uc.mutation.Secret(); ok {
+		_spec.SetField(user.FieldSecret, field.TypeString, value)
+		_node.Secret = value
 	}
 	if value, ok := uc.mutation.Phone(); ok {
 		_spec.SetField(user.FieldPhone, field.TypeString, value)
@@ -687,39 +707,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
 	}
-	if value, ok := uc.mutation.AvatarURL(); ok {
-		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
-		_node.AvatarURL = value
+	if value, ok := uc.mutation.IsFrozen(); ok {
+		_spec.SetField(user.FieldIsFrozen, field.TypeBool, value)
+		_node.IsFrozen = value
 	}
-	if value, ok := uc.mutation.Status(); ok {
-		_spec.SetField(user.FieldStatus, field.TypeEnum, value)
-		_node.Status = value
+	if value, ok := uc.mutation.UserType(); ok {
+		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
+		_node.UserType = value
 	}
-	if value, ok := uc.mutation.GetType(); ok {
-		_spec.SetField(user.FieldType, field.TypeEnum, value)
-		_node.Type = value
-	}
-	if value, ok := uc.mutation.Platform(); ok {
-		_spec.SetField(user.FieldPlatform, field.TypeInt, value)
-		_node.Platform = value
-	}
-	if value, ok := uc.mutation.HmacKey(); ok {
-		_spec.SetField(user.FieldHmacKey, field.TypeString, value)
-		_node.HmacKey = value
-	}
-	if value, ok := uc.mutation.HmacSecret(); ok {
-		_spec.SetField(user.FieldHmacSecret, field.TypeString, value)
-		_node.HmacSecret = value
-	}
-	if nodes := uc.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -727,63 +731,15 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.HmacKeyPairIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.HmacKeyPairTable,
-			Columns: []string{user.HmacKeyPairColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.CreatedMissionsIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.CollectsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.WalletIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.WalletTable,
-			Columns: []string{user.WalletColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.CollectionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -816,6 +772,70 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profitsetting.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CostAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.CostAccountTable,
+			Columns: []string{user.CostAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ProfitAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.ProfitAccountTable,
+			Columns: []string{user.ProfitAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profitaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CostBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.EarnBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -912,6 +932,39 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.ParentTable,
+			Columns: []string{user.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

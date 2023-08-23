@@ -8,8 +8,7 @@ const (
 	MissionStatusDoing     MissionStatus = "doing"
 	MissionStatusSupplying MissionStatus = "supplying"
 	MissionStatusClosing   MissionStatus = "closing"
-	MissionStatusSucceed   MissionStatus = "succeed"
-	MissionStatusFailed    MissionStatus = "failed"
+	MissionStatusDone      MissionStatus = "done"
 )
 
 func (m MissionStatus) Values() []string {
@@ -19,7 +18,6 @@ func (m MissionStatus) Values() []string {
 		string(MissionStatusDoing),
 		string(MissionStatusSupplying),
 		string(MissionStatusClosing),
-		string(MissionStatusSucceed),
-		string(MissionStatusFailed),
+		string(MissionStatusDone),
 	}
 }

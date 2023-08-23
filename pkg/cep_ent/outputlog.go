@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 输出表，用于最老的直连方式任务计费
+// OutputLog is the model entity for the OutputLog schema.
 type OutputLog struct {
 	config `json:"-"`
 	// ID of the ent.

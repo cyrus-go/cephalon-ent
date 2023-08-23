@@ -5,10 +5,8 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionbatch"
-	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/enums"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -34,26 +32,20 @@ type Mission struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 任务类型
 	Type enums.MissionType `json:"type"`
-	// 是否为计时类型任务
-	IsTime bool `json:"is_time"`
 	// 任务的请求参数体
 	Body string `json:"body"`
 	// 回调地址，空字符串表示不回调
 	CallBackURL string `json:"call_back_url"`
 	// 任务状态
 	Status enums.MissionStatus `json:"status"`
+	// 任务结果，pending 表示还没有结果
+	Result enums.MissionResult `json:"result"`
 	// 任务结果资源位置列表序列化
-	ResultUrls string `json:"-"`
-	// 有的任务除了链接外还有其他有用的结果，都塞在这个字段，比如 sd 的实际入参
-	AdditionalResult string `json:"-"`
-	// 外键任务创建者的密钥对 ID
-	HmacKeyPairID int64 `json:"hmac_key_pair_id"`
-	// 外键任务创建者的 ID
-	UserID int64 `json:"user_id"`
+	ResultUrls []string `json:"-"`
+	// 任务创建者的密钥对 ID
+	KeyPairID int64 `json:"key_pair_id"`
 	// 任务批次号
-	MissionBatchNumber string `json:"batch_number"`
-	// 外键任务批次
-	MissionBatchID int64 `json:"mission_batch_id"`
+	MissionBatchNumber string `json:"mission_batch_number"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -62,91 +54,35 @@ type Mission struct {
 
 // MissionEdges holds the relations/edges for other nodes in the graph.
 type MissionEdges struct {
-	// MissionProductions holds the value of the mission_productions edge.
-	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
-	// MissionConsumeOrder holds the value of the mission_consume_order edge.
-	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
-	// MissionProduceOrders holds the value of the mission_produce_orders edge.
-	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
-	// HmacKeyPair holds the value of the hmac_key_pair edge.
-	HmacKeyPair *HmacKeyPair `json:"hmac_key_pair,omitempty"`
-	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
-	// MissionBatch holds the value of the mission_batch edge.
-	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
+	// MissionKeyPairs holds the value of the mission_key_pairs edge.
+	MissionKeyPairs []*MissionKeyPair `json:"mission_key_pairs,omitempty"`
+	// KeyPair holds the value of the key_pair edge.
+	KeyPair *HmacKeyPair `json:"key_pair,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [2]bool
 }
 
-// MissionProductionsOrErr returns the MissionProductions value or an error if the edge
+// MissionKeyPairsOrErr returns the MissionKeyPairs value or an error if the edge
 // was not loaded in eager-loading.
-func (e MissionEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
+func (e MissionEdges) MissionKeyPairsOrErr() ([]*MissionKeyPair, error) {
 	if e.loadedTypes[0] {
-		return e.MissionProductions, nil
+		return e.MissionKeyPairs, nil
 	}
-	return nil, &NotLoadedError{edge: "mission_productions"}
+	return nil, &NotLoadedError{edge: "mission_key_pairs"}
 }
 
-// MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
+// KeyPairOrErr returns the KeyPair value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e MissionEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
+func (e MissionEdges) KeyPairOrErr() (*HmacKeyPair, error) {
 	if e.loadedTypes[1] {
-		if e.MissionConsumeOrder == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: missionconsumeorder.Label}
-		}
-		return e.MissionConsumeOrder, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_consume_order"}
-}
-
-// MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
-	if e.loadedTypes[2] {
-		return e.MissionProduceOrders, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_produce_orders"}
-}
-
-// HmacKeyPairOrErr returns the HmacKeyPair value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e MissionEdges) HmacKeyPairOrErr() (*HmacKeyPair, error) {
-	if e.loadedTypes[3] {
-		if e.HmacKeyPair == nil {
+		if e.KeyPair == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: hmackeypair.Label}
 		}
-		return e.HmacKeyPair, nil
+		return e.KeyPair, nil
 	}
-	return nil, &NotLoadedError{edge: "hmac_key_pair"}
-}
-
-// UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e MissionEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[4] {
-		if e.User == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: user.Label}
-		}
-		return e.User, nil
-	}
-	return nil, &NotLoadedError{edge: "user"}
-}
-
-// MissionBatchOrErr returns the MissionBatch value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e MissionEdges) MissionBatchOrErr() (*MissionBatch, error) {
-	if e.loadedTypes[5] {
-		if e.MissionBatch == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: missionbatch.Label}
-		}
-		return e.MissionBatch, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_batch"}
+	return nil, &NotLoadedError{edge: "key_pair"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -154,11 +90,11 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mission.FieldIsTime:
-			values[i] = new(sql.NullBool)
-		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldHmacKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID:
+		case mission.FieldResultUrls:
+			values[i] = new([]byte)
+		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResultUrls, mission.FieldAdditionalResult, mission.FieldMissionBatchNumber:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -219,12 +155,6 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Type = enums.MissionType(value.String)
 			}
-		case mission.FieldIsTime:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_time", values[i])
-			} else if value.Valid {
-				m.IsTime = value.Bool
-			}
 		case mission.FieldBody:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field body", values[i])
@@ -243,41 +173,31 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Status = enums.MissionStatus(value.String)
 			}
+		case mission.FieldResult:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field result", values[i])
+			} else if value.Valid {
+				m.Result = enums.MissionResult(value.String)
+			}
 		case mission.FieldResultUrls:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field result_urls", values[i])
-			} else if value.Valid {
-				m.ResultUrls = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &m.ResultUrls); err != nil {
+					return fmt.Errorf("unmarshal field result_urls: %w", err)
+				}
 			}
-		case mission.FieldAdditionalResult:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field additional_result", values[i])
-			} else if value.Valid {
-				m.AdditionalResult = value.String
-			}
-		case mission.FieldHmacKeyPairID:
+		case mission.FieldKeyPairID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field hmac_key_pair_id", values[i])
+				return fmt.Errorf("unexpected type %T for field key_pair_id", values[i])
 			} else if value.Valid {
-				m.HmacKeyPairID = value.Int64
-			}
-		case mission.FieldUserID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				m.UserID = value.Int64
+				m.KeyPairID = value.Int64
 			}
 		case mission.FieldMissionBatchNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field mission_batch_number", values[i])
 			} else if value.Valid {
 				m.MissionBatchNumber = value.String
-			}
-		case mission.FieldMissionBatchID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field mission_batch_id", values[i])
-			} else if value.Valid {
-				m.MissionBatchID = value.Int64
 			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
@@ -292,34 +212,14 @@ func (m *Mission) Value(name string) (ent.Value, error) {
 	return m.selectValues.Get(name)
 }
 
-// QueryMissionProductions queries the "mission_productions" edge of the Mission entity.
-func (m *Mission) QueryMissionProductions() *MissionProductionQuery {
-	return NewMissionClient(m.config).QueryMissionProductions(m)
+// QueryMissionKeyPairs queries the "mission_key_pairs" edge of the Mission entity.
+func (m *Mission) QueryMissionKeyPairs() *MissionKeyPairQuery {
+	return NewMissionClient(m.config).QueryMissionKeyPairs(m)
 }
 
-// QueryMissionConsumeOrder queries the "mission_consume_order" edge of the Mission entity.
-func (m *Mission) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
-	return NewMissionClient(m.config).QueryMissionConsumeOrder(m)
-}
-
-// QueryMissionProduceOrders queries the "mission_produce_orders" edge of the Mission entity.
-func (m *Mission) QueryMissionProduceOrders() *MissionProduceOrderQuery {
-	return NewMissionClient(m.config).QueryMissionProduceOrders(m)
-}
-
-// QueryHmacKeyPair queries the "hmac_key_pair" edge of the Mission entity.
-func (m *Mission) QueryHmacKeyPair() *HmacKeyPairQuery {
-	return NewMissionClient(m.config).QueryHmacKeyPair(m)
-}
-
-// QueryUser queries the "user" edge of the Mission entity.
-func (m *Mission) QueryUser() *UserQuery {
-	return NewMissionClient(m.config).QueryUser(m)
-}
-
-// QueryMissionBatch queries the "mission_batch" edge of the Mission entity.
-func (m *Mission) QueryMissionBatch() *MissionBatchQuery {
-	return NewMissionClient(m.config).QueryMissionBatch(m)
+// QueryKeyPair queries the "key_pair" edge of the Mission entity.
+func (m *Mission) QueryKeyPair() *HmacKeyPairQuery {
+	return NewMissionClient(m.config).QueryKeyPair(m)
 }
 
 // Update returns a builder for updating this Mission.
@@ -363,9 +263,6 @@ func (m *Mission) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", m.Type))
 	builder.WriteString(", ")
-	builder.WriteString("is_time=")
-	builder.WriteString(fmt.Sprintf("%v", m.IsTime))
-	builder.WriteString(", ")
 	builder.WriteString("body=")
 	builder.WriteString(m.Body)
 	builder.WriteString(", ")
@@ -375,21 +272,16 @@ func (m *Mission) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", m.Status))
 	builder.WriteString(", ")
+	builder.WriteString("result=")
+	builder.WriteString(fmt.Sprintf("%v", m.Result))
+	builder.WriteString(", ")
 	builder.WriteString("result_urls=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("additional_result=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("hmac_key_pair_id=")
-	builder.WriteString(fmt.Sprintf("%v", m.HmacKeyPairID))
-	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", m.UserID))
+	builder.WriteString("key_pair_id=")
+	builder.WriteString(fmt.Sprintf("%v", m.KeyPairID))
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_number=")
 	builder.WriteString(m.MissionBatchNumber)
-	builder.WriteString(", ")
-	builder.WriteString("mission_batch_id=")
-	builder.WriteString(fmt.Sprintf("%v", m.MissionBatchID))
 	builder.WriteByte(')')
 	return builder.String()
 }

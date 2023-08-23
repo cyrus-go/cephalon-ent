@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 )
 
@@ -14,10 +13,10 @@ type OutputLog struct {
 // Fields of the OutputLog.
 func (OutputLog) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("trace_id").Default(0).Immutable().StructTag(`json:"trace_id"`).Comment("请求追踪 id"),
-		field.String("headers").Default("").StructTag(`json:"headers"`).Comment("请求头"),
+		field.Int64("trace_id").Immutable().StructTag(`json:"trace_id"`).Comment("请求追踪 id"),
+		field.String("headers").StructTag(`json:"headers"`).Comment("请求头"),
 		field.String("body").Default("").Optional().StructTag(`json:"body"`).Comment("请求体"),
-		field.String("url").Default("").StructTag(`json:"url"`).Comment("请求地址"),
+		field.String("url").StructTag(`json:"url"`).Comment("请求地址"),
 		field.String("ip").Default("").Optional().StructTag(`json:"ip"`).Comment("客户端 IP"),
 		field.String("caller").Default("general").StructTag(`json:"caller"`).Comment("调用方"),
 		field.Int16("status").Default(200).Optional().StructTag(`json:"status"`).Comment("状态码"),
@@ -33,12 +32,5 @@ func (OutputLog) Edges() []ent.Edge {
 func (OutputLog) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
-	}
-}
-
-// Annotations of the BaseMixin.
-func (OutputLog) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		schema.Comment("输出表，用于最老的直连方式任务计费"),
 	}
 }

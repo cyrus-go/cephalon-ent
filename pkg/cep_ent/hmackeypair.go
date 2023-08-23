@@ -4,7 +4,6 @@ package cep_ent
 
 import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
-	"cephalon-ent/pkg/cep_ent/user"
 	"fmt"
 	"strings"
 	"time"
@@ -13,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Hmac 密钥对，用于没有登录态时安全调用任务相关接口的场景
+// HmacKeyPair is the model entity for the HmacKeyPair schema.
 type HmacKeyPair struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -34,8 +33,6 @@ type HmacKeyPair struct {
 	Secret string `json:"secret"`
 	// 请求方
 	Caller string `json:"caller"`
-	// 外键用户 ID
-	UserID int64 `json:"user_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HmacKeyPairQuery when eager-loading is set.
 	Edges        HmacKeyPairEdges `json:"edges"`
@@ -44,24 +41,22 @@ type HmacKeyPair struct {
 
 // HmacKeyPairEdges holds the relations/edges for other nodes in the graph.
 type HmacKeyPairEdges struct {
-	// MissionProductions holds the value of the mission_productions edge.
-	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
+	// MissionKeyPairs holds the value of the mission_key_pairs edge.
+	MissionKeyPairs []*MissionKeyPair `json:"mission_key_pairs,omitempty"`
 	// CreatedMissions holds the value of the created_missions edge.
 	CreatedMissions []*Mission `json:"created_missions,omitempty"`
-	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [2]bool
 }
 
-// MissionProductionsOrErr returns the MissionProductions value or an error if the edge
+// MissionKeyPairsOrErr returns the MissionKeyPairs value or an error if the edge
 // was not loaded in eager-loading.
-func (e HmacKeyPairEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
+func (e HmacKeyPairEdges) MissionKeyPairsOrErr() ([]*MissionKeyPair, error) {
 	if e.loadedTypes[0] {
-		return e.MissionProductions, nil
+		return e.MissionKeyPairs, nil
 	}
-	return nil, &NotLoadedError{edge: "mission_productions"}
+	return nil, &NotLoadedError{edge: "mission_key_pairs"}
 }
 
 // CreatedMissionsOrErr returns the CreatedMissions value or an error if the edge
@@ -73,25 +68,12 @@ func (e HmacKeyPairEdges) CreatedMissionsOrErr() ([]*Mission, error) {
 	return nil, &NotLoadedError{edge: "created_missions"}
 }
 
-// UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e HmacKeyPairEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[2] {
-		if e.User == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: user.Label}
-		}
-		return e.User, nil
-	}
-	return nil, &NotLoadedError{edge: "user"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*HmacKeyPair) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case hmackeypair.FieldID, hmackeypair.FieldCreatedBy, hmackeypair.FieldUpdatedBy, hmackeypair.FieldUserID:
+		case hmackeypair.FieldID, hmackeypair.FieldCreatedBy, hmackeypair.FieldUpdatedBy:
 			values[i] = new(sql.NullInt64)
 		case hmackeypair.FieldKey, hmackeypair.FieldSecret, hmackeypair.FieldCaller:
 			values[i] = new(sql.NullString)
@@ -166,12 +148,6 @@ func (hkp *HmacKeyPair) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				hkp.Caller = value.String
 			}
-		case hmackeypair.FieldUserID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				hkp.UserID = value.Int64
-			}
 		default:
 			hkp.selectValues.Set(columns[i], values[i])
 		}
@@ -185,19 +161,14 @@ func (hkp *HmacKeyPair) Value(name string) (ent.Value, error) {
 	return hkp.selectValues.Get(name)
 }
 
-// QueryMissionProductions queries the "mission_productions" edge of the HmacKeyPair entity.
-func (hkp *HmacKeyPair) QueryMissionProductions() *MissionProductionQuery {
-	return NewHmacKeyPairClient(hkp.config).QueryMissionProductions(hkp)
+// QueryMissionKeyPairs queries the "mission_key_pairs" edge of the HmacKeyPair entity.
+func (hkp *HmacKeyPair) QueryMissionKeyPairs() *MissionKeyPairQuery {
+	return NewHmacKeyPairClient(hkp.config).QueryMissionKeyPairs(hkp)
 }
 
 // QueryCreatedMissions queries the "created_missions" edge of the HmacKeyPair entity.
 func (hkp *HmacKeyPair) QueryCreatedMissions() *MissionQuery {
 	return NewHmacKeyPairClient(hkp.config).QueryCreatedMissions(hkp)
-}
-
-// QueryUser queries the "user" edge of the HmacKeyPair entity.
-func (hkp *HmacKeyPair) QueryUser() *UserQuery {
-	return NewHmacKeyPairClient(hkp.config).QueryUser(hkp)
 }
 
 // Update returns a builder for updating this HmacKeyPair.
@@ -246,9 +217,6 @@ func (hkp *HmacKeyPair) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("caller=")
 	builder.WriteString(hkp.Caller)
-	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", hkp.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

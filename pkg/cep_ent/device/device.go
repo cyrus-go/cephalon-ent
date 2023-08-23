@@ -28,18 +28,26 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
-	// FieldStatus holds the string denoting the status field in the database.
-	FieldStatus = "status"
+	// FieldSerialNumber holds the string denoting the serial_number field in the database.
+	FieldSerialNumber = "serial_number"
+	// FieldState holds the string denoting the state field in the database.
+	FieldState = "state"
+	// FieldSumCep holds the string denoting the sum_cep field in the database.
+	FieldSumCep = "sum_cep"
+	// FieldLinking holds the string denoting the linking field in the database.
+	FieldLinking = "linking"
 	// FieldBindingStatus holds the string denoting the binding_status field in the database.
 	FieldBindingStatus = "binding_status"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
 	EdgeMissionProduceOrders = "mission_produce_orders"
-	// EdgeMissionProductions holds the string denoting the mission_productions edge name in mutations.
-	EdgeMissionProductions = "mission_productions"
 	// EdgeUserDevices holds the string denoting the user_devices edge name in mutations.
 	EdgeUserDevices = "user_devices"
+	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
+	EdgeDeviceGpuMissions = "device_gpu_missions"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -56,13 +64,6 @@ const (
 	MissionProduceOrdersInverseTable = "mission_produce_orders"
 	// MissionProduceOrdersColumn is the table column denoting the mission_produce_orders relation/edge.
 	MissionProduceOrdersColumn = "device_id"
-	// MissionProductionsTable is the table that holds the mission_productions relation/edge.
-	MissionProductionsTable = "mission_productions"
-	// MissionProductionsInverseTable is the table name for the MissionProduction entity.
-	// It exists in this package in order to avoid circular dependency with the "missionproduction" package.
-	MissionProductionsInverseTable = "mission_productions"
-	// MissionProductionsColumn is the table column denoting the mission_productions relation/edge.
-	MissionProductionsColumn = "device_id"
 	// UserDevicesTable is the table that holds the user_devices relation/edge.
 	UserDevicesTable = "user_devices"
 	// UserDevicesInverseTable is the table name for the UserDevice entity.
@@ -70,6 +71,13 @@ const (
 	UserDevicesInverseTable = "user_devices"
 	// UserDevicesColumn is the table column denoting the user_devices relation/edge.
 	UserDevicesColumn = "device_id"
+	// DeviceGpuMissionsTable is the table that holds the device_gpu_missions relation/edge.
+	DeviceGpuMissionsTable = "device_gpu_missions"
+	// DeviceGpuMissionsInverseTable is the table name for the DeviceGpuMission entity.
+	// It exists in this package in order to avoid circular dependency with the "devicegpumission" package.
+	DeviceGpuMissionsInverseTable = "device_gpu_missions"
+	// DeviceGpuMissionsColumn is the table column denoting the device_gpu_missions relation/edge.
+	DeviceGpuMissionsColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -81,8 +89,12 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldUserID,
-	FieldStatus,
+	FieldSerialNumber,
+	FieldState,
+	FieldSumCep,
+	FieldLinking,
 	FieldBindingStatus,
+	FieldStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -110,19 +122,40 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int64
+	// DefaultSerialNumber holds the default value on creation for the "serial_number" field.
+	DefaultSerialNumber string
+	// DefaultSumCep holds the default value on creation for the "sum_cep" field.
+	DefaultSumCep int64
+	// DefaultLinking holds the default value on creation for the "linking" field.
+	DefaultLinking bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.DeviceStatus = "online"
+// State defines the type for the "state" enum field.
+type State string
 
-// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s enums.DeviceStatus) error {
+// StateInit is the default value of the State enum.
+const DefaultState = StateInit
+
+// State values.
+const (
+	StateOn   State = "On"
+	StateDown State = "Down"
+	StateInit State = "Init"
+)
+
+func (s State) String() string {
+	return string(s)
+}
+
+// StateValidator is a validator for the "state" field enum values. It is called by the builders before save.
+func StateValidator(s State) error {
 	switch s {
-	case "online", "offline", "busy", "free":
+	case StateOn, StateDown, StateInit:
 		return nil
 	default:
-		return fmt.Errorf("device: invalid enum value for status field: %q", s)
+		return fmt.Errorf("device: invalid enum value for state field: %q", s)
 	}
 }
 
@@ -135,6 +168,33 @@ func BindingStatusValidator(bs enums.DeviceBindingStatus) error {
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for binding_status field: %q", bs)
+	}
+}
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusOnline is the default value of the Status enum.
+const DefaultStatus = StatusOnline
+
+// Status values.
+const (
+	StatusOnline  Status = "online"
+	StatusOffline Status = "offline"
+	StatusBusy    Status = "busy"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusOnline, StatusOffline, StatusBusy:
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for status field: %q", s)
 	}
 }
 
@@ -176,14 +236,34 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
-// ByStatus orders the results by the status field.
-func ByStatus(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+// BySerialNumber orders the results by the serial_number field.
+func BySerialNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSerialNumber, opts...).ToFunc()
+}
+
+// ByState orders the results by the state field.
+func ByState(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldState, opts...).ToFunc()
+}
+
+// BySumCep orders the results by the sum_cep field.
+func BySumCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSumCep, opts...).ToFunc()
+}
+
+// ByLinking orders the results by the linking field.
+func ByLinking(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLinking, opts...).ToFunc()
 }
 
 // ByBindingStatus orders the results by the binding_status field.
 func ByBindingStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBindingStatus, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.
@@ -207,20 +287,6 @@ func ByMissionProduceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 	}
 }
 
-// ByMissionProductionsCount orders the results by mission_productions count.
-func ByMissionProductionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMissionProductionsStep(), opts...)
-	}
-}
-
-// ByMissionProductions orders the results by mission_productions terms.
-func ByMissionProductions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionProductionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByUserDevicesCount orders the results by user_devices count.
 func ByUserDevicesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -232,6 +298,20 @@ func ByUserDevicesCount(opts ...sql.OrderTermOption) OrderOption {
 func ByUserDevices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newUserDevicesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByDeviceGpuMissionsCount orders the results by device_gpu_missions count.
+func ByDeviceGpuMissionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDeviceGpuMissionsStep(), opts...)
+	}
+}
+
+// ByDeviceGpuMissions orders the results by device_gpu_missions terms.
+func ByDeviceGpuMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceGpuMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -248,17 +328,17 @@ func newMissionProduceOrdersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
 	)
 }
-func newMissionProductionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionProductionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
-	)
-}
 func newUserDevicesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserDevicesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, UserDevicesTable, UserDevicesColumn),
+	)
+}
+func newDeviceGpuMissionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceGpuMissionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DeviceGpuMissionsTable, DeviceGpuMissionsColumn),
 	)
 }

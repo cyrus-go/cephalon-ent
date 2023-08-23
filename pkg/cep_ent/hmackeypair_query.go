@@ -5,9 +5,8 @@ package cep_ent
 import (
 	"cephalon-ent/pkg/cep_ent/hmackeypair"
 	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionproduction"
+	"cephalon-ent/pkg/cep_ent/missionkeypair"
 	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"database/sql/driver"
 	"fmt"
@@ -21,13 +20,12 @@ import (
 // HmacKeyPairQuery is the builder for querying HmacKeyPair entities.
 type HmacKeyPairQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []hmackeypair.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.HmacKeyPair
-	withMissionProductions *MissionProductionQuery
-	withCreatedMissions    *MissionQuery
-	withUser               *UserQuery
+	ctx                 *QueryContext
+	order               []hmackeypair.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.HmacKeyPair
+	withMissionKeyPairs *MissionKeyPairQuery
+	withCreatedMissions *MissionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,9 +62,9 @@ func (hkpq *HmacKeyPairQuery) Order(o ...hmackeypair.OrderOption) *HmacKeyPairQu
 	return hkpq
 }
 
-// QueryMissionProductions chains the current query on the "mission_productions" edge.
-func (hkpq *HmacKeyPairQuery) QueryMissionProductions() *MissionProductionQuery {
-	query := (&MissionProductionClient{config: hkpq.config}).Query()
+// QueryMissionKeyPairs chains the current query on the "mission_key_pairs" edge.
+func (hkpq *HmacKeyPairQuery) QueryMissionKeyPairs() *MissionKeyPairQuery {
+	query := (&MissionKeyPairClient{config: hkpq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := hkpq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -77,8 +75,8 @@ func (hkpq *HmacKeyPairQuery) QueryMissionProductions() *MissionProductionQuery 
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(hmackeypair.Table, hmackeypair.FieldID, selector),
-			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, hmackeypair.MissionProductionsTable, hmackeypair.MissionProductionsColumn),
+			sqlgraph.To(missionkeypair.Table, missionkeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, hmackeypair.MissionKeyPairsTable, hmackeypair.MissionKeyPairsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hkpq.driver.Dialect(), step)
 		return fromU, nil
@@ -101,28 +99,6 @@ func (hkpq *HmacKeyPairQuery) QueryCreatedMissions() *MissionQuery {
 			sqlgraph.From(hmackeypair.Table, hmackeypair.FieldID, selector),
 			sqlgraph.To(mission.Table, mission.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, hmackeypair.CreatedMissionsTable, hmackeypair.CreatedMissionsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(hkpq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryUser chains the current query on the "user" edge.
-func (hkpq *HmacKeyPairQuery) QueryUser() *UserQuery {
-	query := (&UserClient{config: hkpq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := hkpq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := hkpq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(hmackeypair.Table, hmackeypair.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, hmackeypair.UserTable, hmackeypair.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(hkpq.driver.Dialect(), step)
 		return fromU, nil
@@ -317,28 +293,27 @@ func (hkpq *HmacKeyPairQuery) Clone() *HmacKeyPairQuery {
 		return nil
 	}
 	return &HmacKeyPairQuery{
-		config:                 hkpq.config,
-		ctx:                    hkpq.ctx.Clone(),
-		order:                  append([]hmackeypair.OrderOption{}, hkpq.order...),
-		inters:                 append([]Interceptor{}, hkpq.inters...),
-		predicates:             append([]predicate.HmacKeyPair{}, hkpq.predicates...),
-		withMissionProductions: hkpq.withMissionProductions.Clone(),
-		withCreatedMissions:    hkpq.withCreatedMissions.Clone(),
-		withUser:               hkpq.withUser.Clone(),
+		config:              hkpq.config,
+		ctx:                 hkpq.ctx.Clone(),
+		order:               append([]hmackeypair.OrderOption{}, hkpq.order...),
+		inters:              append([]Interceptor{}, hkpq.inters...),
+		predicates:          append([]predicate.HmacKeyPair{}, hkpq.predicates...),
+		withMissionKeyPairs: hkpq.withMissionKeyPairs.Clone(),
+		withCreatedMissions: hkpq.withCreatedMissions.Clone(),
 		// clone intermediate query.
 		sql:  hkpq.sql.Clone(),
 		path: hkpq.path,
 	}
 }
 
-// WithMissionProductions tells the query-builder to eager-load the nodes that are connected to
-// the "mission_productions" edge. The optional arguments are used to configure the query builder of the edge.
-func (hkpq *HmacKeyPairQuery) WithMissionProductions(opts ...func(*MissionProductionQuery)) *HmacKeyPairQuery {
-	query := (&MissionProductionClient{config: hkpq.config}).Query()
+// WithMissionKeyPairs tells the query-builder to eager-load the nodes that are connected to
+// the "mission_key_pairs" edge. The optional arguments are used to configure the query builder of the edge.
+func (hkpq *HmacKeyPairQuery) WithMissionKeyPairs(opts ...func(*MissionKeyPairQuery)) *HmacKeyPairQuery {
+	query := (&MissionKeyPairClient{config: hkpq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	hkpq.withMissionProductions = query
+	hkpq.withMissionKeyPairs = query
 	return hkpq
 }
 
@@ -350,17 +325,6 @@ func (hkpq *HmacKeyPairQuery) WithCreatedMissions(opts ...func(*MissionQuery)) *
 		opt(query)
 	}
 	hkpq.withCreatedMissions = query
-	return hkpq
-}
-
-// WithUser tells the query-builder to eager-load the nodes that are connected to
-// the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (hkpq *HmacKeyPairQuery) WithUser(opts ...func(*UserQuery)) *HmacKeyPairQuery {
-	query := (&UserClient{config: hkpq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	hkpq.withUser = query
 	return hkpq
 }
 
@@ -442,10 +406,9 @@ func (hkpq *HmacKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*HmacKeyPair{}
 		_spec       = hkpq.querySpec()
-		loadedTypes = [3]bool{
-			hkpq.withMissionProductions != nil,
+		loadedTypes = [2]bool{
+			hkpq.withMissionKeyPairs != nil,
 			hkpq.withCreatedMissions != nil,
-			hkpq.withUser != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -466,12 +429,10 @@ func (hkpq *HmacKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := hkpq.withMissionProductions; query != nil {
-		if err := hkpq.loadMissionProductions(ctx, query, nodes,
-			func(n *HmacKeyPair) { n.Edges.MissionProductions = []*MissionProduction{} },
-			func(n *HmacKeyPair, e *MissionProduction) {
-				n.Edges.MissionProductions = append(n.Edges.MissionProductions, e)
-			}); err != nil {
+	if query := hkpq.withMissionKeyPairs; query != nil {
+		if err := hkpq.loadMissionKeyPairs(ctx, query, nodes,
+			func(n *HmacKeyPair) { n.Edges.MissionKeyPairs = []*MissionKeyPair{} },
+			func(n *HmacKeyPair, e *MissionKeyPair) { n.Edges.MissionKeyPairs = append(n.Edges.MissionKeyPairs, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -482,16 +443,10 @@ func (hkpq *HmacKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 			return nil, err
 		}
 	}
-	if query := hkpq.withUser; query != nil {
-		if err := hkpq.loadUser(ctx, query, nodes, nil,
-			func(n *HmacKeyPair, e *User) { n.Edges.User = e }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
 }
 
-func (hkpq *HmacKeyPairQuery) loadMissionProductions(ctx context.Context, query *MissionProductionQuery, nodes []*HmacKeyPair, init func(*HmacKeyPair), assign func(*HmacKeyPair, *MissionProduction)) error {
+func (hkpq *HmacKeyPairQuery) loadMissionKeyPairs(ctx context.Context, query *MissionKeyPairQuery, nodes []*HmacKeyPair, init func(*HmacKeyPair), assign func(*HmacKeyPair, *MissionKeyPair)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*HmacKeyPair)
 	for i := range nodes {
@@ -502,20 +457,20 @@ func (hkpq *HmacKeyPairQuery) loadMissionProductions(ctx context.Context, query 
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(missionproduction.FieldHmacKeyPairID)
+		query.ctx.AppendFieldOnce(missionkeypair.FieldKeyPairID)
 	}
-	query.Where(predicate.MissionProduction(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(hmackeypair.MissionProductionsColumn), fks...))
+	query.Where(predicate.MissionKeyPair(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(hmackeypair.MissionKeyPairsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.HmacKeyPairID
+		fk := n.KeyPairID
 		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "hmac_key_pair_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "key_pair_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -532,7 +487,7 @@ func (hkpq *HmacKeyPairQuery) loadCreatedMissions(ctx context.Context, query *Mi
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(mission.FieldHmacKeyPairID)
+		query.ctx.AppendFieldOnce(mission.FieldKeyPairID)
 	}
 	query.Where(predicate.Mission(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(hmackeypair.CreatedMissionsColumn), fks...))
@@ -542,41 +497,12 @@ func (hkpq *HmacKeyPairQuery) loadCreatedMissions(ctx context.Context, query *Mi
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.HmacKeyPairID
+		fk := n.KeyPairID
 		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "hmac_key_pair_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "key_pair_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
-	}
-	return nil
-}
-func (hkpq *HmacKeyPairQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*HmacKeyPair, init func(*HmacKeyPair), assign func(*HmacKeyPair, *User)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*HmacKeyPair)
-	for i := range nodes {
-		fk := nodes[i].UserID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(user.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
 	}
 	return nil
 }
@@ -605,9 +531,6 @@ func (hkpq *HmacKeyPairQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != hmackeypair.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
-		}
-		if hkpq.withUser != nil {
-			_spec.Node.AddColumnOnce(hmackeypair.FieldUserID)
 		}
 	}
 	if ps := hkpq.predicates; len(ps) > 0 {

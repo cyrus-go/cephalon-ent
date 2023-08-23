@@ -30,37 +30,26 @@ const (
 	FieldSecret = "secret"
 	// FieldCaller holds the string denoting the caller field in the database.
 	FieldCaller = "caller"
-	// FieldUserID holds the string denoting the user_id field in the database.
-	FieldUserID = "user_id"
-	// EdgeMissionProductions holds the string denoting the mission_productions edge name in mutations.
-	EdgeMissionProductions = "mission_productions"
+	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
+	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeCreatedMissions holds the string denoting the created_missions edge name in mutations.
 	EdgeCreatedMissions = "created_missions"
-	// EdgeUser holds the string denoting the user edge name in mutations.
-	EdgeUser = "user"
 	// Table holds the table name of the hmackeypair in the database.
 	Table = "hmac_key_pairs"
-	// MissionProductionsTable is the table that holds the mission_productions relation/edge.
-	MissionProductionsTable = "mission_productions"
-	// MissionProductionsInverseTable is the table name for the MissionProduction entity.
-	// It exists in this package in order to avoid circular dependency with the "missionproduction" package.
-	MissionProductionsInverseTable = "mission_productions"
-	// MissionProductionsColumn is the table column denoting the mission_productions relation/edge.
-	MissionProductionsColumn = "hmac_key_pair_id"
+	// MissionKeyPairsTable is the table that holds the mission_key_pairs relation/edge.
+	MissionKeyPairsTable = "mission_key_pairs"
+	// MissionKeyPairsInverseTable is the table name for the MissionKeyPair entity.
+	// It exists in this package in order to avoid circular dependency with the "missionkeypair" package.
+	MissionKeyPairsInverseTable = "mission_key_pairs"
+	// MissionKeyPairsColumn is the table column denoting the mission_key_pairs relation/edge.
+	MissionKeyPairsColumn = "key_pair_id"
 	// CreatedMissionsTable is the table that holds the created_missions relation/edge.
 	CreatedMissionsTable = "missions"
 	// CreatedMissionsInverseTable is the table name for the Mission entity.
 	// It exists in this package in order to avoid circular dependency with the "mission" package.
 	CreatedMissionsInverseTable = "missions"
 	// CreatedMissionsColumn is the table column denoting the created_missions relation/edge.
-	CreatedMissionsColumn = "hmac_key_pair_id"
-	// UserTable is the table that holds the user relation/edge.
-	UserTable = "hmac_key_pairs"
-	// UserInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	UserInverseTable = "users"
-	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_id"
+	CreatedMissionsColumn = "key_pair_id"
 )
 
 // Columns holds all SQL columns for hmackeypair fields.
@@ -74,7 +63,6 @@ var Columns = []string{
 	FieldKey,
 	FieldSecret,
 	FieldCaller,
-	FieldUserID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -100,14 +88,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
-	// DefaultKey holds the default value on creation for the "key" field.
-	DefaultKey string
-	// DefaultSecret holds the default value on creation for the "secret" field.
-	DefaultSecret string
 	// DefaultCaller holds the default value on creation for the "caller" field.
 	DefaultCaller string
-	// DefaultUserID holds the default value on creation for the "user_id" field.
-	DefaultUserID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -160,22 +142,17 @@ func ByCaller(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCaller, opts...).ToFunc()
 }
 
-// ByUserID orders the results by the user_id field.
-func ByUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUserID, opts...).ToFunc()
-}
-
-// ByMissionProductionsCount orders the results by mission_productions count.
-func ByMissionProductionsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByMissionKeyPairsCount orders the results by mission_key_pairs count.
+func ByMissionKeyPairsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMissionProductionsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newMissionKeyPairsStep(), opts...)
 	}
 }
 
-// ByMissionProductions orders the results by mission_productions terms.
-func ByMissionProductions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByMissionKeyPairs orders the results by mission_key_pairs terms.
+func ByMissionKeyPairs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionProductionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newMissionKeyPairsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -192,18 +169,11 @@ func ByCreatedMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCreatedMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByUserField orders the results by user field.
-func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
-	}
-}
-func newMissionProductionsStep() *sqlgraph.Step {
+func newMissionKeyPairsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionProductionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
+		sqlgraph.To(MissionKeyPairsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
 	)
 }
 func newCreatedMissionsStep() *sqlgraph.Step {
@@ -211,12 +181,5 @@ func newCreatedMissionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CreatedMissionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CreatedMissionsTable, CreatedMissionsColumn),
-	)
-}
-func newUserStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, UserTable, UserColumn),
 	)
 }

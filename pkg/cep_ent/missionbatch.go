@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 任务批次，和任务相关的数据一对多
+// MissionBatch is the model entity for the MissionBatch schema.
 type MissionBatch struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -42,15 +42,11 @@ type MissionBatch struct {
 type MissionBatchEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// Missions holds the value of the missions edge.
-	Missions []*Mission `json:"missions,omitempty"`
 	// MissionConsumeOrders holds the value of the mission_consume_orders edge.
 	MissionConsumeOrders []*MissionConsumeOrder `json:"mission_consume_orders,omitempty"`
-	// MissionProduceOrders holds the value of the mission_produce_orders edge.
-	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -66,31 +62,13 @@ func (e MissionBatchEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// MissionsOrErr returns the Missions value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionBatchEdges) MissionsOrErr() ([]*Mission, error) {
-	if e.loadedTypes[1] {
-		return e.Missions, nil
-	}
-	return nil, &NotLoadedError{edge: "missions"}
-}
-
 // MissionConsumeOrdersOrErr returns the MissionConsumeOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionBatchEdges) MissionConsumeOrdersOrErr() ([]*MissionConsumeOrder, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.MissionConsumeOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_consume_orders"}
-}
-
-// MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionBatchEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
-	if e.loadedTypes[3] {
-		return e.MissionProduceOrders, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_produce_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -185,19 +163,9 @@ func (mb *MissionBatch) QueryUser() *UserQuery {
 	return NewMissionBatchClient(mb.config).QueryUser(mb)
 }
 
-// QueryMissions queries the "missions" edge of the MissionBatch entity.
-func (mb *MissionBatch) QueryMissions() *MissionQuery {
-	return NewMissionBatchClient(mb.config).QueryMissions(mb)
-}
-
 // QueryMissionConsumeOrders queries the "mission_consume_orders" edge of the MissionBatch entity.
 func (mb *MissionBatch) QueryMissionConsumeOrders() *MissionConsumeOrderQuery {
 	return NewMissionBatchClient(mb.config).QueryMissionConsumeOrders(mb)
-}
-
-// QueryMissionProduceOrders queries the "mission_produce_orders" edge of the MissionBatch entity.
-func (mb *MissionBatch) QueryMissionProduceOrders() *MissionProduceOrderQuery {
-	return NewMissionBatchClient(mb.config).QueryMissionProduceOrders(mb)
 }
 
 // Update returns a builder for updating this MissionBatch.

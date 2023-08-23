@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 用户的分润配置，与用户一对多，但逻辑上主要是一对一
+// ProfitSetting is the model entity for the ProfitSetting schema.
 type ProfitSetting struct {
 	config `json:"-"`
 	// ID of the ent.

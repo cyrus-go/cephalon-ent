@@ -88,16 +88,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
-	// DefaultTraceID holds the default value on creation for the "trace_id" field.
-	DefaultTraceID int64
-	// DefaultHeaders holds the default value on creation for the "headers" field.
-	DefaultHeaders string
 	// DefaultBody holds the default value on creation for the "body" field.
 	DefaultBody string
 	// DefaultQuery holds the default value on creation for the "query" field.
 	DefaultQuery string
-	// DefaultURL holds the default value on creation for the "url" field.
-	DefaultURL string
 	// DefaultIP holds the default value on creation for the "ip" field.
 	DefaultIP string
 	// DefaultCaller holds the default value on creation for the "caller" field.
@@ -110,9 +104,6 @@ var (
 
 // Method defines the type for the "method" enum field.
 type Method string
-
-// MethodGET is the default value of the Method enum.
-const DefaultMethod = MethodGET
 
 // Method values.
 const (

@@ -3,7 +3,6 @@
 package rechargeorder
 
 import (
-	"cephalon-ent/pkg/enums"
 	"fmt"
 	"time"
 
@@ -30,8 +29,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldCep holds the string denoting the cep field in the database.
-	FieldCep = "cep"
+	// FieldPureCep holds the string denoting the pure_cep field in the database.
+	FieldPureCep = "pure_cep"
 	// FieldSocialID holds the string denoting the social_id field in the database.
 	FieldSocialID = "social_id"
 	// FieldType holds the string denoting the type field in the database.
@@ -46,8 +45,8 @@ const (
 	FieldOutTransactionID = "out_transaction_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeBills holds the string denoting the bills edge name in mutations.
-	EdgeBills = "bills"
+	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
+	EdgeCostBills = "cost_bills"
 	// EdgeVxSocial holds the string denoting the vx_social edge name in mutations.
 	EdgeVxSocial = "vx_social"
 	// Table holds the table name of the rechargeorder in the database.
@@ -59,13 +58,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// BillsTable is the table that holds the bills relation/edge.
-	BillsTable = "bills"
-	// BillsInverseTable is the table name for the Bill entity.
-	// It exists in this package in order to avoid circular dependency with the "bill" package.
-	BillsInverseTable = "bills"
-	// BillsColumn is the table column denoting the bills relation/edge.
-	BillsColumn = "reason_id"
+	// CostBillsTable is the table that holds the cost_bills relation/edge.
+	CostBillsTable = "cost_bills"
+	// CostBillsInverseTable is the table name for the CostBill entity.
+	// It exists in this package in order to avoid circular dependency with the "costbill" package.
+	CostBillsInverseTable = "cost_bills"
+	// CostBillsColumn is the table column denoting the cost_bills relation/edge.
+	CostBillsColumn = "reason_id"
 	// VxSocialTable is the table that holds the vx_social relation/edge.
 	VxSocialTable = "recharge_orders"
 	// VxSocialInverseTable is the table name for the VXSocial entity.
@@ -85,7 +84,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldStatus,
-	FieldCep,
+	FieldPureCep,
 	FieldSocialID,
 	FieldType,
 	FieldSerialNumber,
@@ -119,10 +118,10 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int64
-	// DefaultCep holds the default value on creation for the "cep" field.
-	DefaultCep int64
-	// CepValidator is a validator for the "cep" field. It is called by the builders before save.
-	CepValidator func(int64) error
+	// DefaultPureCep holds the default value on creation for the "pure_cep" field.
+	DefaultPureCep int64
+	// PureCepValidator is a validator for the "pure_cep" field. It is called by the builders before save.
+	PureCepValidator func(int64) error
 	// DefaultSocialID holds the default value on creation for the "social_id" field.
 	DefaultSocialID int64
 	// DefaultSerialNumber holds the default value on creation for the "serial_number" field.
@@ -137,24 +136,55 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.MissionStatus = "doing"
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusPending is the default value of the Status enum.
+const DefaultStatus = StatusPending
+
+// Status values.
+const (
+	StatusPending  Status = "pending"
+	StatusCanceled Status = "canceled"
+	StatusSucceed  Status = "succeed"
+	StatusFailed   Status = "failed"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s enums.MissionStatus) error {
+func StatusValidator(s Status) error {
 	switch s {
-	case "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed":
+	case StatusPending, StatusCanceled, StatusSucceed, StatusFailed:
 		return nil
 	default:
 		return fmt.Errorf("rechargeorder: invalid enum value for status field: %q", s)
 	}
 }
 
-const DefaultType enums.RechargeOrderType = "manual"
+// Type defines the type for the "type" enum field.
+type Type string
+
+// TypeVx is the default value of the Type enum.
+const DefaultType = TypeVx
+
+// Type values.
+const (
+	TypeVx     Type = "vx"
+	TypeAlipay Type = "alipay"
+	TypeManual Type = "manual"
+)
+
+func (_type Type) String() string {
+	return string(_type)
+}
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type enums.RechargeOrderType) error {
+func TypeValidator(_type Type) error {
 	switch _type {
-	case "manual", "vx", "alipay":
+	case TypeVx, TypeAlipay, TypeManual:
 		return nil
 	default:
 		return fmt.Errorf("rechargeorder: invalid enum value for type field: %q", _type)
@@ -204,9 +234,9 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByCep orders the results by the cep field.
-func ByCep(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCep, opts...).ToFunc()
+// ByPureCep orders the results by the pure_cep field.
+func ByPureCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPureCep, opts...).ToFunc()
 }
 
 // BySocialID orders the results by the social_id field.
@@ -246,17 +276,17 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByBillsCount orders the results by bills count.
-func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByCostBillsCount orders the results by cost_bills count.
+func ByCostBillsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newCostBillsStep(), opts...)
 	}
 }
 
-// ByBills orders the results by bills terms.
-func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByCostBills orders the results by cost_bills terms.
+func ByCostBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newCostBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -273,11 +303,11 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newBillsStep() *sqlgraph.Step {
+func newCostBillsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BillsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+		sqlgraph.To(CostBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
 	)
 }
 func newVxSocialStep() *sqlgraph.Step {

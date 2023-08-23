@@ -81,11 +81,6 @@ func DeletedAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// IsTime applies equality check predicate on the "is_time" field. It's identical to IsTimeEQ.
-func IsTime(v bool) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldIsTime, v))
-}
-
 // Body applies equality check predicate on the "body" field. It's identical to BodyEQ.
 func Body(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldBody, v))
@@ -96,34 +91,14 @@ func CallBackURL(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCallBackURL, v))
 }
 
-// ResultUrls applies equality check predicate on the "result_urls" field. It's identical to ResultUrlsEQ.
-func ResultUrls(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldResultUrls, v))
-}
-
-// AdditionalResult applies equality check predicate on the "additional_result" field. It's identical to AdditionalResultEQ.
-func AdditionalResult(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldAdditionalResult, v))
-}
-
-// HmacKeyPairID applies equality check predicate on the "hmac_key_pair_id" field. It's identical to HmacKeyPairIDEQ.
-func HmacKeyPairID(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldHmacKeyPairID, v))
-}
-
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldUserID, v))
+// KeyPairID applies equality check predicate on the "key_pair_id" field. It's identical to KeyPairIDEQ.
+func KeyPairID(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldKeyPairID, v))
 }
 
 // MissionBatchNumber applies equality check predicate on the "mission_batch_number" field. It's identical to MissionBatchNumberEQ.
 func MissionBatchNumber(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldMissionBatchNumber, v))
-}
-
-// MissionBatchID applies equality check predicate on the "mission_batch_id" field. It's identical to MissionBatchIDEQ.
-func MissionBatchID(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldMissionBatchID, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -356,16 +331,6 @@ func TypeNotIn(vs ...enums.MissionType) predicate.Mission {
 	return predicate.Mission(sql.FieldNotIn(FieldType, v...))
 }
 
-// IsTimeEQ applies the EQ predicate on the "is_time" field.
-func IsTimeEQ(v bool) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldIsTime, v))
-}
-
-// IsTimeNEQ applies the NEQ predicate on the "is_time" field.
-func IsTimeNEQ(v bool) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldIsTime, v))
-}
-
 // BodyEQ applies the EQ predicate on the "body" field.
 func BodyEQ(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldBody, v))
@@ -526,174 +491,64 @@ func StatusNotIn(vs ...enums.MissionStatus) predicate.Mission {
 	return predicate.Mission(sql.FieldNotIn(FieldStatus, v...))
 }
 
-// ResultUrlsEQ applies the EQ predicate on the "result_urls" field.
-func ResultUrlsEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldResultUrls, v))
+// ResultEQ applies the EQ predicate on the "result" field.
+func ResultEQ(v enums.MissionResult) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldEQ(FieldResult, vc))
 }
 
-// ResultUrlsNEQ applies the NEQ predicate on the "result_urls" field.
-func ResultUrlsNEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldResultUrls, v))
+// ResultNEQ applies the NEQ predicate on the "result" field.
+func ResultNEQ(v enums.MissionResult) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldNEQ(FieldResult, vc))
 }
 
-// ResultUrlsIn applies the In predicate on the "result_urls" field.
-func ResultUrlsIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldResultUrls, vs...))
+// ResultIn applies the In predicate on the "result" field.
+func ResultIn(vs ...enums.MissionResult) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldIn(FieldResult, v...))
 }
 
-// ResultUrlsNotIn applies the NotIn predicate on the "result_urls" field.
-func ResultUrlsNotIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldResultUrls, vs...))
+// ResultNotIn applies the NotIn predicate on the "result" field.
+func ResultNotIn(vs ...enums.MissionResult) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldNotIn(FieldResult, v...))
 }
 
-// ResultUrlsGT applies the GT predicate on the "result_urls" field.
-func ResultUrlsGT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGT(FieldResultUrls, v))
+// ResultUrlsIsNil applies the IsNil predicate on the "result_urls" field.
+func ResultUrlsIsNil() predicate.Mission {
+	return predicate.Mission(sql.FieldIsNull(FieldResultUrls))
 }
 
-// ResultUrlsGTE applies the GTE predicate on the "result_urls" field.
-func ResultUrlsGTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGTE(FieldResultUrls, v))
+// ResultUrlsNotNil applies the NotNil predicate on the "result_urls" field.
+func ResultUrlsNotNil() predicate.Mission {
+	return predicate.Mission(sql.FieldNotNull(FieldResultUrls))
 }
 
-// ResultUrlsLT applies the LT predicate on the "result_urls" field.
-func ResultUrlsLT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLT(FieldResultUrls, v))
+// KeyPairIDEQ applies the EQ predicate on the "key_pair_id" field.
+func KeyPairIDEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldKeyPairID, v))
 }
 
-// ResultUrlsLTE applies the LTE predicate on the "result_urls" field.
-func ResultUrlsLTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLTE(FieldResultUrls, v))
+// KeyPairIDNEQ applies the NEQ predicate on the "key_pair_id" field.
+func KeyPairIDNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldKeyPairID, v))
 }
 
-// ResultUrlsContains applies the Contains predicate on the "result_urls" field.
-func ResultUrlsContains(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContains(FieldResultUrls, v))
+// KeyPairIDIn applies the In predicate on the "key_pair_id" field.
+func KeyPairIDIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldKeyPairID, vs...))
 }
 
-// ResultUrlsHasPrefix applies the HasPrefix predicate on the "result_urls" field.
-func ResultUrlsHasPrefix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasPrefix(FieldResultUrls, v))
-}
-
-// ResultUrlsHasSuffix applies the HasSuffix predicate on the "result_urls" field.
-func ResultUrlsHasSuffix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasSuffix(FieldResultUrls, v))
-}
-
-// ResultUrlsEqualFold applies the EqualFold predicate on the "result_urls" field.
-func ResultUrlsEqualFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEqualFold(FieldResultUrls, v))
-}
-
-// ResultUrlsContainsFold applies the ContainsFold predicate on the "result_urls" field.
-func ResultUrlsContainsFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContainsFold(FieldResultUrls, v))
-}
-
-// AdditionalResultEQ applies the EQ predicate on the "additional_result" field.
-func AdditionalResultEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldAdditionalResult, v))
-}
-
-// AdditionalResultNEQ applies the NEQ predicate on the "additional_result" field.
-func AdditionalResultNEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldAdditionalResult, v))
-}
-
-// AdditionalResultIn applies the In predicate on the "additional_result" field.
-func AdditionalResultIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldAdditionalResult, vs...))
-}
-
-// AdditionalResultNotIn applies the NotIn predicate on the "additional_result" field.
-func AdditionalResultNotIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldAdditionalResult, vs...))
-}
-
-// AdditionalResultGT applies the GT predicate on the "additional_result" field.
-func AdditionalResultGT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGT(FieldAdditionalResult, v))
-}
-
-// AdditionalResultGTE applies the GTE predicate on the "additional_result" field.
-func AdditionalResultGTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGTE(FieldAdditionalResult, v))
-}
-
-// AdditionalResultLT applies the LT predicate on the "additional_result" field.
-func AdditionalResultLT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLT(FieldAdditionalResult, v))
-}
-
-// AdditionalResultLTE applies the LTE predicate on the "additional_result" field.
-func AdditionalResultLTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLTE(FieldAdditionalResult, v))
-}
-
-// AdditionalResultContains applies the Contains predicate on the "additional_result" field.
-func AdditionalResultContains(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContains(FieldAdditionalResult, v))
-}
-
-// AdditionalResultHasPrefix applies the HasPrefix predicate on the "additional_result" field.
-func AdditionalResultHasPrefix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasPrefix(FieldAdditionalResult, v))
-}
-
-// AdditionalResultHasSuffix applies the HasSuffix predicate on the "additional_result" field.
-func AdditionalResultHasSuffix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasSuffix(FieldAdditionalResult, v))
-}
-
-// AdditionalResultEqualFold applies the EqualFold predicate on the "additional_result" field.
-func AdditionalResultEqualFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEqualFold(FieldAdditionalResult, v))
-}
-
-// AdditionalResultContainsFold applies the ContainsFold predicate on the "additional_result" field.
-func AdditionalResultContainsFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContainsFold(FieldAdditionalResult, v))
-}
-
-// HmacKeyPairIDEQ applies the EQ predicate on the "hmac_key_pair_id" field.
-func HmacKeyPairIDEQ(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldHmacKeyPairID, v))
-}
-
-// HmacKeyPairIDNEQ applies the NEQ predicate on the "hmac_key_pair_id" field.
-func HmacKeyPairIDNEQ(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldHmacKeyPairID, v))
-}
-
-// HmacKeyPairIDIn applies the In predicate on the "hmac_key_pair_id" field.
-func HmacKeyPairIDIn(vs ...int64) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldHmacKeyPairID, vs...))
-}
-
-// HmacKeyPairIDNotIn applies the NotIn predicate on the "hmac_key_pair_id" field.
-func HmacKeyPairIDNotIn(vs ...int64) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldHmacKeyPairID, vs...))
-}
-
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldUserID, v))
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...int64) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...int64) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldUserID, vs...))
+// KeyPairIDNotIn applies the NotIn predicate on the "key_pair_id" field.
+func KeyPairIDNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldKeyPairID, vs...))
 }
 
 // MissionBatchNumberEQ applies the EQ predicate on the "mission_batch_number" field.
@@ -761,41 +616,21 @@ func MissionBatchNumberContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldMissionBatchNumber, v))
 }
 
-// MissionBatchIDEQ applies the EQ predicate on the "mission_batch_id" field.
-func MissionBatchIDEQ(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldMissionBatchID, v))
-}
-
-// MissionBatchIDNEQ applies the NEQ predicate on the "mission_batch_id" field.
-func MissionBatchIDNEQ(v int64) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldMissionBatchID, v))
-}
-
-// MissionBatchIDIn applies the In predicate on the "mission_batch_id" field.
-func MissionBatchIDIn(vs ...int64) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldMissionBatchID, vs...))
-}
-
-// MissionBatchIDNotIn applies the NotIn predicate on the "mission_batch_id" field.
-func MissionBatchIDNotIn(vs ...int64) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldMissionBatchID, vs...))
-}
-
-// HasMissionProductions applies the HasEdge predicate on the "mission_productions" edge.
-func HasMissionProductions() predicate.Mission {
+// HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.
+func HasMissionKeyPairs() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasMissionProductionsWith applies the HasEdge predicate on the "mission_productions" edge with a given conditions (other predicates).
-func HasMissionProductionsWith(preds ...predicate.MissionProduction) predicate.Mission {
+// HasMissionKeyPairsWith applies the HasEdge predicate on the "mission_key_pairs" edge with a given conditions (other predicates).
+func HasMissionKeyPairsWith(preds ...predicate.MissionKeyPair) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
-		step := newMissionProductionsStep()
+		step := newMissionKeyPairsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -804,113 +639,21 @@ func HasMissionProductionsWith(preds ...predicate.MissionProduction) predicate.M
 	})
 }
 
-// HasMissionConsumeOrder applies the HasEdge predicate on the "mission_consume_order" edge.
-func HasMissionConsumeOrder() predicate.Mission {
+// HasKeyPair applies the HasEdge predicate on the "key_pair" edge.
+func HasKeyPair() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, MissionConsumeOrderTable, MissionConsumeOrderColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, KeyPairTable, KeyPairColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasMissionConsumeOrderWith applies the HasEdge predicate on the "mission_consume_order" edge with a given conditions (other predicates).
-func HasMissionConsumeOrderWith(preds ...predicate.MissionConsumeOrder) predicate.Mission {
+// HasKeyPairWith applies the HasEdge predicate on the "key_pair" edge with a given conditions (other predicates).
+func HasKeyPairWith(preds ...predicate.HmacKeyPair) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
-		step := newMissionConsumeOrderStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasMissionProduceOrders applies the HasEdge predicate on the "mission_produce_orders" edge.
-func HasMissionProduceOrders() predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionProduceOrdersWith applies the HasEdge predicate on the "mission_produce_orders" edge with a given conditions (other predicates).
-func HasMissionProduceOrdersWith(preds ...predicate.MissionProduceOrder) predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := newMissionProduceOrdersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasHmacKeyPair applies the HasEdge predicate on the "hmac_key_pair" edge.
-func HasHmacKeyPair() predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, HmacKeyPairTable, HmacKeyPairColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasHmacKeyPairWith applies the HasEdge predicate on the "hmac_key_pair" edge with a given conditions (other predicates).
-func HasHmacKeyPairWith(preds ...predicate.HmacKeyPair) predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := newHmacKeyPairStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.User) predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := newUserStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasMissionBatch applies the HasEdge predicate on the "mission_batch" edge.
-func HasMissionBatch() predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionBatchWith applies the HasEdge predicate on the "mission_batch" edge with a given conditions (other predicates).
-func HasMissionBatchWith(preds ...predicate.MissionBatch) predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := newMissionBatchStep()
+		step := newKeyPairStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -3,22 +3,22 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
-	"cephalon-ent/pkg/cep_ent/collection"
+	"cephalon-ent/pkg/cep_ent/collect"
+	"cephalon-ent/pkg/cep_ent/costaccount"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/hmackeypair"
-	"cephalon-ent/pkg/cep_ent/mission"
+	"cephalon-ent/pkg/cep_ent/earnbill"
 	"cephalon-ent/pkg/cep_ent/missionbatch"
 	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"cephalon-ent/pkg/cep_ent/predicate"
+	"cephalon-ent/pkg/cep_ent/profitaccount"
 	"cephalon-ent/pkg/cep_ent/profitsetting"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/userdevice"
+	"cephalon-ent/pkg/cep_ent/vxaccount"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/cep_ent/wallet"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -118,16 +118,44 @@ func (uu *UserUpdate) SetNillableName(s *string) *UserUpdate {
 	return uu
 }
 
-// SetNickName sets the "nick_name" field.
-func (uu *UserUpdate) SetNickName(s string) *UserUpdate {
-	uu.mutation.SetNickName(s)
+// SetJpgURL sets the "jpg_url" field.
+func (uu *UserUpdate) SetJpgURL(s string) *UserUpdate {
+	uu.mutation.SetJpgURL(s)
 	return uu
 }
 
-// SetNillableNickName sets the "nick_name" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableNickName(s *string) *UserUpdate {
+// SetNillableJpgURL sets the "jpg_url" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableJpgURL(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetNickName(*s)
+		uu.SetJpgURL(*s)
+	}
+	return uu
+}
+
+// SetKey sets the "key" field.
+func (uu *UserUpdate) SetKey(s string) *UserUpdate {
+	uu.mutation.SetKey(s)
+	return uu
+}
+
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableKey(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetKey(*s)
+	}
+	return uu
+}
+
+// SetSecret sets the "secret" field.
+func (uu *UserUpdate) SetSecret(s string) *UserUpdate {
+	uu.mutation.SetSecret(s)
+	return uu
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableSecret(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetSecret(*s)
 	}
 	return uu
 }
@@ -160,178 +188,76 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 	return uu
 }
 
-// SetAvatarURL sets the "avatar_url" field.
-func (uu *UserUpdate) SetAvatarURL(s string) *UserUpdate {
-	uu.mutation.SetAvatarURL(s)
+// SetIsFrozen sets the "is_frozen" field.
+func (uu *UserUpdate) SetIsFrozen(b bool) *UserUpdate {
+	uu.mutation.SetIsFrozen(b)
 	return uu
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableAvatarURL(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetAvatarURL(*s)
+// SetNillableIsFrozen sets the "is_frozen" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableIsFrozen(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetIsFrozen(*b)
 	}
 	return uu
 }
 
-// SetStatus sets the "status" field.
-func (uu *UserUpdate) SetStatus(es enums.UserStatus) *UserUpdate {
-	uu.mutation.SetStatus(es)
+// SetUserType sets the "user_type" field.
+func (uu *UserUpdate) SetUserType(ut user.UserType) *UserUpdate {
+	uu.mutation.SetUserType(ut)
 	return uu
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableStatus(es *enums.UserStatus) *UserUpdate {
-	if es != nil {
-		uu.SetStatus(*es)
+// SetNillableUserType sets the "user_type" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUserType(ut *user.UserType) *UserUpdate {
+	if ut != nil {
+		uu.SetUserType(*ut)
 	}
 	return uu
 }
 
-// SetType sets the "type" field.
-func (uu *UserUpdate) SetType(et enums.UserType) *UserUpdate {
-	uu.mutation.SetType(et)
+// SetParentID sets the "parent_id" field.
+func (uu *UserUpdate) SetParentID(i int64) *UserUpdate {
+	uu.mutation.SetParentID(i)
 	return uu
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableType(et *enums.UserType) *UserUpdate {
-	if et != nil {
-		uu.SetType(*et)
-	}
-	return uu
-}
-
-// SetPlatform sets the "platform" field.
-func (uu *UserUpdate) SetPlatform(i int) *UserUpdate {
-	uu.mutation.ResetPlatform()
-	uu.mutation.SetPlatform(i)
-	return uu
-}
-
-// SetNillablePlatform sets the "platform" field if the given value is not nil.
-func (uu *UserUpdate) SetNillablePlatform(i *int) *UserUpdate {
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableParentID(i *int64) *UserUpdate {
 	if i != nil {
-		uu.SetPlatform(*i)
+		uu.SetParentID(*i)
 	}
 	return uu
 }
 
-// AddPlatform adds i to the "platform" field.
-func (uu *UserUpdate) AddPlatform(i int) *UserUpdate {
-	uu.mutation.AddPlatform(i)
+// AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
+func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddVxAccountIDs(ids...)
 	return uu
 }
 
-// SetHmacKey sets the "hmac_key" field.
-func (uu *UserUpdate) SetHmacKey(s string) *UserUpdate {
-	uu.mutation.SetHmacKey(s)
-	return uu
-}
-
-// SetNillableHmacKey sets the "hmac_key" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableHmacKey(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetHmacKey(*s)
+// AddVxAccounts adds the "vx_accounts" edges to the VXAccount entity.
+func (uu *UserUpdate) AddVxAccounts(v ...*VXAccount) *UserUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
+	return uu.AddVxAccountIDs(ids...)
+}
+
+// AddCollectIDs adds the "collects" edge to the Collect entity by IDs.
+func (uu *UserUpdate) AddCollectIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddCollectIDs(ids...)
 	return uu
 }
 
-// SetHmacSecret sets the "hmac_secret" field.
-func (uu *UserUpdate) SetHmacSecret(s string) *UserUpdate {
-	uu.mutation.SetHmacSecret(s)
-	return uu
-}
-
-// SetNillableHmacSecret sets the "hmac_secret" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableHmacSecret(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetHmacSecret(*s)
-	}
-	return uu
-}
-
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (uu *UserUpdate) AddBillIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddBillIDs(ids...)
-	return uu
-}
-
-// AddBills adds the "bills" edges to the Bill entity.
-func (uu *UserUpdate) AddBills(b ...*Bill) *UserUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return uu.AddBillIDs(ids...)
-}
-
-// SetHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID.
-func (uu *UserUpdate) SetHmacKeyPairID(id int64) *UserUpdate {
-	uu.mutation.SetHmacKeyPairID(id)
-	return uu
-}
-
-// SetNillableHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID if the given value is not nil.
-func (uu *UserUpdate) SetNillableHmacKeyPairID(id *int64) *UserUpdate {
-	if id != nil {
-		uu = uu.SetHmacKeyPairID(*id)
-	}
-	return uu
-}
-
-// SetHmacKeyPair sets the "hmac_key_pair" edge to the HmacKeyPair entity.
-func (uu *UserUpdate) SetHmacKeyPair(h *HmacKeyPair) *UserUpdate {
-	return uu.SetHmacKeyPairID(h.ID)
-}
-
-// AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
-func (uu *UserUpdate) AddCreatedMissionIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddCreatedMissionIDs(ids...)
-	return uu
-}
-
-// AddCreatedMissions adds the "created_missions" edges to the Mission entity.
-func (uu *UserUpdate) AddCreatedMissions(m ...*Mission) *UserUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return uu.AddCreatedMissionIDs(ids...)
-}
-
-// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
-func (uu *UserUpdate) SetWalletID(id int64) *UserUpdate {
-	uu.mutation.SetWalletID(id)
-	return uu
-}
-
-// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
-func (uu *UserUpdate) SetNillableWalletID(id *int64) *UserUpdate {
-	if id != nil {
-		uu = uu.SetWalletID(*id)
-	}
-	return uu
-}
-
-// SetWallet sets the "wallet" edge to the Wallet entity.
-func (uu *UserUpdate) SetWallet(w *Wallet) *UserUpdate {
-	return uu.SetWalletID(w.ID)
-}
-
-// AddCollectionIDs adds the "collections" edge to the Collection entity by IDs.
-func (uu *UserUpdate) AddCollectionIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddCollectionIDs(ids...)
-	return uu
-}
-
-// AddCollections adds the "collections" edges to the Collection entity.
-func (uu *UserUpdate) AddCollections(c ...*Collection) *UserUpdate {
+// AddCollects adds the "collects" edges to the Collect entity.
+func (uu *UserUpdate) AddCollects(c ...*Collect) *UserUpdate {
 	ids := make([]int64, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return uu.AddCollectionIDs(ids...)
+	return uu.AddCollectIDs(ids...)
 }
 
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
@@ -362,6 +288,74 @@ func (uu *UserUpdate) AddProfitSettings(p ...*ProfitSetting) *UserUpdate {
 		ids[i] = p[i].ID
 	}
 	return uu.AddProfitSettingIDs(ids...)
+}
+
+// SetCostAccountID sets the "cost_account" edge to the CostAccount entity by ID.
+func (uu *UserUpdate) SetCostAccountID(id int64) *UserUpdate {
+	uu.mutation.SetCostAccountID(id)
+	return uu
+}
+
+// SetNillableCostAccountID sets the "cost_account" edge to the CostAccount entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableCostAccountID(id *int64) *UserUpdate {
+	if id != nil {
+		uu = uu.SetCostAccountID(*id)
+	}
+	return uu
+}
+
+// SetCostAccount sets the "cost_account" edge to the CostAccount entity.
+func (uu *UserUpdate) SetCostAccount(c *CostAccount) *UserUpdate {
+	return uu.SetCostAccountID(c.ID)
+}
+
+// SetProfitAccountID sets the "profit_account" edge to the ProfitAccount entity by ID.
+func (uu *UserUpdate) SetProfitAccountID(id int64) *UserUpdate {
+	uu.mutation.SetProfitAccountID(id)
+	return uu
+}
+
+// SetNillableProfitAccountID sets the "profit_account" edge to the ProfitAccount entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableProfitAccountID(id *int64) *UserUpdate {
+	if id != nil {
+		uu = uu.SetProfitAccountID(*id)
+	}
+	return uu
+}
+
+// SetProfitAccount sets the "profit_account" edge to the ProfitAccount entity.
+func (uu *UserUpdate) SetProfitAccount(p *ProfitAccount) *UserUpdate {
+	return uu.SetProfitAccountID(p.ID)
+}
+
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (uu *UserUpdate) AddCostBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddCostBillIDs(ids...)
+	return uu
+}
+
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (uu *UserUpdate) AddCostBills(c ...*CostBill) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.AddCostBillIDs(ids...)
+}
+
+// AddEarnBillIDs adds the "earn_bills" edge to the EarnBill entity by IDs.
+func (uu *UserUpdate) AddEarnBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddEarnBillIDs(ids...)
+	return uu
+}
+
+// AddEarnBills adds the "earn_bills" edges to the EarnBill entity.
+func (uu *UserUpdate) AddEarnBills(e ...*EarnBill) *UserUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.AddEarnBillIDs(ids...)
 }
 
 // AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
@@ -454,84 +448,71 @@ func (uu *UserUpdate) AddUserDevices(u ...*UserDevice) *UserUpdate {
 	return uu.AddUserDeviceIDs(ids...)
 }
 
+// SetParent sets the "parent" edge to the User entity.
+func (uu *UserUpdate) SetParent(u *User) *UserUpdate {
+	return uu.SetParentID(u.ID)
+}
+
+// AddChildIDs adds the "children" edge to the User entity by IDs.
+func (uu *UserUpdate) AddChildIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddChildIDs(ids...)
+	return uu
+}
+
+// AddChildren adds the "children" edges to the User entity.
+func (uu *UserUpdate) AddChildren(u ...*User) *UserUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.AddChildIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
-// ClearBills clears all "bills" edges to the Bill entity.
-func (uu *UserUpdate) ClearBills() *UserUpdate {
-	uu.mutation.ClearBills()
+// ClearVxAccounts clears all "vx_accounts" edges to the VXAccount entity.
+func (uu *UserUpdate) ClearVxAccounts() *UserUpdate {
+	uu.mutation.ClearVxAccounts()
 	return uu
 }
 
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (uu *UserUpdate) RemoveBillIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveBillIDs(ids...)
+// RemoveVxAccountIDs removes the "vx_accounts" edge to VXAccount entities by IDs.
+func (uu *UserUpdate) RemoveVxAccountIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveVxAccountIDs(ids...)
 	return uu
 }
 
-// RemoveBills removes "bills" edges to Bill entities.
-func (uu *UserUpdate) RemoveBills(b ...*Bill) *UserUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// RemoveVxAccounts removes "vx_accounts" edges to VXAccount entities.
+func (uu *UserUpdate) RemoveVxAccounts(v ...*VXAccount) *UserUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uu.RemoveBillIDs(ids...)
+	return uu.RemoveVxAccountIDs(ids...)
 }
 
-// ClearHmacKeyPair clears the "hmac_key_pair" edge to the HmacKeyPair entity.
-func (uu *UserUpdate) ClearHmacKeyPair() *UserUpdate {
-	uu.mutation.ClearHmacKeyPair()
+// ClearCollects clears all "collects" edges to the Collect entity.
+func (uu *UserUpdate) ClearCollects() *UserUpdate {
+	uu.mutation.ClearCollects()
 	return uu
 }
 
-// ClearCreatedMissions clears all "created_missions" edges to the Mission entity.
-func (uu *UserUpdate) ClearCreatedMissions() *UserUpdate {
-	uu.mutation.ClearCreatedMissions()
+// RemoveCollectIDs removes the "collects" edge to Collect entities by IDs.
+func (uu *UserUpdate) RemoveCollectIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveCollectIDs(ids...)
 	return uu
 }
 
-// RemoveCreatedMissionIDs removes the "created_missions" edge to Mission entities by IDs.
-func (uu *UserUpdate) RemoveCreatedMissionIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveCreatedMissionIDs(ids...)
-	return uu
-}
-
-// RemoveCreatedMissions removes "created_missions" edges to Mission entities.
-func (uu *UserUpdate) RemoveCreatedMissions(m ...*Mission) *UserUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return uu.RemoveCreatedMissionIDs(ids...)
-}
-
-// ClearWallet clears the "wallet" edge to the Wallet entity.
-func (uu *UserUpdate) ClearWallet() *UserUpdate {
-	uu.mutation.ClearWallet()
-	return uu
-}
-
-// ClearCollections clears all "collections" edges to the Collection entity.
-func (uu *UserUpdate) ClearCollections() *UserUpdate {
-	uu.mutation.ClearCollections()
-	return uu
-}
-
-// RemoveCollectionIDs removes the "collections" edge to Collection entities by IDs.
-func (uu *UserUpdate) RemoveCollectionIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveCollectionIDs(ids...)
-	return uu
-}
-
-// RemoveCollections removes "collections" edges to Collection entities.
-func (uu *UserUpdate) RemoveCollections(c ...*Collection) *UserUpdate {
+// RemoveCollects removes "collects" edges to Collect entities.
+func (uu *UserUpdate) RemoveCollects(c ...*Collect) *UserUpdate {
 	ids := make([]int64, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return uu.RemoveCollectionIDs(ids...)
+	return uu.RemoveCollectIDs(ids...)
 }
 
 // ClearDevices clears all "devices" edges to the Device entity.
@@ -574,6 +555,60 @@ func (uu *UserUpdate) RemoveProfitSettings(p ...*ProfitSetting) *UserUpdate {
 		ids[i] = p[i].ID
 	}
 	return uu.RemoveProfitSettingIDs(ids...)
+}
+
+// ClearCostAccount clears the "cost_account" edge to the CostAccount entity.
+func (uu *UserUpdate) ClearCostAccount() *UserUpdate {
+	uu.mutation.ClearCostAccount()
+	return uu
+}
+
+// ClearProfitAccount clears the "profit_account" edge to the ProfitAccount entity.
+func (uu *UserUpdate) ClearProfitAccount() *UserUpdate {
+	uu.mutation.ClearProfitAccount()
+	return uu
+}
+
+// ClearCostBills clears all "cost_bills" edges to the CostBill entity.
+func (uu *UserUpdate) ClearCostBills() *UserUpdate {
+	uu.mutation.ClearCostBills()
+	return uu
+}
+
+// RemoveCostBillIDs removes the "cost_bills" edge to CostBill entities by IDs.
+func (uu *UserUpdate) RemoveCostBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveCostBillIDs(ids...)
+	return uu
+}
+
+// RemoveCostBills removes "cost_bills" edges to CostBill entities.
+func (uu *UserUpdate) RemoveCostBills(c ...*CostBill) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.RemoveCostBillIDs(ids...)
+}
+
+// ClearEarnBills clears all "earn_bills" edges to the EarnBill entity.
+func (uu *UserUpdate) ClearEarnBills() *UserUpdate {
+	uu.mutation.ClearEarnBills()
+	return uu
+}
+
+// RemoveEarnBillIDs removes the "earn_bills" edge to EarnBill entities by IDs.
+func (uu *UserUpdate) RemoveEarnBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveEarnBillIDs(ids...)
+	return uu
+}
+
+// RemoveEarnBills removes "earn_bills" edges to EarnBill entities.
+func (uu *UserUpdate) RemoveEarnBills(e ...*EarnBill) *UserUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.RemoveEarnBillIDs(ids...)
 }
 
 // ClearMissionConsumeOrders clears all "mission_consume_orders" edges to the MissionConsumeOrder entity.
@@ -702,6 +737,33 @@ func (uu *UserUpdate) RemoveUserDevices(u ...*UserDevice) *UserUpdate {
 	return uu.RemoveUserDeviceIDs(ids...)
 }
 
+// ClearParent clears the "parent" edge to the User entity.
+func (uu *UserUpdate) ClearParent() *UserUpdate {
+	uu.mutation.ClearParent()
+	return uu
+}
+
+// ClearChildren clears all "children" edges to the User entity.
+func (uu *UserUpdate) ClearChildren() *UserUpdate {
+	uu.mutation.ClearChildren()
+	return uu
+}
+
+// RemoveChildIDs removes the "children" edge to User entities by IDs.
+func (uu *UserUpdate) RemoveChildIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveChildIDs(ids...)
+	return uu
+}
+
+// RemoveChildren removes "children" edges to User entities.
+func (uu *UserUpdate) RemoveChildren(u ...*User) *UserUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.RemoveChildIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 	uu.defaults()
@@ -740,15 +802,13 @@ func (uu *UserUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
-	if v, ok := uu.mutation.Status(); ok {
-		if err := user.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "User.status": %w`, err)}
+	if v, ok := uu.mutation.UserType(); ok {
+		if err := user.UserTypeValidator(v); err != nil {
+			return &ValidationError{Name: "user_type", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_type": %w`, err)}
 		}
 	}
-	if v, ok := uu.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "User.type": %w`, err)}
-		}
+	if _, ok := uu.mutation.ParentID(); uu.mutation.ParentCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
 	}
 	return nil
 }
@@ -786,8 +846,14 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.NickName(); ok {
-		_spec.SetField(user.FieldNickName, field.TypeString, value)
+	if value, ok := uu.mutation.JpgURL(); ok {
+		_spec.SetField(user.FieldJpgURL, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Key(); ok {
+		_spec.SetField(user.FieldKey, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Secret(); ok {
+		_spec.SetField(user.FieldSecret, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Phone(); ok {
 		_spec.SetField(user.FieldPhone, field.TypeString, value)
@@ -795,49 +861,34 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.AvatarURL(); ok {
-		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
+	if value, ok := uu.mutation.IsFrozen(); ok {
+		_spec.SetField(user.FieldIsFrozen, field.TypeBool, value)
 	}
-	if value, ok := uu.mutation.Status(); ok {
-		_spec.SetField(user.FieldStatus, field.TypeEnum, value)
+	if value, ok := uu.mutation.UserType(); ok {
+		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
 	}
-	if value, ok := uu.mutation.GetType(); ok {
-		_spec.SetField(user.FieldType, field.TypeEnum, value)
-	}
-	if value, ok := uu.mutation.Platform(); ok {
-		_spec.SetField(user.FieldPlatform, field.TypeInt, value)
-	}
-	if value, ok := uu.mutation.AddedPlatform(); ok {
-		_spec.AddField(user.FieldPlatform, field.TypeInt, value)
-	}
-	if value, ok := uu.mutation.HmacKey(); ok {
-		_spec.SetField(user.FieldHmacKey, field.TypeString, value)
-	}
-	if value, ok := uu.mutation.HmacSecret(); ok {
-		_spec.SetField(user.FieldHmacSecret, field.TypeString, value)
-	}
-	if uu.mutation.BillsCleared() {
+	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedBillsIDs(); len(nodes) > 0 && !uu.mutation.BillsCleared() {
+	if nodes := uu.mutation.RemovedVxAccountsIDs(); len(nodes) > 0 && !uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -845,15 +896,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -861,57 +912,28 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.HmacKeyPairCleared() {
+	if uu.mutation.CollectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.HmacKeyPairTable,
-			Columns: []string{user.HmacKeyPairColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.HmacKeyPairIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.HmacKeyPairTable,
-			Columns: []string{user.HmacKeyPairColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uu.mutation.CreatedMissionsCleared() {
+	if nodes := uu.mutation.RemovedCollectsIDs(); len(nodes) > 0 && !uu.mutation.CollectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedCreatedMissionsIDs(); len(nodes) > 0 && !uu.mutation.CreatedMissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -919,89 +941,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.CreatedMissionsIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.CollectsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uu.mutation.WalletCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.WalletTable,
-			Columns: []string{user.WalletColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.WalletIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.WalletTable,
-			Columns: []string{user.WalletColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uu.mutation.CollectionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedCollectionsIDs(); len(nodes) > 0 && !uu.mutation.CollectionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.CollectionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1092,6 +1040,154 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profitsetting.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.CostAccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.CostAccountTable,
+			Columns: []string{user.CostAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costaccount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.CostAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.CostAccountTable,
+			Columns: []string{user.CostAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ProfitAccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.ProfitAccountTable,
+			Columns: []string{user.ProfitAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profitaccount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ProfitAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.ProfitAccountTable,
+			Columns: []string{user.ProfitAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profitaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedCostBillsIDs(); len(nodes) > 0 && !uu.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.CostBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.EarnBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedEarnBillsIDs(); len(nodes) > 0 && !uu.mutation.EarnBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.EarnBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1369,6 +1465,80 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.ParentTable,
+			Columns: []string{user.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.ParentTable,
+			Columns: []string{user.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !uu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -1465,16 +1635,44 @@ func (uuo *UserUpdateOne) SetNillableName(s *string) *UserUpdateOne {
 	return uuo
 }
 
-// SetNickName sets the "nick_name" field.
-func (uuo *UserUpdateOne) SetNickName(s string) *UserUpdateOne {
-	uuo.mutation.SetNickName(s)
+// SetJpgURL sets the "jpg_url" field.
+func (uuo *UserUpdateOne) SetJpgURL(s string) *UserUpdateOne {
+	uuo.mutation.SetJpgURL(s)
 	return uuo
 }
 
-// SetNillableNickName sets the "nick_name" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableNickName(s *string) *UserUpdateOne {
+// SetNillableJpgURL sets the "jpg_url" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableJpgURL(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetNickName(*s)
+		uuo.SetJpgURL(*s)
+	}
+	return uuo
+}
+
+// SetKey sets the "key" field.
+func (uuo *UserUpdateOne) SetKey(s string) *UserUpdateOne {
+	uuo.mutation.SetKey(s)
+	return uuo
+}
+
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableKey(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetKey(*s)
+	}
+	return uuo
+}
+
+// SetSecret sets the "secret" field.
+func (uuo *UserUpdateOne) SetSecret(s string) *UserUpdateOne {
+	uuo.mutation.SetSecret(s)
+	return uuo
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableSecret(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetSecret(*s)
 	}
 	return uuo
 }
@@ -1507,178 +1705,76 @@ func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 	return uuo
 }
 
-// SetAvatarURL sets the "avatar_url" field.
-func (uuo *UserUpdateOne) SetAvatarURL(s string) *UserUpdateOne {
-	uuo.mutation.SetAvatarURL(s)
+// SetIsFrozen sets the "is_frozen" field.
+func (uuo *UserUpdateOne) SetIsFrozen(b bool) *UserUpdateOne {
+	uuo.mutation.SetIsFrozen(b)
 	return uuo
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableAvatarURL(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetAvatarURL(*s)
+// SetNillableIsFrozen sets the "is_frozen" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableIsFrozen(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetIsFrozen(*b)
 	}
 	return uuo
 }
 
-// SetStatus sets the "status" field.
-func (uuo *UserUpdateOne) SetStatus(es enums.UserStatus) *UserUpdateOne {
-	uuo.mutation.SetStatus(es)
+// SetUserType sets the "user_type" field.
+func (uuo *UserUpdateOne) SetUserType(ut user.UserType) *UserUpdateOne {
+	uuo.mutation.SetUserType(ut)
 	return uuo
 }
 
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableStatus(es *enums.UserStatus) *UserUpdateOne {
-	if es != nil {
-		uuo.SetStatus(*es)
+// SetNillableUserType sets the "user_type" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUserType(ut *user.UserType) *UserUpdateOne {
+	if ut != nil {
+		uuo.SetUserType(*ut)
 	}
 	return uuo
 }
 
-// SetType sets the "type" field.
-func (uuo *UserUpdateOne) SetType(et enums.UserType) *UserUpdateOne {
-	uuo.mutation.SetType(et)
+// SetParentID sets the "parent_id" field.
+func (uuo *UserUpdateOne) SetParentID(i int64) *UserUpdateOne {
+	uuo.mutation.SetParentID(i)
 	return uuo
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableType(et *enums.UserType) *UserUpdateOne {
-	if et != nil {
-		uuo.SetType(*et)
-	}
-	return uuo
-}
-
-// SetPlatform sets the "platform" field.
-func (uuo *UserUpdateOne) SetPlatform(i int) *UserUpdateOne {
-	uuo.mutation.ResetPlatform()
-	uuo.mutation.SetPlatform(i)
-	return uuo
-}
-
-// SetNillablePlatform sets the "platform" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillablePlatform(i *int) *UserUpdateOne {
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableParentID(i *int64) *UserUpdateOne {
 	if i != nil {
-		uuo.SetPlatform(*i)
+		uuo.SetParentID(*i)
 	}
 	return uuo
 }
 
-// AddPlatform adds i to the "platform" field.
-func (uuo *UserUpdateOne) AddPlatform(i int) *UserUpdateOne {
-	uuo.mutation.AddPlatform(i)
+// AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
+func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddVxAccountIDs(ids...)
 	return uuo
 }
 
-// SetHmacKey sets the "hmac_key" field.
-func (uuo *UserUpdateOne) SetHmacKey(s string) *UserUpdateOne {
-	uuo.mutation.SetHmacKey(s)
-	return uuo
-}
-
-// SetNillableHmacKey sets the "hmac_key" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableHmacKey(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetHmacKey(*s)
+// AddVxAccounts adds the "vx_accounts" edges to the VXAccount entity.
+func (uuo *UserUpdateOne) AddVxAccounts(v ...*VXAccount) *UserUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
+	return uuo.AddVxAccountIDs(ids...)
+}
+
+// AddCollectIDs adds the "collects" edge to the Collect entity by IDs.
+func (uuo *UserUpdateOne) AddCollectIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddCollectIDs(ids...)
 	return uuo
 }
 
-// SetHmacSecret sets the "hmac_secret" field.
-func (uuo *UserUpdateOne) SetHmacSecret(s string) *UserUpdateOne {
-	uuo.mutation.SetHmacSecret(s)
-	return uuo
-}
-
-// SetNillableHmacSecret sets the "hmac_secret" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableHmacSecret(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetHmacSecret(*s)
-	}
-	return uuo
-}
-
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (uuo *UserUpdateOne) AddBillIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddBillIDs(ids...)
-	return uuo
-}
-
-// AddBills adds the "bills" edges to the Bill entity.
-func (uuo *UserUpdateOne) AddBills(b ...*Bill) *UserUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return uuo.AddBillIDs(ids...)
-}
-
-// SetHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID.
-func (uuo *UserUpdateOne) SetHmacKeyPairID(id int64) *UserUpdateOne {
-	uuo.mutation.SetHmacKeyPairID(id)
-	return uuo
-}
-
-// SetNillableHmacKeyPairID sets the "hmac_key_pair" edge to the HmacKeyPair entity by ID if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableHmacKeyPairID(id *int64) *UserUpdateOne {
-	if id != nil {
-		uuo = uuo.SetHmacKeyPairID(*id)
-	}
-	return uuo
-}
-
-// SetHmacKeyPair sets the "hmac_key_pair" edge to the HmacKeyPair entity.
-func (uuo *UserUpdateOne) SetHmacKeyPair(h *HmacKeyPair) *UserUpdateOne {
-	return uuo.SetHmacKeyPairID(h.ID)
-}
-
-// AddCreatedMissionIDs adds the "created_missions" edge to the Mission entity by IDs.
-func (uuo *UserUpdateOne) AddCreatedMissionIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddCreatedMissionIDs(ids...)
-	return uuo
-}
-
-// AddCreatedMissions adds the "created_missions" edges to the Mission entity.
-func (uuo *UserUpdateOne) AddCreatedMissions(m ...*Mission) *UserUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return uuo.AddCreatedMissionIDs(ids...)
-}
-
-// SetWalletID sets the "wallet" edge to the Wallet entity by ID.
-func (uuo *UserUpdateOne) SetWalletID(id int64) *UserUpdateOne {
-	uuo.mutation.SetWalletID(id)
-	return uuo
-}
-
-// SetNillableWalletID sets the "wallet" edge to the Wallet entity by ID if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableWalletID(id *int64) *UserUpdateOne {
-	if id != nil {
-		uuo = uuo.SetWalletID(*id)
-	}
-	return uuo
-}
-
-// SetWallet sets the "wallet" edge to the Wallet entity.
-func (uuo *UserUpdateOne) SetWallet(w *Wallet) *UserUpdateOne {
-	return uuo.SetWalletID(w.ID)
-}
-
-// AddCollectionIDs adds the "collections" edge to the Collection entity by IDs.
-func (uuo *UserUpdateOne) AddCollectionIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddCollectionIDs(ids...)
-	return uuo
-}
-
-// AddCollections adds the "collections" edges to the Collection entity.
-func (uuo *UserUpdateOne) AddCollections(c ...*Collection) *UserUpdateOne {
+// AddCollects adds the "collects" edges to the Collect entity.
+func (uuo *UserUpdateOne) AddCollects(c ...*Collect) *UserUpdateOne {
 	ids := make([]int64, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return uuo.AddCollectionIDs(ids...)
+	return uuo.AddCollectIDs(ids...)
 }
 
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
@@ -1709,6 +1805,74 @@ func (uuo *UserUpdateOne) AddProfitSettings(p ...*ProfitSetting) *UserUpdateOne 
 		ids[i] = p[i].ID
 	}
 	return uuo.AddProfitSettingIDs(ids...)
+}
+
+// SetCostAccountID sets the "cost_account" edge to the CostAccount entity by ID.
+func (uuo *UserUpdateOne) SetCostAccountID(id int64) *UserUpdateOne {
+	uuo.mutation.SetCostAccountID(id)
+	return uuo
+}
+
+// SetNillableCostAccountID sets the "cost_account" edge to the CostAccount entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCostAccountID(id *int64) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetCostAccountID(*id)
+	}
+	return uuo
+}
+
+// SetCostAccount sets the "cost_account" edge to the CostAccount entity.
+func (uuo *UserUpdateOne) SetCostAccount(c *CostAccount) *UserUpdateOne {
+	return uuo.SetCostAccountID(c.ID)
+}
+
+// SetProfitAccountID sets the "profit_account" edge to the ProfitAccount entity by ID.
+func (uuo *UserUpdateOne) SetProfitAccountID(id int64) *UserUpdateOne {
+	uuo.mutation.SetProfitAccountID(id)
+	return uuo
+}
+
+// SetNillableProfitAccountID sets the "profit_account" edge to the ProfitAccount entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableProfitAccountID(id *int64) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetProfitAccountID(*id)
+	}
+	return uuo
+}
+
+// SetProfitAccount sets the "profit_account" edge to the ProfitAccount entity.
+func (uuo *UserUpdateOne) SetProfitAccount(p *ProfitAccount) *UserUpdateOne {
+	return uuo.SetProfitAccountID(p.ID)
+}
+
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (uuo *UserUpdateOne) AddCostBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddCostBillIDs(ids...)
+	return uuo
+}
+
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (uuo *UserUpdateOne) AddCostBills(c ...*CostBill) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.AddCostBillIDs(ids...)
+}
+
+// AddEarnBillIDs adds the "earn_bills" edge to the EarnBill entity by IDs.
+func (uuo *UserUpdateOne) AddEarnBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddEarnBillIDs(ids...)
+	return uuo
+}
+
+// AddEarnBills adds the "earn_bills" edges to the EarnBill entity.
+func (uuo *UserUpdateOne) AddEarnBills(e ...*EarnBill) *UserUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.AddEarnBillIDs(ids...)
 }
 
 // AddMissionConsumeOrderIDs adds the "mission_consume_orders" edge to the MissionConsumeOrder entity by IDs.
@@ -1801,84 +1965,71 @@ func (uuo *UserUpdateOne) AddUserDevices(u ...*UserDevice) *UserUpdateOne {
 	return uuo.AddUserDeviceIDs(ids...)
 }
 
+// SetParent sets the "parent" edge to the User entity.
+func (uuo *UserUpdateOne) SetParent(u *User) *UserUpdateOne {
+	return uuo.SetParentID(u.ID)
+}
+
+// AddChildIDs adds the "children" edge to the User entity by IDs.
+func (uuo *UserUpdateOne) AddChildIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddChildIDs(ids...)
+	return uuo
+}
+
+// AddChildren adds the "children" edges to the User entity.
+func (uuo *UserUpdateOne) AddChildren(u ...*User) *UserUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.AddChildIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
 }
 
-// ClearBills clears all "bills" edges to the Bill entity.
-func (uuo *UserUpdateOne) ClearBills() *UserUpdateOne {
-	uuo.mutation.ClearBills()
+// ClearVxAccounts clears all "vx_accounts" edges to the VXAccount entity.
+func (uuo *UserUpdateOne) ClearVxAccounts() *UserUpdateOne {
+	uuo.mutation.ClearVxAccounts()
 	return uuo
 }
 
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (uuo *UserUpdateOne) RemoveBillIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveBillIDs(ids...)
+// RemoveVxAccountIDs removes the "vx_accounts" edge to VXAccount entities by IDs.
+func (uuo *UserUpdateOne) RemoveVxAccountIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveVxAccountIDs(ids...)
 	return uuo
 }
 
-// RemoveBills removes "bills" edges to Bill entities.
-func (uuo *UserUpdateOne) RemoveBills(b ...*Bill) *UserUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// RemoveVxAccounts removes "vx_accounts" edges to VXAccount entities.
+func (uuo *UserUpdateOne) RemoveVxAccounts(v ...*VXAccount) *UserUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uuo.RemoveBillIDs(ids...)
+	return uuo.RemoveVxAccountIDs(ids...)
 }
 
-// ClearHmacKeyPair clears the "hmac_key_pair" edge to the HmacKeyPair entity.
-func (uuo *UserUpdateOne) ClearHmacKeyPair() *UserUpdateOne {
-	uuo.mutation.ClearHmacKeyPair()
+// ClearCollects clears all "collects" edges to the Collect entity.
+func (uuo *UserUpdateOne) ClearCollects() *UserUpdateOne {
+	uuo.mutation.ClearCollects()
 	return uuo
 }
 
-// ClearCreatedMissions clears all "created_missions" edges to the Mission entity.
-func (uuo *UserUpdateOne) ClearCreatedMissions() *UserUpdateOne {
-	uuo.mutation.ClearCreatedMissions()
+// RemoveCollectIDs removes the "collects" edge to Collect entities by IDs.
+func (uuo *UserUpdateOne) RemoveCollectIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveCollectIDs(ids...)
 	return uuo
 }
 
-// RemoveCreatedMissionIDs removes the "created_missions" edge to Mission entities by IDs.
-func (uuo *UserUpdateOne) RemoveCreatedMissionIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveCreatedMissionIDs(ids...)
-	return uuo
-}
-
-// RemoveCreatedMissions removes "created_missions" edges to Mission entities.
-func (uuo *UserUpdateOne) RemoveCreatedMissions(m ...*Mission) *UserUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return uuo.RemoveCreatedMissionIDs(ids...)
-}
-
-// ClearWallet clears the "wallet" edge to the Wallet entity.
-func (uuo *UserUpdateOne) ClearWallet() *UserUpdateOne {
-	uuo.mutation.ClearWallet()
-	return uuo
-}
-
-// ClearCollections clears all "collections" edges to the Collection entity.
-func (uuo *UserUpdateOne) ClearCollections() *UserUpdateOne {
-	uuo.mutation.ClearCollections()
-	return uuo
-}
-
-// RemoveCollectionIDs removes the "collections" edge to Collection entities by IDs.
-func (uuo *UserUpdateOne) RemoveCollectionIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveCollectionIDs(ids...)
-	return uuo
-}
-
-// RemoveCollections removes "collections" edges to Collection entities.
-func (uuo *UserUpdateOne) RemoveCollections(c ...*Collection) *UserUpdateOne {
+// RemoveCollects removes "collects" edges to Collect entities.
+func (uuo *UserUpdateOne) RemoveCollects(c ...*Collect) *UserUpdateOne {
 	ids := make([]int64, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
-	return uuo.RemoveCollectionIDs(ids...)
+	return uuo.RemoveCollectIDs(ids...)
 }
 
 // ClearDevices clears all "devices" edges to the Device entity.
@@ -1921,6 +2072,60 @@ func (uuo *UserUpdateOne) RemoveProfitSettings(p ...*ProfitSetting) *UserUpdateO
 		ids[i] = p[i].ID
 	}
 	return uuo.RemoveProfitSettingIDs(ids...)
+}
+
+// ClearCostAccount clears the "cost_account" edge to the CostAccount entity.
+func (uuo *UserUpdateOne) ClearCostAccount() *UserUpdateOne {
+	uuo.mutation.ClearCostAccount()
+	return uuo
+}
+
+// ClearProfitAccount clears the "profit_account" edge to the ProfitAccount entity.
+func (uuo *UserUpdateOne) ClearProfitAccount() *UserUpdateOne {
+	uuo.mutation.ClearProfitAccount()
+	return uuo
+}
+
+// ClearCostBills clears all "cost_bills" edges to the CostBill entity.
+func (uuo *UserUpdateOne) ClearCostBills() *UserUpdateOne {
+	uuo.mutation.ClearCostBills()
+	return uuo
+}
+
+// RemoveCostBillIDs removes the "cost_bills" edge to CostBill entities by IDs.
+func (uuo *UserUpdateOne) RemoveCostBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveCostBillIDs(ids...)
+	return uuo
+}
+
+// RemoveCostBills removes "cost_bills" edges to CostBill entities.
+func (uuo *UserUpdateOne) RemoveCostBills(c ...*CostBill) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.RemoveCostBillIDs(ids...)
+}
+
+// ClearEarnBills clears all "earn_bills" edges to the EarnBill entity.
+func (uuo *UserUpdateOne) ClearEarnBills() *UserUpdateOne {
+	uuo.mutation.ClearEarnBills()
+	return uuo
+}
+
+// RemoveEarnBillIDs removes the "earn_bills" edge to EarnBill entities by IDs.
+func (uuo *UserUpdateOne) RemoveEarnBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveEarnBillIDs(ids...)
+	return uuo
+}
+
+// RemoveEarnBills removes "earn_bills" edges to EarnBill entities.
+func (uuo *UserUpdateOne) RemoveEarnBills(e ...*EarnBill) *UserUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.RemoveEarnBillIDs(ids...)
 }
 
 // ClearMissionConsumeOrders clears all "mission_consume_orders" edges to the MissionConsumeOrder entity.
@@ -2049,6 +2254,33 @@ func (uuo *UserUpdateOne) RemoveUserDevices(u ...*UserDevice) *UserUpdateOne {
 	return uuo.RemoveUserDeviceIDs(ids...)
 }
 
+// ClearParent clears the "parent" edge to the User entity.
+func (uuo *UserUpdateOne) ClearParent() *UserUpdateOne {
+	uuo.mutation.ClearParent()
+	return uuo
+}
+
+// ClearChildren clears all "children" edges to the User entity.
+func (uuo *UserUpdateOne) ClearChildren() *UserUpdateOne {
+	uuo.mutation.ClearChildren()
+	return uuo
+}
+
+// RemoveChildIDs removes the "children" edge to User entities by IDs.
+func (uuo *UserUpdateOne) RemoveChildIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveChildIDs(ids...)
+	return uuo
+}
+
+// RemoveChildren removes "children" edges to User entities.
+func (uuo *UserUpdateOne) RemoveChildren(u ...*User) *UserUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.RemoveChildIDs(ids...)
+}
+
 // Where appends a list predicates to the UserUpdate builder.
 func (uuo *UserUpdateOne) Where(ps ...predicate.User) *UserUpdateOne {
 	uuo.mutation.Where(ps...)
@@ -2100,15 +2332,13 @@ func (uuo *UserUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UserUpdateOne) check() error {
-	if v, ok := uuo.mutation.Status(); ok {
-		if err := user.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "User.status": %w`, err)}
+	if v, ok := uuo.mutation.UserType(); ok {
+		if err := user.UserTypeValidator(v); err != nil {
+			return &ValidationError{Name: "user_type", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_type": %w`, err)}
 		}
 	}
-	if v, ok := uuo.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "User.type": %w`, err)}
-		}
+	if _, ok := uuo.mutation.ParentID(); uuo.mutation.ParentCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
 	}
 	return nil
 }
@@ -2163,8 +2393,14 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.NickName(); ok {
-		_spec.SetField(user.FieldNickName, field.TypeString, value)
+	if value, ok := uuo.mutation.JpgURL(); ok {
+		_spec.SetField(user.FieldJpgURL, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Key(); ok {
+		_spec.SetField(user.FieldKey, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Secret(); ok {
+		_spec.SetField(user.FieldSecret, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Phone(); ok {
 		_spec.SetField(user.FieldPhone, field.TypeString, value)
@@ -2172,49 +2408,34 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.AvatarURL(); ok {
-		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
+	if value, ok := uuo.mutation.IsFrozen(); ok {
+		_spec.SetField(user.FieldIsFrozen, field.TypeBool, value)
 	}
-	if value, ok := uuo.mutation.Status(); ok {
-		_spec.SetField(user.FieldStatus, field.TypeEnum, value)
+	if value, ok := uuo.mutation.UserType(); ok {
+		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
 	}
-	if value, ok := uuo.mutation.GetType(); ok {
-		_spec.SetField(user.FieldType, field.TypeEnum, value)
-	}
-	if value, ok := uuo.mutation.Platform(); ok {
-		_spec.SetField(user.FieldPlatform, field.TypeInt, value)
-	}
-	if value, ok := uuo.mutation.AddedPlatform(); ok {
-		_spec.AddField(user.FieldPlatform, field.TypeInt, value)
-	}
-	if value, ok := uuo.mutation.HmacKey(); ok {
-		_spec.SetField(user.FieldHmacKey, field.TypeString, value)
-	}
-	if value, ok := uuo.mutation.HmacSecret(); ok {
-		_spec.SetField(user.FieldHmacSecret, field.TypeString, value)
-	}
-	if uuo.mutation.BillsCleared() {
+	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !uuo.mutation.BillsCleared() {
+	if nodes := uuo.mutation.RemovedVxAccountsIDs(); len(nodes) > 0 && !uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2222,15 +2443,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.BillsTable,
-			Columns: []string{user.BillsColumn},
+			Table:   user.VxAccountsTable,
+			Columns: []string{user.VxAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2238,57 +2459,28 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.HmacKeyPairCleared() {
+	if uuo.mutation.CollectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.HmacKeyPairTable,
-			Columns: []string{user.HmacKeyPairColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.HmacKeyPairIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.HmacKeyPairTable,
-			Columns: []string{user.HmacKeyPairColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.CreatedMissionsCleared() {
+	if nodes := uuo.mutation.RemovedCollectsIDs(); len(nodes) > 0 && !uuo.mutation.CollectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedCreatedMissionsIDs(); len(nodes) > 0 && !uuo.mutation.CreatedMissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2296,89 +2488,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.CreatedMissionsIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.CollectsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.CreatedMissionsTable,
-			Columns: []string{user.CreatedMissionsColumn},
+			Table:   user.CollectsTable,
+			Columns: []string{user.CollectsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.WalletCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.WalletTable,
-			Columns: []string{user.WalletColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.WalletIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.WalletTable,
-			Columns: []string{user.WalletColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.CollectionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedCollectionsIDs(); len(nodes) > 0 && !uuo.mutation.CollectionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.CollectionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.CollectionsTable,
-			Columns: []string{user.CollectionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(collection.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2469,6 +2587,154 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profitsetting.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.CostAccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.CostAccountTable,
+			Columns: []string{user.CostAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costaccount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.CostAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.CostAccountTable,
+			Columns: []string{user.CostAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ProfitAccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.ProfitAccountTable,
+			Columns: []string{user.ProfitAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profitaccount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ProfitAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.ProfitAccountTable,
+			Columns: []string{user.ProfitAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profitaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedCostBillsIDs(); len(nodes) > 0 && !uuo.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.CostBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CostBillsTable,
+			Columns: []string{user.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.EarnBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedEarnBillsIDs(); len(nodes) > 0 && !uuo.mutation.EarnBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.EarnBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EarnBillsTable,
+			Columns: []string{user.EarnBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2739,6 +3005,80 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.ParentTable,
+			Columns: []string{user.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.ParentTable,
+			Columns: []string{user.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !uuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

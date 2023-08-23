@@ -14,7 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 用户和设备的记录，主要记录绑定时长和过程
+// UserDevice is the model entity for the UserDevice schema.
 type UserDevice struct {
 	config `json:"-"`
 	// ID of the ent.

@@ -3,7 +3,7 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/predicate"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
@@ -21,13 +21,13 @@ import (
 // RechargeOrderQuery is the builder for querying RechargeOrder entities.
 type RechargeOrderQuery struct {
 	config
-	ctx          *QueryContext
-	order        []rechargeorder.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.RechargeOrder
-	withUser     *UserQuery
-	withBills    *BillQuery
-	withVxSocial *VXSocialQuery
+	ctx           *QueryContext
+	order         []rechargeorder.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.RechargeOrder
+	withUser      *UserQuery
+	withCostBills *CostBillQuery
+	withVxSocial  *VXSocialQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -86,9 +86,9 @@ func (roq *RechargeOrderQuery) QueryUser() *UserQuery {
 	return query
 }
 
-// QueryBills chains the current query on the "bills" edge.
-func (roq *RechargeOrderQuery) QueryBills() *BillQuery {
-	query := (&BillClient{config: roq.config}).Query()
+// QueryCostBills chains the current query on the "cost_bills" edge.
+func (roq *RechargeOrderQuery) QueryCostBills() *CostBillQuery {
+	query := (&CostBillClient{config: roq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := roq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -99,8 +99,8 @@ func (roq *RechargeOrderQuery) QueryBills() *BillQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(rechargeorder.Table, rechargeorder.FieldID, selector),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, rechargeorder.BillsTable, rechargeorder.BillsColumn),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, rechargeorder.CostBillsTable, rechargeorder.CostBillsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(roq.driver.Dialect(), step)
 		return fromU, nil
@@ -317,14 +317,14 @@ func (roq *RechargeOrderQuery) Clone() *RechargeOrderQuery {
 		return nil
 	}
 	return &RechargeOrderQuery{
-		config:       roq.config,
-		ctx:          roq.ctx.Clone(),
-		order:        append([]rechargeorder.OrderOption{}, roq.order...),
-		inters:       append([]Interceptor{}, roq.inters...),
-		predicates:   append([]predicate.RechargeOrder{}, roq.predicates...),
-		withUser:     roq.withUser.Clone(),
-		withBills:    roq.withBills.Clone(),
-		withVxSocial: roq.withVxSocial.Clone(),
+		config:        roq.config,
+		ctx:           roq.ctx.Clone(),
+		order:         append([]rechargeorder.OrderOption{}, roq.order...),
+		inters:        append([]Interceptor{}, roq.inters...),
+		predicates:    append([]predicate.RechargeOrder{}, roq.predicates...),
+		withUser:      roq.withUser.Clone(),
+		withCostBills: roq.withCostBills.Clone(),
+		withVxSocial:  roq.withVxSocial.Clone(),
 		// clone intermediate query.
 		sql:  roq.sql.Clone(),
 		path: roq.path,
@@ -342,14 +342,14 @@ func (roq *RechargeOrderQuery) WithUser(opts ...func(*UserQuery)) *RechargeOrder
 	return roq
 }
 
-// WithBills tells the query-builder to eager-load the nodes that are connected to
-// the "bills" edge. The optional arguments are used to configure the query builder of the edge.
-func (roq *RechargeOrderQuery) WithBills(opts ...func(*BillQuery)) *RechargeOrderQuery {
-	query := (&BillClient{config: roq.config}).Query()
+// WithCostBills tells the query-builder to eager-load the nodes that are connected to
+// the "cost_bills" edge. The optional arguments are used to configure the query builder of the edge.
+func (roq *RechargeOrderQuery) WithCostBills(opts ...func(*CostBillQuery)) *RechargeOrderQuery {
+	query := (&CostBillClient{config: roq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	roq.withBills = query
+	roq.withCostBills = query
 	return roq
 }
 
@@ -444,7 +444,7 @@ func (roq *RechargeOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		_spec       = roq.querySpec()
 		loadedTypes = [3]bool{
 			roq.withUser != nil,
-			roq.withBills != nil,
+			roq.withCostBills != nil,
 			roq.withVxSocial != nil,
 		}
 	)
@@ -472,10 +472,10 @@ func (roq *RechargeOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 			return nil, err
 		}
 	}
-	if query := roq.withBills; query != nil {
-		if err := roq.loadBills(ctx, query, nodes,
-			func(n *RechargeOrder) { n.Edges.Bills = []*Bill{} },
-			func(n *RechargeOrder, e *Bill) { n.Edges.Bills = append(n.Edges.Bills, e) }); err != nil {
+	if query := roq.withCostBills; query != nil {
+		if err := roq.loadCostBills(ctx, query, nodes,
+			func(n *RechargeOrder) { n.Edges.CostBills = []*CostBill{} },
+			func(n *RechargeOrder, e *CostBill) { n.Edges.CostBills = append(n.Edges.CostBills, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -517,7 +517,7 @@ func (roq *RechargeOrderQuery) loadUser(ctx context.Context, query *UserQuery, n
 	}
 	return nil
 }
-func (roq *RechargeOrderQuery) loadBills(ctx context.Context, query *BillQuery, nodes []*RechargeOrder, init func(*RechargeOrder), assign func(*RechargeOrder, *Bill)) error {
+func (roq *RechargeOrderQuery) loadCostBills(ctx context.Context, query *CostBillQuery, nodes []*RechargeOrder, init func(*RechargeOrder), assign func(*RechargeOrder, *CostBill)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*RechargeOrder)
 	for i := range nodes {
@@ -528,10 +528,10 @@ func (roq *RechargeOrderQuery) loadBills(ctx context.Context, query *BillQuery, 
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(bill.FieldReasonID)
+		query.ctx.AppendFieldOnce(costbill.FieldReasonID)
 	}
-	query.Where(predicate.Bill(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(rechargeorder.BillsColumn), fks...))
+	query.Where(predicate.CostBill(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(rechargeorder.CostBillsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

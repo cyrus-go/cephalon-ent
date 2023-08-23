@@ -3,11 +3,10 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/bill"
+	"cephalon-ent/pkg/cep_ent/costbill"
 	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"cephalon-ent/pkg/cep_ent/user"
 	"cephalon-ent/pkg/cep_ent/vxsocial"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -109,29 +108,29 @@ func (roc *RechargeOrderCreate) SetNillableUserID(i *int64) *RechargeOrderCreate
 }
 
 // SetStatus sets the "status" field.
-func (roc *RechargeOrderCreate) SetStatus(es enums.MissionStatus) *RechargeOrderCreate {
-	roc.mutation.SetStatus(es)
+func (roc *RechargeOrderCreate) SetStatus(r rechargeorder.Status) *RechargeOrderCreate {
+	roc.mutation.SetStatus(r)
 	return roc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (roc *RechargeOrderCreate) SetNillableStatus(es *enums.MissionStatus) *RechargeOrderCreate {
-	if es != nil {
-		roc.SetStatus(*es)
+func (roc *RechargeOrderCreate) SetNillableStatus(r *rechargeorder.Status) *RechargeOrderCreate {
+	if r != nil {
+		roc.SetStatus(*r)
 	}
 	return roc
 }
 
-// SetCep sets the "cep" field.
-func (roc *RechargeOrderCreate) SetCep(i int64) *RechargeOrderCreate {
-	roc.mutation.SetCep(i)
+// SetPureCep sets the "pure_cep" field.
+func (roc *RechargeOrderCreate) SetPureCep(i int64) *RechargeOrderCreate {
+	roc.mutation.SetPureCep(i)
 	return roc
 }
 
-// SetNillableCep sets the "cep" field if the given value is not nil.
-func (roc *RechargeOrderCreate) SetNillableCep(i *int64) *RechargeOrderCreate {
+// SetNillablePureCep sets the "pure_cep" field if the given value is not nil.
+func (roc *RechargeOrderCreate) SetNillablePureCep(i *int64) *RechargeOrderCreate {
 	if i != nil {
-		roc.SetCep(*i)
+		roc.SetPureCep(*i)
 	}
 	return roc
 }
@@ -151,15 +150,15 @@ func (roc *RechargeOrderCreate) SetNillableSocialID(i *int64) *RechargeOrderCrea
 }
 
 // SetType sets the "type" field.
-func (roc *RechargeOrderCreate) SetType(eot enums.RechargeOrderType) *RechargeOrderCreate {
-	roc.mutation.SetType(eot)
+func (roc *RechargeOrderCreate) SetType(r rechargeorder.Type) *RechargeOrderCreate {
+	roc.mutation.SetType(r)
 	return roc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (roc *RechargeOrderCreate) SetNillableType(eot *enums.RechargeOrderType) *RechargeOrderCreate {
-	if eot != nil {
-		roc.SetType(*eot)
+func (roc *RechargeOrderCreate) SetNillableType(r *rechargeorder.Type) *RechargeOrderCreate {
+	if r != nil {
+		roc.SetType(*r)
 	}
 	return roc
 }
@@ -239,19 +238,19 @@ func (roc *RechargeOrderCreate) SetUser(u *User) *RechargeOrderCreate {
 	return roc.SetUserID(u.ID)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (roc *RechargeOrderCreate) AddBillIDs(ids ...int64) *RechargeOrderCreate {
-	roc.mutation.AddBillIDs(ids...)
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (roc *RechargeOrderCreate) AddCostBillIDs(ids ...int64) *RechargeOrderCreate {
+	roc.mutation.AddCostBillIDs(ids...)
 	return roc
 }
 
-// AddBills adds the "bills" edges to the Bill entity.
-func (roc *RechargeOrderCreate) AddBills(b ...*Bill) *RechargeOrderCreate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (roc *RechargeOrderCreate) AddCostBills(c ...*CostBill) *RechargeOrderCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
 	}
-	return roc.AddBillIDs(ids...)
+	return roc.AddCostBillIDs(ids...)
 }
 
 // SetVxSocialID sets the "vx_social" edge to the VXSocial entity by ID.
@@ -336,9 +335,9 @@ func (roc *RechargeOrderCreate) defaults() {
 		v := rechargeorder.DefaultStatus
 		roc.mutation.SetStatus(v)
 	}
-	if _, ok := roc.mutation.Cep(); !ok {
-		v := rechargeorder.DefaultCep
-		roc.mutation.SetCep(v)
+	if _, ok := roc.mutation.PureCep(); !ok {
+		v := rechargeorder.DefaultPureCep
+		roc.mutation.SetPureCep(v)
 	}
 	if _, ok := roc.mutation.SocialID(); !ok {
 		v := rechargeorder.DefaultSocialID
@@ -398,12 +397,12 @@ func (roc *RechargeOrderCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.status": %w`, err)}
 		}
 	}
-	if _, ok := roc.mutation.Cep(); !ok {
-		return &ValidationError{Name: "cep", err: errors.New(`cep_ent: missing required field "RechargeOrder.cep"`)}
+	if _, ok := roc.mutation.PureCep(); !ok {
+		return &ValidationError{Name: "pure_cep", err: errors.New(`cep_ent: missing required field "RechargeOrder.pure_cep"`)}
 	}
-	if v, ok := roc.mutation.Cep(); ok {
-		if err := rechargeorder.CepValidator(v); err != nil {
-			return &ValidationError{Name: "cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.cep": %w`, err)}
+	if v, ok := roc.mutation.PureCep(); ok {
+		if err := rechargeorder.PureCepValidator(v); err != nil {
+			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
 		}
 	}
 	if _, ok := roc.mutation.GetType(); !ok {
@@ -485,9 +484,9 @@ func (roc *RechargeOrderCreate) createSpec() (*RechargeOrder, *sqlgraph.CreateSp
 		_spec.SetField(rechargeorder.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
-	if value, ok := roc.mutation.Cep(); ok {
-		_spec.SetField(rechargeorder.FieldCep, field.TypeInt64, value)
-		_node.Cep = value
+	if value, ok := roc.mutation.PureCep(); ok {
+		_spec.SetField(rechargeorder.FieldPureCep, field.TypeInt64, value)
+		_node.PureCep = value
 	}
 	if value, ok := roc.mutation.GetType(); ok {
 		_spec.SetField(rechargeorder.FieldType, field.TypeEnum, value)
@@ -526,15 +525,15 @@ func (roc *RechargeOrderCreate) createSpec() (*RechargeOrder, *sqlgraph.CreateSp
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := roc.mutation.BillsIDs(); len(nodes) > 0 {
+	if nodes := roc.mutation.CostBillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   rechargeorder.BillsTable,
-			Columns: []string{rechargeorder.BillsColumn},
+			Table:   rechargeorder.CostBillsTable,
+			Columns: []string{rechargeorder.CostBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

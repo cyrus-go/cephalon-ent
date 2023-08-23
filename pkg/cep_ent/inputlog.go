@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// 接口输入表，用于记录最老的直接任务模式
+// InputLog is the model entity for the InputLog schema.
 type InputLog struct {
 	config `json:"-"`
 	// ID of the ent.

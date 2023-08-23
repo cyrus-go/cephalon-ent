@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -39,12 +38,5 @@ func (VXSocial) Edges() []ent.Edge {
 func (VXSocial) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
-	}
-}
-
-// Annotations of the BaseMixin.
-func (VXSocial) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		schema.Comment("微信身份源，与用户一对多，微信订单依赖于它"),
 	}
 }
