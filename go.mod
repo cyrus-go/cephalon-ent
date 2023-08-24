@@ -1,4 +1,4 @@
-module cephalon-ent
+module github.com/stark-sim/cephalon-ent
 
 go 1.20
 
