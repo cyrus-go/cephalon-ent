@@ -12344,6 +12344,7 @@ type MissionMutation struct {
 	result_urls              *[]string
 	appendresult_urls        []string
 	mission_batch_number     *string
+	gpu_version              *enums.GpuVersion
 	clearedFields            map[string]struct{}
 	mission_key_pairs        map[int64]struct{}
 	removedmission_key_pairs map[int64]struct{}
@@ -12996,6 +12997,42 @@ func (m *MissionMutation) ResetMissionBatchNumber() {
 	m.mission_batch_number = nil
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (m *MissionMutation) SetGpuVersion(ev enums.GpuVersion) {
+	m.gpu_version = &ev
+}
+
+// GpuVersion returns the value of the "gpu_version" field in the mutation.
+func (m *MissionMutation) GpuVersion() (r enums.GpuVersion, exists bool) {
+	v := m.gpu_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuVersion returns the old "gpu_version" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldGpuVersion(ctx context.Context) (v enums.GpuVersion, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuVersion: %w", err)
+	}
+	return oldValue.GpuVersion, nil
+}
+
+// ResetGpuVersion resets all changes to the "gpu_version" field.
+func (m *MissionMutation) ResetGpuVersion() {
+	m.gpu_version = nil
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
 func (m *MissionMutation) AddMissionKeyPairIDs(ids ...int64) {
 	if m.mission_key_pairs == nil {
@@ -13110,7 +13147,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -13150,6 +13187,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.mission_batch_number != nil {
 		fields = append(fields, mission.FieldMissionBatchNumber)
 	}
+	if m.gpu_version != nil {
+		fields = append(fields, mission.FieldGpuVersion)
+	}
 	return fields
 }
 
@@ -13184,6 +13224,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.KeyPairID()
 	case mission.FieldMissionBatchNumber:
 		return m.MissionBatchNumber()
+	case mission.FieldGpuVersion:
+		return m.GpuVersion()
 	}
 	return nil, false
 }
@@ -13219,6 +13261,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldKeyPairID(ctx)
 	case mission.FieldMissionBatchNumber:
 		return m.OldMissionBatchNumber(ctx)
+	case mission.FieldGpuVersion:
+		return m.OldGpuVersion(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13318,6 +13362,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionBatchNumber(v)
+		return nil
+	case mission.FieldGpuVersion:
+		v, ok := value.(enums.GpuVersion)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuVersion(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -13442,6 +13493,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldMissionBatchNumber:
 		m.ResetMissionBatchNumber()
+		return nil
+	case mission.FieldGpuVersion:
+		m.ResetGpuVersion()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

@@ -199,6 +199,20 @@ func (mc *MissionCreate) SetNillableMissionBatchNumber(s *string) *MissionCreate
 	return mc
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (mc *MissionCreate) SetGpuVersion(ev enums.GpuVersion) *MissionCreate {
+	mc.mutation.SetGpuVersion(ev)
+	return mc
+}
+
+// SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableGpuVersion(ev *enums.GpuVersion) *MissionCreate {
+	if ev != nil {
+		mc.SetGpuVersion(*ev)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -316,6 +330,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultMissionBatchNumber
 		mc.mutation.SetMissionBatchNumber(v)
 	}
+	if _, ok := mc.mutation.GpuVersion(); !ok {
+		v := mission.DefaultGpuVersion
+		mc.mutation.SetGpuVersion(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -374,6 +392,14 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.MissionBatchNumber(); !ok {
 		return &ValidationError{Name: "mission_batch_number", err: errors.New(`cep_ent: missing required field "Mission.mission_batch_number"`)}
+	}
+	if _, ok := mc.mutation.GpuVersion(); !ok {
+		return &ValidationError{Name: "gpu_version", err: errors.New(`cep_ent: missing required field "Mission.gpu_version"`)}
+	}
+	if v, ok := mc.mutation.GpuVersion(); ok {
+		if err := mission.GpuVersionValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
+		}
 	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair", err: errors.New(`cep_ent: missing required edge "Mission.key_pair"`)}
@@ -458,6 +484,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(mission.FieldMissionBatchNumber, field.TypeString, value)
 		_node.MissionBatchNumber = value
+	}
+	if value, ok := mc.mutation.GpuVersion(); ok {
+		_spec.SetField(mission.FieldGpuVersion, field.TypeEnum, value)
+		_node.GpuVersion = value
 	}
 	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -706,6 +736,18 @@ func (u *MissionUpsert) UpdateMissionBatchNumber() *MissionUpsert {
 	return u
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (u *MissionUpsert) SetGpuVersion(v enums.GpuVersion) *MissionUpsert {
+	u.Set(mission.FieldGpuVersion, v)
+	return u
+}
+
+// UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateGpuVersion() *MissionUpsert {
+	u.SetExcluded(mission.FieldGpuVersion)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -943,6 +985,20 @@ func (u *MissionUpsertOne) SetMissionBatchNumber(v string) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateMissionBatchNumber() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateMissionBatchNumber()
+	})
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (u *MissionUpsertOne) SetGpuVersion(v enums.GpuVersion) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetGpuVersion(v)
+	})
+}
+
+// UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateGpuVersion() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateGpuVersion()
 	})
 }
 
@@ -1345,6 +1401,20 @@ func (u *MissionUpsertBulk) SetMissionBatchNumber(v string) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateMissionBatchNumber() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateMissionBatchNumber()
+	})
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (u *MissionUpsertBulk) SetGpuVersion(v enums.GpuVersion) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetGpuVersion(v)
+	})
+}
+
+// UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateGpuVersion() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateGpuVersion()
 	})
 }
 

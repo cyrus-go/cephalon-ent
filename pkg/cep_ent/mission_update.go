@@ -210,6 +210,20 @@ func (mu *MissionUpdate) SetNillableMissionBatchNumber(s *string) *MissionUpdate
 	return mu
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (mu *MissionUpdate) SetGpuVersion(ev enums.GpuVersion) *MissionUpdate {
+	mu.mutation.SetGpuVersion(ev)
+	return mu
+}
+
+// SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableGpuVersion(ev *enums.GpuVersion) *MissionUpdate {
+	if ev != nil {
+		mu.SetGpuVersion(*ev)
+	}
+	return mu
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mu *MissionUpdate) AddMissionKeyPairIDs(ids ...int64) *MissionUpdate {
 	mu.mutation.AddMissionKeyPairIDs(ids...)
@@ -315,6 +329,11 @@ func (mu *MissionUpdate) check() error {
 			return &ValidationError{Name: "result", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.result": %w`, err)}
 		}
 	}
+	if v, ok := mu.mutation.GpuVersion(); ok {
+		if err := mission.GpuVersionValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
+		}
+	}
 	if _, ok := mu.mutation.KeyPairID(); mu.mutation.KeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.key_pair"`)
 	}
@@ -379,6 +398,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(mission.FieldMissionBatchNumber, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.GpuVersion(); ok {
+		_spec.SetField(mission.FieldGpuVersion, field.TypeEnum, value)
 	}
 	if mu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -652,6 +674,20 @@ func (muo *MissionUpdateOne) SetNillableMissionBatchNumber(s *string) *MissionUp
 	return muo
 }
 
+// SetGpuVersion sets the "gpu_version" field.
+func (muo *MissionUpdateOne) SetGpuVersion(ev enums.GpuVersion) *MissionUpdateOne {
+	muo.mutation.SetGpuVersion(ev)
+	return muo
+}
+
+// SetNillableGpuVersion sets the "gpu_version" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableGpuVersion(ev *enums.GpuVersion) *MissionUpdateOne {
+	if ev != nil {
+		muo.SetGpuVersion(*ev)
+	}
+	return muo
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (muo *MissionUpdateOne) AddMissionKeyPairIDs(ids ...int64) *MissionUpdateOne {
 	muo.mutation.AddMissionKeyPairIDs(ids...)
@@ -770,6 +806,11 @@ func (muo *MissionUpdateOne) check() error {
 			return &ValidationError{Name: "result", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.result": %w`, err)}
 		}
 	}
+	if v, ok := muo.mutation.GpuVersion(); ok {
+		if err := mission.GpuVersionValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
+		}
+	}
 	if _, ok := muo.mutation.KeyPairID(); muo.mutation.KeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.key_pair"`)
 	}
@@ -851,6 +892,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(mission.FieldMissionBatchNumber, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.GpuVersion(); ok {
+		_spec.SetField(mission.FieldGpuVersion, field.TypeEnum, value)
 	}
 	if muo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{

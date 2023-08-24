@@ -46,6 +46,8 @@ type Mission struct {
 	KeyPairID int64 `json:"key_pair_id"`
 	// 任务批次号
 	MissionBatchNumber string `json:"mission_batch_number"`
+	// 最低可接显卡
+	GpuVersion enums.GpuVersion `json:"gpu_version"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -94,7 +96,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -199,6 +201,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.MissionBatchNumber = value.String
 			}
+		case mission.FieldGpuVersion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gpu_version", values[i])
+			} else if value.Valid {
+				m.GpuVersion = enums.GpuVersion(value.String)
+			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
 		}
@@ -282,6 +290,9 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_number=")
 	builder.WriteString(m.MissionBatchNumber)
+	builder.WriteString(", ")
+	builder.WriteString("gpu_version=")
+	builder.WriteString(fmt.Sprintf("%v", m.GpuVersion))
 	builder.WriteByte(')')
 	return builder.String()
 }

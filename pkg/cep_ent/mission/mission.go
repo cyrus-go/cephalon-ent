@@ -42,6 +42,8 @@ const (
 	FieldKeyPairID = "key_pair_id"
 	// FieldMissionBatchNumber holds the string denoting the mission_batch_number field in the database.
 	FieldMissionBatchNumber = "mission_batch_number"
+	// FieldGpuVersion holds the string denoting the gpu_version field in the database.
+	FieldGpuVersion = "gpu_version"
 	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
 	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldResultUrls,
 	FieldKeyPairID,
 	FieldMissionBatchNumber,
+	FieldGpuVersion,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -153,6 +156,18 @@ func ResultValidator(r enums.MissionResult) error {
 	}
 }
 
+const DefaultGpuVersion enums.GpuVersion = "RTX 2060"
+
+// GpuVersionValidator is a validator for the "gpu_version" field enum values. It is called by the builders before save.
+func GpuVersionValidator(gv enums.GpuVersion) error {
+	switch gv {
+	case "RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090":
+		return nil
+	default:
+		return fmt.Errorf("mission: invalid enum value for gpu_version field: %q", gv)
+	}
+}
+
 // OrderOption defines the ordering options for the Mission queries.
 type OrderOption func(*sql.Selector)
 
@@ -219,6 +234,11 @@ func ByKeyPairID(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionBatchNumber orders the results by the mission_batch_number field.
 func ByMissionBatchNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionBatchNumber, opts...).ToFunc()
+}
+
+// ByGpuVersion orders the results by the gpu_version field.
+func ByGpuVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuVersion, opts...).ToFunc()
 }
 
 // ByMissionKeyPairsCount orders the results by mission_key_pairs count.

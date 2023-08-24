@@ -356,6 +356,7 @@ var (
 		{Name: "result", Type: field.TypeEnum, Comment: "任务结果，pending 表示还没有结果", Enums: []string{"pending", "succeed", "failed"}, Default: "pending"},
 		{Name: "result_urls", Type: field.TypeJSON, Nullable: true, Comment: "任务结果资源位置列表序列化"},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号", Default: ""},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "最低可接显卡", Enums: []string{"RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 	}
 	// MissionsTable holds the schema information for the "missions" table.
@@ -366,7 +367,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[13]},
+				Columns:    []*schema.Column{MissionsColumns[14]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

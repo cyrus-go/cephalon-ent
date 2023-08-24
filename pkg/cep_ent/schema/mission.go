@@ -23,6 +23,7 @@ func (Mission) Fields() []ent.Field {
 		field.Strings("result_urls").Optional().Sensitive().Comment("任务结果资源位置列表序列化"),
 		field.Int64("key_pair_id").Default(0).StructTag(`json:"key_pair_id"`).Comment("任务创建者的密钥对 ID"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
+		field.Enum("gpu_version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersion2060)).StructTag(`json:"gpu_version"`).Comment("最低可接显卡"),
 	}
 }
 

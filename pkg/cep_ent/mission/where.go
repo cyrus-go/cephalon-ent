@@ -616,6 +616,36 @@ func MissionBatchNumberContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldMissionBatchNumber, v))
 }
 
+// GpuVersionEQ applies the EQ predicate on the "gpu_version" field.
+func GpuVersionEQ(v enums.GpuVersion) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldEQ(FieldGpuVersion, vc))
+}
+
+// GpuVersionNEQ applies the NEQ predicate on the "gpu_version" field.
+func GpuVersionNEQ(v enums.GpuVersion) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldNEQ(FieldGpuVersion, vc))
+}
+
+// GpuVersionIn applies the In predicate on the "gpu_version" field.
+func GpuVersionIn(vs ...enums.GpuVersion) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldIn(FieldGpuVersion, v...))
+}
+
+// GpuVersionNotIn applies the NotIn predicate on the "gpu_version" field.
+func GpuVersionNotIn(vs ...enums.GpuVersion) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldNotIn(FieldGpuVersion, v...))
+}
+
 // HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.
 func HasMissionKeyPairs() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
