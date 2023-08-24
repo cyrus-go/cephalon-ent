@@ -3,10 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/devicegpumission"
-	"cephalon-ent/pkg/cep_ent/gpu"
-	"cephalon-ent/pkg/cep_ent/missionkind"
 	"context"
 	"errors"
 	"fmt"
@@ -15,6 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 )
 
 // DeviceGpuMissionCreate is the builder for creating a DeviceGpuMission entity.

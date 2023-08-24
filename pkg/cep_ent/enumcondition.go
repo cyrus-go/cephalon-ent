@@ -3,13 +3,13 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/enumcondition"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 )
 
 // EnumCondition is the model entity for the EnumCondition schema.

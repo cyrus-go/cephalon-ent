@@ -1,9 +1,9 @@
 package schema
 
 import (
-	"cephalon-ent/common"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
+	"github.com/stark-sim/cephalon-ent/common"
 	"time"
 
 	"entgo.io/ent"

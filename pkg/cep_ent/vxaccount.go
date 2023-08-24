@@ -3,14 +3,14 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/user"
-	"cephalon-ent/pkg/cep_ent/vxaccount"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 )
 
 // VXAccount is the model entity for the VXAccount schema.

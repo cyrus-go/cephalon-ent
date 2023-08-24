@@ -3,7 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/inputlog"
 	"context"
 	"errors"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 )
 
 // InputLogCreate is the builder for creating a InputLog entity.

@@ -3,12 +3,12 @@
 package gpu
 
 import (
-	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/enums"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.

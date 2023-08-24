@@ -3,9 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/rechargeorder"
-	"cephalon-ent/pkg/cep_ent/user"
-	"cephalon-ent/pkg/cep_ent/vxsocial"
 	"context"
 	"errors"
 	"fmt"
@@ -14,6 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 )
 
 // VXSocialCreate is the builder for creating a VXSocial entity.

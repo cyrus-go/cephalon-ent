@@ -3,9 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/missionbatch"
-	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"errors"
 	"fmt"
@@ -14,6 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // MissionBatchCreate is the builder for creating a MissionBatch entity.

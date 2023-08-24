@@ -3,10 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/hmackeypair"
-	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionkeypair"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -15,6 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // MissionKeyPairCreate is the builder for creating a MissionKeyPair entity.

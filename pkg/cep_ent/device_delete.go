@@ -3,13 +3,13 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/predicate"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // DeviceDelete is the builder for deleting a Device entity.

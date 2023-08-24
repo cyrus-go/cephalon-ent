@@ -3,9 +3,10 @@
 package hook
 
 import (
-	"cephalon-ent/pkg/cep_ent"
 	"context"
 	"fmt"
+
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent"
 )
 
 // The CollectFunc type is an adapter to allow the use of ordinary

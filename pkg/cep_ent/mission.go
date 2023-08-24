@@ -3,9 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/hmackeypair"
-	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/enums"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -13,6 +10,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // Mission is the model entity for the Mission schema.

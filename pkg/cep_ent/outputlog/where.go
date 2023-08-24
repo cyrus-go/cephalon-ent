@@ -3,10 +3,10 @@
 package outputlog
 
 import (
-	"cephalon-ent/pkg/cep_ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

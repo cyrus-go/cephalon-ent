@@ -3,13 +3,13 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/platformaccount"
-	"cephalon-ent/pkg/cep_ent/predicate"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // PlatformAccountDelete is the builder for deleting a PlatformAccount entity.

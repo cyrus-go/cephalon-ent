@@ -3,14 +3,14 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/gpu"
-	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // Gpu is the model entity for the Gpu schema.

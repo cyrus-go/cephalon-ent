@@ -3,8 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/earnbill"
-	"cephalon-ent/pkg/cep_ent/platformaccount"
 	"context"
 	"errors"
 	"fmt"
@@ -13,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 )
 
 // PlatformAccountCreate is the builder for creating a PlatformAccount entity.

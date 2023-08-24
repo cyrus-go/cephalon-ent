@@ -3,14 +3,14 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/collect"
-	"cephalon-ent/pkg/cep_ent/user"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // Collect is the model entity for the Collect schema.

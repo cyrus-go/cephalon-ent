@@ -3,13 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/earnbill"
-	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/user"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -18,6 +11,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // MissionProduceOrderUpdate is the builder for updating MissionProduceOrder entities.

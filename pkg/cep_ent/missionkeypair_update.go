@@ -3,11 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/hmackeypair"
-	"cephalon-ent/pkg/cep_ent/mission"
-	"cephalon-ent/pkg/cep_ent/missionkeypair"
-	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -17,6 +12,11 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // MissionKeyPairUpdate is the builder for updating MissionKeyPair entities.

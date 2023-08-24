@@ -3,14 +3,14 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/missionbatch"
-	"cephalon-ent/pkg/cep_ent/user"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // MissionBatch is the model entity for the MissionBatch schema.

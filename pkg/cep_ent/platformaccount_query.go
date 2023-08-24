@@ -3,9 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/earnbill"
-	"cephalon-ent/pkg/cep_ent/platformaccount"
-	"cephalon-ent/pkg/cep_ent/predicate"
 	"context"
 	"database/sql/driver"
 	"fmt"
@@ -14,6 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // PlatformAccountQuery is the builder for querying PlatformAccount entities.

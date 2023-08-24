@@ -3,8 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/enumcondition"
-	"cephalon-ent/pkg/cep_ent/predicate"
 	"context"
 	"errors"
 	"fmt"
@@ -13,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // EnumConditionUpdate is the builder for updating EnumCondition entities.

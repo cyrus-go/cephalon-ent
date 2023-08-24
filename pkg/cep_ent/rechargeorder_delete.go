@@ -3,13 +3,13 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/rechargeorder"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 )
 
 // RechargeOrderDelete is the builder for deleting a RechargeOrder entity.

@@ -3,12 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/device"
-	"cephalon-ent/pkg/cep_ent/devicegpumission"
-	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/user"
-	"cephalon-ent/pkg/cep_ent/userdevice"
-	"cephalon-ent/pkg/enums"
 	"context"
 	"errors"
 	"fmt"
@@ -17,6 +11,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // DeviceCreate is the builder for creating a Device entity.

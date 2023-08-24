@@ -3,14 +3,14 @@
 package enttest
 
 import (
-	"cephalon-ent/pkg/cep_ent"
 	"context"
-	// required by schema hooks.
-	_ "cephalon-ent/pkg/cep_ent/runtime"
 
-	"cephalon-ent/pkg/cep_ent/migrate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent"
+	// required by schema hooks.
+	_ "github.com/stark-sim/cephalon-ent/pkg/cep_ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/migrate"
 )
 
 type (

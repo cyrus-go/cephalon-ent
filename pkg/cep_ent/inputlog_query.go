@@ -3,8 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/inputlog"
-	"cephalon-ent/pkg/cep_ent/predicate"
 	"context"
 	"fmt"
 	"math"
@@ -12,6 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // InputLogQuery is the builder for querying InputLog entities.

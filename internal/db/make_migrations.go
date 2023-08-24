@@ -12,8 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	// 需要初始化数据库配置
-	"cephalon-ent/configs"
-	"cephalon-ent/pkg/cep_ent/migrate"
+	"github.com/stark-sim/cephalon-ent/configs"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/migrate"
 )
 
 func main() {

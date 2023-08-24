@@ -1,12 +1,12 @@
 package main
 
 import (
-	"cephalon-ent/common"
-	"cephalon-ent/internal/db"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/stark-sim/cephalon-ent/common"
+	"github.com/stark-sim/cephalon-ent/internal/db"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 func main() {

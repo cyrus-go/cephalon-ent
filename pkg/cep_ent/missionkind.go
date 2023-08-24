@@ -3,14 +3,14 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/missionkind"
-	"cephalon-ent/pkg/enums"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // MissionKind is the model entity for the MissionKind schema.

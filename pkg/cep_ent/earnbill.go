@@ -3,17 +3,17 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/earnbill"
-	"cephalon-ent/pkg/cep_ent/missionproduceorder"
-	"cephalon-ent/pkg/cep_ent/platformaccount"
-	"cephalon-ent/pkg/cep_ent/profitaccount"
-	"cephalon-ent/pkg/cep_ent/user"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // EarnBill is the model entity for the EarnBill schema.

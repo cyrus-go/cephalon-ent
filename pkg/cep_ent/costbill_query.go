@@ -3,12 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/costaccount"
-	"cephalon-ent/pkg/cep_ent/costbill"
-	"cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/rechargeorder"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"fmt"
 	"math"
@@ -16,6 +10,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // CostBillQuery is the builder for querying CostBill entities.

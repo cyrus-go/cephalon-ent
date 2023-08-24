@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in cephalon-ent/pkg/cep_ent/runtime.go
+// The schema-stitching logic is generated in github.com/stark-sim/cephalon-ent/pkg/cep_ent/runtime.go
 
 const (
 	Version = "v0.12.3"                                         // Version of ent codegen.

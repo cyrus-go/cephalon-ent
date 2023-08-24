@@ -3,14 +3,14 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/profitaccount"
-	"cephalon-ent/pkg/cep_ent/user"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // ProfitAccount is the model entity for the ProfitAccount schema.

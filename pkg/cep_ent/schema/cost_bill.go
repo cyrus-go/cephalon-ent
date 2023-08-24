@@ -1,11 +1,11 @@
 package schema
 
 import (
-	"cephalon-ent/pkg/enums"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 type CostBill struct {

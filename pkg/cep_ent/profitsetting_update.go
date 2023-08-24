@@ -3,9 +3,6 @@
 package cep_ent
 
 import (
-	"cephalon-ent/pkg/cep_ent/predicate"
-	"cephalon-ent/pkg/cep_ent/profitsetting"
-	"cephalon-ent/pkg/cep_ent/user"
 	"context"
 	"errors"
 	"fmt"
@@ -14,6 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // ProfitSettingUpdate is the builder for updating ProfitSetting entities.

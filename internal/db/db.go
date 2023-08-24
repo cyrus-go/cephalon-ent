@@ -1,8 +1,6 @@
 package db
 
 import (
-	"cephalon-ent/configs"
-	"cephalon-ent/pkg/cep_ent"
 	"database/sql"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
@@ -14,6 +12,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"github.com/stark-sim/cephalon-ent/configs"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent"
 	"time"
 )
 
