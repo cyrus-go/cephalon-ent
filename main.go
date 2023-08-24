@@ -18,9 +18,9 @@ func main() {
 	//	return
 	//}
 
-	users, err := db.DB.User.Query().Where(user.DeletedAt(common.ZeroTime)).All(ctx)
+	users, err := db.DB.User.Query().Where(user.DeletedAt(common.ZeroTime)).First(ctx)
 	if err != nil {
 		logrus.Errorf("%+v", err)
 	}
-	fmt.Printf("%+v", users)
+	fmt.Printf("%+v\n", users)
 }

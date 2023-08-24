@@ -590,6 +590,26 @@ var (
 			},
 		},
 	}
+	// PricesColumns holds the columns for the "prices" table.
+	PricesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
+		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
+		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"SD", "JP", "WT"}, Default: "SD"},
+		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"time", "count"}, Default: "count"},
+		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
+	}
+	// PricesTable holds the schema information for the "prices" table.
+	PricesTable = &schema.Table{
+		Name:       "prices",
+		Columns:    PricesColumns,
+		PrimaryKey: []*schema.Column{PricesColumns[0]},
+	}
 	// ProfitAccountsColumns holds the columns for the "profit_accounts" table.
 	ProfitAccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -822,6 +842,7 @@ var (
 		MissionProduceOrdersTable,
 		OutputLogsTable,
 		PlatformAccountsTable,
+		PricesTable,
 		ProfitAccountsTable,
 		ProfitSettingsTable,
 		RechargeOrdersTable,
@@ -875,6 +896,7 @@ func init() {
 	MissionProduceOrdersTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}
+	PricesTable.Annotation = &entsql.Annotation{}
 	ProfitAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	ProfitAccountsTable.Annotation = &entsql.Annotation{}
 	ProfitSettingsTable.ForeignKeys[0].RefTable = UsersTable

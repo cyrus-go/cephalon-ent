@@ -23,7 +23,7 @@ var DB *cep_ent.Client
 func init() {
 	dbConf := configs.Conf.DBConfig
 	url = fmt.Sprintf("postgres://%s:%s@%s:%v/%s?sslmode=disable&TimeZone=Asia/Shanghai", dbConf.Username, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Database)
-	fmt.Printf("db_url is :%s", url)
+	fmt.Printf("db_url is :%s\n", url)
 	DB = NewDBClient(dbConf)
 	err := migrateWithMigrationFiles()
 	if err != nil {

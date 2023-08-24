@@ -63,6 +63,9 @@ type OutputLog func(*sql.Selector)
 // PlatformAccount is the predicate function for platformaccount builders.
 type PlatformAccount func(*sql.Selector)
 
+// Price is the predicate function for price builders.
+type Price func(*sql.Selector)
+
 // ProfitAccount is the predicate function for profitaccount builders.
 type ProfitAccount func(*sql.Selector)
 

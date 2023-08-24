@@ -24,6 +24,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -979,6 +980,41 @@ func init() {
 	platformaccountDescID := platformaccountMixinFields0[0].Descriptor()
 	// platformaccount.DefaultID holds the default value on creation for the id field.
 	platformaccount.DefaultID = platformaccountDescID.Default.(func() int64)
+	priceMixin := schema.Price{}.Mixin()
+	priceMixinFields0 := priceMixin[0].Fields()
+	_ = priceMixinFields0
+	priceFields := schema.Price{}.Fields()
+	_ = priceFields
+	// priceDescCreatedBy is the schema descriptor for created_by field.
+	priceDescCreatedBy := priceMixinFields0[1].Descriptor()
+	// price.DefaultCreatedBy holds the default value on creation for the created_by field.
+	price.DefaultCreatedBy = priceDescCreatedBy.Default.(int64)
+	// priceDescUpdatedBy is the schema descriptor for updated_by field.
+	priceDescUpdatedBy := priceMixinFields0[2].Descriptor()
+	// price.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	price.DefaultUpdatedBy = priceDescUpdatedBy.Default.(int64)
+	// priceDescCreatedAt is the schema descriptor for created_at field.
+	priceDescCreatedAt := priceMixinFields0[3].Descriptor()
+	// price.DefaultCreatedAt holds the default value on creation for the created_at field.
+	price.DefaultCreatedAt = priceDescCreatedAt.Default.(func() time.Time)
+	// priceDescUpdatedAt is the schema descriptor for updated_at field.
+	priceDescUpdatedAt := priceMixinFields0[4].Descriptor()
+	// price.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	price.DefaultUpdatedAt = priceDescUpdatedAt.Default.(func() time.Time)
+	// price.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	price.UpdateDefaultUpdatedAt = priceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// priceDescDeletedAt is the schema descriptor for deleted_at field.
+	priceDescDeletedAt := priceMixinFields0[5].Descriptor()
+	// price.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	price.DefaultDeletedAt = priceDescDeletedAt.Default.(time.Time)
+	// priceDescCep is the schema descriptor for cep field.
+	priceDescCep := priceFields[4].Descriptor()
+	// price.DefaultCep holds the default value on creation for the cep field.
+	price.DefaultCep = priceDescCep.Default.(int64)
+	// priceDescID is the schema descriptor for id field.
+	priceDescID := priceMixinFields0[0].Descriptor()
+	// price.DefaultID holds the default value on creation for the id field.
+	price.DefaultID = priceDescID.Default.(func() int64)
 	profitaccountMixin := schema.ProfitAccount{}.Mixin()
 	profitaccountMixinFields0 := profitaccountMixin[0].Fields()
 	_ = profitaccountMixinFields0

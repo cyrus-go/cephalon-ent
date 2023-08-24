@@ -33,6 +33,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -85,6 +86,8 @@ type Client struct {
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
 	PlatformAccount *PlatformAccountClient
+	// Price is the client for interacting with the Price builders.
+	Price *PriceClient
 	// ProfitAccount is the client for interacting with the ProfitAccount builders.
 	ProfitAccount *ProfitAccountClient
 	// ProfitSetting is the client for interacting with the ProfitSetting builders.
@@ -131,6 +134,7 @@ func (c *Client) init() {
 	c.MissionProduceOrder = NewMissionProduceOrderClient(c.config)
 	c.OutputLog = NewOutputLogClient(c.config)
 	c.PlatformAccount = NewPlatformAccountClient(c.config)
+	c.Price = NewPriceClient(c.config)
 	c.ProfitAccount = NewProfitAccountClient(c.config)
 	c.ProfitSetting = NewProfitSettingClient(c.config)
 	c.RechargeOrder = NewRechargeOrderClient(c.config)
@@ -239,6 +243,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MissionProduceOrder: NewMissionProduceOrderClient(cfg),
 		OutputLog:           NewOutputLogClient(cfg),
 		PlatformAccount:     NewPlatformAccountClient(cfg),
+		Price:               NewPriceClient(cfg),
 		ProfitAccount:       NewProfitAccountClient(cfg),
 		ProfitSetting:       NewProfitSettingClient(cfg),
 		RechargeOrder:       NewRechargeOrderClient(cfg),
@@ -284,6 +289,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MissionProduceOrder: NewMissionProduceOrderClient(cfg),
 		OutputLog:           NewOutputLogClient(cfg),
 		PlatformAccount:     NewPlatformAccountClient(cfg),
+		Price:               NewPriceClient(cfg),
 		ProfitAccount:       NewProfitAccountClient(cfg),
 		ProfitSetting:       NewProfitSettingClient(cfg),
 		RechargeOrder:       NewRechargeOrderClient(cfg),
@@ -323,7 +329,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.Gpu, c.HmacKeyPair, c.InputLog,
 		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair,
-		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount,
+		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount, c.Price,
 		c.ProfitAccount, c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice,
 		c.VXAccount, c.VXSocial,
 	} {
@@ -338,7 +344,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.Gpu, c.HmacKeyPair, c.InputLog,
 		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair,
-		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount,
+		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount, c.Price,
 		c.ProfitAccount, c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice,
 		c.VXAccount, c.VXSocial,
 	} {
@@ -387,6 +393,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.OutputLog.mutate(ctx, m)
 	case *PlatformAccountMutation:
 		return c.PlatformAccount.mutate(ctx, m)
+	case *PriceMutation:
+		return c.Price.mutate(ctx, m)
 	case *ProfitAccountMutation:
 		return c.ProfitAccount.mutate(ctx, m)
 	case *ProfitSettingMutation:
@@ -3240,6 +3248,124 @@ func (c *PlatformAccountClient) mutate(ctx context.Context, m *PlatformAccountMu
 	}
 }
 
+// PriceClient is a client for the Price schema.
+type PriceClient struct {
+	config
+}
+
+// NewPriceClient returns a client for the Price from the given config.
+func NewPriceClient(c config) *PriceClient {
+	return &PriceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `price.Hooks(f(g(h())))`.
+func (c *PriceClient) Use(hooks ...Hook) {
+	c.hooks.Price = append(c.hooks.Price, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `price.Intercept(f(g(h())))`.
+func (c *PriceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Price = append(c.inters.Price, interceptors...)
+}
+
+// Create returns a builder for creating a Price entity.
+func (c *PriceClient) Create() *PriceCreate {
+	mutation := newPriceMutation(c.config, OpCreate)
+	return &PriceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Price entities.
+func (c *PriceClient) CreateBulk(builders ...*PriceCreate) *PriceCreateBulk {
+	return &PriceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Price.
+func (c *PriceClient) Update() *PriceUpdate {
+	mutation := newPriceMutation(c.config, OpUpdate)
+	return &PriceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PriceClient) UpdateOne(pr *Price) *PriceUpdateOne {
+	mutation := newPriceMutation(c.config, OpUpdateOne, withPrice(pr))
+	return &PriceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PriceClient) UpdateOneID(id int64) *PriceUpdateOne {
+	mutation := newPriceMutation(c.config, OpUpdateOne, withPriceID(id))
+	return &PriceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Price.
+func (c *PriceClient) Delete() *PriceDelete {
+	mutation := newPriceMutation(c.config, OpDelete)
+	return &PriceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PriceClient) DeleteOne(pr *Price) *PriceDeleteOne {
+	return c.DeleteOneID(pr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PriceClient) DeleteOneID(id int64) *PriceDeleteOne {
+	builder := c.Delete().Where(price.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PriceDeleteOne{builder}
+}
+
+// Query returns a query builder for Price.
+func (c *PriceClient) Query() *PriceQuery {
+	return &PriceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePrice},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Price entity by its id.
+func (c *PriceClient) Get(ctx context.Context, id int64) (*Price, error) {
+	return c.Query().Where(price.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PriceClient) GetX(ctx context.Context, id int64) *Price {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PriceClient) Hooks() []Hook {
+	return c.hooks.Price
+}
+
+// Interceptors returns the client interceptors.
+func (c *PriceClient) Interceptors() []Interceptor {
+	return c.inters.Price
+}
+
+func (c *PriceClient) mutate(ctx context.Context, m *PriceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PriceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PriceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PriceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PriceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Price mutation op: %q", m.Op())
+	}
+}
+
 // ProfitAccountClient is a client for the ProfitAccount schema.
 type ProfitAccountClient struct {
 	config
@@ -4504,14 +4630,15 @@ type (
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, Gpu, HmacKeyPair, InputLog, Mission,
 		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind,
-		MissionProduceOrder, OutputLog, PlatformAccount, ProfitAccount, ProfitSetting,
-		RechargeOrder, User, UserDevice, VXAccount, VXSocial []ent.Hook
+		MissionProduceOrder, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeOrder, User, UserDevice, VXAccount, VXSocial []ent.Hook
 	}
 	inters struct {
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, Gpu, HmacKeyPair, InputLog, Mission,
 		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind,
-		MissionProduceOrder, OutputLog, PlatformAccount, ProfitAccount, ProfitSetting,
-		RechargeOrder, User, UserDevice, VXAccount, VXSocial []ent.Interceptor
+		MissionProduceOrder, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
+		VXSocial []ent.Interceptor
 	}
 )

@@ -237,6 +237,18 @@ func (f PlatformAccountFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (ce
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.PlatformAccountMutation", m)
 }
 
+// The PriceFunc type is an adapter to allow the use of ordinary
+// function as Price mutator.
+type PriceFunc func(context.Context, *cep_ent.PriceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PriceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.PriceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.PriceMutation", m)
+}
+
 // The ProfitAccountFunc type is an adapter to allow the use of ordinary
 // function as ProfitAccount mutator.
 type ProfitAccountFunc func(context.Context, *cep_ent.ProfitAccountMutation) (cep_ent.Value, error)

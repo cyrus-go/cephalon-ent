@@ -50,6 +50,8 @@ type Tx struct {
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
 	PlatformAccount *PlatformAccountClient
+	// Price is the client for interacting with the Price builders.
+	Price *PriceClient
 	// ProfitAccount is the client for interacting with the ProfitAccount builders.
 	ProfitAccount *ProfitAccountClient
 	// ProfitSetting is the client for interacting with the ProfitSetting builders.
@@ -214,6 +216,7 @@ func (tx *Tx) init() {
 	tx.MissionProduceOrder = NewMissionProduceOrderClient(tx.config)
 	tx.OutputLog = NewOutputLogClient(tx.config)
 	tx.PlatformAccount = NewPlatformAccountClient(tx.config)
+	tx.Price = NewPriceClient(tx.config)
 	tx.ProfitAccount = NewProfitAccountClient(tx.config)
 	tx.ProfitSetting = NewProfitSettingClient(tx.config)
 	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
