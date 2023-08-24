@@ -162,30 +162,12 @@ var (
 	DefaultID func() int64
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusWaiting is the default value of the Status enum.
-const DefaultStatus = StatusWaiting
-
-// Status values.
-const (
-	StatusWaiting   Status = "waiting"
-	StatusCanceled  Status = "canceled"
-	StatusDoing     Status = "doing"
-	StatusSucceed   Status = "succeed"
-	StatusFailed    Status = "failed"
-	StatusSupplying Status = "supplying"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.MissionOrderStatus = "waiting"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.MissionOrderStatus) error {
 	switch s {
-	case StatusWaiting, StatusCanceled, StatusDoing, StatusSucceed, StatusFailed, StatusSupplying:
+	case "waiting", "canceled", "doing", "supplying", "failed", "succeed":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for status field: %q", s)

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -19,6 +20,7 @@ type CollectCreate struct {
 	config
 	mutation *CollectMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -282,6 +284,7 @@ func (cc *CollectCreate) createSpec() (*Collect, *sqlgraph.CreateSpec) {
 		_node = &Collect{config: cc.config}
 		_spec = sqlgraph.NewCreateSpec(collect.Table, sqlgraph.NewFieldSpec(collect.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = cc.conflict
 	if id, ok := cc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -334,10 +337,365 @@ func (cc *CollectCreate) createSpec() (*Collect, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Collect.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.CollectUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (cc *CollectCreate) OnConflict(opts ...sql.ConflictOption) *CollectUpsertOne {
+	cc.conflict = opts
+	return &CollectUpsertOne{
+		create: cc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Collect.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (cc *CollectCreate) OnConflictColumns(columns ...string) *CollectUpsertOne {
+	cc.conflict = append(cc.conflict, sql.ConflictColumns(columns...))
+	return &CollectUpsertOne{
+		create: cc,
+	}
+}
+
+type (
+	// CollectUpsertOne is the builder for "upsert"-ing
+	//  one Collect node.
+	CollectUpsertOne struct {
+		create *CollectCreate
+	}
+
+	// CollectUpsert is the "OnConflict" setter.
+	CollectUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CollectUpsert) SetCreatedBy(v int64) *CollectUpsert {
+	u.Set(collect.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateCreatedBy() *CollectUpsert {
+	u.SetExcluded(collect.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CollectUpsert) AddCreatedBy(v int64) *CollectUpsert {
+	u.Add(collect.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CollectUpsert) SetUpdatedBy(v int64) *CollectUpsert {
+	u.Set(collect.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateUpdatedBy() *CollectUpsert {
+	u.SetExcluded(collect.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CollectUpsert) AddUpdatedBy(v int64) *CollectUpsert {
+	u.Add(collect.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CollectUpsert) SetUpdatedAt(v time.Time) *CollectUpsert {
+	u.Set(collect.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateUpdatedAt() *CollectUpsert {
+	u.SetExcluded(collect.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CollectUpsert) SetDeletedAt(v time.Time) *CollectUpsert {
+	u.Set(collect.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateDeletedAt() *CollectUpsert {
+	u.SetExcluded(collect.FieldDeletedAt)
+	return u
+}
+
+// SetURL sets the "url" field.
+func (u *CollectUpsert) SetURL(v string) *CollectUpsert {
+	u.Set(collect.FieldURL, v)
+	return u
+}
+
+// UpdateURL sets the "url" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateURL() *CollectUpsert {
+	u.SetExcluded(collect.FieldURL)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CollectUpsert) SetUserID(v int64) *CollectUpsert {
+	u.Set(collect.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateUserID() *CollectUpsert {
+	u.SetExcluded(collect.FieldUserID)
+	return u
+}
+
+// SetJpgName sets the "jpg_name" field.
+func (u *CollectUpsert) SetJpgName(v int64) *CollectUpsert {
+	u.Set(collect.FieldJpgName, v)
+	return u
+}
+
+// UpdateJpgName sets the "jpg_name" field to the value that was provided on create.
+func (u *CollectUpsert) UpdateJpgName() *CollectUpsert {
+	u.SetExcluded(collect.FieldJpgName)
+	return u
+}
+
+// AddJpgName adds v to the "jpg_name" field.
+func (u *CollectUpsert) AddJpgName(v int64) *CollectUpsert {
+	u.Add(collect.FieldJpgName, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.Collect.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(collect.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *CollectUpsertOne) UpdateNewValues() *CollectUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(collect.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(collect.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Collect.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *CollectUpsertOne) Ignore() *CollectUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *CollectUpsertOne) DoNothing() *CollectUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the CollectCreate.OnConflict
+// documentation for more info.
+func (u *CollectUpsertOne) Update(set func(*CollectUpsert)) *CollectUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&CollectUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CollectUpsertOne) SetCreatedBy(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CollectUpsertOne) AddCreatedBy(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateCreatedBy() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CollectUpsertOne) SetUpdatedBy(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CollectUpsertOne) AddUpdatedBy(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateUpdatedBy() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CollectUpsertOne) SetUpdatedAt(v time.Time) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateUpdatedAt() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CollectUpsertOne) SetDeletedAt(v time.Time) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateDeletedAt() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetURL sets the "url" field.
+func (u *CollectUpsertOne) SetURL(v string) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetURL(v)
+	})
+}
+
+// UpdateURL sets the "url" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateURL() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateURL()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CollectUpsertOne) SetUserID(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateUserID() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetJpgName sets the "jpg_name" field.
+func (u *CollectUpsertOne) SetJpgName(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetJpgName(v)
+	})
+}
+
+// AddJpgName adds v to the "jpg_name" field.
+func (u *CollectUpsertOne) AddJpgName(v int64) *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.AddJpgName(v)
+	})
+}
+
+// UpdateJpgName sets the "jpg_name" field to the value that was provided on create.
+func (u *CollectUpsertOne) UpdateJpgName() *CollectUpsertOne {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateJpgName()
+	})
+}
+
+// Exec executes the query.
+func (u *CollectUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for CollectCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *CollectUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *CollectUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *CollectUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // CollectCreateBulk is the builder for creating many Collect entities in bulk.
 type CollectCreateBulk struct {
 	config
 	builders []*CollectCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the Collect entities in the database.
@@ -364,6 +722,7 @@ func (ccb *CollectCreateBulk) Save(ctx context.Context) ([]*Collect, error) {
 					_, err = mutators[i+1].Mutate(root, ccb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = ccb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, ccb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -414,6 +773,239 @@ func (ccb *CollectCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (ccb *CollectCreateBulk) ExecX(ctx context.Context) {
 	if err := ccb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Collect.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.CollectUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (ccb *CollectCreateBulk) OnConflict(opts ...sql.ConflictOption) *CollectUpsertBulk {
+	ccb.conflict = opts
+	return &CollectUpsertBulk{
+		create: ccb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Collect.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ccb *CollectCreateBulk) OnConflictColumns(columns ...string) *CollectUpsertBulk {
+	ccb.conflict = append(ccb.conflict, sql.ConflictColumns(columns...))
+	return &CollectUpsertBulk{
+		create: ccb,
+	}
+}
+
+// CollectUpsertBulk is the builder for "upsert"-ing
+// a bulk of Collect nodes.
+type CollectUpsertBulk struct {
+	create *CollectCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.Collect.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(collect.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *CollectUpsertBulk) UpdateNewValues() *CollectUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(collect.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(collect.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Collect.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *CollectUpsertBulk) Ignore() *CollectUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *CollectUpsertBulk) DoNothing() *CollectUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the CollectCreateBulk.OnConflict
+// documentation for more info.
+func (u *CollectUpsertBulk) Update(set func(*CollectUpsert)) *CollectUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&CollectUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CollectUpsertBulk) SetCreatedBy(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CollectUpsertBulk) AddCreatedBy(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateCreatedBy() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CollectUpsertBulk) SetUpdatedBy(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CollectUpsertBulk) AddUpdatedBy(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateUpdatedBy() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CollectUpsertBulk) SetUpdatedAt(v time.Time) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateUpdatedAt() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CollectUpsertBulk) SetDeletedAt(v time.Time) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateDeletedAt() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetURL sets the "url" field.
+func (u *CollectUpsertBulk) SetURL(v string) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetURL(v)
+	})
+}
+
+// UpdateURL sets the "url" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateURL() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateURL()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CollectUpsertBulk) SetUserID(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateUserID() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetJpgName sets the "jpg_name" field.
+func (u *CollectUpsertBulk) SetJpgName(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.SetJpgName(v)
+	})
+}
+
+// AddJpgName adds v to the "jpg_name" field.
+func (u *CollectUpsertBulk) AddJpgName(v int64) *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.AddJpgName(v)
+	})
+}
+
+// UpdateJpgName sets the "jpg_name" field to the value that was provided on create.
+func (u *CollectUpsertBulk) UpdateJpgName() *CollectUpsertBulk {
+	return u.Update(func(s *CollectUpsert) {
+		s.UpdateJpgName()
+	})
+}
+
+// Exec executes the query.
+func (u *CollectUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the CollectCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for CollectCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *CollectUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

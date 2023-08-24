@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type HmacKeyPairCreate struct {
 	config
 	mutation *HmacKeyPairMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -281,6 +283,7 @@ func (hkpc *HmacKeyPairCreate) createSpec() (*HmacKeyPair, *sqlgraph.CreateSpec)
 		_node = &HmacKeyPair{config: hkpc.config}
 		_spec = sqlgraph.NewCreateSpec(hmackeypair.Table, sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = hkpc.conflict
 	if id, ok := hkpc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -352,10 +355,352 @@ func (hkpc *HmacKeyPairCreate) createSpec() (*HmacKeyPair, *sqlgraph.CreateSpec)
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.HmacKeyPair.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.HmacKeyPairUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (hkpc *HmacKeyPairCreate) OnConflict(opts ...sql.ConflictOption) *HmacKeyPairUpsertOne {
+	hkpc.conflict = opts
+	return &HmacKeyPairUpsertOne{
+		create: hkpc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.HmacKeyPair.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (hkpc *HmacKeyPairCreate) OnConflictColumns(columns ...string) *HmacKeyPairUpsertOne {
+	hkpc.conflict = append(hkpc.conflict, sql.ConflictColumns(columns...))
+	return &HmacKeyPairUpsertOne{
+		create: hkpc,
+	}
+}
+
+type (
+	// HmacKeyPairUpsertOne is the builder for "upsert"-ing
+	//  one HmacKeyPair node.
+	HmacKeyPairUpsertOne struct {
+		create *HmacKeyPairCreate
+	}
+
+	// HmacKeyPairUpsert is the "OnConflict" setter.
+	HmacKeyPairUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *HmacKeyPairUpsert) SetCreatedBy(v int64) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateCreatedBy() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *HmacKeyPairUpsert) AddCreatedBy(v int64) *HmacKeyPairUpsert {
+	u.Add(hmackeypair.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *HmacKeyPairUpsert) SetUpdatedBy(v int64) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateUpdatedBy() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *HmacKeyPairUpsert) AddUpdatedBy(v int64) *HmacKeyPairUpsert {
+	u.Add(hmackeypair.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *HmacKeyPairUpsert) SetUpdatedAt(v time.Time) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateUpdatedAt() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *HmacKeyPairUpsert) SetDeletedAt(v time.Time) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateDeletedAt() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldDeletedAt)
+	return u
+}
+
+// SetKey sets the "key" field.
+func (u *HmacKeyPairUpsert) SetKey(v string) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldKey, v)
+	return u
+}
+
+// UpdateKey sets the "key" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateKey() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldKey)
+	return u
+}
+
+// SetSecret sets the "secret" field.
+func (u *HmacKeyPairUpsert) SetSecret(v string) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldSecret, v)
+	return u
+}
+
+// UpdateSecret sets the "secret" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateSecret() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldSecret)
+	return u
+}
+
+// SetCaller sets the "caller" field.
+func (u *HmacKeyPairUpsert) SetCaller(v string) *HmacKeyPairUpsert {
+	u.Set(hmackeypair.FieldCaller, v)
+	return u
+}
+
+// UpdateCaller sets the "caller" field to the value that was provided on create.
+func (u *HmacKeyPairUpsert) UpdateCaller() *HmacKeyPairUpsert {
+	u.SetExcluded(hmackeypair.FieldCaller)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.HmacKeyPair.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(hmackeypair.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *HmacKeyPairUpsertOne) UpdateNewValues() *HmacKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(hmackeypair.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(hmackeypair.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.HmacKeyPair.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *HmacKeyPairUpsertOne) Ignore() *HmacKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *HmacKeyPairUpsertOne) DoNothing() *HmacKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the HmacKeyPairCreate.OnConflict
+// documentation for more info.
+func (u *HmacKeyPairUpsertOne) Update(set func(*HmacKeyPairUpsert)) *HmacKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&HmacKeyPairUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *HmacKeyPairUpsertOne) SetCreatedBy(v int64) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *HmacKeyPairUpsertOne) AddCreatedBy(v int64) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateCreatedBy() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *HmacKeyPairUpsertOne) SetUpdatedBy(v int64) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *HmacKeyPairUpsertOne) AddUpdatedBy(v int64) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateUpdatedBy() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *HmacKeyPairUpsertOne) SetUpdatedAt(v time.Time) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateUpdatedAt() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *HmacKeyPairUpsertOne) SetDeletedAt(v time.Time) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateDeletedAt() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetKey sets the "key" field.
+func (u *HmacKeyPairUpsertOne) SetKey(v string) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetKey(v)
+	})
+}
+
+// UpdateKey sets the "key" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateKey() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateKey()
+	})
+}
+
+// SetSecret sets the "secret" field.
+func (u *HmacKeyPairUpsertOne) SetSecret(v string) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetSecret(v)
+	})
+}
+
+// UpdateSecret sets the "secret" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateSecret() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateSecret()
+	})
+}
+
+// SetCaller sets the "caller" field.
+func (u *HmacKeyPairUpsertOne) SetCaller(v string) *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetCaller(v)
+	})
+}
+
+// UpdateCaller sets the "caller" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertOne) UpdateCaller() *HmacKeyPairUpsertOne {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateCaller()
+	})
+}
+
+// Exec executes the query.
+func (u *HmacKeyPairUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for HmacKeyPairCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *HmacKeyPairUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *HmacKeyPairUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *HmacKeyPairUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // HmacKeyPairCreateBulk is the builder for creating many HmacKeyPair entities in bulk.
 type HmacKeyPairCreateBulk struct {
 	config
 	builders []*HmacKeyPairCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the HmacKeyPair entities in the database.
@@ -382,6 +727,7 @@ func (hkpcb *HmacKeyPairCreateBulk) Save(ctx context.Context) ([]*HmacKeyPair, e
 					_, err = mutators[i+1].Mutate(root, hkpcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = hkpcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, hkpcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -432,6 +778,232 @@ func (hkpcb *HmacKeyPairCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (hkpcb *HmacKeyPairCreateBulk) ExecX(ctx context.Context) {
 	if err := hkpcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.HmacKeyPair.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.HmacKeyPairUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (hkpcb *HmacKeyPairCreateBulk) OnConflict(opts ...sql.ConflictOption) *HmacKeyPairUpsertBulk {
+	hkpcb.conflict = opts
+	return &HmacKeyPairUpsertBulk{
+		create: hkpcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.HmacKeyPair.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (hkpcb *HmacKeyPairCreateBulk) OnConflictColumns(columns ...string) *HmacKeyPairUpsertBulk {
+	hkpcb.conflict = append(hkpcb.conflict, sql.ConflictColumns(columns...))
+	return &HmacKeyPairUpsertBulk{
+		create: hkpcb,
+	}
+}
+
+// HmacKeyPairUpsertBulk is the builder for "upsert"-ing
+// a bulk of HmacKeyPair nodes.
+type HmacKeyPairUpsertBulk struct {
+	create *HmacKeyPairCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.HmacKeyPair.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(hmackeypair.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *HmacKeyPairUpsertBulk) UpdateNewValues() *HmacKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(hmackeypair.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(hmackeypair.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.HmacKeyPair.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *HmacKeyPairUpsertBulk) Ignore() *HmacKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *HmacKeyPairUpsertBulk) DoNothing() *HmacKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the HmacKeyPairCreateBulk.OnConflict
+// documentation for more info.
+func (u *HmacKeyPairUpsertBulk) Update(set func(*HmacKeyPairUpsert)) *HmacKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&HmacKeyPairUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *HmacKeyPairUpsertBulk) SetCreatedBy(v int64) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *HmacKeyPairUpsertBulk) AddCreatedBy(v int64) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateCreatedBy() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *HmacKeyPairUpsertBulk) SetUpdatedBy(v int64) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *HmacKeyPairUpsertBulk) AddUpdatedBy(v int64) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateUpdatedBy() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *HmacKeyPairUpsertBulk) SetUpdatedAt(v time.Time) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateUpdatedAt() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *HmacKeyPairUpsertBulk) SetDeletedAt(v time.Time) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateDeletedAt() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetKey sets the "key" field.
+func (u *HmacKeyPairUpsertBulk) SetKey(v string) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetKey(v)
+	})
+}
+
+// UpdateKey sets the "key" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateKey() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateKey()
+	})
+}
+
+// SetSecret sets the "secret" field.
+func (u *HmacKeyPairUpsertBulk) SetSecret(v string) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetSecret(v)
+	})
+}
+
+// UpdateSecret sets the "secret" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateSecret() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateSecret()
+	})
+}
+
+// SetCaller sets the "caller" field.
+func (u *HmacKeyPairUpsertBulk) SetCaller(v string) *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.SetCaller(v)
+	})
+}
+
+// UpdateCaller sets the "caller" field to the value that was provided on create.
+func (u *HmacKeyPairUpsertBulk) UpdateCaller() *HmacKeyPairUpsertBulk {
+	return u.Update(func(s *HmacKeyPairUpsert) {
+		s.UpdateCaller()
+	})
+}
+
+// Exec executes the query.
+func (u *HmacKeyPairUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the HmacKeyPairCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for HmacKeyPairCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *HmacKeyPairUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

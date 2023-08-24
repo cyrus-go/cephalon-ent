@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -18,6 +19,7 @@ type OutputLogCreate struct {
 	config
 	mutation *OutputLogMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -333,6 +335,7 @@ func (olc *OutputLogCreate) createSpec() (*OutputLog, *sqlgraph.CreateSpec) {
 		_node = &OutputLog{config: olc.config}
 		_spec = sqlgraph.NewCreateSpec(outputlog.Table, sqlgraph.NewFieldSpec(outputlog.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = olc.conflict
 	if id, ok := olc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -392,10 +395,511 @@ func (olc *OutputLogCreate) createSpec() (*OutputLog, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.OutputLog.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.OutputLogUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (olc *OutputLogCreate) OnConflict(opts ...sql.ConflictOption) *OutputLogUpsertOne {
+	olc.conflict = opts
+	return &OutputLogUpsertOne{
+		create: olc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.OutputLog.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (olc *OutputLogCreate) OnConflictColumns(columns ...string) *OutputLogUpsertOne {
+	olc.conflict = append(olc.conflict, sql.ConflictColumns(columns...))
+	return &OutputLogUpsertOne{
+		create: olc,
+	}
+}
+
+type (
+	// OutputLogUpsertOne is the builder for "upsert"-ing
+	//  one OutputLog node.
+	OutputLogUpsertOne struct {
+		create *OutputLogCreate
+	}
+
+	// OutputLogUpsert is the "OnConflict" setter.
+	OutputLogUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *OutputLogUpsert) SetCreatedBy(v int64) *OutputLogUpsert {
+	u.Set(outputlog.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateCreatedBy() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *OutputLogUpsert) AddCreatedBy(v int64) *OutputLogUpsert {
+	u.Add(outputlog.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *OutputLogUpsert) SetUpdatedBy(v int64) *OutputLogUpsert {
+	u.Set(outputlog.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateUpdatedBy() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *OutputLogUpsert) AddUpdatedBy(v int64) *OutputLogUpsert {
+	u.Add(outputlog.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *OutputLogUpsert) SetUpdatedAt(v time.Time) *OutputLogUpsert {
+	u.Set(outputlog.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateUpdatedAt() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *OutputLogUpsert) SetDeletedAt(v time.Time) *OutputLogUpsert {
+	u.Set(outputlog.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateDeletedAt() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldDeletedAt)
+	return u
+}
+
+// SetHeaders sets the "headers" field.
+func (u *OutputLogUpsert) SetHeaders(v string) *OutputLogUpsert {
+	u.Set(outputlog.FieldHeaders, v)
+	return u
+}
+
+// UpdateHeaders sets the "headers" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateHeaders() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldHeaders)
+	return u
+}
+
+// SetBody sets the "body" field.
+func (u *OutputLogUpsert) SetBody(v string) *OutputLogUpsert {
+	u.Set(outputlog.FieldBody, v)
+	return u
+}
+
+// UpdateBody sets the "body" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateBody() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldBody)
+	return u
+}
+
+// ClearBody clears the value of the "body" field.
+func (u *OutputLogUpsert) ClearBody() *OutputLogUpsert {
+	u.SetNull(outputlog.FieldBody)
+	return u
+}
+
+// SetURL sets the "url" field.
+func (u *OutputLogUpsert) SetURL(v string) *OutputLogUpsert {
+	u.Set(outputlog.FieldURL, v)
+	return u
+}
+
+// UpdateURL sets the "url" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateURL() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldURL)
+	return u
+}
+
+// SetIP sets the "ip" field.
+func (u *OutputLogUpsert) SetIP(v string) *OutputLogUpsert {
+	u.Set(outputlog.FieldIP, v)
+	return u
+}
+
+// UpdateIP sets the "ip" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateIP() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldIP)
+	return u
+}
+
+// ClearIP clears the value of the "ip" field.
+func (u *OutputLogUpsert) ClearIP() *OutputLogUpsert {
+	u.SetNull(outputlog.FieldIP)
+	return u
+}
+
+// SetCaller sets the "caller" field.
+func (u *OutputLogUpsert) SetCaller(v string) *OutputLogUpsert {
+	u.Set(outputlog.FieldCaller, v)
+	return u
+}
+
+// UpdateCaller sets the "caller" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateCaller() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldCaller)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *OutputLogUpsert) SetStatus(v int16) *OutputLogUpsert {
+	u.Set(outputlog.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateStatus() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldStatus)
+	return u
+}
+
+// AddStatus adds v to the "status" field.
+func (u *OutputLogUpsert) AddStatus(v int16) *OutputLogUpsert {
+	u.Add(outputlog.FieldStatus, v)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *OutputLogUpsert) ClearStatus() *OutputLogUpsert {
+	u.SetNull(outputlog.FieldStatus)
+	return u
+}
+
+// SetHmacKey sets the "hmac_key" field.
+func (u *OutputLogUpsert) SetHmacKey(v string) *OutputLogUpsert {
+	u.Set(outputlog.FieldHmacKey, v)
+	return u
+}
+
+// UpdateHmacKey sets the "hmac_key" field to the value that was provided on create.
+func (u *OutputLogUpsert) UpdateHmacKey() *OutputLogUpsert {
+	u.SetExcluded(outputlog.FieldHmacKey)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.OutputLog.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(outputlog.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *OutputLogUpsertOne) UpdateNewValues() *OutputLogUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(outputlog.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(outputlog.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TraceID(); exists {
+			s.SetIgnore(outputlog.FieldTraceID)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.OutputLog.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *OutputLogUpsertOne) Ignore() *OutputLogUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *OutputLogUpsertOne) DoNothing() *OutputLogUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the OutputLogCreate.OnConflict
+// documentation for more info.
+func (u *OutputLogUpsertOne) Update(set func(*OutputLogUpsert)) *OutputLogUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&OutputLogUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *OutputLogUpsertOne) SetCreatedBy(v int64) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *OutputLogUpsertOne) AddCreatedBy(v int64) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateCreatedBy() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *OutputLogUpsertOne) SetUpdatedBy(v int64) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *OutputLogUpsertOne) AddUpdatedBy(v int64) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateUpdatedBy() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *OutputLogUpsertOne) SetUpdatedAt(v time.Time) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateUpdatedAt() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *OutputLogUpsertOne) SetDeletedAt(v time.Time) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateDeletedAt() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetHeaders sets the "headers" field.
+func (u *OutputLogUpsertOne) SetHeaders(v string) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetHeaders(v)
+	})
+}
+
+// UpdateHeaders sets the "headers" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateHeaders() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateHeaders()
+	})
+}
+
+// SetBody sets the "body" field.
+func (u *OutputLogUpsertOne) SetBody(v string) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetBody(v)
+	})
+}
+
+// UpdateBody sets the "body" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateBody() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateBody()
+	})
+}
+
+// ClearBody clears the value of the "body" field.
+func (u *OutputLogUpsertOne) ClearBody() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.ClearBody()
+	})
+}
+
+// SetURL sets the "url" field.
+func (u *OutputLogUpsertOne) SetURL(v string) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetURL(v)
+	})
+}
+
+// UpdateURL sets the "url" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateURL() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateURL()
+	})
+}
+
+// SetIP sets the "ip" field.
+func (u *OutputLogUpsertOne) SetIP(v string) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetIP(v)
+	})
+}
+
+// UpdateIP sets the "ip" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateIP() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateIP()
+	})
+}
+
+// ClearIP clears the value of the "ip" field.
+func (u *OutputLogUpsertOne) ClearIP() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.ClearIP()
+	})
+}
+
+// SetCaller sets the "caller" field.
+func (u *OutputLogUpsertOne) SetCaller(v string) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetCaller(v)
+	})
+}
+
+// UpdateCaller sets the "caller" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateCaller() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateCaller()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *OutputLogUpsertOne) SetStatus(v int16) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// AddStatus adds v to the "status" field.
+func (u *OutputLogUpsertOne) AddStatus(v int16) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.AddStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateStatus() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *OutputLogUpsertOne) ClearStatus() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.ClearStatus()
+	})
+}
+
+// SetHmacKey sets the "hmac_key" field.
+func (u *OutputLogUpsertOne) SetHmacKey(v string) *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetHmacKey(v)
+	})
+}
+
+// UpdateHmacKey sets the "hmac_key" field to the value that was provided on create.
+func (u *OutputLogUpsertOne) UpdateHmacKey() *OutputLogUpsertOne {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateHmacKey()
+	})
+}
+
+// Exec executes the query.
+func (u *OutputLogUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for OutputLogCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *OutputLogUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *OutputLogUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *OutputLogUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // OutputLogCreateBulk is the builder for creating many OutputLog entities in bulk.
 type OutputLogCreateBulk struct {
 	config
 	builders []*OutputLogCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the OutputLog entities in the database.
@@ -422,6 +926,7 @@ func (olcb *OutputLogCreateBulk) Save(ctx context.Context) ([]*OutputLog, error)
 					_, err = mutators[i+1].Mutate(root, olcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = olcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, olcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -472,6 +977,319 @@ func (olcb *OutputLogCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (olcb *OutputLogCreateBulk) ExecX(ctx context.Context) {
 	if err := olcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.OutputLog.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.OutputLogUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (olcb *OutputLogCreateBulk) OnConflict(opts ...sql.ConflictOption) *OutputLogUpsertBulk {
+	olcb.conflict = opts
+	return &OutputLogUpsertBulk{
+		create: olcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.OutputLog.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (olcb *OutputLogCreateBulk) OnConflictColumns(columns ...string) *OutputLogUpsertBulk {
+	olcb.conflict = append(olcb.conflict, sql.ConflictColumns(columns...))
+	return &OutputLogUpsertBulk{
+		create: olcb,
+	}
+}
+
+// OutputLogUpsertBulk is the builder for "upsert"-ing
+// a bulk of OutputLog nodes.
+type OutputLogUpsertBulk struct {
+	create *OutputLogCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.OutputLog.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(outputlog.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *OutputLogUpsertBulk) UpdateNewValues() *OutputLogUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(outputlog.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(outputlog.FieldCreatedAt)
+			}
+			if _, exists := b.mutation.TraceID(); exists {
+				s.SetIgnore(outputlog.FieldTraceID)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.OutputLog.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *OutputLogUpsertBulk) Ignore() *OutputLogUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *OutputLogUpsertBulk) DoNothing() *OutputLogUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the OutputLogCreateBulk.OnConflict
+// documentation for more info.
+func (u *OutputLogUpsertBulk) Update(set func(*OutputLogUpsert)) *OutputLogUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&OutputLogUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *OutputLogUpsertBulk) SetCreatedBy(v int64) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *OutputLogUpsertBulk) AddCreatedBy(v int64) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateCreatedBy() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *OutputLogUpsertBulk) SetUpdatedBy(v int64) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *OutputLogUpsertBulk) AddUpdatedBy(v int64) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateUpdatedBy() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *OutputLogUpsertBulk) SetUpdatedAt(v time.Time) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateUpdatedAt() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *OutputLogUpsertBulk) SetDeletedAt(v time.Time) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateDeletedAt() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetHeaders sets the "headers" field.
+func (u *OutputLogUpsertBulk) SetHeaders(v string) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetHeaders(v)
+	})
+}
+
+// UpdateHeaders sets the "headers" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateHeaders() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateHeaders()
+	})
+}
+
+// SetBody sets the "body" field.
+func (u *OutputLogUpsertBulk) SetBody(v string) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetBody(v)
+	})
+}
+
+// UpdateBody sets the "body" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateBody() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateBody()
+	})
+}
+
+// ClearBody clears the value of the "body" field.
+func (u *OutputLogUpsertBulk) ClearBody() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.ClearBody()
+	})
+}
+
+// SetURL sets the "url" field.
+func (u *OutputLogUpsertBulk) SetURL(v string) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetURL(v)
+	})
+}
+
+// UpdateURL sets the "url" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateURL() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateURL()
+	})
+}
+
+// SetIP sets the "ip" field.
+func (u *OutputLogUpsertBulk) SetIP(v string) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetIP(v)
+	})
+}
+
+// UpdateIP sets the "ip" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateIP() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateIP()
+	})
+}
+
+// ClearIP clears the value of the "ip" field.
+func (u *OutputLogUpsertBulk) ClearIP() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.ClearIP()
+	})
+}
+
+// SetCaller sets the "caller" field.
+func (u *OutputLogUpsertBulk) SetCaller(v string) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetCaller(v)
+	})
+}
+
+// UpdateCaller sets the "caller" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateCaller() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateCaller()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *OutputLogUpsertBulk) SetStatus(v int16) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// AddStatus adds v to the "status" field.
+func (u *OutputLogUpsertBulk) AddStatus(v int16) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.AddStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateStatus() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *OutputLogUpsertBulk) ClearStatus() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.ClearStatus()
+	})
+}
+
+// SetHmacKey sets the "hmac_key" field.
+func (u *OutputLogUpsertBulk) SetHmacKey(v string) *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.SetHmacKey(v)
+	})
+}
+
+// UpdateHmacKey sets the "hmac_key" field to the value that was provided on create.
+func (u *OutputLogUpsertBulk) UpdateHmacKey() *OutputLogUpsertBulk {
+	return u.Update(func(s *OutputLogUpsert) {
+		s.UpdateHmacKey()
+	})
+}
+
+// Exec executes the query.
+func (u *OutputLogUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the OutputLogCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for OutputLogCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *OutputLogUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

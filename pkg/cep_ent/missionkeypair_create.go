@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -21,6 +22,7 @@ type MissionKeyPairCreate struct {
 	config
 	mutation *MissionKeyPairMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -342,6 +344,7 @@ func (mkpc *MissionKeyPairCreate) createSpec() (*MissionKeyPair, *sqlgraph.Creat
 		_node = &MissionKeyPair{config: mkpc.config}
 		_spec = sqlgraph.NewCreateSpec(missionkeypair.Table, sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = mkpc.conflict
 	if id, ok := mkpc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -423,10 +426,482 @@ func (mkpc *MissionKeyPairCreate) createSpec() (*MissionKeyPair, *sqlgraph.Creat
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionKeyPair.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionKeyPairUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mkpc *MissionKeyPairCreate) OnConflict(opts ...sql.ConflictOption) *MissionKeyPairUpsertOne {
+	mkpc.conflict = opts
+	return &MissionKeyPairUpsertOne{
+		create: mkpc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionKeyPair.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mkpc *MissionKeyPairCreate) OnConflictColumns(columns ...string) *MissionKeyPairUpsertOne {
+	mkpc.conflict = append(mkpc.conflict, sql.ConflictColumns(columns...))
+	return &MissionKeyPairUpsertOne{
+		create: mkpc,
+	}
+}
+
+type (
+	// MissionKeyPairUpsertOne is the builder for "upsert"-ing
+	//  one MissionKeyPair node.
+	MissionKeyPairUpsertOne struct {
+		create *MissionKeyPairCreate
+	}
+
+	// MissionKeyPairUpsert is the "OnConflict" setter.
+	MissionKeyPairUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionKeyPairUpsert) SetCreatedBy(v int64) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateCreatedBy() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionKeyPairUpsert) AddCreatedBy(v int64) *MissionKeyPairUpsert {
+	u.Add(missionkeypair.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionKeyPairUpsert) SetUpdatedBy(v int64) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateUpdatedBy() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionKeyPairUpsert) AddUpdatedBy(v int64) *MissionKeyPairUpsert {
+	u.Add(missionkeypair.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionKeyPairUpsert) SetUpdatedAt(v time.Time) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateUpdatedAt() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionKeyPairUpsert) SetDeletedAt(v time.Time) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateDeletedAt() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldDeletedAt)
+	return u
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *MissionKeyPairUpsert) SetMissionID(v int64) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldMissionID, v)
+	return u
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateMissionID() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldMissionID)
+	return u
+}
+
+// SetKeyPairID sets the "key_pair_id" field.
+func (u *MissionKeyPairUpsert) SetKeyPairID(v int64) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldKeyPairID, v)
+	return u
+}
+
+// UpdateKeyPairID sets the "key_pair_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateKeyPairID() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldKeyPairID)
+	return u
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionKeyPairUpsert) SetStartedAt(v time.Time) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateStartedAt() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldStartedAt)
+	return u
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionKeyPairUpsert) SetFinishedAt(v time.Time) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldFinishedAt, v)
+	return u
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateFinishedAt() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldFinishedAt)
+	return u
+}
+
+// SetResult sets the "result" field.
+func (u *MissionKeyPairUpsert) SetResult(v enums.MissionResult) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldResult, v)
+	return u
+}
+
+// UpdateResult sets the "result" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateResult() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldResult)
+	return u
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionKeyPairUpsert) SetDeviceID(v int64) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldDeviceID, v)
+	return u
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateDeviceID() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldDeviceID)
+	return u
+}
+
+// AddDeviceID adds v to the "device_id" field.
+func (u *MissionKeyPairUpsert) AddDeviceID(v int64) *MissionKeyPairUpsert {
+	u.Add(missionkeypair.FieldDeviceID, v)
+	return u
+}
+
+// SetResultUrls sets the "result_urls" field.
+func (u *MissionKeyPairUpsert) SetResultUrls(v []string) *MissionKeyPairUpsert {
+	u.Set(missionkeypair.FieldResultUrls, v)
+	return u
+}
+
+// UpdateResultUrls sets the "result_urls" field to the value that was provided on create.
+func (u *MissionKeyPairUpsert) UpdateResultUrls() *MissionKeyPairUpsert {
+	u.SetExcluded(missionkeypair.FieldResultUrls)
+	return u
+}
+
+// ClearResultUrls clears the value of the "result_urls" field.
+func (u *MissionKeyPairUpsert) ClearResultUrls() *MissionKeyPairUpsert {
+	u.SetNull(missionkeypair.FieldResultUrls)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.MissionKeyPair.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionkeypair.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionKeyPairUpsertOne) UpdateNewValues() *MissionKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(missionkeypair.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(missionkeypair.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionKeyPair.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *MissionKeyPairUpsertOne) Ignore() *MissionKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionKeyPairUpsertOne) DoNothing() *MissionKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionKeyPairCreate.OnConflict
+// documentation for more info.
+func (u *MissionKeyPairUpsertOne) Update(set func(*MissionKeyPairUpsert)) *MissionKeyPairUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionKeyPairUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionKeyPairUpsertOne) SetCreatedBy(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionKeyPairUpsertOne) AddCreatedBy(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateCreatedBy() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionKeyPairUpsertOne) SetUpdatedBy(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionKeyPairUpsertOne) AddUpdatedBy(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateUpdatedBy() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionKeyPairUpsertOne) SetUpdatedAt(v time.Time) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateUpdatedAt() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionKeyPairUpsertOne) SetDeletedAt(v time.Time) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateDeletedAt() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *MissionKeyPairUpsertOne) SetMissionID(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetMissionID(v)
+	})
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateMissionID() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateMissionID()
+	})
+}
+
+// SetKeyPairID sets the "key_pair_id" field.
+func (u *MissionKeyPairUpsertOne) SetKeyPairID(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetKeyPairID(v)
+	})
+}
+
+// UpdateKeyPairID sets the "key_pair_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateKeyPairID() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateKeyPairID()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionKeyPairUpsertOne) SetStartedAt(v time.Time) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateStartedAt() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionKeyPairUpsertOne) SetFinishedAt(v time.Time) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateFinishedAt() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// SetResult sets the "result" field.
+func (u *MissionKeyPairUpsertOne) SetResult(v enums.MissionResult) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetResult(v)
+	})
+}
+
+// UpdateResult sets the "result" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateResult() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateResult()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionKeyPairUpsertOne) SetDeviceID(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// AddDeviceID adds v to the "device_id" field.
+func (u *MissionKeyPairUpsertOne) AddDeviceID(v int64) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.AddDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateDeviceID() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateDeviceID()
+	})
+}
+
+// SetResultUrls sets the "result_urls" field.
+func (u *MissionKeyPairUpsertOne) SetResultUrls(v []string) *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetResultUrls(v)
+	})
+}
+
+// UpdateResultUrls sets the "result_urls" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertOne) UpdateResultUrls() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateResultUrls()
+	})
+}
+
+// ClearResultUrls clears the value of the "result_urls" field.
+func (u *MissionKeyPairUpsertOne) ClearResultUrls() *MissionKeyPairUpsertOne {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.ClearResultUrls()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionKeyPairUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionKeyPairCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionKeyPairUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *MissionKeyPairUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *MissionKeyPairUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // MissionKeyPairCreateBulk is the builder for creating many MissionKeyPair entities in bulk.
 type MissionKeyPairCreateBulk struct {
 	config
 	builders []*MissionKeyPairCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionKeyPair entities in the database.
@@ -453,6 +928,7 @@ func (mkpcb *MissionKeyPairCreateBulk) Save(ctx context.Context) ([]*MissionKeyP
 					_, err = mutators[i+1].Mutate(root, mkpcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = mkpcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, mkpcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -503,6 +979,302 @@ func (mkpcb *MissionKeyPairCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (mkpcb *MissionKeyPairCreateBulk) ExecX(ctx context.Context) {
 	if err := mkpcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionKeyPair.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionKeyPairUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mkpcb *MissionKeyPairCreateBulk) OnConflict(opts ...sql.ConflictOption) *MissionKeyPairUpsertBulk {
+	mkpcb.conflict = opts
+	return &MissionKeyPairUpsertBulk{
+		create: mkpcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionKeyPair.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mkpcb *MissionKeyPairCreateBulk) OnConflictColumns(columns ...string) *MissionKeyPairUpsertBulk {
+	mkpcb.conflict = append(mkpcb.conflict, sql.ConflictColumns(columns...))
+	return &MissionKeyPairUpsertBulk{
+		create: mkpcb,
+	}
+}
+
+// MissionKeyPairUpsertBulk is the builder for "upsert"-ing
+// a bulk of MissionKeyPair nodes.
+type MissionKeyPairUpsertBulk struct {
+	create *MissionKeyPairCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.MissionKeyPair.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionkeypair.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionKeyPairUpsertBulk) UpdateNewValues() *MissionKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(missionkeypair.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(missionkeypair.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionKeyPair.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *MissionKeyPairUpsertBulk) Ignore() *MissionKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionKeyPairUpsertBulk) DoNothing() *MissionKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionKeyPairCreateBulk.OnConflict
+// documentation for more info.
+func (u *MissionKeyPairUpsertBulk) Update(set func(*MissionKeyPairUpsert)) *MissionKeyPairUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionKeyPairUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionKeyPairUpsertBulk) SetCreatedBy(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionKeyPairUpsertBulk) AddCreatedBy(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateCreatedBy() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionKeyPairUpsertBulk) SetUpdatedBy(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionKeyPairUpsertBulk) AddUpdatedBy(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateUpdatedBy() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionKeyPairUpsertBulk) SetUpdatedAt(v time.Time) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateUpdatedAt() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionKeyPairUpsertBulk) SetDeletedAt(v time.Time) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateDeletedAt() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *MissionKeyPairUpsertBulk) SetMissionID(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetMissionID(v)
+	})
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateMissionID() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateMissionID()
+	})
+}
+
+// SetKeyPairID sets the "key_pair_id" field.
+func (u *MissionKeyPairUpsertBulk) SetKeyPairID(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetKeyPairID(v)
+	})
+}
+
+// UpdateKeyPairID sets the "key_pair_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateKeyPairID() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateKeyPairID()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionKeyPairUpsertBulk) SetStartedAt(v time.Time) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateStartedAt() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionKeyPairUpsertBulk) SetFinishedAt(v time.Time) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateFinishedAt() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// SetResult sets the "result" field.
+func (u *MissionKeyPairUpsertBulk) SetResult(v enums.MissionResult) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetResult(v)
+	})
+}
+
+// UpdateResult sets the "result" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateResult() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateResult()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionKeyPairUpsertBulk) SetDeviceID(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// AddDeviceID adds v to the "device_id" field.
+func (u *MissionKeyPairUpsertBulk) AddDeviceID(v int64) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.AddDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateDeviceID() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateDeviceID()
+	})
+}
+
+// SetResultUrls sets the "result_urls" field.
+func (u *MissionKeyPairUpsertBulk) SetResultUrls(v []string) *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.SetResultUrls(v)
+	})
+}
+
+// UpdateResultUrls sets the "result_urls" field to the value that was provided on create.
+func (u *MissionKeyPairUpsertBulk) UpdateResultUrls() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.UpdateResultUrls()
+	})
+}
+
+// ClearResultUrls clears the value of the "result_urls" field.
+func (u *MissionKeyPairUpsertBulk) ClearResultUrls() *MissionKeyPairUpsertBulk {
+	return u.Update(func(s *MissionKeyPairUpsert) {
+		s.ClearResultUrls()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionKeyPairUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionKeyPairCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionKeyPairCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionKeyPairUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

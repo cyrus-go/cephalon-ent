@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type MissionBatchCreate struct {
 	config
 	mutation *MissionBatchMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -277,6 +279,7 @@ func (mbc *MissionBatchCreate) createSpec() (*MissionBatch, *sqlgraph.CreateSpec
 		_node = &MissionBatch{config: mbc.config}
 		_spec = sqlgraph.NewCreateSpec(missionbatch.Table, sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = mbc.conflict
 	if id, ok := mbc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -341,10 +344,326 @@ func (mbc *MissionBatchCreate) createSpec() (*MissionBatch, *sqlgraph.CreateSpec
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionBatch.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionBatchUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mbc *MissionBatchCreate) OnConflict(opts ...sql.ConflictOption) *MissionBatchUpsertOne {
+	mbc.conflict = opts
+	return &MissionBatchUpsertOne{
+		create: mbc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionBatch.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mbc *MissionBatchCreate) OnConflictColumns(columns ...string) *MissionBatchUpsertOne {
+	mbc.conflict = append(mbc.conflict, sql.ConflictColumns(columns...))
+	return &MissionBatchUpsertOne{
+		create: mbc,
+	}
+}
+
+type (
+	// MissionBatchUpsertOne is the builder for "upsert"-ing
+	//  one MissionBatch node.
+	MissionBatchUpsertOne struct {
+		create *MissionBatchCreate
+	}
+
+	// MissionBatchUpsert is the "OnConflict" setter.
+	MissionBatchUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionBatchUpsert) SetCreatedBy(v int64) *MissionBatchUpsert {
+	u.Set(missionbatch.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionBatchUpsert) UpdateCreatedBy() *MissionBatchUpsert {
+	u.SetExcluded(missionbatch.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionBatchUpsert) AddCreatedBy(v int64) *MissionBatchUpsert {
+	u.Add(missionbatch.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionBatchUpsert) SetUpdatedBy(v int64) *MissionBatchUpsert {
+	u.Set(missionbatch.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionBatchUpsert) UpdateUpdatedBy() *MissionBatchUpsert {
+	u.SetExcluded(missionbatch.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionBatchUpsert) AddUpdatedBy(v int64) *MissionBatchUpsert {
+	u.Add(missionbatch.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionBatchUpsert) SetUpdatedAt(v time.Time) *MissionBatchUpsert {
+	u.Set(missionbatch.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionBatchUpsert) UpdateUpdatedAt() *MissionBatchUpsert {
+	u.SetExcluded(missionbatch.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionBatchUpsert) SetDeletedAt(v time.Time) *MissionBatchUpsert {
+	u.Set(missionbatch.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionBatchUpsert) UpdateDeletedAt() *MissionBatchUpsert {
+	u.SetExcluded(missionbatch.FieldDeletedAt)
+	return u
+}
+
+// SetNumber sets the "number" field.
+func (u *MissionBatchUpsert) SetNumber(v string) *MissionBatchUpsert {
+	u.Set(missionbatch.FieldNumber, v)
+	return u
+}
+
+// UpdateNumber sets the "number" field to the value that was provided on create.
+func (u *MissionBatchUpsert) UpdateNumber() *MissionBatchUpsert {
+	u.SetExcluded(missionbatch.FieldNumber)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionBatchUpsert) SetUserID(v int64) *MissionBatchUpsert {
+	u.Set(missionbatch.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionBatchUpsert) UpdateUserID() *MissionBatchUpsert {
+	u.SetExcluded(missionbatch.FieldUserID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.MissionBatch.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionbatch.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionBatchUpsertOne) UpdateNewValues() *MissionBatchUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(missionbatch.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(missionbatch.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionBatch.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *MissionBatchUpsertOne) Ignore() *MissionBatchUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionBatchUpsertOne) DoNothing() *MissionBatchUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionBatchCreate.OnConflict
+// documentation for more info.
+func (u *MissionBatchUpsertOne) Update(set func(*MissionBatchUpsert)) *MissionBatchUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionBatchUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionBatchUpsertOne) SetCreatedBy(v int64) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionBatchUpsertOne) AddCreatedBy(v int64) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionBatchUpsertOne) UpdateCreatedBy() *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionBatchUpsertOne) SetUpdatedBy(v int64) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionBatchUpsertOne) AddUpdatedBy(v int64) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionBatchUpsertOne) UpdateUpdatedBy() *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionBatchUpsertOne) SetUpdatedAt(v time.Time) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionBatchUpsertOne) UpdateUpdatedAt() *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionBatchUpsertOne) SetDeletedAt(v time.Time) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionBatchUpsertOne) UpdateDeletedAt() *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetNumber sets the "number" field.
+func (u *MissionBatchUpsertOne) SetNumber(v string) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetNumber(v)
+	})
+}
+
+// UpdateNumber sets the "number" field to the value that was provided on create.
+func (u *MissionBatchUpsertOne) UpdateNumber() *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateNumber()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionBatchUpsertOne) SetUserID(v int64) *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionBatchUpsertOne) UpdateUserID() *MissionBatchUpsertOne {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionBatchUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionBatchCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionBatchUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *MissionBatchUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *MissionBatchUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // MissionBatchCreateBulk is the builder for creating many MissionBatch entities in bulk.
 type MissionBatchCreateBulk struct {
 	config
 	builders []*MissionBatchCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionBatch entities in the database.
@@ -371,6 +690,7 @@ func (mbcb *MissionBatchCreateBulk) Save(ctx context.Context) ([]*MissionBatch, 
 					_, err = mutators[i+1].Mutate(root, mbcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = mbcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, mbcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -421,6 +741,218 @@ func (mbcb *MissionBatchCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (mbcb *MissionBatchCreateBulk) ExecX(ctx context.Context) {
 	if err := mbcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionBatch.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionBatchUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mbcb *MissionBatchCreateBulk) OnConflict(opts ...sql.ConflictOption) *MissionBatchUpsertBulk {
+	mbcb.conflict = opts
+	return &MissionBatchUpsertBulk{
+		create: mbcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionBatch.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mbcb *MissionBatchCreateBulk) OnConflictColumns(columns ...string) *MissionBatchUpsertBulk {
+	mbcb.conflict = append(mbcb.conflict, sql.ConflictColumns(columns...))
+	return &MissionBatchUpsertBulk{
+		create: mbcb,
+	}
+}
+
+// MissionBatchUpsertBulk is the builder for "upsert"-ing
+// a bulk of MissionBatch nodes.
+type MissionBatchUpsertBulk struct {
+	create *MissionBatchCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.MissionBatch.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionbatch.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionBatchUpsertBulk) UpdateNewValues() *MissionBatchUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(missionbatch.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(missionbatch.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionBatch.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *MissionBatchUpsertBulk) Ignore() *MissionBatchUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionBatchUpsertBulk) DoNothing() *MissionBatchUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionBatchCreateBulk.OnConflict
+// documentation for more info.
+func (u *MissionBatchUpsertBulk) Update(set func(*MissionBatchUpsert)) *MissionBatchUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionBatchUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionBatchUpsertBulk) SetCreatedBy(v int64) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionBatchUpsertBulk) AddCreatedBy(v int64) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionBatchUpsertBulk) UpdateCreatedBy() *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionBatchUpsertBulk) SetUpdatedBy(v int64) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionBatchUpsertBulk) AddUpdatedBy(v int64) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionBatchUpsertBulk) UpdateUpdatedBy() *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionBatchUpsertBulk) SetUpdatedAt(v time.Time) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionBatchUpsertBulk) UpdateUpdatedAt() *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionBatchUpsertBulk) SetDeletedAt(v time.Time) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionBatchUpsertBulk) UpdateDeletedAt() *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetNumber sets the "number" field.
+func (u *MissionBatchUpsertBulk) SetNumber(v string) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetNumber(v)
+	})
+}
+
+// UpdateNumber sets the "number" field to the value that was provided on create.
+func (u *MissionBatchUpsertBulk) UpdateNumber() *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateNumber()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionBatchUpsertBulk) SetUserID(v int64) *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionBatchUpsertBulk) UpdateUserID() *MissionBatchUpsertBulk {
+	return u.Update(func(s *MissionBatchUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionBatchUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionBatchCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionBatchCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionBatchUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

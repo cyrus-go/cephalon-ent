@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -18,6 +19,7 @@ type EnumMissionStatusCreate struct {
 	config
 	mutation *EnumMissionStatusMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -273,6 +275,7 @@ func (emsc *EnumMissionStatusCreate) createSpec() (*EnumMissionStatus, *sqlgraph
 		_node = &EnumMissionStatus{config: emsc.config}
 		_spec = sqlgraph.NewCreateSpec(enummissionstatus.Table, sqlgraph.NewFieldSpec(enummissionstatus.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = emsc.conflict
 	if id, ok := emsc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -312,10 +315,352 @@ func (emsc *EnumMissionStatusCreate) createSpec() (*EnumMissionStatus, *sqlgraph
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.EnumMissionStatus.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EnumMissionStatusUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (emsc *EnumMissionStatusCreate) OnConflict(opts ...sql.ConflictOption) *EnumMissionStatusUpsertOne {
+	emsc.conflict = opts
+	return &EnumMissionStatusUpsertOne{
+		create: emsc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.EnumMissionStatus.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (emsc *EnumMissionStatusCreate) OnConflictColumns(columns ...string) *EnumMissionStatusUpsertOne {
+	emsc.conflict = append(emsc.conflict, sql.ConflictColumns(columns...))
+	return &EnumMissionStatusUpsertOne{
+		create: emsc,
+	}
+}
+
+type (
+	// EnumMissionStatusUpsertOne is the builder for "upsert"-ing
+	//  one EnumMissionStatus node.
+	EnumMissionStatusUpsertOne struct {
+		create *EnumMissionStatusCreate
+	}
+
+	// EnumMissionStatusUpsert is the "OnConflict" setter.
+	EnumMissionStatusUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EnumMissionStatusUpsert) SetCreatedBy(v int64) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateCreatedBy() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EnumMissionStatusUpsert) AddCreatedBy(v int64) *EnumMissionStatusUpsert {
+	u.Add(enummissionstatus.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EnumMissionStatusUpsert) SetUpdatedBy(v int64) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateUpdatedBy() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EnumMissionStatusUpsert) AddUpdatedBy(v int64) *EnumMissionStatusUpsert {
+	u.Add(enummissionstatus.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EnumMissionStatusUpsert) SetUpdatedAt(v time.Time) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateUpdatedAt() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EnumMissionStatusUpsert) SetDeletedAt(v time.Time) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateDeletedAt() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldDeletedAt)
+	return u
+}
+
+// SetFrontStatus sets the "front_status" field.
+func (u *EnumMissionStatusUpsert) SetFrontStatus(v string) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldFrontStatus, v)
+	return u
+}
+
+// UpdateFrontStatus sets the "front_status" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateFrontStatus() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldFrontStatus)
+	return u
+}
+
+// SetMissionType sets the "mission_type" field.
+func (u *EnumMissionStatusUpsert) SetMissionType(v string) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldMissionType, v)
+	return u
+}
+
+// UpdateMissionType sets the "mission_type" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateMissionType() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldMissionType)
+	return u
+}
+
+// SetMissionStatus sets the "mission_status" field.
+func (u *EnumMissionStatusUpsert) SetMissionStatus(v string) *EnumMissionStatusUpsert {
+	u.Set(enummissionstatus.FieldMissionStatus, v)
+	return u
+}
+
+// UpdateMissionStatus sets the "mission_status" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsert) UpdateMissionStatus() *EnumMissionStatusUpsert {
+	u.SetExcluded(enummissionstatus.FieldMissionStatus)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.EnumMissionStatus.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(enummissionstatus.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *EnumMissionStatusUpsertOne) UpdateNewValues() *EnumMissionStatusUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(enummissionstatus.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(enummissionstatus.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.EnumMissionStatus.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *EnumMissionStatusUpsertOne) Ignore() *EnumMissionStatusUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EnumMissionStatusUpsertOne) DoNothing() *EnumMissionStatusUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EnumMissionStatusCreate.OnConflict
+// documentation for more info.
+func (u *EnumMissionStatusUpsertOne) Update(set func(*EnumMissionStatusUpsert)) *EnumMissionStatusUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EnumMissionStatusUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EnumMissionStatusUpsertOne) SetCreatedBy(v int64) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EnumMissionStatusUpsertOne) AddCreatedBy(v int64) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateCreatedBy() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EnumMissionStatusUpsertOne) SetUpdatedBy(v int64) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EnumMissionStatusUpsertOne) AddUpdatedBy(v int64) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateUpdatedBy() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EnumMissionStatusUpsertOne) SetUpdatedAt(v time.Time) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateUpdatedAt() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EnumMissionStatusUpsertOne) SetDeletedAt(v time.Time) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateDeletedAt() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetFrontStatus sets the "front_status" field.
+func (u *EnumMissionStatusUpsertOne) SetFrontStatus(v string) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetFrontStatus(v)
+	})
+}
+
+// UpdateFrontStatus sets the "front_status" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateFrontStatus() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateFrontStatus()
+	})
+}
+
+// SetMissionType sets the "mission_type" field.
+func (u *EnumMissionStatusUpsertOne) SetMissionType(v string) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetMissionType(v)
+	})
+}
+
+// UpdateMissionType sets the "mission_type" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateMissionType() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateMissionType()
+	})
+}
+
+// SetMissionStatus sets the "mission_status" field.
+func (u *EnumMissionStatusUpsertOne) SetMissionStatus(v string) *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetMissionStatus(v)
+	})
+}
+
+// UpdateMissionStatus sets the "mission_status" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertOne) UpdateMissionStatus() *EnumMissionStatusUpsertOne {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateMissionStatus()
+	})
+}
+
+// Exec executes the query.
+func (u *EnumMissionStatusUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for EnumMissionStatusCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EnumMissionStatusUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *EnumMissionStatusUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *EnumMissionStatusUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // EnumMissionStatusCreateBulk is the builder for creating many EnumMissionStatus entities in bulk.
 type EnumMissionStatusCreateBulk struct {
 	config
 	builders []*EnumMissionStatusCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the EnumMissionStatus entities in the database.
@@ -342,6 +687,7 @@ func (emscb *EnumMissionStatusCreateBulk) Save(ctx context.Context) ([]*EnumMiss
 					_, err = mutators[i+1].Mutate(root, emscb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = emscb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, emscb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -392,6 +738,232 @@ func (emscb *EnumMissionStatusCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (emscb *EnumMissionStatusCreateBulk) ExecX(ctx context.Context) {
 	if err := emscb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.EnumMissionStatus.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EnumMissionStatusUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (emscb *EnumMissionStatusCreateBulk) OnConflict(opts ...sql.ConflictOption) *EnumMissionStatusUpsertBulk {
+	emscb.conflict = opts
+	return &EnumMissionStatusUpsertBulk{
+		create: emscb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.EnumMissionStatus.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (emscb *EnumMissionStatusCreateBulk) OnConflictColumns(columns ...string) *EnumMissionStatusUpsertBulk {
+	emscb.conflict = append(emscb.conflict, sql.ConflictColumns(columns...))
+	return &EnumMissionStatusUpsertBulk{
+		create: emscb,
+	}
+}
+
+// EnumMissionStatusUpsertBulk is the builder for "upsert"-ing
+// a bulk of EnumMissionStatus nodes.
+type EnumMissionStatusUpsertBulk struct {
+	create *EnumMissionStatusCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.EnumMissionStatus.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(enummissionstatus.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *EnumMissionStatusUpsertBulk) UpdateNewValues() *EnumMissionStatusUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(enummissionstatus.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(enummissionstatus.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.EnumMissionStatus.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *EnumMissionStatusUpsertBulk) Ignore() *EnumMissionStatusUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EnumMissionStatusUpsertBulk) DoNothing() *EnumMissionStatusUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EnumMissionStatusCreateBulk.OnConflict
+// documentation for more info.
+func (u *EnumMissionStatusUpsertBulk) Update(set func(*EnumMissionStatusUpsert)) *EnumMissionStatusUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EnumMissionStatusUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EnumMissionStatusUpsertBulk) SetCreatedBy(v int64) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EnumMissionStatusUpsertBulk) AddCreatedBy(v int64) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateCreatedBy() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EnumMissionStatusUpsertBulk) SetUpdatedBy(v int64) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EnumMissionStatusUpsertBulk) AddUpdatedBy(v int64) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateUpdatedBy() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EnumMissionStatusUpsertBulk) SetUpdatedAt(v time.Time) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateUpdatedAt() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EnumMissionStatusUpsertBulk) SetDeletedAt(v time.Time) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateDeletedAt() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetFrontStatus sets the "front_status" field.
+func (u *EnumMissionStatusUpsertBulk) SetFrontStatus(v string) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetFrontStatus(v)
+	})
+}
+
+// UpdateFrontStatus sets the "front_status" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateFrontStatus() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateFrontStatus()
+	})
+}
+
+// SetMissionType sets the "mission_type" field.
+func (u *EnumMissionStatusUpsertBulk) SetMissionType(v string) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetMissionType(v)
+	})
+}
+
+// UpdateMissionType sets the "mission_type" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateMissionType() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateMissionType()
+	})
+}
+
+// SetMissionStatus sets the "mission_status" field.
+func (u *EnumMissionStatusUpsertBulk) SetMissionStatus(v string) *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.SetMissionStatus(v)
+	})
+}
+
+// UpdateMissionStatus sets the "mission_status" field to the value that was provided on create.
+func (u *EnumMissionStatusUpsertBulk) UpdateMissionStatus() *EnumMissionStatusUpsertBulk {
+	return u.Update(func(s *EnumMissionStatusUpsert) {
+		s.UpdateMissionStatus()
+	})
+}
+
+// Exec executes the query.
+func (u *EnumMissionStatusUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the EnumMissionStatusCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for EnumMissionStatusCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EnumMissionStatusUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

@@ -13,7 +13,7 @@ import (
 func main() {
 	// 整合 versioned migrations
 	if err := entc.Generate("./schema", &gen.Config{
-		Features: []gen.Feature{gen.FeatureVersionedMigration},
+		Features: []gen.Feature{gen.FeatureVersionedMigration, gen.FeatureUpsert},
 	}); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

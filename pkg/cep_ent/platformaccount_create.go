@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -19,6 +20,7 @@ type PlatformAccountCreate struct {
 	config
 	mutation *PlatformAccountMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -378,6 +380,7 @@ func (pac *PlatformAccountCreate) createSpec() (*PlatformAccount, *sqlgraph.Crea
 		_node = &PlatformAccount{config: pac.config}
 		_spec = sqlgraph.NewCreateSpec(platformaccount.Table, sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = pac.conflict
 	if id, ok := pac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -449,10 +452,534 @@ func (pac *PlatformAccountCreate) createSpec() (*PlatformAccount, *sqlgraph.Crea
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.PlatformAccount.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.PlatformAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (pac *PlatformAccountCreate) OnConflict(opts ...sql.ConflictOption) *PlatformAccountUpsertOne {
+	pac.conflict = opts
+	return &PlatformAccountUpsertOne{
+		create: pac,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.PlatformAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pac *PlatformAccountCreate) OnConflictColumns(columns ...string) *PlatformAccountUpsertOne {
+	pac.conflict = append(pac.conflict, sql.ConflictColumns(columns...))
+	return &PlatformAccountUpsertOne{
+		create: pac,
+	}
+}
+
+type (
+	// PlatformAccountUpsertOne is the builder for "upsert"-ing
+	//  one PlatformAccount node.
+	PlatformAccountUpsertOne struct {
+		create *PlatformAccountCreate
+	}
+
+	// PlatformAccountUpsert is the "OnConflict" setter.
+	PlatformAccountUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *PlatformAccountUpsert) SetCreatedBy(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateCreatedBy() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *PlatformAccountUpsert) AddCreatedBy(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *PlatformAccountUpsert) SetUpdatedBy(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateUpdatedBy() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *PlatformAccountUpsert) AddUpdatedBy(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *PlatformAccountUpsert) SetUpdatedAt(v time.Time) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateUpdatedAt() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *PlatformAccountUpsert) SetDeletedAt(v time.Time) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateDeletedAt() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldDeletedAt)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *PlatformAccountUpsert) SetType(v platformaccount.Type) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateType() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldType)
+	return u
+}
+
+// SetSumTotalCep sets the "sum_total_cep" field.
+func (u *PlatformAccountUpsert) SetSumTotalCep(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldSumTotalCep, v)
+	return u
+}
+
+// UpdateSumTotalCep sets the "sum_total_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateSumTotalCep() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldSumTotalCep)
+	return u
+}
+
+// AddSumTotalCep adds v to the "sum_total_cep" field.
+func (u *PlatformAccountUpsert) AddSumTotalCep(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldSumTotalCep, v)
+	return u
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (u *PlatformAccountUpsert) SetTotalCep(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldTotalCep, v)
+	return u
+}
+
+// UpdateTotalCep sets the "total_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateTotalCep() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldTotalCep)
+	return u
+}
+
+// AddTotalCep adds v to the "total_cep" field.
+func (u *PlatformAccountUpsert) AddTotalCep(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldTotalCep, v)
+	return u
+}
+
+// SetSumPureCep sets the "sum_pure_cep" field.
+func (u *PlatformAccountUpsert) SetSumPureCep(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldSumPureCep, v)
+	return u
+}
+
+// UpdateSumPureCep sets the "sum_pure_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateSumPureCep() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldSumPureCep)
+	return u
+}
+
+// AddSumPureCep adds v to the "sum_pure_cep" field.
+func (u *PlatformAccountUpsert) AddSumPureCep(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldSumPureCep, v)
+	return u
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *PlatformAccountUpsert) SetPureCep(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldPureCep, v)
+	return u
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdatePureCep() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldPureCep)
+	return u
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *PlatformAccountUpsert) AddPureCep(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldPureCep, v)
+	return u
+}
+
+// SetSumGiftCep sets the "sum_gift_cep" field.
+func (u *PlatformAccountUpsert) SetSumGiftCep(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldSumGiftCep, v)
+	return u
+}
+
+// UpdateSumGiftCep sets the "sum_gift_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateSumGiftCep() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldSumGiftCep)
+	return u
+}
+
+// AddSumGiftCep adds v to the "sum_gift_cep" field.
+func (u *PlatformAccountUpsert) AddSumGiftCep(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldSumGiftCep, v)
+	return u
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *PlatformAccountUpsert) SetGiftCep(v int64) *PlatformAccountUpsert {
+	u.Set(platformaccount.FieldGiftCep, v)
+	return u
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsert) UpdateGiftCep() *PlatformAccountUpsert {
+	u.SetExcluded(platformaccount.FieldGiftCep)
+	return u
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *PlatformAccountUpsert) AddGiftCep(v int64) *PlatformAccountUpsert {
+	u.Add(platformaccount.FieldGiftCep, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.PlatformAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(platformaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *PlatformAccountUpsertOne) UpdateNewValues() *PlatformAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(platformaccount.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(platformaccount.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.PlatformAccount.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *PlatformAccountUpsertOne) Ignore() *PlatformAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *PlatformAccountUpsertOne) DoNothing() *PlatformAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the PlatformAccountCreate.OnConflict
+// documentation for more info.
+func (u *PlatformAccountUpsertOne) Update(set func(*PlatformAccountUpsert)) *PlatformAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&PlatformAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *PlatformAccountUpsertOne) SetCreatedBy(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *PlatformAccountUpsertOne) AddCreatedBy(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateCreatedBy() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *PlatformAccountUpsertOne) SetUpdatedBy(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *PlatformAccountUpsertOne) AddUpdatedBy(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateUpdatedBy() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *PlatformAccountUpsertOne) SetUpdatedAt(v time.Time) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateUpdatedAt() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *PlatformAccountUpsertOne) SetDeletedAt(v time.Time) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateDeletedAt() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *PlatformAccountUpsertOne) SetType(v platformaccount.Type) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateType() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetSumTotalCep sets the "sum_total_cep" field.
+func (u *PlatformAccountUpsertOne) SetSumTotalCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetSumTotalCep(v)
+	})
+}
+
+// AddSumTotalCep adds v to the "sum_total_cep" field.
+func (u *PlatformAccountUpsertOne) AddSumTotalCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddSumTotalCep(v)
+	})
+}
+
+// UpdateSumTotalCep sets the "sum_total_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateSumTotalCep() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateSumTotalCep()
+	})
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (u *PlatformAccountUpsertOne) SetTotalCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetTotalCep(v)
+	})
+}
+
+// AddTotalCep adds v to the "total_cep" field.
+func (u *PlatformAccountUpsertOne) AddTotalCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddTotalCep(v)
+	})
+}
+
+// UpdateTotalCep sets the "total_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateTotalCep() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateTotalCep()
+	})
+}
+
+// SetSumPureCep sets the "sum_pure_cep" field.
+func (u *PlatformAccountUpsertOne) SetSumPureCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetSumPureCep(v)
+	})
+}
+
+// AddSumPureCep adds v to the "sum_pure_cep" field.
+func (u *PlatformAccountUpsertOne) AddSumPureCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddSumPureCep(v)
+	})
+}
+
+// UpdateSumPureCep sets the "sum_pure_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateSumPureCep() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateSumPureCep()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *PlatformAccountUpsertOne) SetPureCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *PlatformAccountUpsertOne) AddPureCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdatePureCep() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetSumGiftCep sets the "sum_gift_cep" field.
+func (u *PlatformAccountUpsertOne) SetSumGiftCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetSumGiftCep(v)
+	})
+}
+
+// AddSumGiftCep adds v to the "sum_gift_cep" field.
+func (u *PlatformAccountUpsertOne) AddSumGiftCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddSumGiftCep(v)
+	})
+}
+
+// UpdateSumGiftCep sets the "sum_gift_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateSumGiftCep() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateSumGiftCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *PlatformAccountUpsertOne) SetGiftCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *PlatformAccountUpsertOne) AddGiftCep(v int64) *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertOne) UpdateGiftCep() *PlatformAccountUpsertOne {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// Exec executes the query.
+func (u *PlatformAccountUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for PlatformAccountCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *PlatformAccountUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *PlatformAccountUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *PlatformAccountUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // PlatformAccountCreateBulk is the builder for creating many PlatformAccount entities in bulk.
 type PlatformAccountCreateBulk struct {
 	config
 	builders []*PlatformAccountCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the PlatformAccount entities in the database.
@@ -479,6 +1006,7 @@ func (pacb *PlatformAccountCreateBulk) Save(ctx context.Context) ([]*PlatformAcc
 					_, err = mutators[i+1].Mutate(root, pacb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = pacb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, pacb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -529,6 +1057,330 @@ func (pacb *PlatformAccountCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (pacb *PlatformAccountCreateBulk) ExecX(ctx context.Context) {
 	if err := pacb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.PlatformAccount.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.PlatformAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (pacb *PlatformAccountCreateBulk) OnConflict(opts ...sql.ConflictOption) *PlatformAccountUpsertBulk {
+	pacb.conflict = opts
+	return &PlatformAccountUpsertBulk{
+		create: pacb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.PlatformAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pacb *PlatformAccountCreateBulk) OnConflictColumns(columns ...string) *PlatformAccountUpsertBulk {
+	pacb.conflict = append(pacb.conflict, sql.ConflictColumns(columns...))
+	return &PlatformAccountUpsertBulk{
+		create: pacb,
+	}
+}
+
+// PlatformAccountUpsertBulk is the builder for "upsert"-ing
+// a bulk of PlatformAccount nodes.
+type PlatformAccountUpsertBulk struct {
+	create *PlatformAccountCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.PlatformAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(platformaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *PlatformAccountUpsertBulk) UpdateNewValues() *PlatformAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(platformaccount.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(platformaccount.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.PlatformAccount.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *PlatformAccountUpsertBulk) Ignore() *PlatformAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *PlatformAccountUpsertBulk) DoNothing() *PlatformAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the PlatformAccountCreateBulk.OnConflict
+// documentation for more info.
+func (u *PlatformAccountUpsertBulk) Update(set func(*PlatformAccountUpsert)) *PlatformAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&PlatformAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *PlatformAccountUpsertBulk) SetCreatedBy(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *PlatformAccountUpsertBulk) AddCreatedBy(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateCreatedBy() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *PlatformAccountUpsertBulk) SetUpdatedBy(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *PlatformAccountUpsertBulk) AddUpdatedBy(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateUpdatedBy() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *PlatformAccountUpsertBulk) SetUpdatedAt(v time.Time) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateUpdatedAt() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *PlatformAccountUpsertBulk) SetDeletedAt(v time.Time) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateDeletedAt() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *PlatformAccountUpsertBulk) SetType(v platformaccount.Type) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateType() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetSumTotalCep sets the "sum_total_cep" field.
+func (u *PlatformAccountUpsertBulk) SetSumTotalCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetSumTotalCep(v)
+	})
+}
+
+// AddSumTotalCep adds v to the "sum_total_cep" field.
+func (u *PlatformAccountUpsertBulk) AddSumTotalCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddSumTotalCep(v)
+	})
+}
+
+// UpdateSumTotalCep sets the "sum_total_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateSumTotalCep() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateSumTotalCep()
+	})
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (u *PlatformAccountUpsertBulk) SetTotalCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetTotalCep(v)
+	})
+}
+
+// AddTotalCep adds v to the "total_cep" field.
+func (u *PlatformAccountUpsertBulk) AddTotalCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddTotalCep(v)
+	})
+}
+
+// UpdateTotalCep sets the "total_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateTotalCep() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateTotalCep()
+	})
+}
+
+// SetSumPureCep sets the "sum_pure_cep" field.
+func (u *PlatformAccountUpsertBulk) SetSumPureCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetSumPureCep(v)
+	})
+}
+
+// AddSumPureCep adds v to the "sum_pure_cep" field.
+func (u *PlatformAccountUpsertBulk) AddSumPureCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddSumPureCep(v)
+	})
+}
+
+// UpdateSumPureCep sets the "sum_pure_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateSumPureCep() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateSumPureCep()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *PlatformAccountUpsertBulk) SetPureCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *PlatformAccountUpsertBulk) AddPureCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdatePureCep() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetSumGiftCep sets the "sum_gift_cep" field.
+func (u *PlatformAccountUpsertBulk) SetSumGiftCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetSumGiftCep(v)
+	})
+}
+
+// AddSumGiftCep adds v to the "sum_gift_cep" field.
+func (u *PlatformAccountUpsertBulk) AddSumGiftCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddSumGiftCep(v)
+	})
+}
+
+// UpdateSumGiftCep sets the "sum_gift_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateSumGiftCep() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateSumGiftCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *PlatformAccountUpsertBulk) SetGiftCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *PlatformAccountUpsertBulk) AddGiftCep(v int64) *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *PlatformAccountUpsertBulk) UpdateGiftCep() *PlatformAccountUpsertBulk {
+	return u.Update(func(s *PlatformAccountUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// Exec executes the query.
+func (u *PlatformAccountUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the PlatformAccountCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for PlatformAccountCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *PlatformAccountUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

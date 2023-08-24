@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -21,6 +22,7 @@ type RechargeOrderCreate struct {
 	config
 	mutation *RechargeOrderMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -456,6 +458,7 @@ func (roc *RechargeOrderCreate) createSpec() (*RechargeOrder, *sqlgraph.CreateSp
 		_node = &RechargeOrder{config: roc.config}
 		_spec = sqlgraph.NewCreateSpec(rechargeorder.Table, sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = roc.conflict
 	if id, ok := roc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -561,10 +564,547 @@ func (roc *RechargeOrderCreate) createSpec() (*RechargeOrder, *sqlgraph.CreateSp
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.RechargeOrder.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.RechargeOrderUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (roc *RechargeOrderCreate) OnConflict(opts ...sql.ConflictOption) *RechargeOrderUpsertOne {
+	roc.conflict = opts
+	return &RechargeOrderUpsertOne{
+		create: roc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.RechargeOrder.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (roc *RechargeOrderCreate) OnConflictColumns(columns ...string) *RechargeOrderUpsertOne {
+	roc.conflict = append(roc.conflict, sql.ConflictColumns(columns...))
+	return &RechargeOrderUpsertOne{
+		create: roc,
+	}
+}
+
+type (
+	// RechargeOrderUpsertOne is the builder for "upsert"-ing
+	//  one RechargeOrder node.
+	RechargeOrderUpsertOne struct {
+		create *RechargeOrderCreate
+	}
+
+	// RechargeOrderUpsert is the "OnConflict" setter.
+	RechargeOrderUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *RechargeOrderUpsert) SetCreatedBy(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateCreatedBy() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *RechargeOrderUpsert) AddCreatedBy(v int64) *RechargeOrderUpsert {
+	u.Add(rechargeorder.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *RechargeOrderUpsert) SetUpdatedBy(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateUpdatedBy() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *RechargeOrderUpsert) AddUpdatedBy(v int64) *RechargeOrderUpsert {
+	u.Add(rechargeorder.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *RechargeOrderUpsert) SetUpdatedAt(v time.Time) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateUpdatedAt() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *RechargeOrderUpsert) SetDeletedAt(v time.Time) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateDeletedAt() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *RechargeOrderUpsert) SetUserID(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateUserID() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldUserID)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *RechargeOrderUpsert) SetStatus(v rechargeorder.Status) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateStatus() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldStatus)
+	return u
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *RechargeOrderUpsert) SetPureCep(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldPureCep, v)
+	return u
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdatePureCep() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldPureCep)
+	return u
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *RechargeOrderUpsert) AddPureCep(v int64) *RechargeOrderUpsert {
+	u.Add(rechargeorder.FieldPureCep, v)
+	return u
+}
+
+// SetSocialID sets the "social_id" field.
+func (u *RechargeOrderUpsert) SetSocialID(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldSocialID, v)
+	return u
+}
+
+// UpdateSocialID sets the "social_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateSocialID() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldSocialID)
+	return u
+}
+
+// ClearSocialID clears the value of the "social_id" field.
+func (u *RechargeOrderUpsert) ClearSocialID() *RechargeOrderUpsert {
+	u.SetNull(rechargeorder.FieldSocialID)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *RechargeOrderUpsert) SetType(v rechargeorder.Type) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateType() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldType)
+	return u
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *RechargeOrderUpsert) SetSerialNumber(v string) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldSerialNumber, v)
+	return u
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateSerialNumber() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldSerialNumber)
+	return u
+}
+
+// SetThirdAPIResp sets the "third_api_resp" field.
+func (u *RechargeOrderUpsert) SetThirdAPIResp(v string) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldThirdAPIResp, v)
+	return u
+}
+
+// UpdateThirdAPIResp sets the "third_api_resp" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateThirdAPIResp() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldThirdAPIResp)
+	return u
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (u *RechargeOrderUpsert) SetFromUserID(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldFromUserID, v)
+	return u
+}
+
+// UpdateFromUserID sets the "from_user_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateFromUserID() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldFromUserID)
+	return u
+}
+
+// AddFromUserID adds v to the "from_user_id" field.
+func (u *RechargeOrderUpsert) AddFromUserID(v int64) *RechargeOrderUpsert {
+	u.Add(rechargeorder.FieldFromUserID, v)
+	return u
+}
+
+// SetOutTransactionID sets the "out_transaction_id" field.
+func (u *RechargeOrderUpsert) SetOutTransactionID(v string) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldOutTransactionID, v)
+	return u
+}
+
+// UpdateOutTransactionID sets the "out_transaction_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateOutTransactionID() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldOutTransactionID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.RechargeOrder.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(rechargeorder.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *RechargeOrderUpsertOne) UpdateNewValues() *RechargeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(rechargeorder.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(rechargeorder.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.RechargeOrder.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *RechargeOrderUpsertOne) Ignore() *RechargeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *RechargeOrderUpsertOne) DoNothing() *RechargeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the RechargeOrderCreate.OnConflict
+// documentation for more info.
+func (u *RechargeOrderUpsertOne) Update(set func(*RechargeOrderUpsert)) *RechargeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&RechargeOrderUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *RechargeOrderUpsertOne) SetCreatedBy(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *RechargeOrderUpsertOne) AddCreatedBy(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateCreatedBy() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *RechargeOrderUpsertOne) SetUpdatedBy(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *RechargeOrderUpsertOne) AddUpdatedBy(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateUpdatedBy() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *RechargeOrderUpsertOne) SetUpdatedAt(v time.Time) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateUpdatedAt() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *RechargeOrderUpsertOne) SetDeletedAt(v time.Time) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateDeletedAt() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *RechargeOrderUpsertOne) SetUserID(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateUserID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *RechargeOrderUpsertOne) SetStatus(v rechargeorder.Status) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateStatus() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *RechargeOrderUpsertOne) SetPureCep(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *RechargeOrderUpsertOne) AddPureCep(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdatePureCep() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetSocialID sets the "social_id" field.
+func (u *RechargeOrderUpsertOne) SetSocialID(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetSocialID(v)
+	})
+}
+
+// UpdateSocialID sets the "social_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateSocialID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateSocialID()
+	})
+}
+
+// ClearSocialID clears the value of the "social_id" field.
+func (u *RechargeOrderUpsertOne) ClearSocialID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.ClearSocialID()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *RechargeOrderUpsertOne) SetType(v rechargeorder.Type) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateType() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *RechargeOrderUpsertOne) SetSerialNumber(v string) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateSerialNumber() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetThirdAPIResp sets the "third_api_resp" field.
+func (u *RechargeOrderUpsertOne) SetThirdAPIResp(v string) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetThirdAPIResp(v)
+	})
+}
+
+// UpdateThirdAPIResp sets the "third_api_resp" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateThirdAPIResp() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateThirdAPIResp()
+	})
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (u *RechargeOrderUpsertOne) SetFromUserID(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetFromUserID(v)
+	})
+}
+
+// AddFromUserID adds v to the "from_user_id" field.
+func (u *RechargeOrderUpsertOne) AddFromUserID(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddFromUserID(v)
+	})
+}
+
+// UpdateFromUserID sets the "from_user_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateFromUserID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateFromUserID()
+	})
+}
+
+// SetOutTransactionID sets the "out_transaction_id" field.
+func (u *RechargeOrderUpsertOne) SetOutTransactionID(v string) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetOutTransactionID(v)
+	})
+}
+
+// UpdateOutTransactionID sets the "out_transaction_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateOutTransactionID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateOutTransactionID()
+	})
+}
+
+// Exec executes the query.
+func (u *RechargeOrderUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for RechargeOrderCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *RechargeOrderUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *RechargeOrderUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *RechargeOrderUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // RechargeOrderCreateBulk is the builder for creating many RechargeOrder entities in bulk.
 type RechargeOrderCreateBulk struct {
 	config
 	builders []*RechargeOrderCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the RechargeOrder entities in the database.
@@ -591,6 +1131,7 @@ func (rocb *RechargeOrderCreateBulk) Save(ctx context.Context) ([]*RechargeOrder
 					_, err = mutators[i+1].Mutate(root, rocb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = rocb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, rocb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -641,6 +1182,337 @@ func (rocb *RechargeOrderCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (rocb *RechargeOrderCreateBulk) ExecX(ctx context.Context) {
 	if err := rocb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.RechargeOrder.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.RechargeOrderUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (rocb *RechargeOrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *RechargeOrderUpsertBulk {
+	rocb.conflict = opts
+	return &RechargeOrderUpsertBulk{
+		create: rocb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.RechargeOrder.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (rocb *RechargeOrderCreateBulk) OnConflictColumns(columns ...string) *RechargeOrderUpsertBulk {
+	rocb.conflict = append(rocb.conflict, sql.ConflictColumns(columns...))
+	return &RechargeOrderUpsertBulk{
+		create: rocb,
+	}
+}
+
+// RechargeOrderUpsertBulk is the builder for "upsert"-ing
+// a bulk of RechargeOrder nodes.
+type RechargeOrderUpsertBulk struct {
+	create *RechargeOrderCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.RechargeOrder.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(rechargeorder.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *RechargeOrderUpsertBulk) UpdateNewValues() *RechargeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(rechargeorder.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(rechargeorder.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.RechargeOrder.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *RechargeOrderUpsertBulk) Ignore() *RechargeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *RechargeOrderUpsertBulk) DoNothing() *RechargeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the RechargeOrderCreateBulk.OnConflict
+// documentation for more info.
+func (u *RechargeOrderUpsertBulk) Update(set func(*RechargeOrderUpsert)) *RechargeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&RechargeOrderUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *RechargeOrderUpsertBulk) SetCreatedBy(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *RechargeOrderUpsertBulk) AddCreatedBy(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateCreatedBy() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *RechargeOrderUpsertBulk) SetUpdatedBy(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *RechargeOrderUpsertBulk) AddUpdatedBy(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateUpdatedBy() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *RechargeOrderUpsertBulk) SetUpdatedAt(v time.Time) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateUpdatedAt() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *RechargeOrderUpsertBulk) SetDeletedAt(v time.Time) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateDeletedAt() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *RechargeOrderUpsertBulk) SetUserID(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateUserID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *RechargeOrderUpsertBulk) SetStatus(v rechargeorder.Status) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateStatus() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *RechargeOrderUpsertBulk) SetPureCep(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *RechargeOrderUpsertBulk) AddPureCep(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdatePureCep() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetSocialID sets the "social_id" field.
+func (u *RechargeOrderUpsertBulk) SetSocialID(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetSocialID(v)
+	})
+}
+
+// UpdateSocialID sets the "social_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateSocialID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateSocialID()
+	})
+}
+
+// ClearSocialID clears the value of the "social_id" field.
+func (u *RechargeOrderUpsertBulk) ClearSocialID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.ClearSocialID()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *RechargeOrderUpsertBulk) SetType(v rechargeorder.Type) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateType() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *RechargeOrderUpsertBulk) SetSerialNumber(v string) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateSerialNumber() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetThirdAPIResp sets the "third_api_resp" field.
+func (u *RechargeOrderUpsertBulk) SetThirdAPIResp(v string) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetThirdAPIResp(v)
+	})
+}
+
+// UpdateThirdAPIResp sets the "third_api_resp" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateThirdAPIResp() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateThirdAPIResp()
+	})
+}
+
+// SetFromUserID sets the "from_user_id" field.
+func (u *RechargeOrderUpsertBulk) SetFromUserID(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetFromUserID(v)
+	})
+}
+
+// AddFromUserID adds v to the "from_user_id" field.
+func (u *RechargeOrderUpsertBulk) AddFromUserID(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddFromUserID(v)
+	})
+}
+
+// UpdateFromUserID sets the "from_user_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateFromUserID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateFromUserID()
+	})
+}
+
+// SetOutTransactionID sets the "out_transaction_id" field.
+func (u *RechargeOrderUpsertBulk) SetOutTransactionID(v string) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetOutTransactionID(v)
+	})
+}
+
+// UpdateOutTransactionID sets the "out_transaction_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateOutTransactionID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateOutTransactionID()
+	})
+}
+
+// Exec executes the query.
+func (u *RechargeOrderUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the RechargeOrderCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for RechargeOrderCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *RechargeOrderUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

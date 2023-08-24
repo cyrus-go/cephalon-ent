@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type VXSocialCreate struct {
 	config
 	mutation *VXSocialMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -408,6 +410,7 @@ func (vsc *VXSocialCreate) createSpec() (*VXSocial, *sqlgraph.CreateSpec) {
 		_node = &VXSocial{config: vsc.config}
 		_spec = sqlgraph.NewCreateSpec(vxsocial.Table, sqlgraph.NewFieldSpec(vxsocial.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = vsc.conflict
 	if id, ok := vsc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -496,10 +499,482 @@ func (vsc *VXSocialCreate) createSpec() (*VXSocial, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.VXSocial.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.VXSocialUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (vsc *VXSocialCreate) OnConflict(opts ...sql.ConflictOption) *VXSocialUpsertOne {
+	vsc.conflict = opts
+	return &VXSocialUpsertOne{
+		create: vsc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.VXSocial.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (vsc *VXSocialCreate) OnConflictColumns(columns ...string) *VXSocialUpsertOne {
+	vsc.conflict = append(vsc.conflict, sql.ConflictColumns(columns...))
+	return &VXSocialUpsertOne{
+		create: vsc,
+	}
+}
+
+type (
+	// VXSocialUpsertOne is the builder for "upsert"-ing
+	//  one VXSocial node.
+	VXSocialUpsertOne struct {
+		create *VXSocialCreate
+	}
+
+	// VXSocialUpsert is the "OnConflict" setter.
+	VXSocialUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *VXSocialUpsert) SetCreatedBy(v int64) *VXSocialUpsert {
+	u.Set(vxsocial.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateCreatedBy() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *VXSocialUpsert) AddCreatedBy(v int64) *VXSocialUpsert {
+	u.Add(vxsocial.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *VXSocialUpsert) SetUpdatedBy(v int64) *VXSocialUpsert {
+	u.Set(vxsocial.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateUpdatedBy() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *VXSocialUpsert) AddUpdatedBy(v int64) *VXSocialUpsert {
+	u.Add(vxsocial.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *VXSocialUpsert) SetUpdatedAt(v time.Time) *VXSocialUpsert {
+	u.Set(vxsocial.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateUpdatedAt() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *VXSocialUpsert) SetDeletedAt(v time.Time) *VXSocialUpsert {
+	u.Set(vxsocial.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateDeletedAt() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldDeletedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *VXSocialUpsert) SetAppID(v string) *VXSocialUpsert {
+	u.Set(vxsocial.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateAppID() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldAppID)
+	return u
+}
+
+// SetOpenID sets the "open_id" field.
+func (u *VXSocialUpsert) SetOpenID(v string) *VXSocialUpsert {
+	u.Set(vxsocial.FieldOpenID, v)
+	return u
+}
+
+// UpdateOpenID sets the "open_id" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateOpenID() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldOpenID)
+	return u
+}
+
+// SetUnionID sets the "union_id" field.
+func (u *VXSocialUpsert) SetUnionID(v string) *VXSocialUpsert {
+	u.Set(vxsocial.FieldUnionID, v)
+	return u
+}
+
+// UpdateUnionID sets the "union_id" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateUnionID() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldUnionID)
+	return u
+}
+
+// SetScope sets the "scope" field.
+func (u *VXSocialUpsert) SetScope(v vxsocial.Scope) *VXSocialUpsert {
+	u.Set(vxsocial.FieldScope, v)
+	return u
+}
+
+// UpdateScope sets the "scope" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateScope() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldScope)
+	return u
+}
+
+// SetSessionKey sets the "session_key" field.
+func (u *VXSocialUpsert) SetSessionKey(v string) *VXSocialUpsert {
+	u.Set(vxsocial.FieldSessionKey, v)
+	return u
+}
+
+// UpdateSessionKey sets the "session_key" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateSessionKey() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldSessionKey)
+	return u
+}
+
+// SetAccessToken sets the "access_token" field.
+func (u *VXSocialUpsert) SetAccessToken(v string) *VXSocialUpsert {
+	u.Set(vxsocial.FieldAccessToken, v)
+	return u
+}
+
+// UpdateAccessToken sets the "access_token" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateAccessToken() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldAccessToken)
+	return u
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (u *VXSocialUpsert) SetRefreshToken(v string) *VXSocialUpsert {
+	u.Set(vxsocial.FieldRefreshToken, v)
+	return u
+}
+
+// UpdateRefreshToken sets the "refresh_token" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateRefreshToken() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldRefreshToken)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *VXSocialUpsert) SetUserID(v int64) *VXSocialUpsert {
+	u.Set(vxsocial.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *VXSocialUpsert) UpdateUserID() *VXSocialUpsert {
+	u.SetExcluded(vxsocial.FieldUserID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.VXSocial.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(vxsocial.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *VXSocialUpsertOne) UpdateNewValues() *VXSocialUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(vxsocial.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(vxsocial.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.VXSocial.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *VXSocialUpsertOne) Ignore() *VXSocialUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *VXSocialUpsertOne) DoNothing() *VXSocialUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the VXSocialCreate.OnConflict
+// documentation for more info.
+func (u *VXSocialUpsertOne) Update(set func(*VXSocialUpsert)) *VXSocialUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&VXSocialUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *VXSocialUpsertOne) SetCreatedBy(v int64) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *VXSocialUpsertOne) AddCreatedBy(v int64) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateCreatedBy() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *VXSocialUpsertOne) SetUpdatedBy(v int64) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *VXSocialUpsertOne) AddUpdatedBy(v int64) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateUpdatedBy() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *VXSocialUpsertOne) SetUpdatedAt(v time.Time) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateUpdatedAt() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *VXSocialUpsertOne) SetDeletedAt(v time.Time) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateDeletedAt() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *VXSocialUpsertOne) SetAppID(v string) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateAppID() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetOpenID sets the "open_id" field.
+func (u *VXSocialUpsertOne) SetOpenID(v string) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetOpenID(v)
+	})
+}
+
+// UpdateOpenID sets the "open_id" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateOpenID() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateOpenID()
+	})
+}
+
+// SetUnionID sets the "union_id" field.
+func (u *VXSocialUpsertOne) SetUnionID(v string) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUnionID(v)
+	})
+}
+
+// UpdateUnionID sets the "union_id" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateUnionID() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUnionID()
+	})
+}
+
+// SetScope sets the "scope" field.
+func (u *VXSocialUpsertOne) SetScope(v vxsocial.Scope) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetScope(v)
+	})
+}
+
+// UpdateScope sets the "scope" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateScope() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateScope()
+	})
+}
+
+// SetSessionKey sets the "session_key" field.
+func (u *VXSocialUpsertOne) SetSessionKey(v string) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetSessionKey(v)
+	})
+}
+
+// UpdateSessionKey sets the "session_key" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateSessionKey() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateSessionKey()
+	})
+}
+
+// SetAccessToken sets the "access_token" field.
+func (u *VXSocialUpsertOne) SetAccessToken(v string) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetAccessToken(v)
+	})
+}
+
+// UpdateAccessToken sets the "access_token" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateAccessToken() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateAccessToken()
+	})
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (u *VXSocialUpsertOne) SetRefreshToken(v string) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetRefreshToken(v)
+	})
+}
+
+// UpdateRefreshToken sets the "refresh_token" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateRefreshToken() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateRefreshToken()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *VXSocialUpsertOne) SetUserID(v int64) *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *VXSocialUpsertOne) UpdateUserID() *VXSocialUpsertOne {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// Exec executes the query.
+func (u *VXSocialUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for VXSocialCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *VXSocialUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *VXSocialUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *VXSocialUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // VXSocialCreateBulk is the builder for creating many VXSocial entities in bulk.
 type VXSocialCreateBulk struct {
 	config
 	builders []*VXSocialCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the VXSocial entities in the database.
@@ -526,6 +1001,7 @@ func (vscb *VXSocialCreateBulk) Save(ctx context.Context) ([]*VXSocial, error) {
 					_, err = mutators[i+1].Mutate(root, vscb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = vscb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, vscb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -576,6 +1052,302 @@ func (vscb *VXSocialCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (vscb *VXSocialCreateBulk) ExecX(ctx context.Context) {
 	if err := vscb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.VXSocial.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.VXSocialUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (vscb *VXSocialCreateBulk) OnConflict(opts ...sql.ConflictOption) *VXSocialUpsertBulk {
+	vscb.conflict = opts
+	return &VXSocialUpsertBulk{
+		create: vscb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.VXSocial.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (vscb *VXSocialCreateBulk) OnConflictColumns(columns ...string) *VXSocialUpsertBulk {
+	vscb.conflict = append(vscb.conflict, sql.ConflictColumns(columns...))
+	return &VXSocialUpsertBulk{
+		create: vscb,
+	}
+}
+
+// VXSocialUpsertBulk is the builder for "upsert"-ing
+// a bulk of VXSocial nodes.
+type VXSocialUpsertBulk struct {
+	create *VXSocialCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.VXSocial.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(vxsocial.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *VXSocialUpsertBulk) UpdateNewValues() *VXSocialUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(vxsocial.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(vxsocial.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.VXSocial.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *VXSocialUpsertBulk) Ignore() *VXSocialUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *VXSocialUpsertBulk) DoNothing() *VXSocialUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the VXSocialCreateBulk.OnConflict
+// documentation for more info.
+func (u *VXSocialUpsertBulk) Update(set func(*VXSocialUpsert)) *VXSocialUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&VXSocialUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *VXSocialUpsertBulk) SetCreatedBy(v int64) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *VXSocialUpsertBulk) AddCreatedBy(v int64) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateCreatedBy() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *VXSocialUpsertBulk) SetUpdatedBy(v int64) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *VXSocialUpsertBulk) AddUpdatedBy(v int64) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateUpdatedBy() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *VXSocialUpsertBulk) SetUpdatedAt(v time.Time) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateUpdatedAt() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *VXSocialUpsertBulk) SetDeletedAt(v time.Time) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateDeletedAt() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *VXSocialUpsertBulk) SetAppID(v string) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateAppID() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// SetOpenID sets the "open_id" field.
+func (u *VXSocialUpsertBulk) SetOpenID(v string) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetOpenID(v)
+	})
+}
+
+// UpdateOpenID sets the "open_id" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateOpenID() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateOpenID()
+	})
+}
+
+// SetUnionID sets the "union_id" field.
+func (u *VXSocialUpsertBulk) SetUnionID(v string) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUnionID(v)
+	})
+}
+
+// UpdateUnionID sets the "union_id" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateUnionID() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUnionID()
+	})
+}
+
+// SetScope sets the "scope" field.
+func (u *VXSocialUpsertBulk) SetScope(v vxsocial.Scope) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetScope(v)
+	})
+}
+
+// UpdateScope sets the "scope" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateScope() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateScope()
+	})
+}
+
+// SetSessionKey sets the "session_key" field.
+func (u *VXSocialUpsertBulk) SetSessionKey(v string) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetSessionKey(v)
+	})
+}
+
+// UpdateSessionKey sets the "session_key" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateSessionKey() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateSessionKey()
+	})
+}
+
+// SetAccessToken sets the "access_token" field.
+func (u *VXSocialUpsertBulk) SetAccessToken(v string) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetAccessToken(v)
+	})
+}
+
+// UpdateAccessToken sets the "access_token" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateAccessToken() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateAccessToken()
+	})
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (u *VXSocialUpsertBulk) SetRefreshToken(v string) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetRefreshToken(v)
+	})
+}
+
+// UpdateRefreshToken sets the "refresh_token" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateRefreshToken() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateRefreshToken()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *VXSocialUpsertBulk) SetUserID(v int64) *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *VXSocialUpsertBulk) UpdateUserID() *VXSocialUpsertBulk {
+	return u.Update(func(s *VXSocialUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// Exec executes the query.
+func (u *VXSocialUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the VXSocialCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for VXSocialCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *VXSocialUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

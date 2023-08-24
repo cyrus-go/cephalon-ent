@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -23,6 +24,7 @@ type MissionConsumeOrderCreate struct {
 	config
 	mutation *MissionConsumeOrderMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -124,15 +126,15 @@ func (mcoc *MissionConsumeOrderCreate) SetNillableMissionID(i *int64) *MissionCo
 }
 
 // SetStatus sets the "status" field.
-func (mcoc *MissionConsumeOrderCreate) SetStatus(m missionconsumeorder.Status) *MissionConsumeOrderCreate {
-	mcoc.mutation.SetStatus(m)
+func (mcoc *MissionConsumeOrderCreate) SetStatus(eos enums.MissionOrderStatus) *MissionConsumeOrderCreate {
+	mcoc.mutation.SetStatus(eos)
 	return mcoc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mcoc *MissionConsumeOrderCreate) SetNillableStatus(m *missionconsumeorder.Status) *MissionConsumeOrderCreate {
-	if m != nil {
-		mcoc.SetStatus(*m)
+func (mcoc *MissionConsumeOrderCreate) SetNillableStatus(eos *enums.MissionOrderStatus) *MissionConsumeOrderCreate {
+	if eos != nil {
+		mcoc.SetStatus(*eos)
 	}
 	return mcoc
 }
@@ -549,6 +551,7 @@ func (mcoc *MissionConsumeOrderCreate) createSpec() (*MissionConsumeOrder, *sqlg
 		_node = &MissionConsumeOrder{config: mcoc.config}
 		_spec = sqlgraph.NewCreateSpec(missionconsumeorder.Table, sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = mcoc.conflict
 	if id, ok := mcoc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -686,10 +689,651 @@ func (mcoc *MissionConsumeOrderCreate) createSpec() (*MissionConsumeOrder, *sqlg
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionConsumeOrder.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionConsumeOrderUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mcoc *MissionConsumeOrderCreate) OnConflict(opts ...sql.ConflictOption) *MissionConsumeOrderUpsertOne {
+	mcoc.conflict = opts
+	return &MissionConsumeOrderUpsertOne{
+		create: mcoc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionConsumeOrder.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mcoc *MissionConsumeOrderCreate) OnConflictColumns(columns ...string) *MissionConsumeOrderUpsertOne {
+	mcoc.conflict = append(mcoc.conflict, sql.ConflictColumns(columns...))
+	return &MissionConsumeOrderUpsertOne{
+		create: mcoc,
+	}
+}
+
+type (
+	// MissionConsumeOrderUpsertOne is the builder for "upsert"-ing
+	//  one MissionConsumeOrder node.
+	MissionConsumeOrderUpsertOne struct {
+		create *MissionConsumeOrderCreate
+	}
+
+	// MissionConsumeOrderUpsert is the "OnConflict" setter.
+	MissionConsumeOrderUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionConsumeOrderUpsert) SetCreatedBy(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateCreatedBy() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionConsumeOrderUpsert) AddCreatedBy(v int64) *MissionConsumeOrderUpsert {
+	u.Add(missionconsumeorder.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionConsumeOrderUpsert) SetUpdatedBy(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateUpdatedBy() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionConsumeOrderUpsert) AddUpdatedBy(v int64) *MissionConsumeOrderUpsert {
+	u.Add(missionconsumeorder.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionConsumeOrderUpsert) SetUpdatedAt(v time.Time) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateUpdatedAt() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionConsumeOrderUpsert) SetDeletedAt(v time.Time) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateDeletedAt() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionConsumeOrderUpsert) SetUserID(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateUserID() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldUserID)
+	return u
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *MissionConsumeOrderUpsert) SetMissionID(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldMissionID, v)
+	return u
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateMissionID() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldMissionID)
+	return u
+}
+
+// AddMissionID adds v to the "mission_id" field.
+func (u *MissionConsumeOrderUpsert) AddMissionID(v int64) *MissionConsumeOrderUpsert {
+	u.Add(missionconsumeorder.FieldMissionID, v)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *MissionConsumeOrderUpsert) SetStatus(v enums.MissionOrderStatus) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateStatus() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldStatus)
+	return u
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *MissionConsumeOrderUpsert) SetPureCep(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldPureCep, v)
+	return u
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdatePureCep() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldPureCep)
+	return u
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *MissionConsumeOrderUpsert) AddPureCep(v int64) *MissionConsumeOrderUpsert {
+	u.Add(missionconsumeorder.FieldPureCep, v)
+	return u
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *MissionConsumeOrderUpsert) SetGiftCep(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldGiftCep, v)
+	return u
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateGiftCep() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldGiftCep)
+	return u
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *MissionConsumeOrderUpsert) AddGiftCep(v int64) *MissionConsumeOrderUpsert {
+	u.Add(missionconsumeorder.FieldGiftCep, v)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *MissionConsumeOrderUpsert) SetType(v enums.MissionType) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateType() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldType)
+	return u
+}
+
+// SetIsTime sets the "is_time" field.
+func (u *MissionConsumeOrderUpsert) SetIsTime(v bool) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldIsTime, v)
+	return u
+}
+
+// UpdateIsTime sets the "is_time" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateIsTime() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldIsTime)
+	return u
+}
+
+// SetCallWay sets the "call_way" field.
+func (u *MissionConsumeOrderUpsert) SetCallWay(v enums.MissionCallWay) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldCallWay, v)
+	return u
+}
+
+// UpdateCallWay sets the "call_way" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateCallWay() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldCallWay)
+	return u
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *MissionConsumeOrderUpsert) SetSerialNumber(v string) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldSerialNumber, v)
+	return u
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateSerialNumber() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldSerialNumber)
+	return u
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionConsumeOrderUpsert) SetStartedAt(v time.Time) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateStartedAt() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldStartedAt)
+	return u
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionConsumeOrderUpsert) SetFinishedAt(v time.Time) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldFinishedAt, v)
+	return u
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateFinishedAt() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldFinishedAt)
+	return u
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (u *MissionConsumeOrderUpsert) SetMissionBatchID(v int64) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldMissionBatchID, v)
+	return u
+}
+
+// UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateMissionBatchID() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldMissionBatchID)
+	return u
+}
+
+// SetMissionBatchNumber sets the "mission_batch_number" field.
+func (u *MissionConsumeOrderUpsert) SetMissionBatchNumber(v string) *MissionConsumeOrderUpsert {
+	u.Set(missionconsumeorder.FieldMissionBatchNumber, v)
+	return u
+}
+
+// UpdateMissionBatchNumber sets the "mission_batch_number" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsert) UpdateMissionBatchNumber() *MissionConsumeOrderUpsert {
+	u.SetExcluded(missionconsumeorder.FieldMissionBatchNumber)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.MissionConsumeOrder.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionconsumeorder.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionConsumeOrderUpsertOne) UpdateNewValues() *MissionConsumeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(missionconsumeorder.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(missionconsumeorder.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionConsumeOrder.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *MissionConsumeOrderUpsertOne) Ignore() *MissionConsumeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionConsumeOrderUpsertOne) DoNothing() *MissionConsumeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionConsumeOrderCreate.OnConflict
+// documentation for more info.
+func (u *MissionConsumeOrderUpsertOne) Update(set func(*MissionConsumeOrderUpsert)) *MissionConsumeOrderUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionConsumeOrderUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionConsumeOrderUpsertOne) SetCreatedBy(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionConsumeOrderUpsertOne) AddCreatedBy(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateCreatedBy() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionConsumeOrderUpsertOne) SetUpdatedBy(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionConsumeOrderUpsertOne) AddUpdatedBy(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateUpdatedBy() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionConsumeOrderUpsertOne) SetUpdatedAt(v time.Time) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateUpdatedAt() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionConsumeOrderUpsertOne) SetDeletedAt(v time.Time) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateDeletedAt() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionConsumeOrderUpsertOne) SetUserID(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateUserID() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *MissionConsumeOrderUpsertOne) SetMissionID(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetMissionID(v)
+	})
+}
+
+// AddMissionID adds v to the "mission_id" field.
+func (u *MissionConsumeOrderUpsertOne) AddMissionID(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddMissionID(v)
+	})
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateMissionID() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateMissionID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *MissionConsumeOrderUpsertOne) SetStatus(v enums.MissionOrderStatus) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateStatus() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *MissionConsumeOrderUpsertOne) SetPureCep(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *MissionConsumeOrderUpsertOne) AddPureCep(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdatePureCep() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *MissionConsumeOrderUpsertOne) SetGiftCep(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *MissionConsumeOrderUpsertOne) AddGiftCep(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateGiftCep() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *MissionConsumeOrderUpsertOne) SetType(v enums.MissionType) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateType() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetIsTime sets the "is_time" field.
+func (u *MissionConsumeOrderUpsertOne) SetIsTime(v bool) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetIsTime(v)
+	})
+}
+
+// UpdateIsTime sets the "is_time" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateIsTime() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateIsTime()
+	})
+}
+
+// SetCallWay sets the "call_way" field.
+func (u *MissionConsumeOrderUpsertOne) SetCallWay(v enums.MissionCallWay) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetCallWay(v)
+	})
+}
+
+// UpdateCallWay sets the "call_way" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateCallWay() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateCallWay()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *MissionConsumeOrderUpsertOne) SetSerialNumber(v string) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateSerialNumber() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionConsumeOrderUpsertOne) SetStartedAt(v time.Time) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateStartedAt() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionConsumeOrderUpsertOne) SetFinishedAt(v time.Time) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateFinishedAt() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (u *MissionConsumeOrderUpsertOne) SetMissionBatchID(v int64) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetMissionBatchID(v)
+	})
+}
+
+// UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateMissionBatchID() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateMissionBatchID()
+	})
+}
+
+// SetMissionBatchNumber sets the "mission_batch_number" field.
+func (u *MissionConsumeOrderUpsertOne) SetMissionBatchNumber(v string) *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetMissionBatchNumber(v)
+	})
+}
+
+// UpdateMissionBatchNumber sets the "mission_batch_number" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertOne) UpdateMissionBatchNumber() *MissionConsumeOrderUpsertOne {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateMissionBatchNumber()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionConsumeOrderUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionConsumeOrderCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionConsumeOrderUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *MissionConsumeOrderUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *MissionConsumeOrderUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // MissionConsumeOrderCreateBulk is the builder for creating many MissionConsumeOrder entities in bulk.
 type MissionConsumeOrderCreateBulk struct {
 	config
 	builders []*MissionConsumeOrderCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionConsumeOrder entities in the database.
@@ -716,6 +1360,7 @@ func (mcocb *MissionConsumeOrderCreateBulk) Save(ctx context.Context) ([]*Missio
 					_, err = mutators[i+1].Mutate(root, mcocb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = mcocb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, mcocb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -766,6 +1411,393 @@ func (mcocb *MissionConsumeOrderCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (mcocb *MissionConsumeOrderCreateBulk) ExecX(ctx context.Context) {
 	if err := mcocb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionConsumeOrder.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionConsumeOrderUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mcocb *MissionConsumeOrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *MissionConsumeOrderUpsertBulk {
+	mcocb.conflict = opts
+	return &MissionConsumeOrderUpsertBulk{
+		create: mcocb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionConsumeOrder.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mcocb *MissionConsumeOrderCreateBulk) OnConflictColumns(columns ...string) *MissionConsumeOrderUpsertBulk {
+	mcocb.conflict = append(mcocb.conflict, sql.ConflictColumns(columns...))
+	return &MissionConsumeOrderUpsertBulk{
+		create: mcocb,
+	}
+}
+
+// MissionConsumeOrderUpsertBulk is the builder for "upsert"-ing
+// a bulk of MissionConsumeOrder nodes.
+type MissionConsumeOrderUpsertBulk struct {
+	create *MissionConsumeOrderCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.MissionConsumeOrder.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionconsumeorder.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionConsumeOrderUpsertBulk) UpdateNewValues() *MissionConsumeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(missionconsumeorder.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(missionconsumeorder.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionConsumeOrder.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *MissionConsumeOrderUpsertBulk) Ignore() *MissionConsumeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionConsumeOrderUpsertBulk) DoNothing() *MissionConsumeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionConsumeOrderCreateBulk.OnConflict
+// documentation for more info.
+func (u *MissionConsumeOrderUpsertBulk) Update(set func(*MissionConsumeOrderUpsert)) *MissionConsumeOrderUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionConsumeOrderUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionConsumeOrderUpsertBulk) SetCreatedBy(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionConsumeOrderUpsertBulk) AddCreatedBy(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateCreatedBy() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionConsumeOrderUpsertBulk) SetUpdatedBy(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionConsumeOrderUpsertBulk) AddUpdatedBy(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateUpdatedBy() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionConsumeOrderUpsertBulk) SetUpdatedAt(v time.Time) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateUpdatedAt() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionConsumeOrderUpsertBulk) SetDeletedAt(v time.Time) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateDeletedAt() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionConsumeOrderUpsertBulk) SetUserID(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateUserID() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *MissionConsumeOrderUpsertBulk) SetMissionID(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetMissionID(v)
+	})
+}
+
+// AddMissionID adds v to the "mission_id" field.
+func (u *MissionConsumeOrderUpsertBulk) AddMissionID(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddMissionID(v)
+	})
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateMissionID() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateMissionID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *MissionConsumeOrderUpsertBulk) SetStatus(v enums.MissionOrderStatus) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateStatus() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *MissionConsumeOrderUpsertBulk) SetPureCep(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *MissionConsumeOrderUpsertBulk) AddPureCep(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdatePureCep() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *MissionConsumeOrderUpsertBulk) SetGiftCep(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *MissionConsumeOrderUpsertBulk) AddGiftCep(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateGiftCep() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *MissionConsumeOrderUpsertBulk) SetType(v enums.MissionType) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateType() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetIsTime sets the "is_time" field.
+func (u *MissionConsumeOrderUpsertBulk) SetIsTime(v bool) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetIsTime(v)
+	})
+}
+
+// UpdateIsTime sets the "is_time" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateIsTime() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateIsTime()
+	})
+}
+
+// SetCallWay sets the "call_way" field.
+func (u *MissionConsumeOrderUpsertBulk) SetCallWay(v enums.MissionCallWay) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetCallWay(v)
+	})
+}
+
+// UpdateCallWay sets the "call_way" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateCallWay() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateCallWay()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *MissionConsumeOrderUpsertBulk) SetSerialNumber(v string) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateSerialNumber() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionConsumeOrderUpsertBulk) SetStartedAt(v time.Time) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateStartedAt() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionConsumeOrderUpsertBulk) SetFinishedAt(v time.Time) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateFinishedAt() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (u *MissionConsumeOrderUpsertBulk) SetMissionBatchID(v int64) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetMissionBatchID(v)
+	})
+}
+
+// UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateMissionBatchID() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateMissionBatchID()
+	})
+}
+
+// SetMissionBatchNumber sets the "mission_batch_number" field.
+func (u *MissionConsumeOrderUpsertBulk) SetMissionBatchNumber(v string) *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.SetMissionBatchNumber(v)
+	})
+}
+
+// UpdateMissionBatchNumber sets the "mission_batch_number" field to the value that was provided on create.
+func (u *MissionConsumeOrderUpsertBulk) UpdateMissionBatchNumber() *MissionConsumeOrderUpsertBulk {
+	return u.Update(func(s *MissionConsumeOrderUpsert) {
+		s.UpdateMissionBatchNumber()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionConsumeOrderUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionConsumeOrderCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionConsumeOrderCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionConsumeOrderUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

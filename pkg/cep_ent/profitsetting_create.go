@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -19,6 +20,7 @@ type ProfitSettingCreate struct {
 	config
 	mutation *ProfitSettingMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -261,6 +263,7 @@ func (psc *ProfitSettingCreate) createSpec() (*ProfitSetting, *sqlgraph.CreateSp
 		_node = &ProfitSetting{config: psc.config}
 		_spec = sqlgraph.NewCreateSpec(profitsetting.Table, sqlgraph.NewFieldSpec(profitsetting.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = psc.conflict
 	if id, ok := psc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -309,10 +312,339 @@ func (psc *ProfitSettingCreate) createSpec() (*ProfitSetting, *sqlgraph.CreateSp
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.ProfitSetting.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ProfitSettingUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (psc *ProfitSettingCreate) OnConflict(opts ...sql.ConflictOption) *ProfitSettingUpsertOne {
+	psc.conflict = opts
+	return &ProfitSettingUpsertOne{
+		create: psc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.ProfitSetting.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (psc *ProfitSettingCreate) OnConflictColumns(columns ...string) *ProfitSettingUpsertOne {
+	psc.conflict = append(psc.conflict, sql.ConflictColumns(columns...))
+	return &ProfitSettingUpsertOne{
+		create: psc,
+	}
+}
+
+type (
+	// ProfitSettingUpsertOne is the builder for "upsert"-ing
+	//  one ProfitSetting node.
+	ProfitSettingUpsertOne struct {
+		create *ProfitSettingCreate
+	}
+
+	// ProfitSettingUpsert is the "OnConflict" setter.
+	ProfitSettingUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *ProfitSettingUpsert) SetCreatedBy(v int64) *ProfitSettingUpsert {
+	u.Set(profitsetting.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *ProfitSettingUpsert) UpdateCreatedBy() *ProfitSettingUpsert {
+	u.SetExcluded(profitsetting.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *ProfitSettingUpsert) AddCreatedBy(v int64) *ProfitSettingUpsert {
+	u.Add(profitsetting.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *ProfitSettingUpsert) SetUpdatedBy(v int64) *ProfitSettingUpsert {
+	u.Set(profitsetting.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *ProfitSettingUpsert) UpdateUpdatedBy() *ProfitSettingUpsert {
+	u.SetExcluded(profitsetting.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *ProfitSettingUpsert) AddUpdatedBy(v int64) *ProfitSettingUpsert {
+	u.Add(profitsetting.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *ProfitSettingUpsert) SetUpdatedAt(v time.Time) *ProfitSettingUpsert {
+	u.Set(profitsetting.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *ProfitSettingUpsert) UpdateUpdatedAt() *ProfitSettingUpsert {
+	u.SetExcluded(profitsetting.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *ProfitSettingUpsert) SetDeletedAt(v time.Time) *ProfitSettingUpsert {
+	u.Set(profitsetting.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *ProfitSettingUpsert) UpdateDeletedAt() *ProfitSettingUpsert {
+	u.SetExcluded(profitsetting.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ProfitSettingUpsert) SetUserID(v int64) *ProfitSettingUpsert {
+	u.Set(profitsetting.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ProfitSettingUpsert) UpdateUserID() *ProfitSettingUpsert {
+	u.SetExcluded(profitsetting.FieldUserID)
+	return u
+}
+
+// SetRatio sets the "ratio" field.
+func (u *ProfitSettingUpsert) SetRatio(v int64) *ProfitSettingUpsert {
+	u.Set(profitsetting.FieldRatio, v)
+	return u
+}
+
+// UpdateRatio sets the "ratio" field to the value that was provided on create.
+func (u *ProfitSettingUpsert) UpdateRatio() *ProfitSettingUpsert {
+	u.SetExcluded(profitsetting.FieldRatio)
+	return u
+}
+
+// AddRatio adds v to the "ratio" field.
+func (u *ProfitSettingUpsert) AddRatio(v int64) *ProfitSettingUpsert {
+	u.Add(profitsetting.FieldRatio, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.ProfitSetting.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(profitsetting.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *ProfitSettingUpsertOne) UpdateNewValues() *ProfitSettingUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(profitsetting.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(profitsetting.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.ProfitSetting.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *ProfitSettingUpsertOne) Ignore() *ProfitSettingUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *ProfitSettingUpsertOne) DoNothing() *ProfitSettingUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the ProfitSettingCreate.OnConflict
+// documentation for more info.
+func (u *ProfitSettingUpsertOne) Update(set func(*ProfitSettingUpsert)) *ProfitSettingUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&ProfitSettingUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *ProfitSettingUpsertOne) SetCreatedBy(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *ProfitSettingUpsertOne) AddCreatedBy(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *ProfitSettingUpsertOne) UpdateCreatedBy() *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *ProfitSettingUpsertOne) SetUpdatedBy(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *ProfitSettingUpsertOne) AddUpdatedBy(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *ProfitSettingUpsertOne) UpdateUpdatedBy() *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *ProfitSettingUpsertOne) SetUpdatedAt(v time.Time) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *ProfitSettingUpsertOne) UpdateUpdatedAt() *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *ProfitSettingUpsertOne) SetDeletedAt(v time.Time) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *ProfitSettingUpsertOne) UpdateDeletedAt() *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ProfitSettingUpsertOne) SetUserID(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ProfitSettingUpsertOne) UpdateUserID() *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetRatio sets the "ratio" field.
+func (u *ProfitSettingUpsertOne) SetRatio(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetRatio(v)
+	})
+}
+
+// AddRatio adds v to the "ratio" field.
+func (u *ProfitSettingUpsertOne) AddRatio(v int64) *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.AddRatio(v)
+	})
+}
+
+// UpdateRatio sets the "ratio" field to the value that was provided on create.
+func (u *ProfitSettingUpsertOne) UpdateRatio() *ProfitSettingUpsertOne {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateRatio()
+	})
+}
+
+// Exec executes the query.
+func (u *ProfitSettingUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for ProfitSettingCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *ProfitSettingUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *ProfitSettingUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *ProfitSettingUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // ProfitSettingCreateBulk is the builder for creating many ProfitSetting entities in bulk.
 type ProfitSettingCreateBulk struct {
 	config
 	builders []*ProfitSettingCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the ProfitSetting entities in the database.
@@ -339,6 +671,7 @@ func (pscb *ProfitSettingCreateBulk) Save(ctx context.Context) ([]*ProfitSetting
 					_, err = mutators[i+1].Mutate(root, pscb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = pscb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, pscb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -389,6 +722,225 @@ func (pscb *ProfitSettingCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (pscb *ProfitSettingCreateBulk) ExecX(ctx context.Context) {
 	if err := pscb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.ProfitSetting.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ProfitSettingUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (pscb *ProfitSettingCreateBulk) OnConflict(opts ...sql.ConflictOption) *ProfitSettingUpsertBulk {
+	pscb.conflict = opts
+	return &ProfitSettingUpsertBulk{
+		create: pscb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.ProfitSetting.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pscb *ProfitSettingCreateBulk) OnConflictColumns(columns ...string) *ProfitSettingUpsertBulk {
+	pscb.conflict = append(pscb.conflict, sql.ConflictColumns(columns...))
+	return &ProfitSettingUpsertBulk{
+		create: pscb,
+	}
+}
+
+// ProfitSettingUpsertBulk is the builder for "upsert"-ing
+// a bulk of ProfitSetting nodes.
+type ProfitSettingUpsertBulk struct {
+	create *ProfitSettingCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.ProfitSetting.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(profitsetting.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *ProfitSettingUpsertBulk) UpdateNewValues() *ProfitSettingUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(profitsetting.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(profitsetting.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.ProfitSetting.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *ProfitSettingUpsertBulk) Ignore() *ProfitSettingUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *ProfitSettingUpsertBulk) DoNothing() *ProfitSettingUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the ProfitSettingCreateBulk.OnConflict
+// documentation for more info.
+func (u *ProfitSettingUpsertBulk) Update(set func(*ProfitSettingUpsert)) *ProfitSettingUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&ProfitSettingUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *ProfitSettingUpsertBulk) SetCreatedBy(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *ProfitSettingUpsertBulk) AddCreatedBy(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *ProfitSettingUpsertBulk) UpdateCreatedBy() *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *ProfitSettingUpsertBulk) SetUpdatedBy(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *ProfitSettingUpsertBulk) AddUpdatedBy(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *ProfitSettingUpsertBulk) UpdateUpdatedBy() *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *ProfitSettingUpsertBulk) SetUpdatedAt(v time.Time) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *ProfitSettingUpsertBulk) UpdateUpdatedAt() *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *ProfitSettingUpsertBulk) SetDeletedAt(v time.Time) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *ProfitSettingUpsertBulk) UpdateDeletedAt() *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ProfitSettingUpsertBulk) SetUserID(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ProfitSettingUpsertBulk) UpdateUserID() *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetRatio sets the "ratio" field.
+func (u *ProfitSettingUpsertBulk) SetRatio(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.SetRatio(v)
+	})
+}
+
+// AddRatio adds v to the "ratio" field.
+func (u *ProfitSettingUpsertBulk) AddRatio(v int64) *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.AddRatio(v)
+	})
+}
+
+// UpdateRatio sets the "ratio" field to the value that was provided on create.
+func (u *ProfitSettingUpsertBulk) UpdateRatio() *ProfitSettingUpsertBulk {
+	return u.Update(func(s *ProfitSettingUpsert) {
+		s.UpdateRatio()
+	})
+}
+
+// Exec executes the query.
+func (u *ProfitSettingUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the ProfitSettingCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for ProfitSettingCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *ProfitSettingUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

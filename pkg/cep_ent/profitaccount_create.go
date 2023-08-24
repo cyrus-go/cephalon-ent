@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type ProfitAccountCreate struct {
 	config
 	mutation *ProfitAccountMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -298,6 +300,7 @@ func (pac *ProfitAccountCreate) createSpec() (*ProfitAccount, *sqlgraph.CreateSp
 		_node = &ProfitAccount{config: pac.config}
 		_spec = sqlgraph.NewCreateSpec(profitaccount.Table, sqlgraph.NewFieldSpec(profitaccount.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = pac.conflict
 	if id, ok := pac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -366,10 +369,378 @@ func (pac *ProfitAccountCreate) createSpec() (*ProfitAccount, *sqlgraph.CreateSp
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.ProfitAccount.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ProfitAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (pac *ProfitAccountCreate) OnConflict(opts ...sql.ConflictOption) *ProfitAccountUpsertOne {
+	pac.conflict = opts
+	return &ProfitAccountUpsertOne{
+		create: pac,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.ProfitAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pac *ProfitAccountCreate) OnConflictColumns(columns ...string) *ProfitAccountUpsertOne {
+	pac.conflict = append(pac.conflict, sql.ConflictColumns(columns...))
+	return &ProfitAccountUpsertOne{
+		create: pac,
+	}
+}
+
+type (
+	// ProfitAccountUpsertOne is the builder for "upsert"-ing
+	//  one ProfitAccount node.
+	ProfitAccountUpsertOne struct {
+		create *ProfitAccountCreate
+	}
+
+	// ProfitAccountUpsert is the "OnConflict" setter.
+	ProfitAccountUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *ProfitAccountUpsert) SetCreatedBy(v int64) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateCreatedBy() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *ProfitAccountUpsert) AddCreatedBy(v int64) *ProfitAccountUpsert {
+	u.Add(profitaccount.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *ProfitAccountUpsert) SetUpdatedBy(v int64) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateUpdatedBy() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *ProfitAccountUpsert) AddUpdatedBy(v int64) *ProfitAccountUpsert {
+	u.Add(profitaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *ProfitAccountUpsert) SetUpdatedAt(v time.Time) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateUpdatedAt() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *ProfitAccountUpsert) SetDeletedAt(v time.Time) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateDeletedAt() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ProfitAccountUpsert) SetUserID(v int64) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateUserID() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldUserID)
+	return u
+}
+
+// SetSumCep sets the "sum_cep" field.
+func (u *ProfitAccountUpsert) SetSumCep(v int64) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldSumCep, v)
+	return u
+}
+
+// UpdateSumCep sets the "sum_cep" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateSumCep() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldSumCep)
+	return u
+}
+
+// AddSumCep adds v to the "sum_cep" field.
+func (u *ProfitAccountUpsert) AddSumCep(v int64) *ProfitAccountUpsert {
+	u.Add(profitaccount.FieldSumCep, v)
+	return u
+}
+
+// SetRemainCep sets the "remain_cep" field.
+func (u *ProfitAccountUpsert) SetRemainCep(v int64) *ProfitAccountUpsert {
+	u.Set(profitaccount.FieldRemainCep, v)
+	return u
+}
+
+// UpdateRemainCep sets the "remain_cep" field to the value that was provided on create.
+func (u *ProfitAccountUpsert) UpdateRemainCep() *ProfitAccountUpsert {
+	u.SetExcluded(profitaccount.FieldRemainCep)
+	return u
+}
+
+// AddRemainCep adds v to the "remain_cep" field.
+func (u *ProfitAccountUpsert) AddRemainCep(v int64) *ProfitAccountUpsert {
+	u.Add(profitaccount.FieldRemainCep, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.ProfitAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(profitaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *ProfitAccountUpsertOne) UpdateNewValues() *ProfitAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(profitaccount.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(profitaccount.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.ProfitAccount.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *ProfitAccountUpsertOne) Ignore() *ProfitAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *ProfitAccountUpsertOne) DoNothing() *ProfitAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the ProfitAccountCreate.OnConflict
+// documentation for more info.
+func (u *ProfitAccountUpsertOne) Update(set func(*ProfitAccountUpsert)) *ProfitAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&ProfitAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *ProfitAccountUpsertOne) SetCreatedBy(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *ProfitAccountUpsertOne) AddCreatedBy(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateCreatedBy() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *ProfitAccountUpsertOne) SetUpdatedBy(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *ProfitAccountUpsertOne) AddUpdatedBy(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateUpdatedBy() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *ProfitAccountUpsertOne) SetUpdatedAt(v time.Time) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateUpdatedAt() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *ProfitAccountUpsertOne) SetDeletedAt(v time.Time) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateDeletedAt() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ProfitAccountUpsertOne) SetUserID(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateUserID() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetSumCep sets the "sum_cep" field.
+func (u *ProfitAccountUpsertOne) SetSumCep(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetSumCep(v)
+	})
+}
+
+// AddSumCep adds v to the "sum_cep" field.
+func (u *ProfitAccountUpsertOne) AddSumCep(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddSumCep(v)
+	})
+}
+
+// UpdateSumCep sets the "sum_cep" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateSumCep() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateSumCep()
+	})
+}
+
+// SetRemainCep sets the "remain_cep" field.
+func (u *ProfitAccountUpsertOne) SetRemainCep(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetRemainCep(v)
+	})
+}
+
+// AddRemainCep adds v to the "remain_cep" field.
+func (u *ProfitAccountUpsertOne) AddRemainCep(v int64) *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddRemainCep(v)
+	})
+}
+
+// UpdateRemainCep sets the "remain_cep" field to the value that was provided on create.
+func (u *ProfitAccountUpsertOne) UpdateRemainCep() *ProfitAccountUpsertOne {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateRemainCep()
+	})
+}
+
+// Exec executes the query.
+func (u *ProfitAccountUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for ProfitAccountCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *ProfitAccountUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *ProfitAccountUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *ProfitAccountUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // ProfitAccountCreateBulk is the builder for creating many ProfitAccount entities in bulk.
 type ProfitAccountCreateBulk struct {
 	config
 	builders []*ProfitAccountCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the ProfitAccount entities in the database.
@@ -396,6 +767,7 @@ func (pacb *ProfitAccountCreateBulk) Save(ctx context.Context) ([]*ProfitAccount
 					_, err = mutators[i+1].Mutate(root, pacb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = pacb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, pacb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -446,6 +818,246 @@ func (pacb *ProfitAccountCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (pacb *ProfitAccountCreateBulk) ExecX(ctx context.Context) {
 	if err := pacb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.ProfitAccount.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.ProfitAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (pacb *ProfitAccountCreateBulk) OnConflict(opts ...sql.ConflictOption) *ProfitAccountUpsertBulk {
+	pacb.conflict = opts
+	return &ProfitAccountUpsertBulk{
+		create: pacb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.ProfitAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (pacb *ProfitAccountCreateBulk) OnConflictColumns(columns ...string) *ProfitAccountUpsertBulk {
+	pacb.conflict = append(pacb.conflict, sql.ConflictColumns(columns...))
+	return &ProfitAccountUpsertBulk{
+		create: pacb,
+	}
+}
+
+// ProfitAccountUpsertBulk is the builder for "upsert"-ing
+// a bulk of ProfitAccount nodes.
+type ProfitAccountUpsertBulk struct {
+	create *ProfitAccountCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.ProfitAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(profitaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *ProfitAccountUpsertBulk) UpdateNewValues() *ProfitAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(profitaccount.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(profitaccount.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.ProfitAccount.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *ProfitAccountUpsertBulk) Ignore() *ProfitAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *ProfitAccountUpsertBulk) DoNothing() *ProfitAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the ProfitAccountCreateBulk.OnConflict
+// documentation for more info.
+func (u *ProfitAccountUpsertBulk) Update(set func(*ProfitAccountUpsert)) *ProfitAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&ProfitAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *ProfitAccountUpsertBulk) SetCreatedBy(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *ProfitAccountUpsertBulk) AddCreatedBy(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateCreatedBy() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *ProfitAccountUpsertBulk) SetUpdatedBy(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *ProfitAccountUpsertBulk) AddUpdatedBy(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateUpdatedBy() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *ProfitAccountUpsertBulk) SetUpdatedAt(v time.Time) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateUpdatedAt() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *ProfitAccountUpsertBulk) SetDeletedAt(v time.Time) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateDeletedAt() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *ProfitAccountUpsertBulk) SetUserID(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateUserID() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetSumCep sets the "sum_cep" field.
+func (u *ProfitAccountUpsertBulk) SetSumCep(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetSumCep(v)
+	})
+}
+
+// AddSumCep adds v to the "sum_cep" field.
+func (u *ProfitAccountUpsertBulk) AddSumCep(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddSumCep(v)
+	})
+}
+
+// UpdateSumCep sets the "sum_cep" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateSumCep() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateSumCep()
+	})
+}
+
+// SetRemainCep sets the "remain_cep" field.
+func (u *ProfitAccountUpsertBulk) SetRemainCep(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.SetRemainCep(v)
+	})
+}
+
+// AddRemainCep adds v to the "remain_cep" field.
+func (u *ProfitAccountUpsertBulk) AddRemainCep(v int64) *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.AddRemainCep(v)
+	})
+}
+
+// UpdateRemainCep sets the "remain_cep" field to the value that was provided on create.
+func (u *ProfitAccountUpsertBulk) UpdateRemainCep() *ProfitAccountUpsertBulk {
+	return u.Update(func(s *ProfitAccountUpsert) {
+		s.UpdateRemainCep()
+	})
+}
+
+// Exec executes the query.
+func (u *ProfitAccountUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the ProfitAccountCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for ProfitAccountCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *ProfitAccountUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

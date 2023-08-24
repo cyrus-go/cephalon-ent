@@ -131,15 +131,15 @@ func (mcou *MissionConsumeOrderUpdate) AddMissionID(i int64) *MissionConsumeOrde
 }
 
 // SetStatus sets the "status" field.
-func (mcou *MissionConsumeOrderUpdate) SetStatus(m missionconsumeorder.Status) *MissionConsumeOrderUpdate {
-	mcou.mutation.SetStatus(m)
+func (mcou *MissionConsumeOrderUpdate) SetStatus(eos enums.MissionOrderStatus) *MissionConsumeOrderUpdate {
+	mcou.mutation.SetStatus(eos)
 	return mcou
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mcou *MissionConsumeOrderUpdate) SetNillableStatus(m *missionconsumeorder.Status) *MissionConsumeOrderUpdate {
-	if m != nil {
-		mcou.SetStatus(*m)
+func (mcou *MissionConsumeOrderUpdate) SetNillableStatus(eos *enums.MissionOrderStatus) *MissionConsumeOrderUpdate {
+	if eos != nil {
+		mcou.SetStatus(*eos)
 	}
 	return mcou
 }
@@ -797,15 +797,15 @@ func (mcouo *MissionConsumeOrderUpdateOne) AddMissionID(i int64) *MissionConsume
 }
 
 // SetStatus sets the "status" field.
-func (mcouo *MissionConsumeOrderUpdateOne) SetStatus(m missionconsumeorder.Status) *MissionConsumeOrderUpdateOne {
-	mcouo.mutation.SetStatus(m)
+func (mcouo *MissionConsumeOrderUpdateOne) SetStatus(eos enums.MissionOrderStatus) *MissionConsumeOrderUpdateOne {
+	mcouo.mutation.SetStatus(eos)
 	return mcouo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (mcouo *MissionConsumeOrderUpdateOne) SetNillableStatus(m *missionconsumeorder.Status) *MissionConsumeOrderUpdateOne {
-	if m != nil {
-		mcouo.SetStatus(*m)
+func (mcouo *MissionConsumeOrderUpdateOne) SetNillableStatus(eos *enums.MissionOrderStatus) *MissionConsumeOrderUpdateOne {
+	if eos != nil {
+		mcouo.SetStatus(*eos)
 	}
 	return mcouo
 }

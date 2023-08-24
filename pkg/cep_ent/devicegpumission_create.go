@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -21,6 +22,7 @@ type DeviceGpuMissionCreate struct {
 	config
 	mutation *DeviceGpuMissionMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -300,6 +302,7 @@ func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.C
 		_node = &DeviceGpuMission{config: dgmc.config}
 		_spec = sqlgraph.NewCreateSpec(devicegpumission.Table, sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = dgmc.conflict
 	if id, ok := dgmc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -378,10 +381,352 @@ func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.C
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.DeviceGpuMission.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.DeviceGpuMissionUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (dgmc *DeviceGpuMissionCreate) OnConflict(opts ...sql.ConflictOption) *DeviceGpuMissionUpsertOne {
+	dgmc.conflict = opts
+	return &DeviceGpuMissionUpsertOne{
+		create: dgmc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.DeviceGpuMission.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (dgmc *DeviceGpuMissionCreate) OnConflictColumns(columns ...string) *DeviceGpuMissionUpsertOne {
+	dgmc.conflict = append(dgmc.conflict, sql.ConflictColumns(columns...))
+	return &DeviceGpuMissionUpsertOne{
+		create: dgmc,
+	}
+}
+
+type (
+	// DeviceGpuMissionUpsertOne is the builder for "upsert"-ing
+	//  one DeviceGpuMission node.
+	DeviceGpuMissionUpsertOne struct {
+		create *DeviceGpuMissionCreate
+	}
+
+	// DeviceGpuMissionUpsert is the "OnConflict" setter.
+	DeviceGpuMissionUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *DeviceGpuMissionUpsert) SetCreatedBy(v int64) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateCreatedBy() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *DeviceGpuMissionUpsert) AddCreatedBy(v int64) *DeviceGpuMissionUpsert {
+	u.Add(devicegpumission.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *DeviceGpuMissionUpsert) SetUpdatedBy(v int64) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateUpdatedBy() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *DeviceGpuMissionUpsert) AddUpdatedBy(v int64) *DeviceGpuMissionUpsert {
+	u.Add(devicegpumission.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *DeviceGpuMissionUpsert) SetUpdatedAt(v time.Time) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateUpdatedAt() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *DeviceGpuMissionUpsert) SetDeletedAt(v time.Time) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateDeletedAt() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldDeletedAt)
+	return u
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *DeviceGpuMissionUpsert) SetDeviceID(v int64) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldDeviceID, v)
+	return u
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateDeviceID() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldDeviceID)
+	return u
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (u *DeviceGpuMissionUpsert) SetGpuID(v int64) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldGpuID, v)
+	return u
+}
+
+// UpdateGpuID sets the "gpu_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateGpuID() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldGpuID)
+	return u
+}
+
+// SetMissionKindID sets the "mission_kind_id" field.
+func (u *DeviceGpuMissionUpsert) SetMissionKindID(v int64) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldMissionKindID, v)
+	return u
+}
+
+// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateMissionKindID() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldMissionKindID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.DeviceGpuMission.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(devicegpumission.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *DeviceGpuMissionUpsertOne) UpdateNewValues() *DeviceGpuMissionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(devicegpumission.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(devicegpumission.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.DeviceGpuMission.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *DeviceGpuMissionUpsertOne) Ignore() *DeviceGpuMissionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *DeviceGpuMissionUpsertOne) DoNothing() *DeviceGpuMissionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the DeviceGpuMissionCreate.OnConflict
+// documentation for more info.
+func (u *DeviceGpuMissionUpsertOne) Update(set func(*DeviceGpuMissionUpsert)) *DeviceGpuMissionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&DeviceGpuMissionUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *DeviceGpuMissionUpsertOne) SetCreatedBy(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *DeviceGpuMissionUpsertOne) AddCreatedBy(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateCreatedBy() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *DeviceGpuMissionUpsertOne) SetUpdatedBy(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *DeviceGpuMissionUpsertOne) AddUpdatedBy(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateUpdatedBy() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *DeviceGpuMissionUpsertOne) SetUpdatedAt(v time.Time) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateUpdatedAt() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *DeviceGpuMissionUpsertOne) SetDeletedAt(v time.Time) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateDeletedAt() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *DeviceGpuMissionUpsertOne) SetDeviceID(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateDeviceID() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateDeviceID()
+	})
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (u *DeviceGpuMissionUpsertOne) SetGpuID(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetGpuID(v)
+	})
+}
+
+// UpdateGpuID sets the "gpu_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateGpuID() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateGpuID()
+	})
+}
+
+// SetMissionKindID sets the "mission_kind_id" field.
+func (u *DeviceGpuMissionUpsertOne) SetMissionKindID(v int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetMissionKindID(v)
+	})
+}
+
+// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateMissionKindID() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateMissionKindID()
+	})
+}
+
+// Exec executes the query.
+func (u *DeviceGpuMissionUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for DeviceGpuMissionCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *DeviceGpuMissionUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *DeviceGpuMissionUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *DeviceGpuMissionUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // DeviceGpuMissionCreateBulk is the builder for creating many DeviceGpuMission entities in bulk.
 type DeviceGpuMissionCreateBulk struct {
 	config
 	builders []*DeviceGpuMissionCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the DeviceGpuMission entities in the database.
@@ -408,6 +753,7 @@ func (dgmcb *DeviceGpuMissionCreateBulk) Save(ctx context.Context) ([]*DeviceGpu
 					_, err = mutators[i+1].Mutate(root, dgmcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = dgmcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, dgmcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -458,6 +804,232 @@ func (dgmcb *DeviceGpuMissionCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (dgmcb *DeviceGpuMissionCreateBulk) ExecX(ctx context.Context) {
 	if err := dgmcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.DeviceGpuMission.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.DeviceGpuMissionUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (dgmcb *DeviceGpuMissionCreateBulk) OnConflict(opts ...sql.ConflictOption) *DeviceGpuMissionUpsertBulk {
+	dgmcb.conflict = opts
+	return &DeviceGpuMissionUpsertBulk{
+		create: dgmcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.DeviceGpuMission.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (dgmcb *DeviceGpuMissionCreateBulk) OnConflictColumns(columns ...string) *DeviceGpuMissionUpsertBulk {
+	dgmcb.conflict = append(dgmcb.conflict, sql.ConflictColumns(columns...))
+	return &DeviceGpuMissionUpsertBulk{
+		create: dgmcb,
+	}
+}
+
+// DeviceGpuMissionUpsertBulk is the builder for "upsert"-ing
+// a bulk of DeviceGpuMission nodes.
+type DeviceGpuMissionUpsertBulk struct {
+	create *DeviceGpuMissionCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.DeviceGpuMission.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(devicegpumission.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *DeviceGpuMissionUpsertBulk) UpdateNewValues() *DeviceGpuMissionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(devicegpumission.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(devicegpumission.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.DeviceGpuMission.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *DeviceGpuMissionUpsertBulk) Ignore() *DeviceGpuMissionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *DeviceGpuMissionUpsertBulk) DoNothing() *DeviceGpuMissionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the DeviceGpuMissionCreateBulk.OnConflict
+// documentation for more info.
+func (u *DeviceGpuMissionUpsertBulk) Update(set func(*DeviceGpuMissionUpsert)) *DeviceGpuMissionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&DeviceGpuMissionUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *DeviceGpuMissionUpsertBulk) SetCreatedBy(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *DeviceGpuMissionUpsertBulk) AddCreatedBy(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateCreatedBy() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *DeviceGpuMissionUpsertBulk) SetUpdatedBy(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *DeviceGpuMissionUpsertBulk) AddUpdatedBy(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateUpdatedBy() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *DeviceGpuMissionUpsertBulk) SetUpdatedAt(v time.Time) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateUpdatedAt() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *DeviceGpuMissionUpsertBulk) SetDeletedAt(v time.Time) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateDeletedAt() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *DeviceGpuMissionUpsertBulk) SetDeviceID(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateDeviceID() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateDeviceID()
+	})
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (u *DeviceGpuMissionUpsertBulk) SetGpuID(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetGpuID(v)
+	})
+}
+
+// UpdateGpuID sets the "gpu_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateGpuID() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateGpuID()
+	})
+}
+
+// SetMissionKindID sets the "mission_kind_id" field.
+func (u *DeviceGpuMissionUpsertBulk) SetMissionKindID(v int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetMissionKindID(v)
+	})
+}
+
+// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateMissionKindID() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateMissionKindID()
+	})
+}
+
+// Exec executes the query.
+func (u *DeviceGpuMissionUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the DeviceGpuMissionCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for DeviceGpuMissionCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *DeviceGpuMissionUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

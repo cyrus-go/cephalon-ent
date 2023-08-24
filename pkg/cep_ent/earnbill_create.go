@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -22,6 +23,7 @@ type EarnBillCreate struct {
 	config
 	mutation *EarnBillMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -490,6 +492,7 @@ func (ebc *EarnBillCreate) createSpec() (*EarnBill, *sqlgraph.CreateSpec) {
 		_node = &EarnBill{config: ebc.config}
 		_spec = sqlgraph.NewCreateSpec(earnbill.Table, sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = ebc.conflict
 	if id, ok := ebc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -613,10 +616,625 @@ func (ebc *EarnBillCreate) createSpec() (*EarnBill, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.EarnBill.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EarnBillUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (ebc *EarnBillCreate) OnConflict(opts ...sql.ConflictOption) *EarnBillUpsertOne {
+	ebc.conflict = opts
+	return &EarnBillUpsertOne{
+		create: ebc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.EarnBill.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ebc *EarnBillCreate) OnConflictColumns(columns ...string) *EarnBillUpsertOne {
+	ebc.conflict = append(ebc.conflict, sql.ConflictColumns(columns...))
+	return &EarnBillUpsertOne{
+		create: ebc,
+	}
+}
+
+type (
+	// EarnBillUpsertOne is the builder for "upsert"-ing
+	//  one EarnBill node.
+	EarnBillUpsertOne struct {
+		create *EarnBillCreate
+	}
+
+	// EarnBillUpsert is the "OnConflict" setter.
+	EarnBillUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EarnBillUpsert) SetCreatedBy(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateCreatedBy() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EarnBillUpsert) AddCreatedBy(v int64) *EarnBillUpsert {
+	u.Add(earnbill.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EarnBillUpsert) SetUpdatedBy(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateUpdatedBy() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EarnBillUpsert) AddUpdatedBy(v int64) *EarnBillUpsert {
+	u.Add(earnbill.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EarnBillUpsert) SetUpdatedAt(v time.Time) *EarnBillUpsert {
+	u.Set(earnbill.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateUpdatedAt() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EarnBillUpsert) SetDeletedAt(v time.Time) *EarnBillUpsert {
+	u.Set(earnbill.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateDeletedAt() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldDeletedAt)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *EarnBillUpsert) SetType(v earnbill.Type) *EarnBillUpsert {
+	u.Set(earnbill.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateType() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldType)
+	return u
+}
+
+// SetIsMinus sets the "is_minus" field.
+func (u *EarnBillUpsert) SetIsMinus(v bool) *EarnBillUpsert {
+	u.Set(earnbill.FieldIsMinus, v)
+	return u
+}
+
+// UpdateIsMinus sets the "is_minus" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateIsMinus() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldIsMinus)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *EarnBillUpsert) SetUserID(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateUserID() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldUserID)
+	return u
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *EarnBillUpsert) SetSerialNumber(v string) *EarnBillUpsert {
+	u.Set(earnbill.FieldSerialNumber, v)
+	return u
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateSerialNumber() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldSerialNumber)
+	return u
+}
+
+// SetProfitAccountID sets the "profit_account_id" field.
+func (u *EarnBillUpsert) SetProfitAccountID(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldProfitAccountID, v)
+	return u
+}
+
+// UpdateProfitAccountID sets the "profit_account_id" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateProfitAccountID() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldProfitAccountID)
+	return u
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *EarnBillUpsert) SetPureCep(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldPureCep, v)
+	return u
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdatePureCep() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldPureCep)
+	return u
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *EarnBillUpsert) AddPureCep(v int64) *EarnBillUpsert {
+	u.Add(earnbill.FieldPureCep, v)
+	return u
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *EarnBillUpsert) SetGiftCep(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldGiftCep, v)
+	return u
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateGiftCep() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldGiftCep)
+	return u
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *EarnBillUpsert) AddGiftCep(v int64) *EarnBillUpsert {
+	u.Add(earnbill.FieldGiftCep, v)
+	return u
+}
+
+// SetPlatformAccountID sets the "platform_account_id" field.
+func (u *EarnBillUpsert) SetPlatformAccountID(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldPlatformAccountID, v)
+	return u
+}
+
+// UpdatePlatformAccountID sets the "platform_account_id" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdatePlatformAccountID() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldPlatformAccountID)
+	return u
+}
+
+// SetPlatformPureCep sets the "platform_pure_cep" field.
+func (u *EarnBillUpsert) SetPlatformPureCep(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldPlatformPureCep, v)
+	return u
+}
+
+// UpdatePlatformPureCep sets the "platform_pure_cep" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdatePlatformPureCep() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldPlatformPureCep)
+	return u
+}
+
+// AddPlatformPureCep adds v to the "platform_pure_cep" field.
+func (u *EarnBillUpsert) AddPlatformPureCep(v int64) *EarnBillUpsert {
+	u.Add(earnbill.FieldPlatformPureCep, v)
+	return u
+}
+
+// SetPlatformGiftCep sets the "platform_gift_cep" field.
+func (u *EarnBillUpsert) SetPlatformGiftCep(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldPlatformGiftCep, v)
+	return u
+}
+
+// UpdatePlatformGiftCep sets the "platform_gift_cep" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdatePlatformGiftCep() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldPlatformGiftCep)
+	return u
+}
+
+// AddPlatformGiftCep adds v to the "platform_gift_cep" field.
+func (u *EarnBillUpsert) AddPlatformGiftCep(v int64) *EarnBillUpsert {
+	u.Add(earnbill.FieldPlatformGiftCep, v)
+	return u
+}
+
+// SetReasonID sets the "reason_id" field.
+func (u *EarnBillUpsert) SetReasonID(v int64) *EarnBillUpsert {
+	u.Set(earnbill.FieldReasonID, v)
+	return u
+}
+
+// UpdateReasonID sets the "reason_id" field to the value that was provided on create.
+func (u *EarnBillUpsert) UpdateReasonID() *EarnBillUpsert {
+	u.SetExcluded(earnbill.FieldReasonID)
+	return u
+}
+
+// ClearReasonID clears the value of the "reason_id" field.
+func (u *EarnBillUpsert) ClearReasonID() *EarnBillUpsert {
+	u.SetNull(earnbill.FieldReasonID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.EarnBill.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(earnbill.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *EarnBillUpsertOne) UpdateNewValues() *EarnBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(earnbill.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(earnbill.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.EarnBill.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *EarnBillUpsertOne) Ignore() *EarnBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EarnBillUpsertOne) DoNothing() *EarnBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EarnBillCreate.OnConflict
+// documentation for more info.
+func (u *EarnBillUpsertOne) Update(set func(*EarnBillUpsert)) *EarnBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EarnBillUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EarnBillUpsertOne) SetCreatedBy(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EarnBillUpsertOne) AddCreatedBy(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateCreatedBy() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EarnBillUpsertOne) SetUpdatedBy(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EarnBillUpsertOne) AddUpdatedBy(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateUpdatedBy() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EarnBillUpsertOne) SetUpdatedAt(v time.Time) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateUpdatedAt() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EarnBillUpsertOne) SetDeletedAt(v time.Time) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateDeletedAt() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *EarnBillUpsertOne) SetType(v earnbill.Type) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateType() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetIsMinus sets the "is_minus" field.
+func (u *EarnBillUpsertOne) SetIsMinus(v bool) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetIsMinus(v)
+	})
+}
+
+// UpdateIsMinus sets the "is_minus" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateIsMinus() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateIsMinus()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *EarnBillUpsertOne) SetUserID(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateUserID() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *EarnBillUpsertOne) SetSerialNumber(v string) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateSerialNumber() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetProfitAccountID sets the "profit_account_id" field.
+func (u *EarnBillUpsertOne) SetProfitAccountID(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetProfitAccountID(v)
+	})
+}
+
+// UpdateProfitAccountID sets the "profit_account_id" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateProfitAccountID() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateProfitAccountID()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *EarnBillUpsertOne) SetPureCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *EarnBillUpsertOne) AddPureCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdatePureCep() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *EarnBillUpsertOne) SetGiftCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *EarnBillUpsertOne) AddGiftCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateGiftCep() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetPlatformAccountID sets the "platform_account_id" field.
+func (u *EarnBillUpsertOne) SetPlatformAccountID(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPlatformAccountID(v)
+	})
+}
+
+// UpdatePlatformAccountID sets the "platform_account_id" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdatePlatformAccountID() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePlatformAccountID()
+	})
+}
+
+// SetPlatformPureCep sets the "platform_pure_cep" field.
+func (u *EarnBillUpsertOne) SetPlatformPureCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPlatformPureCep(v)
+	})
+}
+
+// AddPlatformPureCep adds v to the "platform_pure_cep" field.
+func (u *EarnBillUpsertOne) AddPlatformPureCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddPlatformPureCep(v)
+	})
+}
+
+// UpdatePlatformPureCep sets the "platform_pure_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdatePlatformPureCep() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePlatformPureCep()
+	})
+}
+
+// SetPlatformGiftCep sets the "platform_gift_cep" field.
+func (u *EarnBillUpsertOne) SetPlatformGiftCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPlatformGiftCep(v)
+	})
+}
+
+// AddPlatformGiftCep adds v to the "platform_gift_cep" field.
+func (u *EarnBillUpsertOne) AddPlatformGiftCep(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddPlatformGiftCep(v)
+	})
+}
+
+// UpdatePlatformGiftCep sets the "platform_gift_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdatePlatformGiftCep() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePlatformGiftCep()
+	})
+}
+
+// SetReasonID sets the "reason_id" field.
+func (u *EarnBillUpsertOne) SetReasonID(v int64) *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetReasonID(v)
+	})
+}
+
+// UpdateReasonID sets the "reason_id" field to the value that was provided on create.
+func (u *EarnBillUpsertOne) UpdateReasonID() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateReasonID()
+	})
+}
+
+// ClearReasonID clears the value of the "reason_id" field.
+func (u *EarnBillUpsertOne) ClearReasonID() *EarnBillUpsertOne {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.ClearReasonID()
+	})
+}
+
+// Exec executes the query.
+func (u *EarnBillUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for EarnBillCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EarnBillUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *EarnBillUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *EarnBillUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // EarnBillCreateBulk is the builder for creating many EarnBill entities in bulk.
 type EarnBillCreateBulk struct {
 	config
 	builders []*EarnBillCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the EarnBill entities in the database.
@@ -643,6 +1261,7 @@ func (ebcb *EarnBillCreateBulk) Save(ctx context.Context) ([]*EarnBill, error) {
 					_, err = mutators[i+1].Mutate(root, ebcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = ebcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, ebcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -693,6 +1312,379 @@ func (ebcb *EarnBillCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (ebcb *EarnBillCreateBulk) ExecX(ctx context.Context) {
 	if err := ebcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.EarnBill.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EarnBillUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (ebcb *EarnBillCreateBulk) OnConflict(opts ...sql.ConflictOption) *EarnBillUpsertBulk {
+	ebcb.conflict = opts
+	return &EarnBillUpsertBulk{
+		create: ebcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.EarnBill.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ebcb *EarnBillCreateBulk) OnConflictColumns(columns ...string) *EarnBillUpsertBulk {
+	ebcb.conflict = append(ebcb.conflict, sql.ConflictColumns(columns...))
+	return &EarnBillUpsertBulk{
+		create: ebcb,
+	}
+}
+
+// EarnBillUpsertBulk is the builder for "upsert"-ing
+// a bulk of EarnBill nodes.
+type EarnBillUpsertBulk struct {
+	create *EarnBillCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.EarnBill.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(earnbill.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *EarnBillUpsertBulk) UpdateNewValues() *EarnBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(earnbill.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(earnbill.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.EarnBill.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *EarnBillUpsertBulk) Ignore() *EarnBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EarnBillUpsertBulk) DoNothing() *EarnBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EarnBillCreateBulk.OnConflict
+// documentation for more info.
+func (u *EarnBillUpsertBulk) Update(set func(*EarnBillUpsert)) *EarnBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EarnBillUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EarnBillUpsertBulk) SetCreatedBy(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EarnBillUpsertBulk) AddCreatedBy(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateCreatedBy() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EarnBillUpsertBulk) SetUpdatedBy(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EarnBillUpsertBulk) AddUpdatedBy(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateUpdatedBy() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EarnBillUpsertBulk) SetUpdatedAt(v time.Time) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateUpdatedAt() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EarnBillUpsertBulk) SetDeletedAt(v time.Time) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateDeletedAt() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *EarnBillUpsertBulk) SetType(v earnbill.Type) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateType() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetIsMinus sets the "is_minus" field.
+func (u *EarnBillUpsertBulk) SetIsMinus(v bool) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetIsMinus(v)
+	})
+}
+
+// UpdateIsMinus sets the "is_minus" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateIsMinus() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateIsMinus()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *EarnBillUpsertBulk) SetUserID(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateUserID() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *EarnBillUpsertBulk) SetSerialNumber(v string) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateSerialNumber() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetProfitAccountID sets the "profit_account_id" field.
+func (u *EarnBillUpsertBulk) SetProfitAccountID(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetProfitAccountID(v)
+	})
+}
+
+// UpdateProfitAccountID sets the "profit_account_id" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateProfitAccountID() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateProfitAccountID()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *EarnBillUpsertBulk) SetPureCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *EarnBillUpsertBulk) AddPureCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdatePureCep() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *EarnBillUpsertBulk) SetGiftCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *EarnBillUpsertBulk) AddGiftCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateGiftCep() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetPlatformAccountID sets the "platform_account_id" field.
+func (u *EarnBillUpsertBulk) SetPlatformAccountID(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPlatformAccountID(v)
+	})
+}
+
+// UpdatePlatformAccountID sets the "platform_account_id" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdatePlatformAccountID() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePlatformAccountID()
+	})
+}
+
+// SetPlatformPureCep sets the "platform_pure_cep" field.
+func (u *EarnBillUpsertBulk) SetPlatformPureCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPlatformPureCep(v)
+	})
+}
+
+// AddPlatformPureCep adds v to the "platform_pure_cep" field.
+func (u *EarnBillUpsertBulk) AddPlatformPureCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddPlatformPureCep(v)
+	})
+}
+
+// UpdatePlatformPureCep sets the "platform_pure_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdatePlatformPureCep() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePlatformPureCep()
+	})
+}
+
+// SetPlatformGiftCep sets the "platform_gift_cep" field.
+func (u *EarnBillUpsertBulk) SetPlatformGiftCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetPlatformGiftCep(v)
+	})
+}
+
+// AddPlatformGiftCep adds v to the "platform_gift_cep" field.
+func (u *EarnBillUpsertBulk) AddPlatformGiftCep(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.AddPlatformGiftCep(v)
+	})
+}
+
+// UpdatePlatformGiftCep sets the "platform_gift_cep" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdatePlatformGiftCep() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdatePlatformGiftCep()
+	})
+}
+
+// SetReasonID sets the "reason_id" field.
+func (u *EarnBillUpsertBulk) SetReasonID(v int64) *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.SetReasonID(v)
+	})
+}
+
+// UpdateReasonID sets the "reason_id" field to the value that was provided on create.
+func (u *EarnBillUpsertBulk) UpdateReasonID() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.UpdateReasonID()
+	})
+}
+
+// ClearReasonID clears the value of the "reason_id" field.
+func (u *EarnBillUpsertBulk) ClearReasonID() *EarnBillUpsertBulk {
+	return u.Update(func(s *EarnBillUpsert) {
+		s.ClearReasonID()
+	})
+}
+
+// Exec executes the query.
+func (u *EarnBillUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the EarnBillCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for EarnBillCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EarnBillUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

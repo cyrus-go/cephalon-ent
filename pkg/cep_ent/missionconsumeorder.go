@@ -35,7 +35,7 @@ type MissionConsumeOrder struct {
 	// 任务 id，关联任务中枢的任务
 	MissionID int64 `json:"mission_id"`
 	// 任务订单的状态，注意不强关联任务的状态
-	Status missionconsumeorder.Status `json:"status"`
+	Status enums.MissionOrderStatus `json:"status"`
 	// 任务消耗的本金 cep 量
 	PureCep int64 `json:"pure_cep"`
 	// 任务消耗的赠送 cep 量
@@ -201,7 +201,7 @@ func (mco *MissionConsumeOrder) assignValues(columns []string, values []any) err
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				mco.Status = missionconsumeorder.Status(value.String)
+				mco.Status = enums.MissionOrderStatus(value.String)
 			}
 		case missionconsumeorder.FieldPureCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

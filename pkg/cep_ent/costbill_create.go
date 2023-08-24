@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -23,6 +24,7 @@ type CostBillCreate struct {
 	config
 	mutation *CostBillMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -486,6 +488,7 @@ func (cbc *CostBillCreate) createSpec() (*CostBill, *sqlgraph.CreateSpec) {
 		_node = &CostBill{config: cbc.config}
 		_spec = sqlgraph.NewCreateSpec(costbill.Table, sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = cbc.conflict
 	if id, ok := cbc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -609,10 +612,586 @@ func (cbc *CostBillCreate) createSpec() (*CostBill, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.CostBill.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.CostBillUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (cbc *CostBillCreate) OnConflict(opts ...sql.ConflictOption) *CostBillUpsertOne {
+	cbc.conflict = opts
+	return &CostBillUpsertOne{
+		create: cbc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.CostBill.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (cbc *CostBillCreate) OnConflictColumns(columns ...string) *CostBillUpsertOne {
+	cbc.conflict = append(cbc.conflict, sql.ConflictColumns(columns...))
+	return &CostBillUpsertOne{
+		create: cbc,
+	}
+}
+
+type (
+	// CostBillUpsertOne is the builder for "upsert"-ing
+	//  one CostBill node.
+	CostBillUpsertOne struct {
+		create *CostBillCreate
+	}
+
+	// CostBillUpsert is the "OnConflict" setter.
+	CostBillUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CostBillUpsert) SetCreatedBy(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateCreatedBy() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CostBillUpsert) AddCreatedBy(v int64) *CostBillUpsert {
+	u.Add(costbill.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CostBillUpsert) SetUpdatedBy(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateUpdatedBy() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CostBillUpsert) AddUpdatedBy(v int64) *CostBillUpsert {
+	u.Add(costbill.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CostBillUpsert) SetUpdatedAt(v time.Time) *CostBillUpsert {
+	u.Set(costbill.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateUpdatedAt() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CostBillUpsert) SetDeletedAt(v time.Time) *CostBillUpsert {
+	u.Set(costbill.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateDeletedAt() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldDeletedAt)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *CostBillUpsert) SetType(v costbill.Type) *CostBillUpsert {
+	u.Set(costbill.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateType() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldType)
+	return u
+}
+
+// SetIsAdd sets the "is_add" field.
+func (u *CostBillUpsert) SetIsAdd(v bool) *CostBillUpsert {
+	u.Set(costbill.FieldIsAdd, v)
+	return u
+}
+
+// UpdateIsAdd sets the "is_add" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateIsAdd() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldIsAdd)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CostBillUpsert) SetUserID(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateUserID() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldUserID)
+	return u
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *CostBillUpsert) SetSerialNumber(v string) *CostBillUpsert {
+	u.Set(costbill.FieldSerialNumber, v)
+	return u
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateSerialNumber() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldSerialNumber)
+	return u
+}
+
+// SetCostAccountID sets the "cost_account_id" field.
+func (u *CostBillUpsert) SetCostAccountID(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldCostAccountID, v)
+	return u
+}
+
+// UpdateCostAccountID sets the "cost_account_id" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateCostAccountID() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldCostAccountID)
+	return u
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *CostBillUpsert) SetPureCep(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldPureCep, v)
+	return u
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdatePureCep() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldPureCep)
+	return u
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *CostBillUpsert) AddPureCep(v int64) *CostBillUpsert {
+	u.Add(costbill.FieldPureCep, v)
+	return u
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *CostBillUpsert) SetGiftCep(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldGiftCep, v)
+	return u
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateGiftCep() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldGiftCep)
+	return u
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *CostBillUpsert) AddGiftCep(v int64) *CostBillUpsert {
+	u.Add(costbill.FieldGiftCep, v)
+	return u
+}
+
+// SetReasonID sets the "reason_id" field.
+func (u *CostBillUpsert) SetReasonID(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldReasonID, v)
+	return u
+}
+
+// UpdateReasonID sets the "reason_id" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateReasonID() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldReasonID)
+	return u
+}
+
+// ClearReasonID clears the value of the "reason_id" field.
+func (u *CostBillUpsert) ClearReasonID() *CostBillUpsert {
+	u.SetNull(costbill.FieldReasonID)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *CostBillUpsert) SetStatus(v enums.BillStatus) *CostBillUpsert {
+	u.Set(costbill.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateStatus() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldStatus)
+	return u
+}
+
+// SetMarketBillID sets the "market_bill_id" field.
+func (u *CostBillUpsert) SetMarketBillID(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldMarketBillID, v)
+	return u
+}
+
+// UpdateMarketBillID sets the "market_bill_id" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateMarketBillID() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldMarketBillID)
+	return u
+}
+
+// AddMarketBillID adds v to the "market_bill_id" field.
+func (u *CostBillUpsert) AddMarketBillID(v int64) *CostBillUpsert {
+	u.Add(costbill.FieldMarketBillID, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.CostBill.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(costbill.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *CostBillUpsertOne) UpdateNewValues() *CostBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(costbill.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(costbill.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.CostBill.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *CostBillUpsertOne) Ignore() *CostBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *CostBillUpsertOne) DoNothing() *CostBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the CostBillCreate.OnConflict
+// documentation for more info.
+func (u *CostBillUpsertOne) Update(set func(*CostBillUpsert)) *CostBillUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&CostBillUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CostBillUpsertOne) SetCreatedBy(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CostBillUpsertOne) AddCreatedBy(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateCreatedBy() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CostBillUpsertOne) SetUpdatedBy(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CostBillUpsertOne) AddUpdatedBy(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateUpdatedBy() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CostBillUpsertOne) SetUpdatedAt(v time.Time) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateUpdatedAt() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CostBillUpsertOne) SetDeletedAt(v time.Time) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateDeletedAt() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *CostBillUpsertOne) SetType(v costbill.Type) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateType() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetIsAdd sets the "is_add" field.
+func (u *CostBillUpsertOne) SetIsAdd(v bool) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetIsAdd(v)
+	})
+}
+
+// UpdateIsAdd sets the "is_add" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateIsAdd() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateIsAdd()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CostBillUpsertOne) SetUserID(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateUserID() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *CostBillUpsertOne) SetSerialNumber(v string) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateSerialNumber() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetCostAccountID sets the "cost_account_id" field.
+func (u *CostBillUpsertOne) SetCostAccountID(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetCostAccountID(v)
+	})
+}
+
+// UpdateCostAccountID sets the "cost_account_id" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateCostAccountID() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateCostAccountID()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *CostBillUpsertOne) SetPureCep(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *CostBillUpsertOne) AddPureCep(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdatePureCep() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *CostBillUpsertOne) SetGiftCep(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *CostBillUpsertOne) AddGiftCep(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateGiftCep() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetReasonID sets the "reason_id" field.
+func (u *CostBillUpsertOne) SetReasonID(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetReasonID(v)
+	})
+}
+
+// UpdateReasonID sets the "reason_id" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateReasonID() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateReasonID()
+	})
+}
+
+// ClearReasonID clears the value of the "reason_id" field.
+func (u *CostBillUpsertOne) ClearReasonID() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.ClearReasonID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *CostBillUpsertOne) SetStatus(v enums.BillStatus) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateStatus() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetMarketBillID sets the "market_bill_id" field.
+func (u *CostBillUpsertOne) SetMarketBillID(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetMarketBillID(v)
+	})
+}
+
+// AddMarketBillID adds v to the "market_bill_id" field.
+func (u *CostBillUpsertOne) AddMarketBillID(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddMarketBillID(v)
+	})
+}
+
+// UpdateMarketBillID sets the "market_bill_id" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateMarketBillID() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateMarketBillID()
+	})
+}
+
+// Exec executes the query.
+func (u *CostBillUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for CostBillCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *CostBillUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *CostBillUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *CostBillUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // CostBillCreateBulk is the builder for creating many CostBill entities in bulk.
 type CostBillCreateBulk struct {
 	config
 	builders []*CostBillCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the CostBill entities in the database.
@@ -639,6 +1218,7 @@ func (cbcb *CostBillCreateBulk) Save(ctx context.Context) ([]*CostBill, error) {
 					_, err = mutators[i+1].Mutate(root, cbcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = cbcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, cbcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -689,6 +1269,358 @@ func (cbcb *CostBillCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (cbcb *CostBillCreateBulk) ExecX(ctx context.Context) {
 	if err := cbcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.CostBill.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.CostBillUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (cbcb *CostBillCreateBulk) OnConflict(opts ...sql.ConflictOption) *CostBillUpsertBulk {
+	cbcb.conflict = opts
+	return &CostBillUpsertBulk{
+		create: cbcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.CostBill.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (cbcb *CostBillCreateBulk) OnConflictColumns(columns ...string) *CostBillUpsertBulk {
+	cbcb.conflict = append(cbcb.conflict, sql.ConflictColumns(columns...))
+	return &CostBillUpsertBulk{
+		create: cbcb,
+	}
+}
+
+// CostBillUpsertBulk is the builder for "upsert"-ing
+// a bulk of CostBill nodes.
+type CostBillUpsertBulk struct {
+	create *CostBillCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.CostBill.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(costbill.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *CostBillUpsertBulk) UpdateNewValues() *CostBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(costbill.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(costbill.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.CostBill.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *CostBillUpsertBulk) Ignore() *CostBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *CostBillUpsertBulk) DoNothing() *CostBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the CostBillCreateBulk.OnConflict
+// documentation for more info.
+func (u *CostBillUpsertBulk) Update(set func(*CostBillUpsert)) *CostBillUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&CostBillUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CostBillUpsertBulk) SetCreatedBy(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CostBillUpsertBulk) AddCreatedBy(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateCreatedBy() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CostBillUpsertBulk) SetUpdatedBy(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CostBillUpsertBulk) AddUpdatedBy(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateUpdatedBy() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CostBillUpsertBulk) SetUpdatedAt(v time.Time) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateUpdatedAt() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CostBillUpsertBulk) SetDeletedAt(v time.Time) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateDeletedAt() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *CostBillUpsertBulk) SetType(v costbill.Type) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateType() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetIsAdd sets the "is_add" field.
+func (u *CostBillUpsertBulk) SetIsAdd(v bool) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetIsAdd(v)
+	})
+}
+
+// UpdateIsAdd sets the "is_add" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateIsAdd() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateIsAdd()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CostBillUpsertBulk) SetUserID(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateUserID() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (u *CostBillUpsertBulk) SetSerialNumber(v string) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetSerialNumber(v)
+	})
+}
+
+// UpdateSerialNumber sets the "serial_number" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateSerialNumber() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateSerialNumber()
+	})
+}
+
+// SetCostAccountID sets the "cost_account_id" field.
+func (u *CostBillUpsertBulk) SetCostAccountID(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetCostAccountID(v)
+	})
+}
+
+// UpdateCostAccountID sets the "cost_account_id" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateCostAccountID() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateCostAccountID()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *CostBillUpsertBulk) SetPureCep(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *CostBillUpsertBulk) AddPureCep(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdatePureCep() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *CostBillUpsertBulk) SetGiftCep(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *CostBillUpsertBulk) AddGiftCep(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateGiftCep() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetReasonID sets the "reason_id" field.
+func (u *CostBillUpsertBulk) SetReasonID(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetReasonID(v)
+	})
+}
+
+// UpdateReasonID sets the "reason_id" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateReasonID() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateReasonID()
+	})
+}
+
+// ClearReasonID clears the value of the "reason_id" field.
+func (u *CostBillUpsertBulk) ClearReasonID() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.ClearReasonID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *CostBillUpsertBulk) SetStatus(v enums.BillStatus) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateStatus() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetMarketBillID sets the "market_bill_id" field.
+func (u *CostBillUpsertBulk) SetMarketBillID(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetMarketBillID(v)
+	})
+}
+
+// AddMarketBillID adds v to the "market_bill_id" field.
+func (u *CostBillUpsertBulk) AddMarketBillID(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.AddMarketBillID(v)
+	})
+}
+
+// UpdateMarketBillID sets the "market_bill_id" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateMarketBillID() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateMarketBillID()
+	})
+}
+
+// Exec executes the query.
+func (u *CostBillUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the CostBillCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for CostBillCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *CostBillUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

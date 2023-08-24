@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -18,6 +19,7 @@ type EnumConditionCreate struct {
 	config
 	mutation *EnumConditionMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -273,6 +275,7 @@ func (ecc *EnumConditionCreate) createSpec() (*EnumCondition, *sqlgraph.CreateSp
 		_node = &EnumCondition{config: ecc.config}
 		_spec = sqlgraph.NewCreateSpec(enumcondition.Table, sqlgraph.NewFieldSpec(enumcondition.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = ecc.conflict
 	if id, ok := ecc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -312,10 +315,352 @@ func (ecc *EnumConditionCreate) createSpec() (*EnumCondition, *sqlgraph.CreateSp
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.EnumCondition.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EnumConditionUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (ecc *EnumConditionCreate) OnConflict(opts ...sql.ConflictOption) *EnumConditionUpsertOne {
+	ecc.conflict = opts
+	return &EnumConditionUpsertOne{
+		create: ecc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.EnumCondition.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (ecc *EnumConditionCreate) OnConflictColumns(columns ...string) *EnumConditionUpsertOne {
+	ecc.conflict = append(ecc.conflict, sql.ConflictColumns(columns...))
+	return &EnumConditionUpsertOne{
+		create: ecc,
+	}
+}
+
+type (
+	// EnumConditionUpsertOne is the builder for "upsert"-ing
+	//  one EnumCondition node.
+	EnumConditionUpsertOne struct {
+		create *EnumConditionCreate
+	}
+
+	// EnumConditionUpsert is the "OnConflict" setter.
+	EnumConditionUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EnumConditionUpsert) SetCreatedBy(v int64) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateCreatedBy() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EnumConditionUpsert) AddCreatedBy(v int64) *EnumConditionUpsert {
+	u.Add(enumcondition.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EnumConditionUpsert) SetUpdatedBy(v int64) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateUpdatedBy() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EnumConditionUpsert) AddUpdatedBy(v int64) *EnumConditionUpsert {
+	u.Add(enumcondition.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EnumConditionUpsert) SetUpdatedAt(v time.Time) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateUpdatedAt() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EnumConditionUpsert) SetDeletedAt(v time.Time) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateDeletedAt() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldDeletedAt)
+	return u
+}
+
+// SetFrontType sets the "front_type" field.
+func (u *EnumConditionUpsert) SetFrontType(v string) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldFrontType, v)
+	return u
+}
+
+// UpdateFrontType sets the "front_type" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateFrontType() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldFrontType)
+	return u
+}
+
+// SetMissionType sets the "mission_type" field.
+func (u *EnumConditionUpsert) SetMissionType(v string) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldMissionType, v)
+	return u
+}
+
+// UpdateMissionType sets the "mission_type" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateMissionType() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldMissionType)
+	return u
+}
+
+// SetMissionCallWay sets the "mission_call_way" field.
+func (u *EnumConditionUpsert) SetMissionCallWay(v string) *EnumConditionUpsert {
+	u.Set(enumcondition.FieldMissionCallWay, v)
+	return u
+}
+
+// UpdateMissionCallWay sets the "mission_call_way" field to the value that was provided on create.
+func (u *EnumConditionUpsert) UpdateMissionCallWay() *EnumConditionUpsert {
+	u.SetExcluded(enumcondition.FieldMissionCallWay)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.EnumCondition.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(enumcondition.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *EnumConditionUpsertOne) UpdateNewValues() *EnumConditionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(enumcondition.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(enumcondition.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.EnumCondition.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *EnumConditionUpsertOne) Ignore() *EnumConditionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EnumConditionUpsertOne) DoNothing() *EnumConditionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EnumConditionCreate.OnConflict
+// documentation for more info.
+func (u *EnumConditionUpsertOne) Update(set func(*EnumConditionUpsert)) *EnumConditionUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EnumConditionUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EnumConditionUpsertOne) SetCreatedBy(v int64) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EnumConditionUpsertOne) AddCreatedBy(v int64) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateCreatedBy() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EnumConditionUpsertOne) SetUpdatedBy(v int64) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EnumConditionUpsertOne) AddUpdatedBy(v int64) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateUpdatedBy() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EnumConditionUpsertOne) SetUpdatedAt(v time.Time) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateUpdatedAt() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EnumConditionUpsertOne) SetDeletedAt(v time.Time) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateDeletedAt() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetFrontType sets the "front_type" field.
+func (u *EnumConditionUpsertOne) SetFrontType(v string) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetFrontType(v)
+	})
+}
+
+// UpdateFrontType sets the "front_type" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateFrontType() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateFrontType()
+	})
+}
+
+// SetMissionType sets the "mission_type" field.
+func (u *EnumConditionUpsertOne) SetMissionType(v string) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetMissionType(v)
+	})
+}
+
+// UpdateMissionType sets the "mission_type" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateMissionType() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateMissionType()
+	})
+}
+
+// SetMissionCallWay sets the "mission_call_way" field.
+func (u *EnumConditionUpsertOne) SetMissionCallWay(v string) *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetMissionCallWay(v)
+	})
+}
+
+// UpdateMissionCallWay sets the "mission_call_way" field to the value that was provided on create.
+func (u *EnumConditionUpsertOne) UpdateMissionCallWay() *EnumConditionUpsertOne {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateMissionCallWay()
+	})
+}
+
+// Exec executes the query.
+func (u *EnumConditionUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for EnumConditionCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EnumConditionUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *EnumConditionUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *EnumConditionUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // EnumConditionCreateBulk is the builder for creating many EnumCondition entities in bulk.
 type EnumConditionCreateBulk struct {
 	config
 	builders []*EnumConditionCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the EnumCondition entities in the database.
@@ -342,6 +687,7 @@ func (eccb *EnumConditionCreateBulk) Save(ctx context.Context) ([]*EnumCondition
 					_, err = mutators[i+1].Mutate(root, eccb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = eccb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, eccb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -392,6 +738,232 @@ func (eccb *EnumConditionCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (eccb *EnumConditionCreateBulk) ExecX(ctx context.Context) {
 	if err := eccb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.EnumCondition.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.EnumConditionUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (eccb *EnumConditionCreateBulk) OnConflict(opts ...sql.ConflictOption) *EnumConditionUpsertBulk {
+	eccb.conflict = opts
+	return &EnumConditionUpsertBulk{
+		create: eccb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.EnumCondition.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (eccb *EnumConditionCreateBulk) OnConflictColumns(columns ...string) *EnumConditionUpsertBulk {
+	eccb.conflict = append(eccb.conflict, sql.ConflictColumns(columns...))
+	return &EnumConditionUpsertBulk{
+		create: eccb,
+	}
+}
+
+// EnumConditionUpsertBulk is the builder for "upsert"-ing
+// a bulk of EnumCondition nodes.
+type EnumConditionUpsertBulk struct {
+	create *EnumConditionCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.EnumCondition.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(enumcondition.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *EnumConditionUpsertBulk) UpdateNewValues() *EnumConditionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(enumcondition.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(enumcondition.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.EnumCondition.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *EnumConditionUpsertBulk) Ignore() *EnumConditionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *EnumConditionUpsertBulk) DoNothing() *EnumConditionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the EnumConditionCreateBulk.OnConflict
+// documentation for more info.
+func (u *EnumConditionUpsertBulk) Update(set func(*EnumConditionUpsert)) *EnumConditionUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&EnumConditionUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *EnumConditionUpsertBulk) SetCreatedBy(v int64) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *EnumConditionUpsertBulk) AddCreatedBy(v int64) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateCreatedBy() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *EnumConditionUpsertBulk) SetUpdatedBy(v int64) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *EnumConditionUpsertBulk) AddUpdatedBy(v int64) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateUpdatedBy() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *EnumConditionUpsertBulk) SetUpdatedAt(v time.Time) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateUpdatedAt() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *EnumConditionUpsertBulk) SetDeletedAt(v time.Time) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateDeletedAt() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetFrontType sets the "front_type" field.
+func (u *EnumConditionUpsertBulk) SetFrontType(v string) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetFrontType(v)
+	})
+}
+
+// UpdateFrontType sets the "front_type" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateFrontType() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateFrontType()
+	})
+}
+
+// SetMissionType sets the "mission_type" field.
+func (u *EnumConditionUpsertBulk) SetMissionType(v string) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetMissionType(v)
+	})
+}
+
+// UpdateMissionType sets the "mission_type" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateMissionType() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateMissionType()
+	})
+}
+
+// SetMissionCallWay sets the "mission_call_way" field.
+func (u *EnumConditionUpsertBulk) SetMissionCallWay(v string) *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.SetMissionCallWay(v)
+	})
+}
+
+// UpdateMissionCallWay sets the "mission_call_way" field to the value that was provided on create.
+func (u *EnumConditionUpsertBulk) UpdateMissionCallWay() *EnumConditionUpsertBulk {
+	return u.Update(func(s *EnumConditionUpsert) {
+		s.UpdateMissionCallWay()
+	})
+}
+
+// Exec executes the query.
+func (u *EnumConditionUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the EnumConditionCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for EnumConditionCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *EnumConditionUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

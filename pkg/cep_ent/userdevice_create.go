@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type UserDeviceCreate struct {
 	config
 	mutation *UserDeviceMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -270,6 +272,7 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 		_node = &UserDevice{config: udc.config}
 		_spec = sqlgraph.NewCreateSpec(userdevice.Table, sqlgraph.NewFieldSpec(userdevice.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = udc.conflict
 	if id, ok := udc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -331,10 +334,326 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserDevice.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserDeviceUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (udc *UserDeviceCreate) OnConflict(opts ...sql.ConflictOption) *UserDeviceUpsertOne {
+	udc.conflict = opts
+	return &UserDeviceUpsertOne{
+		create: udc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserDevice.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (udc *UserDeviceCreate) OnConflictColumns(columns ...string) *UserDeviceUpsertOne {
+	udc.conflict = append(udc.conflict, sql.ConflictColumns(columns...))
+	return &UserDeviceUpsertOne{
+		create: udc,
+	}
+}
+
+type (
+	// UserDeviceUpsertOne is the builder for "upsert"-ing
+	//  one UserDevice node.
+	UserDeviceUpsertOne struct {
+		create *UserDeviceCreate
+	}
+
+	// UserDeviceUpsert is the "OnConflict" setter.
+	UserDeviceUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *UserDeviceUpsert) SetCreatedBy(v int64) *UserDeviceUpsert {
+	u.Set(userdevice.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateCreatedBy() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *UserDeviceUpsert) AddCreatedBy(v int64) *UserDeviceUpsert {
+	u.Add(userdevice.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *UserDeviceUpsert) SetUpdatedBy(v int64) *UserDeviceUpsert {
+	u.Set(userdevice.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateUpdatedBy() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *UserDeviceUpsert) AddUpdatedBy(v int64) *UserDeviceUpsert {
+	u.Add(userdevice.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserDeviceUpsert) SetUpdatedAt(v time.Time) *UserDeviceUpsert {
+	u.Set(userdevice.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateUpdatedAt() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *UserDeviceUpsert) SetDeletedAt(v time.Time) *UserDeviceUpsert {
+	u.Set(userdevice.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateDeletedAt() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *UserDeviceUpsert) SetUserID(v int64) *UserDeviceUpsert {
+	u.Set(userdevice.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateUserID() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldUserID)
+	return u
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *UserDeviceUpsert) SetDeviceID(v int64) *UserDeviceUpsert {
+	u.Set(userdevice.FieldDeviceID, v)
+	return u
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateDeviceID() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldDeviceID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.UserDevice.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(userdevice.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *UserDeviceUpsertOne) UpdateNewValues() *UserDeviceUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(userdevice.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(userdevice.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserDevice.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *UserDeviceUpsertOne) Ignore() *UserDeviceUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserDeviceUpsertOne) DoNothing() *UserDeviceUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserDeviceCreate.OnConflict
+// documentation for more info.
+func (u *UserDeviceUpsertOne) Update(set func(*UserDeviceUpsert)) *UserDeviceUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserDeviceUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *UserDeviceUpsertOne) SetCreatedBy(v int64) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *UserDeviceUpsertOne) AddCreatedBy(v int64) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateCreatedBy() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *UserDeviceUpsertOne) SetUpdatedBy(v int64) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *UserDeviceUpsertOne) AddUpdatedBy(v int64) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateUpdatedBy() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserDeviceUpsertOne) SetUpdatedAt(v time.Time) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateUpdatedAt() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *UserDeviceUpsertOne) SetDeletedAt(v time.Time) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateDeletedAt() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *UserDeviceUpsertOne) SetUserID(v int64) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateUserID() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *UserDeviceUpsertOne) SetDeviceID(v int64) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateDeviceID() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateDeviceID()
+	})
+}
+
+// Exec executes the query.
+func (u *UserDeviceUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for UserDeviceCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserDeviceUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UserDeviceUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UserDeviceUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UserDeviceCreateBulk is the builder for creating many UserDevice entities in bulk.
 type UserDeviceCreateBulk struct {
 	config
 	builders []*UserDeviceCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UserDevice entities in the database.
@@ -361,6 +680,7 @@ func (udcb *UserDeviceCreateBulk) Save(ctx context.Context) ([]*UserDevice, erro
 					_, err = mutators[i+1].Mutate(root, udcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = udcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, udcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -411,6 +731,218 @@ func (udcb *UserDeviceCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (udcb *UserDeviceCreateBulk) ExecX(ctx context.Context) {
 	if err := udcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserDevice.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserDeviceUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (udcb *UserDeviceCreateBulk) OnConflict(opts ...sql.ConflictOption) *UserDeviceUpsertBulk {
+	udcb.conflict = opts
+	return &UserDeviceUpsertBulk{
+		create: udcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserDevice.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (udcb *UserDeviceCreateBulk) OnConflictColumns(columns ...string) *UserDeviceUpsertBulk {
+	udcb.conflict = append(udcb.conflict, sql.ConflictColumns(columns...))
+	return &UserDeviceUpsertBulk{
+		create: udcb,
+	}
+}
+
+// UserDeviceUpsertBulk is the builder for "upsert"-ing
+// a bulk of UserDevice nodes.
+type UserDeviceUpsertBulk struct {
+	create *UserDeviceCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UserDevice.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(userdevice.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *UserDeviceUpsertBulk) UpdateNewValues() *UserDeviceUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(userdevice.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(userdevice.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserDevice.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *UserDeviceUpsertBulk) Ignore() *UserDeviceUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserDeviceUpsertBulk) DoNothing() *UserDeviceUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserDeviceCreateBulk.OnConflict
+// documentation for more info.
+func (u *UserDeviceUpsertBulk) Update(set func(*UserDeviceUpsert)) *UserDeviceUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserDeviceUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *UserDeviceUpsertBulk) SetCreatedBy(v int64) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *UserDeviceUpsertBulk) AddCreatedBy(v int64) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateCreatedBy() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *UserDeviceUpsertBulk) SetUpdatedBy(v int64) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *UserDeviceUpsertBulk) AddUpdatedBy(v int64) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateUpdatedBy() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *UserDeviceUpsertBulk) SetUpdatedAt(v time.Time) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateUpdatedAt() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *UserDeviceUpsertBulk) SetDeletedAt(v time.Time) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateDeletedAt() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *UserDeviceUpsertBulk) SetUserID(v int64) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateUserID() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *UserDeviceUpsertBulk) SetDeviceID(v int64) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateDeviceID() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateDeviceID()
+	})
+}
+
+// Exec executes the query.
+func (u *UserDeviceUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the UserDeviceCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for UserDeviceCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserDeviceUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

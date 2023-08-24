@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type CostAccountCreate struct {
 	config
 	mutation *CostAccountMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -445,6 +447,7 @@ func (cac *CostAccountCreate) createSpec() (*CostAccount, *sqlgraph.CreateSpec) 
 		_node = &CostAccount{config: cac.config}
 		_spec = sqlgraph.NewCreateSpec(costaccount.Table, sqlgraph.NewFieldSpec(costaccount.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = cac.conflict
 	if id, ok := cac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -541,10 +544,651 @@ func (cac *CostAccountCreate) createSpec() (*CostAccount, *sqlgraph.CreateSpec) 
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.CostAccount.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.CostAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (cac *CostAccountCreate) OnConflict(opts ...sql.ConflictOption) *CostAccountUpsertOne {
+	cac.conflict = opts
+	return &CostAccountUpsertOne{
+		create: cac,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.CostAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (cac *CostAccountCreate) OnConflictColumns(columns ...string) *CostAccountUpsertOne {
+	cac.conflict = append(cac.conflict, sql.ConflictColumns(columns...))
+	return &CostAccountUpsertOne{
+		create: cac,
+	}
+}
+
+type (
+	// CostAccountUpsertOne is the builder for "upsert"-ing
+	//  one CostAccount node.
+	CostAccountUpsertOne struct {
+		create *CostAccountCreate
+	}
+
+	// CostAccountUpsert is the "OnConflict" setter.
+	CostAccountUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CostAccountUpsert) SetCreatedBy(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateCreatedBy() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CostAccountUpsert) AddCreatedBy(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CostAccountUpsert) SetUpdatedBy(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateUpdatedBy() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CostAccountUpsert) AddUpdatedBy(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CostAccountUpsert) SetUpdatedAt(v time.Time) *CostAccountUpsert {
+	u.Set(costaccount.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateUpdatedAt() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CostAccountUpsert) SetDeletedAt(v time.Time) *CostAccountUpsert {
+	u.Set(costaccount.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateDeletedAt() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CostAccountUpsert) SetUserID(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateUserID() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldUserID)
+	return u
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (u *CostAccountUpsert) SetTotalCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldTotalCep, v)
+	return u
+}
+
+// UpdateTotalCep sets the "total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateTotalCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldTotalCep)
+	return u
+}
+
+// AddTotalCep adds v to the "total_cep" field.
+func (u *CostAccountUpsert) AddTotalCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldTotalCep, v)
+	return u
+}
+
+// SetSumTotalCep sets the "sum_total_cep" field.
+func (u *CostAccountUpsert) SetSumTotalCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldSumTotalCep, v)
+	return u
+}
+
+// UpdateSumTotalCep sets the "sum_total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateSumTotalCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldSumTotalCep)
+	return u
+}
+
+// AddSumTotalCep adds v to the "sum_total_cep" field.
+func (u *CostAccountUpsert) AddSumTotalCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldSumTotalCep, v)
+	return u
+}
+
+// SetFrozenTotalCep sets the "frozen_total_cep" field.
+func (u *CostAccountUpsert) SetFrozenTotalCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldFrozenTotalCep, v)
+	return u
+}
+
+// UpdateFrozenTotalCep sets the "frozen_total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateFrozenTotalCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldFrozenTotalCep)
+	return u
+}
+
+// AddFrozenTotalCep adds v to the "frozen_total_cep" field.
+func (u *CostAccountUpsert) AddFrozenTotalCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldFrozenTotalCep, v)
+	return u
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *CostAccountUpsert) SetPureCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldPureCep, v)
+	return u
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdatePureCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldPureCep)
+	return u
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *CostAccountUpsert) AddPureCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldPureCep, v)
+	return u
+}
+
+// SetSumPureCep sets the "sum_pure_cep" field.
+func (u *CostAccountUpsert) SetSumPureCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldSumPureCep, v)
+	return u
+}
+
+// UpdateSumPureCep sets the "sum_pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateSumPureCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldSumPureCep)
+	return u
+}
+
+// AddSumPureCep adds v to the "sum_pure_cep" field.
+func (u *CostAccountUpsert) AddSumPureCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldSumPureCep, v)
+	return u
+}
+
+// SetFrozenPureCep sets the "frozen_pure_cep" field.
+func (u *CostAccountUpsert) SetFrozenPureCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldFrozenPureCep, v)
+	return u
+}
+
+// UpdateFrozenPureCep sets the "frozen_pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateFrozenPureCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldFrozenPureCep)
+	return u
+}
+
+// AddFrozenPureCep adds v to the "frozen_pure_cep" field.
+func (u *CostAccountUpsert) AddFrozenPureCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldFrozenPureCep, v)
+	return u
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *CostAccountUpsert) SetGiftCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldGiftCep, v)
+	return u
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateGiftCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldGiftCep)
+	return u
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *CostAccountUpsert) AddGiftCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldGiftCep, v)
+	return u
+}
+
+// SetSumGiftCep sets the "sum_gift_cep" field.
+func (u *CostAccountUpsert) SetSumGiftCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldSumGiftCep, v)
+	return u
+}
+
+// UpdateSumGiftCep sets the "sum_gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateSumGiftCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldSumGiftCep)
+	return u
+}
+
+// AddSumGiftCep adds v to the "sum_gift_cep" field.
+func (u *CostAccountUpsert) AddSumGiftCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldSumGiftCep, v)
+	return u
+}
+
+// SetFrozenGiftCep sets the "frozen_gift_cep" field.
+func (u *CostAccountUpsert) SetFrozenGiftCep(v int64) *CostAccountUpsert {
+	u.Set(costaccount.FieldFrozenGiftCep, v)
+	return u
+}
+
+// UpdateFrozenGiftCep sets the "frozen_gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsert) UpdateFrozenGiftCep() *CostAccountUpsert {
+	u.SetExcluded(costaccount.FieldFrozenGiftCep)
+	return u
+}
+
+// AddFrozenGiftCep adds v to the "frozen_gift_cep" field.
+func (u *CostAccountUpsert) AddFrozenGiftCep(v int64) *CostAccountUpsert {
+	u.Add(costaccount.FieldFrozenGiftCep, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.CostAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(costaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *CostAccountUpsertOne) UpdateNewValues() *CostAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(costaccount.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(costaccount.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.CostAccount.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *CostAccountUpsertOne) Ignore() *CostAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *CostAccountUpsertOne) DoNothing() *CostAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the CostAccountCreate.OnConflict
+// documentation for more info.
+func (u *CostAccountUpsertOne) Update(set func(*CostAccountUpsert)) *CostAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&CostAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CostAccountUpsertOne) SetCreatedBy(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CostAccountUpsertOne) AddCreatedBy(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateCreatedBy() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CostAccountUpsertOne) SetUpdatedBy(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CostAccountUpsertOne) AddUpdatedBy(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateUpdatedBy() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CostAccountUpsertOne) SetUpdatedAt(v time.Time) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateUpdatedAt() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CostAccountUpsertOne) SetDeletedAt(v time.Time) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateDeletedAt() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CostAccountUpsertOne) SetUserID(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateUserID() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (u *CostAccountUpsertOne) SetTotalCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetTotalCep(v)
+	})
+}
+
+// AddTotalCep adds v to the "total_cep" field.
+func (u *CostAccountUpsertOne) AddTotalCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddTotalCep(v)
+	})
+}
+
+// UpdateTotalCep sets the "total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateTotalCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateTotalCep()
+	})
+}
+
+// SetSumTotalCep sets the "sum_total_cep" field.
+func (u *CostAccountUpsertOne) SetSumTotalCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetSumTotalCep(v)
+	})
+}
+
+// AddSumTotalCep adds v to the "sum_total_cep" field.
+func (u *CostAccountUpsertOne) AddSumTotalCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddSumTotalCep(v)
+	})
+}
+
+// UpdateSumTotalCep sets the "sum_total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateSumTotalCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateSumTotalCep()
+	})
+}
+
+// SetFrozenTotalCep sets the "frozen_total_cep" field.
+func (u *CostAccountUpsertOne) SetFrozenTotalCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetFrozenTotalCep(v)
+	})
+}
+
+// AddFrozenTotalCep adds v to the "frozen_total_cep" field.
+func (u *CostAccountUpsertOne) AddFrozenTotalCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddFrozenTotalCep(v)
+	})
+}
+
+// UpdateFrozenTotalCep sets the "frozen_total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateFrozenTotalCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateFrozenTotalCep()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *CostAccountUpsertOne) SetPureCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *CostAccountUpsertOne) AddPureCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdatePureCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetSumPureCep sets the "sum_pure_cep" field.
+func (u *CostAccountUpsertOne) SetSumPureCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetSumPureCep(v)
+	})
+}
+
+// AddSumPureCep adds v to the "sum_pure_cep" field.
+func (u *CostAccountUpsertOne) AddSumPureCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddSumPureCep(v)
+	})
+}
+
+// UpdateSumPureCep sets the "sum_pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateSumPureCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateSumPureCep()
+	})
+}
+
+// SetFrozenPureCep sets the "frozen_pure_cep" field.
+func (u *CostAccountUpsertOne) SetFrozenPureCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetFrozenPureCep(v)
+	})
+}
+
+// AddFrozenPureCep adds v to the "frozen_pure_cep" field.
+func (u *CostAccountUpsertOne) AddFrozenPureCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddFrozenPureCep(v)
+	})
+}
+
+// UpdateFrozenPureCep sets the "frozen_pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateFrozenPureCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateFrozenPureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *CostAccountUpsertOne) SetGiftCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *CostAccountUpsertOne) AddGiftCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateGiftCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetSumGiftCep sets the "sum_gift_cep" field.
+func (u *CostAccountUpsertOne) SetSumGiftCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetSumGiftCep(v)
+	})
+}
+
+// AddSumGiftCep adds v to the "sum_gift_cep" field.
+func (u *CostAccountUpsertOne) AddSumGiftCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddSumGiftCep(v)
+	})
+}
+
+// UpdateSumGiftCep sets the "sum_gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateSumGiftCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateSumGiftCep()
+	})
+}
+
+// SetFrozenGiftCep sets the "frozen_gift_cep" field.
+func (u *CostAccountUpsertOne) SetFrozenGiftCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetFrozenGiftCep(v)
+	})
+}
+
+// AddFrozenGiftCep adds v to the "frozen_gift_cep" field.
+func (u *CostAccountUpsertOne) AddFrozenGiftCep(v int64) *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddFrozenGiftCep(v)
+	})
+}
+
+// UpdateFrozenGiftCep sets the "frozen_gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertOne) UpdateFrozenGiftCep() *CostAccountUpsertOne {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateFrozenGiftCep()
+	})
+}
+
+// Exec executes the query.
+func (u *CostAccountUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for CostAccountCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *CostAccountUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *CostAccountUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *CostAccountUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // CostAccountCreateBulk is the builder for creating many CostAccount entities in bulk.
 type CostAccountCreateBulk struct {
 	config
 	builders []*CostAccountCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the CostAccount entities in the database.
@@ -571,6 +1215,7 @@ func (cacb *CostAccountCreateBulk) Save(ctx context.Context) ([]*CostAccount, er
 					_, err = mutators[i+1].Mutate(root, cacb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = cacb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, cacb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -621,6 +1266,393 @@ func (cacb *CostAccountCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (cacb *CostAccountCreateBulk) ExecX(ctx context.Context) {
 	if err := cacb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.CostAccount.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.CostAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (cacb *CostAccountCreateBulk) OnConflict(opts ...sql.ConflictOption) *CostAccountUpsertBulk {
+	cacb.conflict = opts
+	return &CostAccountUpsertBulk{
+		create: cacb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.CostAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (cacb *CostAccountCreateBulk) OnConflictColumns(columns ...string) *CostAccountUpsertBulk {
+	cacb.conflict = append(cacb.conflict, sql.ConflictColumns(columns...))
+	return &CostAccountUpsertBulk{
+		create: cacb,
+	}
+}
+
+// CostAccountUpsertBulk is the builder for "upsert"-ing
+// a bulk of CostAccount nodes.
+type CostAccountUpsertBulk struct {
+	create *CostAccountCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.CostAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(costaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *CostAccountUpsertBulk) UpdateNewValues() *CostAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(costaccount.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(costaccount.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.CostAccount.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *CostAccountUpsertBulk) Ignore() *CostAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *CostAccountUpsertBulk) DoNothing() *CostAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the CostAccountCreateBulk.OnConflict
+// documentation for more info.
+func (u *CostAccountUpsertBulk) Update(set func(*CostAccountUpsert)) *CostAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&CostAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *CostAccountUpsertBulk) SetCreatedBy(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *CostAccountUpsertBulk) AddCreatedBy(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateCreatedBy() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *CostAccountUpsertBulk) SetUpdatedBy(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *CostAccountUpsertBulk) AddUpdatedBy(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateUpdatedBy() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *CostAccountUpsertBulk) SetUpdatedAt(v time.Time) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateUpdatedAt() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *CostAccountUpsertBulk) SetDeletedAt(v time.Time) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateDeletedAt() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CostAccountUpsertBulk) SetUserID(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateUserID() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetTotalCep sets the "total_cep" field.
+func (u *CostAccountUpsertBulk) SetTotalCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetTotalCep(v)
+	})
+}
+
+// AddTotalCep adds v to the "total_cep" field.
+func (u *CostAccountUpsertBulk) AddTotalCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddTotalCep(v)
+	})
+}
+
+// UpdateTotalCep sets the "total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateTotalCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateTotalCep()
+	})
+}
+
+// SetSumTotalCep sets the "sum_total_cep" field.
+func (u *CostAccountUpsertBulk) SetSumTotalCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetSumTotalCep(v)
+	})
+}
+
+// AddSumTotalCep adds v to the "sum_total_cep" field.
+func (u *CostAccountUpsertBulk) AddSumTotalCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddSumTotalCep(v)
+	})
+}
+
+// UpdateSumTotalCep sets the "sum_total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateSumTotalCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateSumTotalCep()
+	})
+}
+
+// SetFrozenTotalCep sets the "frozen_total_cep" field.
+func (u *CostAccountUpsertBulk) SetFrozenTotalCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetFrozenTotalCep(v)
+	})
+}
+
+// AddFrozenTotalCep adds v to the "frozen_total_cep" field.
+func (u *CostAccountUpsertBulk) AddFrozenTotalCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddFrozenTotalCep(v)
+	})
+}
+
+// UpdateFrozenTotalCep sets the "frozen_total_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateFrozenTotalCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateFrozenTotalCep()
+	})
+}
+
+// SetPureCep sets the "pure_cep" field.
+func (u *CostAccountUpsertBulk) SetPureCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetPureCep(v)
+	})
+}
+
+// AddPureCep adds v to the "pure_cep" field.
+func (u *CostAccountUpsertBulk) AddPureCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddPureCep(v)
+	})
+}
+
+// UpdatePureCep sets the "pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdatePureCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdatePureCep()
+	})
+}
+
+// SetSumPureCep sets the "sum_pure_cep" field.
+func (u *CostAccountUpsertBulk) SetSumPureCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetSumPureCep(v)
+	})
+}
+
+// AddSumPureCep adds v to the "sum_pure_cep" field.
+func (u *CostAccountUpsertBulk) AddSumPureCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddSumPureCep(v)
+	})
+}
+
+// UpdateSumPureCep sets the "sum_pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateSumPureCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateSumPureCep()
+	})
+}
+
+// SetFrozenPureCep sets the "frozen_pure_cep" field.
+func (u *CostAccountUpsertBulk) SetFrozenPureCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetFrozenPureCep(v)
+	})
+}
+
+// AddFrozenPureCep adds v to the "frozen_pure_cep" field.
+func (u *CostAccountUpsertBulk) AddFrozenPureCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddFrozenPureCep(v)
+	})
+}
+
+// UpdateFrozenPureCep sets the "frozen_pure_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateFrozenPureCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateFrozenPureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *CostAccountUpsertBulk) SetGiftCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *CostAccountUpsertBulk) AddGiftCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateGiftCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateGiftCep()
+	})
+}
+
+// SetSumGiftCep sets the "sum_gift_cep" field.
+func (u *CostAccountUpsertBulk) SetSumGiftCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetSumGiftCep(v)
+	})
+}
+
+// AddSumGiftCep adds v to the "sum_gift_cep" field.
+func (u *CostAccountUpsertBulk) AddSumGiftCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddSumGiftCep(v)
+	})
+}
+
+// UpdateSumGiftCep sets the "sum_gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateSumGiftCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateSumGiftCep()
+	})
+}
+
+// SetFrozenGiftCep sets the "frozen_gift_cep" field.
+func (u *CostAccountUpsertBulk) SetFrozenGiftCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.SetFrozenGiftCep(v)
+	})
+}
+
+// AddFrozenGiftCep adds v to the "frozen_gift_cep" field.
+func (u *CostAccountUpsertBulk) AddFrozenGiftCep(v int64) *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.AddFrozenGiftCep(v)
+	})
+}
+
+// UpdateFrozenGiftCep sets the "frozen_gift_cep" field to the value that was provided on create.
+func (u *CostAccountUpsertBulk) UpdateFrozenGiftCep() *CostAccountUpsertBulk {
+	return u.Update(func(s *CostAccountUpsert) {
+		s.UpdateFrozenGiftCep()
+	})
+}
+
+// Exec executes the query.
+func (u *CostAccountUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the CostAccountCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for CostAccountCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *CostAccountUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

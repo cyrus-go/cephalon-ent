@@ -14425,7 +14425,7 @@ type MissionConsumeOrderMutation struct {
 	deleted_at                    *time.Time
 	mission_id                    *int64
 	addmission_id                 *int64
-	status                        *missionconsumeorder.Status
+	status                        *enums.MissionOrderStatus
 	pure_cep                      *int64
 	addpure_cep                   *int64
 	gift_cep                      *int64
@@ -14870,12 +14870,12 @@ func (m *MissionConsumeOrderMutation) ResetMissionID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *MissionConsumeOrderMutation) SetStatus(value missionconsumeorder.Status) {
-	m.status = &value
+func (m *MissionConsumeOrderMutation) SetStatus(eos enums.MissionOrderStatus) {
+	m.status = &eos
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MissionConsumeOrderMutation) Status() (r missionconsumeorder.Status, exists bool) {
+func (m *MissionConsumeOrderMutation) Status() (r enums.MissionOrderStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -14886,7 +14886,7 @@ func (m *MissionConsumeOrderMutation) Status() (r missionconsumeorder.Status, ex
 // OldStatus returns the old "status" field's value of the MissionConsumeOrder entity.
 // If the MissionConsumeOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionConsumeOrderMutation) OldStatus(ctx context.Context) (v missionconsumeorder.Status, err error) {
+func (m *MissionConsumeOrderMutation) OldStatus(ctx context.Context) (v enums.MissionOrderStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -15702,7 +15702,7 @@ func (m *MissionConsumeOrderMutation) SetField(name string, value ent.Value) err
 		m.SetMissionID(v)
 		return nil
 	case missionconsumeorder.FieldStatus:
-		v, ok := value.(missionconsumeorder.Status)
+		v, ok := value.(enums.MissionOrderStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -18146,7 +18146,7 @@ type MissionProduceOrderMutation struct {
 	deleted_at                   *time.Time
 	mission_id                   *int64
 	addmission_id                *int64
-	status                       *missionproduceorder.Status
+	status                       *enums.MissionOrderStatus
 	pure_cep                     *int64
 	addpure_cep                  *int64
 	gift_cep                     *int64
@@ -18586,12 +18586,12 @@ func (m *MissionProduceOrderMutation) ResetMissionID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *MissionProduceOrderMutation) SetStatus(value missionproduceorder.Status) {
-	m.status = &value
+func (m *MissionProduceOrderMutation) SetStatus(eos enums.MissionOrderStatus) {
+	m.status = &eos
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MissionProduceOrderMutation) Status() (r missionproduceorder.Status, exists bool) {
+func (m *MissionProduceOrderMutation) Status() (r enums.MissionOrderStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -18602,7 +18602,7 @@ func (m *MissionProduceOrderMutation) Status() (r missionproduceorder.Status, ex
 // OldStatus returns the old "status" field's value of the MissionProduceOrder entity.
 // If the MissionProduceOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionProduceOrderMutation) OldStatus(ctx context.Context) (v missionproduceorder.Status, err error) {
+func (m *MissionProduceOrderMutation) OldStatus(ctx context.Context) (v enums.MissionOrderStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -19261,7 +19261,7 @@ func (m *MissionProduceOrderMutation) SetField(name string, value ent.Value) err
 		m.SetMissionID(v)
 		return nil
 	case missionproduceorder.FieldStatus:
-		v, ok := value.(missionproduceorder.Status)
+		v, ok := value.(enums.MissionOrderStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

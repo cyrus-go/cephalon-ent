@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -19,6 +20,7 @@ type VXAccountCreate struct {
 	config
 	mutation *VXAccountMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -324,6 +326,7 @@ func (vac *VXAccountCreate) createSpec() (*VXAccount, *sqlgraph.CreateSpec) {
 		_node = &VXAccount{config: vac.config}
 		_spec = sqlgraph.NewCreateSpec(vxaccount.Table, sqlgraph.NewFieldSpec(vxaccount.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = vac.conflict
 	if id, ok := vac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -384,10 +387,404 @@ func (vac *VXAccountCreate) createSpec() (*VXAccount, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.VXAccount.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.VXAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (vac *VXAccountCreate) OnConflict(opts ...sql.ConflictOption) *VXAccountUpsertOne {
+	vac.conflict = opts
+	return &VXAccountUpsertOne{
+		create: vac,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.VXAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (vac *VXAccountCreate) OnConflictColumns(columns ...string) *VXAccountUpsertOne {
+	vac.conflict = append(vac.conflict, sql.ConflictColumns(columns...))
+	return &VXAccountUpsertOne{
+		create: vac,
+	}
+}
+
+type (
+	// VXAccountUpsertOne is the builder for "upsert"-ing
+	//  one VXAccount node.
+	VXAccountUpsertOne struct {
+		create *VXAccountCreate
+	}
+
+	// VXAccountUpsert is the "OnConflict" setter.
+	VXAccountUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *VXAccountUpsert) SetCreatedBy(v int64) *VXAccountUpsert {
+	u.Set(vxaccount.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateCreatedBy() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *VXAccountUpsert) AddCreatedBy(v int64) *VXAccountUpsert {
+	u.Add(vxaccount.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *VXAccountUpsert) SetUpdatedBy(v int64) *VXAccountUpsert {
+	u.Set(vxaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateUpdatedBy() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *VXAccountUpsert) AddUpdatedBy(v int64) *VXAccountUpsert {
+	u.Add(vxaccount.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *VXAccountUpsert) SetUpdatedAt(v time.Time) *VXAccountUpsert {
+	u.Set(vxaccount.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateUpdatedAt() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *VXAccountUpsert) SetDeletedAt(v time.Time) *VXAccountUpsert {
+	u.Set(vxaccount.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateDeletedAt() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldDeletedAt)
+	return u
+}
+
+// SetOpenID sets the "open_id" field.
+func (u *VXAccountUpsert) SetOpenID(v string) *VXAccountUpsert {
+	u.Set(vxaccount.FieldOpenID, v)
+	return u
+}
+
+// UpdateOpenID sets the "open_id" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateOpenID() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldOpenID)
+	return u
+}
+
+// SetUnionID sets the "union_id" field.
+func (u *VXAccountUpsert) SetUnionID(v string) *VXAccountUpsert {
+	u.Set(vxaccount.FieldUnionID, v)
+	return u
+}
+
+// UpdateUnionID sets the "union_id" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateUnionID() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldUnionID)
+	return u
+}
+
+// SetScope sets the "scope" field.
+func (u *VXAccountUpsert) SetScope(v string) *VXAccountUpsert {
+	u.Set(vxaccount.FieldScope, v)
+	return u
+}
+
+// UpdateScope sets the "scope" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateScope() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldScope)
+	return u
+}
+
+// SetSessionKey sets the "session_key" field.
+func (u *VXAccountUpsert) SetSessionKey(v string) *VXAccountUpsert {
+	u.Set(vxaccount.FieldSessionKey, v)
+	return u
+}
+
+// UpdateSessionKey sets the "session_key" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateSessionKey() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldSessionKey)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *VXAccountUpsert) SetUserID(v int64) *VXAccountUpsert {
+	u.Set(vxaccount.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *VXAccountUpsert) UpdateUserID() *VXAccountUpsert {
+	u.SetExcluded(vxaccount.FieldUserID)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.VXAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(vxaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *VXAccountUpsertOne) UpdateNewValues() *VXAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(vxaccount.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(vxaccount.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.VXAccount.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *VXAccountUpsertOne) Ignore() *VXAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *VXAccountUpsertOne) DoNothing() *VXAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the VXAccountCreate.OnConflict
+// documentation for more info.
+func (u *VXAccountUpsertOne) Update(set func(*VXAccountUpsert)) *VXAccountUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&VXAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *VXAccountUpsertOne) SetCreatedBy(v int64) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *VXAccountUpsertOne) AddCreatedBy(v int64) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateCreatedBy() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *VXAccountUpsertOne) SetUpdatedBy(v int64) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *VXAccountUpsertOne) AddUpdatedBy(v int64) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateUpdatedBy() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *VXAccountUpsertOne) SetUpdatedAt(v time.Time) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateUpdatedAt() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *VXAccountUpsertOne) SetDeletedAt(v time.Time) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateDeletedAt() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetOpenID sets the "open_id" field.
+func (u *VXAccountUpsertOne) SetOpenID(v string) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetOpenID(v)
+	})
+}
+
+// UpdateOpenID sets the "open_id" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateOpenID() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateOpenID()
+	})
+}
+
+// SetUnionID sets the "union_id" field.
+func (u *VXAccountUpsertOne) SetUnionID(v string) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUnionID(v)
+	})
+}
+
+// UpdateUnionID sets the "union_id" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateUnionID() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUnionID()
+	})
+}
+
+// SetScope sets the "scope" field.
+func (u *VXAccountUpsertOne) SetScope(v string) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetScope(v)
+	})
+}
+
+// UpdateScope sets the "scope" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateScope() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateScope()
+	})
+}
+
+// SetSessionKey sets the "session_key" field.
+func (u *VXAccountUpsertOne) SetSessionKey(v string) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetSessionKey(v)
+	})
+}
+
+// UpdateSessionKey sets the "session_key" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateSessionKey() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateSessionKey()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *VXAccountUpsertOne) SetUserID(v int64) *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *VXAccountUpsertOne) UpdateUserID() *VXAccountUpsertOne {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// Exec executes the query.
+func (u *VXAccountUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for VXAccountCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *VXAccountUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *VXAccountUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *VXAccountUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // VXAccountCreateBulk is the builder for creating many VXAccount entities in bulk.
 type VXAccountCreateBulk struct {
 	config
 	builders []*VXAccountCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the VXAccount entities in the database.
@@ -414,6 +811,7 @@ func (vacb *VXAccountCreateBulk) Save(ctx context.Context) ([]*VXAccount, error)
 					_, err = mutators[i+1].Mutate(root, vacb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = vacb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, vacb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -464,6 +862,260 @@ func (vacb *VXAccountCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (vacb *VXAccountCreateBulk) ExecX(ctx context.Context) {
 	if err := vacb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.VXAccount.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.VXAccountUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (vacb *VXAccountCreateBulk) OnConflict(opts ...sql.ConflictOption) *VXAccountUpsertBulk {
+	vacb.conflict = opts
+	return &VXAccountUpsertBulk{
+		create: vacb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.VXAccount.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (vacb *VXAccountCreateBulk) OnConflictColumns(columns ...string) *VXAccountUpsertBulk {
+	vacb.conflict = append(vacb.conflict, sql.ConflictColumns(columns...))
+	return &VXAccountUpsertBulk{
+		create: vacb,
+	}
+}
+
+// VXAccountUpsertBulk is the builder for "upsert"-ing
+// a bulk of VXAccount nodes.
+type VXAccountUpsertBulk struct {
+	create *VXAccountCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.VXAccount.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(vxaccount.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *VXAccountUpsertBulk) UpdateNewValues() *VXAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(vxaccount.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(vxaccount.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.VXAccount.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *VXAccountUpsertBulk) Ignore() *VXAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *VXAccountUpsertBulk) DoNothing() *VXAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the VXAccountCreateBulk.OnConflict
+// documentation for more info.
+func (u *VXAccountUpsertBulk) Update(set func(*VXAccountUpsert)) *VXAccountUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&VXAccountUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *VXAccountUpsertBulk) SetCreatedBy(v int64) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *VXAccountUpsertBulk) AddCreatedBy(v int64) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateCreatedBy() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *VXAccountUpsertBulk) SetUpdatedBy(v int64) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *VXAccountUpsertBulk) AddUpdatedBy(v int64) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateUpdatedBy() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *VXAccountUpsertBulk) SetUpdatedAt(v time.Time) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateUpdatedAt() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *VXAccountUpsertBulk) SetDeletedAt(v time.Time) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateDeletedAt() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetOpenID sets the "open_id" field.
+func (u *VXAccountUpsertBulk) SetOpenID(v string) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetOpenID(v)
+	})
+}
+
+// UpdateOpenID sets the "open_id" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateOpenID() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateOpenID()
+	})
+}
+
+// SetUnionID sets the "union_id" field.
+func (u *VXAccountUpsertBulk) SetUnionID(v string) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUnionID(v)
+	})
+}
+
+// UpdateUnionID sets the "union_id" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateUnionID() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUnionID()
+	})
+}
+
+// SetScope sets the "scope" field.
+func (u *VXAccountUpsertBulk) SetScope(v string) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetScope(v)
+	})
+}
+
+// UpdateScope sets the "scope" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateScope() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateScope()
+	})
+}
+
+// SetSessionKey sets the "session_key" field.
+func (u *VXAccountUpsertBulk) SetSessionKey(v string) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetSessionKey(v)
+	})
+}
+
+// UpdateSessionKey sets the "session_key" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateSessionKey() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateSessionKey()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *VXAccountUpsertBulk) SetUserID(v int64) *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *VXAccountUpsertBulk) UpdateUserID() *VXAccountUpsertBulk {
+	return u.Update(func(s *VXAccountUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// Exec executes the query.
+func (u *VXAccountUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the VXAccountCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for VXAccountCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *VXAccountUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type MissionKindCreate struct {
 	config
 	mutation *MissionKindMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -305,6 +307,7 @@ func (mkc *MissionKindCreate) createSpec() (*MissionKind, *sqlgraph.CreateSpec) 
 		_node = &MissionKind{config: mkc.config}
 		_spec = sqlgraph.NewCreateSpec(missionkind.Table, sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = mkc.conflict
 	if id, ok := mkc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -360,10 +363,352 @@ func (mkc *MissionKindCreate) createSpec() (*MissionKind, *sqlgraph.CreateSpec) 
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionKind.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionKindUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mkc *MissionKindCreate) OnConflict(opts ...sql.ConflictOption) *MissionKindUpsertOne {
+	mkc.conflict = opts
+	return &MissionKindUpsertOne{
+		create: mkc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionKind.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mkc *MissionKindCreate) OnConflictColumns(columns ...string) *MissionKindUpsertOne {
+	mkc.conflict = append(mkc.conflict, sql.ConflictColumns(columns...))
+	return &MissionKindUpsertOne{
+		create: mkc,
+	}
+}
+
+type (
+	// MissionKindUpsertOne is the builder for "upsert"-ing
+	//  one MissionKind node.
+	MissionKindUpsertOne struct {
+		create *MissionKindCreate
+	}
+
+	// MissionKindUpsert is the "OnConflict" setter.
+	MissionKindUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionKindUpsert) SetCreatedBy(v int64) *MissionKindUpsert {
+	u.Set(missionkind.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateCreatedBy() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionKindUpsert) AddCreatedBy(v int64) *MissionKindUpsert {
+	u.Add(missionkind.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionKindUpsert) SetUpdatedBy(v int64) *MissionKindUpsert {
+	u.Set(missionkind.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateUpdatedBy() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionKindUpsert) AddUpdatedBy(v int64) *MissionKindUpsert {
+	u.Add(missionkind.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionKindUpsert) SetUpdatedAt(v time.Time) *MissionKindUpsert {
+	u.Set(missionkind.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateUpdatedAt() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionKindUpsert) SetDeletedAt(v time.Time) *MissionKindUpsert {
+	u.Set(missionkind.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateDeletedAt() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldDeletedAt)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *MissionKindUpsert) SetType(v enums.MissionType) *MissionKindUpsert {
+	u.Set(missionkind.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateType() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldType)
+	return u
+}
+
+// SetCategory sets the "category" field.
+func (u *MissionKindUpsert) SetCategory(v enums.MissionCategory) *MissionKindUpsert {
+	u.Set(missionkind.FieldCategory, v)
+	return u
+}
+
+// UpdateCategory sets the "category" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateCategory() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldCategory)
+	return u
+}
+
+// SetBillingType sets the "billing_type" field.
+func (u *MissionKindUpsert) SetBillingType(v enums.MissionBillingType) *MissionKindUpsert {
+	u.Set(missionkind.FieldBillingType, v)
+	return u
+}
+
+// UpdateBillingType sets the "billing_type" field to the value that was provided on create.
+func (u *MissionKindUpsert) UpdateBillingType() *MissionKindUpsert {
+	u.SetExcluded(missionkind.FieldBillingType)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.MissionKind.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionkind.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionKindUpsertOne) UpdateNewValues() *MissionKindUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(missionkind.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(missionkind.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionKind.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *MissionKindUpsertOne) Ignore() *MissionKindUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionKindUpsertOne) DoNothing() *MissionKindUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionKindCreate.OnConflict
+// documentation for more info.
+func (u *MissionKindUpsertOne) Update(set func(*MissionKindUpsert)) *MissionKindUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionKindUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionKindUpsertOne) SetCreatedBy(v int64) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionKindUpsertOne) AddCreatedBy(v int64) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateCreatedBy() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionKindUpsertOne) SetUpdatedBy(v int64) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionKindUpsertOne) AddUpdatedBy(v int64) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateUpdatedBy() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionKindUpsertOne) SetUpdatedAt(v time.Time) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateUpdatedAt() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionKindUpsertOne) SetDeletedAt(v time.Time) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateDeletedAt() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *MissionKindUpsertOne) SetType(v enums.MissionType) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateType() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetCategory sets the "category" field.
+func (u *MissionKindUpsertOne) SetCategory(v enums.MissionCategory) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetCategory(v)
+	})
+}
+
+// UpdateCategory sets the "category" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateCategory() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateCategory()
+	})
+}
+
+// SetBillingType sets the "billing_type" field.
+func (u *MissionKindUpsertOne) SetBillingType(v enums.MissionBillingType) *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetBillingType(v)
+	})
+}
+
+// UpdateBillingType sets the "billing_type" field to the value that was provided on create.
+func (u *MissionKindUpsertOne) UpdateBillingType() *MissionKindUpsertOne {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateBillingType()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionKindUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionKindCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionKindUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *MissionKindUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *MissionKindUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // MissionKindCreateBulk is the builder for creating many MissionKind entities in bulk.
 type MissionKindCreateBulk struct {
 	config
 	builders []*MissionKindCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionKind entities in the database.
@@ -390,6 +735,7 @@ func (mkcb *MissionKindCreateBulk) Save(ctx context.Context) ([]*MissionKind, er
 					_, err = mutators[i+1].Mutate(root, mkcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = mkcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, mkcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -440,6 +786,232 @@ func (mkcb *MissionKindCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (mkcb *MissionKindCreateBulk) ExecX(ctx context.Context) {
 	if err := mkcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.MissionKind.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.MissionKindUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (mkcb *MissionKindCreateBulk) OnConflict(opts ...sql.ConflictOption) *MissionKindUpsertBulk {
+	mkcb.conflict = opts
+	return &MissionKindUpsertBulk{
+		create: mkcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.MissionKind.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (mkcb *MissionKindCreateBulk) OnConflictColumns(columns ...string) *MissionKindUpsertBulk {
+	mkcb.conflict = append(mkcb.conflict, sql.ConflictColumns(columns...))
+	return &MissionKindUpsertBulk{
+		create: mkcb,
+	}
+}
+
+// MissionKindUpsertBulk is the builder for "upsert"-ing
+// a bulk of MissionKind nodes.
+type MissionKindUpsertBulk struct {
+	create *MissionKindCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.MissionKind.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(missionkind.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *MissionKindUpsertBulk) UpdateNewValues() *MissionKindUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(missionkind.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(missionkind.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.MissionKind.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *MissionKindUpsertBulk) Ignore() *MissionKindUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *MissionKindUpsertBulk) DoNothing() *MissionKindUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the MissionKindCreateBulk.OnConflict
+// documentation for more info.
+func (u *MissionKindUpsertBulk) Update(set func(*MissionKindUpsert)) *MissionKindUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&MissionKindUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *MissionKindUpsertBulk) SetCreatedBy(v int64) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *MissionKindUpsertBulk) AddCreatedBy(v int64) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateCreatedBy() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *MissionKindUpsertBulk) SetUpdatedBy(v int64) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *MissionKindUpsertBulk) AddUpdatedBy(v int64) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateUpdatedBy() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *MissionKindUpsertBulk) SetUpdatedAt(v time.Time) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateUpdatedAt() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *MissionKindUpsertBulk) SetDeletedAt(v time.Time) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateDeletedAt() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *MissionKindUpsertBulk) SetType(v enums.MissionType) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateType() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetCategory sets the "category" field.
+func (u *MissionKindUpsertBulk) SetCategory(v enums.MissionCategory) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetCategory(v)
+	})
+}
+
+// UpdateCategory sets the "category" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateCategory() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateCategory()
+	})
+}
+
+// SetBillingType sets the "billing_type" field.
+func (u *MissionKindUpsertBulk) SetBillingType(v enums.MissionBillingType) *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.SetBillingType(v)
+	})
+}
+
+// UpdateBillingType sets the "billing_type" field to the value that was provided on create.
+func (u *MissionKindUpsertBulk) UpdateBillingType() *MissionKindUpsertBulk {
+	return u.Update(func(s *MissionKindUpsert) {
+		s.UpdateBillingType()
+	})
+}
+
+// Exec executes the query.
+func (u *MissionKindUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionKindCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for MissionKindCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *MissionKindUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

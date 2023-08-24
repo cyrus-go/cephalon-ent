@@ -17,7 +17,7 @@ func (MissionProduceOrder) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键关联用户 id"),
 		field.Int64("mission_id").Default(0).StructTag(`json:"mission_id"`).Comment("任务 id，关联任务中枢的任务"),
-		field.Enum("status").Values("waiting", "canceled", "doing", "succeed", "failed", "supplying").Default("waiting").StructTag(`json:"status"`).Comment("任务订单的状态，注意不强关联任务的状态"),
+		field.Enum("status").GoType(enums.MissionOrderStatusWaiting).Default(string(enums.MissionOrderStatusWaiting)).StructTag(`json:"status"`).Comment("任务订单的状态，注意不强关联任务的状态"),
 		field.Int64("pure_cep").Default(0).StructTag(`json:"pure_cep"`).Comment("任务收益的本金 cep 量"),
 		field.Int64("gift_cep").Default(0).StructTag(`json:"gift_cep"`).Comment("任务收益的赠送 cep 量"),
 		field.Enum("type").GoType(enums.MissionTypeSdTxt2Img).Default(string(enums.MissionTypeSdTxt2Img)).StructTag(`json:"type"`).Comment("任务类型，计时或者次数任务"),

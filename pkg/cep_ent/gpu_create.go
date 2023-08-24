@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
@@ -20,6 +21,7 @@ type GpuCreate struct {
 	config
 	mutation *GpuMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -253,6 +255,7 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 		_node = &Gpu{config: gc.config}
 		_spec = sqlgraph.NewCreateSpec(gpu.Table, sqlgraph.NewFieldSpec(gpu.FieldID, field.TypeInt64))
 	)
+	_spec.OnConflict = gc.conflict
 	if id, ok := gc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
@@ -300,10 +303,300 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Gpu.Create().
+//		SetCreatedBy(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.GpuUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (gc *GpuCreate) OnConflict(opts ...sql.ConflictOption) *GpuUpsertOne {
+	gc.conflict = opts
+	return &GpuUpsertOne{
+		create: gc,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Gpu.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (gc *GpuCreate) OnConflictColumns(columns ...string) *GpuUpsertOne {
+	gc.conflict = append(gc.conflict, sql.ConflictColumns(columns...))
+	return &GpuUpsertOne{
+		create: gc,
+	}
+}
+
+type (
+	// GpuUpsertOne is the builder for "upsert"-ing
+	//  one Gpu node.
+	GpuUpsertOne struct {
+		create *GpuCreate
+	}
+
+	// GpuUpsert is the "OnConflict" setter.
+	GpuUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetCreatedBy sets the "created_by" field.
+func (u *GpuUpsert) SetCreatedBy(v int64) *GpuUpsert {
+	u.Set(gpu.FieldCreatedBy, v)
+	return u
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateCreatedBy() *GpuUpsert {
+	u.SetExcluded(gpu.FieldCreatedBy)
+	return u
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *GpuUpsert) AddCreatedBy(v int64) *GpuUpsert {
+	u.Add(gpu.FieldCreatedBy, v)
+	return u
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *GpuUpsert) SetUpdatedBy(v int64) *GpuUpsert {
+	u.Set(gpu.FieldUpdatedBy, v)
+	return u
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateUpdatedBy() *GpuUpsert {
+	u.SetExcluded(gpu.FieldUpdatedBy)
+	return u
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *GpuUpsert) AddUpdatedBy(v int64) *GpuUpsert {
+	u.Add(gpu.FieldUpdatedBy, v)
+	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *GpuUpsert) SetUpdatedAt(v time.Time) *GpuUpsert {
+	u.Set(gpu.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateUpdatedAt() *GpuUpsert {
+	u.SetExcluded(gpu.FieldUpdatedAt)
+	return u
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *GpuUpsert) SetDeletedAt(v time.Time) *GpuUpsert {
+	u.Set(gpu.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateDeletedAt() *GpuUpsert {
+	u.SetExcluded(gpu.FieldDeletedAt)
+	return u
+}
+
+// SetVersion sets the "version" field.
+func (u *GpuUpsert) SetVersion(v enums.GpuVersion) *GpuUpsert {
+	u.Set(gpu.FieldVersion, v)
+	return u
+}
+
+// UpdateVersion sets the "version" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateVersion() *GpuUpsert {
+	u.SetExcluded(gpu.FieldVersion)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
+// Using this option is equivalent to using:
+//
+//	client.Gpu.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(gpu.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *GpuUpsertOne) UpdateNewValues() *GpuUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(gpu.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(gpu.FieldCreatedAt)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Gpu.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *GpuUpsertOne) Ignore() *GpuUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *GpuUpsertOne) DoNothing() *GpuUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the GpuCreate.OnConflict
+// documentation for more info.
+func (u *GpuUpsertOne) Update(set func(*GpuUpsert)) *GpuUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&GpuUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *GpuUpsertOne) SetCreatedBy(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *GpuUpsertOne) AddCreatedBy(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateCreatedBy() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *GpuUpsertOne) SetUpdatedBy(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *GpuUpsertOne) AddUpdatedBy(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateUpdatedBy() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *GpuUpsertOne) SetUpdatedAt(v time.Time) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateUpdatedAt() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *GpuUpsertOne) SetDeletedAt(v time.Time) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateDeletedAt() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetVersion sets the "version" field.
+func (u *GpuUpsertOne) SetVersion(v enums.GpuVersion) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetVersion(v)
+	})
+}
+
+// UpdateVersion sets the "version" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateVersion() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateVersion()
+	})
+}
+
+// Exec executes the query.
+func (u *GpuUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for GpuCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *GpuUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *GpuUpsertOne) ID(ctx context.Context) (id int64, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *GpuUpsertOne) IDX(ctx context.Context) int64 {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // GpuCreateBulk is the builder for creating many Gpu entities in bulk.
 type GpuCreateBulk struct {
 	config
 	builders []*GpuCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the Gpu entities in the database.
@@ -330,6 +623,7 @@ func (gcb *GpuCreateBulk) Save(ctx context.Context) ([]*Gpu, error) {
 					_, err = mutators[i+1].Mutate(root, gcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = gcb.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, gcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -380,6 +674,204 @@ func (gcb *GpuCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (gcb *GpuCreateBulk) ExecX(ctx context.Context) {
 	if err := gcb.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Gpu.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.GpuUpsert) {
+//			SetCreatedBy(v+v).
+//		}).
+//		Exec(ctx)
+func (gcb *GpuCreateBulk) OnConflict(opts ...sql.ConflictOption) *GpuUpsertBulk {
+	gcb.conflict = opts
+	return &GpuUpsertBulk{
+		create: gcb,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Gpu.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (gcb *GpuCreateBulk) OnConflictColumns(columns ...string) *GpuUpsertBulk {
+	gcb.conflict = append(gcb.conflict, sql.ConflictColumns(columns...))
+	return &GpuUpsertBulk{
+		create: gcb,
+	}
+}
+
+// GpuUpsertBulk is the builder for "upsert"-ing
+// a bulk of Gpu nodes.
+type GpuUpsertBulk struct {
+	create *GpuCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.Gpu.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(gpu.FieldID)
+//			}),
+//		).
+//		Exec(ctx)
+func (u *GpuUpsertBulk) UpdateNewValues() *GpuUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(gpu.FieldID)
+			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(gpu.FieldCreatedAt)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Gpu.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *GpuUpsertBulk) Ignore() *GpuUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *GpuUpsertBulk) DoNothing() *GpuUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the GpuCreateBulk.OnConflict
+// documentation for more info.
+func (u *GpuUpsertBulk) Update(set func(*GpuUpsert)) *GpuUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&GpuUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (u *GpuUpsertBulk) SetCreatedBy(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetCreatedBy(v)
+	})
+}
+
+// AddCreatedBy adds v to the "created_by" field.
+func (u *GpuUpsertBulk) AddCreatedBy(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddCreatedBy(v)
+	})
+}
+
+// UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateCreatedBy() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateCreatedBy()
+	})
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (u *GpuUpsertBulk) SetUpdatedBy(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetUpdatedBy(v)
+	})
+}
+
+// AddUpdatedBy adds v to the "updated_by" field.
+func (u *GpuUpsertBulk) AddUpdatedBy(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddUpdatedBy(v)
+	})
+}
+
+// UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateUpdatedBy() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateUpdatedBy()
+	})
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *GpuUpsertBulk) SetUpdatedAt(v time.Time) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateUpdatedAt() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (u *GpuUpsertBulk) SetDeletedAt(v time.Time) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateDeletedAt() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// SetVersion sets the "version" field.
+func (u *GpuUpsertBulk) SetVersion(v enums.GpuVersion) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetVersion(v)
+	})
+}
+
+// UpdateVersion sets the "version" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateVersion() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateVersion()
+	})
+}
+
+// Exec executes the query.
+func (u *GpuUpsertBulk) Exec(ctx context.Context) error {
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the GpuCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("cep_ent: missing options for GpuCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *GpuUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
