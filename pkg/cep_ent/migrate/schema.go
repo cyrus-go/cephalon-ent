@@ -285,6 +285,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
+		{Name: "power", Type: field.TypeInt, Comment: "显卡能力值", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{

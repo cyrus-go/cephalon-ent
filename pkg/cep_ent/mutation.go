@@ -9422,6 +9422,8 @@ type GpuMutation struct {
 	updated_at                 *time.Time
 	deleted_at                 *time.Time
 	version                    *enums.GpuVersion
+	power                      *int
+	addpower                   *int
 	clearedFields              map[string]struct{}
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
@@ -9791,6 +9793,62 @@ func (m *GpuMutation) ResetVersion() {
 	m.version = nil
 }
 
+// SetPower sets the "power" field.
+func (m *GpuMutation) SetPower(i int) {
+	m.power = &i
+	m.addpower = nil
+}
+
+// Power returns the value of the "power" field in the mutation.
+func (m *GpuMutation) Power() (r int, exists bool) {
+	v := m.power
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPower returns the old "power" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldPower(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPower is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPower requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPower: %w", err)
+	}
+	return oldValue.Power, nil
+}
+
+// AddPower adds i to the "power" field.
+func (m *GpuMutation) AddPower(i int) {
+	if m.addpower != nil {
+		*m.addpower += i
+	} else {
+		m.addpower = &i
+	}
+}
+
+// AddedPower returns the value that was added to the "power" field in this mutation.
+func (m *GpuMutation) AddedPower() (r int, exists bool) {
+	v := m.addpower
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPower resets all changes to the "power" field.
+func (m *GpuMutation) ResetPower() {
+	m.power = nil
+	m.addpower = nil
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
 func (m *GpuMutation) AddDeviceGpuMissionIDs(ids ...int64) {
 	if m.device_gpu_missions == nil {
@@ -9879,7 +9937,7 @@ func (m *GpuMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GpuMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_by != nil {
 		fields = append(fields, gpu.FieldCreatedBy)
 	}
@@ -9897,6 +9955,9 @@ func (m *GpuMutation) Fields() []string {
 	}
 	if m.version != nil {
 		fields = append(fields, gpu.FieldVersion)
+	}
+	if m.power != nil {
+		fields = append(fields, gpu.FieldPower)
 	}
 	return fields
 }
@@ -9918,6 +9979,8 @@ func (m *GpuMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case gpu.FieldVersion:
 		return m.Version()
+	case gpu.FieldPower:
+		return m.Power()
 	}
 	return nil, false
 }
@@ -9939,6 +10002,8 @@ func (m *GpuMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldDeletedAt(ctx)
 	case gpu.FieldVersion:
 		return m.OldVersion(ctx)
+	case gpu.FieldPower:
+		return m.OldPower(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -9990,6 +10055,13 @@ func (m *GpuMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetVersion(v)
 		return nil
+	case gpu.FieldPower:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPower(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -10004,6 +10076,9 @@ func (m *GpuMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, gpu.FieldUpdatedBy)
 	}
+	if m.addpower != nil {
+		fields = append(fields, gpu.FieldPower)
+	}
 	return fields
 }
 
@@ -10016,6 +10091,8 @@ func (m *GpuMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case gpu.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case gpu.FieldPower:
+		return m.AddedPower()
 	}
 	return nil, false
 }
@@ -10038,6 +10115,13 @@ func (m *GpuMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
+		return nil
+	case gpu.FieldPower:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPower(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu numeric field %s", name)
@@ -10083,6 +10167,9 @@ func (m *GpuMutation) ResetField(name string) error {
 		return nil
 	case gpu.FieldVersion:
 		m.ResetVersion()
+		return nil
+	case gpu.FieldPower:
+		m.ResetPower()
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)

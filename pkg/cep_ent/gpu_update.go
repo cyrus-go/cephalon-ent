@@ -106,6 +106,27 @@ func (gu *GpuUpdate) SetNillableVersion(ev *enums.GpuVersion) *GpuUpdate {
 	return gu
 }
 
+// SetPower sets the "power" field.
+func (gu *GpuUpdate) SetPower(i int) *GpuUpdate {
+	gu.mutation.ResetPower()
+	gu.mutation.SetPower(i)
+	return gu
+}
+
+// SetNillablePower sets the "power" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillablePower(i *int) *GpuUpdate {
+	if i != nil {
+		gu.SetPower(*i)
+	}
+	return gu
+}
+
+// AddPower adds i to the "power" field.
+func (gu *GpuUpdate) AddPower(i int) *GpuUpdate {
+	gu.mutation.AddPower(i)
+	return gu
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (gu *GpuUpdate) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdate {
 	gu.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -225,6 +246,12 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.Version(); ok {
 		_spec.SetField(gpu.FieldVersion, field.TypeEnum, value)
+	}
+	if value, ok := gu.mutation.Power(); ok {
+		_spec.SetField(gpu.FieldPower, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedPower(); ok {
+		_spec.AddField(gpu.FieldPower, field.TypeInt, value)
 	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -364,6 +391,27 @@ func (guo *GpuUpdateOne) SetNillableVersion(ev *enums.GpuVersion) *GpuUpdateOne 
 	if ev != nil {
 		guo.SetVersion(*ev)
 	}
+	return guo
+}
+
+// SetPower sets the "power" field.
+func (guo *GpuUpdateOne) SetPower(i int) *GpuUpdateOne {
+	guo.mutation.ResetPower()
+	guo.mutation.SetPower(i)
+	return guo
+}
+
+// SetNillablePower sets the "power" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillablePower(i *int) *GpuUpdateOne {
+	if i != nil {
+		guo.SetPower(*i)
+	}
+	return guo
+}
+
+// AddPower adds i to the "power" field.
+func (guo *GpuUpdateOne) AddPower(i int) *GpuUpdateOne {
+	guo.mutation.AddPower(i)
 	return guo
 }
 
@@ -516,6 +564,12 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	}
 	if value, ok := guo.mutation.Version(); ok {
 		_spec.SetField(gpu.FieldVersion, field.TypeEnum, value)
+	}
+	if value, ok := guo.mutation.Power(); ok {
+		_spec.SetField(gpu.FieldPower, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedPower(); ok {
+		_spec.AddField(gpu.FieldPower, field.TypeInt, value)
 	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

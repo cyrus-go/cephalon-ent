@@ -490,6 +490,10 @@ func init() {
 	gpuDescDeletedAt := gpuMixinFields0[5].Descriptor()
 	// gpu.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	gpu.DefaultDeletedAt = gpuDescDeletedAt.Default.(time.Time)
+	// gpuDescPower is the schema descriptor for power field.
+	gpuDescPower := gpuFields[1].Descriptor()
+	// gpu.DefaultPower holds the default value on creation for the power field.
+	gpu.DefaultPower = gpuDescPower.Default.(int)
 	// gpuDescID is the schema descriptor for id field.
 	gpuDescID := gpuMixinFields0[0].Descriptor()
 	// gpu.DefaultID holds the default value on creation for the id field.

@@ -14,6 +14,7 @@ type Gpu struct {
 func (Gpu) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersion2060)).StructTag(`json:"version"`).Comment("显卡型号"),
+		field.Int("power").Default(0).StructTag(`json:"power"`).Comment("显卡能力值"),
 	}
 }
 

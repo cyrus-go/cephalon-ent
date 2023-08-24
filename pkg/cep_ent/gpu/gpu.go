@@ -28,6 +28,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldVersion holds the string denoting the version field in the database.
 	FieldVersion = "version"
+	// FieldPower holds the string denoting the power field in the database.
+	FieldPower = "power"
 	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
 	EdgeDeviceGpuMissions = "device_gpu_missions"
 	// Table holds the table name of the gpu in the database.
@@ -50,6 +52,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldVersion,
+	FieldPower,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -75,6 +78,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
+	// DefaultPower holds the default value on creation for the "power" field.
+	DefaultPower int
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -127,6 +132,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByVersion orders the results by the version field.
 func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByPower orders the results by the power field.
+func ByPower(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPower, opts...).ToFunc()
 }
 
 // ByDeviceGpuMissionsCount orders the results by device_gpu_missions count.

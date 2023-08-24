@@ -108,6 +108,20 @@ func (gc *GpuCreate) SetNillableVersion(ev *enums.GpuVersion) *GpuCreate {
 	return gc
 }
 
+// SetPower sets the "power" field.
+func (gc *GpuCreate) SetPower(i int) *GpuCreate {
+	gc.mutation.SetPower(i)
+	return gc
+}
+
+// SetNillablePower sets the "power" field if the given value is not nil.
+func (gc *GpuCreate) SetNillablePower(i *int) *GpuCreate {
+	if i != nil {
+		gc.SetPower(*i)
+	}
+	return gc
+}
+
 // SetID sets the "id" field.
 func (gc *GpuCreate) SetID(i int64) *GpuCreate {
 	gc.mutation.SetID(i)
@@ -196,6 +210,10 @@ func (gc *GpuCreate) defaults() {
 		v := gpu.DefaultVersion
 		gc.mutation.SetVersion(v)
 	}
+	if _, ok := gc.mutation.Power(); !ok {
+		v := gpu.DefaultPower
+		gc.mutation.SetPower(v)
+	}
 	if _, ok := gc.mutation.ID(); !ok {
 		v := gpu.DefaultID()
 		gc.mutation.SetID(v)
@@ -226,6 +244,9 @@ func (gc *GpuCreate) check() error {
 		if err := gpu.VersionValidator(v); err != nil {
 			return &ValidationError{Name: "version", err: fmt.Errorf(`cep_ent: validator failed for field "Gpu.version": %w`, err)}
 		}
+	}
+	if _, ok := gc.mutation.Power(); !ok {
+		return &ValidationError{Name: "power", err: errors.New(`cep_ent: missing required field "Gpu.power"`)}
 	}
 	return nil
 }
@@ -283,6 +304,10 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.Version(); ok {
 		_spec.SetField(gpu.FieldVersion, field.TypeEnum, value)
 		_node.Version = value
+	}
+	if value, ok := gc.mutation.Power(); ok {
+		_spec.SetField(gpu.FieldPower, field.TypeInt, value)
+		_node.Power = value
 	}
 	if nodes := gc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -424,6 +449,24 @@ func (u *GpuUpsert) UpdateVersion() *GpuUpsert {
 	return u
 }
 
+// SetPower sets the "power" field.
+func (u *GpuUpsert) SetPower(v int) *GpuUpsert {
+	u.Set(gpu.FieldPower, v)
+	return u
+}
+
+// UpdatePower sets the "power" field to the value that was provided on create.
+func (u *GpuUpsert) UpdatePower() *GpuUpsert {
+	u.SetExcluded(gpu.FieldPower)
+	return u
+}
+
+// AddPower adds v to the "power" field.
+func (u *GpuUpsert) AddPower(v int) *GpuUpsert {
+	u.Add(gpu.FieldPower, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -556,6 +599,27 @@ func (u *GpuUpsertOne) SetVersion(v enums.GpuVersion) *GpuUpsertOne {
 func (u *GpuUpsertOne) UpdateVersion() *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetPower sets the "power" field.
+func (u *GpuUpsertOne) SetPower(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetPower(v)
+	})
+}
+
+// AddPower adds v to the "power" field.
+func (u *GpuUpsertOne) AddPower(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddPower(v)
+	})
+}
+
+// UpdatePower sets the "power" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdatePower() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdatePower()
 	})
 }
 
@@ -853,6 +917,27 @@ func (u *GpuUpsertBulk) SetVersion(v enums.GpuVersion) *GpuUpsertBulk {
 func (u *GpuUpsertBulk) UpdateVersion() *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateVersion()
+	})
+}
+
+// SetPower sets the "power" field.
+func (u *GpuUpsertBulk) SetPower(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetPower(v)
+	})
+}
+
+// AddPower adds v to the "power" field.
+func (u *GpuUpsertBulk) AddPower(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddPower(v)
+	})
+}
+
+// UpdatePower sets the "power" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdatePower() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdatePower()
 	})
 }
 

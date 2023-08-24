@@ -30,6 +30,8 @@ type Gpu struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 显卡型号
 	Version enums.GpuVersion `json:"version"`
+	// 显卡能力值
+	Power int `json:"power"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GpuQuery when eager-loading is set.
 	Edges        GpuEdges `json:"edges"`
@@ -59,7 +61,7 @@ func (*Gpu) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy:
+		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower:
 			values[i] = new(sql.NullInt64)
 		case gpu.FieldVersion:
 			values[i] = new(sql.NullString)
@@ -122,6 +124,12 @@ func (gp *Gpu) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gp.Version = enums.GpuVersion(value.String)
 			}
+		case gpu.FieldPower:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field power", values[i])
+			} else if value.Valid {
+				gp.Power = int(value.Int64)
+			}
 		default:
 			gp.selectValues.Set(columns[i], values[i])
 		}
@@ -180,6 +188,9 @@ func (gp *Gpu) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("version=")
 	builder.WriteString(fmt.Sprintf("%v", gp.Version))
+	builder.WriteString(", ")
+	builder.WriteString("power=")
+	builder.WriteString(fmt.Sprintf("%v", gp.Power))
 	builder.WriteByte(')')
 	return builder.String()
 }

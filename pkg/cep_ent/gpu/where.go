@@ -81,6 +81,11 @@ func DeletedAt(v time.Time) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldDeletedAt, v))
 }
 
+// Power applies equality check predicate on the "power" field. It's identical to PowerEQ.
+func Power(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldPower, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldCreatedBy, v))
@@ -309,6 +314,46 @@ func VersionNotIn(vs ...enums.GpuVersion) predicate.Gpu {
 		v[i] = vs[i]
 	}
 	return predicate.Gpu(sql.FieldNotIn(FieldVersion, v...))
+}
+
+// PowerEQ applies the EQ predicate on the "power" field.
+func PowerEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldPower, v))
+}
+
+// PowerNEQ applies the NEQ predicate on the "power" field.
+func PowerNEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldPower, v))
+}
+
+// PowerIn applies the In predicate on the "power" field.
+func PowerIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldPower, vs...))
+}
+
+// PowerNotIn applies the NotIn predicate on the "power" field.
+func PowerNotIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldPower, vs...))
+}
+
+// PowerGT applies the GT predicate on the "power" field.
+func PowerGT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldPower, v))
+}
+
+// PowerGTE applies the GTE predicate on the "power" field.
+func PowerGTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldPower, v))
+}
+
+// PowerLT applies the LT predicate on the "power" field.
+func PowerLT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldPower, v))
+}
+
+// PowerLTE applies the LTE predicate on the "power" field.
+func PowerLTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldPower, v))
 }
 
 // HasDeviceGpuMissions applies the HasEdge predicate on the "device_gpu_missions" edge.
