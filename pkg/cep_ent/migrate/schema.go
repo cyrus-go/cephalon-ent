@@ -284,7 +284,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
+		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX 2060", "RTX 2060 Ti", "RTX 2070", "RTX 2070 Ti", "RTX 2080", "RTX 2080 Ti", "RTX 3060", "RTX 3060 Ti", "RTX 3070", "RTX 3070 Ti", "RTX 3080", "RTX 3080 Ti", "RTX 3090", "RTX 3090 Ti", "RTX 4060", "RTX 4060 Ti", "RTX 4070", "RTX 4070 Ti", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
 		{Name: "power", Type: field.TypeInt, Comment: "显卡能力值", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
@@ -357,7 +357,7 @@ var (
 		{Name: "result", Type: field.TypeEnum, Comment: "任务结果，pending 表示还没有结果", Enums: []string{"pending", "succeed", "failed"}, Default: "pending"},
 		{Name: "result_urls", Type: field.TypeJSON, Nullable: true, Comment: "任务结果资源位置列表序列化"},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号", Default: ""},
-		{Name: "gpu_version", Type: field.TypeEnum, Comment: "最低可接显卡", Enums: []string{"RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "最低可接显卡", Enums: []string{"RTX 2060", "RTX 2060 Ti", "RTX 2070", "RTX 2070 Ti", "RTX 2080", "RTX 2080 Ti", "RTX 3060", "RTX 3060 Ti", "RTX 3070", "RTX 3070 Ti", "RTX 3080", "RTX 3080 Ti", "RTX 3090", "RTX 3090 Ti", "RTX 4060", "RTX 4060 Ti", "RTX 4070", "RTX 4070 Ti", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 	}
 	// MissionsTable holds the schema information for the "missions" table.
@@ -600,7 +600,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX 2060", "RTX 3070", "RTX 3080", "RTX 3090", "RTX 4070", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX 2060", "RTX 2060 Ti", "RTX 2070", "RTX 2070 Ti", "RTX 2080", "RTX 2080 Ti", "RTX 3060", "RTX 3060 Ti", "RTX 3070", "RTX 3070 Ti", "RTX 3080", "RTX 3080 Ti", "RTX 3090", "RTX 3090 Ti", "RTX 4060", "RTX 4060 Ti", "RTX 4070", "RTX 4070 Ti", "RTX 4080", "RTX 4090"}, Default: "RTX 2060"},
 		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
 		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"SD", "JP", "WT"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"time", "count"}, Default: "count"},
