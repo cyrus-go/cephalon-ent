@@ -6,8 +6,16 @@ const (
 	PlatformWalletTypeProfit PlatformWalletType = "profit"
 )
 
-func (m PlatformWalletType) Values() []string {
+func (obj PlatformWalletType) Values() []string {
 	return []string{
 		string(PlatformWalletTypeProfit),
+	}
+}
+
+func (obj PlatformWalletType) Ptr() *PlatformWalletType {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

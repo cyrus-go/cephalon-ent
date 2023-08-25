@@ -7,9 +7,17 @@ const (
 	UserTypeEnterprise UserType = "enterprise"
 )
 
-func (m UserType) Values() []string {
+func (obj UserType) Values() []string {
 	return []string{
 		string(UserTypePersonal),
 		string(UserTypeEnterprise),
+	}
+}
+
+func (obj UserType) Ptr() *UserType {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

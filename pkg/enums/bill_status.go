@@ -15,3 +15,11 @@ func (BillStatus) Values() []string {
 		string(BillStatusDone),
 	}
 }
+
+func (obj BillStatus) Ptr() *BillStatus {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
+	}
+}

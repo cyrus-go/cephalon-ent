@@ -15,3 +15,11 @@ func (BillType) Values() []string {
 		string(BillTypeMissionProduce),
 	}
 }
+
+func (obj BillType) Ptr() *BillType {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
+	}
+}

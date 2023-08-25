@@ -8,10 +8,18 @@ const (
 	MissionCategoryWT MissionCategory = "WT"
 )
 
-func (m MissionCategory) Values() []string {
+func (obj MissionCategory) Values() []string {
 	return []string{
 		string(MissionCategorySD),
 		string(MissionCategoryJP),
 		string(MissionCategoryWT),
+	}
+}
+
+func (obj MissionCategory) Ptr() *MissionCategory {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

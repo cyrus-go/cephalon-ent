@@ -7,9 +7,17 @@ const (
 	MissionBillingTypeCount MissionBillingType = "count"
 )
 
-func (m MissionBillingType) Values() []string {
+func (obj MissionBillingType) Values() []string {
 	return []string{
 		string(MissionBillingTypeTime),
 		string(MissionBillingTypeCount),
+	}
+}
+
+func (obj MissionBillingType) Ptr() *MissionBillingType {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

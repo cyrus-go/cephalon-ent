@@ -8,10 +8,18 @@ const (
 	RechargeOrderTypeAlipay RechargeOrderType = "alipay"
 )
 
-func (m RechargeOrderType) Values() []string {
+func (obj RechargeOrderType) Values() []string {
 	return []string{
 		string(RechargeOrderTypeManual),
 		string(RechargeOrderTypeVX),
 		string(RechargeOrderTypeAlipay),
+	}
+}
+
+func (obj RechargeOrderType) Ptr() *RechargeOrderType {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

@@ -11,7 +11,7 @@ const (
 	MissionOrderStatusSucceed   MissionOrderStatus = "succeed"
 )
 
-func (m MissionOrderStatus) Values() []string {
+func (obj MissionOrderStatus) Values() []string {
 	return []string{
 		string(MissionOrderStatusWaiting),
 		string(MissionOrderStatusCanceled),
@@ -19,5 +19,13 @@ func (m MissionOrderStatus) Values() []string {
 		string(MissionOrderStatusSupplying),
 		string(MissionOrderStatusFailed),
 		string(MissionOrderStatusSucceed),
+	}
+}
+
+func (obj MissionOrderStatus) Ptr() *MissionOrderStatus {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

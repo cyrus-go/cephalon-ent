@@ -25,7 +25,7 @@ const (
 	GpuVersion4090   GpuVersion = "RTX 4090"
 )
 
-func (g GpuVersion) Values() []string {
+func (obj GpuVersion) Values() []string {
 	return []string{
 		string(GpuVersion2060),
 		string(GpuVersion2060Ti),
@@ -47,5 +47,13 @@ func (g GpuVersion) Values() []string {
 		string(GpuVersion4070Ti),
 		string(GpuVersion4080),
 		string(GpuVersion4090),
+	}
+}
+
+func (obj GpuVersion) Ptr() *GpuVersion {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

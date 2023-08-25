@@ -11,7 +11,7 @@ const (
 	MissionTypeSdExtraSingleImage MissionType = "extra-single-image"
 )
 
-func (m MissionType) Values() []string {
+func (obj MissionType) Values() []string {
 	return []string{
 		string(MissionTypeSdTime),
 		string(MissionTypeSdTxt2Img),
@@ -19,5 +19,13 @@ func (m MissionType) Values() []string {
 		string(MissionTypeJpTime),
 		string(MissionTypeWtTime),
 		string(MissionTypeSdExtraSingleImage),
+	}
+}
+
+func (obj MissionType) Ptr() *MissionType {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

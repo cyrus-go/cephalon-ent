@@ -8,10 +8,18 @@ const (
 	MissionResultFailed  MissionResult = "failed"
 )
 
-func (m MissionResult) Values() []string {
+func (obj MissionResult) Values() []string {
 	return []string{
 		string(MissionResultPending),
 		string(MissionResultSucceed),
 		string(MissionResultFailed),
+	}
+}
+
+func (obj MissionResult) Ptr() *MissionResult {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
 	}
 }

@@ -17,3 +17,11 @@ func (DeviceBindingStatus) Values() []string {
 		string(DeviceBindingStatusRebinding),
 	}
 }
+
+func (obj DeviceBindingStatus) Ptr() *DeviceBindingStatus {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
+	}
+}

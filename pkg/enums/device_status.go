@@ -17,3 +17,11 @@ func (DeviceStatus) Values() []string {
 		string(DeviceStatusFree),
 	}
 }
+
+func (obj DeviceStatus) Ptr() *DeviceStatus {
+	if obj != "" {
+		return &obj
+	} else {
+		return nil
+	}
+}
