@@ -35,6 +35,10 @@ const (
 	FieldMissionBillingType = "mission_billing_type"
 	// FieldCep holds the string denoting the cep field in the database.
 	FieldCep = "cep"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldFinishedAt holds the string denoting the finished_at field in the database.
+	FieldFinishedAt = "finished_at"
 	// Table holds the table name of the price in the database.
 	Table = "prices"
 )
@@ -52,6 +56,8 @@ var Columns = []string{
 	FieldMissionCategory,
 	FieldMissionBillingType,
 	FieldCep,
+	FieldStartedAt,
+	FieldFinishedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -187,4 +193,14 @@ func ByMissionBillingType(opts ...sql.OrderTermOption) OrderOption {
 // ByCep orders the results by the cep field.
 func ByCep(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCep, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByFinishedAt orders the results by the finished_at field.
+func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
 }

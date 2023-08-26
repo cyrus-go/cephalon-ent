@@ -44,6 +44,8 @@ const (
 	FieldMissionBatchNumber = "mission_batch_number"
 	// FieldGpuVersion holds the string denoting the gpu_version field in the database.
 	FieldGpuVersion = "gpu_version"
+	// FieldUnitCep holds the string denoting the unit_cep field in the database.
+	FieldUnitCep = "unit_cep"
 	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
 	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
@@ -83,6 +85,7 @@ var Columns = []string{
 	FieldKeyPairID,
 	FieldMissionBatchNumber,
 	FieldGpuVersion,
+	FieldUnitCep,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -116,6 +119,8 @@ var (
 	DefaultKeyPairID int64
 	// DefaultMissionBatchNumber holds the default value on creation for the "mission_batch_number" field.
 	DefaultMissionBatchNumber string
+	// DefaultUnitCep holds the default value on creation for the "unit_cep" field.
+	DefaultUnitCep int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -239,6 +244,11 @@ func ByMissionBatchNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByGpuVersion orders the results by the gpu_version field.
 func ByGpuVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGpuVersion, opts...).ToFunc()
+}
+
+// ByUnitCep orders the results by the unit_cep field.
+func ByUnitCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUnitCep, opts...).ToFunc()
 }
 
 // ByMissionKeyPairsCount orders the results by mission_key_pairs count.

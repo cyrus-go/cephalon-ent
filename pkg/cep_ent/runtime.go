@@ -627,6 +627,10 @@ func init() {
 	missionDescMissionBatchNumber := missionFields[7].Descriptor()
 	// mission.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	mission.DefaultMissionBatchNumber = missionDescMissionBatchNumber.Default.(string)
+	// missionDescUnitCep is the schema descriptor for unit_cep field.
+	missionDescUnitCep := missionFields[9].Descriptor()
+	// mission.DefaultUnitCep holds the default value on creation for the unit_cep field.
+	mission.DefaultUnitCep = missionDescUnitCep.Default.(int64)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

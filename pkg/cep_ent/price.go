@@ -37,7 +37,11 @@ type Price struct {
 	// 任务计费类型
 	MissionBillingType enums.MissionBillingType `json:"mission_billing_type"`
 	// 任务单价
-	Cep          int64 `json:"cep"`
+	Cep int64 `json:"cep"`
+	// 价格有效时间开始，为空表示永久有效
+	StartedAt *time.Time `json:"started_at"`
+	// 价格有效时间结束，为空表示永久有效
+	FinishedAt   *time.Time `json:"finished_at"`
 	selectValues sql.SelectValues
 }
 
@@ -50,7 +54,7 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case price.FieldGpuVersion, price.FieldMissionType, price.FieldMissionCategory, price.FieldMissionBillingType:
 			values[i] = new(sql.NullString)
-		case price.FieldCreatedAt, price.FieldUpdatedAt, price.FieldDeletedAt:
+		case price.FieldCreatedAt, price.FieldUpdatedAt, price.FieldDeletedAt, price.FieldStartedAt, price.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -133,6 +137,20 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.Cep = value.Int64
 			}
+		case price.FieldStartedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field started_at", values[i])
+			} else if value.Valid {
+				pr.StartedAt = new(time.Time)
+				*pr.StartedAt = value.Time
+			}
+		case price.FieldFinishedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
+			} else if value.Valid {
+				pr.FinishedAt = new(time.Time)
+				*pr.FinishedAt = value.Time
+			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
 		}
@@ -198,6 +216,16 @@ func (pr *Price) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cep=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Cep))
+	builder.WriteString(", ")
+	if v := pr.StartedAt; v != nil {
+		builder.WriteString("started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := pr.FinishedAt; v != nil {
+		builder.WriteString("finished_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

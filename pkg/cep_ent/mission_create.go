@@ -213,6 +213,20 @@ func (mc *MissionCreate) SetNillableGpuVersion(ev *enums.GpuVersion) *MissionCre
 	return mc
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (mc *MissionCreate) SetUnitCep(i int64) *MissionCreate {
+	mc.mutation.SetUnitCep(i)
+	return mc
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableUnitCep(i *int64) *MissionCreate {
+	if i != nil {
+		mc.SetUnitCep(*i)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -334,6 +348,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultGpuVersion
 		mc.mutation.SetGpuVersion(v)
 	}
+	if _, ok := mc.mutation.UnitCep(); !ok {
+		v := mission.DefaultUnitCep
+		mc.mutation.SetUnitCep(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -400,6 +418,9 @@ func (mc *MissionCreate) check() error {
 		if err := mission.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
 		}
+	}
+	if _, ok := mc.mutation.UnitCep(); !ok {
+		return &ValidationError{Name: "unit_cep", err: errors.New(`cep_ent: missing required field "Mission.unit_cep"`)}
 	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair", err: errors.New(`cep_ent: missing required edge "Mission.key_pair"`)}
@@ -488,6 +509,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.GpuVersion(); ok {
 		_spec.SetField(mission.FieldGpuVersion, field.TypeEnum, value)
 		_node.GpuVersion = value
+	}
+	if value, ok := mc.mutation.UnitCep(); ok {
+		_spec.SetField(mission.FieldUnitCep, field.TypeInt64, value)
+		_node.UnitCep = value
 	}
 	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -748,6 +773,24 @@ func (u *MissionUpsert) UpdateGpuVersion() *MissionUpsert {
 	return u
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (u *MissionUpsert) SetUnitCep(v int64) *MissionUpsert {
+	u.Set(mission.FieldUnitCep, v)
+	return u
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateUnitCep() *MissionUpsert {
+	u.SetExcluded(mission.FieldUnitCep)
+	return u
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *MissionUpsert) AddUnitCep(v int64) *MissionUpsert {
+	u.Add(mission.FieldUnitCep, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -999,6 +1042,27 @@ func (u *MissionUpsertOne) SetGpuVersion(v enums.GpuVersion) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateGpuVersion() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateGpuVersion()
+	})
+}
+
+// SetUnitCep sets the "unit_cep" field.
+func (u *MissionUpsertOne) SetUnitCep(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUnitCep(v)
+	})
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *MissionUpsertOne) AddUnitCep(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddUnitCep(v)
+	})
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateUnitCep() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUnitCep()
 	})
 }
 
@@ -1415,6 +1479,27 @@ func (u *MissionUpsertBulk) SetGpuVersion(v enums.GpuVersion) *MissionUpsertBulk
 func (u *MissionUpsertBulk) UpdateGpuVersion() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateGpuVersion()
+	})
+}
+
+// SetUnitCep sets the "unit_cep" field.
+func (u *MissionUpsertBulk) SetUnitCep(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUnitCep(v)
+	})
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *MissionUpsertBulk) AddUnitCep(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddUnitCep(v)
+	})
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateUnitCep() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUnitCep()
 	})
 }
 

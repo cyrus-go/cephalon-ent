@@ -224,6 +224,27 @@ func (mu *MissionUpdate) SetNillableGpuVersion(ev *enums.GpuVersion) *MissionUpd
 	return mu
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (mu *MissionUpdate) SetUnitCep(i int64) *MissionUpdate {
+	mu.mutation.ResetUnitCep()
+	mu.mutation.SetUnitCep(i)
+	return mu
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableUnitCep(i *int64) *MissionUpdate {
+	if i != nil {
+		mu.SetUnitCep(*i)
+	}
+	return mu
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (mu *MissionUpdate) AddUnitCep(i int64) *MissionUpdate {
+	mu.mutation.AddUnitCep(i)
+	return mu
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mu *MissionUpdate) AddMissionKeyPairIDs(ids ...int64) *MissionUpdate {
 	mu.mutation.AddMissionKeyPairIDs(ids...)
@@ -401,6 +422,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.GpuVersion(); ok {
 		_spec.SetField(mission.FieldGpuVersion, field.TypeEnum, value)
+	}
+	if value, ok := mu.mutation.UnitCep(); ok {
+		_spec.SetField(mission.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := mu.mutation.AddedUnitCep(); ok {
+		_spec.AddField(mission.FieldUnitCep, field.TypeInt64, value)
 	}
 	if mu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -688,6 +715,27 @@ func (muo *MissionUpdateOne) SetNillableGpuVersion(ev *enums.GpuVersion) *Missio
 	return muo
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (muo *MissionUpdateOne) SetUnitCep(i int64) *MissionUpdateOne {
+	muo.mutation.ResetUnitCep()
+	muo.mutation.SetUnitCep(i)
+	return muo
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableUnitCep(i *int64) *MissionUpdateOne {
+	if i != nil {
+		muo.SetUnitCep(*i)
+	}
+	return muo
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (muo *MissionUpdateOne) AddUnitCep(i int64) *MissionUpdateOne {
+	muo.mutation.AddUnitCep(i)
+	return muo
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (muo *MissionUpdateOne) AddMissionKeyPairIDs(ids ...int64) *MissionUpdateOne {
 	muo.mutation.AddMissionKeyPairIDs(ids...)
@@ -895,6 +943,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.GpuVersion(); ok {
 		_spec.SetField(mission.FieldGpuVersion, field.TypeEnum, value)
+	}
+	if value, ok := muo.mutation.UnitCep(); ok {
+		_spec.SetField(mission.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := muo.mutation.AddedUnitCep(); ok {
+		_spec.AddField(mission.FieldUnitCep, field.TypeInt64, value)
 	}
 	if muo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{

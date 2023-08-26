@@ -17,6 +17,8 @@ func (Price) Fields() []ent.Field {
 		field.Enum("mission_category").GoType(enums.MissionCategorySD).Default(string(enums.MissionCategorySD)).StructTag(`json:"mission_category"`).Comment("任务大类"),
 		field.Enum("mission_billing_type").GoType(enums.MissionBillingTypeCount).Default(string(enums.MissionBillingTypeCount)).StructTag(`json:"mission_billing_type"`).Comment("任务计费类型"),
 		field.Int64("cep").Default(0).StructTag(`json:"cep"`).Comment("任务单价"),
+		field.Time("started_at").Optional().Nillable().StructTag(`json:"started_at"`).Comment("价格有效时间开始，为空表示永久有效"),
+		field.Time("finished_at").Optional().Nillable().StructTag(`json:"finished_at"`).Comment("价格有效时间结束，为空表示永久有效"),
 	}
 }
 

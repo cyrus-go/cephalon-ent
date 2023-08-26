@@ -12432,6 +12432,8 @@ type MissionMutation struct {
 	appendresult_urls        []string
 	mission_batch_number     *string
 	gpu_version              *enums.GpuVersion
+	unit_cep                 *int64
+	addunit_cep              *int64
 	clearedFields            map[string]struct{}
 	mission_key_pairs        map[int64]struct{}
 	removedmission_key_pairs map[int64]struct{}
@@ -13120,6 +13122,62 @@ func (m *MissionMutation) ResetGpuVersion() {
 	m.gpu_version = nil
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (m *MissionMutation) SetUnitCep(i int64) {
+	m.unit_cep = &i
+	m.addunit_cep = nil
+}
+
+// UnitCep returns the value of the "unit_cep" field in the mutation.
+func (m *MissionMutation) UnitCep() (r int64, exists bool) {
+	v := m.unit_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnitCep returns the old "unit_cep" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldUnitCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnitCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnitCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnitCep: %w", err)
+	}
+	return oldValue.UnitCep, nil
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (m *MissionMutation) AddUnitCep(i int64) {
+	if m.addunit_cep != nil {
+		*m.addunit_cep += i
+	} else {
+		m.addunit_cep = &i
+	}
+}
+
+// AddedUnitCep returns the value that was added to the "unit_cep" field in this mutation.
+func (m *MissionMutation) AddedUnitCep() (r int64, exists bool) {
+	v := m.addunit_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUnitCep resets all changes to the "unit_cep" field.
+func (m *MissionMutation) ResetUnitCep() {
+	m.unit_cep = nil
+	m.addunit_cep = nil
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
 func (m *MissionMutation) AddMissionKeyPairIDs(ids ...int64) {
 	if m.mission_key_pairs == nil {
@@ -13234,7 +13292,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -13277,6 +13335,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.gpu_version != nil {
 		fields = append(fields, mission.FieldGpuVersion)
 	}
+	if m.unit_cep != nil {
+		fields = append(fields, mission.FieldUnitCep)
+	}
 	return fields
 }
 
@@ -13313,6 +13374,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionBatchNumber()
 	case mission.FieldGpuVersion:
 		return m.GpuVersion()
+	case mission.FieldUnitCep:
+		return m.UnitCep()
 	}
 	return nil, false
 }
@@ -13350,6 +13413,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldMissionBatchNumber(ctx)
 	case mission.FieldGpuVersion:
 		return m.OldGpuVersion(ctx)
+	case mission.FieldUnitCep:
+		return m.OldUnitCep(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13457,6 +13522,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGpuVersion(v)
 		return nil
+	case mission.FieldUnitCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnitCep(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13471,6 +13543,9 @@ func (m *MissionMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, mission.FieldUpdatedBy)
 	}
+	if m.addunit_cep != nil {
+		fields = append(fields, mission.FieldUnitCep)
+	}
 	return fields
 }
 
@@ -13483,6 +13558,8 @@ func (m *MissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case mission.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case mission.FieldUnitCep:
+		return m.AddedUnitCep()
 	}
 	return nil, false
 }
@@ -13505,6 +13582,13 @@ func (m *MissionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
+		return nil
+	case mission.FieldUnitCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUnitCep(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission numeric field %s", name)
@@ -13583,6 +13667,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldGpuVersion:
 		m.ResetGpuVersion()
+		return nil
+	case mission.FieldUnitCep:
+		m.ResetUnitCep()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -22239,6 +22326,8 @@ type PriceMutation struct {
 	mission_billing_type *enums.MissionBillingType
 	cep                  *int64
 	addcep               *int64
+	started_at           *time.Time
+	finished_at          *time.Time
 	clearedFields        map[string]struct{}
 	done                 bool
 	oldValue             func(context.Context) (*Price, error)
@@ -22769,6 +22858,104 @@ func (m *PriceMutation) ResetCep() {
 	m.addcep = nil
 }
 
+// SetStartedAt sets the "started_at" field.
+func (m *PriceMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *PriceMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the Price entity.
+// If the Price object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PriceMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *PriceMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[price.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *PriceMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[price.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *PriceMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, price.FieldStartedAt)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *PriceMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *PriceMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the Price entity.
+// If the Price object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PriceMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *PriceMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[price.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *PriceMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[price.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *PriceMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, price.FieldFinishedAt)
+}
+
 // Where appends a list predicates to the PriceMutation builder.
 func (m *PriceMutation) Where(ps ...predicate.Price) {
 	m.predicates = append(m.predicates, ps...)
@@ -22803,7 +22990,7 @@ func (m *PriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PriceMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, price.FieldCreatedBy)
 	}
@@ -22834,6 +23021,12 @@ func (m *PriceMutation) Fields() []string {
 	if m.cep != nil {
 		fields = append(fields, price.FieldCep)
 	}
+	if m.started_at != nil {
+		fields = append(fields, price.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, price.FieldFinishedAt)
+	}
 	return fields
 }
 
@@ -22862,6 +23055,10 @@ func (m *PriceMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionBillingType()
 	case price.FieldCep:
 		return m.Cep()
+	case price.FieldStartedAt:
+		return m.StartedAt()
+	case price.FieldFinishedAt:
+		return m.FinishedAt()
 	}
 	return nil, false
 }
@@ -22891,6 +23088,10 @@ func (m *PriceMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldMissionBillingType(ctx)
 	case price.FieldCep:
 		return m.OldCep(ctx)
+	case price.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case price.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Price field %s", name)
 }
@@ -22970,6 +23171,20 @@ func (m *PriceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCep(v)
 		return nil
+	case price.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case price.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Price field %s", name)
 }
@@ -23038,7 +23253,14 @@ func (m *PriceMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *PriceMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(price.FieldStartedAt) {
+		fields = append(fields, price.FieldStartedAt)
+	}
+	if m.FieldCleared(price.FieldFinishedAt) {
+		fields = append(fields, price.FieldFinishedAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -23051,6 +23273,14 @@ func (m *PriceMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *PriceMutation) ClearField(name string) error {
+	switch name {
+	case price.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case price.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
+	}
 	return fmt.Errorf("unknown Price nullable field %s", name)
 }
 
@@ -23087,6 +23317,12 @@ func (m *PriceMutation) ResetField(name string) error {
 		return nil
 	case price.FieldCep:
 		m.ResetCep()
+		return nil
+	case price.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case price.FieldFinishedAt:
+		m.ResetFinishedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Price field %s", name)

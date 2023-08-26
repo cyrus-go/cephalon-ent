@@ -101,6 +101,11 @@ func MissionBatchNumber(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldMissionBatchNumber, v))
 }
 
+// UnitCep applies equality check predicate on the "unit_cep" field. It's identical to UnitCepEQ.
+func UnitCep(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUnitCep, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -644,6 +649,46 @@ func GpuVersionNotIn(vs ...enums.GpuVersion) predicate.Mission {
 		v[i] = vs[i]
 	}
 	return predicate.Mission(sql.FieldNotIn(FieldGpuVersion, v...))
+}
+
+// UnitCepEQ applies the EQ predicate on the "unit_cep" field.
+func UnitCepEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUnitCep, v))
+}
+
+// UnitCepNEQ applies the NEQ predicate on the "unit_cep" field.
+func UnitCepNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldUnitCep, v))
+}
+
+// UnitCepIn applies the In predicate on the "unit_cep" field.
+func UnitCepIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldUnitCep, vs...))
+}
+
+// UnitCepNotIn applies the NotIn predicate on the "unit_cep" field.
+func UnitCepNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldUnitCep, vs...))
+}
+
+// UnitCepGT applies the GT predicate on the "unit_cep" field.
+func UnitCepGT(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldUnitCep, v))
+}
+
+// UnitCepGTE applies the GTE predicate on the "unit_cep" field.
+func UnitCepGTE(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldUnitCep, v))
+}
+
+// UnitCepLT applies the LT predicate on the "unit_cep" field.
+func UnitCepLT(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldUnitCep, v))
+}
+
+// UnitCepLTE applies the LTE predicate on the "unit_cep" field.
+func UnitCepLTE(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldUnitCep, v))
 }
 
 // HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.

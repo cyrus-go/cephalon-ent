@@ -24,6 +24,7 @@ func (Mission) Fields() []ent.Field {
 		field.Int64("key_pair_id").Default(0).StructTag(`json:"key_pair_id"`).Comment("任务创建者的密钥对 ID"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
 		field.Enum("gpu_version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersion2060)).StructTag(`json:"gpu_version"`).Comment("最低可接显卡"),
+		field.Int64("unit_cep").Default(0).StructTag(`json:"unit_cep"`).Comment("任务单价，按次就是 unit_cep/次，按时就是 unit_cep/分钟"),
 	}
 }
 

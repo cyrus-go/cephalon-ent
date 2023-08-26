@@ -168,6 +168,46 @@ func (pu *PriceUpdate) AddCep(i int64) *PriceUpdate {
 	return pu
 }
 
+// SetStartedAt sets the "started_at" field.
+func (pu *PriceUpdate) SetStartedAt(t time.Time) *PriceUpdate {
+	pu.mutation.SetStartedAt(t)
+	return pu
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableStartedAt(t *time.Time) *PriceUpdate {
+	if t != nil {
+		pu.SetStartedAt(*t)
+	}
+	return pu
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (pu *PriceUpdate) ClearStartedAt() *PriceUpdate {
+	pu.mutation.ClearStartedAt()
+	return pu
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (pu *PriceUpdate) SetFinishedAt(t time.Time) *PriceUpdate {
+	pu.mutation.SetFinishedAt(t)
+	return pu
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableFinishedAt(t *time.Time) *PriceUpdate {
+	if t != nil {
+		pu.SetFinishedAt(*t)
+	}
+	return pu
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (pu *PriceUpdate) ClearFinishedAt() *PriceUpdate {
+	pu.mutation.ClearFinishedAt()
+	return pu
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (pu *PriceUpdate) Mutation() *PriceMutation {
 	return pu.mutation
@@ -281,6 +321,18 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.AddedCep(); ok {
 		_spec.AddField(price.FieldCep, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.StartedAt(); ok {
+		_spec.SetField(price.FieldStartedAt, field.TypeTime, value)
+	}
+	if pu.mutation.StartedAtCleared() {
+		_spec.ClearField(price.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := pu.mutation.FinishedAt(); ok {
+		_spec.SetField(price.FieldFinishedAt, field.TypeTime, value)
+	}
+	if pu.mutation.FinishedAtCleared() {
+		_spec.ClearField(price.FieldFinishedAt, field.TypeTime)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -441,6 +493,46 @@ func (puo *PriceUpdateOne) AddCep(i int64) *PriceUpdateOne {
 	return puo
 }
 
+// SetStartedAt sets the "started_at" field.
+func (puo *PriceUpdateOne) SetStartedAt(t time.Time) *PriceUpdateOne {
+	puo.mutation.SetStartedAt(t)
+	return puo
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableStartedAt(t *time.Time) *PriceUpdateOne {
+	if t != nil {
+		puo.SetStartedAt(*t)
+	}
+	return puo
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (puo *PriceUpdateOne) ClearStartedAt() *PriceUpdateOne {
+	puo.mutation.ClearStartedAt()
+	return puo
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (puo *PriceUpdateOne) SetFinishedAt(t time.Time) *PriceUpdateOne {
+	puo.mutation.SetFinishedAt(t)
+	return puo
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableFinishedAt(t *time.Time) *PriceUpdateOne {
+	if t != nil {
+		puo.SetFinishedAt(*t)
+	}
+	return puo
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (puo *PriceUpdateOne) ClearFinishedAt() *PriceUpdateOne {
+	puo.mutation.ClearFinishedAt()
+	return puo
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (puo *PriceUpdateOne) Mutation() *PriceMutation {
 	return puo.mutation
@@ -584,6 +676,18 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if value, ok := puo.mutation.AddedCep(); ok {
 		_spec.AddField(price.FieldCep, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.StartedAt(); ok {
+		_spec.SetField(price.FieldStartedAt, field.TypeTime, value)
+	}
+	if puo.mutation.StartedAtCleared() {
+		_spec.ClearField(price.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := puo.mutation.FinishedAt(); ok {
+		_spec.SetField(price.FieldFinishedAt, field.TypeTime, value)
+	}
+	if puo.mutation.FinishedAtCleared() {
+		_spec.ClearField(price.FieldFinishedAt, field.TypeTime)
 	}
 	_node = &Price{config: puo.config}
 	_spec.Assign = _node.assignValues

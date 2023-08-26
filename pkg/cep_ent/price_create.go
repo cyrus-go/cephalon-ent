@@ -163,6 +163,34 @@ func (pc *PriceCreate) SetNillableCep(i *int64) *PriceCreate {
 	return pc
 }
 
+// SetStartedAt sets the "started_at" field.
+func (pc *PriceCreate) SetStartedAt(t time.Time) *PriceCreate {
+	pc.mutation.SetStartedAt(t)
+	return pc
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableStartedAt(t *time.Time) *PriceCreate {
+	if t != nil {
+		pc.SetStartedAt(*t)
+	}
+	return pc
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (pc *PriceCreate) SetFinishedAt(t time.Time) *PriceCreate {
+	pc.mutation.SetFinishedAt(t)
+	return pc
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableFinishedAt(t *time.Time) *PriceCreate {
+	if t != nil {
+		pc.SetFinishedAt(*t)
+	}
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *PriceCreate) SetID(i int64) *PriceCreate {
 	pc.mutation.SetID(i)
@@ -383,6 +411,14 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 		_spec.SetField(price.FieldCep, field.TypeInt64, value)
 		_node.Cep = value
 	}
+	if value, ok := pc.mutation.StartedAt(); ok {
+		_spec.SetField(price.FieldStartedAt, field.TypeTime, value)
+		_node.StartedAt = &value
+	}
+	if value, ok := pc.mutation.FinishedAt(); ok {
+		_spec.SetField(price.FieldFinishedAt, field.TypeTime, value)
+		_node.FinishedAt = &value
+	}
 	return _node, _spec
 }
 
@@ -558,6 +594,42 @@ func (u *PriceUpsert) UpdateCep() *PriceUpsert {
 // AddCep adds v to the "cep" field.
 func (u *PriceUpsert) AddCep(v int64) *PriceUpsert {
 	u.Add(price.FieldCep, v)
+	return u
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *PriceUpsert) SetStartedAt(v time.Time) *PriceUpsert {
+	u.Set(price.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateStartedAt() *PriceUpsert {
+	u.SetExcluded(price.FieldStartedAt)
+	return u
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *PriceUpsert) ClearStartedAt() *PriceUpsert {
+	u.SetNull(price.FieldStartedAt)
+	return u
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *PriceUpsert) SetFinishedAt(v time.Time) *PriceUpsert {
+	u.Set(price.FieldFinishedAt, v)
+	return u
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateFinishedAt() *PriceUpsert {
+	u.SetExcluded(price.FieldFinishedAt)
+	return u
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *PriceUpsert) ClearFinishedAt() *PriceUpsert {
+	u.SetNull(price.FieldFinishedAt)
 	return u
 }
 
@@ -756,6 +828,48 @@ func (u *PriceUpsertOne) AddCep(v int64) *PriceUpsertOne {
 func (u *PriceUpsertOne) UpdateCep() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateCep()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *PriceUpsertOne) SetStartedAt(v time.Time) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateStartedAt() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *PriceUpsertOne) ClearStartedAt() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *PriceUpsertOne) SetFinishedAt(v time.Time) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateFinishedAt() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *PriceUpsertOne) ClearFinishedAt() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 
@@ -1116,6 +1230,48 @@ func (u *PriceUpsertBulk) AddCep(v int64) *PriceUpsertBulk {
 func (u *PriceUpsertBulk) UpdateCep() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateCep()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *PriceUpsertBulk) SetStartedAt(v time.Time) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateStartedAt() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *PriceUpsertBulk) ClearStartedAt() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *PriceUpsertBulk) SetFinishedAt(v time.Time) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateFinishedAt() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *PriceUpsertBulk) ClearFinishedAt() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 
