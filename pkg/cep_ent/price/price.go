@@ -89,12 +89,12 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultGpuVersion enums.GpuVersion = "RTX 2060"
+const DefaultGpuVersion enums.GpuVersion = "RTX2060"
 
 // GpuVersionValidator is a validator for the "gpu_version" field enum values. It is called by the builders before save.
 func GpuVersionValidator(gv enums.GpuVersion) error {
 	switch gv {
-	case "RTX 2060", "RTX 2060 Ti", "RTX 2070", "RTX 2070 Ti", "RTX 2080", "RTX 2080 Ti", "RTX 3060", "RTX 3060 Ti", "RTX 3070", "RTX 3070 Ti", "RTX 3080", "RTX 3080 Ti", "RTX 3090", "RTX 3090 Ti", "RTX 4060", "RTX 4060 Ti", "RTX 4070", "RTX 4070 Ti", "RTX 4080", "RTX 4090":
+	case "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for gpu_version field: %q", gv)
