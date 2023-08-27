@@ -2173,6 +2173,22 @@ func (c *MissionClient) QueryKeyPair(m *Mission) *HmacKeyPairQuery {
 	return query
 }
 
+// QueryMissionConsumeOrder queries the mission_consume_order edge of a Mission.
+func (c *MissionClient) QueryMissionConsumeOrder(m *Mission) *MissionConsumeOrderQuery {
+	query := (&MissionConsumeOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, mission.MissionConsumeOrderTable, mission.MissionConsumeOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MissionClient) Hooks() []Hook {
 	return c.hooks.Mission
@@ -2498,6 +2514,22 @@ func (c *MissionConsumeOrderClient) QueryMissionBatch(mco *MissionConsumeOrder) 
 			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, id),
 			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionconsumeorder.MissionBatchTable, missionconsumeorder.MissionBatchColumn),
+		)
+		fromV = sqlgraph.Neighbors(mco.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMission queries the mission edge of a MissionConsumeOrder.
+func (c *MissionConsumeOrderClient) QueryMission(mco *MissionConsumeOrder) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mco.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, missionconsumeorder.MissionTable, missionconsumeorder.MissionColumn),
 		)
 		fromV = sqlgraph.Neighbors(mco.driver.Dialect(), step)
 		return fromV, nil

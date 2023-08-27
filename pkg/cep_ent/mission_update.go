@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -265,6 +266,25 @@ func (mu *MissionUpdate) SetKeyPair(h *HmacKeyPair) *MissionUpdate {
 	return mu.SetKeyPairID(h.ID)
 }
 
+// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
+func (mu *MissionUpdate) SetMissionConsumeOrderID(id int64) *MissionUpdate {
+	mu.mutation.SetMissionConsumeOrderID(id)
+	return mu
+}
+
+// SetNillableMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID if the given value is not nil.
+func (mu *MissionUpdate) SetNillableMissionConsumeOrderID(id *int64) *MissionUpdate {
+	if id != nil {
+		mu = mu.SetMissionConsumeOrderID(*id)
+	}
+	return mu
+}
+
+// SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
+func (mu *MissionUpdate) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionUpdate {
+	return mu.SetMissionConsumeOrderID(m.ID)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (mu *MissionUpdate) Mutation() *MissionMutation {
 	return mu.mutation
@@ -294,6 +314,12 @@ func (mu *MissionUpdate) RemoveMissionKeyPairs(m ...*MissionKeyPair) *MissionUpd
 // ClearKeyPair clears the "key_pair" edge to the HmacKeyPair entity.
 func (mu *MissionUpdate) ClearKeyPair() *MissionUpdate {
 	mu.mutation.ClearKeyPair()
+	return mu
+}
+
+// ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
+func (mu *MissionUpdate) ClearMissionConsumeOrder() *MissionUpdate {
+	mu.mutation.ClearMissionConsumeOrder()
 	return mu
 }
 
@@ -496,6 +522,35 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.MissionConsumeOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionConsumeOrderTable,
+			Columns: []string{mission.MissionConsumeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionConsumeOrderTable,
+			Columns: []string{mission.MissionConsumeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -756,6 +811,25 @@ func (muo *MissionUpdateOne) SetKeyPair(h *HmacKeyPair) *MissionUpdateOne {
 	return muo.SetKeyPairID(h.ID)
 }
 
+// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
+func (muo *MissionUpdateOne) SetMissionConsumeOrderID(id int64) *MissionUpdateOne {
+	muo.mutation.SetMissionConsumeOrderID(id)
+	return muo
+}
+
+// SetNillableMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableMissionConsumeOrderID(id *int64) *MissionUpdateOne {
+	if id != nil {
+		muo = muo.SetMissionConsumeOrderID(*id)
+	}
+	return muo
+}
+
+// SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
+func (muo *MissionUpdateOne) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionUpdateOne {
+	return muo.SetMissionConsumeOrderID(m.ID)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (muo *MissionUpdateOne) Mutation() *MissionMutation {
 	return muo.mutation
@@ -785,6 +859,12 @@ func (muo *MissionUpdateOne) RemoveMissionKeyPairs(m ...*MissionKeyPair) *Missio
 // ClearKeyPair clears the "key_pair" edge to the HmacKeyPair entity.
 func (muo *MissionUpdateOne) ClearKeyPair() *MissionUpdateOne {
 	muo.mutation.ClearKeyPair()
+	return muo
+}
+
+// ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
+func (muo *MissionUpdateOne) ClearMissionConsumeOrder() *MissionUpdateOne {
+	muo.mutation.ClearMissionConsumeOrder()
 	return muo
 }
 
@@ -1017,6 +1097,35 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.MissionConsumeOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionConsumeOrderTable,
+			Columns: []string{mission.MissionConsumeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionConsumeOrderTable,
+			Columns: []string{mission.MissionConsumeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

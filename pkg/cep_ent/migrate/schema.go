@@ -408,7 +408,6 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，关联任务中枢的任务", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务消耗的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务消耗的赠送 cep 量", Default: 0},
@@ -419,6 +418,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始执行时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务结束执行时刻"},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号，用于方便检索", Default: ""},
+		{Name: "mission_id", Type: field.TypeInt64, Unique: true, Comment: "任务 id，关联任务中枢的任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键关联用户 id", Default: 0},
 	}
@@ -428,6 +428,12 @@ var (
 		Columns:    MissionConsumeOrdersColumns,
 		PrimaryKey: []*schema.Column{MissionConsumeOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mission_consume_orders_missions_mission_consume_order",
+				Columns:    []*schema.Column{MissionConsumeOrdersColumns[16]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
 			{
 				Symbol:     "mission_consume_orders_mission_batches_mission_consume_orders",
 				Columns:    []*schema.Column{MissionConsumeOrdersColumns[17]},
@@ -888,8 +894,9 @@ func init() {
 	MissionsTable.Annotation = &entsql.Annotation{}
 	MissionBatchesTable.ForeignKeys[0].RefTable = UsersTable
 	MissionBatchesTable.Annotation = &entsql.Annotation{}
-	MissionConsumeOrdersTable.ForeignKeys[0].RefTable = MissionBatchesTable
-	MissionConsumeOrdersTable.ForeignKeys[1].RefTable = UsersTable
+	MissionConsumeOrdersTable.ForeignKeys[0].RefTable = MissionsTable
+	MissionConsumeOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
+	MissionConsumeOrdersTable.ForeignKeys[2].RefTable = UsersTable
 	MissionConsumeOrdersTable.Annotation = &entsql.Annotation{}
 	MissionKeyPairsTable.ForeignKeys[0].RefTable = HmacKeyPairsTable
 	MissionKeyPairsTable.ForeignKeys[1].RefTable = MissionsTable

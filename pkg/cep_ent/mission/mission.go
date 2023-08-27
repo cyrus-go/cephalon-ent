@@ -50,6 +50,8 @@ const (
 	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
 	EdgeKeyPair = "key_pair"
+	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
+	EdgeMissionConsumeOrder = "mission_consume_order"
 	// Table holds the table name of the mission in the database.
 	Table = "missions"
 	// MissionKeyPairsTable is the table that holds the mission_key_pairs relation/edge.
@@ -66,6 +68,13 @@ const (
 	KeyPairInverseTable = "hmac_key_pairs"
 	// KeyPairColumn is the table column denoting the key_pair relation/edge.
 	KeyPairColumn = "key_pair_id"
+	// MissionConsumeOrderTable is the table that holds the mission_consume_order relation/edge.
+	MissionConsumeOrderTable = "mission_consume_orders"
+	// MissionConsumeOrderInverseTable is the table name for the MissionConsumeOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionconsumeorder" package.
+	MissionConsumeOrderInverseTable = "mission_consume_orders"
+	// MissionConsumeOrderColumn is the table column denoting the mission_consume_order relation/edge.
+	MissionConsumeOrderColumn = "mission_id"
 )
 
 // Columns holds all SQL columns for mission fields.
@@ -271,6 +280,13 @@ func ByKeyPairField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newKeyPairStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByMissionConsumeOrderField orders the results by mission_consume_order field.
+func ByMissionConsumeOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrderStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newMissionKeyPairsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -283,5 +299,12 @@ func newKeyPairStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(KeyPairInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, KeyPairTable, KeyPairColumn),
+	)
+}
+func newMissionConsumeOrderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionConsumeOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, MissionConsumeOrderTable, MissionConsumeOrderColumn),
 	)
 }

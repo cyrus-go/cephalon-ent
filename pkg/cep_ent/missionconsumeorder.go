@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -72,9 +73,11 @@ type MissionConsumeOrderEdges struct {
 	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
 	// MissionBatch holds the value of the mission_batch edge.
 	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
+	// Mission holds the value of the mission edge.
+	Mission *Mission `json:"mission,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -119,6 +122,19 @@ func (e MissionConsumeOrderEdges) MissionBatchOrErr() (*MissionBatch, error) {
 		return e.MissionBatch, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_batch"}
+}
+
+// MissionOrErr returns the Mission value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionConsumeOrderEdges) MissionOrErr() (*Mission, error) {
+	if e.loadedTypes[4] {
+		if e.Mission == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: mission.Label}
+		}
+		return e.Mission, nil
+	}
+	return nil, &NotLoadedError{edge: "mission"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -294,6 +310,11 @@ func (mco *MissionConsumeOrder) QueryMissionProduceOrders() *MissionProduceOrder
 // QueryMissionBatch queries the "mission_batch" edge of the MissionConsumeOrder entity.
 func (mco *MissionConsumeOrder) QueryMissionBatch() *MissionBatchQuery {
 	return NewMissionConsumeOrderClient(mco.config).QueryMissionBatch(mco)
+}
+
+// QueryMission queries the "mission" edge of the MissionConsumeOrder entity.
+func (mco *MissionConsumeOrder) QueryMission() *MissionQuery {
+	return NewMissionConsumeOrderClient(mco.config).QueryMission(mco)
 }
 
 // Update returns a builder for updating this MissionConsumeOrder.

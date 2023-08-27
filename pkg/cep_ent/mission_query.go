@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
@@ -20,12 +21,13 @@ import (
 // MissionQuery is the builder for querying Mission entities.
 type MissionQuery struct {
 	config
-	ctx                 *QueryContext
-	order               []mission.OrderOption
-	inters              []Interceptor
-	predicates          []predicate.Mission
-	withMissionKeyPairs *MissionKeyPairQuery
-	withKeyPair         *HmacKeyPairQuery
+	ctx                     *QueryContext
+	order                   []mission.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.Mission
+	withMissionKeyPairs     *MissionKeyPairQuery
+	withKeyPair             *HmacKeyPairQuery
+	withMissionConsumeOrder *MissionConsumeOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -99,6 +101,28 @@ func (mq *MissionQuery) QueryKeyPair() *HmacKeyPairQuery {
 			sqlgraph.From(mission.Table, mission.FieldID, selector),
 			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, mission.KeyPairTable, mission.KeyPairColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissionConsumeOrder chains the current query on the "mission_consume_order" edge.
+func (mq *MissionQuery) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
+	query := (&MissionConsumeOrderClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, mission.MissionConsumeOrderTable, mission.MissionConsumeOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -293,13 +317,14 @@ func (mq *MissionQuery) Clone() *MissionQuery {
 		return nil
 	}
 	return &MissionQuery{
-		config:              mq.config,
-		ctx:                 mq.ctx.Clone(),
-		order:               append([]mission.OrderOption{}, mq.order...),
-		inters:              append([]Interceptor{}, mq.inters...),
-		predicates:          append([]predicate.Mission{}, mq.predicates...),
-		withMissionKeyPairs: mq.withMissionKeyPairs.Clone(),
-		withKeyPair:         mq.withKeyPair.Clone(),
+		config:                  mq.config,
+		ctx:                     mq.ctx.Clone(),
+		order:                   append([]mission.OrderOption{}, mq.order...),
+		inters:                  append([]Interceptor{}, mq.inters...),
+		predicates:              append([]predicate.Mission{}, mq.predicates...),
+		withMissionKeyPairs:     mq.withMissionKeyPairs.Clone(),
+		withKeyPair:             mq.withKeyPair.Clone(),
+		withMissionConsumeOrder: mq.withMissionConsumeOrder.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -325,6 +350,17 @@ func (mq *MissionQuery) WithKeyPair(opts ...func(*HmacKeyPairQuery)) *MissionQue
 		opt(query)
 	}
 	mq.withKeyPair = query
+	return mq
+}
+
+// WithMissionConsumeOrder tells the query-builder to eager-load the nodes that are connected to
+// the "mission_consume_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithMissionConsumeOrder(opts ...func(*MissionConsumeOrderQuery)) *MissionQuery {
+	query := (&MissionConsumeOrderClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withMissionConsumeOrder = query
 	return mq
 }
 
@@ -406,9 +442,10 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 	var (
 		nodes       = []*Mission{}
 		_spec       = mq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			mq.withMissionKeyPairs != nil,
 			mq.withKeyPair != nil,
+			mq.withMissionConsumeOrder != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -439,6 +476,12 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 	if query := mq.withKeyPair; query != nil {
 		if err := mq.loadKeyPair(ctx, query, nodes, nil,
 			func(n *Mission, e *HmacKeyPair) { n.Edges.KeyPair = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withMissionConsumeOrder; query != nil {
+		if err := mq.loadMissionConsumeOrder(ctx, query, nodes, nil,
+			func(n *Mission, e *MissionConsumeOrder) { n.Edges.MissionConsumeOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -501,6 +544,33 @@ func (mq *MissionQuery) loadKeyPair(ctx context.Context, query *HmacKeyPairQuery
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (mq *MissionQuery) loadMissionConsumeOrder(ctx context.Context, query *MissionConsumeOrderQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionConsumeOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionconsumeorder.FieldMissionID)
+	}
+	query.Where(predicate.MissionConsumeOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.MissionConsumeOrderColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

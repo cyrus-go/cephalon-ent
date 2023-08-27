@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -62,9 +63,11 @@ type MissionEdges struct {
 	MissionKeyPairs []*MissionKeyPair `json:"mission_key_pairs,omitempty"`
 	// KeyPair holds the value of the key_pair edge.
 	KeyPair *HmacKeyPair `json:"key_pair,omitempty"`
+	// MissionConsumeOrder holds the value of the mission_consume_order edge.
+	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // MissionKeyPairsOrErr returns the MissionKeyPairs value or an error if the edge
@@ -87,6 +90,19 @@ func (e MissionEdges) KeyPairOrErr() (*HmacKeyPair, error) {
 		return e.KeyPair, nil
 	}
 	return nil, &NotLoadedError{edge: "key_pair"}
+}
+
+// MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
+	if e.loadedTypes[2] {
+		if e.MissionConsumeOrder == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionconsumeorder.Label}
+		}
+		return e.MissionConsumeOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_consume_order"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -236,6 +252,11 @@ func (m *Mission) QueryMissionKeyPairs() *MissionKeyPairQuery {
 // QueryKeyPair queries the "key_pair" edge of the Mission entity.
 func (m *Mission) QueryKeyPair() *HmacKeyPairQuery {
 	return NewMissionClient(m.config).QueryKeyPair(m)
+}
+
+// QueryMissionConsumeOrder queries the "mission_consume_order" edge of the Mission entity.
+func (m *Mission) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
+	return NewMissionClient(m.config).QueryMissionConsumeOrder(m)
 }
 
 // Update returns a builder for updating this Mission.

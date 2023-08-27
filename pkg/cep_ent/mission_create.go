@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -259,6 +260,25 @@ func (mc *MissionCreate) AddMissionKeyPairs(m ...*MissionKeyPair) *MissionCreate
 // SetKeyPair sets the "key_pair" edge to the HmacKeyPair entity.
 func (mc *MissionCreate) SetKeyPair(h *HmacKeyPair) *MissionCreate {
 	return mc.SetKeyPairID(h.ID)
+}
+
+// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
+func (mc *MissionCreate) SetMissionConsumeOrderID(id int64) *MissionCreate {
+	mc.mutation.SetMissionConsumeOrderID(id)
+	return mc
+}
+
+// SetNillableMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID if the given value is not nil.
+func (mc *MissionCreate) SetNillableMissionConsumeOrderID(id *int64) *MissionCreate {
+	if id != nil {
+		mc = mc.SetMissionConsumeOrderID(*id)
+	}
+	return mc
+}
+
+// SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
+func (mc *MissionCreate) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionCreate {
+	return mc.SetMissionConsumeOrderID(m.ID)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -545,6 +565,22 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.KeyPairID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionConsumeOrderTable,
+			Columns: []string{mission.MissionConsumeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

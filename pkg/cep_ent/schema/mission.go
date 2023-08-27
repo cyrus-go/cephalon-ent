@@ -33,6 +33,7 @@ func (Mission) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("mission_key_pairs", MissionKeyPair.Type),
 		edge.From("key_pair", HmacKeyPair.Type).Ref("created_missions").Field("key_pair_id").Unique().Required(),
+		edge.To("mission_consume_order", MissionConsumeOrder.Type).Unique(),
 	}
 }
 

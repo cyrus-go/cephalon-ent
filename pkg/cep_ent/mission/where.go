@@ -737,6 +737,29 @@ func HasKeyPairWith(preds ...predicate.HmacKeyPair) predicate.Mission {
 	})
 }
 
+// HasMissionConsumeOrder applies the HasEdge predicate on the "mission_consume_order" edge.
+func HasMissionConsumeOrder() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, MissionConsumeOrderTable, MissionConsumeOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionConsumeOrderWith applies the HasEdge predicate on the "mission_consume_order" edge with a given conditions (other predicates).
+func HasMissionConsumeOrderWith(preds ...predicate.MissionConsumeOrder) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionConsumeOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Mission) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {

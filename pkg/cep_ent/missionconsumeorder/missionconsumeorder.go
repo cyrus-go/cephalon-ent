@@ -60,6 +60,8 @@ const (
 	EdgeMissionProduceOrders = "mission_produce_orders"
 	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
 	EdgeMissionBatch = "mission_batch"
+	// EdgeMission holds the string denoting the mission edge name in mutations.
+	EdgeMission = "mission"
 	// Table holds the table name of the missionconsumeorder in the database.
 	Table = "mission_consume_orders"
 	// UserTable is the table that holds the user relation/edge.
@@ -90,6 +92,13 @@ const (
 	MissionBatchInverseTable = "mission_batches"
 	// MissionBatchColumn is the table column denoting the mission_batch relation/edge.
 	MissionBatchColumn = "mission_batch_id"
+	// MissionTable is the table that holds the mission relation/edge.
+	MissionTable = "mission_consume_orders"
+	// MissionInverseTable is the table name for the Mission entity.
+	// It exists in this package in order to avoid circular dependency with the "mission" package.
+	MissionInverseTable = "missions"
+	// MissionColumn is the table column denoting the mission relation/edge.
+	MissionColumn = "mission_id"
 )
 
 // Columns holds all SQL columns for missionconsumeorder fields.
@@ -337,6 +346,13 @@ func ByMissionBatchField(field string, opts ...sql.OrderTermOption) OrderOption 
 		sqlgraph.OrderByNeighborTerms(s, newMissionBatchStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByMissionField orders the results by mission field.
+func ByMissionField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -363,5 +379,12 @@ func newMissionBatchStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionBatchInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
+	)
+}
+func newMissionStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, MissionTable, MissionColumn),
 	)
 }

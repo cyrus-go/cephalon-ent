@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -333,6 +334,11 @@ func (mcoc *MissionConsumeOrderCreate) SetMissionBatch(m *MissionBatch) *Mission
 	return mcoc.SetMissionBatchID(m.ID)
 }
 
+// SetMission sets the "mission" edge to the Mission entity.
+func (mcoc *MissionConsumeOrderCreate) SetMission(m *Mission) *MissionConsumeOrderCreate {
+	return mcoc.SetMissionID(m.ID)
+}
+
 // Mutation returns the MissionConsumeOrderMutation object of the builder.
 func (mcoc *MissionConsumeOrderCreate) Mutation() *MissionConsumeOrderMutation {
 	return mcoc.mutation
@@ -523,6 +529,9 @@ func (mcoc *MissionConsumeOrderCreate) check() error {
 	if _, ok := mcoc.mutation.MissionBatchID(); !ok {
 		return &ValidationError{Name: "mission_batch", err: errors.New(`cep_ent: missing required edge "MissionConsumeOrder.mission_batch"`)}
 	}
+	if _, ok := mcoc.mutation.MissionID(); !ok {
+		return &ValidationError{Name: "mission", err: errors.New(`cep_ent: missing required edge "MissionConsumeOrder.mission"`)}
+	}
 	return nil
 }
 
@@ -575,10 +584,6 @@ func (mcoc *MissionConsumeOrderCreate) createSpec() (*MissionConsumeOrder, *sqlg
 	if value, ok := mcoc.mutation.DeletedAt(); ok {
 		_spec.SetField(missionconsumeorder.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
-	}
-	if value, ok := mcoc.mutation.MissionID(); ok {
-		_spec.SetField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
-		_node.MissionID = value
 	}
 	if value, ok := mcoc.mutation.Status(); ok {
 		_spec.SetField(missionconsumeorder.FieldStatus, field.TypeEnum, value)
@@ -684,6 +689,23 @@ func (mcoc *MissionConsumeOrderCreate) createSpec() (*MissionConsumeOrder, *sqlg
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MissionBatchID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mcoc.mutation.MissionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   missionconsumeorder.MissionTable,
+			Columns: []string{missionconsumeorder.MissionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -819,12 +841,6 @@ func (u *MissionConsumeOrderUpsert) SetMissionID(v int64) *MissionConsumeOrderUp
 // UpdateMissionID sets the "mission_id" field to the value that was provided on create.
 func (u *MissionConsumeOrderUpsert) UpdateMissionID() *MissionConsumeOrderUpsert {
 	u.SetExcluded(missionconsumeorder.FieldMissionID)
-	return u
-}
-
-// AddMissionID adds v to the "mission_id" field.
-func (u *MissionConsumeOrderUpsert) AddMissionID(v int64) *MissionConsumeOrderUpsert {
-	u.Add(missionconsumeorder.FieldMissionID, v)
 	return u
 }
 
@@ -1111,13 +1127,6 @@ func (u *MissionConsumeOrderUpsertOne) UpdateUserID() *MissionConsumeOrderUpsert
 func (u *MissionConsumeOrderUpsertOne) SetMissionID(v int64) *MissionConsumeOrderUpsertOne {
 	return u.Update(func(s *MissionConsumeOrderUpsert) {
 		s.SetMissionID(v)
-	})
-}
-
-// AddMissionID adds v to the "mission_id" field.
-func (u *MissionConsumeOrderUpsertOne) AddMissionID(v int64) *MissionConsumeOrderUpsertOne {
-	return u.Update(func(s *MissionConsumeOrderUpsert) {
-		s.AddMissionID(v)
 	})
 }
 
@@ -1597,13 +1606,6 @@ func (u *MissionConsumeOrderUpsertBulk) UpdateUserID() *MissionConsumeOrderUpser
 func (u *MissionConsumeOrderUpsertBulk) SetMissionID(v int64) *MissionConsumeOrderUpsertBulk {
 	return u.Update(func(s *MissionConsumeOrderUpsert) {
 		s.SetMissionID(v)
-	})
-}
-
-// AddMissionID adds v to the "mission_id" field.
-func (u *MissionConsumeOrderUpsertBulk) AddMissionID(v int64) *MissionConsumeOrderUpsertBulk {
-	return u.Update(func(s *MissionConsumeOrderUpsert) {
-		s.AddMissionID(v)
 	})
 }
 

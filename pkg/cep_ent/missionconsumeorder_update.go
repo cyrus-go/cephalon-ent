@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -111,7 +112,6 @@ func (mcou *MissionConsumeOrderUpdate) SetNillableUserID(i *int64) *MissionConsu
 
 // SetMissionID sets the "mission_id" field.
 func (mcou *MissionConsumeOrderUpdate) SetMissionID(i int64) *MissionConsumeOrderUpdate {
-	mcou.mutation.ResetMissionID()
 	mcou.mutation.SetMissionID(i)
 	return mcou
 }
@@ -121,12 +121,6 @@ func (mcou *MissionConsumeOrderUpdate) SetNillableMissionID(i *int64) *MissionCo
 	if i != nil {
 		mcou.SetMissionID(*i)
 	}
-	return mcou
-}
-
-// AddMissionID adds i to the "mission_id" field.
-func (mcou *MissionConsumeOrderUpdate) AddMissionID(i int64) *MissionConsumeOrderUpdate {
-	mcou.mutation.AddMissionID(i)
 	return mcou
 }
 
@@ -338,6 +332,11 @@ func (mcou *MissionConsumeOrderUpdate) SetMissionBatch(m *MissionBatch) *Mission
 	return mcou.SetMissionBatchID(m.ID)
 }
 
+// SetMission sets the "mission" edge to the Mission entity.
+func (mcou *MissionConsumeOrderUpdate) SetMission(m *Mission) *MissionConsumeOrderUpdate {
+	return mcou.SetMissionID(m.ID)
+}
+
 // Mutation returns the MissionConsumeOrderMutation object of the builder.
 func (mcou *MissionConsumeOrderUpdate) Mutation() *MissionConsumeOrderMutation {
 	return mcou.mutation
@@ -394,6 +393,12 @@ func (mcou *MissionConsumeOrderUpdate) RemoveMissionProduceOrders(m ...*MissionP
 // ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
 func (mcou *MissionConsumeOrderUpdate) ClearMissionBatch() *MissionConsumeOrderUpdate {
 	mcou.mutation.ClearMissionBatch()
+	return mcou
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (mcou *MissionConsumeOrderUpdate) ClearMission() *MissionConsumeOrderUpdate {
+	mcou.mutation.ClearMission()
 	return mcou
 }
 
@@ -456,6 +461,9 @@ func (mcou *MissionConsumeOrderUpdate) check() error {
 	if _, ok := mcou.mutation.MissionBatchID(); mcou.mutation.MissionBatchCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionConsumeOrder.mission_batch"`)
 	}
+	if _, ok := mcou.mutation.MissionID(); mcou.mutation.MissionCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionConsumeOrder.mission"`)
+	}
 	return nil
 }
 
@@ -488,12 +496,6 @@ func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if value, ok := mcou.mutation.DeletedAt(); ok {
 		_spec.SetField(missionconsumeorder.FieldDeletedAt, field.TypeTime, value)
-	}
-	if value, ok := mcou.mutation.MissionID(); ok {
-		_spec.SetField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
-	}
-	if value, ok := mcou.mutation.AddedMissionID(); ok {
-		_spec.AddField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
 	}
 	if value, ok := mcou.mutation.Status(); ok {
 		_spec.SetField(missionconsumeorder.FieldStatus, field.TypeEnum, value)
@@ -679,6 +681,35 @@ func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if mcou.mutation.MissionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   missionconsumeorder.MissionTable,
+			Columns: []string{missionconsumeorder.MissionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mcou.mutation.MissionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   missionconsumeorder.MissionTable,
+			Columns: []string{missionconsumeorder.MissionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mcou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionconsumeorder.Label}
@@ -777,7 +808,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) SetNillableUserID(i *int64) *MissionC
 
 // SetMissionID sets the "mission_id" field.
 func (mcouo *MissionConsumeOrderUpdateOne) SetMissionID(i int64) *MissionConsumeOrderUpdateOne {
-	mcouo.mutation.ResetMissionID()
 	mcouo.mutation.SetMissionID(i)
 	return mcouo
 }
@@ -787,12 +817,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) SetNillableMissionID(i *int64) *Missi
 	if i != nil {
 		mcouo.SetMissionID(*i)
 	}
-	return mcouo
-}
-
-// AddMissionID adds i to the "mission_id" field.
-func (mcouo *MissionConsumeOrderUpdateOne) AddMissionID(i int64) *MissionConsumeOrderUpdateOne {
-	mcouo.mutation.AddMissionID(i)
 	return mcouo
 }
 
@@ -1004,6 +1028,11 @@ func (mcouo *MissionConsumeOrderUpdateOne) SetMissionBatch(m *MissionBatch) *Mis
 	return mcouo.SetMissionBatchID(m.ID)
 }
 
+// SetMission sets the "mission" edge to the Mission entity.
+func (mcouo *MissionConsumeOrderUpdateOne) SetMission(m *Mission) *MissionConsumeOrderUpdateOne {
+	return mcouo.SetMissionID(m.ID)
+}
+
 // Mutation returns the MissionConsumeOrderMutation object of the builder.
 func (mcouo *MissionConsumeOrderUpdateOne) Mutation() *MissionConsumeOrderMutation {
 	return mcouo.mutation
@@ -1060,6 +1089,12 @@ func (mcouo *MissionConsumeOrderUpdateOne) RemoveMissionProduceOrders(m ...*Miss
 // ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
 func (mcouo *MissionConsumeOrderUpdateOne) ClearMissionBatch() *MissionConsumeOrderUpdateOne {
 	mcouo.mutation.ClearMissionBatch()
+	return mcouo
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (mcouo *MissionConsumeOrderUpdateOne) ClearMission() *MissionConsumeOrderUpdateOne {
+	mcouo.mutation.ClearMission()
 	return mcouo
 }
 
@@ -1135,6 +1170,9 @@ func (mcouo *MissionConsumeOrderUpdateOne) check() error {
 	if _, ok := mcouo.mutation.MissionBatchID(); mcouo.mutation.MissionBatchCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionConsumeOrder.mission_batch"`)
 	}
+	if _, ok := mcouo.mutation.MissionID(); mcouo.mutation.MissionCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionConsumeOrder.mission"`)
+	}
 	return nil
 }
 
@@ -1184,12 +1222,6 @@ func (mcouo *MissionConsumeOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := mcouo.mutation.DeletedAt(); ok {
 		_spec.SetField(missionconsumeorder.FieldDeletedAt, field.TypeTime, value)
-	}
-	if value, ok := mcouo.mutation.MissionID(); ok {
-		_spec.SetField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
-	}
-	if value, ok := mcouo.mutation.AddedMissionID(); ok {
-		_spec.AddField(missionconsumeorder.FieldMissionID, field.TypeInt64, value)
 	}
 	if value, ok := mcouo.mutation.Status(); ok {
 		_spec.SetField(missionconsumeorder.FieldStatus, field.TypeEnum, value)
@@ -1368,6 +1400,35 @@ func (mcouo *MissionConsumeOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mcouo.mutation.MissionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   missionconsumeorder.MissionTable,
+			Columns: []string{missionconsumeorder.MissionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mcouo.mutation.MissionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   missionconsumeorder.MissionTable,
+			Columns: []string{missionconsumeorder.MissionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
