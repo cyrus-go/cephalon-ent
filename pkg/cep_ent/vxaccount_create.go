@@ -783,12 +783,16 @@ func (u *VXAccountUpsertOne) IDX(ctx context.Context) int64 {
 // VXAccountCreateBulk is the builder for creating many VXAccount entities in bulk.
 type VXAccountCreateBulk struct {
 	config
+	err      error
 	builders []*VXAccountCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the VXAccount entities in the database.
 func (vacb *VXAccountCreateBulk) Save(ctx context.Context) ([]*VXAccount, error) {
+	if vacb.err != nil {
+		return nil, vacb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(vacb.builders))
 	nodes := make([]*VXAccount, len(vacb.builders))
 	mutators := make([]Mutator, len(vacb.builders))
@@ -1102,6 +1106,9 @@ func (u *VXAccountUpsertBulk) UpdateUserID() *VXAccountUpsertBulk {
 
 // Exec executes the query.
 func (u *VXAccountUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the VXAccountCreateBulk instead", i)

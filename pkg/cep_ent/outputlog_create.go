@@ -898,12 +898,16 @@ func (u *OutputLogUpsertOne) IDX(ctx context.Context) int64 {
 // OutputLogCreateBulk is the builder for creating many OutputLog entities in bulk.
 type OutputLogCreateBulk struct {
 	config
+	err      error
 	builders []*OutputLogCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the OutputLog entities in the database.
 func (olcb *OutputLogCreateBulk) Save(ctx context.Context) ([]*OutputLog, error) {
+	if olcb.err != nil {
+		return nil, olcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(olcb.builders))
 	nodes := make([]*OutputLog, len(olcb.builders))
 	mutators := make([]Mutator, len(olcb.builders))
@@ -1276,6 +1280,9 @@ func (u *OutputLogUpsertBulk) UpdateHmacKey() *OutputLogUpsertBulk {
 
 // Exec executes the query.
 func (u *OutputLogUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the OutputLogCreateBulk instead", i)

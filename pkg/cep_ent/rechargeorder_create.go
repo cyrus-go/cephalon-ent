@@ -1103,12 +1103,16 @@ func (u *RechargeOrderUpsertOne) IDX(ctx context.Context) int64 {
 // RechargeOrderCreateBulk is the builder for creating many RechargeOrder entities in bulk.
 type RechargeOrderCreateBulk struct {
 	config
+	err      error
 	builders []*RechargeOrderCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the RechargeOrder entities in the database.
 func (rocb *RechargeOrderCreateBulk) Save(ctx context.Context) ([]*RechargeOrder, error) {
+	if rocb.err != nil {
+		return nil, rocb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(rocb.builders))
 	nodes := make([]*RechargeOrder, len(rocb.builders))
 	mutators := make([]Mutator, len(rocb.builders))
@@ -1499,6 +1503,9 @@ func (u *RechargeOrderUpsertBulk) UpdateOutTransactionID() *RechargeOrderUpsertB
 
 // Exec executes the query.
 func (u *RechargeOrderUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the RechargeOrderCreateBulk instead", i)

@@ -1341,12 +1341,16 @@ func (u *MissionConsumeOrderUpsertOne) IDX(ctx context.Context) int64 {
 // MissionConsumeOrderCreateBulk is the builder for creating many MissionConsumeOrder entities in bulk.
 type MissionConsumeOrderCreateBulk struct {
 	config
+	err      error
 	builders []*MissionConsumeOrderCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionConsumeOrder entities in the database.
 func (mcocb *MissionConsumeOrderCreateBulk) Save(ctx context.Context) ([]*MissionConsumeOrder, error) {
+	if mcocb.err != nil {
+		return nil, mcocb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(mcocb.builders))
 	nodes := make([]*MissionConsumeOrder, len(mcocb.builders))
 	mutators := make([]Mutator, len(mcocb.builders))
@@ -1786,6 +1790,9 @@ func (u *MissionConsumeOrderUpsertBulk) UpdateMissionBatchNumber() *MissionConsu
 
 // Exec executes the query.
 func (u *MissionConsumeOrderUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionConsumeOrderCreateBulk instead", i)

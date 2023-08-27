@@ -1233,12 +1233,16 @@ func (u *EarnBillUpsertOne) IDX(ctx context.Context) int64 {
 // EarnBillCreateBulk is the builder for creating many EarnBill entities in bulk.
 type EarnBillCreateBulk struct {
 	config
+	err      error
 	builders []*EarnBillCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the EarnBill entities in the database.
 func (ebcb *EarnBillCreateBulk) Save(ctx context.Context) ([]*EarnBill, error) {
+	if ebcb.err != nil {
+		return nil, ebcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(ebcb.builders))
 	nodes := make([]*EarnBill, len(ebcb.builders))
 	mutators := make([]Mutator, len(ebcb.builders))
@@ -1671,6 +1675,9 @@ func (u *EarnBillUpsertBulk) ClearReasonID() *EarnBillUpsertBulk {
 
 // Exec executes the query.
 func (u *EarnBillUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the EarnBillCreateBulk instead", i)

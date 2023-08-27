@@ -643,12 +643,16 @@ func (u *ProfitSettingUpsertOne) IDX(ctx context.Context) int64 {
 // ProfitSettingCreateBulk is the builder for creating many ProfitSetting entities in bulk.
 type ProfitSettingCreateBulk struct {
 	config
+	err      error
 	builders []*ProfitSettingCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the ProfitSetting entities in the database.
 func (pscb *ProfitSettingCreateBulk) Save(ctx context.Context) ([]*ProfitSetting, error) {
+	if pscb.err != nil {
+		return nil, pscb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(pscb.builders))
 	nodes := make([]*ProfitSetting, len(pscb.builders))
 	mutators := make([]Mutator, len(pscb.builders))
@@ -927,6 +931,9 @@ func (u *ProfitSettingUpsertBulk) UpdateRatio() *ProfitSettingUpsertBulk {
 
 // Exec executes the query.
 func (u *ProfitSettingUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the ProfitSettingCreateBulk instead", i)

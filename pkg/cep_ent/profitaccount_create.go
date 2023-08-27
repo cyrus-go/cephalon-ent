@@ -739,12 +739,16 @@ func (u *ProfitAccountUpsertOne) IDX(ctx context.Context) int64 {
 // ProfitAccountCreateBulk is the builder for creating many ProfitAccount entities in bulk.
 type ProfitAccountCreateBulk struct {
 	config
+	err      error
 	builders []*ProfitAccountCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the ProfitAccount entities in the database.
 func (pacb *ProfitAccountCreateBulk) Save(ctx context.Context) ([]*ProfitAccount, error) {
+	if pacb.err != nil {
+		return nil, pacb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(pacb.builders))
 	nodes := make([]*ProfitAccount, len(pacb.builders))
 	mutators := make([]Mutator, len(pacb.builders))
@@ -1044,6 +1048,9 @@ func (u *ProfitAccountUpsertBulk) UpdateRemainCep() *ProfitAccountUpsertBulk {
 
 // Exec executes the query.
 func (u *ProfitAccountUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the ProfitAccountCreateBulk instead", i)

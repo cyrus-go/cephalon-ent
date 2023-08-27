@@ -1190,12 +1190,16 @@ func (u *CostBillUpsertOne) IDX(ctx context.Context) int64 {
 // CostBillCreateBulk is the builder for creating many CostBill entities in bulk.
 type CostBillCreateBulk struct {
 	config
+	err      error
 	builders []*CostBillCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the CostBill entities in the database.
 func (cbcb *CostBillCreateBulk) Save(ctx context.Context) ([]*CostBill, error) {
+	if cbcb.err != nil {
+		return nil, cbcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(cbcb.builders))
 	nodes := make([]*CostBill, len(cbcb.builders))
 	mutators := make([]Mutator, len(cbcb.builders))
@@ -1607,6 +1611,9 @@ func (u *CostBillUpsertBulk) UpdateMarketBillID() *CostBillUpsertBulk {
 
 // Exec executes the query.
 func (u *CostBillUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the CostBillCreateBulk instead", i)

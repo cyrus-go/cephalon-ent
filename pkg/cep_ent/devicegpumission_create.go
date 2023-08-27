@@ -725,12 +725,16 @@ func (u *DeviceGpuMissionUpsertOne) IDX(ctx context.Context) int64 {
 // DeviceGpuMissionCreateBulk is the builder for creating many DeviceGpuMission entities in bulk.
 type DeviceGpuMissionCreateBulk struct {
 	config
+	err      error
 	builders []*DeviceGpuMissionCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the DeviceGpuMission entities in the database.
 func (dgmcb *DeviceGpuMissionCreateBulk) Save(ctx context.Context) ([]*DeviceGpuMission, error) {
+	if dgmcb.err != nil {
+		return nil, dgmcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(dgmcb.builders))
 	nodes := make([]*DeviceGpuMission, len(dgmcb.builders))
 	mutators := make([]Mutator, len(dgmcb.builders))
@@ -1016,6 +1020,9 @@ func (u *DeviceGpuMissionUpsertBulk) UpdateMissionKindID() *DeviceGpuMissionUpse
 
 // Exec executes the query.
 func (u *DeviceGpuMissionUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the DeviceGpuMissionCreateBulk instead", i)

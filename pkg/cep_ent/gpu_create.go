@@ -659,12 +659,16 @@ func (u *GpuUpsertOne) IDX(ctx context.Context) int64 {
 // GpuCreateBulk is the builder for creating many Gpu entities in bulk.
 type GpuCreateBulk struct {
 	config
+	err      error
 	builders []*GpuCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the Gpu entities in the database.
 func (gcb *GpuCreateBulk) Save(ctx context.Context) ([]*Gpu, error) {
+	if gcb.err != nil {
+		return nil, gcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(gcb.builders))
 	nodes := make([]*Gpu, len(gcb.builders))
 	mutators := make([]Mutator, len(gcb.builders))
@@ -943,6 +947,9 @@ func (u *GpuUpsertBulk) UpdatePower() *GpuUpsertBulk {
 
 // Exec executes the query.
 func (u *GpuUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the GpuCreateBulk instead", i)

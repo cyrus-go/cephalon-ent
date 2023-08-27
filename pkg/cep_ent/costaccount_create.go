@@ -1187,12 +1187,16 @@ func (u *CostAccountUpsertOne) IDX(ctx context.Context) int64 {
 // CostAccountCreateBulk is the builder for creating many CostAccount entities in bulk.
 type CostAccountCreateBulk struct {
 	config
+	err      error
 	builders []*CostAccountCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the CostAccount entities in the database.
 func (cacb *CostAccountCreateBulk) Save(ctx context.Context) ([]*CostAccount, error) {
+	if cacb.err != nil {
+		return nil, cacb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(cacb.builders))
 	nodes := make([]*CostAccount, len(cacb.builders))
 	mutators := make([]Mutator, len(cacb.builders))
@@ -1639,6 +1643,9 @@ func (u *CostAccountUpsertBulk) UpdateFrozenGiftCep() *CostAccountUpsertBulk {
 
 // Exec executes the query.
 func (u *CostAccountUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the CostAccountCreateBulk instead", i)

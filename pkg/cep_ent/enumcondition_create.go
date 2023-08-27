@@ -659,12 +659,16 @@ func (u *EnumConditionUpsertOne) IDX(ctx context.Context) int64 {
 // EnumConditionCreateBulk is the builder for creating many EnumCondition entities in bulk.
 type EnumConditionCreateBulk struct {
 	config
+	err      error
 	builders []*EnumConditionCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the EnumCondition entities in the database.
 func (eccb *EnumConditionCreateBulk) Save(ctx context.Context) ([]*EnumCondition, error) {
+	if eccb.err != nil {
+		return nil, eccb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(eccb.builders))
 	nodes := make([]*EnumCondition, len(eccb.builders))
 	mutators := make([]Mutator, len(eccb.builders))
@@ -950,6 +954,9 @@ func (u *EnumConditionUpsertBulk) UpdateMissionCallWay() *EnumConditionUpsertBul
 
 // Exec executes the query.
 func (u *EnumConditionUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the EnumConditionCreateBulk instead", i)

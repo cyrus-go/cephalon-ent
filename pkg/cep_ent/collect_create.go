@@ -694,12 +694,16 @@ func (u *CollectUpsertOne) IDX(ctx context.Context) int64 {
 // CollectCreateBulk is the builder for creating many Collect entities in bulk.
 type CollectCreateBulk struct {
 	config
+	err      error
 	builders []*CollectCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the Collect entities in the database.
 func (ccb *CollectCreateBulk) Save(ctx context.Context) ([]*Collect, error) {
+	if ccb.err != nil {
+		return nil, ccb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(ccb.builders))
 	nodes := make([]*Collect, len(ccb.builders))
 	mutators := make([]Mutator, len(ccb.builders))
@@ -992,6 +996,9 @@ func (u *CollectUpsertBulk) UpdateJpgName() *CollectUpsertBulk {
 
 // Exec executes the query.
 func (u *CollectUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the CollectCreateBulk instead", i)

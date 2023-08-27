@@ -866,32 +866,15 @@ func HmacKeyContainsFold(v string) predicate.InputLog {
 
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.InputLog) predicate.InputLog {
-	return predicate.InputLog(func(s *sql.Selector) {
-		s1 := s.Clone().SetP(nil)
-		for _, p := range predicates {
-			p(s1)
-		}
-		s.Where(s1.P())
-	})
+	return predicate.InputLog(sql.AndPredicates(predicates...))
 }
 
 // Or groups predicates with the OR operator between them.
 func Or(predicates ...predicate.InputLog) predicate.InputLog {
-	return predicate.InputLog(func(s *sql.Selector) {
-		s1 := s.Clone().SetP(nil)
-		for i, p := range predicates {
-			if i > 0 {
-				s1.Or()
-			}
-			p(s1)
-		}
-		s.Where(s1.P())
-	})
+	return predicate.InputLog(sql.OrPredicates(predicates...))
 }
 
 // Not applies the not operator on the given predicate.
 func Not(p predicate.InputLog) predicate.InputLog {
-	return predicate.InputLog(func(s *sql.Selector) {
-		p(s.Not())
-	})
+	return predicate.InputLog(sql.NotPredicates(p))
 }

@@ -973,12 +973,16 @@ func (u *VXSocialUpsertOne) IDX(ctx context.Context) int64 {
 // VXSocialCreateBulk is the builder for creating many VXSocial entities in bulk.
 type VXSocialCreateBulk struct {
 	config
+	err      error
 	builders []*VXSocialCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the VXSocial entities in the database.
 func (vscb *VXSocialCreateBulk) Save(ctx context.Context) ([]*VXSocial, error) {
+	if vscb.err != nil {
+		return nil, vscb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(vscb.builders))
 	nodes := make([]*VXSocial, len(vscb.builders))
 	mutators := make([]Mutator, len(vscb.builders))
@@ -1334,6 +1338,9 @@ func (u *VXSocialUpsertBulk) UpdateUserID() *VXSocialUpsertBulk {
 
 // Exec executes the query.
 func (u *VXSocialUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the VXSocialCreateBulk instead", i)

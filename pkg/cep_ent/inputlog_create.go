@@ -929,12 +929,16 @@ func (u *InputLogUpsertOne) IDX(ctx context.Context) int64 {
 // InputLogCreateBulk is the builder for creating many InputLog entities in bulk.
 type InputLogCreateBulk struct {
 	config
+	err      error
 	builders []*InputLogCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the InputLog entities in the database.
 func (ilcb *InputLogCreateBulk) Save(ctx context.Context) ([]*InputLog, error) {
+	if ilcb.err != nil {
+		return nil, ilcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(ilcb.builders))
 	nodes := make([]*InputLog, len(ilcb.builders))
 	mutators := make([]Mutator, len(ilcb.builders))
@@ -1314,6 +1318,9 @@ func (u *InputLogUpsertBulk) UpdateHmacKey() *InputLogUpsertBulk {
 
 // Exec executes the query.
 func (u *InputLogUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the InputLogCreateBulk instead", i)

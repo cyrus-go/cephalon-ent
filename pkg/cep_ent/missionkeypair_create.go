@@ -900,12 +900,16 @@ func (u *MissionKeyPairUpsertOne) IDX(ctx context.Context) int64 {
 // MissionKeyPairCreateBulk is the builder for creating many MissionKeyPair entities in bulk.
 type MissionKeyPairCreateBulk struct {
 	config
+	err      error
 	builders []*MissionKeyPairCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionKeyPair entities in the database.
 func (mkpcb *MissionKeyPairCreateBulk) Save(ctx context.Context) ([]*MissionKeyPair, error) {
+	if mkpcb.err != nil {
+		return nil, mkpcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(mkpcb.builders))
 	nodes := make([]*MissionKeyPair, len(mkpcb.builders))
 	mutators := make([]Mutator, len(mkpcb.builders))
@@ -1261,6 +1265,9 @@ func (u *MissionKeyPairUpsertBulk) ClearResultUrls() *MissionKeyPairUpsertBulk {
 
 // Exec executes the query.
 func (u *MissionKeyPairUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionKeyPairCreateBulk instead", i)

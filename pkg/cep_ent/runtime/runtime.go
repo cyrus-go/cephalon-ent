@@ -5,6 +5,6 @@ package runtime
 // The schema-stitching logic is generated in github.com/stark-sim/cephalon-ent/pkg/cep_ent/runtime.go
 
 const (
-	Version = "v0.12.3"                                         // Version of ent codegen.
-	Sum     = "h1:N5lO2EOrHpCH5HYfiMOCHYbo+oh5M8GjT0/cx5x6xkk=" // Sum of ent codegen.
+	Version = "v0.12.4-0.20230819175200-62a3e6f20318"           // Version of ent codegen.
+	Sum     = "h1:H9/0qwxIAakemMjrsRHyeg463/4GsMjqURCiXmt8u8U=" // Sum of ent codegen.
 )

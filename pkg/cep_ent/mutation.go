@@ -559,6 +559,7 @@ func (m *CollectMutation) ResetJpgName() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *CollectMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[collect.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -1854,6 +1855,7 @@ func (m *CostAccountMutation) ResetFrozenGiftCep() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *CostAccountMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[costaccount.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -3334,6 +3336,7 @@ func (m *CostBillMutation) ResetMarketBillID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *CostBillMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[costbill.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -3360,6 +3363,7 @@ func (m *CostBillMutation) ResetUser() {
 // ClearCostAccount clears the "cost_account" edge to the CostAccount entity.
 func (m *CostBillMutation) ClearCostAccount() {
 	m.clearedcost_account = true
+	m.clearedFields[costbill.FieldCostAccountID] = struct{}{}
 }
 
 // CostAccountCleared reports if the "cost_account" edge to the CostAccount entity was cleared.
@@ -3391,6 +3395,7 @@ func (m *CostBillMutation) SetRechargeOrderID(id int64) {
 // ClearRechargeOrder clears the "recharge_order" edge to the RechargeOrder entity.
 func (m *CostBillMutation) ClearRechargeOrder() {
 	m.clearedrecharge_order = true
+	m.clearedFields[costbill.FieldReasonID] = struct{}{}
 }
 
 // RechargeOrderCleared reports if the "recharge_order" edge to the RechargeOrder entity was cleared.
@@ -3430,6 +3435,7 @@ func (m *CostBillMutation) SetMissionConsumeOrderID(id int64) {
 // ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (m *CostBillMutation) ClearMissionConsumeOrder() {
 	m.clearedmission_consume_order = true
+	m.clearedFields[costbill.FieldReasonID] = struct{}{}
 }
 
 // MissionConsumeOrderCleared reports if the "mission_consume_order" edge to the MissionConsumeOrder entity was cleared.
@@ -4666,6 +4672,7 @@ func (m *DeviceMutation) ResetStatus() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[device.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -5822,6 +5829,7 @@ func (m *DeviceGpuMissionMutation) ResetMissionKindID() {
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *DeviceGpuMissionMutation) ClearDevice() {
 	m.cleareddevice = true
+	m.clearedFields[devicegpumission.FieldDeviceID] = struct{}{}
 }
 
 // DeviceCleared reports if the "device" edge to the Device entity was cleared.
@@ -5848,6 +5856,7 @@ func (m *DeviceGpuMissionMutation) ResetDevice() {
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *DeviceGpuMissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
+	m.clearedFields[devicegpumission.FieldMissionKindID] = struct{}{}
 }
 
 // MissionKindCleared reports if the "mission_kind" edge to the MissionKind entity was cleared.
@@ -5874,6 +5883,7 @@ func (m *DeviceGpuMissionMutation) ResetMissionKind() {
 // ClearGpu clears the "gpu" edge to the Gpu entity.
 func (m *DeviceGpuMissionMutation) ClearGpu() {
 	m.clearedgpu = true
+	m.clearedFields[devicegpumission.FieldGpuID] = struct{}{}
 }
 
 // GpuCleared reports if the "gpu" edge to the Gpu entity was cleared.
@@ -7138,6 +7148,7 @@ func (m *EarnBillMutation) ResetReasonID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *EarnBillMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[earnbill.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -7164,6 +7175,7 @@ func (m *EarnBillMutation) ResetUser() {
 // ClearProfitAccount clears the "profit_account" edge to the ProfitAccount entity.
 func (m *EarnBillMutation) ClearProfitAccount() {
 	m.clearedprofit_account = true
+	m.clearedFields[earnbill.FieldProfitAccountID] = struct{}{}
 }
 
 // ProfitAccountCleared reports if the "profit_account" edge to the ProfitAccount entity was cleared.
@@ -7190,6 +7202,7 @@ func (m *EarnBillMutation) ResetProfitAccount() {
 // ClearPlatformAccount clears the "platform_account" edge to the PlatformAccount entity.
 func (m *EarnBillMutation) ClearPlatformAccount() {
 	m.clearedplatform_account = true
+	m.clearedFields[earnbill.FieldPlatformAccountID] = struct{}{}
 }
 
 // PlatformAccountCleared reports if the "platform_account" edge to the PlatformAccount entity was cleared.
@@ -7221,6 +7234,7 @@ func (m *EarnBillMutation) SetMissionProduceOrdersID(id int64) {
 // ClearMissionProduceOrders clears the "mission_produce_orders" edge to the MissionProduceOrder entity.
 func (m *EarnBillMutation) ClearMissionProduceOrders() {
 	m.clearedmission_produce_orders = true
+	m.clearedFields[earnbill.FieldReasonID] = struct{}{}
 }
 
 // MissionProduceOrdersCleared reports if the "mission_produce_orders" edge to the MissionProduceOrder entity was cleared.
@@ -13237,6 +13251,7 @@ func (m *MissionMutation) ResetMissionKeyPairs() {
 // ClearKeyPair clears the "key_pair" edge to the HmacKeyPair entity.
 func (m *MissionMutation) ClearKeyPair() {
 	m.clearedkey_pair = true
+	m.clearedFields[mission.FieldKeyPairID] = struct{}{}
 }
 
 // KeyPairCleared reports if the "key_pair" edge to the HmacKeyPair entity was cleared.
@@ -14260,6 +14275,7 @@ func (m *MissionBatchMutation) ResetUserID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *MissionBatchMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[missionbatch.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -15577,6 +15593,7 @@ func (m *MissionConsumeOrderMutation) ResetMissionBatchNumber() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *MissionConsumeOrderMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[missionconsumeorder.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -15711,6 +15728,7 @@ func (m *MissionConsumeOrderMutation) ResetMissionProduceOrders() {
 // ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
 func (m *MissionConsumeOrderMutation) ClearMissionBatch() {
 	m.clearedmission_batch = true
+	m.clearedFields[missionconsumeorder.FieldMissionBatchID] = struct{}{}
 }
 
 // MissionBatchCleared reports if the "mission_batch" edge to the MissionBatch entity was cleared.
@@ -15737,6 +15755,7 @@ func (m *MissionConsumeOrderMutation) ResetMissionBatch() {
 // ClearMission clears the "mission" edge to the Mission entity.
 func (m *MissionConsumeOrderMutation) ClearMission() {
 	m.clearedmission = true
+	m.clearedFields[missionconsumeorder.FieldMissionID] = struct{}{}
 }
 
 // MissionCleared reports if the "mission" edge to the Mission entity was cleared.
@@ -17053,6 +17072,7 @@ func (m *MissionKeyPairMutation) ResetResultUrls() {
 // ClearMission clears the "mission" edge to the Mission entity.
 func (m *MissionKeyPairMutation) ClearMission() {
 	m.clearedmission = true
+	m.clearedFields[missionkeypair.FieldMissionID] = struct{}{}
 }
 
 // MissionCleared reports if the "mission" edge to the Mission entity was cleared.
@@ -17079,6 +17099,7 @@ func (m *MissionKeyPairMutation) ResetMission() {
 // ClearKeyPair clears the "key_pair" edge to the HmacKeyPair entity.
 func (m *MissionKeyPairMutation) ClearKeyPair() {
 	m.clearedkey_pair = true
+	m.clearedFields[missionkeypair.FieldKeyPairID] = struct{}{}
 }
 
 // KeyPairCleared reports if the "key_pair" edge to the HmacKeyPair entity was cleared.
@@ -19217,6 +19238,7 @@ func (m *MissionProduceOrderMutation) ResetMissionConsumeOrderID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *MissionProduceOrderMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[missionproduceorder.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -19297,6 +19319,7 @@ func (m *MissionProduceOrderMutation) ResetEarnBills() {
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *MissionProduceOrderMutation) ClearDevice() {
 	m.cleareddevice = true
+	m.clearedFields[missionproduceorder.FieldDeviceID] = struct{}{}
 }
 
 // DeviceCleared reports if the "device" edge to the Device entity was cleared.
@@ -19323,6 +19346,7 @@ func (m *MissionProduceOrderMutation) ResetDevice() {
 // ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (m *MissionProduceOrderMutation) ClearMissionConsumeOrder() {
 	m.clearedmission_consume_order = true
+	m.clearedFields[missionproduceorder.FieldMissionConsumeOrderID] = struct{}{}
 }
 
 // MissionConsumeOrderCleared reports if the "mission_consume_order" edge to the MissionConsumeOrder entity was cleared.
@@ -23950,6 +23974,7 @@ func (m *ProfitAccountMutation) ResetRemainCep() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *ProfitAccountMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[profitaccount.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -24872,6 +24897,7 @@ func (m *ProfitSettingMutation) ResetRatio() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *ProfitSettingMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[profitsetting.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -25980,6 +26006,7 @@ func (m *RechargeOrderMutation) ResetOutTransactionID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *RechargeOrderMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[rechargeorder.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -26065,6 +26092,7 @@ func (m *RechargeOrderMutation) SetVxSocialID(id int64) {
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
 func (m *RechargeOrderMutation) ClearVxSocial() {
 	m.clearedvx_social = true
+	m.clearedFields[rechargeorder.FieldSocialID] = struct{}{}
 }
 
 // VxSocialCleared reports if the "vx_social" edge to the VXSocial entity was cleared.
@@ -28077,6 +28105,7 @@ func (m *UserMutation) ResetUserDevices() {
 // ClearParent clears the "parent" edge to the User entity.
 func (m *UserMutation) ClearParent() {
 	m.clearedparent = true
+	m.clearedFields[user.FieldParentID] = struct{}{}
 }
 
 // ParentCleared reports if the "parent" edge to the User entity was cleared.
@@ -29405,6 +29434,7 @@ func (m *UserDeviceMutation) ResetDeviceID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *UserDeviceMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[userdevice.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -29431,6 +29461,7 @@ func (m *UserDeviceMutation) ResetUser() {
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *UserDeviceMutation) ClearDevice() {
 	m.cleareddevice = true
+	m.clearedFields[userdevice.FieldDeviceID] = struct{}{}
 }
 
 // DeviceCleared reports if the "device" edge to the Device entity was cleared.
@@ -30338,6 +30369,7 @@ func (m *VXAccountMutation) ResetUserID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *VXAccountMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[vxaccount.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
@@ -31392,6 +31424,7 @@ func (m *VXSocialMutation) ResetUserID() {
 // ClearUser clears the "user" edge to the User entity.
 func (m *VXSocialMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[vxsocial.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.

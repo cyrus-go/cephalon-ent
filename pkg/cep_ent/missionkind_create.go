@@ -707,12 +707,16 @@ func (u *MissionKindUpsertOne) IDX(ctx context.Context) int64 {
 // MissionKindCreateBulk is the builder for creating many MissionKind entities in bulk.
 type MissionKindCreateBulk struct {
 	config
+	err      error
 	builders []*MissionKindCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the MissionKind entities in the database.
 func (mkcb *MissionKindCreateBulk) Save(ctx context.Context) ([]*MissionKind, error) {
+	if mkcb.err != nil {
+		return nil, mkcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(mkcb.builders))
 	nodes := make([]*MissionKind, len(mkcb.builders))
 	mutators := make([]Mutator, len(mkcb.builders))
@@ -998,6 +1002,9 @@ func (u *MissionKindUpsertBulk) UpdateBillingType() *MissionKindUpsertBulk {
 
 // Exec executes the query.
 func (u *MissionKindUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the MissionKindCreateBulk instead", i)

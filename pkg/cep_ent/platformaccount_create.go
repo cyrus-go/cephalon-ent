@@ -978,12 +978,16 @@ func (u *PlatformAccountUpsertOne) IDX(ctx context.Context) int64 {
 // PlatformAccountCreateBulk is the builder for creating many PlatformAccount entities in bulk.
 type PlatformAccountCreateBulk struct {
 	config
+	err      error
 	builders []*PlatformAccountCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the PlatformAccount entities in the database.
 func (pacb *PlatformAccountCreateBulk) Save(ctx context.Context) ([]*PlatformAccount, error) {
+	if pacb.err != nil {
+		return nil, pacb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(pacb.builders))
 	nodes := make([]*PlatformAccount, len(pacb.builders))
 	mutators := make([]Mutator, len(pacb.builders))
@@ -1367,6 +1371,9 @@ func (u *PlatformAccountUpsertBulk) UpdateGiftCep() *PlatformAccountUpsertBulk {
 
 // Exec executes the query.
 func (u *PlatformAccountUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the PlatformAccountCreateBulk instead", i)

@@ -699,12 +699,16 @@ func (u *HmacKeyPairUpsertOne) IDX(ctx context.Context) int64 {
 // HmacKeyPairCreateBulk is the builder for creating many HmacKeyPair entities in bulk.
 type HmacKeyPairCreateBulk struct {
 	config
+	err      error
 	builders []*HmacKeyPairCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the HmacKeyPair entities in the database.
 func (hkpcb *HmacKeyPairCreateBulk) Save(ctx context.Context) ([]*HmacKeyPair, error) {
+	if hkpcb.err != nil {
+		return nil, hkpcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(hkpcb.builders))
 	nodes := make([]*HmacKeyPair, len(hkpcb.builders))
 	mutators := make([]Mutator, len(hkpcb.builders))
@@ -990,6 +994,9 @@ func (u *HmacKeyPairUpsertBulk) UpdateCaller() *HmacKeyPairUpsertBulk {
 
 // Exec executes the query.
 func (u *HmacKeyPairUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the HmacKeyPairCreateBulk instead", i)

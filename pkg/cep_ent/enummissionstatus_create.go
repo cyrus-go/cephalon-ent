@@ -659,12 +659,16 @@ func (u *EnumMissionStatusUpsertOne) IDX(ctx context.Context) int64 {
 // EnumMissionStatusCreateBulk is the builder for creating many EnumMissionStatus entities in bulk.
 type EnumMissionStatusCreateBulk struct {
 	config
+	err      error
 	builders []*EnumMissionStatusCreate
 	conflict []sql.ConflictOption
 }
 
 // Save creates the EnumMissionStatus entities in the database.
 func (emscb *EnumMissionStatusCreateBulk) Save(ctx context.Context) ([]*EnumMissionStatus, error) {
+	if emscb.err != nil {
+		return nil, emscb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(emscb.builders))
 	nodes := make([]*EnumMissionStatus, len(emscb.builders))
 	mutators := make([]Mutator, len(emscb.builders))
@@ -950,6 +954,9 @@ func (u *EnumMissionStatusUpsertBulk) UpdateMissionStatus() *EnumMissionStatusUp
 
 // Exec executes the query.
 func (u *EnumMissionStatusUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
 			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the EnumMissionStatusCreateBulk instead", i)
