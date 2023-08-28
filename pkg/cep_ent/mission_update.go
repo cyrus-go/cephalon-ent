@@ -246,6 +246,55 @@ func (mu *MissionUpdate) AddUnitCep(i int64) *MissionUpdate {
 	return mu
 }
 
+// SetRespStatusCode sets the "resp_status_code" field.
+func (mu *MissionUpdate) SetRespStatusCode(i int32) *MissionUpdate {
+	mu.mutation.ResetRespStatusCode()
+	mu.mutation.SetRespStatusCode(i)
+	return mu
+}
+
+// SetNillableRespStatusCode sets the "resp_status_code" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableRespStatusCode(i *int32) *MissionUpdate {
+	if i != nil {
+		mu.SetRespStatusCode(*i)
+	}
+	return mu
+}
+
+// AddRespStatusCode adds i to the "resp_status_code" field.
+func (mu *MissionUpdate) AddRespStatusCode(i int32) *MissionUpdate {
+	mu.mutation.AddRespStatusCode(i)
+	return mu
+}
+
+// SetRespBody sets the "resp_body" field.
+func (mu *MissionUpdate) SetRespBody(s string) *MissionUpdate {
+	mu.mutation.SetRespBody(s)
+	return mu
+}
+
+// SetNillableRespBody sets the "resp_body" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableRespBody(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetRespBody(*s)
+	}
+	return mu
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (mu *MissionUpdate) SetSdAPI(s string) *MissionUpdate {
+	mu.mutation.SetSdAPI(s)
+	return mu
+}
+
+// SetNillableSdAPI sets the "sd_api" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableSdAPI(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetSdAPI(*s)
+	}
+	return mu
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mu *MissionUpdate) AddMissionKeyPairIDs(ids ...int64) *MissionUpdate {
 	mu.mutation.AddMissionKeyPairIDs(ids...)
@@ -454,6 +503,18 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.AddedUnitCep(); ok {
 		_spec.AddField(mission.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := mu.mutation.RespStatusCode(); ok {
+		_spec.SetField(mission.FieldRespStatusCode, field.TypeInt32, value)
+	}
+	if value, ok := mu.mutation.AddedRespStatusCode(); ok {
+		_spec.AddField(mission.FieldRespStatusCode, field.TypeInt32, value)
+	}
+	if value, ok := mu.mutation.RespBody(); ok {
+		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.SdAPI(); ok {
+		_spec.SetField(mission.FieldSdAPI, field.TypeString, value)
 	}
 	if mu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -791,6 +852,55 @@ func (muo *MissionUpdateOne) AddUnitCep(i int64) *MissionUpdateOne {
 	return muo
 }
 
+// SetRespStatusCode sets the "resp_status_code" field.
+func (muo *MissionUpdateOne) SetRespStatusCode(i int32) *MissionUpdateOne {
+	muo.mutation.ResetRespStatusCode()
+	muo.mutation.SetRespStatusCode(i)
+	return muo
+}
+
+// SetNillableRespStatusCode sets the "resp_status_code" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableRespStatusCode(i *int32) *MissionUpdateOne {
+	if i != nil {
+		muo.SetRespStatusCode(*i)
+	}
+	return muo
+}
+
+// AddRespStatusCode adds i to the "resp_status_code" field.
+func (muo *MissionUpdateOne) AddRespStatusCode(i int32) *MissionUpdateOne {
+	muo.mutation.AddRespStatusCode(i)
+	return muo
+}
+
+// SetRespBody sets the "resp_body" field.
+func (muo *MissionUpdateOne) SetRespBody(s string) *MissionUpdateOne {
+	muo.mutation.SetRespBody(s)
+	return muo
+}
+
+// SetNillableRespBody sets the "resp_body" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableRespBody(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetRespBody(*s)
+	}
+	return muo
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (muo *MissionUpdateOne) SetSdAPI(s string) *MissionUpdateOne {
+	muo.mutation.SetSdAPI(s)
+	return muo
+}
+
+// SetNillableSdAPI sets the "sd_api" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableSdAPI(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetSdAPI(*s)
+	}
+	return muo
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (muo *MissionUpdateOne) AddMissionKeyPairIDs(ids ...int64) *MissionUpdateOne {
 	muo.mutation.AddMissionKeyPairIDs(ids...)
@@ -1029,6 +1139,18 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.AddedUnitCep(); ok {
 		_spec.AddField(mission.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := muo.mutation.RespStatusCode(); ok {
+		_spec.SetField(mission.FieldRespStatusCode, field.TypeInt32, value)
+	}
+	if value, ok := muo.mutation.AddedRespStatusCode(); ok {
+		_spec.AddField(mission.FieldRespStatusCode, field.TypeInt32, value)
+	}
+	if value, ok := muo.mutation.RespBody(); ok {
+		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.SdAPI(); ok {
+		_spec.SetField(mission.FieldSdAPI, field.TypeString, value)
 	}
 	if muo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{

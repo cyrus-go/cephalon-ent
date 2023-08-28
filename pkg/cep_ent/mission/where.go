@@ -106,6 +106,21 @@ func UnitCep(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldUnitCep, v))
 }
 
+// RespStatusCode applies equality check predicate on the "resp_status_code" field. It's identical to RespStatusCodeEQ.
+func RespStatusCode(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldRespStatusCode, v))
+}
+
+// RespBody applies equality check predicate on the "resp_body" field. It's identical to RespBodyEQ.
+func RespBody(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldRespBody, v))
+}
+
+// SdAPI applies equality check predicate on the "sd_api" field. It's identical to SdAPIEQ.
+func SdAPI(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldSdAPI, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -689,6 +704,176 @@ func UnitCepLT(v int64) predicate.Mission {
 // UnitCepLTE applies the LTE predicate on the "unit_cep" field.
 func UnitCepLTE(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldLTE(FieldUnitCep, v))
+}
+
+// RespStatusCodeEQ applies the EQ predicate on the "resp_status_code" field.
+func RespStatusCodeEQ(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldRespStatusCode, v))
+}
+
+// RespStatusCodeNEQ applies the NEQ predicate on the "resp_status_code" field.
+func RespStatusCodeNEQ(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldRespStatusCode, v))
+}
+
+// RespStatusCodeIn applies the In predicate on the "resp_status_code" field.
+func RespStatusCodeIn(vs ...int32) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldRespStatusCode, vs...))
+}
+
+// RespStatusCodeNotIn applies the NotIn predicate on the "resp_status_code" field.
+func RespStatusCodeNotIn(vs ...int32) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldRespStatusCode, vs...))
+}
+
+// RespStatusCodeGT applies the GT predicate on the "resp_status_code" field.
+func RespStatusCodeGT(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldRespStatusCode, v))
+}
+
+// RespStatusCodeGTE applies the GTE predicate on the "resp_status_code" field.
+func RespStatusCodeGTE(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldRespStatusCode, v))
+}
+
+// RespStatusCodeLT applies the LT predicate on the "resp_status_code" field.
+func RespStatusCodeLT(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldRespStatusCode, v))
+}
+
+// RespStatusCodeLTE applies the LTE predicate on the "resp_status_code" field.
+func RespStatusCodeLTE(v int32) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldRespStatusCode, v))
+}
+
+// RespBodyEQ applies the EQ predicate on the "resp_body" field.
+func RespBodyEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldRespBody, v))
+}
+
+// RespBodyNEQ applies the NEQ predicate on the "resp_body" field.
+func RespBodyNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldRespBody, v))
+}
+
+// RespBodyIn applies the In predicate on the "resp_body" field.
+func RespBodyIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldRespBody, vs...))
+}
+
+// RespBodyNotIn applies the NotIn predicate on the "resp_body" field.
+func RespBodyNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldRespBody, vs...))
+}
+
+// RespBodyGT applies the GT predicate on the "resp_body" field.
+func RespBodyGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldRespBody, v))
+}
+
+// RespBodyGTE applies the GTE predicate on the "resp_body" field.
+func RespBodyGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldRespBody, v))
+}
+
+// RespBodyLT applies the LT predicate on the "resp_body" field.
+func RespBodyLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldRespBody, v))
+}
+
+// RespBodyLTE applies the LTE predicate on the "resp_body" field.
+func RespBodyLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldRespBody, v))
+}
+
+// RespBodyContains applies the Contains predicate on the "resp_body" field.
+func RespBodyContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldRespBody, v))
+}
+
+// RespBodyHasPrefix applies the HasPrefix predicate on the "resp_body" field.
+func RespBodyHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldRespBody, v))
+}
+
+// RespBodyHasSuffix applies the HasSuffix predicate on the "resp_body" field.
+func RespBodyHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldRespBody, v))
+}
+
+// RespBodyEqualFold applies the EqualFold predicate on the "resp_body" field.
+func RespBodyEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldRespBody, v))
+}
+
+// RespBodyContainsFold applies the ContainsFold predicate on the "resp_body" field.
+func RespBodyContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldRespBody, v))
+}
+
+// SdAPIEQ applies the EQ predicate on the "sd_api" field.
+func SdAPIEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldSdAPI, v))
+}
+
+// SdAPINEQ applies the NEQ predicate on the "sd_api" field.
+func SdAPINEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldSdAPI, v))
+}
+
+// SdAPIIn applies the In predicate on the "sd_api" field.
+func SdAPIIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldSdAPI, vs...))
+}
+
+// SdAPINotIn applies the NotIn predicate on the "sd_api" field.
+func SdAPINotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldSdAPI, vs...))
+}
+
+// SdAPIGT applies the GT predicate on the "sd_api" field.
+func SdAPIGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldSdAPI, v))
+}
+
+// SdAPIGTE applies the GTE predicate on the "sd_api" field.
+func SdAPIGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldSdAPI, v))
+}
+
+// SdAPILT applies the LT predicate on the "sd_api" field.
+func SdAPILT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldSdAPI, v))
+}
+
+// SdAPILTE applies the LTE predicate on the "sd_api" field.
+func SdAPILTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldSdAPI, v))
+}
+
+// SdAPIContains applies the Contains predicate on the "sd_api" field.
+func SdAPIContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldSdAPI, v))
+}
+
+// SdAPIHasPrefix applies the HasPrefix predicate on the "sd_api" field.
+func SdAPIHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldSdAPI, v))
+}
+
+// SdAPIHasSuffix applies the HasSuffix predicate on the "sd_api" field.
+func SdAPIHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldSdAPI, v))
+}
+
+// SdAPIEqualFold applies the EqualFold predicate on the "sd_api" field.
+func SdAPIEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldSdAPI, v))
+}
+
+// SdAPIContainsFold applies the ContainsFold predicate on the "sd_api" field.
+func SdAPIContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldSdAPI, v))
 }
 
 // HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.

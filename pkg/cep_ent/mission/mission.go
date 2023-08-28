@@ -46,6 +46,12 @@ const (
 	FieldGpuVersion = "gpu_version"
 	// FieldUnitCep holds the string denoting the unit_cep field in the database.
 	FieldUnitCep = "unit_cep"
+	// FieldRespStatusCode holds the string denoting the resp_status_code field in the database.
+	FieldRespStatusCode = "resp_status_code"
+	// FieldRespBody holds the string denoting the resp_body field in the database.
+	FieldRespBody = "resp_body"
+	// FieldSdAPI holds the string denoting the sd_api field in the database.
+	FieldSdAPI = "sd_api"
 	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
 	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
@@ -95,6 +101,9 @@ var Columns = []string{
 	FieldMissionBatchNumber,
 	FieldGpuVersion,
 	FieldUnitCep,
+	FieldRespStatusCode,
+	FieldRespBody,
+	FieldSdAPI,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -130,6 +139,12 @@ var (
 	DefaultMissionBatchNumber string
 	// DefaultUnitCep holds the default value on creation for the "unit_cep" field.
 	DefaultUnitCep int64
+	// DefaultRespStatusCode holds the default value on creation for the "resp_status_code" field.
+	DefaultRespStatusCode int32
+	// DefaultRespBody holds the default value on creation for the "resp_body" field.
+	DefaultRespBody string
+	// DefaultSdAPI holds the default value on creation for the "sd_api" field.
+	DefaultSdAPI string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -139,7 +154,7 @@ const DefaultType enums.MissionType = "txt2img"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image":
+	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api":
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for type field: %q", _type)
@@ -258,6 +273,21 @@ func ByGpuVersion(opts ...sql.OrderTermOption) OrderOption {
 // ByUnitCep orders the results by the unit_cep field.
 func ByUnitCep(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUnitCep, opts...).ToFunc()
+}
+
+// ByRespStatusCode orders the results by the resp_status_code field.
+func ByRespStatusCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRespStatusCode, opts...).ToFunc()
+}
+
+// ByRespBody orders the results by the resp_body field.
+func ByRespBody(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRespBody, opts...).ToFunc()
+}
+
+// BySdAPI orders the results by the sd_api field.
+func BySdAPI(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSdAPI, opts...).ToFunc()
 }
 
 // ByMissionKeyPairsCount orders the results by mission_key_pairs count.

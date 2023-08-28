@@ -631,6 +631,18 @@ func init() {
 	missionDescUnitCep := missionFields[9].Descriptor()
 	// mission.DefaultUnitCep holds the default value on creation for the unit_cep field.
 	mission.DefaultUnitCep = missionDescUnitCep.Default.(int64)
+	// missionDescRespStatusCode is the schema descriptor for resp_status_code field.
+	missionDescRespStatusCode := missionFields[10].Descriptor()
+	// mission.DefaultRespStatusCode holds the default value on creation for the resp_status_code field.
+	mission.DefaultRespStatusCode = missionDescRespStatusCode.Default.(int32)
+	// missionDescRespBody is the schema descriptor for resp_body field.
+	missionDescRespBody := missionFields[11].Descriptor()
+	// mission.DefaultRespBody holds the default value on creation for the resp_body field.
+	mission.DefaultRespBody = missionDescRespBody.Default.(string)
+	// missionDescSdAPI is the schema descriptor for sd_api field.
+	missionDescSdAPI := missionFields[12].Descriptor()
+	// mission.DefaultSdAPI holds the default value on creation for the sd_api field.
+	mission.DefaultSdAPI = missionDescSdAPI.Default.(string)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

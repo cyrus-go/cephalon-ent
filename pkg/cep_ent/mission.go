@@ -51,6 +51,12 @@ type Mission struct {
 	GpuVersion enums.GpuVersion `json:"gpu_version"`
 	// 任务单价，按次就是 unit_cep/次，按时就是 unit_cep/分钟
 	UnitCep int64 `json:"unit_cep"`
+	// 内部功能返回码
+	RespStatusCode int32 `json:"resp_status_code"`
+	// 返回内容体 json 序列化为 string
+	RespBody string `json:"resp_body"`
+	// 当 type 为 sd_api 时使用，为转发的 sd 接口功能
+	SdAPI string `json:"sd_api"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -112,9 +118,9 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case mission.FieldResultUrls:
 			values[i] = new([]byte)
-		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID, mission.FieldUnitCep:
+		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldSdAPI:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -231,6 +237,24 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.UnitCep = value.Int64
 			}
+		case mission.FieldRespStatusCode:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field resp_status_code", values[i])
+			} else if value.Valid {
+				m.RespStatusCode = int32(value.Int64)
+			}
+		case mission.FieldRespBody:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field resp_body", values[i])
+			} else if value.Valid {
+				m.RespBody = value.String
+			}
+		case mission.FieldSdAPI:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field sd_api", values[i])
+			} else if value.Valid {
+				m.SdAPI = value.String
+			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
 		}
@@ -325,6 +349,15 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("unit_cep=")
 	builder.WriteString(fmt.Sprintf("%v", m.UnitCep))
+	builder.WriteString(", ")
+	builder.WriteString("resp_status_code=")
+	builder.WriteString(fmt.Sprintf("%v", m.RespStatusCode))
+	builder.WriteString(", ")
+	builder.WriteString("resp_body=")
+	builder.WriteString(m.RespBody)
+	builder.WriteString(", ")
+	builder.WriteString("sd_api=")
+	builder.WriteString(m.SdAPI)
 	builder.WriteByte(')')
 	return builder.String()
 }

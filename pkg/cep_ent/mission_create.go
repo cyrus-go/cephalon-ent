@@ -228,6 +228,48 @@ func (mc *MissionCreate) SetNillableUnitCep(i *int64) *MissionCreate {
 	return mc
 }
 
+// SetRespStatusCode sets the "resp_status_code" field.
+func (mc *MissionCreate) SetRespStatusCode(i int32) *MissionCreate {
+	mc.mutation.SetRespStatusCode(i)
+	return mc
+}
+
+// SetNillableRespStatusCode sets the "resp_status_code" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableRespStatusCode(i *int32) *MissionCreate {
+	if i != nil {
+		mc.SetRespStatusCode(*i)
+	}
+	return mc
+}
+
+// SetRespBody sets the "resp_body" field.
+func (mc *MissionCreate) SetRespBody(s string) *MissionCreate {
+	mc.mutation.SetRespBody(s)
+	return mc
+}
+
+// SetNillableRespBody sets the "resp_body" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableRespBody(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetRespBody(*s)
+	}
+	return mc
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (mc *MissionCreate) SetSdAPI(s string) *MissionCreate {
+	mc.mutation.SetSdAPI(s)
+	return mc
+}
+
+// SetNillableSdAPI sets the "sd_api" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableSdAPI(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetSdAPI(*s)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -372,6 +414,18 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultUnitCep
 		mc.mutation.SetUnitCep(v)
 	}
+	if _, ok := mc.mutation.RespStatusCode(); !ok {
+		v := mission.DefaultRespStatusCode
+		mc.mutation.SetRespStatusCode(v)
+	}
+	if _, ok := mc.mutation.RespBody(); !ok {
+		v := mission.DefaultRespBody
+		mc.mutation.SetRespBody(v)
+	}
+	if _, ok := mc.mutation.SdAPI(); !ok {
+		v := mission.DefaultSdAPI
+		mc.mutation.SetSdAPI(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -441,6 +495,15 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.UnitCep(); !ok {
 		return &ValidationError{Name: "unit_cep", err: errors.New(`cep_ent: missing required field "Mission.unit_cep"`)}
+	}
+	if _, ok := mc.mutation.RespStatusCode(); !ok {
+		return &ValidationError{Name: "resp_status_code", err: errors.New(`cep_ent: missing required field "Mission.resp_status_code"`)}
+	}
+	if _, ok := mc.mutation.RespBody(); !ok {
+		return &ValidationError{Name: "resp_body", err: errors.New(`cep_ent: missing required field "Mission.resp_body"`)}
+	}
+	if _, ok := mc.mutation.SdAPI(); !ok {
+		return &ValidationError{Name: "sd_api", err: errors.New(`cep_ent: missing required field "Mission.sd_api"`)}
 	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair", err: errors.New(`cep_ent: missing required edge "Mission.key_pair"`)}
@@ -533,6 +596,18 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.UnitCep(); ok {
 		_spec.SetField(mission.FieldUnitCep, field.TypeInt64, value)
 		_node.UnitCep = value
+	}
+	if value, ok := mc.mutation.RespStatusCode(); ok {
+		_spec.SetField(mission.FieldRespStatusCode, field.TypeInt32, value)
+		_node.RespStatusCode = value
+	}
+	if value, ok := mc.mutation.RespBody(); ok {
+		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
+		_node.RespBody = value
+	}
+	if value, ok := mc.mutation.SdAPI(); ok {
+		_spec.SetField(mission.FieldSdAPI, field.TypeString, value)
+		_node.SdAPI = value
 	}
 	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -827,6 +902,48 @@ func (u *MissionUpsert) AddUnitCep(v int64) *MissionUpsert {
 	return u
 }
 
+// SetRespStatusCode sets the "resp_status_code" field.
+func (u *MissionUpsert) SetRespStatusCode(v int32) *MissionUpsert {
+	u.Set(mission.FieldRespStatusCode, v)
+	return u
+}
+
+// UpdateRespStatusCode sets the "resp_status_code" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateRespStatusCode() *MissionUpsert {
+	u.SetExcluded(mission.FieldRespStatusCode)
+	return u
+}
+
+// AddRespStatusCode adds v to the "resp_status_code" field.
+func (u *MissionUpsert) AddRespStatusCode(v int32) *MissionUpsert {
+	u.Add(mission.FieldRespStatusCode, v)
+	return u
+}
+
+// SetRespBody sets the "resp_body" field.
+func (u *MissionUpsert) SetRespBody(v string) *MissionUpsert {
+	u.Set(mission.FieldRespBody, v)
+	return u
+}
+
+// UpdateRespBody sets the "resp_body" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateRespBody() *MissionUpsert {
+	u.SetExcluded(mission.FieldRespBody)
+	return u
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (u *MissionUpsert) SetSdAPI(v string) *MissionUpsert {
+	u.Set(mission.FieldSdAPI, v)
+	return u
+}
+
+// UpdateSdAPI sets the "sd_api" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateSdAPI() *MissionUpsert {
+	u.SetExcluded(mission.FieldSdAPI)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1099,6 +1216,55 @@ func (u *MissionUpsertOne) AddUnitCep(v int64) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateUnitCep() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateUnitCep()
+	})
+}
+
+// SetRespStatusCode sets the "resp_status_code" field.
+func (u *MissionUpsertOne) SetRespStatusCode(v int32) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetRespStatusCode(v)
+	})
+}
+
+// AddRespStatusCode adds v to the "resp_status_code" field.
+func (u *MissionUpsertOne) AddRespStatusCode(v int32) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddRespStatusCode(v)
+	})
+}
+
+// UpdateRespStatusCode sets the "resp_status_code" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateRespStatusCode() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateRespStatusCode()
+	})
+}
+
+// SetRespBody sets the "resp_body" field.
+func (u *MissionUpsertOne) SetRespBody(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetRespBody(v)
+	})
+}
+
+// UpdateRespBody sets the "resp_body" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateRespBody() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateRespBody()
+	})
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (u *MissionUpsertOne) SetSdAPI(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetSdAPI(v)
+	})
+}
+
+// UpdateSdAPI sets the "sd_api" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateSdAPI() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateSdAPI()
 	})
 }
 
@@ -1540,6 +1706,55 @@ func (u *MissionUpsertBulk) AddUnitCep(v int64) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateUnitCep() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateUnitCep()
+	})
+}
+
+// SetRespStatusCode sets the "resp_status_code" field.
+func (u *MissionUpsertBulk) SetRespStatusCode(v int32) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetRespStatusCode(v)
+	})
+}
+
+// AddRespStatusCode adds v to the "resp_status_code" field.
+func (u *MissionUpsertBulk) AddRespStatusCode(v int32) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddRespStatusCode(v)
+	})
+}
+
+// UpdateRespStatusCode sets the "resp_status_code" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateRespStatusCode() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateRespStatusCode()
+	})
+}
+
+// SetRespBody sets the "resp_body" field.
+func (u *MissionUpsertBulk) SetRespBody(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetRespBody(v)
+	})
+}
+
+// UpdateRespBody sets the "resp_body" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateRespBody() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateRespBody()
+	})
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (u *MissionUpsertBulk) SetSdAPI(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetSdAPI(v)
+	})
+}
+
+// UpdateSdAPI sets the "sd_api" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateSdAPI() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateSdAPI()
 	})
 }
 

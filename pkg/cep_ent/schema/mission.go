@@ -25,6 +25,9 @@ func (Mission) Fields() []ent.Field {
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
 		field.Enum("gpu_version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersion2060)).StructTag(`json:"gpu_version"`).Comment("最低可接显卡"),
 		field.Int64("unit_cep").Default(0).StructTag(`json:"unit_cep"`).Comment("任务单价，按次就是 unit_cep/次，按时就是 unit_cep/分钟"),
+		field.Int32("resp_status_code").Default(0).StructTag(`json:"resp_status_code"`).Comment("内部功能返回码"),
+		field.String("resp_body").Default("").StructTag(`json:"resp_body"`).Comment("返回内容体 json 序列化为 string"),
+		field.String("sd_api").Default("").StructTag(`json:"sd_api"`).Comment("当 type 为 sd_api 时使用，为转发的 sd 接口功能"),
 	}
 }
 

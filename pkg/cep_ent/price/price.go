@@ -106,7 +106,7 @@ const DefaultMissionType enums.MissionType = "txt2img"
 // MissionTypeValidator is a validator for the "mission_type" field enum values. It is called by the builders before save.
 func MissionTypeValidator(mt enums.MissionType) error {
 	switch mt {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image":
+	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_type field: %q", mt)

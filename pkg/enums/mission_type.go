@@ -9,6 +9,7 @@ const (
 	MissionTypeJpTime             MissionType = "jp_time"
 	MissionTypeWtTime             MissionType = "wt_time"
 	MissionTypeSdExtraSingleImage MissionType = "extra-single-image"
+	MissionTypeSdApi              MissionType = "sd_api"
 )
 
 func (obj MissionType) Values() []string {
@@ -19,6 +20,7 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeJpTime),
 		string(MissionTypeWtTime),
 		string(MissionTypeSdExtraSingleImage),
+		string(MissionTypeSdApi),
 	}
 }
 

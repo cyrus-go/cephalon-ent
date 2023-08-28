@@ -12448,6 +12448,10 @@ type MissionMutation struct {
 	gpu_version                  *enums.GpuVersion
 	unit_cep                     *int64
 	addunit_cep                  *int64
+	resp_status_code             *int32
+	addresp_status_code          *int32
+	resp_body                    *string
+	sd_api                       *string
 	clearedFields                map[string]struct{}
 	mission_key_pairs            map[int64]struct{}
 	removedmission_key_pairs     map[int64]struct{}
@@ -13194,6 +13198,134 @@ func (m *MissionMutation) ResetUnitCep() {
 	m.addunit_cep = nil
 }
 
+// SetRespStatusCode sets the "resp_status_code" field.
+func (m *MissionMutation) SetRespStatusCode(i int32) {
+	m.resp_status_code = &i
+	m.addresp_status_code = nil
+}
+
+// RespStatusCode returns the value of the "resp_status_code" field in the mutation.
+func (m *MissionMutation) RespStatusCode() (r int32, exists bool) {
+	v := m.resp_status_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRespStatusCode returns the old "resp_status_code" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldRespStatusCode(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRespStatusCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRespStatusCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRespStatusCode: %w", err)
+	}
+	return oldValue.RespStatusCode, nil
+}
+
+// AddRespStatusCode adds i to the "resp_status_code" field.
+func (m *MissionMutation) AddRespStatusCode(i int32) {
+	if m.addresp_status_code != nil {
+		*m.addresp_status_code += i
+	} else {
+		m.addresp_status_code = &i
+	}
+}
+
+// AddedRespStatusCode returns the value that was added to the "resp_status_code" field in this mutation.
+func (m *MissionMutation) AddedRespStatusCode() (r int32, exists bool) {
+	v := m.addresp_status_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRespStatusCode resets all changes to the "resp_status_code" field.
+func (m *MissionMutation) ResetRespStatusCode() {
+	m.resp_status_code = nil
+	m.addresp_status_code = nil
+}
+
+// SetRespBody sets the "resp_body" field.
+func (m *MissionMutation) SetRespBody(s string) {
+	m.resp_body = &s
+}
+
+// RespBody returns the value of the "resp_body" field in the mutation.
+func (m *MissionMutation) RespBody() (r string, exists bool) {
+	v := m.resp_body
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRespBody returns the old "resp_body" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldRespBody(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRespBody is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRespBody requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRespBody: %w", err)
+	}
+	return oldValue.RespBody, nil
+}
+
+// ResetRespBody resets all changes to the "resp_body" field.
+func (m *MissionMutation) ResetRespBody() {
+	m.resp_body = nil
+}
+
+// SetSdAPI sets the "sd_api" field.
+func (m *MissionMutation) SetSdAPI(s string) {
+	m.sd_api = &s
+}
+
+// SdAPI returns the value of the "sd_api" field in the mutation.
+func (m *MissionMutation) SdAPI() (r string, exists bool) {
+	v := m.sd_api
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSdAPI returns the old "sd_api" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldSdAPI(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSdAPI is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSdAPI requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSdAPI: %w", err)
+	}
+	return oldValue.SdAPI, nil
+}
+
+// ResetSdAPI resets all changes to the "sd_api" field.
+func (m *MissionMutation) ResetSdAPI() {
+	m.sd_api = nil
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
 func (m *MissionMutation) AddMissionKeyPairIDs(ids ...int64) {
 	if m.mission_key_pairs == nil {
@@ -13348,7 +13480,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -13394,6 +13526,15 @@ func (m *MissionMutation) Fields() []string {
 	if m.unit_cep != nil {
 		fields = append(fields, mission.FieldUnitCep)
 	}
+	if m.resp_status_code != nil {
+		fields = append(fields, mission.FieldRespStatusCode)
+	}
+	if m.resp_body != nil {
+		fields = append(fields, mission.FieldRespBody)
+	}
+	if m.sd_api != nil {
+		fields = append(fields, mission.FieldSdAPI)
+	}
 	return fields
 }
 
@@ -13432,6 +13573,12 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.GpuVersion()
 	case mission.FieldUnitCep:
 		return m.UnitCep()
+	case mission.FieldRespStatusCode:
+		return m.RespStatusCode()
+	case mission.FieldRespBody:
+		return m.RespBody()
+	case mission.FieldSdAPI:
+		return m.SdAPI()
 	}
 	return nil, false
 }
@@ -13471,6 +13618,12 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldGpuVersion(ctx)
 	case mission.FieldUnitCep:
 		return m.OldUnitCep(ctx)
+	case mission.FieldRespStatusCode:
+		return m.OldRespStatusCode(ctx)
+	case mission.FieldRespBody:
+		return m.OldRespBody(ctx)
+	case mission.FieldSdAPI:
+		return m.OldSdAPI(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13585,6 +13738,27 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUnitCep(v)
 		return nil
+	case mission.FieldRespStatusCode:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRespStatusCode(v)
+		return nil
+	case mission.FieldRespBody:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRespBody(v)
+		return nil
+	case mission.FieldSdAPI:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSdAPI(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13602,6 +13776,9 @@ func (m *MissionMutation) AddedFields() []string {
 	if m.addunit_cep != nil {
 		fields = append(fields, mission.FieldUnitCep)
 	}
+	if m.addresp_status_code != nil {
+		fields = append(fields, mission.FieldRespStatusCode)
+	}
 	return fields
 }
 
@@ -13616,6 +13793,8 @@ func (m *MissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case mission.FieldUnitCep:
 		return m.AddedUnitCep()
+	case mission.FieldRespStatusCode:
+		return m.AddedRespStatusCode()
 	}
 	return nil, false
 }
@@ -13645,6 +13824,13 @@ func (m *MissionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUnitCep(v)
+		return nil
+	case mission.FieldRespStatusCode:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRespStatusCode(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission numeric field %s", name)
@@ -13726,6 +13912,15 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldUnitCep:
 		m.ResetUnitCep()
+		return nil
+	case mission.FieldRespStatusCode:
+		m.ResetRespStatusCode()
+		return nil
+	case mission.FieldRespBody:
+		m.ResetRespBody()
+		return nil
+	case mission.FieldSdAPI:
+		m.ResetSdAPI()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

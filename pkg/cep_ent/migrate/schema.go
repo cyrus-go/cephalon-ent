@@ -350,7 +350,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api"}, Default: "txt2img"},
 		{Name: "body", Type: field.TypeString, Comment: "任务的请求参数体", Default: ""},
 		{Name: "call_back_url", Type: field.TypeString, Comment: "回调地址，空字符串表示不回调", Default: ""},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "done"}, Default: "waiting"},
@@ -359,6 +359,9 @@ var (
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号", Default: ""},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "最低可接显卡", Enums: []string{"RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
 		{Name: "unit_cep", Type: field.TypeInt64, Comment: "任务单价，按次就是 unit_cep/次，按时就是 unit_cep/分钟", Default: 0},
+		{Name: "resp_status_code", Type: field.TypeInt32, Comment: "内部功能返回码", Default: 0},
+		{Name: "resp_body", Type: field.TypeString, Comment: "返回内容体 json 序列化为 string", Default: ""},
+		{Name: "sd_api", Type: field.TypeString, Comment: "当 type 为 sd_api 时使用，为转发的 sd 接口功能", Default: ""},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 	}
 	// MissionsTable holds the schema information for the "missions" table.
@@ -369,7 +372,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[15]},
+				Columns:    []*schema.Column{MissionsColumns[18]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -411,7 +414,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务消耗的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务消耗的赠送 cep 量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api"}, Default: "txt2img"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
 		{Name: "call_way", Type: field.TypeEnum, Comment: "调用方式，API 调用或者微信小程序调用", Enums: []string{"api", "yuan_hui", "dev_platform"}, Default: "api"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
@@ -492,7 +495,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api"}, Default: "txt2img"},
 		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"SD", "JP", "WT"}, Default: "SD"},
 		{Name: "billing_type", Type: field.TypeEnum, Comment: "计费类型", Enums: []string{"time", "count"}, Default: "count"},
 	}
@@ -514,7 +517,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务收益的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务收益的赠送 cep 量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api"}, Default: "txt2img"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "生产者接该任务用的设备 id", Default: 0},
@@ -608,7 +611,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
-		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image"}, Default: "txt2img"},
+		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api"}, Default: "txt2img"},
 		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"SD", "JP", "WT"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"time", "count"}, Default: "count"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
