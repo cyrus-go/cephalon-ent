@@ -1031,6 +1031,10 @@ func init() {
 	priceDescCep := priceFields[4].Descriptor()
 	// price.DefaultCep holds the default value on creation for the cep field.
 	price.DefaultCep = priceDescCep.Default.(int64)
+	// priceDescIsDeprecated is the schema descriptor for is_deprecated field.
+	priceDescIsDeprecated := priceFields[7].Descriptor()
+	// price.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
+	price.DefaultIsDeprecated = priceDescIsDeprecated.Default.(bool)
 	// priceDescID is the schema descriptor for id field.
 	priceDescID := priceMixinFields0[0].Descriptor()
 	// price.DefaultID holds the default value on creation for the id field.

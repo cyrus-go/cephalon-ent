@@ -617,6 +617,7 @@ var (
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
+		{Name: "is_deprecated", Type: field.TypeBool, Comment: "价格是否屏蔽，前端置灰，硬选也可以", Default: false},
 	}
 	// PricesTable holds the schema information for the "prices" table.
 	PricesTable = &schema.Table{

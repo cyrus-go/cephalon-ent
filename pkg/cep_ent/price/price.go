@@ -39,6 +39,8 @@ const (
 	FieldStartedAt = "started_at"
 	// FieldFinishedAt holds the string denoting the finished_at field in the database.
 	FieldFinishedAt = "finished_at"
+	// FieldIsDeprecated holds the string denoting the is_deprecated field in the database.
+	FieldIsDeprecated = "is_deprecated"
 	// Table holds the table name of the price in the database.
 	Table = "prices"
 )
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldCep,
 	FieldStartedAt,
 	FieldFinishedAt,
+	FieldIsDeprecated,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -85,6 +88,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultCep holds the default value on creation for the "cep" field.
 	DefaultCep int64
+	// DefaultIsDeprecated holds the default value on creation for the "is_deprecated" field.
+	DefaultIsDeprecated bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -203,4 +208,9 @@ func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByFinishedAt orders the results by the finished_at field.
 func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
+}
+
+// ByIsDeprecated orders the results by the is_deprecated field.
+func ByIsDeprecated(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsDeprecated, opts...).ToFunc()
 }

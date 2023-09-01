@@ -191,6 +191,20 @@ func (pc *PriceCreate) SetNillableFinishedAt(t *time.Time) *PriceCreate {
 	return pc
 }
 
+// SetIsDeprecated sets the "is_deprecated" field.
+func (pc *PriceCreate) SetIsDeprecated(b bool) *PriceCreate {
+	pc.mutation.SetIsDeprecated(b)
+	return pc
+}
+
+// SetNillableIsDeprecated sets the "is_deprecated" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableIsDeprecated(b *bool) *PriceCreate {
+	if b != nil {
+		pc.SetIsDeprecated(*b)
+	}
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *PriceCreate) SetID(i int64) *PriceCreate {
 	pc.mutation.SetID(i)
@@ -280,6 +294,10 @@ func (pc *PriceCreate) defaults() {
 		v := price.DefaultCep
 		pc.mutation.SetCep(v)
 	}
+	if _, ok := pc.mutation.IsDeprecated(); !ok {
+		v := price.DefaultIsDeprecated
+		pc.mutation.SetIsDeprecated(v)
+	}
 	if _, ok := pc.mutation.ID(); !ok {
 		v := price.DefaultID()
 		pc.mutation.SetID(v)
@@ -337,6 +355,9 @@ func (pc *PriceCreate) check() error {
 	}
 	if _, ok := pc.mutation.Cep(); !ok {
 		return &ValidationError{Name: "cep", err: errors.New(`cep_ent: missing required field "Price.cep"`)}
+	}
+	if _, ok := pc.mutation.IsDeprecated(); !ok {
+		return &ValidationError{Name: "is_deprecated", err: errors.New(`cep_ent: missing required field "Price.is_deprecated"`)}
 	}
 	return nil
 }
@@ -418,6 +439,10 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.FinishedAt(); ok {
 		_spec.SetField(price.FieldFinishedAt, field.TypeTime, value)
 		_node.FinishedAt = &value
+	}
+	if value, ok := pc.mutation.IsDeprecated(); ok {
+		_spec.SetField(price.FieldIsDeprecated, field.TypeBool, value)
+		_node.IsDeprecated = value
 	}
 	return _node, _spec
 }
@@ -630,6 +655,18 @@ func (u *PriceUpsert) UpdateFinishedAt() *PriceUpsert {
 // ClearFinishedAt clears the value of the "finished_at" field.
 func (u *PriceUpsert) ClearFinishedAt() *PriceUpsert {
 	u.SetNull(price.FieldFinishedAt)
+	return u
+}
+
+// SetIsDeprecated sets the "is_deprecated" field.
+func (u *PriceUpsert) SetIsDeprecated(v bool) *PriceUpsert {
+	u.Set(price.FieldIsDeprecated, v)
+	return u
+}
+
+// UpdateIsDeprecated sets the "is_deprecated" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateIsDeprecated() *PriceUpsert {
+	u.SetExcluded(price.FieldIsDeprecated)
 	return u
 }
 
@@ -870,6 +907,20 @@ func (u *PriceUpsertOne) UpdateFinishedAt() *PriceUpsertOne {
 func (u *PriceUpsertOne) ClearFinishedAt() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.ClearFinishedAt()
+	})
+}
+
+// SetIsDeprecated sets the "is_deprecated" field.
+func (u *PriceUpsertOne) SetIsDeprecated(v bool) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetIsDeprecated(v)
+	})
+}
+
+// UpdateIsDeprecated sets the "is_deprecated" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateIsDeprecated() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateIsDeprecated()
 	})
 }
 
@@ -1276,6 +1327,20 @@ func (u *PriceUpsertBulk) UpdateFinishedAt() *PriceUpsertBulk {
 func (u *PriceUpsertBulk) ClearFinishedAt() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.ClearFinishedAt()
+	})
+}
+
+// SetIsDeprecated sets the "is_deprecated" field.
+func (u *PriceUpsertBulk) SetIsDeprecated(v bool) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetIsDeprecated(v)
+	})
+}
+
+// UpdateIsDeprecated sets the "is_deprecated" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateIsDeprecated() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateIsDeprecated()
 	})
 }
 

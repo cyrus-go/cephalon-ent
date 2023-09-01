@@ -41,7 +41,9 @@ type Price struct {
 	// 价格有效时间开始，为空表示永久有效
 	StartedAt *time.Time `json:"started_at"`
 	// 价格有效时间结束，为空表示永久有效
-	FinishedAt   *time.Time `json:"finished_at"`
+	FinishedAt *time.Time `json:"finished_at"`
+	// 价格是否屏蔽，前端置灰，硬选也可以
+	IsDeprecated bool `json:"is_deprecated"`
 	selectValues sql.SelectValues
 }
 
@@ -50,6 +52,8 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case price.FieldIsDeprecated:
+			values[i] = new(sql.NullBool)
 		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldCep:
 			values[i] = new(sql.NullInt64)
 		case price.FieldGpuVersion, price.FieldMissionType, price.FieldMissionCategory, price.FieldMissionBillingType:
@@ -151,6 +155,12 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 				pr.FinishedAt = new(time.Time)
 				*pr.FinishedAt = value.Time
 			}
+		case price.FieldIsDeprecated:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_deprecated", values[i])
+			} else if value.Valid {
+				pr.IsDeprecated = value.Bool
+			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
 		}
@@ -226,6 +236,9 @@ func (pr *Price) String() string {
 		builder.WriteString("finished_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("is_deprecated=")
+	builder.WriteString(fmt.Sprintf("%v", pr.IsDeprecated))
 	builder.WriteByte(')')
 	return builder.String()
 }

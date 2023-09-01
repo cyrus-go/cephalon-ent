@@ -95,6 +95,11 @@ func FinishedAt(v time.Time) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldFinishedAt, v))
 }
 
+// IsDeprecated applies equality check predicate on the "is_deprecated" field. It's identical to IsDeprecatedEQ.
+func IsDeprecated(v bool) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldIsDeprecated, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldCreatedBy, v))
@@ -553,6 +558,16 @@ func FinishedAtIsNil() predicate.Price {
 // FinishedAtNotNil applies the NotNil predicate on the "finished_at" field.
 func FinishedAtNotNil() predicate.Price {
 	return predicate.Price(sql.FieldNotNull(FieldFinishedAt))
+}
+
+// IsDeprecatedEQ applies the EQ predicate on the "is_deprecated" field.
+func IsDeprecatedEQ(v bool) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldIsDeprecated, v))
+}
+
+// IsDeprecatedNEQ applies the NEQ predicate on the "is_deprecated" field.
+func IsDeprecatedNEQ(v bool) predicate.Price {
+	return predicate.Price(sql.FieldNEQ(FieldIsDeprecated, v))
 }
 
 // And groups predicates with the AND operator between them.

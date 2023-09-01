@@ -19,6 +19,7 @@ func (Price) Fields() []ent.Field {
 		field.Int64("cep").Default(0).StructTag(`json:"cep"`).Comment("任务单价"),
 		field.Time("started_at").Optional().Nillable().StructTag(`json:"started_at"`).Comment("价格有效时间开始，为空表示永久有效"),
 		field.Time("finished_at").Optional().Nillable().StructTag(`json:"finished_at"`).Comment("价格有效时间结束，为空表示永久有效"),
+		field.Bool("is_deprecated").Default(false).StructTag(`json:"is_deprecated"`).Comment("价格是否屏蔽，前端置灰，硬选也可以"),
 	}
 }
 

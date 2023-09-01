@@ -22618,6 +22618,7 @@ type PriceMutation struct {
 	addcep               *int64
 	started_at           *time.Time
 	finished_at          *time.Time
+	is_deprecated        *bool
 	clearedFields        map[string]struct{}
 	done                 bool
 	oldValue             func(context.Context) (*Price, error)
@@ -23246,6 +23247,42 @@ func (m *PriceMutation) ResetFinishedAt() {
 	delete(m.clearedFields, price.FieldFinishedAt)
 }
 
+// SetIsDeprecated sets the "is_deprecated" field.
+func (m *PriceMutation) SetIsDeprecated(b bool) {
+	m.is_deprecated = &b
+}
+
+// IsDeprecated returns the value of the "is_deprecated" field in the mutation.
+func (m *PriceMutation) IsDeprecated() (r bool, exists bool) {
+	v := m.is_deprecated
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsDeprecated returns the old "is_deprecated" field's value of the Price entity.
+// If the Price object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PriceMutation) OldIsDeprecated(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsDeprecated is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsDeprecated requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsDeprecated: %w", err)
+	}
+	return oldValue.IsDeprecated, nil
+}
+
+// ResetIsDeprecated resets all changes to the "is_deprecated" field.
+func (m *PriceMutation) ResetIsDeprecated() {
+	m.is_deprecated = nil
+}
+
 // Where appends a list predicates to the PriceMutation builder.
 func (m *PriceMutation) Where(ps ...predicate.Price) {
 	m.predicates = append(m.predicates, ps...)
@@ -23280,7 +23317,7 @@ func (m *PriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PriceMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, price.FieldCreatedBy)
 	}
@@ -23317,6 +23354,9 @@ func (m *PriceMutation) Fields() []string {
 	if m.finished_at != nil {
 		fields = append(fields, price.FieldFinishedAt)
 	}
+	if m.is_deprecated != nil {
+		fields = append(fields, price.FieldIsDeprecated)
+	}
 	return fields
 }
 
@@ -23349,6 +23389,8 @@ func (m *PriceMutation) Field(name string) (ent.Value, bool) {
 		return m.StartedAt()
 	case price.FieldFinishedAt:
 		return m.FinishedAt()
+	case price.FieldIsDeprecated:
+		return m.IsDeprecated()
 	}
 	return nil, false
 }
@@ -23382,6 +23424,8 @@ func (m *PriceMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldStartedAt(ctx)
 	case price.FieldFinishedAt:
 		return m.OldFinishedAt(ctx)
+	case price.FieldIsDeprecated:
+		return m.OldIsDeprecated(ctx)
 	}
 	return nil, fmt.Errorf("unknown Price field %s", name)
 }
@@ -23474,6 +23518,13 @@ func (m *PriceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFinishedAt(v)
+		return nil
+	case price.FieldIsDeprecated:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsDeprecated(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Price field %s", name)
@@ -23613,6 +23664,9 @@ func (m *PriceMutation) ResetField(name string) error {
 		return nil
 	case price.FieldFinishedAt:
 		m.ResetFinishedAt()
+		return nil
+	case price.FieldIsDeprecated:
+		m.ResetIsDeprecated()
 		return nil
 	}
 	return fmt.Errorf("unknown Price field %s", name)

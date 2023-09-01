@@ -208,6 +208,20 @@ func (pu *PriceUpdate) ClearFinishedAt() *PriceUpdate {
 	return pu
 }
 
+// SetIsDeprecated sets the "is_deprecated" field.
+func (pu *PriceUpdate) SetIsDeprecated(b bool) *PriceUpdate {
+	pu.mutation.SetIsDeprecated(b)
+	return pu
+}
+
+// SetNillableIsDeprecated sets the "is_deprecated" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableIsDeprecated(b *bool) *PriceUpdate {
+	if b != nil {
+		pu.SetIsDeprecated(*b)
+	}
+	return pu
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (pu *PriceUpdate) Mutation() *PriceMutation {
 	return pu.mutation
@@ -333,6 +347,9 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.FinishedAtCleared() {
 		_spec.ClearField(price.FieldFinishedAt, field.TypeTime)
+	}
+	if value, ok := pu.mutation.IsDeprecated(); ok {
+		_spec.SetField(price.FieldIsDeprecated, field.TypeBool, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -533,6 +550,20 @@ func (puo *PriceUpdateOne) ClearFinishedAt() *PriceUpdateOne {
 	return puo
 }
 
+// SetIsDeprecated sets the "is_deprecated" field.
+func (puo *PriceUpdateOne) SetIsDeprecated(b bool) *PriceUpdateOne {
+	puo.mutation.SetIsDeprecated(b)
+	return puo
+}
+
+// SetNillableIsDeprecated sets the "is_deprecated" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableIsDeprecated(b *bool) *PriceUpdateOne {
+	if b != nil {
+		puo.SetIsDeprecated(*b)
+	}
+	return puo
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (puo *PriceUpdateOne) Mutation() *PriceMutation {
 	return puo.mutation
@@ -688,6 +719,9 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if puo.mutation.FinishedAtCleared() {
 		_spec.ClearField(price.FieldFinishedAt, field.TypeTime)
+	}
+	if value, ok := puo.mutation.IsDeprecated(); ok {
+		_spec.SetField(price.FieldIsDeprecated, field.TypeBool, value)
 	}
 	_node = &Price{config: puo.config}
 	_spec.Assign = _node.assignValues
