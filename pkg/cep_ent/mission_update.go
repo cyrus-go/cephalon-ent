@@ -337,6 +337,20 @@ func (mu *MissionUpdate) SetNillableTempHmacSecret(s *string) *MissionUpdate {
 	return mu
 }
 
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (mu *MissionUpdate) SetSecondHmacKey(s string) *MissionUpdate {
+	mu.mutation.SetSecondHmacKey(s)
+	return mu
+}
+
+// SetNillableSecondHmacKey sets the "second_hmac_key" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableSecondHmacKey(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetSecondHmacKey(*s)
+	}
+	return mu
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mu *MissionUpdate) AddMissionKeyPairIDs(ids ...int64) *MissionUpdate {
 	mu.mutation.AddMissionKeyPairIDs(ids...)
@@ -571,6 +585,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.TempHmacSecret(); ok {
 		_spec.SetField(mission.FieldTempHmacSecret, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.SecondHmacKey(); ok {
+		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
 	}
 	if mu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -999,6 +1016,20 @@ func (muo *MissionUpdateOne) SetNillableTempHmacSecret(s *string) *MissionUpdate
 	return muo
 }
 
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (muo *MissionUpdateOne) SetSecondHmacKey(s string) *MissionUpdateOne {
+	muo.mutation.SetSecondHmacKey(s)
+	return muo
+}
+
+// SetNillableSecondHmacKey sets the "second_hmac_key" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableSecondHmacKey(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetSecondHmacKey(*s)
+	}
+	return muo
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (muo *MissionUpdateOne) AddMissionKeyPairIDs(ids ...int64) *MissionUpdateOne {
 	muo.mutation.AddMissionKeyPairIDs(ids...)
@@ -1263,6 +1294,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.TempHmacSecret(); ok {
 		_spec.SetField(mission.FieldTempHmacSecret, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.SecondHmacKey(); ok {
+		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
 	}
 	if muo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{

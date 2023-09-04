@@ -58,11 +58,13 @@ type Mission struct {
 	// 当 type 为 sd_api 时使用，为转发的 sd 内部接口路径
 	InnerAPI string `json:"inner_api"`
 	// 内部转发接口的请求方式，POST 或者 GET 等
-	InnerMethod enums.InnerMethod `json:"inner_method,omitempty"`
+	InnerMethod enums.InnerMethod `json:"inner_method"`
 	// 当 type 为 key_pair 时，使用的临时密钥对的键
-	TempHmacKey string `json:"temp_hmac_key,omitempty" temp_hmac_key`
+	TempHmacKey string `json:"temp_hmac_key"`
 	// 当 type 为 key_pair 时，使用的临时密钥对的值
-	TempHmacSecret string `json:"temp_hmac_secret,omitempty" temp_hmac_secret`
+	TempHmacSecret string `json:"temp_hmac_secret"`
+	// 创建任务时使用了的 二级 hmac_key
+	SecondHmacKey string `json:"second_hmac_key"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -126,7 +128,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerAPI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerAPI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -279,6 +281,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.TempHmacSecret = value.String
 			}
+		case mission.FieldSecondHmacKey:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field second_hmac_key", values[i])
+			} else if value.Valid {
+				m.SecondHmacKey = value.String
+			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
 		}
@@ -391,6 +399,9 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("temp_hmac_secret=")
 	builder.WriteString(m.TempHmacSecret)
+	builder.WriteString(", ")
+	builder.WriteString("second_hmac_key=")
+	builder.WriteString(m.SecondHmacKey)
 	builder.WriteByte(')')
 	return builder.String()
 }

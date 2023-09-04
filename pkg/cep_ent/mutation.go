@@ -12455,6 +12455,7 @@ type MissionMutation struct {
 	inner_method                 *enums.InnerMethod
 	temp_hmac_key                *string
 	temp_hmac_secret             *string
+	second_hmac_key              *string
 	clearedFields                map[string]struct{}
 	mission_key_pairs            map[int64]struct{}
 	removedmission_key_pairs     map[int64]struct{}
@@ -13437,6 +13438,42 @@ func (m *MissionMutation) ResetTempHmacSecret() {
 	m.temp_hmac_secret = nil
 }
 
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (m *MissionMutation) SetSecondHmacKey(s string) {
+	m.second_hmac_key = &s
+}
+
+// SecondHmacKey returns the value of the "second_hmac_key" field in the mutation.
+func (m *MissionMutation) SecondHmacKey() (r string, exists bool) {
+	v := m.second_hmac_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecondHmacKey returns the old "second_hmac_key" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldSecondHmacKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecondHmacKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecondHmacKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecondHmacKey: %w", err)
+	}
+	return oldValue.SecondHmacKey, nil
+}
+
+// ResetSecondHmacKey resets all changes to the "second_hmac_key" field.
+func (m *MissionMutation) ResetSecondHmacKey() {
+	m.second_hmac_key = nil
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
 func (m *MissionMutation) AddMissionKeyPairIDs(ids ...int64) {
 	if m.mission_key_pairs == nil {
@@ -13591,7 +13628,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -13655,6 +13692,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.temp_hmac_secret != nil {
 		fields = append(fields, mission.FieldTempHmacSecret)
 	}
+	if m.second_hmac_key != nil {
+		fields = append(fields, mission.FieldSecondHmacKey)
+	}
 	return fields
 }
 
@@ -13705,6 +13745,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.TempHmacKey()
 	case mission.FieldTempHmacSecret:
 		return m.TempHmacSecret()
+	case mission.FieldSecondHmacKey:
+		return m.SecondHmacKey()
 	}
 	return nil, false
 }
@@ -13756,6 +13798,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldTempHmacKey(ctx)
 	case mission.FieldTempHmacSecret:
 		return m.OldTempHmacSecret(ctx)
+	case mission.FieldSecondHmacKey:
+		return m.OldSecondHmacKey(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13911,6 +13955,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTempHmacSecret(v)
+		return nil
+	case mission.FieldSecondHmacKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecondHmacKey(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -14083,6 +14134,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldTempHmacSecret:
 		m.ResetTempHmacSecret()
+		return nil
+	case mission.FieldSecondHmacKey:
+		m.ResetSecondHmacKey()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

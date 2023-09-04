@@ -58,6 +58,8 @@ const (
 	FieldTempHmacKey = "temp_hmac_key"
 	// FieldTempHmacSecret holds the string denoting the temp_hmac_secret field in the database.
 	FieldTempHmacSecret = "temp_hmac_secret"
+	// FieldSecondHmacKey holds the string denoting the second_hmac_key field in the database.
+	FieldSecondHmacKey = "second_hmac_key"
 	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
 	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
@@ -113,6 +115,7 @@ var Columns = []string{
 	FieldInnerMethod,
 	FieldTempHmacKey,
 	FieldTempHmacSecret,
+	FieldSecondHmacKey,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -158,6 +161,8 @@ var (
 	DefaultTempHmacKey string
 	// DefaultTempHmacSecret holds the default value on creation for the "temp_hmac_secret" field.
 	DefaultTempHmacSecret string
+	// DefaultSecondHmacKey holds the default value on creation for the "second_hmac_key" field.
+	DefaultSecondHmacKey string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -328,6 +333,11 @@ func ByTempHmacKey(opts ...sql.OrderTermOption) OrderOption {
 // ByTempHmacSecret orders the results by the temp_hmac_secret field.
 func ByTempHmacSecret(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTempHmacSecret, opts...).ToFunc()
+}
+
+// BySecondHmacKey orders the results by the second_hmac_key field.
+func BySecondHmacKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSecondHmacKey, opts...).ToFunc()
 }
 
 // ByMissionKeyPairsCount orders the results by mission_key_pairs count.

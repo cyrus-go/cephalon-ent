@@ -365,6 +365,7 @@ var (
 		{Name: "inner_method", Type: field.TypeEnum, Comment: "内部转发接口的请求方式，POST 或者 GET 等", Enums: []string{"POST", "GET", "HEAD"}, Default: "POST"},
 		{Name: "temp_hmac_key", Type: field.TypeString, Comment: "当 type 为 key_pair 时，使用的临时密钥对的键", Default: ""},
 		{Name: "temp_hmac_secret", Type: field.TypeString, Comment: "当 type 为 key_pair 时，使用的临时密钥对的值", Default: ""},
+		{Name: "second_hmac_key", Type: field.TypeString, Comment: "创建任务时使用了的 二级 hmac_key", Default: ""},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 	}
 	// MissionsTable holds the schema information for the "missions" table.
@@ -375,7 +376,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[21]},
+				Columns:    []*schema.Column{MissionsColumns[22]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

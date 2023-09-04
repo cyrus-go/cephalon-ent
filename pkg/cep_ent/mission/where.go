@@ -131,6 +131,11 @@ func TempHmacSecret(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldTempHmacSecret, v))
 }
 
+// SecondHmacKey applies equality check predicate on the "second_hmac_key" field. It's identical to SecondHmacKeyEQ.
+func SecondHmacKey(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldSecondHmacKey, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -1044,6 +1049,71 @@ func TempHmacSecretEqualFold(v string) predicate.Mission {
 // TempHmacSecretContainsFold applies the ContainsFold predicate on the "temp_hmac_secret" field.
 func TempHmacSecretContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldTempHmacSecret, v))
+}
+
+// SecondHmacKeyEQ applies the EQ predicate on the "second_hmac_key" field.
+func SecondHmacKeyEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyNEQ applies the NEQ predicate on the "second_hmac_key" field.
+func SecondHmacKeyNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyIn applies the In predicate on the "second_hmac_key" field.
+func SecondHmacKeyIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldSecondHmacKey, vs...))
+}
+
+// SecondHmacKeyNotIn applies the NotIn predicate on the "second_hmac_key" field.
+func SecondHmacKeyNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldSecondHmacKey, vs...))
+}
+
+// SecondHmacKeyGT applies the GT predicate on the "second_hmac_key" field.
+func SecondHmacKeyGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyGTE applies the GTE predicate on the "second_hmac_key" field.
+func SecondHmacKeyGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyLT applies the LT predicate on the "second_hmac_key" field.
+func SecondHmacKeyLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyLTE applies the LTE predicate on the "second_hmac_key" field.
+func SecondHmacKeyLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyContains applies the Contains predicate on the "second_hmac_key" field.
+func SecondHmacKeyContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyHasPrefix applies the HasPrefix predicate on the "second_hmac_key" field.
+func SecondHmacKeyHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyHasSuffix applies the HasSuffix predicate on the "second_hmac_key" field.
+func SecondHmacKeyHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyEqualFold applies the EqualFold predicate on the "second_hmac_key" field.
+func SecondHmacKeyEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldSecondHmacKey, v))
+}
+
+// SecondHmacKeyContainsFold applies the ContainsFold predicate on the "second_hmac_key" field.
+func SecondHmacKeyContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldSecondHmacKey, v))
 }
 
 // HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.

@@ -312,6 +312,20 @@ func (mc *MissionCreate) SetNillableTempHmacSecret(s *string) *MissionCreate {
 	return mc
 }
 
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (mc *MissionCreate) SetSecondHmacKey(s string) *MissionCreate {
+	mc.mutation.SetSecondHmacKey(s)
+	return mc
+}
+
+// SetNillableSecondHmacKey sets the "second_hmac_key" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableSecondHmacKey(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetSecondHmacKey(*s)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -480,6 +494,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultTempHmacSecret
 		mc.mutation.SetTempHmacSecret(v)
 	}
+	if _, ok := mc.mutation.SecondHmacKey(); !ok {
+		v := mission.DefaultSecondHmacKey
+		mc.mutation.SetSecondHmacKey(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -572,6 +590,9 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.TempHmacSecret(); !ok {
 		return &ValidationError{Name: "temp_hmac_secret", err: errors.New(`cep_ent: missing required field "Mission.temp_hmac_secret"`)}
+	}
+	if _, ok := mc.mutation.SecondHmacKey(); !ok {
+		return &ValidationError{Name: "second_hmac_key", err: errors.New(`cep_ent: missing required field "Mission.second_hmac_key"`)}
 	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair", err: errors.New(`cep_ent: missing required edge "Mission.key_pair"`)}
@@ -688,6 +709,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.TempHmacSecret(); ok {
 		_spec.SetField(mission.FieldTempHmacSecret, field.TypeString, value)
 		_node.TempHmacSecret = value
+	}
+	if value, ok := mc.mutation.SecondHmacKey(); ok {
+		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
+		_node.SecondHmacKey = value
 	}
 	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1060,6 +1085,18 @@ func (u *MissionUpsert) UpdateTempHmacSecret() *MissionUpsert {
 	return u
 }
 
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (u *MissionUpsert) SetSecondHmacKey(v string) *MissionUpsert {
+	u.Set(mission.FieldSecondHmacKey, v)
+	return u
+}
+
+// UpdateSecondHmacKey sets the "second_hmac_key" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateSecondHmacKey() *MissionUpsert {
+	u.SetExcluded(mission.FieldSecondHmacKey)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1423,6 +1460,20 @@ func (u *MissionUpsertOne) SetTempHmacSecret(v string) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateTempHmacSecret() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateTempHmacSecret()
+	})
+}
+
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (u *MissionUpsertOne) SetSecondHmacKey(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetSecondHmacKey(v)
+	})
+}
+
+// UpdateSecondHmacKey sets the "second_hmac_key" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateSecondHmacKey() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateSecondHmacKey()
 	})
 }
 
@@ -1955,6 +2006,20 @@ func (u *MissionUpsertBulk) SetTempHmacSecret(v string) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateTempHmacSecret() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateTempHmacSecret()
+	})
+}
+
+// SetSecondHmacKey sets the "second_hmac_key" field.
+func (u *MissionUpsertBulk) SetSecondHmacKey(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetSecondHmacKey(v)
+	})
+}
+
+// UpdateSecondHmacKey sets the "second_hmac_key" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateSecondHmacKey() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateSecondHmacKey()
 	})
 }
 

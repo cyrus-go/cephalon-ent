@@ -651,6 +651,10 @@ func init() {
 	missionDescTempHmacSecret := missionFields[15].Descriptor()
 	// mission.DefaultTempHmacSecret holds the default value on creation for the temp_hmac_secret field.
 	mission.DefaultTempHmacSecret = missionDescTempHmacSecret.Default.(string)
+	// missionDescSecondHmacKey is the schema descriptor for second_hmac_key field.
+	missionDescSecondHmacKey := missionFields[16].Descriptor()
+	// mission.DefaultSecondHmacKey holds the default value on creation for the second_hmac_key field.
+	mission.DefaultSecondHmacKey = missionDescSecondHmacKey.Default.(string)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.
