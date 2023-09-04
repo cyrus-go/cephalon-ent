@@ -116,9 +116,19 @@ func RespBody(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldRespBody, v))
 }
 
-// SdAPI applies equality check predicate on the "sd_api" field. It's identical to SdAPIEQ.
-func SdAPI(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldSdAPI, v))
+// InnerAPI applies equality check predicate on the "inner_api" field. It's identical to InnerAPIEQ.
+func InnerAPI(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldInnerAPI, v))
+}
+
+// TempHmacKey applies equality check predicate on the "temp_hmac_key" field. It's identical to TempHmacKeyEQ.
+func TempHmacKey(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldTempHmacKey, v))
+}
+
+// TempHmacSecret applies equality check predicate on the "temp_hmac_secret" field. It's identical to TempHmacSecretEQ.
+func TempHmacSecret(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldTempHmacSecret, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -811,69 +821,229 @@ func RespBodyContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldRespBody, v))
 }
 
-// SdAPIEQ applies the EQ predicate on the "sd_api" field.
-func SdAPIEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldSdAPI, v))
+// InnerAPIEQ applies the EQ predicate on the "inner_api" field.
+func InnerAPIEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldInnerAPI, v))
 }
 
-// SdAPINEQ applies the NEQ predicate on the "sd_api" field.
-func SdAPINEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldSdAPI, v))
+// InnerAPINEQ applies the NEQ predicate on the "inner_api" field.
+func InnerAPINEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldInnerAPI, v))
 }
 
-// SdAPIIn applies the In predicate on the "sd_api" field.
-func SdAPIIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldSdAPI, vs...))
+// InnerAPIIn applies the In predicate on the "inner_api" field.
+func InnerAPIIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldInnerAPI, vs...))
 }
 
-// SdAPINotIn applies the NotIn predicate on the "sd_api" field.
-func SdAPINotIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldSdAPI, vs...))
+// InnerAPINotIn applies the NotIn predicate on the "inner_api" field.
+func InnerAPINotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldInnerAPI, vs...))
 }
 
-// SdAPIGT applies the GT predicate on the "sd_api" field.
-func SdAPIGT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGT(FieldSdAPI, v))
+// InnerAPIGT applies the GT predicate on the "inner_api" field.
+func InnerAPIGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldInnerAPI, v))
 }
 
-// SdAPIGTE applies the GTE predicate on the "sd_api" field.
-func SdAPIGTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGTE(FieldSdAPI, v))
+// InnerAPIGTE applies the GTE predicate on the "inner_api" field.
+func InnerAPIGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldInnerAPI, v))
 }
 
-// SdAPILT applies the LT predicate on the "sd_api" field.
-func SdAPILT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLT(FieldSdAPI, v))
+// InnerAPILT applies the LT predicate on the "inner_api" field.
+func InnerAPILT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldInnerAPI, v))
 }
 
-// SdAPILTE applies the LTE predicate on the "sd_api" field.
-func SdAPILTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLTE(FieldSdAPI, v))
+// InnerAPILTE applies the LTE predicate on the "inner_api" field.
+func InnerAPILTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldInnerAPI, v))
 }
 
-// SdAPIContains applies the Contains predicate on the "sd_api" field.
-func SdAPIContains(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContains(FieldSdAPI, v))
+// InnerAPIContains applies the Contains predicate on the "inner_api" field.
+func InnerAPIContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldInnerAPI, v))
 }
 
-// SdAPIHasPrefix applies the HasPrefix predicate on the "sd_api" field.
-func SdAPIHasPrefix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasPrefix(FieldSdAPI, v))
+// InnerAPIHasPrefix applies the HasPrefix predicate on the "inner_api" field.
+func InnerAPIHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldInnerAPI, v))
 }
 
-// SdAPIHasSuffix applies the HasSuffix predicate on the "sd_api" field.
-func SdAPIHasSuffix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasSuffix(FieldSdAPI, v))
+// InnerAPIHasSuffix applies the HasSuffix predicate on the "inner_api" field.
+func InnerAPIHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldInnerAPI, v))
 }
 
-// SdAPIEqualFold applies the EqualFold predicate on the "sd_api" field.
-func SdAPIEqualFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEqualFold(FieldSdAPI, v))
+// InnerAPIEqualFold applies the EqualFold predicate on the "inner_api" field.
+func InnerAPIEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldInnerAPI, v))
 }
 
-// SdAPIContainsFold applies the ContainsFold predicate on the "sd_api" field.
-func SdAPIContainsFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContainsFold(FieldSdAPI, v))
+// InnerAPIContainsFold applies the ContainsFold predicate on the "inner_api" field.
+func InnerAPIContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldInnerAPI, v))
+}
+
+// InnerMethodEQ applies the EQ predicate on the "inner_method" field.
+func InnerMethodEQ(v enums.InnerMethod) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldEQ(FieldInnerMethod, vc))
+}
+
+// InnerMethodNEQ applies the NEQ predicate on the "inner_method" field.
+func InnerMethodNEQ(v enums.InnerMethod) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldNEQ(FieldInnerMethod, vc))
+}
+
+// InnerMethodIn applies the In predicate on the "inner_method" field.
+func InnerMethodIn(vs ...enums.InnerMethod) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldIn(FieldInnerMethod, v...))
+}
+
+// InnerMethodNotIn applies the NotIn predicate on the "inner_method" field.
+func InnerMethodNotIn(vs ...enums.InnerMethod) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldNotIn(FieldInnerMethod, v...))
+}
+
+// TempHmacKeyEQ applies the EQ predicate on the "temp_hmac_key" field.
+func TempHmacKeyEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyNEQ applies the NEQ predicate on the "temp_hmac_key" field.
+func TempHmacKeyNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyIn applies the In predicate on the "temp_hmac_key" field.
+func TempHmacKeyIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldTempHmacKey, vs...))
+}
+
+// TempHmacKeyNotIn applies the NotIn predicate on the "temp_hmac_key" field.
+func TempHmacKeyNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldTempHmacKey, vs...))
+}
+
+// TempHmacKeyGT applies the GT predicate on the "temp_hmac_key" field.
+func TempHmacKeyGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyGTE applies the GTE predicate on the "temp_hmac_key" field.
+func TempHmacKeyGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyLT applies the LT predicate on the "temp_hmac_key" field.
+func TempHmacKeyLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyLTE applies the LTE predicate on the "temp_hmac_key" field.
+func TempHmacKeyLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyContains applies the Contains predicate on the "temp_hmac_key" field.
+func TempHmacKeyContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyHasPrefix applies the HasPrefix predicate on the "temp_hmac_key" field.
+func TempHmacKeyHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyHasSuffix applies the HasSuffix predicate on the "temp_hmac_key" field.
+func TempHmacKeyHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyEqualFold applies the EqualFold predicate on the "temp_hmac_key" field.
+func TempHmacKeyEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldTempHmacKey, v))
+}
+
+// TempHmacKeyContainsFold applies the ContainsFold predicate on the "temp_hmac_key" field.
+func TempHmacKeyContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldTempHmacKey, v))
+}
+
+// TempHmacSecretEQ applies the EQ predicate on the "temp_hmac_secret" field.
+func TempHmacSecretEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretNEQ applies the NEQ predicate on the "temp_hmac_secret" field.
+func TempHmacSecretNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretIn applies the In predicate on the "temp_hmac_secret" field.
+func TempHmacSecretIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldTempHmacSecret, vs...))
+}
+
+// TempHmacSecretNotIn applies the NotIn predicate on the "temp_hmac_secret" field.
+func TempHmacSecretNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldTempHmacSecret, vs...))
+}
+
+// TempHmacSecretGT applies the GT predicate on the "temp_hmac_secret" field.
+func TempHmacSecretGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretGTE applies the GTE predicate on the "temp_hmac_secret" field.
+func TempHmacSecretGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretLT applies the LT predicate on the "temp_hmac_secret" field.
+func TempHmacSecretLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretLTE applies the LTE predicate on the "temp_hmac_secret" field.
+func TempHmacSecretLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretContains applies the Contains predicate on the "temp_hmac_secret" field.
+func TempHmacSecretContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretHasPrefix applies the HasPrefix predicate on the "temp_hmac_secret" field.
+func TempHmacSecretHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretHasSuffix applies the HasSuffix predicate on the "temp_hmac_secret" field.
+func TempHmacSecretHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretEqualFold applies the EqualFold predicate on the "temp_hmac_secret" field.
+func TempHmacSecretEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldTempHmacSecret, v))
+}
+
+// TempHmacSecretContainsFold applies the ContainsFold predicate on the "temp_hmac_secret" field.
+func TempHmacSecretContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldTempHmacSecret, v))
 }
 
 // HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.

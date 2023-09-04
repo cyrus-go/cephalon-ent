@@ -639,10 +639,18 @@ func init() {
 	missionDescRespBody := missionFields[11].Descriptor()
 	// mission.DefaultRespBody holds the default value on creation for the resp_body field.
 	mission.DefaultRespBody = missionDescRespBody.Default.(string)
-	// missionDescSdAPI is the schema descriptor for sd_api field.
-	missionDescSdAPI := missionFields[12].Descriptor()
-	// mission.DefaultSdAPI holds the default value on creation for the sd_api field.
-	mission.DefaultSdAPI = missionDescSdAPI.Default.(string)
+	// missionDescInnerAPI is the schema descriptor for inner_api field.
+	missionDescInnerAPI := missionFields[12].Descriptor()
+	// mission.DefaultInnerAPI holds the default value on creation for the inner_api field.
+	mission.DefaultInnerAPI = missionDescInnerAPI.Default.(string)
+	// missionDescTempHmacKey is the schema descriptor for temp_hmac_key field.
+	missionDescTempHmacKey := missionFields[14].Descriptor()
+	// mission.DefaultTempHmacKey holds the default value on creation for the temp_hmac_key field.
+	mission.DefaultTempHmacKey = missionDescTempHmacKey.Default.(string)
+	// missionDescTempHmacSecret is the schema descriptor for temp_hmac_secret field.
+	missionDescTempHmacSecret := missionFields[15].Descriptor()
+	// mission.DefaultTempHmacSecret holds the default value on creation for the temp_hmac_secret field.
+	mission.DefaultTempHmacSecret = missionDescTempHmacSecret.Default.(string)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

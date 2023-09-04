@@ -256,16 +256,58 @@ func (mc *MissionCreate) SetNillableRespBody(s *string) *MissionCreate {
 	return mc
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (mc *MissionCreate) SetSdAPI(s string) *MissionCreate {
-	mc.mutation.SetSdAPI(s)
+// SetInnerAPI sets the "inner_api" field.
+func (mc *MissionCreate) SetInnerAPI(s string) *MissionCreate {
+	mc.mutation.SetInnerAPI(s)
 	return mc
 }
 
-// SetNillableSdAPI sets the "sd_api" field if the given value is not nil.
-func (mc *MissionCreate) SetNillableSdAPI(s *string) *MissionCreate {
+// SetNillableInnerAPI sets the "inner_api" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableInnerAPI(s *string) *MissionCreate {
 	if s != nil {
-		mc.SetSdAPI(*s)
+		mc.SetInnerAPI(*s)
+	}
+	return mc
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (mc *MissionCreate) SetInnerMethod(em enums.InnerMethod) *MissionCreate {
+	mc.mutation.SetInnerMethod(em)
+	return mc
+}
+
+// SetNillableInnerMethod sets the "inner_method" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableInnerMethod(em *enums.InnerMethod) *MissionCreate {
+	if em != nil {
+		mc.SetInnerMethod(*em)
+	}
+	return mc
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (mc *MissionCreate) SetTempHmacKey(s string) *MissionCreate {
+	mc.mutation.SetTempHmacKey(s)
+	return mc
+}
+
+// SetNillableTempHmacKey sets the "temp_hmac_key" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableTempHmacKey(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetTempHmacKey(*s)
+	}
+	return mc
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (mc *MissionCreate) SetTempHmacSecret(s string) *MissionCreate {
+	mc.mutation.SetTempHmacSecret(s)
+	return mc
+}
+
+// SetNillableTempHmacSecret sets the "temp_hmac_secret" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableTempHmacSecret(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetTempHmacSecret(*s)
 	}
 	return mc
 }
@@ -422,9 +464,21 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultRespBody
 		mc.mutation.SetRespBody(v)
 	}
-	if _, ok := mc.mutation.SdAPI(); !ok {
-		v := mission.DefaultSdAPI
-		mc.mutation.SetSdAPI(v)
+	if _, ok := mc.mutation.InnerAPI(); !ok {
+		v := mission.DefaultInnerAPI
+		mc.mutation.SetInnerAPI(v)
+	}
+	if _, ok := mc.mutation.InnerMethod(); !ok {
+		v := mission.DefaultInnerMethod
+		mc.mutation.SetInnerMethod(v)
+	}
+	if _, ok := mc.mutation.TempHmacKey(); !ok {
+		v := mission.DefaultTempHmacKey
+		mc.mutation.SetTempHmacKey(v)
+	}
+	if _, ok := mc.mutation.TempHmacSecret(); !ok {
+		v := mission.DefaultTempHmacSecret
+		mc.mutation.SetTempHmacSecret(v)
 	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
@@ -502,8 +556,22 @@ func (mc *MissionCreate) check() error {
 	if _, ok := mc.mutation.RespBody(); !ok {
 		return &ValidationError{Name: "resp_body", err: errors.New(`cep_ent: missing required field "Mission.resp_body"`)}
 	}
-	if _, ok := mc.mutation.SdAPI(); !ok {
-		return &ValidationError{Name: "sd_api", err: errors.New(`cep_ent: missing required field "Mission.sd_api"`)}
+	if _, ok := mc.mutation.InnerAPI(); !ok {
+		return &ValidationError{Name: "inner_api", err: errors.New(`cep_ent: missing required field "Mission.inner_api"`)}
+	}
+	if _, ok := mc.mutation.InnerMethod(); !ok {
+		return &ValidationError{Name: "inner_method", err: errors.New(`cep_ent: missing required field "Mission.inner_method"`)}
+	}
+	if v, ok := mc.mutation.InnerMethod(); ok {
+		if err := mission.InnerMethodValidator(v); err != nil {
+			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
+		}
+	}
+	if _, ok := mc.mutation.TempHmacKey(); !ok {
+		return &ValidationError{Name: "temp_hmac_key", err: errors.New(`cep_ent: missing required field "Mission.temp_hmac_key"`)}
+	}
+	if _, ok := mc.mutation.TempHmacSecret(); !ok {
+		return &ValidationError{Name: "temp_hmac_secret", err: errors.New(`cep_ent: missing required field "Mission.temp_hmac_secret"`)}
 	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair", err: errors.New(`cep_ent: missing required edge "Mission.key_pair"`)}
@@ -605,9 +673,21 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
 		_node.RespBody = value
 	}
-	if value, ok := mc.mutation.SdAPI(); ok {
-		_spec.SetField(mission.FieldSdAPI, field.TypeString, value)
-		_node.SdAPI = value
+	if value, ok := mc.mutation.InnerAPI(); ok {
+		_spec.SetField(mission.FieldInnerAPI, field.TypeString, value)
+		_node.InnerAPI = value
+	}
+	if value, ok := mc.mutation.InnerMethod(); ok {
+		_spec.SetField(mission.FieldInnerMethod, field.TypeEnum, value)
+		_node.InnerMethod = value
+	}
+	if value, ok := mc.mutation.TempHmacKey(); ok {
+		_spec.SetField(mission.FieldTempHmacKey, field.TypeString, value)
+		_node.TempHmacKey = value
+	}
+	if value, ok := mc.mutation.TempHmacSecret(); ok {
+		_spec.SetField(mission.FieldTempHmacSecret, field.TypeString, value)
+		_node.TempHmacSecret = value
 	}
 	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -932,15 +1012,51 @@ func (u *MissionUpsert) UpdateRespBody() *MissionUpsert {
 	return u
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (u *MissionUpsert) SetSdAPI(v string) *MissionUpsert {
-	u.Set(mission.FieldSdAPI, v)
+// SetInnerAPI sets the "inner_api" field.
+func (u *MissionUpsert) SetInnerAPI(v string) *MissionUpsert {
+	u.Set(mission.FieldInnerAPI, v)
 	return u
 }
 
-// UpdateSdAPI sets the "sd_api" field to the value that was provided on create.
-func (u *MissionUpsert) UpdateSdAPI() *MissionUpsert {
-	u.SetExcluded(mission.FieldSdAPI)
+// UpdateInnerAPI sets the "inner_api" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateInnerAPI() *MissionUpsert {
+	u.SetExcluded(mission.FieldInnerAPI)
+	return u
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (u *MissionUpsert) SetInnerMethod(v enums.InnerMethod) *MissionUpsert {
+	u.Set(mission.FieldInnerMethod, v)
+	return u
+}
+
+// UpdateInnerMethod sets the "inner_method" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateInnerMethod() *MissionUpsert {
+	u.SetExcluded(mission.FieldInnerMethod)
+	return u
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (u *MissionUpsert) SetTempHmacKey(v string) *MissionUpsert {
+	u.Set(mission.FieldTempHmacKey, v)
+	return u
+}
+
+// UpdateTempHmacKey sets the "temp_hmac_key" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateTempHmacKey() *MissionUpsert {
+	u.SetExcluded(mission.FieldTempHmacKey)
+	return u
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (u *MissionUpsert) SetTempHmacSecret(v string) *MissionUpsert {
+	u.Set(mission.FieldTempHmacSecret, v)
+	return u
+}
+
+// UpdateTempHmacSecret sets the "temp_hmac_secret" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateTempHmacSecret() *MissionUpsert {
+	u.SetExcluded(mission.FieldTempHmacSecret)
 	return u
 }
 
@@ -1254,17 +1370,59 @@ func (u *MissionUpsertOne) UpdateRespBody() *MissionUpsertOne {
 	})
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (u *MissionUpsertOne) SetSdAPI(v string) *MissionUpsertOne {
+// SetInnerAPI sets the "inner_api" field.
+func (u *MissionUpsertOne) SetInnerAPI(v string) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
-		s.SetSdAPI(v)
+		s.SetInnerAPI(v)
 	})
 }
 
-// UpdateSdAPI sets the "sd_api" field to the value that was provided on create.
-func (u *MissionUpsertOne) UpdateSdAPI() *MissionUpsertOne {
+// UpdateInnerAPI sets the "inner_api" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateInnerAPI() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
-		s.UpdateSdAPI()
+		s.UpdateInnerAPI()
+	})
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (u *MissionUpsertOne) SetInnerMethod(v enums.InnerMethod) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetInnerMethod(v)
+	})
+}
+
+// UpdateInnerMethod sets the "inner_method" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateInnerMethod() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateInnerMethod()
+	})
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (u *MissionUpsertOne) SetTempHmacKey(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetTempHmacKey(v)
+	})
+}
+
+// UpdateTempHmacKey sets the "temp_hmac_key" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateTempHmacKey() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateTempHmacKey()
+	})
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (u *MissionUpsertOne) SetTempHmacSecret(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetTempHmacSecret(v)
+	})
+}
+
+// UpdateTempHmacSecret sets the "temp_hmac_secret" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateTempHmacSecret() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateTempHmacSecret()
 	})
 }
 
@@ -1744,17 +1902,59 @@ func (u *MissionUpsertBulk) UpdateRespBody() *MissionUpsertBulk {
 	})
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (u *MissionUpsertBulk) SetSdAPI(v string) *MissionUpsertBulk {
+// SetInnerAPI sets the "inner_api" field.
+func (u *MissionUpsertBulk) SetInnerAPI(v string) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
-		s.SetSdAPI(v)
+		s.SetInnerAPI(v)
 	})
 }
 
-// UpdateSdAPI sets the "sd_api" field to the value that was provided on create.
-func (u *MissionUpsertBulk) UpdateSdAPI() *MissionUpsertBulk {
+// UpdateInnerAPI sets the "inner_api" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateInnerAPI() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
-		s.UpdateSdAPI()
+		s.UpdateInnerAPI()
+	})
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (u *MissionUpsertBulk) SetInnerMethod(v enums.InnerMethod) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetInnerMethod(v)
+	})
+}
+
+// UpdateInnerMethod sets the "inner_method" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateInnerMethod() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateInnerMethod()
+	})
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (u *MissionUpsertBulk) SetTempHmacKey(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetTempHmacKey(v)
+	})
+}
+
+// UpdateTempHmacKey sets the "temp_hmac_key" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateTempHmacKey() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateTempHmacKey()
+	})
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (u *MissionUpsertBulk) SetTempHmacSecret(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetTempHmacSecret(v)
+	})
+}
+
+// UpdateTempHmacSecret sets the "temp_hmac_secret" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateTempHmacSecret() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateTempHmacSecret()
 	})
 }
 

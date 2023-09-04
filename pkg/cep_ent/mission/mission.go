@@ -50,8 +50,14 @@ const (
 	FieldRespStatusCode = "resp_status_code"
 	// FieldRespBody holds the string denoting the resp_body field in the database.
 	FieldRespBody = "resp_body"
-	// FieldSdAPI holds the string denoting the sd_api field in the database.
-	FieldSdAPI = "sd_api"
+	// FieldInnerAPI holds the string denoting the inner_api field in the database.
+	FieldInnerAPI = "inner_api"
+	// FieldInnerMethod holds the string denoting the inner_method field in the database.
+	FieldInnerMethod = "inner_method"
+	// FieldTempHmacKey holds the string denoting the temp_hmac_key field in the database.
+	FieldTempHmacKey = "temp_hmac_key"
+	// FieldTempHmacSecret holds the string denoting the temp_hmac_secret field in the database.
+	FieldTempHmacSecret = "temp_hmac_secret"
 	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
 	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
@@ -103,7 +109,10 @@ var Columns = []string{
 	FieldUnitCep,
 	FieldRespStatusCode,
 	FieldRespBody,
-	FieldSdAPI,
+	FieldInnerAPI,
+	FieldInnerMethod,
+	FieldTempHmacKey,
+	FieldTempHmacSecret,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -143,8 +152,12 @@ var (
 	DefaultRespStatusCode int32
 	// DefaultRespBody holds the default value on creation for the "resp_body" field.
 	DefaultRespBody string
-	// DefaultSdAPI holds the default value on creation for the "sd_api" field.
-	DefaultSdAPI string
+	// DefaultInnerAPI holds the default value on creation for the "inner_api" field.
+	DefaultInnerAPI string
+	// DefaultTempHmacKey holds the default value on creation for the "temp_hmac_key" field.
+	DefaultTempHmacKey string
+	// DefaultTempHmacSecret holds the default value on creation for the "temp_hmac_secret" field.
+	DefaultTempHmacSecret string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -154,7 +167,7 @@ const DefaultType enums.MissionType = "txt2img"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api":
+	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair":
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for type field: %q", _type)
@@ -194,6 +207,18 @@ func GpuVersionValidator(gv enums.GpuVersion) error {
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for gpu_version field: %q", gv)
+	}
+}
+
+const DefaultInnerMethod enums.InnerMethod = "POST"
+
+// InnerMethodValidator is a validator for the "inner_method" field enum values. It is called by the builders before save.
+func InnerMethodValidator(im enums.InnerMethod) error {
+	switch im {
+	case "POST", "GET", "HEAD":
+		return nil
+	default:
+		return fmt.Errorf("mission: invalid enum value for inner_method field: %q", im)
 	}
 }
 
@@ -285,9 +310,24 @@ func ByRespBody(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRespBody, opts...).ToFunc()
 }
 
-// BySdAPI orders the results by the sd_api field.
-func BySdAPI(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSdAPI, opts...).ToFunc()
+// ByInnerAPI orders the results by the inner_api field.
+func ByInnerAPI(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInnerAPI, opts...).ToFunc()
+}
+
+// ByInnerMethod orders the results by the inner_method field.
+func ByInnerMethod(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInnerMethod, opts...).ToFunc()
+}
+
+// ByTempHmacKey orders the results by the temp_hmac_key field.
+func ByTempHmacKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTempHmacKey, opts...).ToFunc()
+}
+
+// ByTempHmacSecret orders the results by the temp_hmac_secret field.
+func ByTempHmacSecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTempHmacSecret, opts...).ToFunc()
 }
 
 // ByMissionKeyPairsCount orders the results by mission_key_pairs count.

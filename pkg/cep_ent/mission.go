@@ -49,14 +49,20 @@ type Mission struct {
 	MissionBatchNumber string `json:"mission_batch_number"`
 	// 最低可接显卡
 	GpuVersion enums.GpuVersion `json:"gpu_version"`
-	// 任务单价，按次就是 unit_cep/次，按时就是 unit_cep/分钟
+	// 任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟
 	UnitCep int64 `json:"unit_cep"`
 	// 内部功能返回码
 	RespStatusCode int32 `json:"resp_status_code"`
-	// 返回内容体 json 序列化为 string
+	// 返回内容体 json 转 string
 	RespBody string `json:"resp_body"`
-	// 当 type 为 sd_api 时使用，为转发的 sd 接口功能
-	SdAPI string `json:"sd_api"`
+	// 当 type 为 sd_api 时使用，为转发的 sd 内部接口路径
+	InnerAPI string `json:"inner_api"`
+	// 内部转发接口的请求方式，POST 或者 GET 等
+	InnerMethod enums.InnerMethod `json:"inner_method,omitempty"`
+	// 当 type 为 key_pair 时，使用的临时密钥对的键
+	TempHmacKey string `json:"temp_hmac_key,omitempty" temp_hmac_key`
+	// 当 type 为 key_pair 时，使用的临时密钥对的值
+	TempHmacSecret string `json:"temp_hmac_secret,omitempty" temp_hmac_secret`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -120,7 +126,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldSdAPI:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerAPI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -249,11 +255,29 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.RespBody = value.String
 			}
-		case mission.FieldSdAPI:
+		case mission.FieldInnerAPI:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field sd_api", values[i])
+				return fmt.Errorf("unexpected type %T for field inner_api", values[i])
 			} else if value.Valid {
-				m.SdAPI = value.String
+				m.InnerAPI = value.String
+			}
+		case mission.FieldInnerMethod:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field inner_method", values[i])
+			} else if value.Valid {
+				m.InnerMethod = enums.InnerMethod(value.String)
+			}
+		case mission.FieldTempHmacKey:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field temp_hmac_key", values[i])
+			} else if value.Valid {
+				m.TempHmacKey = value.String
+			}
+		case mission.FieldTempHmacSecret:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field temp_hmac_secret", values[i])
+			} else if value.Valid {
+				m.TempHmacSecret = value.String
 			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
@@ -356,8 +380,17 @@ func (m *Mission) String() string {
 	builder.WriteString("resp_body=")
 	builder.WriteString(m.RespBody)
 	builder.WriteString(", ")
-	builder.WriteString("sd_api=")
-	builder.WriteString(m.SdAPI)
+	builder.WriteString("inner_api=")
+	builder.WriteString(m.InnerAPI)
+	builder.WriteString(", ")
+	builder.WriteString("inner_method=")
+	builder.WriteString(fmt.Sprintf("%v", m.InnerMethod))
+	builder.WriteString(", ")
+	builder.WriteString("temp_hmac_key=")
+	builder.WriteString(m.TempHmacKey)
+	builder.WriteString(", ")
+	builder.WriteString("temp_hmac_secret=")
+	builder.WriteString(m.TempHmacSecret)
 	builder.WriteByte(')')
 	return builder.String()
 }

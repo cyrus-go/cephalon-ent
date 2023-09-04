@@ -24,10 +24,13 @@ func (Mission) Fields() []ent.Field {
 		field.Int64("key_pair_id").Default(0).StructTag(`json:"key_pair_id"`).Comment("任务创建者的密钥对 ID"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
 		field.Enum("gpu_version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersion2060)).StructTag(`json:"gpu_version"`).Comment("最低可接显卡"),
-		field.Int64("unit_cep").Default(0).StructTag(`json:"unit_cep"`).Comment("任务单价，按次就是 unit_cep/次，按时就是 unit_cep/分钟"),
+		field.Int64("unit_cep").Default(0).StructTag(`json:"unit_cep"`).Comment("任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟"),
 		field.Int32("resp_status_code").Default(0).StructTag(`json:"resp_status_code"`).Comment("内部功能返回码"),
-		field.String("resp_body").Default("").StructTag(`json:"resp_body"`).Comment("返回内容体 json 序列化为 string"),
-		field.String("sd_api").Default("").StructTag(`json:"sd_api"`).Comment("当 type 为 sd_api 时使用，为转发的 sd 接口功能"),
+		field.String("resp_body").Default("").StructTag(`json:"resp_body"`).Comment("返回内容体 json 转 string"),
+		field.String("inner_api").Default("").StructTag(`json:"inner_api"`).Comment("当 type 为 sd_api 时使用，为转发的 sd 内部接口路径"),
+		field.Enum("inner_method").GoType(enums.InnerMethodPost).Default(string(enums.InnerMethodPost)).Comment("内部转发接口的请求方式，POST 或者 GET 等"),
+		field.String("temp_hmac_key").Default("").StructTag("temp_hmac_key").Comment("当 type 为 key_pair 时，使用的临时密钥对的键"),
+		field.String("temp_hmac_secret").Default("").StructTag("temp_hmac_secret").Comment("当 type 为 key_pair 时，使用的临时密钥对的值"),
 	}
 }
 

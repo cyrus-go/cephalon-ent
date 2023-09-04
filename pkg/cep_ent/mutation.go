@@ -12451,7 +12451,10 @@ type MissionMutation struct {
 	resp_status_code             *int32
 	addresp_status_code          *int32
 	resp_body                    *string
-	sd_api                       *string
+	inner_api                    *string
+	inner_method                 *enums.InnerMethod
+	temp_hmac_key                *string
+	temp_hmac_secret             *string
 	clearedFields                map[string]struct{}
 	mission_key_pairs            map[int64]struct{}
 	removedmission_key_pairs     map[int64]struct{}
@@ -13290,40 +13293,148 @@ func (m *MissionMutation) ResetRespBody() {
 	m.resp_body = nil
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (m *MissionMutation) SetSdAPI(s string) {
-	m.sd_api = &s
+// SetInnerAPI sets the "inner_api" field.
+func (m *MissionMutation) SetInnerAPI(s string) {
+	m.inner_api = &s
 }
 
-// SdAPI returns the value of the "sd_api" field in the mutation.
-func (m *MissionMutation) SdAPI() (r string, exists bool) {
-	v := m.sd_api
+// InnerAPI returns the value of the "inner_api" field in the mutation.
+func (m *MissionMutation) InnerAPI() (r string, exists bool) {
+	v := m.inner_api
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSdAPI returns the old "sd_api" field's value of the Mission entity.
+// OldInnerAPI returns the old "inner_api" field's value of the Mission entity.
 // If the Mission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionMutation) OldSdAPI(ctx context.Context) (v string, err error) {
+func (m *MissionMutation) OldInnerAPI(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSdAPI is only allowed on UpdateOne operations")
+		return v, errors.New("OldInnerAPI is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSdAPI requires an ID field in the mutation")
+		return v, errors.New("OldInnerAPI requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSdAPI: %w", err)
+		return v, fmt.Errorf("querying old value for OldInnerAPI: %w", err)
 	}
-	return oldValue.SdAPI, nil
+	return oldValue.InnerAPI, nil
 }
 
-// ResetSdAPI resets all changes to the "sd_api" field.
-func (m *MissionMutation) ResetSdAPI() {
-	m.sd_api = nil
+// ResetInnerAPI resets all changes to the "inner_api" field.
+func (m *MissionMutation) ResetInnerAPI() {
+	m.inner_api = nil
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (m *MissionMutation) SetInnerMethod(em enums.InnerMethod) {
+	m.inner_method = &em
+}
+
+// InnerMethod returns the value of the "inner_method" field in the mutation.
+func (m *MissionMutation) InnerMethod() (r enums.InnerMethod, exists bool) {
+	v := m.inner_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInnerMethod returns the old "inner_method" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldInnerMethod(ctx context.Context) (v enums.InnerMethod, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInnerMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInnerMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInnerMethod: %w", err)
+	}
+	return oldValue.InnerMethod, nil
+}
+
+// ResetInnerMethod resets all changes to the "inner_method" field.
+func (m *MissionMutation) ResetInnerMethod() {
+	m.inner_method = nil
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (m *MissionMutation) SetTempHmacKey(s string) {
+	m.temp_hmac_key = &s
+}
+
+// TempHmacKey returns the value of the "temp_hmac_key" field in the mutation.
+func (m *MissionMutation) TempHmacKey() (r string, exists bool) {
+	v := m.temp_hmac_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTempHmacKey returns the old "temp_hmac_key" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldTempHmacKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTempHmacKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTempHmacKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTempHmacKey: %w", err)
+	}
+	return oldValue.TempHmacKey, nil
+}
+
+// ResetTempHmacKey resets all changes to the "temp_hmac_key" field.
+func (m *MissionMutation) ResetTempHmacKey() {
+	m.temp_hmac_key = nil
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (m *MissionMutation) SetTempHmacSecret(s string) {
+	m.temp_hmac_secret = &s
+}
+
+// TempHmacSecret returns the value of the "temp_hmac_secret" field in the mutation.
+func (m *MissionMutation) TempHmacSecret() (r string, exists bool) {
+	v := m.temp_hmac_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTempHmacSecret returns the old "temp_hmac_secret" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldTempHmacSecret(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTempHmacSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTempHmacSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTempHmacSecret: %w", err)
+	}
+	return oldValue.TempHmacSecret, nil
+}
+
+// ResetTempHmacSecret resets all changes to the "temp_hmac_secret" field.
+func (m *MissionMutation) ResetTempHmacSecret() {
+	m.temp_hmac_secret = nil
 }
 
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
@@ -13480,7 +13591,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 21)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -13532,8 +13643,17 @@ func (m *MissionMutation) Fields() []string {
 	if m.resp_body != nil {
 		fields = append(fields, mission.FieldRespBody)
 	}
-	if m.sd_api != nil {
-		fields = append(fields, mission.FieldSdAPI)
+	if m.inner_api != nil {
+		fields = append(fields, mission.FieldInnerAPI)
+	}
+	if m.inner_method != nil {
+		fields = append(fields, mission.FieldInnerMethod)
+	}
+	if m.temp_hmac_key != nil {
+		fields = append(fields, mission.FieldTempHmacKey)
+	}
+	if m.temp_hmac_secret != nil {
+		fields = append(fields, mission.FieldTempHmacSecret)
 	}
 	return fields
 }
@@ -13577,8 +13697,14 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.RespStatusCode()
 	case mission.FieldRespBody:
 		return m.RespBody()
-	case mission.FieldSdAPI:
-		return m.SdAPI()
+	case mission.FieldInnerAPI:
+		return m.InnerAPI()
+	case mission.FieldInnerMethod:
+		return m.InnerMethod()
+	case mission.FieldTempHmacKey:
+		return m.TempHmacKey()
+	case mission.FieldTempHmacSecret:
+		return m.TempHmacSecret()
 	}
 	return nil, false
 }
@@ -13622,8 +13748,14 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldRespStatusCode(ctx)
 	case mission.FieldRespBody:
 		return m.OldRespBody(ctx)
-	case mission.FieldSdAPI:
-		return m.OldSdAPI(ctx)
+	case mission.FieldInnerAPI:
+		return m.OldInnerAPI(ctx)
+	case mission.FieldInnerMethod:
+		return m.OldInnerMethod(ctx)
+	case mission.FieldTempHmacKey:
+		return m.OldTempHmacKey(ctx)
+	case mission.FieldTempHmacSecret:
+		return m.OldTempHmacSecret(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -13752,12 +13884,33 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRespBody(v)
 		return nil
-	case mission.FieldSdAPI:
+	case mission.FieldInnerAPI:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSdAPI(v)
+		m.SetInnerAPI(v)
+		return nil
+	case mission.FieldInnerMethod:
+		v, ok := value.(enums.InnerMethod)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInnerMethod(v)
+		return nil
+	case mission.FieldTempHmacKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTempHmacKey(v)
+		return nil
+	case mission.FieldTempHmacSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTempHmacSecret(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -13919,8 +14072,17 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldRespBody:
 		m.ResetRespBody()
 		return nil
-	case mission.FieldSdAPI:
-		m.ResetSdAPI()
+	case mission.FieldInnerAPI:
+		m.ResetInnerAPI()
+		return nil
+	case mission.FieldInnerMethod:
+		m.ResetInnerMethod()
+		return nil
+	case mission.FieldTempHmacKey:
+		m.ResetTempHmacKey()
+		return nil
+	case mission.FieldTempHmacSecret:
+		m.ResetTempHmacSecret()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

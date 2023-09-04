@@ -281,16 +281,58 @@ func (mu *MissionUpdate) SetNillableRespBody(s *string) *MissionUpdate {
 	return mu
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (mu *MissionUpdate) SetSdAPI(s string) *MissionUpdate {
-	mu.mutation.SetSdAPI(s)
+// SetInnerAPI sets the "inner_api" field.
+func (mu *MissionUpdate) SetInnerAPI(s string) *MissionUpdate {
+	mu.mutation.SetInnerAPI(s)
 	return mu
 }
 
-// SetNillableSdAPI sets the "sd_api" field if the given value is not nil.
-func (mu *MissionUpdate) SetNillableSdAPI(s *string) *MissionUpdate {
+// SetNillableInnerAPI sets the "inner_api" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableInnerAPI(s *string) *MissionUpdate {
 	if s != nil {
-		mu.SetSdAPI(*s)
+		mu.SetInnerAPI(*s)
+	}
+	return mu
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (mu *MissionUpdate) SetInnerMethod(em enums.InnerMethod) *MissionUpdate {
+	mu.mutation.SetInnerMethod(em)
+	return mu
+}
+
+// SetNillableInnerMethod sets the "inner_method" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableInnerMethod(em *enums.InnerMethod) *MissionUpdate {
+	if em != nil {
+		mu.SetInnerMethod(*em)
+	}
+	return mu
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (mu *MissionUpdate) SetTempHmacKey(s string) *MissionUpdate {
+	mu.mutation.SetTempHmacKey(s)
+	return mu
+}
+
+// SetNillableTempHmacKey sets the "temp_hmac_key" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableTempHmacKey(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetTempHmacKey(*s)
+	}
+	return mu
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (mu *MissionUpdate) SetTempHmacSecret(s string) *MissionUpdate {
+	mu.mutation.SetTempHmacSecret(s)
+	return mu
+}
+
+// SetNillableTempHmacSecret sets the "temp_hmac_secret" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableTempHmacSecret(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetTempHmacSecret(*s)
 	}
 	return mu
 }
@@ -430,6 +472,11 @@ func (mu *MissionUpdate) check() error {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
 		}
 	}
+	if v, ok := mu.mutation.InnerMethod(); ok {
+		if err := mission.InnerMethodValidator(v); err != nil {
+			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
+		}
+	}
 	if _, ok := mu.mutation.KeyPairID(); mu.mutation.KeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.key_pair"`)
 	}
@@ -513,8 +560,17 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.RespBody(); ok {
 		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
 	}
-	if value, ok := mu.mutation.SdAPI(); ok {
-		_spec.SetField(mission.FieldSdAPI, field.TypeString, value)
+	if value, ok := mu.mutation.InnerAPI(); ok {
+		_spec.SetField(mission.FieldInnerAPI, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.InnerMethod(); ok {
+		_spec.SetField(mission.FieldInnerMethod, field.TypeEnum, value)
+	}
+	if value, ok := mu.mutation.TempHmacKey(); ok {
+		_spec.SetField(mission.FieldTempHmacKey, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.TempHmacSecret(); ok {
+		_spec.SetField(mission.FieldTempHmacSecret, field.TypeString, value)
 	}
 	if mu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -887,16 +943,58 @@ func (muo *MissionUpdateOne) SetNillableRespBody(s *string) *MissionUpdateOne {
 	return muo
 }
 
-// SetSdAPI sets the "sd_api" field.
-func (muo *MissionUpdateOne) SetSdAPI(s string) *MissionUpdateOne {
-	muo.mutation.SetSdAPI(s)
+// SetInnerAPI sets the "inner_api" field.
+func (muo *MissionUpdateOne) SetInnerAPI(s string) *MissionUpdateOne {
+	muo.mutation.SetInnerAPI(s)
 	return muo
 }
 
-// SetNillableSdAPI sets the "sd_api" field if the given value is not nil.
-func (muo *MissionUpdateOne) SetNillableSdAPI(s *string) *MissionUpdateOne {
+// SetNillableInnerAPI sets the "inner_api" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableInnerAPI(s *string) *MissionUpdateOne {
 	if s != nil {
-		muo.SetSdAPI(*s)
+		muo.SetInnerAPI(*s)
+	}
+	return muo
+}
+
+// SetInnerMethod sets the "inner_method" field.
+func (muo *MissionUpdateOne) SetInnerMethod(em enums.InnerMethod) *MissionUpdateOne {
+	muo.mutation.SetInnerMethod(em)
+	return muo
+}
+
+// SetNillableInnerMethod sets the "inner_method" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableInnerMethod(em *enums.InnerMethod) *MissionUpdateOne {
+	if em != nil {
+		muo.SetInnerMethod(*em)
+	}
+	return muo
+}
+
+// SetTempHmacKey sets the "temp_hmac_key" field.
+func (muo *MissionUpdateOne) SetTempHmacKey(s string) *MissionUpdateOne {
+	muo.mutation.SetTempHmacKey(s)
+	return muo
+}
+
+// SetNillableTempHmacKey sets the "temp_hmac_key" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableTempHmacKey(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetTempHmacKey(*s)
+	}
+	return muo
+}
+
+// SetTempHmacSecret sets the "temp_hmac_secret" field.
+func (muo *MissionUpdateOne) SetTempHmacSecret(s string) *MissionUpdateOne {
+	muo.mutation.SetTempHmacSecret(s)
+	return muo
+}
+
+// SetNillableTempHmacSecret sets the "temp_hmac_secret" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableTempHmacSecret(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetTempHmacSecret(*s)
 	}
 	return muo
 }
@@ -1049,6 +1147,11 @@ func (muo *MissionUpdateOne) check() error {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
 		}
 	}
+	if v, ok := muo.mutation.InnerMethod(); ok {
+		if err := mission.InnerMethodValidator(v); err != nil {
+			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
+		}
+	}
 	if _, ok := muo.mutation.KeyPairID(); muo.mutation.KeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.key_pair"`)
 	}
@@ -1149,8 +1252,17 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	if value, ok := muo.mutation.RespBody(); ok {
 		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
 	}
-	if value, ok := muo.mutation.SdAPI(); ok {
-		_spec.SetField(mission.FieldSdAPI, field.TypeString, value)
+	if value, ok := muo.mutation.InnerAPI(); ok {
+		_spec.SetField(mission.FieldInnerAPI, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.InnerMethod(); ok {
+		_spec.SetField(mission.FieldInnerMethod, field.TypeEnum, value)
+	}
+	if value, ok := muo.mutation.TempHmacKey(); ok {
+		_spec.SetField(mission.FieldTempHmacKey, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.TempHmacSecret(); ok {
+		_spec.SetField(mission.FieldTempHmacSecret, field.TypeString, value)
 	}
 	if muo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
