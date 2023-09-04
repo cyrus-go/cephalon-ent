@@ -256,16 +256,16 @@ func (mc *MissionCreate) SetNillableRespBody(s *string) *MissionCreate {
 	return mc
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (mc *MissionCreate) SetInnerAPI(s string) *MissionCreate {
-	mc.mutation.SetInnerAPI(s)
+// SetInnerURI sets the "inner_uri" field.
+func (mc *MissionCreate) SetInnerURI(s string) *MissionCreate {
+	mc.mutation.SetInnerURI(s)
 	return mc
 }
 
-// SetNillableInnerAPI sets the "inner_api" field if the given value is not nil.
-func (mc *MissionCreate) SetNillableInnerAPI(s *string) *MissionCreate {
+// SetNillableInnerURI sets the "inner_uri" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableInnerURI(s *string) *MissionCreate {
 	if s != nil {
-		mc.SetInnerAPI(*s)
+		mc.SetInnerURI(*s)
 	}
 	return mc
 }
@@ -478,9 +478,9 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultRespBody
 		mc.mutation.SetRespBody(v)
 	}
-	if _, ok := mc.mutation.InnerAPI(); !ok {
-		v := mission.DefaultInnerAPI
-		mc.mutation.SetInnerAPI(v)
+	if _, ok := mc.mutation.InnerURI(); !ok {
+		v := mission.DefaultInnerURI
+		mc.mutation.SetInnerURI(v)
 	}
 	if _, ok := mc.mutation.InnerMethod(); !ok {
 		v := mission.DefaultInnerMethod
@@ -574,8 +574,8 @@ func (mc *MissionCreate) check() error {
 	if _, ok := mc.mutation.RespBody(); !ok {
 		return &ValidationError{Name: "resp_body", err: errors.New(`cep_ent: missing required field "Mission.resp_body"`)}
 	}
-	if _, ok := mc.mutation.InnerAPI(); !ok {
-		return &ValidationError{Name: "inner_api", err: errors.New(`cep_ent: missing required field "Mission.inner_api"`)}
+	if _, ok := mc.mutation.InnerURI(); !ok {
+		return &ValidationError{Name: "inner_uri", err: errors.New(`cep_ent: missing required field "Mission.inner_uri"`)}
 	}
 	if _, ok := mc.mutation.InnerMethod(); !ok {
 		return &ValidationError{Name: "inner_method", err: errors.New(`cep_ent: missing required field "Mission.inner_method"`)}
@@ -694,9 +694,9 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
 		_node.RespBody = value
 	}
-	if value, ok := mc.mutation.InnerAPI(); ok {
-		_spec.SetField(mission.FieldInnerAPI, field.TypeString, value)
-		_node.InnerAPI = value
+	if value, ok := mc.mutation.InnerURI(); ok {
+		_spec.SetField(mission.FieldInnerURI, field.TypeString, value)
+		_node.InnerURI = value
 	}
 	if value, ok := mc.mutation.InnerMethod(); ok {
 		_spec.SetField(mission.FieldInnerMethod, field.TypeEnum, value)
@@ -1037,15 +1037,15 @@ func (u *MissionUpsert) UpdateRespBody() *MissionUpsert {
 	return u
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (u *MissionUpsert) SetInnerAPI(v string) *MissionUpsert {
-	u.Set(mission.FieldInnerAPI, v)
+// SetInnerURI sets the "inner_uri" field.
+func (u *MissionUpsert) SetInnerURI(v string) *MissionUpsert {
+	u.Set(mission.FieldInnerURI, v)
 	return u
 }
 
-// UpdateInnerAPI sets the "inner_api" field to the value that was provided on create.
-func (u *MissionUpsert) UpdateInnerAPI() *MissionUpsert {
-	u.SetExcluded(mission.FieldInnerAPI)
+// UpdateInnerURI sets the "inner_uri" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateInnerURI() *MissionUpsert {
+	u.SetExcluded(mission.FieldInnerURI)
 	return u
 }
 
@@ -1407,17 +1407,17 @@ func (u *MissionUpsertOne) UpdateRespBody() *MissionUpsertOne {
 	})
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (u *MissionUpsertOne) SetInnerAPI(v string) *MissionUpsertOne {
+// SetInnerURI sets the "inner_uri" field.
+func (u *MissionUpsertOne) SetInnerURI(v string) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
-		s.SetInnerAPI(v)
+		s.SetInnerURI(v)
 	})
 }
 
-// UpdateInnerAPI sets the "inner_api" field to the value that was provided on create.
-func (u *MissionUpsertOne) UpdateInnerAPI() *MissionUpsertOne {
+// UpdateInnerURI sets the "inner_uri" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateInnerURI() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
-		s.UpdateInnerAPI()
+		s.UpdateInnerURI()
 	})
 }
 
@@ -1953,17 +1953,17 @@ func (u *MissionUpsertBulk) UpdateRespBody() *MissionUpsertBulk {
 	})
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (u *MissionUpsertBulk) SetInnerAPI(v string) *MissionUpsertBulk {
+// SetInnerURI sets the "inner_uri" field.
+func (u *MissionUpsertBulk) SetInnerURI(v string) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
-		s.SetInnerAPI(v)
+		s.SetInnerURI(v)
 	})
 }
 
-// UpdateInnerAPI sets the "inner_api" field to the value that was provided on create.
-func (u *MissionUpsertBulk) UpdateInnerAPI() *MissionUpsertBulk {
+// UpdateInnerURI sets the "inner_uri" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateInnerURI() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
-		s.UpdateInnerAPI()
+		s.UpdateInnerURI()
 	})
 }
 

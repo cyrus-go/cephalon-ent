@@ -50,8 +50,8 @@ const (
 	FieldRespStatusCode = "resp_status_code"
 	// FieldRespBody holds the string denoting the resp_body field in the database.
 	FieldRespBody = "resp_body"
-	// FieldInnerAPI holds the string denoting the inner_api field in the database.
-	FieldInnerAPI = "inner_api"
+	// FieldInnerURI holds the string denoting the inner_uri field in the database.
+	FieldInnerURI = "inner_uri"
 	// FieldInnerMethod holds the string denoting the inner_method field in the database.
 	FieldInnerMethod = "inner_method"
 	// FieldTempHmacKey holds the string denoting the temp_hmac_key field in the database.
@@ -111,7 +111,7 @@ var Columns = []string{
 	FieldUnitCep,
 	FieldRespStatusCode,
 	FieldRespBody,
-	FieldInnerAPI,
+	FieldInnerURI,
 	FieldInnerMethod,
 	FieldTempHmacKey,
 	FieldTempHmacSecret,
@@ -155,8 +155,8 @@ var (
 	DefaultRespStatusCode int32
 	// DefaultRespBody holds the default value on creation for the "resp_body" field.
 	DefaultRespBody string
-	// DefaultInnerAPI holds the default value on creation for the "inner_api" field.
-	DefaultInnerAPI string
+	// DefaultInnerURI holds the default value on creation for the "inner_uri" field.
+	DefaultInnerURI string
 	// DefaultTempHmacKey holds the default value on creation for the "temp_hmac_key" field.
 	DefaultTempHmacKey string
 	// DefaultTempHmacSecret holds the default value on creation for the "temp_hmac_secret" field.
@@ -315,9 +315,9 @@ func ByRespBody(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRespBody, opts...).ToFunc()
 }
 
-// ByInnerAPI orders the results by the inner_api field.
-func ByInnerAPI(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldInnerAPI, opts...).ToFunc()
+// ByInnerURI orders the results by the inner_uri field.
+func ByInnerURI(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInnerURI, opts...).ToFunc()
 }
 
 // ByInnerMethod orders the results by the inner_method field.

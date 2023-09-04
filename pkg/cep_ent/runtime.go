@@ -639,10 +639,10 @@ func init() {
 	missionDescRespBody := missionFields[11].Descriptor()
 	// mission.DefaultRespBody holds the default value on creation for the resp_body field.
 	mission.DefaultRespBody = missionDescRespBody.Default.(string)
-	// missionDescInnerAPI is the schema descriptor for inner_api field.
-	missionDescInnerAPI := missionFields[12].Descriptor()
-	// mission.DefaultInnerAPI holds the default value on creation for the inner_api field.
-	mission.DefaultInnerAPI = missionDescInnerAPI.Default.(string)
+	// missionDescInnerURI is the schema descriptor for inner_uri field.
+	missionDescInnerURI := missionFields[12].Descriptor()
+	// mission.DefaultInnerURI holds the default value on creation for the inner_uri field.
+	mission.DefaultInnerURI = missionDescInnerURI.Default.(string)
 	// missionDescTempHmacKey is the schema descriptor for temp_hmac_key field.
 	missionDescTempHmacKey := missionFields[14].Descriptor()
 	// mission.DefaultTempHmacKey holds the default value on creation for the temp_hmac_key field.

@@ -55,8 +55,8 @@ type Mission struct {
 	RespStatusCode int32 `json:"resp_status_code"`
 	// 返回内容体 json 转 string
 	RespBody string `json:"resp_body"`
-	// 当 type 为 sd_api 时使用，为转发的 sd 内部接口路径
-	InnerAPI string `json:"inner_api"`
+	// 当 type 为 sd_api 时使用，为转发的 sd 内部接口相对路径
+	InnerURI string `json:"inner_uri"`
 	// 内部转发接口的请求方式，POST 或者 GET 等
 	InnerMethod enums.InnerMethod `json:"inner_method"`
 	// 当 type 为 key_pair 时，使用的临时密钥对的键
@@ -128,7 +128,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerAPI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -257,11 +257,11 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.RespBody = value.String
 			}
-		case mission.FieldInnerAPI:
+		case mission.FieldInnerURI:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field inner_api", values[i])
+				return fmt.Errorf("unexpected type %T for field inner_uri", values[i])
 			} else if value.Valid {
-				m.InnerAPI = value.String
+				m.InnerURI = value.String
 			}
 		case mission.FieldInnerMethod:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -388,8 +388,8 @@ func (m *Mission) String() string {
 	builder.WriteString("resp_body=")
 	builder.WriteString(m.RespBody)
 	builder.WriteString(", ")
-	builder.WriteString("inner_api=")
-	builder.WriteString(m.InnerAPI)
+	builder.WriteString("inner_uri=")
+	builder.WriteString(m.InnerURI)
 	builder.WriteString(", ")
 	builder.WriteString("inner_method=")
 	builder.WriteString(fmt.Sprintf("%v", m.InnerMethod))

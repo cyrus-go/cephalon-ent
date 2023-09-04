@@ -12451,7 +12451,7 @@ type MissionMutation struct {
 	resp_status_code             *int32
 	addresp_status_code          *int32
 	resp_body                    *string
-	inner_api                    *string
+	inner_uri                    *string
 	inner_method                 *enums.InnerMethod
 	temp_hmac_key                *string
 	temp_hmac_secret             *string
@@ -13294,40 +13294,40 @@ func (m *MissionMutation) ResetRespBody() {
 	m.resp_body = nil
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (m *MissionMutation) SetInnerAPI(s string) {
-	m.inner_api = &s
+// SetInnerURI sets the "inner_uri" field.
+func (m *MissionMutation) SetInnerURI(s string) {
+	m.inner_uri = &s
 }
 
-// InnerAPI returns the value of the "inner_api" field in the mutation.
-func (m *MissionMutation) InnerAPI() (r string, exists bool) {
-	v := m.inner_api
+// InnerURI returns the value of the "inner_uri" field in the mutation.
+func (m *MissionMutation) InnerURI() (r string, exists bool) {
+	v := m.inner_uri
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldInnerAPI returns the old "inner_api" field's value of the Mission entity.
+// OldInnerURI returns the old "inner_uri" field's value of the Mission entity.
 // If the Mission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionMutation) OldInnerAPI(ctx context.Context) (v string, err error) {
+func (m *MissionMutation) OldInnerURI(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInnerAPI is only allowed on UpdateOne operations")
+		return v, errors.New("OldInnerURI is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInnerAPI requires an ID field in the mutation")
+		return v, errors.New("OldInnerURI requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInnerAPI: %w", err)
+		return v, fmt.Errorf("querying old value for OldInnerURI: %w", err)
 	}
-	return oldValue.InnerAPI, nil
+	return oldValue.InnerURI, nil
 }
 
-// ResetInnerAPI resets all changes to the "inner_api" field.
-func (m *MissionMutation) ResetInnerAPI() {
-	m.inner_api = nil
+// ResetInnerURI resets all changes to the "inner_uri" field.
+func (m *MissionMutation) ResetInnerURI() {
+	m.inner_uri = nil
 }
 
 // SetInnerMethod sets the "inner_method" field.
@@ -13680,8 +13680,8 @@ func (m *MissionMutation) Fields() []string {
 	if m.resp_body != nil {
 		fields = append(fields, mission.FieldRespBody)
 	}
-	if m.inner_api != nil {
-		fields = append(fields, mission.FieldInnerAPI)
+	if m.inner_uri != nil {
+		fields = append(fields, mission.FieldInnerURI)
 	}
 	if m.inner_method != nil {
 		fields = append(fields, mission.FieldInnerMethod)
@@ -13737,8 +13737,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.RespStatusCode()
 	case mission.FieldRespBody:
 		return m.RespBody()
-	case mission.FieldInnerAPI:
-		return m.InnerAPI()
+	case mission.FieldInnerURI:
+		return m.InnerURI()
 	case mission.FieldInnerMethod:
 		return m.InnerMethod()
 	case mission.FieldTempHmacKey:
@@ -13790,8 +13790,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldRespStatusCode(ctx)
 	case mission.FieldRespBody:
 		return m.OldRespBody(ctx)
-	case mission.FieldInnerAPI:
-		return m.OldInnerAPI(ctx)
+	case mission.FieldInnerURI:
+		return m.OldInnerURI(ctx)
 	case mission.FieldInnerMethod:
 		return m.OldInnerMethod(ctx)
 	case mission.FieldTempHmacKey:
@@ -13928,12 +13928,12 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRespBody(v)
 		return nil
-	case mission.FieldInnerAPI:
+	case mission.FieldInnerURI:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetInnerAPI(v)
+		m.SetInnerURI(v)
 		return nil
 	case mission.FieldInnerMethod:
 		v, ok := value.(enums.InnerMethod)
@@ -14123,8 +14123,8 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldRespBody:
 		m.ResetRespBody()
 		return nil
-	case mission.FieldInnerAPI:
-		m.ResetInnerAPI()
+	case mission.FieldInnerURI:
+		m.ResetInnerURI()
 		return nil
 	case mission.FieldInnerMethod:
 		m.ResetInnerMethod()

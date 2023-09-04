@@ -361,7 +361,7 @@ var (
 		{Name: "unit_cep", Type: field.TypeInt64, Comment: "任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟", Default: 0},
 		{Name: "resp_status_code", Type: field.TypeInt32, Comment: "内部功能返回码", Default: 0},
 		{Name: "resp_body", Type: field.TypeString, Comment: "返回内容体 json 转 string", Default: ""},
-		{Name: "inner_api", Type: field.TypeString, Comment: "当 type 为 sd_api 时使用，为转发的 sd 内部接口路径", Default: ""},
+		{Name: "inner_uri", Type: field.TypeString, Comment: "当 type 为 sd_api 时使用，为转发的 sd 内部接口相对路径", Default: ""},
 		{Name: "inner_method", Type: field.TypeEnum, Comment: "内部转发接口的请求方式，POST 或者 GET 等", Enums: []string{"POST", "GET", "HEAD"}, Default: "POST"},
 		{Name: "temp_hmac_key", Type: field.TypeString, Comment: "当 type 为 key_pair 时，使用的临时密钥对的键", Default: ""},
 		{Name: "temp_hmac_secret", Type: field.TypeString, Comment: "当 type 为 key_pair 时，使用的临时密钥对的值", Default: ""},

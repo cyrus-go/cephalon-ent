@@ -27,7 +27,7 @@ func (Mission) Fields() []ent.Field {
 		field.Int64("unit_cep").Default(0).StructTag(`json:"unit_cep"`).Comment("任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟"),
 		field.Int32("resp_status_code").Default(0).StructTag(`json:"resp_status_code"`).Comment("内部功能返回码"),
 		field.String("resp_body").Default("").StructTag(`json:"resp_body"`).Comment("返回内容体 json 转 string"),
-		field.String("inner_api").Default("").StructTag(`json:"inner_api"`).Comment("当 type 为 sd_api 时使用，为转发的 sd 内部接口路径"),
+		field.String("inner_uri").Default("").StructTag(`json:"inner_uri"`).Comment("当 type 为 sd_api 时使用，为转发的 sd 内部接口相对路径"),
 		field.Enum("inner_method").GoType(enums.InnerMethodPost).Default(string(enums.InnerMethodPost)).StructTag(`json:"inner_method"`).Comment("内部转发接口的请求方式，POST 或者 GET 等"),
 		field.String("temp_hmac_key").Default("").StructTag(`json:"temp_hmac_key"`).Comment("当 type 为 key_pair 时，使用的临时密钥对的键"),
 		field.String("temp_hmac_secret").Default("").StructTag(`json:"temp_hmac_secret"`).Comment("当 type 为 key_pair 时，使用的临时密钥对的值"),

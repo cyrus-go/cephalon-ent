@@ -281,16 +281,16 @@ func (mu *MissionUpdate) SetNillableRespBody(s *string) *MissionUpdate {
 	return mu
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (mu *MissionUpdate) SetInnerAPI(s string) *MissionUpdate {
-	mu.mutation.SetInnerAPI(s)
+// SetInnerURI sets the "inner_uri" field.
+func (mu *MissionUpdate) SetInnerURI(s string) *MissionUpdate {
+	mu.mutation.SetInnerURI(s)
 	return mu
 }
 
-// SetNillableInnerAPI sets the "inner_api" field if the given value is not nil.
-func (mu *MissionUpdate) SetNillableInnerAPI(s *string) *MissionUpdate {
+// SetNillableInnerURI sets the "inner_uri" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableInnerURI(s *string) *MissionUpdate {
 	if s != nil {
-		mu.SetInnerAPI(*s)
+		mu.SetInnerURI(*s)
 	}
 	return mu
 }
@@ -574,8 +574,8 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.RespBody(); ok {
 		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
 	}
-	if value, ok := mu.mutation.InnerAPI(); ok {
-		_spec.SetField(mission.FieldInnerAPI, field.TypeString, value)
+	if value, ok := mu.mutation.InnerURI(); ok {
+		_spec.SetField(mission.FieldInnerURI, field.TypeString, value)
 	}
 	if value, ok := mu.mutation.InnerMethod(); ok {
 		_spec.SetField(mission.FieldInnerMethod, field.TypeEnum, value)
@@ -960,16 +960,16 @@ func (muo *MissionUpdateOne) SetNillableRespBody(s *string) *MissionUpdateOne {
 	return muo
 }
 
-// SetInnerAPI sets the "inner_api" field.
-func (muo *MissionUpdateOne) SetInnerAPI(s string) *MissionUpdateOne {
-	muo.mutation.SetInnerAPI(s)
+// SetInnerURI sets the "inner_uri" field.
+func (muo *MissionUpdateOne) SetInnerURI(s string) *MissionUpdateOne {
+	muo.mutation.SetInnerURI(s)
 	return muo
 }
 
-// SetNillableInnerAPI sets the "inner_api" field if the given value is not nil.
-func (muo *MissionUpdateOne) SetNillableInnerAPI(s *string) *MissionUpdateOne {
+// SetNillableInnerURI sets the "inner_uri" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableInnerURI(s *string) *MissionUpdateOne {
 	if s != nil {
-		muo.SetInnerAPI(*s)
+		muo.SetInnerURI(*s)
 	}
 	return muo
 }
@@ -1283,8 +1283,8 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	if value, ok := muo.mutation.RespBody(); ok {
 		_spec.SetField(mission.FieldRespBody, field.TypeString, value)
 	}
-	if value, ok := muo.mutation.InnerAPI(); ok {
-		_spec.SetField(mission.FieldInnerAPI, field.TypeString, value)
+	if value, ok := muo.mutation.InnerURI(); ok {
+		_spec.SetField(mission.FieldInnerURI, field.TypeString, value)
 	}
 	if value, ok := muo.mutation.InnerMethod(); ok {
 		_spec.SetField(mission.FieldInnerMethod, field.TypeEnum, value)

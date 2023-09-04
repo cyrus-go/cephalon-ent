@@ -116,9 +116,9 @@ func RespBody(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldRespBody, v))
 }
 
-// InnerAPI applies equality check predicate on the "inner_api" field. It's identical to InnerAPIEQ.
-func InnerAPI(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldInnerAPI, v))
+// InnerURI applies equality check predicate on the "inner_uri" field. It's identical to InnerURIEQ.
+func InnerURI(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldInnerURI, v))
 }
 
 // TempHmacKey applies equality check predicate on the "temp_hmac_key" field. It's identical to TempHmacKeyEQ.
@@ -826,69 +826,69 @@ func RespBodyContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldRespBody, v))
 }
 
-// InnerAPIEQ applies the EQ predicate on the "inner_api" field.
-func InnerAPIEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldInnerAPI, v))
+// InnerURIEQ applies the EQ predicate on the "inner_uri" field.
+func InnerURIEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldInnerURI, v))
 }
 
-// InnerAPINEQ applies the NEQ predicate on the "inner_api" field.
-func InnerAPINEQ(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldInnerAPI, v))
+// InnerURINEQ applies the NEQ predicate on the "inner_uri" field.
+func InnerURINEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldInnerURI, v))
 }
 
-// InnerAPIIn applies the In predicate on the "inner_api" field.
-func InnerAPIIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldInnerAPI, vs...))
+// InnerURIIn applies the In predicate on the "inner_uri" field.
+func InnerURIIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldInnerURI, vs...))
 }
 
-// InnerAPINotIn applies the NotIn predicate on the "inner_api" field.
-func InnerAPINotIn(vs ...string) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldInnerAPI, vs...))
+// InnerURINotIn applies the NotIn predicate on the "inner_uri" field.
+func InnerURINotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldInnerURI, vs...))
 }
 
-// InnerAPIGT applies the GT predicate on the "inner_api" field.
-func InnerAPIGT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGT(FieldInnerAPI, v))
+// InnerURIGT applies the GT predicate on the "inner_uri" field.
+func InnerURIGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldInnerURI, v))
 }
 
-// InnerAPIGTE applies the GTE predicate on the "inner_api" field.
-func InnerAPIGTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldGTE(FieldInnerAPI, v))
+// InnerURIGTE applies the GTE predicate on the "inner_uri" field.
+func InnerURIGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldInnerURI, v))
 }
 
-// InnerAPILT applies the LT predicate on the "inner_api" field.
-func InnerAPILT(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLT(FieldInnerAPI, v))
+// InnerURILT applies the LT predicate on the "inner_uri" field.
+func InnerURILT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldInnerURI, v))
 }
 
-// InnerAPILTE applies the LTE predicate on the "inner_api" field.
-func InnerAPILTE(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldLTE(FieldInnerAPI, v))
+// InnerURILTE applies the LTE predicate on the "inner_uri" field.
+func InnerURILTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldInnerURI, v))
 }
 
-// InnerAPIContains applies the Contains predicate on the "inner_api" field.
-func InnerAPIContains(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContains(FieldInnerAPI, v))
+// InnerURIContains applies the Contains predicate on the "inner_uri" field.
+func InnerURIContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldInnerURI, v))
 }
 
-// InnerAPIHasPrefix applies the HasPrefix predicate on the "inner_api" field.
-func InnerAPIHasPrefix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasPrefix(FieldInnerAPI, v))
+// InnerURIHasPrefix applies the HasPrefix predicate on the "inner_uri" field.
+func InnerURIHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldInnerURI, v))
 }
 
-// InnerAPIHasSuffix applies the HasSuffix predicate on the "inner_api" field.
-func InnerAPIHasSuffix(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldHasSuffix(FieldInnerAPI, v))
+// InnerURIHasSuffix applies the HasSuffix predicate on the "inner_uri" field.
+func InnerURIHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldInnerURI, v))
 }
 
-// InnerAPIEqualFold applies the EqualFold predicate on the "inner_api" field.
-func InnerAPIEqualFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldEqualFold(FieldInnerAPI, v))
+// InnerURIEqualFold applies the EqualFold predicate on the "inner_uri" field.
+func InnerURIEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldInnerURI, v))
 }
 
-// InnerAPIContainsFold applies the ContainsFold predicate on the "inner_api" field.
-func InnerAPIContainsFold(v string) predicate.Mission {
-	return predicate.Mission(sql.FieldContainsFold(FieldInnerAPI, v))
+// InnerURIContainsFold applies the ContainsFold predicate on the "inner_uri" field.
+func InnerURIContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldInnerURI, v))
 }
 
 // InnerMethodEQ applies the EQ predicate on the "inner_method" field.
