@@ -622,6 +622,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
 		{Name: "is_deprecated", Type: field.TypeBool, Comment: "价格是否屏蔽，前端置灰，硬选也可以", Default: false},
+		{Name: "is_sensitive", Type: field.TypeBool, Comment: "价格是否敏感，用于特殊类型任务，不能让外部看到选项", Default: false},
 	}
 	// PricesTable holds the schema information for the "prices" table.
 	PricesTable = &schema.Table{

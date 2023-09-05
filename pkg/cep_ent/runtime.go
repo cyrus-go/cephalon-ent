@@ -1047,6 +1047,10 @@ func init() {
 	priceDescIsDeprecated := priceFields[7].Descriptor()
 	// price.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
 	price.DefaultIsDeprecated = priceDescIsDeprecated.Default.(bool)
+	// priceDescIsSensitive is the schema descriptor for is_sensitive field.
+	priceDescIsSensitive := priceFields[8].Descriptor()
+	// price.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
+	price.DefaultIsSensitive = priceDescIsSensitive.Default.(bool)
 	// priceDescID is the schema descriptor for id field.
 	priceDescID := priceMixinFields0[0].Descriptor()
 	// price.DefaultID holds the default value on creation for the id field.

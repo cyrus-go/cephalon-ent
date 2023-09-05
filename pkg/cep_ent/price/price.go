@@ -41,6 +41,8 @@ const (
 	FieldFinishedAt = "finished_at"
 	// FieldIsDeprecated holds the string denoting the is_deprecated field in the database.
 	FieldIsDeprecated = "is_deprecated"
+	// FieldIsSensitive holds the string denoting the is_sensitive field in the database.
+	FieldIsSensitive = "is_sensitive"
 	// Table holds the table name of the price in the database.
 	Table = "prices"
 )
@@ -61,6 +63,7 @@ var Columns = []string{
 	FieldStartedAt,
 	FieldFinishedAt,
 	FieldIsDeprecated,
+	FieldIsSensitive,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -90,6 +93,8 @@ var (
 	DefaultCep int64
 	// DefaultIsDeprecated holds the default value on creation for the "is_deprecated" field.
 	DefaultIsDeprecated bool
+	// DefaultIsSensitive holds the default value on creation for the "is_sensitive" field.
+	DefaultIsSensitive bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -213,4 +218,9 @@ func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByIsDeprecated orders the results by the is_deprecated field.
 func ByIsDeprecated(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsDeprecated, opts...).ToFunc()
+}
+
+// ByIsSensitive orders the results by the is_sensitive field.
+func ByIsSensitive(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsSensitive, opts...).ToFunc()
 }

@@ -22835,6 +22835,7 @@ type PriceMutation struct {
 	started_at           *time.Time
 	finished_at          *time.Time
 	is_deprecated        *bool
+	is_sensitive         *bool
 	clearedFields        map[string]struct{}
 	done                 bool
 	oldValue             func(context.Context) (*Price, error)
@@ -23499,6 +23500,42 @@ func (m *PriceMutation) ResetIsDeprecated() {
 	m.is_deprecated = nil
 }
 
+// SetIsSensitive sets the "is_sensitive" field.
+func (m *PriceMutation) SetIsSensitive(b bool) {
+	m.is_sensitive = &b
+}
+
+// IsSensitive returns the value of the "is_sensitive" field in the mutation.
+func (m *PriceMutation) IsSensitive() (r bool, exists bool) {
+	v := m.is_sensitive
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsSensitive returns the old "is_sensitive" field's value of the Price entity.
+// If the Price object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PriceMutation) OldIsSensitive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsSensitive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsSensitive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsSensitive: %w", err)
+	}
+	return oldValue.IsSensitive, nil
+}
+
+// ResetIsSensitive resets all changes to the "is_sensitive" field.
+func (m *PriceMutation) ResetIsSensitive() {
+	m.is_sensitive = nil
+}
+
 // Where appends a list predicates to the PriceMutation builder.
 func (m *PriceMutation) Where(ps ...predicate.Price) {
 	m.predicates = append(m.predicates, ps...)
@@ -23533,7 +23570,7 @@ func (m *PriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PriceMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, price.FieldCreatedBy)
 	}
@@ -23573,6 +23610,9 @@ func (m *PriceMutation) Fields() []string {
 	if m.is_deprecated != nil {
 		fields = append(fields, price.FieldIsDeprecated)
 	}
+	if m.is_sensitive != nil {
+		fields = append(fields, price.FieldIsSensitive)
+	}
 	return fields
 }
 
@@ -23607,6 +23647,8 @@ func (m *PriceMutation) Field(name string) (ent.Value, bool) {
 		return m.FinishedAt()
 	case price.FieldIsDeprecated:
 		return m.IsDeprecated()
+	case price.FieldIsSensitive:
+		return m.IsSensitive()
 	}
 	return nil, false
 }
@@ -23642,6 +23684,8 @@ func (m *PriceMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldFinishedAt(ctx)
 	case price.FieldIsDeprecated:
 		return m.OldIsDeprecated(ctx)
+	case price.FieldIsSensitive:
+		return m.OldIsSensitive(ctx)
 	}
 	return nil, fmt.Errorf("unknown Price field %s", name)
 }
@@ -23741,6 +23785,13 @@ func (m *PriceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsDeprecated(v)
+		return nil
+	case price.FieldIsSensitive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsSensitive(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Price field %s", name)
@@ -23883,6 +23934,9 @@ func (m *PriceMutation) ResetField(name string) error {
 		return nil
 	case price.FieldIsDeprecated:
 		m.ResetIsDeprecated()
+		return nil
+	case price.FieldIsSensitive:
+		m.ResetIsSensitive()
 		return nil
 	}
 	return fmt.Errorf("unknown Price field %s", name)

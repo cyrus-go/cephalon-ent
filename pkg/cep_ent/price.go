@@ -44,6 +44,8 @@ type Price struct {
 	FinishedAt *time.Time `json:"finished_at"`
 	// 价格是否屏蔽，前端置灰，硬选也可以
 	IsDeprecated bool `json:"is_deprecated"`
+	// 价格是否敏感，用于特殊类型任务，不能让外部看到选项
+	IsSensitive  bool `json:"is_sensitive"`
 	selectValues sql.SelectValues
 }
 
@@ -52,7 +54,7 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case price.FieldIsDeprecated:
+		case price.FieldIsDeprecated, price.FieldIsSensitive:
 			values[i] = new(sql.NullBool)
 		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldCep:
 			values[i] = new(sql.NullInt64)
@@ -161,6 +163,12 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.IsDeprecated = value.Bool
 			}
+		case price.FieldIsSensitive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_sensitive", values[i])
+			} else if value.Valid {
+				pr.IsSensitive = value.Bool
+			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
 		}
@@ -239,6 +247,9 @@ func (pr *Price) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_deprecated=")
 	builder.WriteString(fmt.Sprintf("%v", pr.IsDeprecated))
+	builder.WriteString(", ")
+	builder.WriteString("is_sensitive=")
+	builder.WriteString(fmt.Sprintf("%v", pr.IsSensitive))
 	builder.WriteByte(')')
 	return builder.String()
 }

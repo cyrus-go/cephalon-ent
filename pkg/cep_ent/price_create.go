@@ -205,6 +205,20 @@ func (pc *PriceCreate) SetNillableIsDeprecated(b *bool) *PriceCreate {
 	return pc
 }
 
+// SetIsSensitive sets the "is_sensitive" field.
+func (pc *PriceCreate) SetIsSensitive(b bool) *PriceCreate {
+	pc.mutation.SetIsSensitive(b)
+	return pc
+}
+
+// SetNillableIsSensitive sets the "is_sensitive" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableIsSensitive(b *bool) *PriceCreate {
+	if b != nil {
+		pc.SetIsSensitive(*b)
+	}
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *PriceCreate) SetID(i int64) *PriceCreate {
 	pc.mutation.SetID(i)
@@ -298,6 +312,10 @@ func (pc *PriceCreate) defaults() {
 		v := price.DefaultIsDeprecated
 		pc.mutation.SetIsDeprecated(v)
 	}
+	if _, ok := pc.mutation.IsSensitive(); !ok {
+		v := price.DefaultIsSensitive
+		pc.mutation.SetIsSensitive(v)
+	}
 	if _, ok := pc.mutation.ID(); !ok {
 		v := price.DefaultID()
 		pc.mutation.SetID(v)
@@ -358,6 +376,9 @@ func (pc *PriceCreate) check() error {
 	}
 	if _, ok := pc.mutation.IsDeprecated(); !ok {
 		return &ValidationError{Name: "is_deprecated", err: errors.New(`cep_ent: missing required field "Price.is_deprecated"`)}
+	}
+	if _, ok := pc.mutation.IsSensitive(); !ok {
+		return &ValidationError{Name: "is_sensitive", err: errors.New(`cep_ent: missing required field "Price.is_sensitive"`)}
 	}
 	return nil
 }
@@ -443,6 +464,10 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.IsDeprecated(); ok {
 		_spec.SetField(price.FieldIsDeprecated, field.TypeBool, value)
 		_node.IsDeprecated = value
+	}
+	if value, ok := pc.mutation.IsSensitive(); ok {
+		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
+		_node.IsSensitive = value
 	}
 	return _node, _spec
 }
@@ -667,6 +692,18 @@ func (u *PriceUpsert) SetIsDeprecated(v bool) *PriceUpsert {
 // UpdateIsDeprecated sets the "is_deprecated" field to the value that was provided on create.
 func (u *PriceUpsert) UpdateIsDeprecated() *PriceUpsert {
 	u.SetExcluded(price.FieldIsDeprecated)
+	return u
+}
+
+// SetIsSensitive sets the "is_sensitive" field.
+func (u *PriceUpsert) SetIsSensitive(v bool) *PriceUpsert {
+	u.Set(price.FieldIsSensitive, v)
+	return u
+}
+
+// UpdateIsSensitive sets the "is_sensitive" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateIsSensitive() *PriceUpsert {
+	u.SetExcluded(price.FieldIsSensitive)
 	return u
 }
 
@@ -921,6 +958,20 @@ func (u *PriceUpsertOne) SetIsDeprecated(v bool) *PriceUpsertOne {
 func (u *PriceUpsertOne) UpdateIsDeprecated() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateIsDeprecated()
+	})
+}
+
+// SetIsSensitive sets the "is_sensitive" field.
+func (u *PriceUpsertOne) SetIsSensitive(v bool) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetIsSensitive(v)
+	})
+}
+
+// UpdateIsSensitive sets the "is_sensitive" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateIsSensitive() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateIsSensitive()
 	})
 }
 
@@ -1341,6 +1392,20 @@ func (u *PriceUpsertBulk) SetIsDeprecated(v bool) *PriceUpsertBulk {
 func (u *PriceUpsertBulk) UpdateIsDeprecated() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateIsDeprecated()
+	})
+}
+
+// SetIsSensitive sets the "is_sensitive" field.
+func (u *PriceUpsertBulk) SetIsSensitive(v bool) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetIsSensitive(v)
+	})
+}
+
+// UpdateIsSensitive sets the "is_sensitive" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateIsSensitive() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateIsSensitive()
 	})
 }
 

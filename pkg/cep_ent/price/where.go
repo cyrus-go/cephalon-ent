@@ -100,6 +100,11 @@ func IsDeprecated(v bool) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldIsDeprecated, v))
 }
 
+// IsSensitive applies equality check predicate on the "is_sensitive" field. It's identical to IsSensitiveEQ.
+func IsSensitive(v bool) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldIsSensitive, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldCreatedBy, v))
@@ -568,6 +573,16 @@ func IsDeprecatedEQ(v bool) predicate.Price {
 // IsDeprecatedNEQ applies the NEQ predicate on the "is_deprecated" field.
 func IsDeprecatedNEQ(v bool) predicate.Price {
 	return predicate.Price(sql.FieldNEQ(FieldIsDeprecated, v))
+}
+
+// IsSensitiveEQ applies the EQ predicate on the "is_sensitive" field.
+func IsSensitiveEQ(v bool) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldIsSensitive, v))
+}
+
+// IsSensitiveNEQ applies the NEQ predicate on the "is_sensitive" field.
+func IsSensitiveNEQ(v bool) predicate.Price {
+	return predicate.Price(sql.FieldNEQ(FieldIsSensitive, v))
 }
 
 // And groups predicates with the AND operator between them.

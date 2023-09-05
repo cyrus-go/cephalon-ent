@@ -222,6 +222,20 @@ func (pu *PriceUpdate) SetNillableIsDeprecated(b *bool) *PriceUpdate {
 	return pu
 }
 
+// SetIsSensitive sets the "is_sensitive" field.
+func (pu *PriceUpdate) SetIsSensitive(b bool) *PriceUpdate {
+	pu.mutation.SetIsSensitive(b)
+	return pu
+}
+
+// SetNillableIsSensitive sets the "is_sensitive" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableIsSensitive(b *bool) *PriceUpdate {
+	if b != nil {
+		pu.SetIsSensitive(*b)
+	}
+	return pu
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (pu *PriceUpdate) Mutation() *PriceMutation {
 	return pu.mutation
@@ -350,6 +364,9 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.IsDeprecated(); ok {
 		_spec.SetField(price.FieldIsDeprecated, field.TypeBool, value)
+	}
+	if value, ok := pu.mutation.IsSensitive(); ok {
+		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -564,6 +581,20 @@ func (puo *PriceUpdateOne) SetNillableIsDeprecated(b *bool) *PriceUpdateOne {
 	return puo
 }
 
+// SetIsSensitive sets the "is_sensitive" field.
+func (puo *PriceUpdateOne) SetIsSensitive(b bool) *PriceUpdateOne {
+	puo.mutation.SetIsSensitive(b)
+	return puo
+}
+
+// SetNillableIsSensitive sets the "is_sensitive" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableIsSensitive(b *bool) *PriceUpdateOne {
+	if b != nil {
+		puo.SetIsSensitive(*b)
+	}
+	return puo
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (puo *PriceUpdateOne) Mutation() *PriceMutation {
 	return puo.mutation
@@ -722,6 +753,9 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if value, ok := puo.mutation.IsDeprecated(); ok {
 		_spec.SetField(price.FieldIsDeprecated, field.TypeBool, value)
+	}
+	if value, ok := puo.mutation.IsSensitive(); ok {
+		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
 	}
 	_node = &Price{config: puo.config}
 	_spec.Assign = _node.assignValues
