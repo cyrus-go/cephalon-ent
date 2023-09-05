@@ -111,7 +111,7 @@ const DefaultMissionType enums.MissionType = "txt2img"
 // MissionTypeValidator is a validator for the "mission_type" field enum values. It is called by the builders before save.
 func MissionTypeValidator(mt enums.MissionType) error {
 	switch mt {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair":
+	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_type field: %q", mt)
@@ -123,7 +123,7 @@ const DefaultMissionCategory enums.MissionCategory = "SD"
 // MissionCategoryValidator is a validator for the "mission_category" field enum values. It is called by the builders before save.
 func MissionCategoryValidator(mc enums.MissionCategory) error {
 	switch mc {
-	case "SD", "JP", "WT":
+	case "SD", "JP", "WT", "JP_DK":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_category field: %q", mc)
