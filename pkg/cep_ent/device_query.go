@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -30,6 +31,7 @@ type DeviceQuery struct {
 	withMissionProduceOrders *MissionProduceOrderQuery
 	withUserDevices          *UserDeviceQuery
 	withDeviceGpuMissions    *DeviceGpuMissionQuery
+	withFrpcInfos            *FrpcInfoQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -147,6 +149,28 @@ func (dq *DeviceQuery) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
 			sqlgraph.From(device.Table, device.FieldID, selector),
 			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceGpuMissionsTable, device.DeviceGpuMissionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFrpcInfos chains the current query on the "frpc_infos" edge.
+func (dq *DeviceQuery) QueryFrpcInfos() *FrpcInfoQuery {
+	query := (&FrpcInfoClient{config: dq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, selector),
+			sqlgraph.To(frpcinfo.Table, frpcinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.FrpcInfosTable, device.FrpcInfosColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
 		return fromU, nil
@@ -350,6 +374,7 @@ func (dq *DeviceQuery) Clone() *DeviceQuery {
 		withMissionProduceOrders: dq.withMissionProduceOrders.Clone(),
 		withUserDevices:          dq.withUserDevices.Clone(),
 		withDeviceGpuMissions:    dq.withDeviceGpuMissions.Clone(),
+		withFrpcInfos:            dq.withFrpcInfos.Clone(),
 		// clone intermediate query.
 		sql:  dq.sql.Clone(),
 		path: dq.path,
@@ -397,6 +422,17 @@ func (dq *DeviceQuery) WithDeviceGpuMissions(opts ...func(*DeviceGpuMissionQuery
 		opt(query)
 	}
 	dq.withDeviceGpuMissions = query
+	return dq
+}
+
+// WithFrpcInfos tells the query-builder to eager-load the nodes that are connected to
+// the "frpc_infos" edge. The optional arguments are used to configure the query builder of the edge.
+func (dq *DeviceQuery) WithFrpcInfos(opts ...func(*FrpcInfoQuery)) *DeviceQuery {
+	query := (&FrpcInfoClient{config: dq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	dq.withFrpcInfos = query
 	return dq
 }
 
@@ -478,11 +514,12 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 	var (
 		nodes       = []*Device{}
 		_spec       = dq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			dq.withUser != nil,
 			dq.withMissionProduceOrders != nil,
 			dq.withUserDevices != nil,
 			dq.withDeviceGpuMissions != nil,
+			dq.withFrpcInfos != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -529,6 +566,13 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 		if err := dq.loadDeviceGpuMissions(ctx, query, nodes,
 			func(n *Device) { n.Edges.DeviceGpuMissions = []*DeviceGpuMission{} },
 			func(n *Device, e *DeviceGpuMission) { n.Edges.DeviceGpuMissions = append(n.Edges.DeviceGpuMissions, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := dq.withFrpcInfos; query != nil {
+		if err := dq.loadFrpcInfos(ctx, query, nodes,
+			func(n *Device) { n.Edges.FrpcInfos = []*FrpcInfo{} },
+			func(n *Device, e *FrpcInfo) { n.Edges.FrpcInfos = append(n.Edges.FrpcInfos, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -639,6 +683,36 @@ func (dq *DeviceQuery) loadDeviceGpuMissions(ctx context.Context, query *DeviceG
 	}
 	query.Where(predicate.DeviceGpuMission(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(device.DeviceGpuMissionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.DeviceID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "device_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (dq *DeviceQuery) loadFrpcInfos(ctx context.Context, query *FrpcInfoQuery, nodes []*Device, init func(*Device), assign func(*Device, *FrpcInfo)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Device)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(frpcinfo.FieldDeviceID)
+	}
+	query.Where(predicate.FrpcInfo(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(device.FrpcInfosColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

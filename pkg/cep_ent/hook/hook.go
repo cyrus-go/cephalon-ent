@@ -105,6 +105,30 @@ func (f EnumMissionStatusFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.EnumMissionStatusMutation", m)
 }
 
+// The FrpcInfoFunc type is an adapter to allow the use of ordinary
+// function as FrpcInfo mutator.
+type FrpcInfoFunc func(context.Context, *cep_ent.FrpcInfoMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FrpcInfoFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.FrpcInfoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.FrpcInfoMutation", m)
+}
+
+// The FrpsInfoFunc type is an adapter to allow the use of ordinary
+// function as FrpsInfo mutator.
+type FrpsInfoFunc func(context.Context, *cep_ent.FrpsInfoMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FrpsInfoFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.FrpsInfoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.FrpsInfoMutation", m)
+}
+
 // The GpuFunc type is an adapter to allow the use of ordinary
 // function as Gpu mutator.
 type GpuFunc func(context.Context, *cep_ent.GpuMutation) (cep_ent.Value, error)

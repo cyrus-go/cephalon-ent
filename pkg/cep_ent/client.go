@@ -23,6 +23,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -65,6 +67,10 @@ type Client struct {
 	EnumCondition *EnumConditionClient
 	// EnumMissionStatus is the client for interacting with the EnumMissionStatus builders.
 	EnumMissionStatus *EnumMissionStatusClient
+	// FrpcInfo is the client for interacting with the FrpcInfo builders.
+	FrpcInfo *FrpcInfoClient
+	// FrpsInfo is the client for interacting with the FrpsInfo builders.
+	FrpsInfo *FrpsInfoClient
 	// Gpu is the client for interacting with the Gpu builders.
 	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
@@ -124,6 +130,8 @@ func (c *Client) init() {
 	c.EarnBill = NewEarnBillClient(c.config)
 	c.EnumCondition = NewEnumConditionClient(c.config)
 	c.EnumMissionStatus = NewEnumMissionStatusClient(c.config)
+	c.FrpcInfo = NewFrpcInfoClient(c.config)
+	c.FrpsInfo = NewFrpsInfoClient(c.config)
 	c.Gpu = NewGpuClient(c.config)
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
@@ -236,6 +244,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EarnBill:            NewEarnBillClient(cfg),
 		EnumCondition:       NewEnumConditionClient(cfg),
 		EnumMissionStatus:   NewEnumMissionStatusClient(cfg),
+		FrpcInfo:            NewFrpcInfoClient(cfg),
+		FrpsInfo:            NewFrpsInfoClient(cfg),
 		Gpu:                 NewGpuClient(cfg),
 		HmacKeyPair:         NewHmacKeyPairClient(cfg),
 		InputLog:            NewInputLogClient(cfg),
@@ -282,6 +292,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EarnBill:            NewEarnBillClient(cfg),
 		EnumCondition:       NewEnumConditionClient(cfg),
 		EnumMissionStatus:   NewEnumMissionStatusClient(cfg),
+		FrpcInfo:            NewFrpcInfoClient(cfg),
+		FrpsInfo:            NewFrpsInfoClient(cfg),
 		Gpu:                 NewGpuClient(cfg),
 		HmacKeyPair:         NewHmacKeyPairClient(cfg),
 		InputLog:            NewInputLogClient(cfg),
@@ -331,11 +343,11 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair,
-		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount, c.Price,
-		c.ProfitAccount, c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice,
-		c.VXAccount, c.VXSocial,
+		c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo, c.Gpu,
+		c.HmacKeyPair, c.InputLog, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeOrder,
+		c.User, c.UserDevice, c.VXAccount, c.VXSocial,
 	} {
 		n.Use(hooks...)
 	}
@@ -346,11 +358,11 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair,
-		c.MissionKind, c.MissionProduceOrder, c.OutputLog, c.PlatformAccount, c.Price,
-		c.ProfitAccount, c.ProfitSetting, c.RechargeOrder, c.User, c.UserDevice,
-		c.VXAccount, c.VXSocial,
+		c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo, c.Gpu,
+		c.HmacKeyPair, c.InputLog, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeOrder,
+		c.User, c.UserDevice, c.VXAccount, c.VXSocial,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -375,6 +387,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.EnumCondition.mutate(ctx, m)
 	case *EnumMissionStatusMutation:
 		return c.EnumMissionStatus.mutate(ctx, m)
+	case *FrpcInfoMutation:
+		return c.FrpcInfo.mutate(ctx, m)
+	case *FrpsInfoMutation:
+		return c.FrpsInfo.mutate(ctx, m)
 	case *GpuMutation:
 		return c.Gpu.mutate(ctx, m)
 	case *HmacKeyPairMutation:
@@ -1101,6 +1117,22 @@ func (c *DeviceClient) QueryDeviceGpuMissions(d *Device) *DeviceGpuMissionQuery 
 	return query
 }
 
+// QueryFrpcInfos queries the frpc_infos edge of a Device.
+func (c *DeviceClient) QueryFrpcInfos(d *Device) *FrpcInfoQuery {
+	query := (&FrpcInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(frpcinfo.Table, frpcinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.FrpcInfosTable, device.FrpcInfosColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DeviceClient) Hooks() []Hook {
 	return c.hooks.Device
@@ -1767,6 +1799,320 @@ func (c *EnumMissionStatusClient) mutate(ctx context.Context, m *EnumMissionStat
 		return (&EnumMissionStatusDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown EnumMissionStatus mutation op: %q", m.Op())
+	}
+}
+
+// FrpcInfoClient is a client for the FrpcInfo schema.
+type FrpcInfoClient struct {
+	config
+}
+
+// NewFrpcInfoClient returns a client for the FrpcInfo from the given config.
+func NewFrpcInfoClient(c config) *FrpcInfoClient {
+	return &FrpcInfoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `frpcinfo.Hooks(f(g(h())))`.
+func (c *FrpcInfoClient) Use(hooks ...Hook) {
+	c.hooks.FrpcInfo = append(c.hooks.FrpcInfo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `frpcinfo.Intercept(f(g(h())))`.
+func (c *FrpcInfoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FrpcInfo = append(c.inters.FrpcInfo, interceptors...)
+}
+
+// Create returns a builder for creating a FrpcInfo entity.
+func (c *FrpcInfoClient) Create() *FrpcInfoCreate {
+	mutation := newFrpcInfoMutation(c.config, OpCreate)
+	return &FrpcInfoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FrpcInfo entities.
+func (c *FrpcInfoClient) CreateBulk(builders ...*FrpcInfoCreate) *FrpcInfoCreateBulk {
+	return &FrpcInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FrpcInfoClient) MapCreateBulk(slice any, setFunc func(*FrpcInfoCreate, int)) *FrpcInfoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FrpcInfoCreateBulk{err: fmt.Errorf("calling to FrpcInfoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FrpcInfoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FrpcInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FrpcInfo.
+func (c *FrpcInfoClient) Update() *FrpcInfoUpdate {
+	mutation := newFrpcInfoMutation(c.config, OpUpdate)
+	return &FrpcInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FrpcInfoClient) UpdateOne(fi *FrpcInfo) *FrpcInfoUpdateOne {
+	mutation := newFrpcInfoMutation(c.config, OpUpdateOne, withFrpcInfo(fi))
+	return &FrpcInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FrpcInfoClient) UpdateOneID(id int64) *FrpcInfoUpdateOne {
+	mutation := newFrpcInfoMutation(c.config, OpUpdateOne, withFrpcInfoID(id))
+	return &FrpcInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FrpcInfo.
+func (c *FrpcInfoClient) Delete() *FrpcInfoDelete {
+	mutation := newFrpcInfoMutation(c.config, OpDelete)
+	return &FrpcInfoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FrpcInfoClient) DeleteOne(fi *FrpcInfo) *FrpcInfoDeleteOne {
+	return c.DeleteOneID(fi.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FrpcInfoClient) DeleteOneID(id int64) *FrpcInfoDeleteOne {
+	builder := c.Delete().Where(frpcinfo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FrpcInfoDeleteOne{builder}
+}
+
+// Query returns a query builder for FrpcInfo.
+func (c *FrpcInfoClient) Query() *FrpcInfoQuery {
+	return &FrpcInfoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFrpcInfo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FrpcInfo entity by its id.
+func (c *FrpcInfoClient) Get(ctx context.Context, id int64) (*FrpcInfo, error) {
+	return c.Query().Where(frpcinfo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FrpcInfoClient) GetX(ctx context.Context, id int64) *FrpcInfo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFrpsInfo queries the frps_info edge of a FrpcInfo.
+func (c *FrpcInfoClient) QueryFrpsInfo(fi *FrpcInfo) *FrpsInfoQuery {
+	query := (&FrpsInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(frpcinfo.Table, frpcinfo.FieldID, id),
+			sqlgraph.To(frpsinfo.Table, frpsinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, frpcinfo.FrpsInfoTable, frpcinfo.FrpsInfoColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDevice queries the device edge of a FrpcInfo.
+func (c *FrpcInfoClient) QueryDevice(fi *FrpcInfo) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(frpcinfo.Table, frpcinfo.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, frpcinfo.DeviceTable, frpcinfo.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FrpcInfoClient) Hooks() []Hook {
+	return c.hooks.FrpcInfo
+}
+
+// Interceptors returns the client interceptors.
+func (c *FrpcInfoClient) Interceptors() []Interceptor {
+	return c.inters.FrpcInfo
+}
+
+func (c *FrpcInfoClient) mutate(ctx context.Context, m *FrpcInfoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FrpcInfoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FrpcInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FrpcInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FrpcInfoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown FrpcInfo mutation op: %q", m.Op())
+	}
+}
+
+// FrpsInfoClient is a client for the FrpsInfo schema.
+type FrpsInfoClient struct {
+	config
+}
+
+// NewFrpsInfoClient returns a client for the FrpsInfo from the given config.
+func NewFrpsInfoClient(c config) *FrpsInfoClient {
+	return &FrpsInfoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `frpsinfo.Hooks(f(g(h())))`.
+func (c *FrpsInfoClient) Use(hooks ...Hook) {
+	c.hooks.FrpsInfo = append(c.hooks.FrpsInfo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `frpsinfo.Intercept(f(g(h())))`.
+func (c *FrpsInfoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FrpsInfo = append(c.inters.FrpsInfo, interceptors...)
+}
+
+// Create returns a builder for creating a FrpsInfo entity.
+func (c *FrpsInfoClient) Create() *FrpsInfoCreate {
+	mutation := newFrpsInfoMutation(c.config, OpCreate)
+	return &FrpsInfoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FrpsInfo entities.
+func (c *FrpsInfoClient) CreateBulk(builders ...*FrpsInfoCreate) *FrpsInfoCreateBulk {
+	return &FrpsInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FrpsInfoClient) MapCreateBulk(slice any, setFunc func(*FrpsInfoCreate, int)) *FrpsInfoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FrpsInfoCreateBulk{err: fmt.Errorf("calling to FrpsInfoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FrpsInfoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FrpsInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FrpsInfo.
+func (c *FrpsInfoClient) Update() *FrpsInfoUpdate {
+	mutation := newFrpsInfoMutation(c.config, OpUpdate)
+	return &FrpsInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FrpsInfoClient) UpdateOne(fi *FrpsInfo) *FrpsInfoUpdateOne {
+	mutation := newFrpsInfoMutation(c.config, OpUpdateOne, withFrpsInfo(fi))
+	return &FrpsInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FrpsInfoClient) UpdateOneID(id int64) *FrpsInfoUpdateOne {
+	mutation := newFrpsInfoMutation(c.config, OpUpdateOne, withFrpsInfoID(id))
+	return &FrpsInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FrpsInfo.
+func (c *FrpsInfoClient) Delete() *FrpsInfoDelete {
+	mutation := newFrpsInfoMutation(c.config, OpDelete)
+	return &FrpsInfoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FrpsInfoClient) DeleteOne(fi *FrpsInfo) *FrpsInfoDeleteOne {
+	return c.DeleteOneID(fi.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FrpsInfoClient) DeleteOneID(id int64) *FrpsInfoDeleteOne {
+	builder := c.Delete().Where(frpsinfo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FrpsInfoDeleteOne{builder}
+}
+
+// Query returns a query builder for FrpsInfo.
+func (c *FrpsInfoClient) Query() *FrpsInfoQuery {
+	return &FrpsInfoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFrpsInfo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FrpsInfo entity by its id.
+func (c *FrpsInfoClient) Get(ctx context.Context, id int64) (*FrpsInfo, error) {
+	return c.Query().Where(frpsinfo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FrpsInfoClient) GetX(ctx context.Context, id int64) *FrpsInfo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFrpcInfos queries the frpc_infos edge of a FrpsInfo.
+func (c *FrpsInfoClient) QueryFrpcInfos(fi *FrpsInfo) *FrpcInfoQuery {
+	query := (&FrpcInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(frpsinfo.Table, frpsinfo.FieldID, id),
+			sqlgraph.To(frpcinfo.Table, frpcinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, frpsinfo.FrpcInfosTable, frpsinfo.FrpcInfosColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FrpsInfoClient) Hooks() []Hook {
+	return c.hooks.FrpsInfo
+}
+
+// Interceptors returns the client interceptors.
+func (c *FrpsInfoClient) Interceptors() []Interceptor {
+	return c.inters.FrpsInfo
+}
+
+func (c *FrpsInfoClient) mutate(ctx context.Context, m *FrpsInfoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FrpsInfoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FrpsInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FrpsInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FrpsInfoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown FrpsInfo mutation op: %q", m.Op())
 	}
 }
 
@@ -5069,17 +5415,18 @@ func (c *VXSocialClient) mutate(ctx context.Context, m *VXSocialMutation) (Value
 type (
 	hooks struct {
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
-		EnumCondition, EnumMissionStatus, Gpu, HmacKeyPair, InputLog, Mission,
-		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind,
-		MissionProduceOrder, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeOrder, User, UserDevice, VXAccount, VXSocial []ent.Hook
+		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
+		InputLog, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
+		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
+		VXSocial []ent.Hook
 	}
 	inters struct {
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
-		EnumCondition, EnumMissionStatus, Gpu, HmacKeyPair, InputLog, Mission,
-		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind,
-		MissionProduceOrder, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
+		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
+		InputLog, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
+		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
 		VXSocial []ent.Interceptor
 	}
 )

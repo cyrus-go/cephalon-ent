@@ -30,6 +30,12 @@ type EnumCondition func(*sql.Selector)
 // EnumMissionStatus is the predicate function for enummissionstatus builders.
 type EnumMissionStatus func(*sql.Selector)
 
+// FrpcInfo is the predicate function for frpcinfo builders.
+type FrpcInfo func(*sql.Selector)
+
+// FrpsInfo is the predicate function for frpsinfo builders.
+type FrpsInfo func(*sql.Selector)
+
 // Gpu is the predicate function for gpu builders.
 type Gpu func(*sql.Selector)
 

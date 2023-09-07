@@ -28,6 +28,10 @@ type Tx struct {
 	EnumCondition *EnumConditionClient
 	// EnumMissionStatus is the client for interacting with the EnumMissionStatus builders.
 	EnumMissionStatus *EnumMissionStatusClient
+	// FrpcInfo is the client for interacting with the FrpcInfo builders.
+	FrpcInfo *FrpcInfoClient
+	// FrpsInfo is the client for interacting with the FrpsInfo builders.
+	FrpsInfo *FrpsInfoClient
 	// Gpu is the client for interacting with the Gpu builders.
 	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
@@ -205,6 +209,8 @@ func (tx *Tx) init() {
 	tx.EarnBill = NewEarnBillClient(tx.config)
 	tx.EnumCondition = NewEnumConditionClient(tx.config)
 	tx.EnumMissionStatus = NewEnumMissionStatusClient(tx.config)
+	tx.FrpcInfo = NewFrpcInfoClient(tx.config)
+	tx.FrpsInfo = NewFrpsInfoClient(tx.config)
 	tx.Gpu = NewGpuClient(tx.config)
 	tx.HmacKeyPair = NewHmacKeyPairClient(tx.config)
 	tx.InputLog = NewInputLogClient(tx.config)

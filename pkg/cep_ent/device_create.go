@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -257,6 +258,21 @@ func (dc *DeviceCreate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceCrea
 		ids[i] = d[i].ID
 	}
 	return dc.AddDeviceGpuMissionIDs(ids...)
+}
+
+// AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
+func (dc *DeviceCreate) AddFrpcInfoIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddFrpcInfoIDs(ids...)
+	return dc
+}
+
+// AddFrpcInfos adds the "frpc_infos" edges to the FrpcInfo entity.
+func (dc *DeviceCreate) AddFrpcInfos(f ...*FrpcInfo) *DeviceCreate {
+	ids := make([]int64, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return dc.AddFrpcInfoIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -539,6 +555,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.FrpcInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

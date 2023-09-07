@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -250,6 +251,21 @@ func (du *DeviceUpdate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceUpda
 	return du.AddDeviceGpuMissionIDs(ids...)
 }
 
+// AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
+func (du *DeviceUpdate) AddFrpcInfoIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddFrpcInfoIDs(ids...)
+	return du
+}
+
+// AddFrpcInfos adds the "frpc_infos" edges to the FrpcInfo entity.
+func (du *DeviceUpdate) AddFrpcInfos(f ...*FrpcInfo) *DeviceUpdate {
+	ids := make([]int64, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return du.AddFrpcInfoIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -322,6 +338,27 @@ func (du *DeviceUpdate) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *DeviceU
 		ids[i] = d[i].ID
 	}
 	return du.RemoveDeviceGpuMissionIDs(ids...)
+}
+
+// ClearFrpcInfos clears all "frpc_infos" edges to the FrpcInfo entity.
+func (du *DeviceUpdate) ClearFrpcInfos() *DeviceUpdate {
+	du.mutation.ClearFrpcInfos()
+	return du
+}
+
+// RemoveFrpcInfoIDs removes the "frpc_infos" edge to FrpcInfo entities by IDs.
+func (du *DeviceUpdate) RemoveFrpcInfoIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveFrpcInfoIDs(ids...)
+	return du
+}
+
+// RemoveFrpcInfos removes "frpc_infos" edges to FrpcInfo entities.
+func (du *DeviceUpdate) RemoveFrpcInfos(f ...*FrpcInfo) *DeviceUpdate {
+	ids := make([]int64, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return du.RemoveFrpcInfoIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -598,6 +635,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.FrpcInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedFrpcInfosIDs(); len(nodes) > 0 && !du.mutation.FrpcInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.FrpcInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{device.Label}
@@ -835,6 +917,21 @@ func (duo *DeviceUpdateOne) AddDeviceGpuMissions(d ...*DeviceGpuMission) *Device
 	return duo.AddDeviceGpuMissionIDs(ids...)
 }
 
+// AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
+func (duo *DeviceUpdateOne) AddFrpcInfoIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddFrpcInfoIDs(ids...)
+	return duo
+}
+
+// AddFrpcInfos adds the "frpc_infos" edges to the FrpcInfo entity.
+func (duo *DeviceUpdateOne) AddFrpcInfos(f ...*FrpcInfo) *DeviceUpdateOne {
+	ids := make([]int64, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return duo.AddFrpcInfoIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -907,6 +1004,27 @@ func (duo *DeviceUpdateOne) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *Dev
 		ids[i] = d[i].ID
 	}
 	return duo.RemoveDeviceGpuMissionIDs(ids...)
+}
+
+// ClearFrpcInfos clears all "frpc_infos" edges to the FrpcInfo entity.
+func (duo *DeviceUpdateOne) ClearFrpcInfos() *DeviceUpdateOne {
+	duo.mutation.ClearFrpcInfos()
+	return duo
+}
+
+// RemoveFrpcInfoIDs removes the "frpc_infos" edge to FrpcInfo entities by IDs.
+func (duo *DeviceUpdateOne) RemoveFrpcInfoIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveFrpcInfoIDs(ids...)
+	return duo
+}
+
+// RemoveFrpcInfos removes "frpc_infos" edges to FrpcInfo entities.
+func (duo *DeviceUpdateOne) RemoveFrpcInfos(f ...*FrpcInfo) *DeviceUpdateOne {
+	ids := make([]int64, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return duo.RemoveFrpcInfoIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -1206,6 +1324,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.FrpcInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedFrpcInfosIDs(); len(nodes) > 0 && !duo.mutation.FrpcInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.FrpcInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.FrpcInfosTable,
+			Columns: []string{device.FrpcInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

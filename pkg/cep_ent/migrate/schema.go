@@ -276,6 +276,60 @@ var (
 		Columns:    EnumMissionStatusColumns,
 		PrimaryKey: []*schema.Column{EnumMissionStatusColumns[0]},
 	}
+	// FrpcInfosColumns holds the columns for the "frpc_infos" table.
+	FrpcInfosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "tag", Type: field.TypeString, Comment: "ini 文件客户端 tag", Default: ""},
+		{Name: "type", Type: field.TypeString, Comment: "frpc 通讯类型", Default: ""},
+		{Name: "local_ip", Type: field.TypeString, Comment: "frpc 本地地址", Default: ""},
+		{Name: "local_port", Type: field.TypeInt, Comment: "frpc 本地要使用端口", Default: 0},
+		{Name: "remote_port", Type: field.TypeInt, Comment: "frpc 本地要使用端口对应的远程端口", Default: 0},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
+		{Name: "frps_id", Type: field.TypeInt64, Comment: "外键 frps id", Default: 0},
+	}
+	// FrpcInfosTable holds the schema information for the "frpc_infos" table.
+	FrpcInfosTable = &schema.Table{
+		Name:       "frpc_infos",
+		Columns:    FrpcInfosColumns,
+		PrimaryKey: []*schema.Column{FrpcInfosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "frpc_infos_devices_frpc_infos",
+				Columns:    []*schema.Column{FrpcInfosColumns[11]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "frpc_infos_frps_infos_frpc_infos",
+				Columns:    []*schema.Column{FrpcInfosColumns[12]},
+				RefColumns: []*schema.Column{FrpsInfosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// FrpsInfosColumns holds the columns for the "frps_infos" table.
+	FrpsInfosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "tag", Type: field.TypeString, Comment: "ini 文件服务端 tag", Default: ""},
+		{Name: "server_addr", Type: field.TypeString, Comment: "frps 服务地址", Default: ""},
+		{Name: "server_port", Type: field.TypeInt, Comment: "frps 服务端口", Default: 0},
+	}
+	// FrpsInfosTable holds the schema information for the "frps_infos" table.
+	FrpsInfosTable = &schema.Table{
+		Name:       "frps_infos",
+		Columns:    FrpsInfosColumns,
+		PrimaryKey: []*schema.Column{FrpsInfosColumns[0]},
+	}
 	// GpusColumns holds the columns for the "gpus" table.
 	GpusColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -851,6 +905,8 @@ var (
 		EarnBillsTable,
 		EnumConditionsTable,
 		EnumMissionStatusTable,
+		FrpcInfosTable,
+		FrpsInfosTable,
 		GpusTable,
 		HmacKeyPairsTable,
 		InputLogsTable,
@@ -896,6 +952,10 @@ func init() {
 	EarnBillsTable.Annotation = &entsql.Annotation{}
 	EnumConditionsTable.Annotation = &entsql.Annotation{}
 	EnumMissionStatusTable.Annotation = &entsql.Annotation{}
+	FrpcInfosTable.ForeignKeys[0].RefTable = DevicesTable
+	FrpcInfosTable.ForeignKeys[1].RefTable = FrpsInfosTable
+	FrpcInfosTable.Annotation = &entsql.Annotation{}
+	FrpsInfosTable.Annotation = &entsql.Annotation{}
 	GpusTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
 	InputLogsTable.Annotation = &entsql.Annotation{}

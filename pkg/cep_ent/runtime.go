@@ -13,6 +13,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -463,6 +465,108 @@ func init() {
 	enummissionstatusDescID := enummissionstatusMixinFields0[0].Descriptor()
 	// enummissionstatus.DefaultID holds the default value on creation for the id field.
 	enummissionstatus.DefaultID = enummissionstatusDescID.Default.(func() int64)
+	frpcinfoMixin := schema.FrpcInfo{}.Mixin()
+	frpcinfoMixinFields0 := frpcinfoMixin[0].Fields()
+	_ = frpcinfoMixinFields0
+	frpcinfoFields := schema.FrpcInfo{}.Fields()
+	_ = frpcinfoFields
+	// frpcinfoDescCreatedBy is the schema descriptor for created_by field.
+	frpcinfoDescCreatedBy := frpcinfoMixinFields0[1].Descriptor()
+	// frpcinfo.DefaultCreatedBy holds the default value on creation for the created_by field.
+	frpcinfo.DefaultCreatedBy = frpcinfoDescCreatedBy.Default.(int64)
+	// frpcinfoDescUpdatedBy is the schema descriptor for updated_by field.
+	frpcinfoDescUpdatedBy := frpcinfoMixinFields0[2].Descriptor()
+	// frpcinfo.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	frpcinfo.DefaultUpdatedBy = frpcinfoDescUpdatedBy.Default.(int64)
+	// frpcinfoDescCreatedAt is the schema descriptor for created_at field.
+	frpcinfoDescCreatedAt := frpcinfoMixinFields0[3].Descriptor()
+	// frpcinfo.DefaultCreatedAt holds the default value on creation for the created_at field.
+	frpcinfo.DefaultCreatedAt = frpcinfoDescCreatedAt.Default.(func() time.Time)
+	// frpcinfoDescUpdatedAt is the schema descriptor for updated_at field.
+	frpcinfoDescUpdatedAt := frpcinfoMixinFields0[4].Descriptor()
+	// frpcinfo.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	frpcinfo.DefaultUpdatedAt = frpcinfoDescUpdatedAt.Default.(func() time.Time)
+	// frpcinfo.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	frpcinfo.UpdateDefaultUpdatedAt = frpcinfoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// frpcinfoDescDeletedAt is the schema descriptor for deleted_at field.
+	frpcinfoDescDeletedAt := frpcinfoMixinFields0[5].Descriptor()
+	// frpcinfo.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	frpcinfo.DefaultDeletedAt = frpcinfoDescDeletedAt.Default.(time.Time)
+	// frpcinfoDescTag is the schema descriptor for tag field.
+	frpcinfoDescTag := frpcinfoFields[0].Descriptor()
+	// frpcinfo.DefaultTag holds the default value on creation for the tag field.
+	frpcinfo.DefaultTag = frpcinfoDescTag.Default.(string)
+	// frpcinfoDescType is the schema descriptor for type field.
+	frpcinfoDescType := frpcinfoFields[1].Descriptor()
+	// frpcinfo.DefaultType holds the default value on creation for the type field.
+	frpcinfo.DefaultType = frpcinfoDescType.Default.(string)
+	// frpcinfoDescLocalIP is the schema descriptor for local_ip field.
+	frpcinfoDescLocalIP := frpcinfoFields[2].Descriptor()
+	// frpcinfo.DefaultLocalIP holds the default value on creation for the local_ip field.
+	frpcinfo.DefaultLocalIP = frpcinfoDescLocalIP.Default.(string)
+	// frpcinfoDescLocalPort is the schema descriptor for local_port field.
+	frpcinfoDescLocalPort := frpcinfoFields[3].Descriptor()
+	// frpcinfo.DefaultLocalPort holds the default value on creation for the local_port field.
+	frpcinfo.DefaultLocalPort = frpcinfoDescLocalPort.Default.(int)
+	// frpcinfoDescRemotePort is the schema descriptor for remote_port field.
+	frpcinfoDescRemotePort := frpcinfoFields[4].Descriptor()
+	// frpcinfo.DefaultRemotePort holds the default value on creation for the remote_port field.
+	frpcinfo.DefaultRemotePort = frpcinfoDescRemotePort.Default.(int)
+	// frpcinfoDescFrpsID is the schema descriptor for frps_id field.
+	frpcinfoDescFrpsID := frpcinfoFields[5].Descriptor()
+	// frpcinfo.DefaultFrpsID holds the default value on creation for the frps_id field.
+	frpcinfo.DefaultFrpsID = frpcinfoDescFrpsID.Default.(int64)
+	// frpcinfoDescDeviceID is the schema descriptor for device_id field.
+	frpcinfoDescDeviceID := frpcinfoFields[6].Descriptor()
+	// frpcinfo.DefaultDeviceID holds the default value on creation for the device_id field.
+	frpcinfo.DefaultDeviceID = frpcinfoDescDeviceID.Default.(int64)
+	// frpcinfoDescID is the schema descriptor for id field.
+	frpcinfoDescID := frpcinfoMixinFields0[0].Descriptor()
+	// frpcinfo.DefaultID holds the default value on creation for the id field.
+	frpcinfo.DefaultID = frpcinfoDescID.Default.(func() int64)
+	frpsinfoMixin := schema.FrpsInfo{}.Mixin()
+	frpsinfoMixinFields0 := frpsinfoMixin[0].Fields()
+	_ = frpsinfoMixinFields0
+	frpsinfoFields := schema.FrpsInfo{}.Fields()
+	_ = frpsinfoFields
+	// frpsinfoDescCreatedBy is the schema descriptor for created_by field.
+	frpsinfoDescCreatedBy := frpsinfoMixinFields0[1].Descriptor()
+	// frpsinfo.DefaultCreatedBy holds the default value on creation for the created_by field.
+	frpsinfo.DefaultCreatedBy = frpsinfoDescCreatedBy.Default.(int64)
+	// frpsinfoDescUpdatedBy is the schema descriptor for updated_by field.
+	frpsinfoDescUpdatedBy := frpsinfoMixinFields0[2].Descriptor()
+	// frpsinfo.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	frpsinfo.DefaultUpdatedBy = frpsinfoDescUpdatedBy.Default.(int64)
+	// frpsinfoDescCreatedAt is the schema descriptor for created_at field.
+	frpsinfoDescCreatedAt := frpsinfoMixinFields0[3].Descriptor()
+	// frpsinfo.DefaultCreatedAt holds the default value on creation for the created_at field.
+	frpsinfo.DefaultCreatedAt = frpsinfoDescCreatedAt.Default.(func() time.Time)
+	// frpsinfoDescUpdatedAt is the schema descriptor for updated_at field.
+	frpsinfoDescUpdatedAt := frpsinfoMixinFields0[4].Descriptor()
+	// frpsinfo.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	frpsinfo.DefaultUpdatedAt = frpsinfoDescUpdatedAt.Default.(func() time.Time)
+	// frpsinfo.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	frpsinfo.UpdateDefaultUpdatedAt = frpsinfoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// frpsinfoDescDeletedAt is the schema descriptor for deleted_at field.
+	frpsinfoDescDeletedAt := frpsinfoMixinFields0[5].Descriptor()
+	// frpsinfo.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	frpsinfo.DefaultDeletedAt = frpsinfoDescDeletedAt.Default.(time.Time)
+	// frpsinfoDescTag is the schema descriptor for tag field.
+	frpsinfoDescTag := frpsinfoFields[0].Descriptor()
+	// frpsinfo.DefaultTag holds the default value on creation for the tag field.
+	frpsinfo.DefaultTag = frpsinfoDescTag.Default.(string)
+	// frpsinfoDescServerAddr is the schema descriptor for server_addr field.
+	frpsinfoDescServerAddr := frpsinfoFields[1].Descriptor()
+	// frpsinfo.DefaultServerAddr holds the default value on creation for the server_addr field.
+	frpsinfo.DefaultServerAddr = frpsinfoDescServerAddr.Default.(string)
+	// frpsinfoDescServerPort is the schema descriptor for server_port field.
+	frpsinfoDescServerPort := frpsinfoFields[2].Descriptor()
+	// frpsinfo.DefaultServerPort holds the default value on creation for the server_port field.
+	frpsinfo.DefaultServerPort = frpsinfoDescServerPort.Default.(int)
+	// frpsinfoDescID is the schema descriptor for id field.
+	frpsinfoDescID := frpsinfoMixinFields0[0].Descriptor()
+	// frpsinfo.DefaultID holds the default value on creation for the id field.
+	frpsinfo.DefaultID = frpsinfoDescID.Default.(func() int64)
 	gpuMixin := schema.Gpu{}.Mixin()
 	gpuMixinFields0 := gpuMixin[0].Fields()
 	_ = gpuMixinFields0

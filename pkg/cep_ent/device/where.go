@@ -598,6 +598,29 @@ func HasDeviceGpuMissionsWith(preds ...predicate.DeviceGpuMission) predicate.Dev
 	})
 }
 
+// HasFrpcInfos applies the HasEdge predicate on the "frpc_infos" edge.
+func HasFrpcInfos() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FrpcInfosTable, FrpcInfosColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFrpcInfosWith applies the HasEdge predicate on the "frpc_infos" edge with a given conditions (other predicates).
+func HasFrpcInfosWith(preds ...predicate.FrpcInfo) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := newFrpcInfosStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Device) predicate.Device {
 	return predicate.Device(sql.AndPredicates(predicates...))

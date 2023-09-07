@@ -19,6 +19,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -59,6 +61,8 @@ const (
 	TypeEarnBill            = "EarnBill"
 	TypeEnumCondition       = "EnumCondition"
 	TypeEnumMissionStatus   = "EnumMissionStatus"
+	TypeFrpcInfo            = "FrpcInfo"
+	TypeFrpsInfo            = "FrpsInfo"
 	TypeGpu                 = "Gpu"
 	TypeHmacKeyPair         = "HmacKeyPair"
 	TypeInputLog            = "InputLog"
@@ -4068,6 +4072,9 @@ type DeviceMutation struct {
 	device_gpu_missions           map[int64]struct{}
 	removeddevice_gpu_missions    map[int64]struct{}
 	cleareddevice_gpu_missions    bool
+	frpc_infos                    map[int64]struct{}
+	removedfrpc_infos             map[int64]struct{}
+	clearedfrpc_infos             bool
 	done                          bool
 	oldValue                      func(context.Context) (*Device, error)
 	predicates                    []predicate.Device
@@ -4858,6 +4865,60 @@ func (m *DeviceMutation) ResetDeviceGpuMissions() {
 	m.removeddevice_gpu_missions = nil
 }
 
+// AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by ids.
+func (m *DeviceMutation) AddFrpcInfoIDs(ids ...int64) {
+	if m.frpc_infos == nil {
+		m.frpc_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.frpc_infos[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFrpcInfos clears the "frpc_infos" edge to the FrpcInfo entity.
+func (m *DeviceMutation) ClearFrpcInfos() {
+	m.clearedfrpc_infos = true
+}
+
+// FrpcInfosCleared reports if the "frpc_infos" edge to the FrpcInfo entity was cleared.
+func (m *DeviceMutation) FrpcInfosCleared() bool {
+	return m.clearedfrpc_infos
+}
+
+// RemoveFrpcInfoIDs removes the "frpc_infos" edge to the FrpcInfo entity by IDs.
+func (m *DeviceMutation) RemoveFrpcInfoIDs(ids ...int64) {
+	if m.removedfrpc_infos == nil {
+		m.removedfrpc_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.frpc_infos, ids[i])
+		m.removedfrpc_infos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFrpcInfos returns the removed IDs of the "frpc_infos" edge to the FrpcInfo entity.
+func (m *DeviceMutation) RemovedFrpcInfosIDs() (ids []int64) {
+	for id := range m.removedfrpc_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FrpcInfosIDs returns the "frpc_infos" edge IDs in the mutation.
+func (m *DeviceMutation) FrpcInfosIDs() (ids []int64) {
+	for id := range m.frpc_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFrpcInfos resets all changes to the "frpc_infos" edge.
+func (m *DeviceMutation) ResetFrpcInfos() {
+	m.frpc_infos = nil
+	m.clearedfrpc_infos = false
+	m.removedfrpc_infos = nil
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -5217,7 +5278,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -5229,6 +5290,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.device_gpu_missions != nil {
 		edges = append(edges, device.EdgeDeviceGpuMissions)
+	}
+	if m.frpc_infos != nil {
+		edges = append(edges, device.EdgeFrpcInfos)
 	}
 	return edges
 }
@@ -5259,13 +5323,19 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeFrpcInfos:
+		ids := make([]ent.Value, 0, len(m.frpc_infos))
+		for id := range m.frpc_infos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -5274,6 +5344,9 @@ func (m *DeviceMutation) RemovedEdges() []string {
 	}
 	if m.removeddevice_gpu_missions != nil {
 		edges = append(edges, device.EdgeDeviceGpuMissions)
+	}
+	if m.removedfrpc_infos != nil {
+		edges = append(edges, device.EdgeFrpcInfos)
 	}
 	return edges
 }
@@ -5300,13 +5373,19 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeFrpcInfos:
+		ids := make([]ent.Value, 0, len(m.removedfrpc_infos))
+		for id := range m.removedfrpc_infos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -5318,6 +5397,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	}
 	if m.cleareddevice_gpu_missions {
 		edges = append(edges, device.EdgeDeviceGpuMissions)
+	}
+	if m.clearedfrpc_infos {
+		edges = append(edges, device.EdgeFrpcInfos)
 	}
 	return edges
 }
@@ -5334,6 +5416,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.cleareduser_devices
 	case device.EdgeDeviceGpuMissions:
 		return m.cleareddevice_gpu_missions
+	case device.EdgeFrpcInfos:
+		return m.clearedfrpc_infos
 	}
 	return false
 }
@@ -5364,6 +5448,9 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 		return nil
 	case device.EdgeDeviceGpuMissions:
 		m.ResetDeviceGpuMissions()
+		return nil
+	case device.EdgeFrpcInfos:
+		m.ResetFrpcInfos()
 		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
@@ -9420,6 +9507,2085 @@ func (m *EnumMissionStatusMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *EnumMissionStatusMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown EnumMissionStatus edge %s", name)
+}
+
+// FrpcInfoMutation represents an operation that mutates the FrpcInfo nodes in the graph.
+type FrpcInfoMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int64
+	created_by       *int64
+	addcreated_by    *int64
+	updated_by       *int64
+	addupdated_by    *int64
+	created_at       *time.Time
+	updated_at       *time.Time
+	deleted_at       *time.Time
+	tag              *string
+	_type            *string
+	local_ip         *string
+	local_port       *int
+	addlocal_port    *int
+	remote_port      *int
+	addremote_port   *int
+	clearedFields    map[string]struct{}
+	frps_info        *int64
+	clearedfrps_info bool
+	device           *int64
+	cleareddevice    bool
+	done             bool
+	oldValue         func(context.Context) (*FrpcInfo, error)
+	predicates       []predicate.FrpcInfo
+}
+
+var _ ent.Mutation = (*FrpcInfoMutation)(nil)
+
+// frpcinfoOption allows management of the mutation configuration using functional options.
+type frpcinfoOption func(*FrpcInfoMutation)
+
+// newFrpcInfoMutation creates new mutation for the FrpcInfo entity.
+func newFrpcInfoMutation(c config, op Op, opts ...frpcinfoOption) *FrpcInfoMutation {
+	m := &FrpcInfoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFrpcInfo,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFrpcInfoID sets the ID field of the mutation.
+func withFrpcInfoID(id int64) frpcinfoOption {
+	return func(m *FrpcInfoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FrpcInfo
+		)
+		m.oldValue = func(ctx context.Context) (*FrpcInfo, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FrpcInfo.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFrpcInfo sets the old FrpcInfo of the mutation.
+func withFrpcInfo(node *FrpcInfo) frpcinfoOption {
+	return func(m *FrpcInfoMutation) {
+		m.oldValue = func(context.Context) (*FrpcInfo, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FrpcInfoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FrpcInfoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FrpcInfo entities.
+func (m *FrpcInfoMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FrpcInfoMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FrpcInfoMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FrpcInfo.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *FrpcInfoMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *FrpcInfoMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *FrpcInfoMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *FrpcInfoMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *FrpcInfoMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *FrpcInfoMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *FrpcInfoMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *FrpcInfoMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *FrpcInfoMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *FrpcInfoMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FrpcInfoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FrpcInfoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FrpcInfoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FrpcInfoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FrpcInfoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FrpcInfoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *FrpcInfoMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *FrpcInfoMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *FrpcInfoMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetTag sets the "tag" field.
+func (m *FrpcInfoMutation) SetTag(s string) {
+	m.tag = &s
+}
+
+// Tag returns the value of the "tag" field in the mutation.
+func (m *FrpcInfoMutation) Tag() (r string, exists bool) {
+	v := m.tag
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTag returns the old "tag" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldTag(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTag is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTag requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTag: %w", err)
+	}
+	return oldValue.Tag, nil
+}
+
+// ResetTag resets all changes to the "tag" field.
+func (m *FrpcInfoMutation) ResetTag() {
+	m.tag = nil
+}
+
+// SetType sets the "type" field.
+func (m *FrpcInfoMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *FrpcInfoMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *FrpcInfoMutation) ResetType() {
+	m._type = nil
+}
+
+// SetLocalIP sets the "local_ip" field.
+func (m *FrpcInfoMutation) SetLocalIP(s string) {
+	m.local_ip = &s
+}
+
+// LocalIP returns the value of the "local_ip" field in the mutation.
+func (m *FrpcInfoMutation) LocalIP() (r string, exists bool) {
+	v := m.local_ip
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocalIP returns the old "local_ip" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldLocalIP(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocalIP is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocalIP requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocalIP: %w", err)
+	}
+	return oldValue.LocalIP, nil
+}
+
+// ResetLocalIP resets all changes to the "local_ip" field.
+func (m *FrpcInfoMutation) ResetLocalIP() {
+	m.local_ip = nil
+}
+
+// SetLocalPort sets the "local_port" field.
+func (m *FrpcInfoMutation) SetLocalPort(i int) {
+	m.local_port = &i
+	m.addlocal_port = nil
+}
+
+// LocalPort returns the value of the "local_port" field in the mutation.
+func (m *FrpcInfoMutation) LocalPort() (r int, exists bool) {
+	v := m.local_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocalPort returns the old "local_port" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldLocalPort(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocalPort is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocalPort requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocalPort: %w", err)
+	}
+	return oldValue.LocalPort, nil
+}
+
+// AddLocalPort adds i to the "local_port" field.
+func (m *FrpcInfoMutation) AddLocalPort(i int) {
+	if m.addlocal_port != nil {
+		*m.addlocal_port += i
+	} else {
+		m.addlocal_port = &i
+	}
+}
+
+// AddedLocalPort returns the value that was added to the "local_port" field in this mutation.
+func (m *FrpcInfoMutation) AddedLocalPort() (r int, exists bool) {
+	v := m.addlocal_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLocalPort resets all changes to the "local_port" field.
+func (m *FrpcInfoMutation) ResetLocalPort() {
+	m.local_port = nil
+	m.addlocal_port = nil
+}
+
+// SetRemotePort sets the "remote_port" field.
+func (m *FrpcInfoMutation) SetRemotePort(i int) {
+	m.remote_port = &i
+	m.addremote_port = nil
+}
+
+// RemotePort returns the value of the "remote_port" field in the mutation.
+func (m *FrpcInfoMutation) RemotePort() (r int, exists bool) {
+	v := m.remote_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemotePort returns the old "remote_port" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldRemotePort(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemotePort is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemotePort requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemotePort: %w", err)
+	}
+	return oldValue.RemotePort, nil
+}
+
+// AddRemotePort adds i to the "remote_port" field.
+func (m *FrpcInfoMutation) AddRemotePort(i int) {
+	if m.addremote_port != nil {
+		*m.addremote_port += i
+	} else {
+		m.addremote_port = &i
+	}
+}
+
+// AddedRemotePort returns the value that was added to the "remote_port" field in this mutation.
+func (m *FrpcInfoMutation) AddedRemotePort() (r int, exists bool) {
+	v := m.addremote_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRemotePort resets all changes to the "remote_port" field.
+func (m *FrpcInfoMutation) ResetRemotePort() {
+	m.remote_port = nil
+	m.addremote_port = nil
+}
+
+// SetFrpsID sets the "frps_id" field.
+func (m *FrpcInfoMutation) SetFrpsID(i int64) {
+	m.frps_info = &i
+}
+
+// FrpsID returns the value of the "frps_id" field in the mutation.
+func (m *FrpcInfoMutation) FrpsID() (r int64, exists bool) {
+	v := m.frps_info
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFrpsID returns the old "frps_id" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldFrpsID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFrpsID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFrpsID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFrpsID: %w", err)
+	}
+	return oldValue.FrpsID, nil
+}
+
+// ResetFrpsID resets all changes to the "frps_id" field.
+func (m *FrpcInfoMutation) ResetFrpsID() {
+	m.frps_info = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *FrpcInfoMutation) SetDeviceID(i int64) {
+	m.device = &i
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *FrpcInfoMutation) DeviceID() (r int64, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *FrpcInfoMutation) ResetDeviceID() {
+	m.device = nil
+}
+
+// SetFrpsInfoID sets the "frps_info" edge to the FrpsInfo entity by id.
+func (m *FrpcInfoMutation) SetFrpsInfoID(id int64) {
+	m.frps_info = &id
+}
+
+// ClearFrpsInfo clears the "frps_info" edge to the FrpsInfo entity.
+func (m *FrpcInfoMutation) ClearFrpsInfo() {
+	m.clearedfrps_info = true
+	m.clearedFields[frpcinfo.FieldFrpsID] = struct{}{}
+}
+
+// FrpsInfoCleared reports if the "frps_info" edge to the FrpsInfo entity was cleared.
+func (m *FrpcInfoMutation) FrpsInfoCleared() bool {
+	return m.clearedfrps_info
+}
+
+// FrpsInfoID returns the "frps_info" edge ID in the mutation.
+func (m *FrpcInfoMutation) FrpsInfoID() (id int64, exists bool) {
+	if m.frps_info != nil {
+		return *m.frps_info, true
+	}
+	return
+}
+
+// FrpsInfoIDs returns the "frps_info" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// FrpsInfoID instead. It exists only for internal usage by the builders.
+func (m *FrpcInfoMutation) FrpsInfoIDs() (ids []int64) {
+	if id := m.frps_info; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFrpsInfo resets all changes to the "frps_info" edge.
+func (m *FrpcInfoMutation) ResetFrpsInfo() {
+	m.frps_info = nil
+	m.clearedfrps_info = false
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *FrpcInfoMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[frpcinfo.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *FrpcInfoMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *FrpcInfoMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *FrpcInfoMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
+// Where appends a list predicates to the FrpcInfoMutation builder.
+func (m *FrpcInfoMutation) Where(ps ...predicate.FrpcInfo) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FrpcInfoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FrpcInfoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FrpcInfo, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FrpcInfoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FrpcInfoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FrpcInfo).
+func (m *FrpcInfoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FrpcInfoMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_by != nil {
+		fields = append(fields, frpcinfo.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, frpcinfo.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, frpcinfo.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, frpcinfo.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, frpcinfo.FieldDeletedAt)
+	}
+	if m.tag != nil {
+		fields = append(fields, frpcinfo.FieldTag)
+	}
+	if m._type != nil {
+		fields = append(fields, frpcinfo.FieldType)
+	}
+	if m.local_ip != nil {
+		fields = append(fields, frpcinfo.FieldLocalIP)
+	}
+	if m.local_port != nil {
+		fields = append(fields, frpcinfo.FieldLocalPort)
+	}
+	if m.remote_port != nil {
+		fields = append(fields, frpcinfo.FieldRemotePort)
+	}
+	if m.frps_info != nil {
+		fields = append(fields, frpcinfo.FieldFrpsID)
+	}
+	if m.device != nil {
+		fields = append(fields, frpcinfo.FieldDeviceID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FrpcInfoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case frpcinfo.FieldCreatedBy:
+		return m.CreatedBy()
+	case frpcinfo.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case frpcinfo.FieldCreatedAt:
+		return m.CreatedAt()
+	case frpcinfo.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case frpcinfo.FieldDeletedAt:
+		return m.DeletedAt()
+	case frpcinfo.FieldTag:
+		return m.Tag()
+	case frpcinfo.FieldType:
+		return m.GetType()
+	case frpcinfo.FieldLocalIP:
+		return m.LocalIP()
+	case frpcinfo.FieldLocalPort:
+		return m.LocalPort()
+	case frpcinfo.FieldRemotePort:
+		return m.RemotePort()
+	case frpcinfo.FieldFrpsID:
+		return m.FrpsID()
+	case frpcinfo.FieldDeviceID:
+		return m.DeviceID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FrpcInfoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case frpcinfo.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case frpcinfo.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case frpcinfo.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case frpcinfo.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case frpcinfo.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case frpcinfo.FieldTag:
+		return m.OldTag(ctx)
+	case frpcinfo.FieldType:
+		return m.OldType(ctx)
+	case frpcinfo.FieldLocalIP:
+		return m.OldLocalIP(ctx)
+	case frpcinfo.FieldLocalPort:
+		return m.OldLocalPort(ctx)
+	case frpcinfo.FieldRemotePort:
+		return m.OldRemotePort(ctx)
+	case frpcinfo.FieldFrpsID:
+		return m.OldFrpsID(ctx)
+	case frpcinfo.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	}
+	return nil, fmt.Errorf("unknown FrpcInfo field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FrpcInfoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case frpcinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case frpcinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case frpcinfo.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case frpcinfo.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case frpcinfo.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case frpcinfo.FieldTag:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTag(v)
+		return nil
+	case frpcinfo.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case frpcinfo.FieldLocalIP:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocalIP(v)
+		return nil
+	case frpcinfo.FieldLocalPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocalPort(v)
+		return nil
+	case frpcinfo.FieldRemotePort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemotePort(v)
+		return nil
+	case frpcinfo.FieldFrpsID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFrpsID(v)
+		return nil
+	case frpcinfo.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FrpcInfo field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FrpcInfoMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, frpcinfo.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, frpcinfo.FieldUpdatedBy)
+	}
+	if m.addlocal_port != nil {
+		fields = append(fields, frpcinfo.FieldLocalPort)
+	}
+	if m.addremote_port != nil {
+		fields = append(fields, frpcinfo.FieldRemotePort)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FrpcInfoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case frpcinfo.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case frpcinfo.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case frpcinfo.FieldLocalPort:
+		return m.AddedLocalPort()
+	case frpcinfo.FieldRemotePort:
+		return m.AddedRemotePort()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FrpcInfoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case frpcinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case frpcinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case frpcinfo.FieldLocalPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLocalPort(v)
+		return nil
+	case frpcinfo.FieldRemotePort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRemotePort(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FrpcInfo numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FrpcInfoMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FrpcInfoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FrpcInfoMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown FrpcInfo nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FrpcInfoMutation) ResetField(name string) error {
+	switch name {
+	case frpcinfo.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case frpcinfo.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case frpcinfo.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case frpcinfo.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case frpcinfo.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case frpcinfo.FieldTag:
+		m.ResetTag()
+		return nil
+	case frpcinfo.FieldType:
+		m.ResetType()
+		return nil
+	case frpcinfo.FieldLocalIP:
+		m.ResetLocalIP()
+		return nil
+	case frpcinfo.FieldLocalPort:
+		m.ResetLocalPort()
+		return nil
+	case frpcinfo.FieldRemotePort:
+		m.ResetRemotePort()
+		return nil
+	case frpcinfo.FieldFrpsID:
+		m.ResetFrpsID()
+		return nil
+	case frpcinfo.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	}
+	return fmt.Errorf("unknown FrpcInfo field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FrpcInfoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.frps_info != nil {
+		edges = append(edges, frpcinfo.EdgeFrpsInfo)
+	}
+	if m.device != nil {
+		edges = append(edges, frpcinfo.EdgeDevice)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FrpcInfoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case frpcinfo.EdgeFrpsInfo:
+		if id := m.frps_info; id != nil {
+			return []ent.Value{*id}
+		}
+	case frpcinfo.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FrpcInfoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FrpcInfoMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FrpcInfoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedfrps_info {
+		edges = append(edges, frpcinfo.EdgeFrpsInfo)
+	}
+	if m.cleareddevice {
+		edges = append(edges, frpcinfo.EdgeDevice)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FrpcInfoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case frpcinfo.EdgeFrpsInfo:
+		return m.clearedfrps_info
+	case frpcinfo.EdgeDevice:
+		return m.cleareddevice
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FrpcInfoMutation) ClearEdge(name string) error {
+	switch name {
+	case frpcinfo.EdgeFrpsInfo:
+		m.ClearFrpsInfo()
+		return nil
+	case frpcinfo.EdgeDevice:
+		m.ClearDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown FrpcInfo unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FrpcInfoMutation) ResetEdge(name string) error {
+	switch name {
+	case frpcinfo.EdgeFrpsInfo:
+		m.ResetFrpsInfo()
+		return nil
+	case frpcinfo.EdgeDevice:
+		m.ResetDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown FrpcInfo edge %s", name)
+}
+
+// FrpsInfoMutation represents an operation that mutates the FrpsInfo nodes in the graph.
+type FrpsInfoMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	created_by        *int64
+	addcreated_by     *int64
+	updated_by        *int64
+	addupdated_by     *int64
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	tag               *string
+	server_addr       *string
+	server_port       *int
+	addserver_port    *int
+	clearedFields     map[string]struct{}
+	frpc_infos        map[int64]struct{}
+	removedfrpc_infos map[int64]struct{}
+	clearedfrpc_infos bool
+	done              bool
+	oldValue          func(context.Context) (*FrpsInfo, error)
+	predicates        []predicate.FrpsInfo
+}
+
+var _ ent.Mutation = (*FrpsInfoMutation)(nil)
+
+// frpsinfoOption allows management of the mutation configuration using functional options.
+type frpsinfoOption func(*FrpsInfoMutation)
+
+// newFrpsInfoMutation creates new mutation for the FrpsInfo entity.
+func newFrpsInfoMutation(c config, op Op, opts ...frpsinfoOption) *FrpsInfoMutation {
+	m := &FrpsInfoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFrpsInfo,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFrpsInfoID sets the ID field of the mutation.
+func withFrpsInfoID(id int64) frpsinfoOption {
+	return func(m *FrpsInfoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FrpsInfo
+		)
+		m.oldValue = func(ctx context.Context) (*FrpsInfo, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FrpsInfo.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFrpsInfo sets the old FrpsInfo of the mutation.
+func withFrpsInfo(node *FrpsInfo) frpsinfoOption {
+	return func(m *FrpsInfoMutation) {
+		m.oldValue = func(context.Context) (*FrpsInfo, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FrpsInfoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FrpsInfoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FrpsInfo entities.
+func (m *FrpsInfoMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FrpsInfoMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FrpsInfoMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FrpsInfo.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *FrpsInfoMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *FrpsInfoMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *FrpsInfoMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *FrpsInfoMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *FrpsInfoMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *FrpsInfoMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *FrpsInfoMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *FrpsInfoMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *FrpsInfoMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *FrpsInfoMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FrpsInfoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FrpsInfoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FrpsInfoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FrpsInfoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FrpsInfoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FrpsInfoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *FrpsInfoMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *FrpsInfoMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *FrpsInfoMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetTag sets the "tag" field.
+func (m *FrpsInfoMutation) SetTag(s string) {
+	m.tag = &s
+}
+
+// Tag returns the value of the "tag" field in the mutation.
+func (m *FrpsInfoMutation) Tag() (r string, exists bool) {
+	v := m.tag
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTag returns the old "tag" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldTag(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTag is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTag requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTag: %w", err)
+	}
+	return oldValue.Tag, nil
+}
+
+// ResetTag resets all changes to the "tag" field.
+func (m *FrpsInfoMutation) ResetTag() {
+	m.tag = nil
+}
+
+// SetServerAddr sets the "server_addr" field.
+func (m *FrpsInfoMutation) SetServerAddr(s string) {
+	m.server_addr = &s
+}
+
+// ServerAddr returns the value of the "server_addr" field in the mutation.
+func (m *FrpsInfoMutation) ServerAddr() (r string, exists bool) {
+	v := m.server_addr
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServerAddr returns the old "server_addr" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldServerAddr(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldServerAddr is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldServerAddr requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServerAddr: %w", err)
+	}
+	return oldValue.ServerAddr, nil
+}
+
+// ResetServerAddr resets all changes to the "server_addr" field.
+func (m *FrpsInfoMutation) ResetServerAddr() {
+	m.server_addr = nil
+}
+
+// SetServerPort sets the "server_port" field.
+func (m *FrpsInfoMutation) SetServerPort(i int) {
+	m.server_port = &i
+	m.addserver_port = nil
+}
+
+// ServerPort returns the value of the "server_port" field in the mutation.
+func (m *FrpsInfoMutation) ServerPort() (r int, exists bool) {
+	v := m.server_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServerPort returns the old "server_port" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldServerPort(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldServerPort is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldServerPort requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServerPort: %w", err)
+	}
+	return oldValue.ServerPort, nil
+}
+
+// AddServerPort adds i to the "server_port" field.
+func (m *FrpsInfoMutation) AddServerPort(i int) {
+	if m.addserver_port != nil {
+		*m.addserver_port += i
+	} else {
+		m.addserver_port = &i
+	}
+}
+
+// AddedServerPort returns the value that was added to the "server_port" field in this mutation.
+func (m *FrpsInfoMutation) AddedServerPort() (r int, exists bool) {
+	v := m.addserver_port
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetServerPort resets all changes to the "server_port" field.
+func (m *FrpsInfoMutation) ResetServerPort() {
+	m.server_port = nil
+	m.addserver_port = nil
+}
+
+// AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by ids.
+func (m *FrpsInfoMutation) AddFrpcInfoIDs(ids ...int64) {
+	if m.frpc_infos == nil {
+		m.frpc_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.frpc_infos[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFrpcInfos clears the "frpc_infos" edge to the FrpcInfo entity.
+func (m *FrpsInfoMutation) ClearFrpcInfos() {
+	m.clearedfrpc_infos = true
+}
+
+// FrpcInfosCleared reports if the "frpc_infos" edge to the FrpcInfo entity was cleared.
+func (m *FrpsInfoMutation) FrpcInfosCleared() bool {
+	return m.clearedfrpc_infos
+}
+
+// RemoveFrpcInfoIDs removes the "frpc_infos" edge to the FrpcInfo entity by IDs.
+func (m *FrpsInfoMutation) RemoveFrpcInfoIDs(ids ...int64) {
+	if m.removedfrpc_infos == nil {
+		m.removedfrpc_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.frpc_infos, ids[i])
+		m.removedfrpc_infos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFrpcInfos returns the removed IDs of the "frpc_infos" edge to the FrpcInfo entity.
+func (m *FrpsInfoMutation) RemovedFrpcInfosIDs() (ids []int64) {
+	for id := range m.removedfrpc_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FrpcInfosIDs returns the "frpc_infos" edge IDs in the mutation.
+func (m *FrpsInfoMutation) FrpcInfosIDs() (ids []int64) {
+	for id := range m.frpc_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFrpcInfos resets all changes to the "frpc_infos" edge.
+func (m *FrpsInfoMutation) ResetFrpcInfos() {
+	m.frpc_infos = nil
+	m.clearedfrpc_infos = false
+	m.removedfrpc_infos = nil
+}
+
+// Where appends a list predicates to the FrpsInfoMutation builder.
+func (m *FrpsInfoMutation) Where(ps ...predicate.FrpsInfo) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FrpsInfoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FrpsInfoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FrpsInfo, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FrpsInfoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FrpsInfoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FrpsInfo).
+func (m *FrpsInfoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FrpsInfoMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_by != nil {
+		fields = append(fields, frpsinfo.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, frpsinfo.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, frpsinfo.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, frpsinfo.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, frpsinfo.FieldDeletedAt)
+	}
+	if m.tag != nil {
+		fields = append(fields, frpsinfo.FieldTag)
+	}
+	if m.server_addr != nil {
+		fields = append(fields, frpsinfo.FieldServerAddr)
+	}
+	if m.server_port != nil {
+		fields = append(fields, frpsinfo.FieldServerPort)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FrpsInfoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case frpsinfo.FieldCreatedBy:
+		return m.CreatedBy()
+	case frpsinfo.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case frpsinfo.FieldCreatedAt:
+		return m.CreatedAt()
+	case frpsinfo.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case frpsinfo.FieldDeletedAt:
+		return m.DeletedAt()
+	case frpsinfo.FieldTag:
+		return m.Tag()
+	case frpsinfo.FieldServerAddr:
+		return m.ServerAddr()
+	case frpsinfo.FieldServerPort:
+		return m.ServerPort()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FrpsInfoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case frpsinfo.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case frpsinfo.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case frpsinfo.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case frpsinfo.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case frpsinfo.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case frpsinfo.FieldTag:
+		return m.OldTag(ctx)
+	case frpsinfo.FieldServerAddr:
+		return m.OldServerAddr(ctx)
+	case frpsinfo.FieldServerPort:
+		return m.OldServerPort(ctx)
+	}
+	return nil, fmt.Errorf("unknown FrpsInfo field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FrpsInfoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case frpsinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case frpsinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case frpsinfo.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case frpsinfo.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case frpsinfo.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case frpsinfo.FieldTag:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTag(v)
+		return nil
+	case frpsinfo.FieldServerAddr:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetServerAddr(v)
+		return nil
+	case frpsinfo.FieldServerPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetServerPort(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FrpsInfo field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FrpsInfoMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, frpsinfo.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, frpsinfo.FieldUpdatedBy)
+	}
+	if m.addserver_port != nil {
+		fields = append(fields, frpsinfo.FieldServerPort)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FrpsInfoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case frpsinfo.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case frpsinfo.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case frpsinfo.FieldServerPort:
+		return m.AddedServerPort()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FrpsInfoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case frpsinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case frpsinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case frpsinfo.FieldServerPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddServerPort(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FrpsInfo numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FrpsInfoMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FrpsInfoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FrpsInfoMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown FrpsInfo nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FrpsInfoMutation) ResetField(name string) error {
+	switch name {
+	case frpsinfo.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case frpsinfo.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case frpsinfo.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case frpsinfo.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case frpsinfo.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case frpsinfo.FieldTag:
+		m.ResetTag()
+		return nil
+	case frpsinfo.FieldServerAddr:
+		m.ResetServerAddr()
+		return nil
+	case frpsinfo.FieldServerPort:
+		m.ResetServerPort()
+		return nil
+	}
+	return fmt.Errorf("unknown FrpsInfo field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FrpsInfoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.frpc_infos != nil {
+		edges = append(edges, frpsinfo.EdgeFrpcInfos)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FrpsInfoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case frpsinfo.EdgeFrpcInfos:
+		ids := make([]ent.Value, 0, len(m.frpc_infos))
+		for id := range m.frpc_infos {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FrpsInfoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedfrpc_infos != nil {
+		edges = append(edges, frpsinfo.EdgeFrpcInfos)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FrpsInfoMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case frpsinfo.EdgeFrpcInfos:
+		ids := make([]ent.Value, 0, len(m.removedfrpc_infos))
+		for id := range m.removedfrpc_infos {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FrpsInfoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedfrpc_infos {
+		edges = append(edges, frpsinfo.EdgeFrpcInfos)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FrpsInfoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case frpsinfo.EdgeFrpcInfos:
+		return m.clearedfrpc_infos
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FrpsInfoMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FrpsInfo unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FrpsInfoMutation) ResetEdge(name string) error {
+	switch name {
+	case frpsinfo.EdgeFrpcInfos:
+		m.ResetFrpcInfos()
+		return nil
+	}
+	return fmt.Errorf("unknown FrpsInfo edge %s", name)
 }
 
 // GpuMutation represents an operation that mutates the Gpu nodes in the graph.

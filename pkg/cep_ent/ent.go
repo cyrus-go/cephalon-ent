@@ -20,6 +20,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
@@ -107,6 +109,8 @@ func checkColumn(table, column string) error {
 			earnbill.Table:            earnbill.ValidColumn,
 			enumcondition.Table:       enumcondition.ValidColumn,
 			enummissionstatus.Table:   enummissionstatus.ValidColumn,
+			frpcinfo.Table:            frpcinfo.ValidColumn,
+			frpsinfo.Table:            frpsinfo.ValidColumn,
 			gpu.Table:                 gpu.ValidColumn,
 			hmackeypair.Table:         hmackeypair.ValidColumn,
 			inputlog.Table:            inputlog.ValidColumn,
