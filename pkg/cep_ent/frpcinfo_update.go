@@ -176,6 +176,20 @@ func (fiu *FrpcInfoUpdate) AddRemotePort(i int) *FrpcInfoUpdate {
 	return fiu
 }
 
+// SetIsUsing sets the "is_using" field.
+func (fiu *FrpcInfoUpdate) SetIsUsing(b bool) *FrpcInfoUpdate {
+	fiu.mutation.SetIsUsing(b)
+	return fiu
+}
+
+// SetNillableIsUsing sets the "is_using" field if the given value is not nil.
+func (fiu *FrpcInfoUpdate) SetNillableIsUsing(b *bool) *FrpcInfoUpdate {
+	if b != nil {
+		fiu.SetIsUsing(*b)
+	}
+	return fiu
+}
+
 // SetFrpsID sets the "frps_id" field.
 func (fiu *FrpcInfoUpdate) SetFrpsID(i int64) *FrpcInfoUpdate {
 	fiu.mutation.SetFrpsID(i)
@@ -334,6 +348,9 @@ func (fiu *FrpcInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := fiu.mutation.AddedRemotePort(); ok {
 		_spec.AddField(frpcinfo.FieldRemotePort, field.TypeInt, value)
+	}
+	if value, ok := fiu.mutation.IsUsing(); ok {
+		_spec.SetField(frpcinfo.FieldIsUsing, field.TypeBool, value)
 	}
 	if fiu.mutation.FrpsInfoCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -559,6 +576,20 @@ func (fiuo *FrpcInfoUpdateOne) AddRemotePort(i int) *FrpcInfoUpdateOne {
 	return fiuo
 }
 
+// SetIsUsing sets the "is_using" field.
+func (fiuo *FrpcInfoUpdateOne) SetIsUsing(b bool) *FrpcInfoUpdateOne {
+	fiuo.mutation.SetIsUsing(b)
+	return fiuo
+}
+
+// SetNillableIsUsing sets the "is_using" field if the given value is not nil.
+func (fiuo *FrpcInfoUpdateOne) SetNillableIsUsing(b *bool) *FrpcInfoUpdateOne {
+	if b != nil {
+		fiuo.SetIsUsing(*b)
+	}
+	return fiuo
+}
+
 // SetFrpsID sets the "frps_id" field.
 func (fiuo *FrpcInfoUpdateOne) SetFrpsID(i int64) *FrpcInfoUpdateOne {
 	fiuo.mutation.SetFrpsID(i)
@@ -747,6 +778,9 @@ func (fiuo *FrpcInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpcInfo, er
 	}
 	if value, ok := fiuo.mutation.AddedRemotePort(); ok {
 		_spec.AddField(frpcinfo.FieldRemotePort, field.TypeInt, value)
+	}
+	if value, ok := fiuo.mutation.IsUsing(); ok {
+		_spec.SetField(frpcinfo.FieldIsUsing, field.TypeBool, value)
 	}
 	if fiuo.mutation.FrpsInfoCleared() {
 		edge := &sqlgraph.EdgeSpec{

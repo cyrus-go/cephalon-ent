@@ -19,6 +19,7 @@ func (FrpcInfo) Fields() []ent.Field {
 		field.String("local_ip").Default("").StructTag(`json:"local_ip"`).Comment("frpc 本地地址"),
 		field.Int("local_port").Default(0).StructTag(`json:"local_port"`).Comment("frpc 本地要使用端口"),
 		field.Int("remote_port").Default(0).StructTag(`json:"remote_port"`).Comment("frpc 本地要使用端口对应的远程端口"),
+		field.Bool("is_using").Default(false).StructTag(`json:"is_using"`).Comment("端口是否已经在使用"),
 
 		field.Int64("frps_id").StructTag(`json:"frps_id"`).Default(0).Comment("外键 frps id"),
 		field.Int64("device_id").StructTag(`json:"device_id"`).Default(0).Comment("外键设备 id"),

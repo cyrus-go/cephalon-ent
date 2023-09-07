@@ -39,6 +39,8 @@ type FrpcInfo struct {
 	LocalPort int `json:"local_port"`
 	// frpc 本地要使用端口对应的远程端口
 	RemotePort int `json:"remote_port"`
+	// 端口是否已经在使用
+	IsUsing bool `json:"is_using"`
 	// 外键 frps id
 	FrpsID int64 `json:"frps_id"`
 	// 外键设备 id
@@ -91,6 +93,8 @@ func (*FrpcInfo) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case frpcinfo.FieldIsUsing:
+			values[i] = new(sql.NullBool)
 		case frpcinfo.FieldID, frpcinfo.FieldCreatedBy, frpcinfo.FieldUpdatedBy, frpcinfo.FieldLocalPort, frpcinfo.FieldRemotePort, frpcinfo.FieldFrpsID, frpcinfo.FieldDeviceID:
 			values[i] = new(sql.NullInt64)
 		case frpcinfo.FieldTag, frpcinfo.FieldType, frpcinfo.FieldLocalIP:
@@ -177,6 +181,12 @@ func (fi *FrpcInfo) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field remote_port", values[i])
 			} else if value.Valid {
 				fi.RemotePort = int(value.Int64)
+			}
+		case frpcinfo.FieldIsUsing:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_using", values[i])
+			} else if value.Valid {
+				fi.IsUsing = value.Bool
 			}
 		case frpcinfo.FieldFrpsID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -265,6 +275,9 @@ func (fi *FrpcInfo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("remote_port=")
 	builder.WriteString(fmt.Sprintf("%v", fi.RemotePort))
+	builder.WriteString(", ")
+	builder.WriteString("is_using=")
+	builder.WriteString(fmt.Sprintf("%v", fi.IsUsing))
 	builder.WriteString(", ")
 	builder.WriteString("frps_id=")
 	builder.WriteString(fmt.Sprintf("%v", fi.FrpsID))

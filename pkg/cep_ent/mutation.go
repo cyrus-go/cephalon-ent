@@ -9529,6 +9529,7 @@ type FrpcInfoMutation struct {
 	addlocal_port    *int
 	remote_port      *int
 	addremote_port   *int
+	is_using         *bool
 	clearedFields    map[string]struct{}
 	frps_info        *int64
 	clearedfrps_info bool
@@ -10083,6 +10084,42 @@ func (m *FrpcInfoMutation) ResetRemotePort() {
 	m.addremote_port = nil
 }
 
+// SetIsUsing sets the "is_using" field.
+func (m *FrpcInfoMutation) SetIsUsing(b bool) {
+	m.is_using = &b
+}
+
+// IsUsing returns the value of the "is_using" field in the mutation.
+func (m *FrpcInfoMutation) IsUsing() (r bool, exists bool) {
+	v := m.is_using
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsUsing returns the old "is_using" field's value of the FrpcInfo entity.
+// If the FrpcInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpcInfoMutation) OldIsUsing(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsUsing is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsUsing requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsUsing: %w", err)
+	}
+	return oldValue.IsUsing, nil
+}
+
+// ResetIsUsing resets all changes to the "is_using" field.
+func (m *FrpcInfoMutation) ResetIsUsing() {
+	m.is_using = nil
+}
+
 // SetFrpsID sets the "frps_id" field.
 func (m *FrpcInfoMutation) SetFrpsID(i int64) {
 	m.frps_info = &i
@@ -10256,7 +10293,7 @@ func (m *FrpcInfoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FrpcInfoMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, frpcinfo.FieldCreatedBy)
 	}
@@ -10286,6 +10323,9 @@ func (m *FrpcInfoMutation) Fields() []string {
 	}
 	if m.remote_port != nil {
 		fields = append(fields, frpcinfo.FieldRemotePort)
+	}
+	if m.is_using != nil {
+		fields = append(fields, frpcinfo.FieldIsUsing)
 	}
 	if m.frps_info != nil {
 		fields = append(fields, frpcinfo.FieldFrpsID)
@@ -10321,6 +10361,8 @@ func (m *FrpcInfoMutation) Field(name string) (ent.Value, bool) {
 		return m.LocalPort()
 	case frpcinfo.FieldRemotePort:
 		return m.RemotePort()
+	case frpcinfo.FieldIsUsing:
+		return m.IsUsing()
 	case frpcinfo.FieldFrpsID:
 		return m.FrpsID()
 	case frpcinfo.FieldDeviceID:
@@ -10354,6 +10396,8 @@ func (m *FrpcInfoMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldLocalPort(ctx)
 	case frpcinfo.FieldRemotePort:
 		return m.OldRemotePort(ctx)
+	case frpcinfo.FieldIsUsing:
+		return m.OldIsUsing(ctx)
 	case frpcinfo.FieldFrpsID:
 		return m.OldFrpsID(ctx)
 	case frpcinfo.FieldDeviceID:
@@ -10436,6 +10480,13 @@ func (m *FrpcInfoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRemotePort(v)
+		return nil
+	case frpcinfo.FieldIsUsing:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsUsing(v)
 		return nil
 	case frpcinfo.FieldFrpsID:
 		v, ok := value.(int64)
@@ -10580,6 +10631,9 @@ func (m *FrpcInfoMutation) ResetField(name string) error {
 		return nil
 	case frpcinfo.FieldRemotePort:
 		m.ResetRemotePort()
+		return nil
+	case frpcinfo.FieldIsUsing:
+		m.ResetIsUsing()
 		return nil
 	case frpcinfo.FieldFrpsID:
 		m.ResetFrpsID()

@@ -34,6 +34,8 @@ const (
 	FieldLocalPort = "local_port"
 	// FieldRemotePort holds the string denoting the remote_port field in the database.
 	FieldRemotePort = "remote_port"
+	// FieldIsUsing holds the string denoting the is_using field in the database.
+	FieldIsUsing = "is_using"
 	// FieldFrpsID holds the string denoting the frps_id field in the database.
 	FieldFrpsID = "frps_id"
 	// FieldDeviceID holds the string denoting the device_id field in the database.
@@ -73,6 +75,7 @@ var Columns = []string{
 	FieldLocalIP,
 	FieldLocalPort,
 	FieldRemotePort,
+	FieldIsUsing,
 	FieldFrpsID,
 	FieldDeviceID,
 }
@@ -110,6 +113,8 @@ var (
 	DefaultLocalPort int
 	// DefaultRemotePort holds the default value on creation for the "remote_port" field.
 	DefaultRemotePort int
+	// DefaultIsUsing holds the default value on creation for the "is_using" field.
+	DefaultIsUsing bool
 	// DefaultFrpsID holds the default value on creation for the "frps_id" field.
 	DefaultFrpsID int64
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
@@ -174,6 +179,11 @@ func ByLocalPort(opts ...sql.OrderTermOption) OrderOption {
 // ByRemotePort orders the results by the remote_port field.
 func ByRemotePort(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRemotePort, opts...).ToFunc()
+}
+
+// ByIsUsing orders the results by the is_using field.
+func ByIsUsing(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsUsing, opts...).ToFunc()
 }
 
 // ByFrpsID orders the results by the frps_id field.

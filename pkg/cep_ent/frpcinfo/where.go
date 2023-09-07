@@ -105,6 +105,11 @@ func RemotePort(v int) predicate.FrpcInfo {
 	return predicate.FrpcInfo(sql.FieldEQ(FieldRemotePort, v))
 }
 
+// IsUsing applies equality check predicate on the "is_using" field. It's identical to IsUsingEQ.
+func IsUsing(v bool) predicate.FrpcInfo {
+	return predicate.FrpcInfo(sql.FieldEQ(FieldIsUsing, v))
+}
+
 // FrpsID applies equality check predicate on the "frps_id" field. It's identical to FrpsIDEQ.
 func FrpsID(v int64) predicate.FrpcInfo {
 	return predicate.FrpcInfo(sql.FieldEQ(FieldFrpsID, v))
@@ -588,6 +593,16 @@ func RemotePortLT(v int) predicate.FrpcInfo {
 // RemotePortLTE applies the LTE predicate on the "remote_port" field.
 func RemotePortLTE(v int) predicate.FrpcInfo {
 	return predicate.FrpcInfo(sql.FieldLTE(FieldRemotePort, v))
+}
+
+// IsUsingEQ applies the EQ predicate on the "is_using" field.
+func IsUsingEQ(v bool) predicate.FrpcInfo {
+	return predicate.FrpcInfo(sql.FieldEQ(FieldIsUsing, v))
+}
+
+// IsUsingNEQ applies the NEQ predicate on the "is_using" field.
+func IsUsingNEQ(v bool) predicate.FrpcInfo {
+	return predicate.FrpcInfo(sql.FieldNEQ(FieldIsUsing, v))
 }
 
 // FrpsIDEQ applies the EQ predicate on the "frps_id" field.

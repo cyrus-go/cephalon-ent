@@ -512,12 +512,16 @@ func init() {
 	frpcinfoDescRemotePort := frpcinfoFields[4].Descriptor()
 	// frpcinfo.DefaultRemotePort holds the default value on creation for the remote_port field.
 	frpcinfo.DefaultRemotePort = frpcinfoDescRemotePort.Default.(int)
+	// frpcinfoDescIsUsing is the schema descriptor for is_using field.
+	frpcinfoDescIsUsing := frpcinfoFields[5].Descriptor()
+	// frpcinfo.DefaultIsUsing holds the default value on creation for the is_using field.
+	frpcinfo.DefaultIsUsing = frpcinfoDescIsUsing.Default.(bool)
 	// frpcinfoDescFrpsID is the schema descriptor for frps_id field.
-	frpcinfoDescFrpsID := frpcinfoFields[5].Descriptor()
+	frpcinfoDescFrpsID := frpcinfoFields[6].Descriptor()
 	// frpcinfo.DefaultFrpsID holds the default value on creation for the frps_id field.
 	frpcinfo.DefaultFrpsID = frpcinfoDescFrpsID.Default.(int64)
 	// frpcinfoDescDeviceID is the schema descriptor for device_id field.
-	frpcinfoDescDeviceID := frpcinfoFields[6].Descriptor()
+	frpcinfoDescDeviceID := frpcinfoFields[7].Descriptor()
 	// frpcinfo.DefaultDeviceID holds the default value on creation for the device_id field.
 	frpcinfo.DefaultDeviceID = frpcinfoDescDeviceID.Default.(int64)
 	// frpcinfoDescID is the schema descriptor for id field.

@@ -164,6 +164,20 @@ func (fic *FrpcInfoCreate) SetNillableRemotePort(i *int) *FrpcInfoCreate {
 	return fic
 }
 
+// SetIsUsing sets the "is_using" field.
+func (fic *FrpcInfoCreate) SetIsUsing(b bool) *FrpcInfoCreate {
+	fic.mutation.SetIsUsing(b)
+	return fic
+}
+
+// SetNillableIsUsing sets the "is_using" field if the given value is not nil.
+func (fic *FrpcInfoCreate) SetNillableIsUsing(b *bool) *FrpcInfoCreate {
+	if b != nil {
+		fic.SetIsUsing(*b)
+	}
+	return fic
+}
+
 // SetFrpsID sets the "frps_id" field.
 func (fic *FrpcInfoCreate) SetFrpsID(i int64) *FrpcInfoCreate {
 	fic.mutation.SetFrpsID(i)
@@ -297,6 +311,10 @@ func (fic *FrpcInfoCreate) defaults() {
 		v := frpcinfo.DefaultRemotePort
 		fic.mutation.SetRemotePort(v)
 	}
+	if _, ok := fic.mutation.IsUsing(); !ok {
+		v := frpcinfo.DefaultIsUsing
+		fic.mutation.SetIsUsing(v)
+	}
 	if _, ok := fic.mutation.FrpsID(); !ok {
 		v := frpcinfo.DefaultFrpsID
 		fic.mutation.SetFrpsID(v)
@@ -342,6 +360,9 @@ func (fic *FrpcInfoCreate) check() error {
 	}
 	if _, ok := fic.mutation.RemotePort(); !ok {
 		return &ValidationError{Name: "remote_port", err: errors.New(`cep_ent: missing required field "FrpcInfo.remote_port"`)}
+	}
+	if _, ok := fic.mutation.IsUsing(); !ok {
+		return &ValidationError{Name: "is_using", err: errors.New(`cep_ent: missing required field "FrpcInfo.is_using"`)}
 	}
 	if _, ok := fic.mutation.FrpsID(); !ok {
 		return &ValidationError{Name: "frps_id", err: errors.New(`cep_ent: missing required field "FrpcInfo.frps_id"`)}
@@ -427,6 +448,10 @@ func (fic *FrpcInfoCreate) createSpec() (*FrpcInfo, *sqlgraph.CreateSpec) {
 	if value, ok := fic.mutation.RemotePort(); ok {
 		_spec.SetField(frpcinfo.FieldRemotePort, field.TypeInt, value)
 		_node.RemotePort = value
+	}
+	if value, ok := fic.mutation.IsUsing(); ok {
+		_spec.SetField(frpcinfo.FieldIsUsing, field.TypeBool, value)
+		_node.IsUsing = value
 	}
 	if nodes := fic.mutation.FrpsInfoIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -643,6 +668,18 @@ func (u *FrpcInfoUpsert) UpdateRemotePort() *FrpcInfoUpsert {
 // AddRemotePort adds v to the "remote_port" field.
 func (u *FrpcInfoUpsert) AddRemotePort(v int) *FrpcInfoUpsert {
 	u.Add(frpcinfo.FieldRemotePort, v)
+	return u
+}
+
+// SetIsUsing sets the "is_using" field.
+func (u *FrpcInfoUpsert) SetIsUsing(v bool) *FrpcInfoUpsert {
+	u.Set(frpcinfo.FieldIsUsing, v)
+	return u
+}
+
+// UpdateIsUsing sets the "is_using" field to the value that was provided on create.
+func (u *FrpcInfoUpsert) UpdateIsUsing() *FrpcInfoUpsert {
+	u.SetExcluded(frpcinfo.FieldIsUsing)
 	return u
 }
 
@@ -872,6 +909,20 @@ func (u *FrpcInfoUpsertOne) AddRemotePort(v int) *FrpcInfoUpsertOne {
 func (u *FrpcInfoUpsertOne) UpdateRemotePort() *FrpcInfoUpsertOne {
 	return u.Update(func(s *FrpcInfoUpsert) {
 		s.UpdateRemotePort()
+	})
+}
+
+// SetIsUsing sets the "is_using" field.
+func (u *FrpcInfoUpsertOne) SetIsUsing(v bool) *FrpcInfoUpsertOne {
+	return u.Update(func(s *FrpcInfoUpsert) {
+		s.SetIsUsing(v)
+	})
+}
+
+// UpdateIsUsing sets the "is_using" field to the value that was provided on create.
+func (u *FrpcInfoUpsertOne) UpdateIsUsing() *FrpcInfoUpsertOne {
+	return u.Update(func(s *FrpcInfoUpsert) {
+		s.UpdateIsUsing()
 	})
 }
 
@@ -1271,6 +1322,20 @@ func (u *FrpcInfoUpsertBulk) AddRemotePort(v int) *FrpcInfoUpsertBulk {
 func (u *FrpcInfoUpsertBulk) UpdateRemotePort() *FrpcInfoUpsertBulk {
 	return u.Update(func(s *FrpcInfoUpsert) {
 		s.UpdateRemotePort()
+	})
+}
+
+// SetIsUsing sets the "is_using" field.
+func (u *FrpcInfoUpsertBulk) SetIsUsing(v bool) *FrpcInfoUpsertBulk {
+	return u.Update(func(s *FrpcInfoUpsert) {
+		s.SetIsUsing(v)
+	})
+}
+
+// UpdateIsUsing sets the "is_using" field to the value that was provided on create.
+func (u *FrpcInfoUpsertBulk) UpdateIsUsing() *FrpcInfoUpsertBulk {
+	return u.Update(func(s *FrpcInfoUpsert) {
+		s.UpdateIsUsing()
 	})
 }
 

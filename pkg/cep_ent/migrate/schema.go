@@ -289,6 +289,7 @@ var (
 		{Name: "local_ip", Type: field.TypeString, Comment: "frpc 本地地址", Default: ""},
 		{Name: "local_port", Type: field.TypeInt, Comment: "frpc 本地要使用端口", Default: 0},
 		{Name: "remote_port", Type: field.TypeInt, Comment: "frpc 本地要使用端口对应的远程端口", Default: 0},
+		{Name: "is_using", Type: field.TypeBool, Comment: "端口是否已经在使用", Default: false},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "frps_id", Type: field.TypeInt64, Comment: "外键 frps id", Default: 0},
 	}
@@ -300,13 +301,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "frpc_infos_devices_frpc_infos",
-				Columns:    []*schema.Column{FrpcInfosColumns[11]},
+				Columns:    []*schema.Column{FrpcInfosColumns[12]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "frpc_infos_frps_infos_frpc_infos",
-				Columns:    []*schema.Column{FrpcInfosColumns[12]},
+				Columns:    []*schema.Column{FrpcInfosColumns[13]},
 				RefColumns: []*schema.Column{FrpsInfosColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
