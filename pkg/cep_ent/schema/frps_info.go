@@ -19,6 +19,7 @@ func (FrpsInfo) Fields() []ent.Field {
 		field.Int("server_port").Default(0).StructTag(`json:"server_port"`).Comment("frps 服务端口"),
 		field.String("authentication_method").Default("").StructTag(`json:"authentication_method"`).Comment("frps 认证方式"),
 		field.String("token").Default("").StructTag(`json:"token"`).Comment("frps 认证 token"),
+		field.String("type").Default("").StructTag(`json:"type"`).Comment("类型：public、private"),
 	}
 }
 

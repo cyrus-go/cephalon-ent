@@ -168,6 +168,20 @@ func (fiu *FrpsInfoUpdate) SetNillableToken(s *string) *FrpsInfoUpdate {
 	return fiu
 }
 
+// SetType sets the "type" field.
+func (fiu *FrpsInfoUpdate) SetType(s string) *FrpsInfoUpdate {
+	fiu.mutation.SetType(s)
+	return fiu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (fiu *FrpsInfoUpdate) SetNillableType(s *string) *FrpsInfoUpdate {
+	if s != nil {
+		fiu.SetType(*s)
+	}
+	return fiu
+}
+
 // AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
 func (fiu *FrpsInfoUpdate) AddFrpcInfoIDs(ids ...int64) *FrpsInfoUpdate {
 	fiu.mutation.AddFrpcInfoIDs(ids...)
@@ -289,6 +303,9 @@ func (fiu *FrpsInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := fiu.mutation.Token(); ok {
 		_spec.SetField(frpsinfo.FieldToken, field.TypeString, value)
+	}
+	if value, ok := fiu.mutation.GetType(); ok {
+		_spec.SetField(frpsinfo.FieldType, field.TypeString, value)
 	}
 	if fiu.mutation.FrpcInfosCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -494,6 +511,20 @@ func (fiuo *FrpsInfoUpdateOne) SetNillableToken(s *string) *FrpsInfoUpdateOne {
 	return fiuo
 }
 
+// SetType sets the "type" field.
+func (fiuo *FrpsInfoUpdateOne) SetType(s string) *FrpsInfoUpdateOne {
+	fiuo.mutation.SetType(s)
+	return fiuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (fiuo *FrpsInfoUpdateOne) SetNillableType(s *string) *FrpsInfoUpdateOne {
+	if s != nil {
+		fiuo.SetType(*s)
+	}
+	return fiuo
+}
+
 // AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
 func (fiuo *FrpsInfoUpdateOne) AddFrpcInfoIDs(ids ...int64) *FrpsInfoUpdateOne {
 	fiuo.mutation.AddFrpcInfoIDs(ids...)
@@ -645,6 +676,9 @@ func (fiuo *FrpsInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpsInfo, er
 	}
 	if value, ok := fiuo.mutation.Token(); ok {
 		_spec.SetField(frpsinfo.FieldToken, field.TypeString, value)
+	}
+	if value, ok := fiuo.mutation.GetType(); ok {
+		_spec.SetField(frpsinfo.FieldType, field.TypeString, value)
 	}
 	if fiuo.mutation.FrpcInfosCleared() {
 		edge := &sqlgraph.EdgeSpec{

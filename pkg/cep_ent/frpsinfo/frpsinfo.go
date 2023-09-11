@@ -34,6 +34,8 @@ const (
 	FieldAuthenticationMethod = "authentication_method"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// EdgeFrpcInfos holds the string denoting the frpc_infos edge name in mutations.
 	EdgeFrpcInfos = "frpc_infos"
 	// Table holds the table name of the frpsinfo in the database.
@@ -60,6 +62,7 @@ var Columns = []string{
 	FieldServerPort,
 	FieldAuthenticationMethod,
 	FieldToken,
+	FieldType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -95,6 +98,8 @@ var (
 	DefaultAuthenticationMethod string
 	// DefaultToken holds the default value on creation for the "token" field.
 	DefaultToken string
+	// DefaultType holds the default value on creation for the "type" field.
+	DefaultType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -155,6 +160,11 @@ func ByAuthenticationMethod(opts ...sql.OrderTermOption) OrderOption {
 // ByToken orders the results by the token field.
 func ByToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldToken, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
 // ByFrpcInfosCount orders the results by frpc_infos count.

@@ -105,6 +105,11 @@ func Token(v string) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldEQ(FieldToken, v))
 }
 
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldType, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldEQ(FieldCreatedBy, v))
@@ -603,6 +608,71 @@ func TokenEqualFold(v string) predicate.FrpsInfo {
 // TokenContainsFold applies the ContainsFold predicate on the "token" field.
 func TokenContainsFold(v string) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldContainsFold(FieldToken, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGT(FieldType, v))
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGTE(FieldType, v))
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLT(FieldType, v))
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLTE(FieldType, v))
+}
+
+// TypeContains applies the Contains predicate on the "type" field.
+func TypeContains(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContains(FieldType, v))
+}
+
+// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
+func TypeHasPrefix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasPrefix(FieldType, v))
+}
+
+// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
+func TypeHasSuffix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasSuffix(FieldType, v))
+}
+
+// TypeEqualFold applies the EqualFold predicate on the "type" field.
+func TypeEqualFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEqualFold(FieldType, v))
+}
+
+// TypeContainsFold applies the ContainsFold predicate on the "type" field.
+func TypeContainsFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContainsFold(FieldType, v))
 }
 
 // HasFrpcInfos applies the HasEdge predicate on the "frpc_infos" edge.

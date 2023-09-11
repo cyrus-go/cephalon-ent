@@ -326,6 +326,7 @@ var (
 		{Name: "server_port", Type: field.TypeInt, Comment: "frps 服务端口", Default: 0},
 		{Name: "authentication_method", Type: field.TypeString, Comment: "frps 认证方式", Default: ""},
 		{Name: "token", Type: field.TypeString, Comment: "frps 认证 token", Default: ""},
+		{Name: "type", Type: field.TypeString, Comment: "类型：public、private", Default: ""},
 	}
 	// FrpsInfosTable holds the schema information for the "frps_infos" table.
 	FrpsInfosTable = &schema.Table{

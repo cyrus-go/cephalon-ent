@@ -163,6 +163,20 @@ func (fic *FrpsInfoCreate) SetNillableToken(s *string) *FrpsInfoCreate {
 	return fic
 }
 
+// SetType sets the "type" field.
+func (fic *FrpsInfoCreate) SetType(s string) *FrpsInfoCreate {
+	fic.mutation.SetType(s)
+	return fic
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (fic *FrpsInfoCreate) SetNillableType(s *string) *FrpsInfoCreate {
+	if s != nil {
+		fic.SetType(*s)
+	}
+	return fic
+}
+
 // SetID sets the "id" field.
 func (fic *FrpsInfoCreate) SetID(i int64) *FrpsInfoCreate {
 	fic.mutation.SetID(i)
@@ -267,6 +281,10 @@ func (fic *FrpsInfoCreate) defaults() {
 		v := frpsinfo.DefaultToken
 		fic.mutation.SetToken(v)
 	}
+	if _, ok := fic.mutation.GetType(); !ok {
+		v := frpsinfo.DefaultType
+		fic.mutation.SetType(v)
+	}
 	if _, ok := fic.mutation.ID(); !ok {
 		v := frpsinfo.DefaultID()
 		fic.mutation.SetID(v)
@@ -304,6 +322,9 @@ func (fic *FrpsInfoCreate) check() error {
 	}
 	if _, ok := fic.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`cep_ent: missing required field "FrpsInfo.token"`)}
+	}
+	if _, ok := fic.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "FrpsInfo.type"`)}
 	}
 	return nil
 }
@@ -377,6 +398,10 @@ func (fic *FrpsInfoCreate) createSpec() (*FrpsInfo, *sqlgraph.CreateSpec) {
 	if value, ok := fic.mutation.Token(); ok {
 		_spec.SetField(frpsinfo.FieldToken, field.TypeString, value)
 		_node.Token = value
+	}
+	if value, ok := fic.mutation.GetType(); ok {
+		_spec.SetField(frpsinfo.FieldType, field.TypeString, value)
+		_node.Type = value
 	}
 	if nodes := fic.mutation.FrpcInfosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -569,6 +594,18 @@ func (u *FrpsInfoUpsert) SetToken(v string) *FrpsInfoUpsert {
 // UpdateToken sets the "token" field to the value that was provided on create.
 func (u *FrpsInfoUpsert) UpdateToken() *FrpsInfoUpsert {
 	u.SetExcluded(frpsinfo.FieldToken)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *FrpsInfoUpsert) SetType(v string) *FrpsInfoUpsert {
+	u.Set(frpsinfo.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *FrpsInfoUpsert) UpdateType() *FrpsInfoUpsert {
+	u.SetExcluded(frpsinfo.FieldType)
 	return u
 }
 
@@ -767,6 +804,20 @@ func (u *FrpsInfoUpsertOne) SetToken(v string) *FrpsInfoUpsertOne {
 func (u *FrpsInfoUpsertOne) UpdateToken() *FrpsInfoUpsertOne {
 	return u.Update(func(s *FrpsInfoUpsert) {
 		s.UpdateToken()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *FrpsInfoUpsertOne) SetType(v string) *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *FrpsInfoUpsertOne) UpdateType() *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateType()
 	})
 }
 
@@ -1131,6 +1182,20 @@ func (u *FrpsInfoUpsertBulk) SetToken(v string) *FrpsInfoUpsertBulk {
 func (u *FrpsInfoUpsertBulk) UpdateToken() *FrpsInfoUpsertBulk {
 	return u.Update(func(s *FrpsInfoUpsert) {
 		s.UpdateToken()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *FrpsInfoUpsertBulk) SetType(v string) *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *FrpsInfoUpsertBulk) UpdateType() *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateType()
 	})
 }
 

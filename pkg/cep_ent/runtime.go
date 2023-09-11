@@ -575,6 +575,10 @@ func init() {
 	frpsinfoDescToken := frpsinfoFields[4].Descriptor()
 	// frpsinfo.DefaultToken holds the default value on creation for the token field.
 	frpsinfo.DefaultToken = frpsinfoDescToken.Default.(string)
+	// frpsinfoDescType is the schema descriptor for type field.
+	frpsinfoDescType := frpsinfoFields[5].Descriptor()
+	// frpsinfo.DefaultType holds the default value on creation for the type field.
+	frpsinfo.DefaultType = frpsinfoDescType.Default.(string)
 	// frpsinfoDescID is the schema descriptor for id field.
 	frpsinfoDescID := frpsinfoMixinFields0[0].Descriptor()
 	// frpsinfo.DefaultID holds the default value on creation for the id field.

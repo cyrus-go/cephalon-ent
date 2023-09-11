@@ -37,6 +37,8 @@ type FrpsInfo struct {
 	AuthenticationMethod string `json:"authentication_method"`
 	// frps 认证 token
 	Token string `json:"token"`
+	// 类型：public、private
+	Type string `json:"type"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FrpsInfoQuery when eager-loading is set.
 	Edges        FrpsInfoEdges `json:"edges"`
@@ -68,7 +70,7 @@ func (*FrpsInfo) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case frpsinfo.FieldID, frpsinfo.FieldCreatedBy, frpsinfo.FieldUpdatedBy, frpsinfo.FieldServerPort:
 			values[i] = new(sql.NullInt64)
-		case frpsinfo.FieldTag, frpsinfo.FieldServerAddr, frpsinfo.FieldAuthenticationMethod, frpsinfo.FieldToken:
+		case frpsinfo.FieldTag, frpsinfo.FieldServerAddr, frpsinfo.FieldAuthenticationMethod, frpsinfo.FieldToken, frpsinfo.FieldType:
 			values[i] = new(sql.NullString)
 		case frpsinfo.FieldCreatedAt, frpsinfo.FieldUpdatedAt, frpsinfo.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -153,6 +155,12 @@ func (fi *FrpsInfo) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				fi.Token = value.String
 			}
+		case frpsinfo.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				fi.Type = value.String
+			}
 		default:
 			fi.selectValues.Set(columns[i], values[i])
 		}
@@ -223,6 +231,9 @@ func (fi *FrpsInfo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(fi.Token)
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fi.Type)
 	builder.WriteByte(')')
 	return builder.String()
 }
