@@ -30,6 +30,10 @@ const (
 	FieldServerAddr = "server_addr"
 	// FieldServerPort holds the string denoting the server_port field in the database.
 	FieldServerPort = "server_port"
+	// FieldAuthenticationMethod holds the string denoting the authentication_method field in the database.
+	FieldAuthenticationMethod = "authentication_method"
+	// FieldToken holds the string denoting the token field in the database.
+	FieldToken = "token"
 	// EdgeFrpcInfos holds the string denoting the frpc_infos edge name in mutations.
 	EdgeFrpcInfos = "frpc_infos"
 	// Table holds the table name of the frpsinfo in the database.
@@ -54,6 +58,8 @@ var Columns = []string{
 	FieldTag,
 	FieldServerAddr,
 	FieldServerPort,
+	FieldAuthenticationMethod,
+	FieldToken,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -85,6 +91,10 @@ var (
 	DefaultServerAddr string
 	// DefaultServerPort holds the default value on creation for the "server_port" field.
 	DefaultServerPort int
+	// DefaultAuthenticationMethod holds the default value on creation for the "authentication_method" field.
+	DefaultAuthenticationMethod string
+	// DefaultToken holds the default value on creation for the "token" field.
+	DefaultToken string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -135,6 +145,16 @@ func ByServerAddr(opts ...sql.OrderTermOption) OrderOption {
 // ByServerPort orders the results by the server_port field.
 func ByServerPort(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldServerPort, opts...).ToFunc()
+}
+
+// ByAuthenticationMethod orders the results by the authentication_method field.
+func ByAuthenticationMethod(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthenticationMethod, opts...).ToFunc()
+}
+
+// ByToken orders the results by the token field.
+func ByToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldToken, opts...).ToFunc()
 }
 
 // ByFrpcInfosCount orders the results by frpc_infos count.

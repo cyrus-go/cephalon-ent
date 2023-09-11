@@ -10740,27 +10740,29 @@ func (m *FrpcInfoMutation) ResetEdge(name string) error {
 // FrpsInfoMutation represents an operation that mutates the FrpsInfo nodes in the graph.
 type FrpsInfoMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int64
-	created_by        *int64
-	addcreated_by     *int64
-	updated_by        *int64
-	addupdated_by     *int64
-	created_at        *time.Time
-	updated_at        *time.Time
-	deleted_at        *time.Time
-	tag               *string
-	server_addr       *string
-	server_port       *int
-	addserver_port    *int
-	clearedFields     map[string]struct{}
-	frpc_infos        map[int64]struct{}
-	removedfrpc_infos map[int64]struct{}
-	clearedfrpc_infos bool
-	done              bool
-	oldValue          func(context.Context) (*FrpsInfo, error)
-	predicates        []predicate.FrpsInfo
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	tag                   *string
+	server_addr           *string
+	server_port           *int
+	addserver_port        *int
+	authentication_method *string
+	token                 *string
+	clearedFields         map[string]struct{}
+	frpc_infos            map[int64]struct{}
+	removedfrpc_infos     map[int64]struct{}
+	clearedfrpc_infos     bool
+	done                  bool
+	oldValue              func(context.Context) (*FrpsInfo, error)
+	predicates            []predicate.FrpsInfo
 }
 
 var _ ent.Mutation = (*FrpsInfoMutation)(nil)
@@ -11215,6 +11217,78 @@ func (m *FrpsInfoMutation) ResetServerPort() {
 	m.addserver_port = nil
 }
 
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (m *FrpsInfoMutation) SetAuthenticationMethod(s string) {
+	m.authentication_method = &s
+}
+
+// AuthenticationMethod returns the value of the "authentication_method" field in the mutation.
+func (m *FrpsInfoMutation) AuthenticationMethod() (r string, exists bool) {
+	v := m.authentication_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthenticationMethod returns the old "authentication_method" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldAuthenticationMethod(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthenticationMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthenticationMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthenticationMethod: %w", err)
+	}
+	return oldValue.AuthenticationMethod, nil
+}
+
+// ResetAuthenticationMethod resets all changes to the "authentication_method" field.
+func (m *FrpsInfoMutation) ResetAuthenticationMethod() {
+	m.authentication_method = nil
+}
+
+// SetToken sets the "token" field.
+func (m *FrpsInfoMutation) SetToken(s string) {
+	m.token = &s
+}
+
+// Token returns the value of the "token" field in the mutation.
+func (m *FrpsInfoMutation) Token() (r string, exists bool) {
+	v := m.token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToken returns the old "token" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToken: %w", err)
+	}
+	return oldValue.Token, nil
+}
+
+// ResetToken resets all changes to the "token" field.
+func (m *FrpsInfoMutation) ResetToken() {
+	m.token = nil
+}
+
 // AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by ids.
 func (m *FrpsInfoMutation) AddFrpcInfoIDs(ids ...int64) {
 	if m.frpc_infos == nil {
@@ -11303,7 +11377,7 @@ func (m *FrpsInfoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FrpsInfoMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, frpsinfo.FieldCreatedBy)
 	}
@@ -11327,6 +11401,12 @@ func (m *FrpsInfoMutation) Fields() []string {
 	}
 	if m.server_port != nil {
 		fields = append(fields, frpsinfo.FieldServerPort)
+	}
+	if m.authentication_method != nil {
+		fields = append(fields, frpsinfo.FieldAuthenticationMethod)
+	}
+	if m.token != nil {
+		fields = append(fields, frpsinfo.FieldToken)
 	}
 	return fields
 }
@@ -11352,6 +11432,10 @@ func (m *FrpsInfoMutation) Field(name string) (ent.Value, bool) {
 		return m.ServerAddr()
 	case frpsinfo.FieldServerPort:
 		return m.ServerPort()
+	case frpsinfo.FieldAuthenticationMethod:
+		return m.AuthenticationMethod()
+	case frpsinfo.FieldToken:
+		return m.Token()
 	}
 	return nil, false
 }
@@ -11377,6 +11461,10 @@ func (m *FrpsInfoMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldServerAddr(ctx)
 	case frpsinfo.FieldServerPort:
 		return m.OldServerPort(ctx)
+	case frpsinfo.FieldAuthenticationMethod:
+		return m.OldAuthenticationMethod(ctx)
+	case frpsinfo.FieldToken:
+		return m.OldToken(ctx)
 	}
 	return nil, fmt.Errorf("unknown FrpsInfo field %s", name)
 }
@@ -11441,6 +11529,20 @@ func (m *FrpsInfoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetServerPort(v)
+		return nil
+	case frpsinfo.FieldAuthenticationMethod:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthenticationMethod(v)
+		return nil
+	case frpsinfo.FieldToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToken(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FrpsInfo field %s", name)
@@ -11553,6 +11655,12 @@ func (m *FrpsInfoMutation) ResetField(name string) error {
 		return nil
 	case frpsinfo.FieldServerPort:
 		m.ResetServerPort()
+		return nil
+	case frpsinfo.FieldAuthenticationMethod:
+		m.ResetAuthenticationMethod()
+		return nil
+	case frpsinfo.FieldToken:
+		m.ResetToken()
 		return nil
 	}
 	return fmt.Errorf("unknown FrpsInfo field %s", name)

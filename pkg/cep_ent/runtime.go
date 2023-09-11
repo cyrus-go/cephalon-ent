@@ -567,6 +567,14 @@ func init() {
 	frpsinfoDescServerPort := frpsinfoFields[2].Descriptor()
 	// frpsinfo.DefaultServerPort holds the default value on creation for the server_port field.
 	frpsinfo.DefaultServerPort = frpsinfoDescServerPort.Default.(int)
+	// frpsinfoDescAuthenticationMethod is the schema descriptor for authentication_method field.
+	frpsinfoDescAuthenticationMethod := frpsinfoFields[3].Descriptor()
+	// frpsinfo.DefaultAuthenticationMethod holds the default value on creation for the authentication_method field.
+	frpsinfo.DefaultAuthenticationMethod = frpsinfoDescAuthenticationMethod.Default.(string)
+	// frpsinfoDescToken is the schema descriptor for token field.
+	frpsinfoDescToken := frpsinfoFields[4].Descriptor()
+	// frpsinfo.DefaultToken holds the default value on creation for the token field.
+	frpsinfo.DefaultToken = frpsinfoDescToken.Default.(string)
 	// frpsinfoDescID is the schema descriptor for id field.
 	frpsinfoDescID := frpsinfoMixinFields0[0].Descriptor()
 	// frpsinfo.DefaultID holds the default value on creation for the id field.

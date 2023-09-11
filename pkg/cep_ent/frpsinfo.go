@@ -33,6 +33,10 @@ type FrpsInfo struct {
 	ServerAddr string `json:"server_addr"`
 	// frps 服务端口
 	ServerPort int `json:"server_port"`
+	// frps 认证方式
+	AuthenticationMethod string `json:"authentication_method"`
+	// frps 认证 token
+	Token string `json:"token"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FrpsInfoQuery when eager-loading is set.
 	Edges        FrpsInfoEdges `json:"edges"`
@@ -64,7 +68,7 @@ func (*FrpsInfo) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case frpsinfo.FieldID, frpsinfo.FieldCreatedBy, frpsinfo.FieldUpdatedBy, frpsinfo.FieldServerPort:
 			values[i] = new(sql.NullInt64)
-		case frpsinfo.FieldTag, frpsinfo.FieldServerAddr:
+		case frpsinfo.FieldTag, frpsinfo.FieldServerAddr, frpsinfo.FieldAuthenticationMethod, frpsinfo.FieldToken:
 			values[i] = new(sql.NullString)
 		case frpsinfo.FieldCreatedAt, frpsinfo.FieldUpdatedAt, frpsinfo.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -137,6 +141,18 @@ func (fi *FrpsInfo) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				fi.ServerPort = int(value.Int64)
 			}
+		case frpsinfo.FieldAuthenticationMethod:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field authentication_method", values[i])
+			} else if value.Valid {
+				fi.AuthenticationMethod = value.String
+			}
+		case frpsinfo.FieldToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field token", values[i])
+			} else if value.Valid {
+				fi.Token = value.String
+			}
 		default:
 			fi.selectValues.Set(columns[i], values[i])
 		}
@@ -201,6 +217,12 @@ func (fi *FrpsInfo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("server_port=")
 	builder.WriteString(fmt.Sprintf("%v", fi.ServerPort))
+	builder.WriteString(", ")
+	builder.WriteString("authentication_method=")
+	builder.WriteString(fi.AuthenticationMethod)
+	builder.WriteString(", ")
+	builder.WriteString("token=")
+	builder.WriteString(fi.Token)
 	builder.WriteByte(')')
 	return builder.String()
 }

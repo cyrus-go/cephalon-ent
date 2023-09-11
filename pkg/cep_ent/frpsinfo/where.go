@@ -95,6 +95,16 @@ func ServerPort(v int) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldEQ(FieldServerPort, v))
 }
 
+// AuthenticationMethod applies equality check predicate on the "authentication_method" field. It's identical to AuthenticationMethodEQ.
+func AuthenticationMethod(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldAuthenticationMethod, v))
+}
+
+// Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
+func Token(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldToken, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldEQ(FieldCreatedBy, v))
@@ -463,6 +473,136 @@ func ServerPortLT(v int) predicate.FrpsInfo {
 // ServerPortLTE applies the LTE predicate on the "server_port" field.
 func ServerPortLTE(v int) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldLTE(FieldServerPort, v))
+}
+
+// AuthenticationMethodEQ applies the EQ predicate on the "authentication_method" field.
+func AuthenticationMethodEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodNEQ applies the NEQ predicate on the "authentication_method" field.
+func AuthenticationMethodNEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNEQ(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodIn applies the In predicate on the "authentication_method" field.
+func AuthenticationMethodIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldIn(FieldAuthenticationMethod, vs...))
+}
+
+// AuthenticationMethodNotIn applies the NotIn predicate on the "authentication_method" field.
+func AuthenticationMethodNotIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNotIn(FieldAuthenticationMethod, vs...))
+}
+
+// AuthenticationMethodGT applies the GT predicate on the "authentication_method" field.
+func AuthenticationMethodGT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGT(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodGTE applies the GTE predicate on the "authentication_method" field.
+func AuthenticationMethodGTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGTE(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodLT applies the LT predicate on the "authentication_method" field.
+func AuthenticationMethodLT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLT(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodLTE applies the LTE predicate on the "authentication_method" field.
+func AuthenticationMethodLTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLTE(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodContains applies the Contains predicate on the "authentication_method" field.
+func AuthenticationMethodContains(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContains(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodHasPrefix applies the HasPrefix predicate on the "authentication_method" field.
+func AuthenticationMethodHasPrefix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasPrefix(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodHasSuffix applies the HasSuffix predicate on the "authentication_method" field.
+func AuthenticationMethodHasSuffix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasSuffix(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodEqualFold applies the EqualFold predicate on the "authentication_method" field.
+func AuthenticationMethodEqualFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEqualFold(FieldAuthenticationMethod, v))
+}
+
+// AuthenticationMethodContainsFold applies the ContainsFold predicate on the "authentication_method" field.
+func AuthenticationMethodContainsFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContainsFold(FieldAuthenticationMethod, v))
+}
+
+// TokenEQ applies the EQ predicate on the "token" field.
+func TokenEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldToken, v))
+}
+
+// TokenNEQ applies the NEQ predicate on the "token" field.
+func TokenNEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNEQ(FieldToken, v))
+}
+
+// TokenIn applies the In predicate on the "token" field.
+func TokenIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldIn(FieldToken, vs...))
+}
+
+// TokenNotIn applies the NotIn predicate on the "token" field.
+func TokenNotIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNotIn(FieldToken, vs...))
+}
+
+// TokenGT applies the GT predicate on the "token" field.
+func TokenGT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGT(FieldToken, v))
+}
+
+// TokenGTE applies the GTE predicate on the "token" field.
+func TokenGTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGTE(FieldToken, v))
+}
+
+// TokenLT applies the LT predicate on the "token" field.
+func TokenLT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLT(FieldToken, v))
+}
+
+// TokenLTE applies the LTE predicate on the "token" field.
+func TokenLTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLTE(FieldToken, v))
+}
+
+// TokenContains applies the Contains predicate on the "token" field.
+func TokenContains(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContains(FieldToken, v))
+}
+
+// TokenHasPrefix applies the HasPrefix predicate on the "token" field.
+func TokenHasPrefix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasPrefix(FieldToken, v))
+}
+
+// TokenHasSuffix applies the HasSuffix predicate on the "token" field.
+func TokenHasSuffix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasSuffix(FieldToken, v))
+}
+
+// TokenEqualFold applies the EqualFold predicate on the "token" field.
+func TokenEqualFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEqualFold(FieldToken, v))
+}
+
+// TokenContainsFold applies the ContainsFold predicate on the "token" field.
+func TokenContainsFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContainsFold(FieldToken, v))
 }
 
 // HasFrpcInfos applies the HasEdge predicate on the "frpc_infos" edge.

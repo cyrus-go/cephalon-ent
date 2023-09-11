@@ -135,6 +135,34 @@ func (fic *FrpsInfoCreate) SetNillableServerPort(i *int) *FrpsInfoCreate {
 	return fic
 }
 
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (fic *FrpsInfoCreate) SetAuthenticationMethod(s string) *FrpsInfoCreate {
+	fic.mutation.SetAuthenticationMethod(s)
+	return fic
+}
+
+// SetNillableAuthenticationMethod sets the "authentication_method" field if the given value is not nil.
+func (fic *FrpsInfoCreate) SetNillableAuthenticationMethod(s *string) *FrpsInfoCreate {
+	if s != nil {
+		fic.SetAuthenticationMethod(*s)
+	}
+	return fic
+}
+
+// SetToken sets the "token" field.
+func (fic *FrpsInfoCreate) SetToken(s string) *FrpsInfoCreate {
+	fic.mutation.SetToken(s)
+	return fic
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (fic *FrpsInfoCreate) SetNillableToken(s *string) *FrpsInfoCreate {
+	if s != nil {
+		fic.SetToken(*s)
+	}
+	return fic
+}
+
 // SetID sets the "id" field.
 func (fic *FrpsInfoCreate) SetID(i int64) *FrpsInfoCreate {
 	fic.mutation.SetID(i)
@@ -231,6 +259,14 @@ func (fic *FrpsInfoCreate) defaults() {
 		v := frpsinfo.DefaultServerPort
 		fic.mutation.SetServerPort(v)
 	}
+	if _, ok := fic.mutation.AuthenticationMethod(); !ok {
+		v := frpsinfo.DefaultAuthenticationMethod
+		fic.mutation.SetAuthenticationMethod(v)
+	}
+	if _, ok := fic.mutation.Token(); !ok {
+		v := frpsinfo.DefaultToken
+		fic.mutation.SetToken(v)
+	}
 	if _, ok := fic.mutation.ID(); !ok {
 		v := frpsinfo.DefaultID()
 		fic.mutation.SetID(v)
@@ -262,6 +298,12 @@ func (fic *FrpsInfoCreate) check() error {
 	}
 	if _, ok := fic.mutation.ServerPort(); !ok {
 		return &ValidationError{Name: "server_port", err: errors.New(`cep_ent: missing required field "FrpsInfo.server_port"`)}
+	}
+	if _, ok := fic.mutation.AuthenticationMethod(); !ok {
+		return &ValidationError{Name: "authentication_method", err: errors.New(`cep_ent: missing required field "FrpsInfo.authentication_method"`)}
+	}
+	if _, ok := fic.mutation.Token(); !ok {
+		return &ValidationError{Name: "token", err: errors.New(`cep_ent: missing required field "FrpsInfo.token"`)}
 	}
 	return nil
 }
@@ -327,6 +369,14 @@ func (fic *FrpsInfoCreate) createSpec() (*FrpsInfo, *sqlgraph.CreateSpec) {
 	if value, ok := fic.mutation.ServerPort(); ok {
 		_spec.SetField(frpsinfo.FieldServerPort, field.TypeInt, value)
 		_node.ServerPort = value
+	}
+	if value, ok := fic.mutation.AuthenticationMethod(); ok {
+		_spec.SetField(frpsinfo.FieldAuthenticationMethod, field.TypeString, value)
+		_node.AuthenticationMethod = value
+	}
+	if value, ok := fic.mutation.Token(); ok {
+		_spec.SetField(frpsinfo.FieldToken, field.TypeString, value)
+		_node.Token = value
 	}
 	if nodes := fic.mutation.FrpcInfosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -498,6 +548,30 @@ func (u *FrpsInfoUpsert) AddServerPort(v int) *FrpsInfoUpsert {
 	return u
 }
 
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (u *FrpsInfoUpsert) SetAuthenticationMethod(v string) *FrpsInfoUpsert {
+	u.Set(frpsinfo.FieldAuthenticationMethod, v)
+	return u
+}
+
+// UpdateAuthenticationMethod sets the "authentication_method" field to the value that was provided on create.
+func (u *FrpsInfoUpsert) UpdateAuthenticationMethod() *FrpsInfoUpsert {
+	u.SetExcluded(frpsinfo.FieldAuthenticationMethod)
+	return u
+}
+
+// SetToken sets the "token" field.
+func (u *FrpsInfoUpsert) SetToken(v string) *FrpsInfoUpsert {
+	u.Set(frpsinfo.FieldToken, v)
+	return u
+}
+
+// UpdateToken sets the "token" field to the value that was provided on create.
+func (u *FrpsInfoUpsert) UpdateToken() *FrpsInfoUpsert {
+	u.SetExcluded(frpsinfo.FieldToken)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -665,6 +739,34 @@ func (u *FrpsInfoUpsertOne) AddServerPort(v int) *FrpsInfoUpsertOne {
 func (u *FrpsInfoUpsertOne) UpdateServerPort() *FrpsInfoUpsertOne {
 	return u.Update(func(s *FrpsInfoUpsert) {
 		s.UpdateServerPort()
+	})
+}
+
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (u *FrpsInfoUpsertOne) SetAuthenticationMethod(v string) *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetAuthenticationMethod(v)
+	})
+}
+
+// UpdateAuthenticationMethod sets the "authentication_method" field to the value that was provided on create.
+func (u *FrpsInfoUpsertOne) UpdateAuthenticationMethod() *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateAuthenticationMethod()
+	})
+}
+
+// SetToken sets the "token" field.
+func (u *FrpsInfoUpsertOne) SetToken(v string) *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetToken(v)
+	})
+}
+
+// UpdateToken sets the "token" field to the value that was provided on create.
+func (u *FrpsInfoUpsertOne) UpdateToken() *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateToken()
 	})
 }
 
@@ -1001,6 +1103,34 @@ func (u *FrpsInfoUpsertBulk) AddServerPort(v int) *FrpsInfoUpsertBulk {
 func (u *FrpsInfoUpsertBulk) UpdateServerPort() *FrpsInfoUpsertBulk {
 	return u.Update(func(s *FrpsInfoUpsert) {
 		s.UpdateServerPort()
+	})
+}
+
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (u *FrpsInfoUpsertBulk) SetAuthenticationMethod(v string) *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetAuthenticationMethod(v)
+	})
+}
+
+// UpdateAuthenticationMethod sets the "authentication_method" field to the value that was provided on create.
+func (u *FrpsInfoUpsertBulk) UpdateAuthenticationMethod() *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateAuthenticationMethod()
+	})
+}
+
+// SetToken sets the "token" field.
+func (u *FrpsInfoUpsertBulk) SetToken(v string) *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetToken(v)
+	})
+}
+
+// UpdateToken sets the "token" field to the value that was provided on create.
+func (u *FrpsInfoUpsertBulk) UpdateToken() *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateToken()
 	})
 }
 

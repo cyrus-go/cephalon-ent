@@ -324,6 +324,8 @@ var (
 		{Name: "tag", Type: field.TypeString, Comment: "ini 文件服务端 tag", Default: ""},
 		{Name: "server_addr", Type: field.TypeString, Comment: "frps 服务地址", Default: ""},
 		{Name: "server_port", Type: field.TypeInt, Comment: "frps 服务端口", Default: 0},
+		{Name: "authentication_method", Type: field.TypeString, Comment: "frps 认证方式", Default: ""},
+		{Name: "token", Type: field.TypeString, Comment: "frps 认证 token", Default: ""},
 	}
 	// FrpsInfosTable holds the schema information for the "frps_infos" table.
 	FrpsInfosTable = &schema.Table{

@@ -140,6 +140,34 @@ func (fiu *FrpsInfoUpdate) AddServerPort(i int) *FrpsInfoUpdate {
 	return fiu
 }
 
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (fiu *FrpsInfoUpdate) SetAuthenticationMethod(s string) *FrpsInfoUpdate {
+	fiu.mutation.SetAuthenticationMethod(s)
+	return fiu
+}
+
+// SetNillableAuthenticationMethod sets the "authentication_method" field if the given value is not nil.
+func (fiu *FrpsInfoUpdate) SetNillableAuthenticationMethod(s *string) *FrpsInfoUpdate {
+	if s != nil {
+		fiu.SetAuthenticationMethod(*s)
+	}
+	return fiu
+}
+
+// SetToken sets the "token" field.
+func (fiu *FrpsInfoUpdate) SetToken(s string) *FrpsInfoUpdate {
+	fiu.mutation.SetToken(s)
+	return fiu
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (fiu *FrpsInfoUpdate) SetNillableToken(s *string) *FrpsInfoUpdate {
+	if s != nil {
+		fiu.SetToken(*s)
+	}
+	return fiu
+}
+
 // AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
 func (fiu *FrpsInfoUpdate) AddFrpcInfoIDs(ids ...int64) *FrpsInfoUpdate {
 	fiu.mutation.AddFrpcInfoIDs(ids...)
@@ -255,6 +283,12 @@ func (fiu *FrpsInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := fiu.mutation.AddedServerPort(); ok {
 		_spec.AddField(frpsinfo.FieldServerPort, field.TypeInt, value)
+	}
+	if value, ok := fiu.mutation.AuthenticationMethod(); ok {
+		_spec.SetField(frpsinfo.FieldAuthenticationMethod, field.TypeString, value)
+	}
+	if value, ok := fiu.mutation.Token(); ok {
+		_spec.SetField(frpsinfo.FieldToken, field.TypeString, value)
 	}
 	if fiu.mutation.FrpcInfosCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -432,6 +466,34 @@ func (fiuo *FrpsInfoUpdateOne) AddServerPort(i int) *FrpsInfoUpdateOne {
 	return fiuo
 }
 
+// SetAuthenticationMethod sets the "authentication_method" field.
+func (fiuo *FrpsInfoUpdateOne) SetAuthenticationMethod(s string) *FrpsInfoUpdateOne {
+	fiuo.mutation.SetAuthenticationMethod(s)
+	return fiuo
+}
+
+// SetNillableAuthenticationMethod sets the "authentication_method" field if the given value is not nil.
+func (fiuo *FrpsInfoUpdateOne) SetNillableAuthenticationMethod(s *string) *FrpsInfoUpdateOne {
+	if s != nil {
+		fiuo.SetAuthenticationMethod(*s)
+	}
+	return fiuo
+}
+
+// SetToken sets the "token" field.
+func (fiuo *FrpsInfoUpdateOne) SetToken(s string) *FrpsInfoUpdateOne {
+	fiuo.mutation.SetToken(s)
+	return fiuo
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (fiuo *FrpsInfoUpdateOne) SetNillableToken(s *string) *FrpsInfoUpdateOne {
+	if s != nil {
+		fiuo.SetToken(*s)
+	}
+	return fiuo
+}
+
 // AddFrpcInfoIDs adds the "frpc_infos" edge to the FrpcInfo entity by IDs.
 func (fiuo *FrpsInfoUpdateOne) AddFrpcInfoIDs(ids ...int64) *FrpsInfoUpdateOne {
 	fiuo.mutation.AddFrpcInfoIDs(ids...)
@@ -577,6 +639,12 @@ func (fiuo *FrpsInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpsInfo, er
 	}
 	if value, ok := fiuo.mutation.AddedServerPort(); ok {
 		_spec.AddField(frpsinfo.FieldServerPort, field.TypeInt, value)
+	}
+	if value, ok := fiuo.mutation.AuthenticationMethod(); ok {
+		_spec.SetField(frpsinfo.FieldAuthenticationMethod, field.TypeString, value)
+	}
+	if value, ok := fiuo.mutation.Token(); ok {
+		_spec.SetField(frpsinfo.FieldToken, field.TypeString, value)
 	}
 	if fiuo.mutation.FrpcInfosCleared() {
 		edge := &sqlgraph.EdgeSpec{
