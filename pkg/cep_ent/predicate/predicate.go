@@ -45,6 +45,9 @@ type HmacKeyPair func(*sql.Selector)
 // InputLog is the predicate function for inputlog builders.
 type InputLog func(*sql.Selector)
 
+// Invite is the predicate function for invite builders.
+type Invite func(*sql.Selector)
+
 // Mission is the predicate function for mission builders.
 type Mission func(*sql.Selector)
 

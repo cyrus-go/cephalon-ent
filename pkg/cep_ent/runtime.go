@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -704,6 +705,57 @@ func init() {
 	inputlogDescID := inputlogMixinFields0[0].Descriptor()
 	// inputlog.DefaultID holds the default value on creation for the id field.
 	inputlog.DefaultID = inputlogDescID.Default.(func() int64)
+	inviteMixin := schema.Invite{}.Mixin()
+	inviteMixinFields0 := inviteMixin[0].Fields()
+	_ = inviteMixinFields0
+	inviteFields := schema.Invite{}.Fields()
+	_ = inviteFields
+	// inviteDescCreatedBy is the schema descriptor for created_by field.
+	inviteDescCreatedBy := inviteMixinFields0[1].Descriptor()
+	// invite.DefaultCreatedBy holds the default value on creation for the created_by field.
+	invite.DefaultCreatedBy = inviteDescCreatedBy.Default.(int64)
+	// inviteDescUpdatedBy is the schema descriptor for updated_by field.
+	inviteDescUpdatedBy := inviteMixinFields0[2].Descriptor()
+	// invite.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	invite.DefaultUpdatedBy = inviteDescUpdatedBy.Default.(int64)
+	// inviteDescCreatedAt is the schema descriptor for created_at field.
+	inviteDescCreatedAt := inviteMixinFields0[3].Descriptor()
+	// invite.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invite.DefaultCreatedAt = inviteDescCreatedAt.Default.(func() time.Time)
+	// inviteDescUpdatedAt is the schema descriptor for updated_at field.
+	inviteDescUpdatedAt := inviteMixinFields0[4].Descriptor()
+	// invite.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	invite.DefaultUpdatedAt = inviteDescUpdatedAt.Default.(func() time.Time)
+	// invite.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	invite.UpdateDefaultUpdatedAt = inviteDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// inviteDescDeletedAt is the schema descriptor for deleted_at field.
+	inviteDescDeletedAt := inviteMixinFields0[5].Descriptor()
+	// invite.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	invite.DefaultDeletedAt = inviteDescDeletedAt.Default.(time.Time)
+	// inviteDescInviteCode is the schema descriptor for invite_code field.
+	inviteDescInviteCode := inviteFields[0].Descriptor()
+	// invite.DefaultInviteCode holds the default value on creation for the invite_code field.
+	invite.DefaultInviteCode = inviteDescInviteCode.Default.(string)
+	// inviteDescShareCep is the schema descriptor for share_cep field.
+	inviteDescShareCep := inviteFields[1].Descriptor()
+	// invite.DefaultShareCep holds the default value on creation for the share_cep field.
+	invite.DefaultShareCep = inviteDescShareCep.Default.(int64)
+	// inviteDescRegCep is the schema descriptor for reg_cep field.
+	inviteDescRegCep := inviteFields[2].Descriptor()
+	// invite.DefaultRegCep holds the default value on creation for the reg_cep field.
+	invite.DefaultRegCep = inviteDescRegCep.Default.(int64)
+	// inviteDescType is the schema descriptor for type field.
+	inviteDescType := inviteFields[3].Descriptor()
+	// invite.DefaultType holds the default value on creation for the type field.
+	invite.DefaultType = inviteDescType.Default.(string)
+	// inviteDescUserID is the schema descriptor for user_id field.
+	inviteDescUserID := inviteFields[4].Descriptor()
+	// invite.DefaultUserID holds the default value on creation for the user_id field.
+	invite.DefaultUserID = inviteDescUserID.Default.(int64)
+	// inviteDescID is the schema descriptor for id field.
+	inviteDescID := inviteMixinFields0[0].Descriptor()
+	// invite.DefaultID holds the default value on creation for the id field.
+	invite.DefaultID = inviteDescID.Default.(func() int64)
 	missionMixin := schema.Mission{}.Mixin()
 	missionMixinFields0 := missionMixin[0].Fields()
 	_ = missionMixinFields0

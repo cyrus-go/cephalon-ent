@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -52,6 +53,7 @@ type UserQuery struct {
 	withUserDevices          *UserDeviceQuery
 	withParent               *UserQuery
 	withChildren             *UserQuery
+	withInvites              *InviteQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -440,6 +442,28 @@ func (uq *UserQuery) QueryChildren() *UserQuery {
 	return query
 }
 
+// QueryInvites chains the current query on the "invites" edge.
+func (uq *UserQuery) QueryInvites() *InviteQuery {
+	query := (&InviteClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(invite.Table, invite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.InvitesTable, user.InvitesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -648,6 +672,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withUserDevices:          uq.withUserDevices.Clone(),
 		withParent:               uq.withParent.Clone(),
 		withChildren:             uq.withChildren.Clone(),
+		withInvites:              uq.withInvites.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -830,6 +855,17 @@ func (uq *UserQuery) WithChildren(opts ...func(*UserQuery)) *UserQuery {
 	return uq
 }
 
+// WithInvites tells the query-builder to eager-load the nodes that are connected to
+// the "invites" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithInvites(opts ...func(*InviteQuery)) *UserQuery {
+	query := (&InviteClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withInvites = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -908,7 +944,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [16]bool{
+		loadedTypes = [17]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -925,6 +961,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withUserDevices != nil,
 			uq.withParent != nil,
 			uq.withChildren != nil,
+			uq.withInvites != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1055,6 +1092,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadChildren(ctx, query, nodes,
 			func(n *User) { n.Edges.Children = []*User{} },
 			func(n *User, e *User) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withInvites; query != nil {
+		if err := uq.loadInvites(ctx, query, nodes,
+			func(n *User) { n.Edges.Invites = []*Invite{} },
+			func(n *User, e *Invite) { n.Edges.Invites = append(n.Edges.Invites, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1529,6 +1573,36 @@ func (uq *UserQuery) loadChildren(ctx context.Context, query *UserQuery, nodes [
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "parent_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadInvites(ctx context.Context, query *InviteQuery, nodes []*User, init func(*User), assign func(*User, *Invite)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(invite.FieldUserID)
+	}
+	query.Where(predicate.Invite(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.InvitesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

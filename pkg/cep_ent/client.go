@@ -28,6 +28,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -77,6 +78,8 @@ type Client struct {
 	HmacKeyPair *HmacKeyPairClient
 	// InputLog is the client for interacting with the InputLog builders.
 	InputLog *InputLogClient
+	// Invite is the client for interacting with the Invite builders.
+	Invite *InviteClient
 	// Mission is the client for interacting with the Mission builders.
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
@@ -135,6 +138,7 @@ func (c *Client) init() {
 	c.Gpu = NewGpuClient(c.config)
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
+	c.Invite = NewInviteClient(c.config)
 	c.Mission = NewMissionClient(c.config)
 	c.MissionBatch = NewMissionBatchClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
@@ -249,6 +253,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Gpu:                 NewGpuClient(cfg),
 		HmacKeyPair:         NewHmacKeyPairClient(cfg),
 		InputLog:            NewInputLogClient(cfg),
+		Invite:              NewInviteClient(cfg),
 		Mission:             NewMissionClient(cfg),
 		MissionBatch:        NewMissionBatchClient(cfg),
 		MissionConsumeOrder: NewMissionConsumeOrderClient(cfg),
@@ -297,6 +302,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Gpu:                 NewGpuClient(cfg),
 		HmacKeyPair:         NewHmacKeyPairClient(cfg),
 		InputLog:            NewInputLogClient(cfg),
+		Invite:              NewInviteClient(cfg),
 		Mission:             NewMissionClient(cfg),
 		MissionBatch:        NewMissionBatchClient(cfg),
 		MissionConsumeOrder: NewMissionConsumeOrderClient(cfg),
@@ -344,10 +350,10 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo, c.Gpu,
-		c.HmacKeyPair, c.InputLog, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
-		c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeOrder,
-		c.User, c.UserDevice, c.VXAccount, c.VXSocial,
+		c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
+		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
+		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
 	} {
 		n.Use(hooks...)
 	}
@@ -359,10 +365,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo, c.Gpu,
-		c.HmacKeyPair, c.InputLog, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
-		c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeOrder,
-		c.User, c.UserDevice, c.VXAccount, c.VXSocial,
+		c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
+		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
+		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -397,6 +403,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.HmacKeyPair.mutate(ctx, m)
 	case *InputLogMutation:
 		return c.InputLog.mutate(ctx, m)
+	case *InviteMutation:
+		return c.Invite.mutate(ctx, m)
 	case *MissionMutation:
 		return c.Mission.mutate(ctx, m)
 	case *MissionBatchMutation:
@@ -2560,6 +2568,155 @@ func (c *InputLogClient) mutate(ctx context.Context, m *InputLogMutation) (Value
 		return (&InputLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown InputLog mutation op: %q", m.Op())
+	}
+}
+
+// InviteClient is a client for the Invite schema.
+type InviteClient struct {
+	config
+}
+
+// NewInviteClient returns a client for the Invite from the given config.
+func NewInviteClient(c config) *InviteClient {
+	return &InviteClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invite.Hooks(f(g(h())))`.
+func (c *InviteClient) Use(hooks ...Hook) {
+	c.hooks.Invite = append(c.hooks.Invite, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invite.Intercept(f(g(h())))`.
+func (c *InviteClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Invite = append(c.inters.Invite, interceptors...)
+}
+
+// Create returns a builder for creating a Invite entity.
+func (c *InviteClient) Create() *InviteCreate {
+	mutation := newInviteMutation(c.config, OpCreate)
+	return &InviteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Invite entities.
+func (c *InviteClient) CreateBulk(builders ...*InviteCreate) *InviteCreateBulk {
+	return &InviteCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InviteClient) MapCreateBulk(slice any, setFunc func(*InviteCreate, int)) *InviteCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InviteCreateBulk{err: fmt.Errorf("calling to InviteClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InviteCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InviteCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Invite.
+func (c *InviteClient) Update() *InviteUpdate {
+	mutation := newInviteMutation(c.config, OpUpdate)
+	return &InviteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InviteClient) UpdateOne(i *Invite) *InviteUpdateOne {
+	mutation := newInviteMutation(c.config, OpUpdateOne, withInvite(i))
+	return &InviteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InviteClient) UpdateOneID(id int64) *InviteUpdateOne {
+	mutation := newInviteMutation(c.config, OpUpdateOne, withInviteID(id))
+	return &InviteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Invite.
+func (c *InviteClient) Delete() *InviteDelete {
+	mutation := newInviteMutation(c.config, OpDelete)
+	return &InviteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InviteClient) DeleteOne(i *Invite) *InviteDeleteOne {
+	return c.DeleteOneID(i.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InviteClient) DeleteOneID(id int64) *InviteDeleteOne {
+	builder := c.Delete().Where(invite.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InviteDeleteOne{builder}
+}
+
+// Query returns a query builder for Invite.
+func (c *InviteClient) Query() *InviteQuery {
+	return &InviteQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvite},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Invite entity by its id.
+func (c *InviteClient) Get(ctx context.Context, id int64) (*Invite, error) {
+	return c.Query().Where(invite.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InviteClient) GetX(ctx context.Context, id int64) *Invite {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Invite.
+func (c *InviteClient) QueryUser(i *Invite) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invite.Table, invite.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invite.UserTable, invite.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InviteClient) Hooks() []Hook {
+	return c.hooks.Invite
+}
+
+// Interceptors returns the client interceptors.
+func (c *InviteClient) Interceptors() []Interceptor {
+	return c.inters.Invite
+}
+
+func (c *InviteClient) mutate(ctx context.Context, m *InviteMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InviteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InviteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InviteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InviteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Invite mutation op: %q", m.Op())
 	}
 }
 
@@ -4907,6 +5064,22 @@ func (c *UserClient) QueryChildren(u *User) *UserQuery {
 	return query
 }
 
+// QueryInvites queries the invites edge of a User.
+func (c *UserClient) QueryInvites(u *User) *InviteQuery {
+	query := (&InviteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(invite.Table, invite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.InvitesTable, user.InvitesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -5416,7 +5589,7 @@ type (
 	hooks struct {
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		InputLog, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
+		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
 		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
 		VXSocial []ent.Hook
@@ -5424,7 +5597,7 @@ type (
 	inters struct {
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		InputLog, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
+		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
 		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
 		VXSocial []ent.Interceptor

@@ -165,6 +165,18 @@ func (f InputLogFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.InputLogMutation", m)
 }
 
+// The InviteFunc type is an adapter to allow the use of ordinary
+// function as Invite mutator.
+type InviteFunc func(context.Context, *cep_ent.InviteMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InviteFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.InviteMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.InviteMutation", m)
+}
+
 // The MissionFunc type is an adapter to allow the use of ordinary
 // function as Mission mutator.
 type MissionFunc func(context.Context, *cep_ent.MissionMutation) (cep_ent.Value, error)

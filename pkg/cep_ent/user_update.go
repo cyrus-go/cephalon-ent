@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -468,6 +469,21 @@ func (uu *UserUpdate) AddChildren(u ...*User) *UserUpdate {
 	return uu.AddChildIDs(ids...)
 }
 
+// AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
+func (uu *UserUpdate) AddInviteIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddInviteIDs(ids...)
+	return uu
+}
+
+// AddInvites adds the "invites" edges to the Invite entity.
+func (uu *UserUpdate) AddInvites(i ...*Invite) *UserUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uu.AddInviteIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -762,6 +778,27 @@ func (uu *UserUpdate) RemoveChildren(u ...*User) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.RemoveChildIDs(ids...)
+}
+
+// ClearInvites clears all "invites" edges to the Invite entity.
+func (uu *UserUpdate) ClearInvites() *UserUpdate {
+	uu.mutation.ClearInvites()
+	return uu
+}
+
+// RemoveInviteIDs removes the "invites" edge to Invite entities by IDs.
+func (uu *UserUpdate) RemoveInviteIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveInviteIDs(ids...)
+	return uu
+}
+
+// RemoveInvites removes "invites" edges to Invite entities.
+func (uu *UserUpdate) RemoveInvites(i ...*Invite) *UserUpdate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uu.RemoveInviteIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1539,6 +1576,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.InvitesTable,
+			Columns: []string{user.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedInvitesIDs(); len(nodes) > 0 && !uu.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.InvitesTable,
+			Columns: []string{user.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.InvitesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.InvitesTable,
+			Columns: []string{user.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -1985,6 +2067,21 @@ func (uuo *UserUpdateOne) AddChildren(u ...*User) *UserUpdateOne {
 	return uuo.AddChildIDs(ids...)
 }
 
+// AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
+func (uuo *UserUpdateOne) AddInviteIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddInviteIDs(ids...)
+	return uuo
+}
+
+// AddInvites adds the "invites" edges to the Invite entity.
+func (uuo *UserUpdateOne) AddInvites(i ...*Invite) *UserUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uuo.AddInviteIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -2279,6 +2376,27 @@ func (uuo *UserUpdateOne) RemoveChildren(u ...*User) *UserUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return uuo.RemoveChildIDs(ids...)
+}
+
+// ClearInvites clears all "invites" edges to the Invite entity.
+func (uuo *UserUpdateOne) ClearInvites() *UserUpdateOne {
+	uuo.mutation.ClearInvites()
+	return uuo
+}
+
+// RemoveInviteIDs removes the "invites" edge to Invite entities by IDs.
+func (uuo *UserUpdateOne) RemoveInviteIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveInviteIDs(ids...)
+	return uuo
+}
+
+// RemoveInvites removes "invites" edges to Invite entities.
+func (uuo *UserUpdateOne) RemoveInvites(i ...*Invite) *UserUpdateOne {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uuo.RemoveInviteIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -3079,6 +3197,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.InvitesTable,
+			Columns: []string{user.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedInvitesIDs(); len(nodes) > 0 && !uuo.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.InvitesTable,
+			Columns: []string{user.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.InvitesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.InvitesTable,
+			Columns: []string{user.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

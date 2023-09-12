@@ -87,9 +87,11 @@ type UserEdges struct {
 	Parent *User `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*User `json:"children,omitempty"`
+	// Invites holds the value of the invites edge.
+	Invites []*Invite `json:"invites,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [16]bool
+	loadedTypes [17]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -246,6 +248,15 @@ func (e UserEdges) ChildrenOrErr() ([]*User, error) {
 		return e.Children, nil
 	}
 	return nil, &NotLoadedError{edge: "children"}
+}
+
+// InvitesOrErr returns the Invites value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) InvitesOrErr() ([]*Invite, error) {
+	if e.loadedTypes[16] {
+		return e.Invites, nil
+	}
+	return nil, &NotLoadedError{edge: "invites"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -457,6 +468,11 @@ func (u *User) QueryParent() *UserQuery {
 // QueryChildren queries the "children" edge of the User entity.
 func (u *User) QueryChildren() *UserQuery {
 	return NewUserClient(u.config).QueryChildren(u)
+}
+
+// QueryInvites queries the "invites" edge of the User entity.
+func (u *User) QueryInvites() *InviteQuery {
+	return NewUserClient(u.config).QueryInvites(u)
 }
 
 // Update returns a builder for updating this User.

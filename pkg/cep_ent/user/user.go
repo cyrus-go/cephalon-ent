@@ -75,6 +75,8 @@ const (
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
+	// EdgeInvites holds the string denoting the invites edge name in mutations.
+	EdgeInvites = "invites"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -183,6 +185,13 @@ const (
 	ChildrenTable = "users"
 	// ChildrenColumn is the table column denoting the children relation/edge.
 	ChildrenColumn = "parent_id"
+	// InvitesTable is the table that holds the invites relation/edge.
+	InvitesTable = "invites"
+	// InvitesInverseTable is the table name for the Invite entity.
+	// It exists in this package in order to avoid circular dependency with the "invite" package.
+	InvitesInverseTable = "invites"
+	// InvitesColumn is the table column denoting the invites relation/edge.
+	InvitesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -553,6 +562,20 @@ func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByInvitesCount orders the results by invites count.
+func ByInvitesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvitesStep(), opts...)
+	}
+}
+
+// ByInvites orders the results by invites terms.
+func ByInvites(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvitesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -663,5 +686,12 @@ func newChildrenStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
+}
+func newInvitesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvitesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvitesTable, InvitesColumn),
 	)
 }

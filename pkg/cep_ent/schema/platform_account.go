@@ -15,7 +15,7 @@ type PlatformAccount struct {
 // Fields of the PlatformAccount.
 func (PlatformAccount) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("type").Values("profit").Default("profit").StructTag(`json:"type"`),
+		field.Enum("type").Values("profit", "market").Default("profit").StructTag(`json:"type"`),
 		field.Int64("sum_total_cep").Default(0).StructTag(`json:"sum_total_cep"`).Comment("累计总余额"),
 		field.Int64("total_cep").Default(0).StructTag(`json:"total_cep"`).Comment("剩余总余额"),
 		field.Int64("sum_pure_cep").Default(0).StructTag(`json:"sum_pure_cep"`).Comment("累计本金"),

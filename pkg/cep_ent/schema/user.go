@@ -44,6 +44,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("mission_batches", MissionBatch.Type),
 		edge.To("user_devices", UserDevice.Type),
 		edge.To("children", User.Type).From("parent").Unique().Required().Field("parent_id"),
+		edge.To("invites", Invite.Type),
 	}
 }
 
