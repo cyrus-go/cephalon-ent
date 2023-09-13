@@ -39,6 +39,8 @@ const (
 	FieldPassword = "password"
 	// FieldIsFrozen holds the string denoting the is_frozen field in the database.
 	FieldIsFrozen = "is_frozen"
+	// FieldIsRecharge holds the string denoting the is_recharge field in the database.
+	FieldIsRecharge = "is_recharge"
 	// FieldUserType holds the string denoting the user_type field in the database.
 	FieldUserType = "user_type"
 	// FieldParentID holds the string denoting the parent_id field in the database.
@@ -209,6 +211,7 @@ var Columns = []string{
 	FieldPhone,
 	FieldPassword,
 	FieldIsFrozen,
+	FieldIsRecharge,
 	FieldUserType,
 	FieldParentID,
 }
@@ -250,6 +253,8 @@ var (
 	DefaultPassword string
 	// DefaultIsFrozen holds the default value on creation for the "is_frozen" field.
 	DefaultIsFrozen bool
+	// DefaultIsRecharge holds the default value on creation for the "is_recharge" field.
+	DefaultIsRecharge bool
 	// DefaultParentID holds the default value on creation for the "parent_id" field.
 	DefaultParentID int64
 	// DefaultID holds the default value on creation for the "id" field.
@@ -348,6 +353,11 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // ByIsFrozen orders the results by the is_frozen field.
 func ByIsFrozen(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsFrozen, opts...).ToFunc()
+}
+
+// ByIsRecharge orders the results by the is_recharge field.
+func ByIsRecharge(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsRecharge, opts...).ToFunc()
 }
 
 // ByUserType orders the results by the user_type field.

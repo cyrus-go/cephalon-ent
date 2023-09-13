@@ -1529,8 +1529,12 @@ func init() {
 	userDescIsFrozen := userFields[6].Descriptor()
 	// user.DefaultIsFrozen holds the default value on creation for the is_frozen field.
 	user.DefaultIsFrozen = userDescIsFrozen.Default.(bool)
+	// userDescIsRecharge is the schema descriptor for is_recharge field.
+	userDescIsRecharge := userFields[7].Descriptor()
+	// user.DefaultIsRecharge holds the default value on creation for the is_recharge field.
+	user.DefaultIsRecharge = userDescIsRecharge.Default.(bool)
 	// userDescParentID is the schema descriptor for parent_id field.
-	userDescParentID := userFields[8].Descriptor()
+	userDescParentID := userFields[9].Descriptor()
 	// user.DefaultParentID holds the default value on creation for the parent_id field.
 	user.DefaultParentID = userDescParentID.Default.(int64)
 	// userDescID is the schema descriptor for id field.

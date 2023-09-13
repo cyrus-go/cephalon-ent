@@ -203,6 +203,20 @@ func (uu *UserUpdate) SetNillableIsFrozen(b *bool) *UserUpdate {
 	return uu
 }
 
+// SetIsRecharge sets the "is_recharge" field.
+func (uu *UserUpdate) SetIsRecharge(b bool) *UserUpdate {
+	uu.mutation.SetIsRecharge(b)
+	return uu
+}
+
+// SetNillableIsRecharge sets the "is_recharge" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableIsRecharge(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetIsRecharge(*b)
+	}
+	return uu
+}
+
 // SetUserType sets the "user_type" field.
 func (uu *UserUpdate) SetUserType(ut user.UserType) *UserUpdate {
 	uu.mutation.SetUserType(ut)
@@ -900,6 +914,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.IsFrozen(); ok {
 		_spec.SetField(user.FieldIsFrozen, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.IsRecharge(); ok {
+		_spec.SetField(user.FieldIsRecharge, field.TypeBool, value)
 	}
 	if value, ok := uu.mutation.UserType(); ok {
 		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
@@ -1801,6 +1818,20 @@ func (uuo *UserUpdateOne) SetNillableIsFrozen(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// SetIsRecharge sets the "is_recharge" field.
+func (uuo *UserUpdateOne) SetIsRecharge(b bool) *UserUpdateOne {
+	uuo.mutation.SetIsRecharge(b)
+	return uuo
+}
+
+// SetNillableIsRecharge sets the "is_recharge" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableIsRecharge(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetIsRecharge(*b)
+	}
+	return uuo
+}
+
 // SetUserType sets the "user_type" field.
 func (uuo *UserUpdateOne) SetUserType(ut user.UserType) *UserUpdateOne {
 	uuo.mutation.SetUserType(ut)
@@ -2528,6 +2559,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.IsFrozen(); ok {
 		_spec.SetField(user.FieldIsFrozen, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.IsRecharge(); ok {
+		_spec.SetField(user.FieldIsRecharge, field.TypeBool, value)
 	}
 	if value, ok := uuo.mutation.UserType(); ok {
 		_spec.SetField(user.FieldUserType, field.TypeEnum, value)

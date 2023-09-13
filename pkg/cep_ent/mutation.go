@@ -32798,6 +32798,7 @@ type UserMutation struct {
 	phone                         *string
 	password                      *string
 	is_frozen                     *bool
+	is_recharge                   *bool
 	user_type                     *user.UserType
 	clearedFields                 map[string]struct{}
 	vx_accounts                   map[int64]struct{}
@@ -33427,6 +33428,42 @@ func (m *UserMutation) OldIsFrozen(ctx context.Context) (v bool, err error) {
 // ResetIsFrozen resets all changes to the "is_frozen" field.
 func (m *UserMutation) ResetIsFrozen() {
 	m.is_frozen = nil
+}
+
+// SetIsRecharge sets the "is_recharge" field.
+func (m *UserMutation) SetIsRecharge(b bool) {
+	m.is_recharge = &b
+}
+
+// IsRecharge returns the value of the "is_recharge" field in the mutation.
+func (m *UserMutation) IsRecharge() (r bool, exists bool) {
+	v := m.is_recharge
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsRecharge returns the old "is_recharge" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldIsRecharge(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsRecharge is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsRecharge requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsRecharge: %w", err)
+	}
+	return oldValue.IsRecharge, nil
+}
+
+// ResetIsRecharge resets all changes to the "is_recharge" field.
+func (m *UserMutation) ResetIsRecharge() {
+	m.is_recharge = nil
 }
 
 // SetUserType sets the "user_type" field.
@@ -34396,7 +34433,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -34432,6 +34469,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.is_frozen != nil {
 		fields = append(fields, user.FieldIsFrozen)
+	}
+	if m.is_recharge != nil {
+		fields = append(fields, user.FieldIsRecharge)
 	}
 	if m.user_type != nil {
 		fields = append(fields, user.FieldUserType)
@@ -34471,6 +34511,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Password()
 	case user.FieldIsFrozen:
 		return m.IsFrozen()
+	case user.FieldIsRecharge:
+		return m.IsRecharge()
 	case user.FieldUserType:
 		return m.UserType()
 	case user.FieldParentID:
@@ -34508,6 +34550,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPassword(ctx)
 	case user.FieldIsFrozen:
 		return m.OldIsFrozen(ctx)
+	case user.FieldIsRecharge:
+		return m.OldIsRecharge(ctx)
 	case user.FieldUserType:
 		return m.OldUserType(ctx)
 	case user.FieldParentID:
@@ -34604,6 +34648,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsFrozen(v)
+		return nil
+	case user.FieldIsRecharge:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsRecharge(v)
 		return nil
 	case user.FieldUserType:
 		v, ok := value.(user.UserType)
@@ -34730,6 +34781,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldIsFrozen:
 		m.ResetIsFrozen()
+		return nil
+	case user.FieldIsRecharge:
+		m.ResetIsRecharge()
 		return nil
 	case user.FieldUserType:
 		m.ResetUserType()

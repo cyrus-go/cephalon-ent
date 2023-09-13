@@ -43,6 +43,8 @@ type User struct {
 	Password string `json:"-"`
 	// 是否冻结
 	IsFrozen bool `json:"is_frozen"`
+	// 是否充值过
+	IsRecharge bool `json:"is_recharge"`
 	// 用户类型
 	UserType user.UserType `json:"user_type"`
 	// 邀请人用户 id
@@ -264,7 +266,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldIsFrozen:
+		case user.FieldIsFrozen, user.FieldIsRecharge:
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID:
 			values[i] = new(sql.NullInt64)
@@ -364,6 +366,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_frozen", values[i])
 			} else if value.Valid {
 				u.IsFrozen = value.Bool
+			}
+		case user.FieldIsRecharge:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_recharge", values[i])
+			} else if value.Valid {
+				u.IsRecharge = value.Bool
 			}
 		case user.FieldUserType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -531,6 +539,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_frozen=")
 	builder.WriteString(fmt.Sprintf("%v", u.IsFrozen))
+	builder.WriteString(", ")
+	builder.WriteString("is_recharge=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsRecharge))
 	builder.WriteString(", ")
 	builder.WriteString("user_type=")
 	builder.WriteString(fmt.Sprintf("%v", u.UserType))

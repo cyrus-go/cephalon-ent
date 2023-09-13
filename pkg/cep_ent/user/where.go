@@ -115,6 +115,11 @@ func IsFrozen(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldIsFrozen, v))
 }
 
+// IsRecharge applies equality check predicate on the "is_recharge" field. It's identical to IsRechargeEQ.
+func IsRecharge(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldIsRecharge, v))
+}
+
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
 func ParentID(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldParentID, v))
@@ -718,6 +723,16 @@ func IsFrozenEQ(v bool) predicate.User {
 // IsFrozenNEQ applies the NEQ predicate on the "is_frozen" field.
 func IsFrozenNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldIsFrozen, v))
+}
+
+// IsRechargeEQ applies the EQ predicate on the "is_recharge" field.
+func IsRechargeEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldIsRecharge, v))
+}
+
+// IsRechargeNEQ applies the NEQ predicate on the "is_recharge" field.
+func IsRechargeNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldIsRecharge, v))
 }
 
 // UserTypeEQ applies the EQ predicate on the "user_type" field.

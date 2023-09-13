@@ -880,6 +880,7 @@ var (
 		{Name: "phone", Type: field.TypeString, Comment: "用户的手机号", Default: ""},
 		{Name: "password", Type: field.TypeString, Comment: "密码", Default: ""},
 		{Name: "is_frozen", Type: field.TypeBool, Comment: "是否冻结", Default: false},
+		{Name: "is_recharge", Type: field.TypeBool, Comment: "是否充值过", Default: false},
 		{Name: "user_type", Type: field.TypeEnum, Comment: "用户类型", Enums: []string{"personal", "enterprise"}, Default: "personal"},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 	}
@@ -891,7 +892,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[14]},
+				Columns:    []*schema.Column{UsersColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

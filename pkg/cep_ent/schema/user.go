@@ -21,6 +21,7 @@ func (User) Fields() []ent.Field {
 		field.String("phone").Default("").StructTag(`json:"phone"`).Comment("用户的手机号"),
 		field.String("password").Default("").Sensitive().Comment("密码"),
 		field.Bool("is_frozen").Default(false).StructTag(`json:"is_frozen"`).Comment("是否冻结"),
+		field.Bool("is_recharge").Default(false).StructTag(`json:"is_recharge"`).Comment("是否充值过"),
 		field.Enum("user_type").Values("personal", "enterprise").Default("personal").StructTag(`json:"user_type"`).Comment("用户类型"),
 		field.Int64("parent_id").Default(0).StructTag(`json:"parent_id"`).Comment("邀请人用户 id"),
 	}

@@ -205,6 +205,20 @@ func (uc *UserCreate) SetNillableIsFrozen(b *bool) *UserCreate {
 	return uc
 }
 
+// SetIsRecharge sets the "is_recharge" field.
+func (uc *UserCreate) SetIsRecharge(b bool) *UserCreate {
+	uc.mutation.SetIsRecharge(b)
+	return uc
+}
+
+// SetNillableIsRecharge sets the "is_recharge" field if the given value is not nil.
+func (uc *UserCreate) SetNillableIsRecharge(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetIsRecharge(*b)
+	}
+	return uc
+}
+
 // SetUserType sets the "user_type" field.
 func (uc *UserCreate) SetUserType(ut user.UserType) *UserCreate {
 	uc.mutation.SetUserType(ut)
@@ -583,6 +597,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultIsFrozen
 		uc.mutation.SetIsFrozen(v)
 	}
+	if _, ok := uc.mutation.IsRecharge(); !ok {
+		v := user.DefaultIsRecharge
+		uc.mutation.SetIsRecharge(v)
+	}
 	if _, ok := uc.mutation.UserType(); !ok {
 		v := user.DefaultUserType
 		uc.mutation.SetUserType(v)
@@ -634,6 +652,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.IsFrozen(); !ok {
 		return &ValidationError{Name: "is_frozen", err: errors.New(`cep_ent: missing required field "User.is_frozen"`)}
+	}
+	if _, ok := uc.mutation.IsRecharge(); !ok {
+		return &ValidationError{Name: "is_recharge", err: errors.New(`cep_ent: missing required field "User.is_recharge"`)}
 	}
 	if _, ok := uc.mutation.UserType(); !ok {
 		return &ValidationError{Name: "user_type", err: errors.New(`cep_ent: missing required field "User.user_type"`)}
@@ -729,6 +750,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.IsFrozen(); ok {
 		_spec.SetField(user.FieldIsFrozen, field.TypeBool, value)
 		_node.IsFrozen = value
+	}
+	if value, ok := uc.mutation.IsRecharge(); ok {
+		_spec.SetField(user.FieldIsRecharge, field.TypeBool, value)
+		_node.IsRecharge = value
 	}
 	if value, ok := uc.mutation.UserType(); ok {
 		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
@@ -1203,6 +1228,18 @@ func (u *UserUpsert) UpdateIsFrozen() *UserUpsert {
 	return u
 }
 
+// SetIsRecharge sets the "is_recharge" field.
+func (u *UserUpsert) SetIsRecharge(v bool) *UserUpsert {
+	u.Set(user.FieldIsRecharge, v)
+	return u
+}
+
+// UpdateIsRecharge sets the "is_recharge" field to the value that was provided on create.
+func (u *UserUpsert) UpdateIsRecharge() *UserUpsert {
+	u.SetExcluded(user.FieldIsRecharge)
+	return u
+}
+
 // SetUserType sets the "user_type" field.
 func (u *UserUpsert) SetUserType(v user.UserType) *UserUpsert {
 	u.Set(user.FieldUserType, v)
@@ -1443,6 +1480,20 @@ func (u *UserUpsertOne) SetIsFrozen(v bool) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateIsFrozen() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateIsFrozen()
+	})
+}
+
+// SetIsRecharge sets the "is_recharge" field.
+func (u *UserUpsertOne) SetIsRecharge(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsRecharge(v)
+	})
+}
+
+// UpdateIsRecharge sets the "is_recharge" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateIsRecharge() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsRecharge()
 	})
 }
 
@@ -1856,6 +1907,20 @@ func (u *UserUpsertBulk) SetIsFrozen(v bool) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateIsFrozen() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateIsFrozen()
+	})
+}
+
+// SetIsRecharge sets the "is_recharge" field.
+func (u *UserUpsertBulk) SetIsRecharge(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsRecharge(v)
+	})
+}
+
+// UpdateIsRecharge sets the "is_recharge" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateIsRecharge() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsRecharge()
 	})
 }
 
