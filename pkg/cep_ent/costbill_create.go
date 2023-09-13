@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -107,6 +108,20 @@ func (cbc *CostBillCreate) SetType(c costbill.Type) *CostBillCreate {
 func (cbc *CostBillCreate) SetNillableType(c *costbill.Type) *CostBillCreate {
 	if c != nil {
 		cbc.SetType(*c)
+	}
+	return cbc
+}
+
+// SetWay sets the "way" field.
+func (cbc *CostBillCreate) SetWay(c costbill.Way) *CostBillCreate {
+	cbc.mutation.SetWay(c)
+	return cbc
+}
+
+// SetNillableWay sets the "way" field if the given value is not nil.
+func (cbc *CostBillCreate) SetNillableWay(c *costbill.Way) *CostBillCreate {
+	if c != nil {
+		cbc.SetWay(*c)
 	}
 	return cbc
 }
@@ -223,16 +238,16 @@ func (cbc *CostBillCreate) SetNillableStatus(es *enums.BillStatus) *CostBillCrea
 	return cbc
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (cbc *CostBillCreate) SetMarketBillID(i int64) *CostBillCreate {
-	cbc.mutation.SetMarketBillID(i)
+// SetMarketAccountID sets the "market_account_id" field.
+func (cbc *CostBillCreate) SetMarketAccountID(i int64) *CostBillCreate {
+	cbc.mutation.SetMarketAccountID(i)
 	return cbc
 }
 
-// SetNillableMarketBillID sets the "market_bill_id" field if the given value is not nil.
-func (cbc *CostBillCreate) SetNillableMarketBillID(i *int64) *CostBillCreate {
+// SetNillableMarketAccountID sets the "market_account_id" field if the given value is not nil.
+func (cbc *CostBillCreate) SetNillableMarketAccountID(i *int64) *CostBillCreate {
 	if i != nil {
-		cbc.SetMarketBillID(*i)
+		cbc.SetMarketAccountID(*i)
 	}
 	return cbc
 }
@@ -299,6 +314,17 @@ func (cbc *CostBillCreate) SetMissionConsumeOrder(m *MissionConsumeOrder) *CostB
 	return cbc.SetMissionConsumeOrderID(m.ID)
 }
 
+// SetPlatformAccountID sets the "platform_account" edge to the PlatformAccount entity by ID.
+func (cbc *CostBillCreate) SetPlatformAccountID(id int64) *CostBillCreate {
+	cbc.mutation.SetPlatformAccountID(id)
+	return cbc
+}
+
+// SetPlatformAccount sets the "platform_account" edge to the PlatformAccount entity.
+func (cbc *CostBillCreate) SetPlatformAccount(p *PlatformAccount) *CostBillCreate {
+	return cbc.SetPlatformAccountID(p.ID)
+}
+
 // Mutation returns the CostBillMutation object of the builder.
 func (cbc *CostBillCreate) Mutation() *CostBillMutation {
 	return cbc.mutation
@@ -358,6 +384,10 @@ func (cbc *CostBillCreate) defaults() {
 		v := costbill.DefaultType
 		cbc.mutation.SetType(v)
 	}
+	if _, ok := cbc.mutation.Way(); !ok {
+		v := costbill.DefaultWay
+		cbc.mutation.SetWay(v)
+	}
 	if _, ok := cbc.mutation.IsAdd(); !ok {
 		v := costbill.DefaultIsAdd
 		cbc.mutation.SetIsAdd(v)
@@ -390,9 +420,9 @@ func (cbc *CostBillCreate) defaults() {
 		v := costbill.DefaultStatus
 		cbc.mutation.SetStatus(v)
 	}
-	if _, ok := cbc.mutation.MarketBillID(); !ok {
-		v := costbill.DefaultMarketBillID
-		cbc.mutation.SetMarketBillID(v)
+	if _, ok := cbc.mutation.MarketAccountID(); !ok {
+		v := costbill.DefaultMarketAccountID
+		cbc.mutation.SetMarketAccountID(v)
 	}
 	if _, ok := cbc.mutation.ID(); !ok {
 		v := costbill.DefaultID()
@@ -425,6 +455,14 @@ func (cbc *CostBillCreate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.type": %w`, err)}
 		}
 	}
+	if _, ok := cbc.mutation.Way(); !ok {
+		return &ValidationError{Name: "way", err: errors.New(`cep_ent: missing required field "CostBill.way"`)}
+	}
+	if v, ok := cbc.mutation.Way(); ok {
+		if err := costbill.WayValidator(v); err != nil {
+			return &ValidationError{Name: "way", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.way": %w`, err)}
+		}
+	}
 	if _, ok := cbc.mutation.IsAdd(); !ok {
 		return &ValidationError{Name: "is_add", err: errors.New(`cep_ent: missing required field "CostBill.is_add"`)}
 	}
@@ -451,14 +489,17 @@ func (cbc *CostBillCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.status": %w`, err)}
 		}
 	}
-	if _, ok := cbc.mutation.MarketBillID(); !ok {
-		return &ValidationError{Name: "market_bill_id", err: errors.New(`cep_ent: missing required field "CostBill.market_bill_id"`)}
+	if _, ok := cbc.mutation.MarketAccountID(); !ok {
+		return &ValidationError{Name: "market_account_id", err: errors.New(`cep_ent: missing required field "CostBill.market_account_id"`)}
 	}
 	if _, ok := cbc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "CostBill.user"`)}
 	}
 	if _, ok := cbc.mutation.CostAccountID(); !ok {
 		return &ValidationError{Name: "cost_account", err: errors.New(`cep_ent: missing required edge "CostBill.cost_account"`)}
+	}
+	if _, ok := cbc.mutation.PlatformAccountID(); !ok {
+		return &ValidationError{Name: "platform_account", err: errors.New(`cep_ent: missing required edge "CostBill.platform_account"`)}
 	}
 	return nil
 }
@@ -517,6 +558,10 @@ func (cbc *CostBillCreate) createSpec() (*CostBill, *sqlgraph.CreateSpec) {
 		_spec.SetField(costbill.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
+	if value, ok := cbc.mutation.Way(); ok {
+		_spec.SetField(costbill.FieldWay, field.TypeEnum, value)
+		_node.Way = value
+	}
 	if value, ok := cbc.mutation.IsAdd(); ok {
 		_spec.SetField(costbill.FieldIsAdd, field.TypeBool, value)
 		_node.IsAdd = value
@@ -536,10 +581,6 @@ func (cbc *CostBillCreate) createSpec() (*CostBill, *sqlgraph.CreateSpec) {
 	if value, ok := cbc.mutation.Status(); ok {
 		_spec.SetField(costbill.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
-	}
-	if value, ok := cbc.mutation.MarketBillID(); ok {
-		_spec.SetField(costbill.FieldMarketBillID, field.TypeInt64, value)
-		_node.MarketBillID = value
 	}
 	if nodes := cbc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -607,6 +648,23 @@ func (cbc *CostBillCreate) createSpec() (*CostBill, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ReasonID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cbc.mutation.PlatformAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.PlatformAccountTable,
+			Columns: []string{costbill.PlatformAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MarketAccountID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -733,6 +791,18 @@ func (u *CostBillUpsert) UpdateType() *CostBillUpsert {
 	return u
 }
 
+// SetWay sets the "way" field.
+func (u *CostBillUpsert) SetWay(v costbill.Way) *CostBillUpsert {
+	u.Set(costbill.FieldWay, v)
+	return u
+}
+
+// UpdateWay sets the "way" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateWay() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldWay)
+	return u
+}
+
 // SetIsAdd sets the "is_add" field.
 func (u *CostBillUpsert) SetIsAdd(v bool) *CostBillUpsert {
 	u.Set(costbill.FieldIsAdd, v)
@@ -847,21 +917,15 @@ func (u *CostBillUpsert) UpdateStatus() *CostBillUpsert {
 	return u
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (u *CostBillUpsert) SetMarketBillID(v int64) *CostBillUpsert {
-	u.Set(costbill.FieldMarketBillID, v)
+// SetMarketAccountID sets the "market_account_id" field.
+func (u *CostBillUpsert) SetMarketAccountID(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldMarketAccountID, v)
 	return u
 }
 
-// UpdateMarketBillID sets the "market_bill_id" field to the value that was provided on create.
-func (u *CostBillUpsert) UpdateMarketBillID() *CostBillUpsert {
-	u.SetExcluded(costbill.FieldMarketBillID)
-	return u
-}
-
-// AddMarketBillID adds v to the "market_bill_id" field.
-func (u *CostBillUpsert) AddMarketBillID(v int64) *CostBillUpsert {
-	u.Add(costbill.FieldMarketBillID, v)
+// UpdateMarketAccountID sets the "market_account_id" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateMarketAccountID() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldMarketAccountID)
 	return u
 }
 
@@ -1000,6 +1064,20 @@ func (u *CostBillUpsertOne) UpdateType() *CostBillUpsertOne {
 	})
 }
 
+// SetWay sets the "way" field.
+func (u *CostBillUpsertOne) SetWay(v costbill.Way) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetWay(v)
+	})
+}
+
+// UpdateWay sets the "way" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateWay() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateWay()
+	})
+}
+
 // SetIsAdd sets the "is_add" field.
 func (u *CostBillUpsertOne) SetIsAdd(v bool) *CostBillUpsertOne {
 	return u.Update(func(s *CostBillUpsert) {
@@ -1133,24 +1211,17 @@ func (u *CostBillUpsertOne) UpdateStatus() *CostBillUpsertOne {
 	})
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (u *CostBillUpsertOne) SetMarketBillID(v int64) *CostBillUpsertOne {
+// SetMarketAccountID sets the "market_account_id" field.
+func (u *CostBillUpsertOne) SetMarketAccountID(v int64) *CostBillUpsertOne {
 	return u.Update(func(s *CostBillUpsert) {
-		s.SetMarketBillID(v)
+		s.SetMarketAccountID(v)
 	})
 }
 
-// AddMarketBillID adds v to the "market_bill_id" field.
-func (u *CostBillUpsertOne) AddMarketBillID(v int64) *CostBillUpsertOne {
+// UpdateMarketAccountID sets the "market_account_id" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateMarketAccountID() *CostBillUpsertOne {
 	return u.Update(func(s *CostBillUpsert) {
-		s.AddMarketBillID(v)
-	})
-}
-
-// UpdateMarketBillID sets the "market_bill_id" field to the value that was provided on create.
-func (u *CostBillUpsertOne) UpdateMarketBillID() *CostBillUpsertOne {
-	return u.Update(func(s *CostBillUpsert) {
-		s.UpdateMarketBillID()
+		s.UpdateMarketAccountID()
 	})
 }
 
@@ -1455,6 +1526,20 @@ func (u *CostBillUpsertBulk) UpdateType() *CostBillUpsertBulk {
 	})
 }
 
+// SetWay sets the "way" field.
+func (u *CostBillUpsertBulk) SetWay(v costbill.Way) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetWay(v)
+	})
+}
+
+// UpdateWay sets the "way" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateWay() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateWay()
+	})
+}
+
 // SetIsAdd sets the "is_add" field.
 func (u *CostBillUpsertBulk) SetIsAdd(v bool) *CostBillUpsertBulk {
 	return u.Update(func(s *CostBillUpsert) {
@@ -1588,24 +1673,17 @@ func (u *CostBillUpsertBulk) UpdateStatus() *CostBillUpsertBulk {
 	})
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (u *CostBillUpsertBulk) SetMarketBillID(v int64) *CostBillUpsertBulk {
+// SetMarketAccountID sets the "market_account_id" field.
+func (u *CostBillUpsertBulk) SetMarketAccountID(v int64) *CostBillUpsertBulk {
 	return u.Update(func(s *CostBillUpsert) {
-		s.SetMarketBillID(v)
+		s.SetMarketAccountID(v)
 	})
 }
 
-// AddMarketBillID adds v to the "market_bill_id" field.
-func (u *CostBillUpsertBulk) AddMarketBillID(v int64) *CostBillUpsertBulk {
+// UpdateMarketAccountID sets the "market_account_id" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateMarketAccountID() *CostBillUpsertBulk {
 	return u.Update(func(s *CostBillUpsert) {
-		s.AddMarketBillID(v)
-	})
-}
-
-// UpdateMarketBillID sets the "market_bill_id" field to the value that was provided on create.
-func (u *CostBillUpsertBulk) UpdateMarketBillID() *CostBillUpsertBulk {
-	return u.Update(func(s *CostBillUpsert) {
-		s.UpdateMarketBillID()
+		s.UpdateMarketAccountID()
 	})
 }
 

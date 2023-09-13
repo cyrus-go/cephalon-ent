@@ -28,6 +28,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldWay holds the string denoting the way field in the database.
+	FieldWay = "way"
 	// FieldIsAdd holds the string denoting the is_add field in the database.
 	FieldIsAdd = "is_add"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -44,8 +46,8 @@ const (
 	FieldReasonID = "reason_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldMarketBillID holds the string denoting the market_bill_id field in the database.
-	FieldMarketBillID = "market_bill_id"
+	// FieldMarketAccountID holds the string denoting the market_account_id field in the database.
+	FieldMarketAccountID = "market_account_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeCostAccount holds the string denoting the cost_account edge name in mutations.
@@ -54,6 +56,8 @@ const (
 	EdgeRechargeOrder = "recharge_order"
 	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
 	EdgeMissionConsumeOrder = "mission_consume_order"
+	// EdgePlatformAccount holds the string denoting the platform_account edge name in mutations.
+	EdgePlatformAccount = "platform_account"
 	// Table holds the table name of the costbill in the database.
 	Table = "cost_bills"
 	// UserTable is the table that holds the user relation/edge.
@@ -84,6 +88,13 @@ const (
 	MissionConsumeOrderInverseTable = "mission_consume_orders"
 	// MissionConsumeOrderColumn is the table column denoting the mission_consume_order relation/edge.
 	MissionConsumeOrderColumn = "reason_id"
+	// PlatformAccountTable is the table that holds the platform_account relation/edge.
+	PlatformAccountTable = "cost_bills"
+	// PlatformAccountInverseTable is the table name for the PlatformAccount entity.
+	// It exists in this package in order to avoid circular dependency with the "platformaccount" package.
+	PlatformAccountInverseTable = "platform_accounts"
+	// PlatformAccountColumn is the table column denoting the platform_account relation/edge.
+	PlatformAccountColumn = "market_account_id"
 )
 
 // Columns holds all SQL columns for costbill fields.
@@ -95,6 +106,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldType,
+	FieldWay,
 	FieldIsAdd,
 	FieldUserID,
 	FieldSerialNumber,
@@ -103,7 +115,7 @@ var Columns = []string{
 	FieldGiftCep,
 	FieldReasonID,
 	FieldStatus,
-	FieldMarketBillID,
+	FieldMarketAccountID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -143,8 +155,8 @@ var (
 	DefaultGiftCep int64
 	// DefaultReasonID holds the default value on creation for the "reason_id" field.
 	DefaultReasonID int64
-	// DefaultMarketBillID holds the default value on creation for the "market_bill_id" field.
-	DefaultMarketBillID int64
+	// DefaultMarketAccountID holds the default value on creation for the "market_account_id" field.
+	DefaultMarketAccountID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -152,13 +164,15 @@ var (
 // Type defines the type for the "type" enum field.
 type Type string
 
-// TypeMission is the default value of the Type enum.
-const DefaultType = TypeMission
+// TypeUnknow is the default value of the Type enum.
+const DefaultType = TypeUnknow
 
 // Type values.
 const (
+	TypeUnknow   Type = "unknow"
 	TypeMission  Type = "mission"
 	TypeRecharge Type = "recharge"
+	TypeActive   Type = "active"
 )
 
 func (_type Type) String() string {
@@ -168,10 +182,42 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeMission, TypeRecharge:
+	case TypeUnknow, TypeMission, TypeRecharge, TypeActive:
 		return nil
 	default:
 		return fmt.Errorf("costbill: invalid enum value for type field: %q", _type)
+	}
+}
+
+// Way defines the type for the "way" enum field.
+type Way string
+
+// WayUnknow is the default value of the Way enum.
+const DefaultWay = WayUnknow
+
+// Way values.
+const (
+	WayUnknow          Way = "unknow"
+	WayRechargeWechat  Way = "recharge_wechat"
+	WayRechargeAlipay  Way = "recharge_alipay"
+	WayMissionTiming   Way = "mission_timing"
+	WayMissionCounting Way = "mission_counting"
+	WayActiveRegister  Way = "active_register"
+	WayActiveShare     Way = "active_share"
+	WayActiveRecharge  Way = "active_recharge"
+)
+
+func (w Way) String() string {
+	return string(w)
+}
+
+// WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
+func WayValidator(w Way) error {
+	switch w {
+	case WayUnknow, WayRechargeWechat, WayRechargeAlipay, WayMissionTiming, WayMissionCounting, WayActiveRegister, WayActiveShare, WayActiveRecharge:
+		return nil
+	default:
+		return fmt.Errorf("costbill: invalid enum value for way field: %q", w)
 	}
 }
 
@@ -225,6 +271,11 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
+// ByWay orders the results by the way field.
+func ByWay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWay, opts...).ToFunc()
+}
+
 // ByIsAdd orders the results by the is_add field.
 func ByIsAdd(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsAdd, opts...).ToFunc()
@@ -265,9 +316,9 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByMarketBillID orders the results by the market_bill_id field.
-func ByMarketBillID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMarketBillID, opts...).ToFunc()
+// ByMarketAccountID orders the results by the market_account_id field.
+func ByMarketAccountID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMarketAccountID, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.
@@ -297,6 +348,13 @@ func ByMissionConsumeOrderField(field string, opts ...sql.OrderTermOption) Order
 		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrderStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByPlatformAccountField orders the results by platform_account field.
+func ByPlatformAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPlatformAccountStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -323,5 +381,12 @@ func newMissionConsumeOrderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionConsumeOrderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionConsumeOrderTable, MissionConsumeOrderColumn),
+	)
+}
+func newPlatformAccountStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PlatformAccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, PlatformAccountTable, PlatformAccountColumn),
 	)
 }

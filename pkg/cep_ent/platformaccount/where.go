@@ -593,6 +593,29 @@ func HasEarnBillsWith(preds ...predicate.EarnBill) predicate.PlatformAccount {
 	})
 }
 
+// HasCostBills applies the HasEdge predicate on the "cost_bills" edge.
+func HasCostBills() predicate.PlatformAccount {
+	return predicate.PlatformAccount(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCostBillsWith applies the HasEdge predicate on the "cost_bills" edge with a given conditions (other predicates).
+func HasCostBillsWith(preds ...predicate.CostBill) predicate.PlatformAccount {
+	return predicate.PlatformAccount(func(s *sql.Selector) {
+		step := newCostBillsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.PlatformAccount) predicate.PlatformAccount {
 	return predicate.PlatformAccount(sql.AndPredicates(predicates...))

@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -34,6 +35,8 @@ type CostBill struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 额度账户流水的类型，充值或者任务消耗
 	Type costbill.Type `json:"type"`
+	// 额度账户流水的产生方式，微信、支付宝、计时消耗等
+	Way costbill.Way `json:"way"`
 	// 是否增加余额，布尔值默认为否
 	IsAdd bool `json:"is_add"`
 	// 外键用户 id
@@ -50,8 +53,8 @@ type CostBill struct {
 	ReasonID int64 `json:"reason_id"`
 	// 消耗流水一开始不能直接生效，确定关联的消耗时间成功后才可以扣费
 	Status enums.BillStatus `json:"status"`
-	// 营销流水 id
-	MarketBillID int64 `json:"market_bill_id"`
+	// 营销账户 id，表示这是一条营销流水（此方案为临时方案）
+	MarketAccountID int64 `json:"market_account_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CostBillQuery when eager-loading is set.
 	Edges        CostBillEdges `json:"edges"`
@@ -68,9 +71,11 @@ type CostBillEdges struct {
 	RechargeOrder *RechargeOrder `json:"recharge_order,omitempty"`
 	// MissionConsumeOrder holds the value of the mission_consume_order edge.
 	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
+	// PlatformAccount holds the value of the platform_account edge.
+	PlatformAccount *PlatformAccount `json:"platform_account,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -125,6 +130,19 @@ func (e CostBillEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) 
 	return nil, &NotLoadedError{edge: "mission_consume_order"}
 }
 
+// PlatformAccountOrErr returns the PlatformAccount value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CostBillEdges) PlatformAccountOrErr() (*PlatformAccount, error) {
+	if e.loadedTypes[4] {
+		if e.PlatformAccount == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: platformaccount.Label}
+		}
+		return e.PlatformAccount, nil
+	}
+	return nil, &NotLoadedError{edge: "platform_account"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*CostBill) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -132,9 +150,9 @@ func (*CostBill) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case costbill.FieldIsAdd:
 			values[i] = new(sql.NullBool)
-		case costbill.FieldID, costbill.FieldCreatedBy, costbill.FieldUpdatedBy, costbill.FieldUserID, costbill.FieldCostAccountID, costbill.FieldPureCep, costbill.FieldGiftCep, costbill.FieldReasonID, costbill.FieldMarketBillID:
+		case costbill.FieldID, costbill.FieldCreatedBy, costbill.FieldUpdatedBy, costbill.FieldUserID, costbill.FieldCostAccountID, costbill.FieldPureCep, costbill.FieldGiftCep, costbill.FieldReasonID, costbill.FieldMarketAccountID:
 			values[i] = new(sql.NullInt64)
-		case costbill.FieldType, costbill.FieldSerialNumber, costbill.FieldStatus:
+		case costbill.FieldType, costbill.FieldWay, costbill.FieldSerialNumber, costbill.FieldStatus:
 			values[i] = new(sql.NullString)
 		case costbill.FieldCreatedAt, costbill.FieldUpdatedAt, costbill.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -195,6 +213,12 @@ func (cb *CostBill) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				cb.Type = costbill.Type(value.String)
 			}
+		case costbill.FieldWay:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field way", values[i])
+			} else if value.Valid {
+				cb.Way = costbill.Way(value.String)
+			}
 		case costbill.FieldIsAdd:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_add", values[i])
@@ -243,11 +267,11 @@ func (cb *CostBill) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				cb.Status = enums.BillStatus(value.String)
 			}
-		case costbill.FieldMarketBillID:
+		case costbill.FieldMarketAccountID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field market_bill_id", values[i])
+				return fmt.Errorf("unexpected type %T for field market_account_id", values[i])
 			} else if value.Valid {
-				cb.MarketBillID = value.Int64
+				cb.MarketAccountID = value.Int64
 			}
 		default:
 			cb.selectValues.Set(columns[i], values[i])
@@ -280,6 +304,11 @@ func (cb *CostBill) QueryRechargeOrder() *RechargeOrderQuery {
 // QueryMissionConsumeOrder queries the "mission_consume_order" edge of the CostBill entity.
 func (cb *CostBill) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 	return NewCostBillClient(cb.config).QueryMissionConsumeOrder(cb)
+}
+
+// QueryPlatformAccount queries the "platform_account" edge of the CostBill entity.
+func (cb *CostBill) QueryPlatformAccount() *PlatformAccountQuery {
+	return NewCostBillClient(cb.config).QueryPlatformAccount(cb)
 }
 
 // Update returns a builder for updating this CostBill.
@@ -323,6 +352,9 @@ func (cb *CostBill) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", cb.Type))
 	builder.WriteString(", ")
+	builder.WriteString("way=")
+	builder.WriteString(fmt.Sprintf("%v", cb.Way))
+	builder.WriteString(", ")
 	builder.WriteString("is_add=")
 	builder.WriteString(fmt.Sprintf("%v", cb.IsAdd))
 	builder.WriteString(", ")
@@ -347,8 +379,8 @@ func (cb *CostBill) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", cb.Status))
 	builder.WriteString(", ")
-	builder.WriteString("market_bill_id=")
-	builder.WriteString(fmt.Sprintf("%v", cb.MarketBillID))
+	builder.WriteString("market_account_id=")
+	builder.WriteString(fmt.Sprintf("%v", cb.MarketAccountID))
 	builder.WriteByte(')')
 	return builder.String()
 }

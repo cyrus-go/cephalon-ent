@@ -928,6 +928,22 @@ func (c *CostBillClient) QueryMissionConsumeOrder(cb *CostBill) *MissionConsumeO
 	return query
 }
 
+// QueryPlatformAccount queries the platform_account edge of a CostBill.
+func (c *CostBillClient) QueryPlatformAccount(cb *CostBill) *PlatformAccountQuery {
+	query := (&PlatformAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, id),
+			sqlgraph.To(platformaccount.Table, platformaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.PlatformAccountTable, costbill.PlatformAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CostBillClient) Hooks() []Hook {
 	return c.hooks.CostBill
@@ -4040,6 +4056,22 @@ func (c *PlatformAccountClient) QueryEarnBills(pa *PlatformAccount) *EarnBillQue
 			sqlgraph.From(platformaccount.Table, platformaccount.FieldID, id),
 			sqlgraph.To(earnbill.Table, earnbill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, platformaccount.EarnBillsTable, platformaccount.EarnBillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(pa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCostBills queries the cost_bills edge of a PlatformAccount.
+func (c *PlatformAccountClient) QueryCostBills(pa *PlatformAccount) *CostBillQuery {
+	query := (&CostBillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(platformaccount.Table, platformaccount.FieldID, id),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, platformaccount.CostBillsTable, platformaccount.CostBillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(pa.driver.Dialect(), step)
 		return fromV, nil

@@ -76,15 +76,16 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Comment: "额度账户流水的类型，充值或者任务消耗", Enums: []string{"mission", "recharge"}, Default: "mission"},
+		{Name: "type", Type: field.TypeEnum, Comment: "额度账户流水的类型，充值或者任务消耗", Enums: []string{"unknow", "mission", "recharge", "active"}, Default: "unknow"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等", Enums: []string{"unknow", "recharge_wechat", "recharge_alipay", "mission_timing", "mission_counting", "active_register", "active_share", "active_recharge"}, Default: "unknow"},
 		{Name: "is_add", Type: field.TypeBool, Comment: "是否增加余额，布尔值默认为否", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "账单序列号", Default: ""},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "消耗多少本金余额", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "消耗多少赠送余额", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "消耗流水一开始不能直接生效，确定关联的消耗时间成功后才可以扣费", Enums: []string{"pending", "canceled", "done"}, Default: "pending"},
-		{Name: "market_bill_id", Type: field.TypeInt64, Comment: "营销流水 id", Default: 0},
 		{Name: "cost_account_id", Type: field.TypeInt64, Comment: "外键消耗账户 id", Default: 0},
 		{Name: "reason_id", Type: field.TypeInt64, Nullable: true, Comment: "关联消耗产生的来源外键 id，比如 type 为 mission 时关联任务订单", Default: 0},
+		{Name: "market_account_id", Type: field.TypeInt64, Comment: "营销账户 id，表示这是一条营销流水（此方案为临时方案）", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// CostBillsTable holds the schema information for the "cost_bills" table.
@@ -107,6 +108,12 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
+				Symbol:     "cost_bills_platform_accounts_cost_bills",
+				Columns:    []*schema.Column{CostBillsColumns[15]},
+				RefColumns: []*schema.Column{PlatformAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
 				Symbol:     "cost_bills_recharge_orders_cost_bills",
 				Columns:    []*schema.Column{CostBillsColumns[14]},
 				RefColumns: []*schema.Column{RechargeOrdersColumns[0]},
@@ -114,7 +121,7 @@ var (
 			},
 			{
 				Symbol:     "cost_bills_users_cost_bills",
-				Columns:    []*schema.Column{CostBillsColumns[15]},
+				Columns:    []*schema.Column{CostBillsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -976,8 +983,9 @@ func init() {
 	CostAccountsTable.Annotation = &entsql.Annotation{}
 	CostBillsTable.ForeignKeys[0].RefTable = CostAccountsTable
 	CostBillsTable.ForeignKeys[1].RefTable = MissionConsumeOrdersTable
-	CostBillsTable.ForeignKeys[2].RefTable = RechargeOrdersTable
-	CostBillsTable.ForeignKeys[3].RefTable = UsersTable
+	CostBillsTable.ForeignKeys[2].RefTable = PlatformAccountsTable
+	CostBillsTable.ForeignKeys[3].RefTable = RechargeOrdersTable
+	CostBillsTable.ForeignKeys[4].RefTable = UsersTable
 	CostBillsTable.Annotation = &entsql.Annotation{}
 	DevicesTable.ForeignKeys[0].RefTable = UsersTable
 	DevicesTable.Annotation = &entsql.Annotation{}

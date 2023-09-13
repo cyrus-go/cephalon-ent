@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -29,6 +30,7 @@ type CostBillQuery struct {
 	withCostAccount         *CostAccountQuery
 	withRechargeOrder       *RechargeOrderQuery
 	withMissionConsumeOrder *MissionConsumeOrderQuery
+	withPlatformAccount     *PlatformAccountQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -146,6 +148,28 @@ func (cbq *CostBillQuery) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 			sqlgraph.From(costbill.Table, costbill.FieldID, selector),
 			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, costbill.MissionConsumeOrderTable, costbill.MissionConsumeOrderColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cbq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPlatformAccount chains the current query on the "platform_account" edge.
+func (cbq *CostBillQuery) QueryPlatformAccount() *PlatformAccountQuery {
+	query := (&PlatformAccountClient{config: cbq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cbq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cbq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, selector),
+			sqlgraph.To(platformaccount.Table, platformaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.PlatformAccountTable, costbill.PlatformAccountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cbq.driver.Dialect(), step)
 		return fromU, nil
@@ -349,6 +373,7 @@ func (cbq *CostBillQuery) Clone() *CostBillQuery {
 		withCostAccount:         cbq.withCostAccount.Clone(),
 		withRechargeOrder:       cbq.withRechargeOrder.Clone(),
 		withMissionConsumeOrder: cbq.withMissionConsumeOrder.Clone(),
+		withPlatformAccount:     cbq.withPlatformAccount.Clone(),
 		// clone intermediate query.
 		sql:  cbq.sql.Clone(),
 		path: cbq.path,
@@ -396,6 +421,17 @@ func (cbq *CostBillQuery) WithMissionConsumeOrder(opts ...func(*MissionConsumeOr
 		opt(query)
 	}
 	cbq.withMissionConsumeOrder = query
+	return cbq
+}
+
+// WithPlatformAccount tells the query-builder to eager-load the nodes that are connected to
+// the "platform_account" edge. The optional arguments are used to configure the query builder of the edge.
+func (cbq *CostBillQuery) WithPlatformAccount(opts ...func(*PlatformAccountQuery)) *CostBillQuery {
+	query := (&PlatformAccountClient{config: cbq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	cbq.withPlatformAccount = query
 	return cbq
 }
 
@@ -477,11 +513,12 @@ func (cbq *CostBillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Co
 	var (
 		nodes       = []*CostBill{}
 		_spec       = cbq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			cbq.withUser != nil,
 			cbq.withCostAccount != nil,
 			cbq.withRechargeOrder != nil,
 			cbq.withMissionConsumeOrder != nil,
+			cbq.withPlatformAccount != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -523,6 +560,12 @@ func (cbq *CostBillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Co
 	if query := cbq.withMissionConsumeOrder; query != nil {
 		if err := cbq.loadMissionConsumeOrder(ctx, query, nodes, nil,
 			func(n *CostBill, e *MissionConsumeOrder) { n.Edges.MissionConsumeOrder = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := cbq.withPlatformAccount; query != nil {
+		if err := cbq.loadPlatformAccount(ctx, query, nodes, nil,
+			func(n *CostBill, e *PlatformAccount) { n.Edges.PlatformAccount = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -645,6 +688,35 @@ func (cbq *CostBillQuery) loadMissionConsumeOrder(ctx context.Context, query *Mi
 	}
 	return nil
 }
+func (cbq *CostBillQuery) loadPlatformAccount(ctx context.Context, query *PlatformAccountQuery, nodes []*CostBill, init func(*CostBill), assign func(*CostBill, *PlatformAccount)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*CostBill)
+	for i := range nodes {
+		fk := nodes[i].MarketAccountID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(platformaccount.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "market_account_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (cbq *CostBillQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cbq.querySpec()
@@ -682,6 +754,9 @@ func (cbq *CostBillQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if cbq.withMissionConsumeOrder != nil {
 			_spec.Node.AddColumnOnce(costbill.FieldReasonID)
+		}
+		if cbq.withPlatformAccount != nil {
+			_spec.Node.AddColumnOnce(costbill.FieldMarketAccountID)
 		}
 	}
 	if ps := cbq.predicates; len(ps) > 0 {

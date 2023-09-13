@@ -30,6 +30,7 @@ func (PlatformAccount) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.To("earn_bills", EarnBill.Type),
+		edge.To("cost_bills", CostBill.Type),
 	}
 }
 

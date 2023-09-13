@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -246,6 +247,21 @@ func (pau *PlatformAccountUpdate) AddEarnBills(e ...*EarnBill) *PlatformAccountU
 	return pau.AddEarnBillIDs(ids...)
 }
 
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (pau *PlatformAccountUpdate) AddCostBillIDs(ids ...int64) *PlatformAccountUpdate {
+	pau.mutation.AddCostBillIDs(ids...)
+	return pau
+}
+
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (pau *PlatformAccountUpdate) AddCostBills(c ...*CostBill) *PlatformAccountUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return pau.AddCostBillIDs(ids...)
+}
+
 // Mutation returns the PlatformAccountMutation object of the builder.
 func (pau *PlatformAccountUpdate) Mutation() *PlatformAccountMutation {
 	return pau.mutation
@@ -270,6 +286,27 @@ func (pau *PlatformAccountUpdate) RemoveEarnBills(e ...*EarnBill) *PlatformAccou
 		ids[i] = e[i].ID
 	}
 	return pau.RemoveEarnBillIDs(ids...)
+}
+
+// ClearCostBills clears all "cost_bills" edges to the CostBill entity.
+func (pau *PlatformAccountUpdate) ClearCostBills() *PlatformAccountUpdate {
+	pau.mutation.ClearCostBills()
+	return pau
+}
+
+// RemoveCostBillIDs removes the "cost_bills" edge to CostBill entities by IDs.
+func (pau *PlatformAccountUpdate) RemoveCostBillIDs(ids ...int64) *PlatformAccountUpdate {
+	pau.mutation.RemoveCostBillIDs(ids...)
+	return pau
+}
+
+// RemoveCostBills removes "cost_bills" edges to CostBill entities.
+func (pau *PlatformAccountUpdate) RemoveCostBills(c ...*CostBill) *PlatformAccountUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return pau.RemoveCostBillIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -425,6 +462,51 @@ func (pau *PlatformAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pau.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pau.mutation.RemovedCostBillsIDs(); len(nodes) > 0 && !pau.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pau.mutation.CostBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -669,6 +751,21 @@ func (pauo *PlatformAccountUpdateOne) AddEarnBills(e ...*EarnBill) *PlatformAcco
 	return pauo.AddEarnBillIDs(ids...)
 }
 
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (pauo *PlatformAccountUpdateOne) AddCostBillIDs(ids ...int64) *PlatformAccountUpdateOne {
+	pauo.mutation.AddCostBillIDs(ids...)
+	return pauo
+}
+
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (pauo *PlatformAccountUpdateOne) AddCostBills(c ...*CostBill) *PlatformAccountUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return pauo.AddCostBillIDs(ids...)
+}
+
 // Mutation returns the PlatformAccountMutation object of the builder.
 func (pauo *PlatformAccountUpdateOne) Mutation() *PlatformAccountMutation {
 	return pauo.mutation
@@ -693,6 +790,27 @@ func (pauo *PlatformAccountUpdateOne) RemoveEarnBills(e ...*EarnBill) *PlatformA
 		ids[i] = e[i].ID
 	}
 	return pauo.RemoveEarnBillIDs(ids...)
+}
+
+// ClearCostBills clears all "cost_bills" edges to the CostBill entity.
+func (pauo *PlatformAccountUpdateOne) ClearCostBills() *PlatformAccountUpdateOne {
+	pauo.mutation.ClearCostBills()
+	return pauo
+}
+
+// RemoveCostBillIDs removes the "cost_bills" edge to CostBill entities by IDs.
+func (pauo *PlatformAccountUpdateOne) RemoveCostBillIDs(ids ...int64) *PlatformAccountUpdateOne {
+	pauo.mutation.RemoveCostBillIDs(ids...)
+	return pauo
+}
+
+// RemoveCostBills removes "cost_bills" edges to CostBill entities.
+func (pauo *PlatformAccountUpdateOne) RemoveCostBills(c ...*CostBill) *PlatformAccountUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return pauo.RemoveCostBillIDs(ids...)
 }
 
 // Where appends a list predicates to the PlatformAccountUpdate builder.
@@ -878,6 +996,51 @@ func (pauo *PlatformAccountUpdateOne) sqlSave(ctx context.Context) (_node *Platf
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pauo.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pauo.mutation.RemovedCostBillsIDs(); len(nodes) > 0 && !pauo.mutation.CostBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pauo.mutation.CostBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

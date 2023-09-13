@@ -51,9 +51,11 @@ type PlatformAccount struct {
 type PlatformAccountEdges struct {
 	// EarnBills holds the value of the earn_bills edge.
 	EarnBills []*EarnBill `json:"earn_bills,omitempty"`
+	// CostBills holds the value of the cost_bills edge.
+	CostBills []*CostBill `json:"cost_bills,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // EarnBillsOrErr returns the EarnBills value or an error if the edge
@@ -63,6 +65,15 @@ func (e PlatformAccountEdges) EarnBillsOrErr() ([]*EarnBill, error) {
 		return e.EarnBills, nil
 	}
 	return nil, &NotLoadedError{edge: "earn_bills"}
+}
+
+// CostBillsOrErr returns the CostBills value or an error if the edge
+// was not loaded in eager-loading.
+func (e PlatformAccountEdges) CostBillsOrErr() ([]*CostBill, error) {
+	if e.loadedTypes[1] {
+		return e.CostBills, nil
+	}
+	return nil, &NotLoadedError{edge: "cost_bills"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -185,6 +196,11 @@ func (pa *PlatformAccount) Value(name string) (ent.Value, error) {
 // QueryEarnBills queries the "earn_bills" edge of the PlatformAccount entity.
 func (pa *PlatformAccount) QueryEarnBills() *EarnBillQuery {
 	return NewPlatformAccountClient(pa.config).QueryEarnBills(pa)
+}
+
+// QueryCostBills queries the "cost_bills" edge of the PlatformAccount entity.
+func (pa *PlatformAccount) QueryCostBills() *CostBillQuery {
+	return NewPlatformAccountClient(pa.config).QueryCostBills(pa)
 }
 
 // Update returns a builder for updating this PlatformAccount.

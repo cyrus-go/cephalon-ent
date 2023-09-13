@@ -184,37 +184,37 @@ func init() {
 	// costbill.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	costbill.DefaultDeletedAt = costbillDescDeletedAt.Default.(time.Time)
 	// costbillDescIsAdd is the schema descriptor for is_add field.
-	costbillDescIsAdd := costbillFields[1].Descriptor()
+	costbillDescIsAdd := costbillFields[2].Descriptor()
 	// costbill.DefaultIsAdd holds the default value on creation for the is_add field.
 	costbill.DefaultIsAdd = costbillDescIsAdd.Default.(bool)
 	// costbillDescUserID is the schema descriptor for user_id field.
-	costbillDescUserID := costbillFields[2].Descriptor()
+	costbillDescUserID := costbillFields[3].Descriptor()
 	// costbill.DefaultUserID holds the default value on creation for the user_id field.
 	costbill.DefaultUserID = costbillDescUserID.Default.(int64)
 	// costbillDescSerialNumber is the schema descriptor for serial_number field.
-	costbillDescSerialNumber := costbillFields[3].Descriptor()
+	costbillDescSerialNumber := costbillFields[4].Descriptor()
 	// costbill.DefaultSerialNumber holds the default value on creation for the serial_number field.
 	costbill.DefaultSerialNumber = costbillDescSerialNumber.Default.(string)
 	// costbillDescCostAccountID is the schema descriptor for cost_account_id field.
-	costbillDescCostAccountID := costbillFields[4].Descriptor()
+	costbillDescCostAccountID := costbillFields[5].Descriptor()
 	// costbill.DefaultCostAccountID holds the default value on creation for the cost_account_id field.
 	costbill.DefaultCostAccountID = costbillDescCostAccountID.Default.(int64)
 	// costbillDescPureCep is the schema descriptor for pure_cep field.
-	costbillDescPureCep := costbillFields[5].Descriptor()
+	costbillDescPureCep := costbillFields[6].Descriptor()
 	// costbill.DefaultPureCep holds the default value on creation for the pure_cep field.
 	costbill.DefaultPureCep = costbillDescPureCep.Default.(int64)
 	// costbillDescGiftCep is the schema descriptor for gift_cep field.
-	costbillDescGiftCep := costbillFields[6].Descriptor()
+	costbillDescGiftCep := costbillFields[7].Descriptor()
 	// costbill.DefaultGiftCep holds the default value on creation for the gift_cep field.
 	costbill.DefaultGiftCep = costbillDescGiftCep.Default.(int64)
 	// costbillDescReasonID is the schema descriptor for reason_id field.
-	costbillDescReasonID := costbillFields[7].Descriptor()
+	costbillDescReasonID := costbillFields[8].Descriptor()
 	// costbill.DefaultReasonID holds the default value on creation for the reason_id field.
 	costbill.DefaultReasonID = costbillDescReasonID.Default.(int64)
-	// costbillDescMarketBillID is the schema descriptor for market_bill_id field.
-	costbillDescMarketBillID := costbillFields[9].Descriptor()
-	// costbill.DefaultMarketBillID holds the default value on creation for the market_bill_id field.
-	costbill.DefaultMarketBillID = costbillDescMarketBillID.Default.(int64)
+	// costbillDescMarketAccountID is the schema descriptor for market_account_id field.
+	costbillDescMarketAccountID := costbillFields[10].Descriptor()
+	// costbill.DefaultMarketAccountID holds the default value on creation for the market_account_id field.
+	costbill.DefaultMarketAccountID = costbillDescMarketAccountID.Default.(int64)
 	// costbillDescID is the schema descriptor for id field.
 	costbillDescID := costbillMixinFields0[0].Descriptor()
 	// costbill.DefaultID holds the default value on creation for the id field.

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -24,6 +25,7 @@ type PlatformAccountQuery struct {
 	inters        []Interceptor
 	predicates    []predicate.PlatformAccount
 	withEarnBills *EarnBillQuery
+	withCostBills *CostBillQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (paq *PlatformAccountQuery) QueryEarnBills() *EarnBillQuery {
 			sqlgraph.From(platformaccount.Table, platformaccount.FieldID, selector),
 			sqlgraph.To(earnbill.Table, earnbill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, platformaccount.EarnBillsTable, platformaccount.EarnBillsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(paq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCostBills chains the current query on the "cost_bills" edge.
+func (paq *PlatformAccountQuery) QueryCostBills() *CostBillQuery {
+	query := (&CostBillClient{config: paq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := paq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := paq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(platformaccount.Table, platformaccount.FieldID, selector),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, platformaccount.CostBillsTable, platformaccount.CostBillsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(paq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +299,7 @@ func (paq *PlatformAccountQuery) Clone() *PlatformAccountQuery {
 		inters:        append([]Interceptor{}, paq.inters...),
 		predicates:    append([]predicate.PlatformAccount{}, paq.predicates...),
 		withEarnBills: paq.withEarnBills.Clone(),
+		withCostBills: paq.withCostBills.Clone(),
 		// clone intermediate query.
 		sql:  paq.sql.Clone(),
 		path: paq.path,
@@ -289,6 +314,17 @@ func (paq *PlatformAccountQuery) WithEarnBills(opts ...func(*EarnBillQuery)) *Pl
 		opt(query)
 	}
 	paq.withEarnBills = query
+	return paq
+}
+
+// WithCostBills tells the query-builder to eager-load the nodes that are connected to
+// the "cost_bills" edge. The optional arguments are used to configure the query builder of the edge.
+func (paq *PlatformAccountQuery) WithCostBills(opts ...func(*CostBillQuery)) *PlatformAccountQuery {
+	query := (&CostBillClient{config: paq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	paq.withCostBills = query
 	return paq
 }
 
@@ -370,8 +406,9 @@ func (paq *PlatformAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	var (
 		nodes       = []*PlatformAccount{}
 		_spec       = paq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			paq.withEarnBills != nil,
+			paq.withCostBills != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -396,6 +433,13 @@ func (paq *PlatformAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		if err := paq.loadEarnBills(ctx, query, nodes,
 			func(n *PlatformAccount) { n.Edges.EarnBills = []*EarnBill{} },
 			func(n *PlatformAccount, e *EarnBill) { n.Edges.EarnBills = append(n.Edges.EarnBills, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := paq.withCostBills; query != nil {
+		if err := paq.loadCostBills(ctx, query, nodes,
+			func(n *PlatformAccount) { n.Edges.CostBills = []*CostBill{} },
+			func(n *PlatformAccount, e *CostBill) { n.Edges.CostBills = append(n.Edges.CostBills, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -427,6 +471,36 @@ func (paq *PlatformAccountQuery) loadEarnBills(ctx context.Context, query *EarnB
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "platform_account_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (paq *PlatformAccountQuery) loadCostBills(ctx context.Context, query *CostBillQuery, nodes []*PlatformAccount, init func(*PlatformAccount), assign func(*PlatformAccount, *CostBill)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*PlatformAccount)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(costbill.FieldMarketAccountID)
+	}
+	query.Where(predicate.CostBill(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(platformaccount.CostBillsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MarketAccountID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "market_account_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

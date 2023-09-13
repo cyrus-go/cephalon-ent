@@ -116,9 +116,9 @@ func ReasonID(v int64) predicate.CostBill {
 	return predicate.CostBill(sql.FieldEQ(FieldReasonID, v))
 }
 
-// MarketBillID applies equality check predicate on the "market_bill_id" field. It's identical to MarketBillIDEQ.
-func MarketBillID(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldEQ(FieldMarketBillID, v))
+// MarketAccountID applies equality check predicate on the "market_account_id" field. It's identical to MarketAccountIDEQ.
+func MarketAccountID(v int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldEQ(FieldMarketAccountID, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -339,6 +339,26 @@ func TypeIn(vs ...Type) predicate.CostBill {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.CostBill {
 	return predicate.CostBill(sql.FieldNotIn(FieldType, vs...))
+}
+
+// WayEQ applies the EQ predicate on the "way" field.
+func WayEQ(v Way) predicate.CostBill {
+	return predicate.CostBill(sql.FieldEQ(FieldWay, v))
+}
+
+// WayNEQ applies the NEQ predicate on the "way" field.
+func WayNEQ(v Way) predicate.CostBill {
+	return predicate.CostBill(sql.FieldNEQ(FieldWay, v))
+}
+
+// WayIn applies the In predicate on the "way" field.
+func WayIn(vs ...Way) predicate.CostBill {
+	return predicate.CostBill(sql.FieldIn(FieldWay, vs...))
+}
+
+// WayNotIn applies the NotIn predicate on the "way" field.
+func WayNotIn(vs ...Way) predicate.CostBill {
+	return predicate.CostBill(sql.FieldNotIn(FieldWay, vs...))
 }
 
 // IsAddEQ applies the EQ predicate on the "is_add" field.
@@ -596,44 +616,24 @@ func StatusNotIn(vs ...enums.BillStatus) predicate.CostBill {
 	return predicate.CostBill(sql.FieldNotIn(FieldStatus, v...))
 }
 
-// MarketBillIDEQ applies the EQ predicate on the "market_bill_id" field.
-func MarketBillIDEQ(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldEQ(FieldMarketBillID, v))
+// MarketAccountIDEQ applies the EQ predicate on the "market_account_id" field.
+func MarketAccountIDEQ(v int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldEQ(FieldMarketAccountID, v))
 }
 
-// MarketBillIDNEQ applies the NEQ predicate on the "market_bill_id" field.
-func MarketBillIDNEQ(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldNEQ(FieldMarketBillID, v))
+// MarketAccountIDNEQ applies the NEQ predicate on the "market_account_id" field.
+func MarketAccountIDNEQ(v int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldNEQ(FieldMarketAccountID, v))
 }
 
-// MarketBillIDIn applies the In predicate on the "market_bill_id" field.
-func MarketBillIDIn(vs ...int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldIn(FieldMarketBillID, vs...))
+// MarketAccountIDIn applies the In predicate on the "market_account_id" field.
+func MarketAccountIDIn(vs ...int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldIn(FieldMarketAccountID, vs...))
 }
 
-// MarketBillIDNotIn applies the NotIn predicate on the "market_bill_id" field.
-func MarketBillIDNotIn(vs ...int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldNotIn(FieldMarketBillID, vs...))
-}
-
-// MarketBillIDGT applies the GT predicate on the "market_bill_id" field.
-func MarketBillIDGT(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldGT(FieldMarketBillID, v))
-}
-
-// MarketBillIDGTE applies the GTE predicate on the "market_bill_id" field.
-func MarketBillIDGTE(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldGTE(FieldMarketBillID, v))
-}
-
-// MarketBillIDLT applies the LT predicate on the "market_bill_id" field.
-func MarketBillIDLT(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldLT(FieldMarketBillID, v))
-}
-
-// MarketBillIDLTE applies the LTE predicate on the "market_bill_id" field.
-func MarketBillIDLTE(v int64) predicate.CostBill {
-	return predicate.CostBill(sql.FieldLTE(FieldMarketBillID, v))
+// MarketAccountIDNotIn applies the NotIn predicate on the "market_account_id" field.
+func MarketAccountIDNotIn(vs ...int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldNotIn(FieldMarketAccountID, vs...))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
@@ -720,6 +720,29 @@ func HasMissionConsumeOrder() predicate.CostBill {
 func HasMissionConsumeOrderWith(preds ...predicate.MissionConsumeOrder) predicate.CostBill {
 	return predicate.CostBill(func(s *sql.Selector) {
 		step := newMissionConsumeOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPlatformAccount applies the HasEdge predicate on the "platform_account" edge.
+func HasPlatformAccount() predicate.CostBill {
+	return predicate.CostBill(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, PlatformAccountTable, PlatformAccountColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPlatformAccountWith applies the HasEdge predicate on the "platform_account" edge with a given conditions (other predicates).
+func HasPlatformAccountWith(preds ...predicate.PlatformAccount) predicate.CostBill {
+	return predicate.CostBill(func(s *sql.Selector) {
+		step := newPlatformAccountStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

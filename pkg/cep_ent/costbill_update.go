@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -105,6 +106,20 @@ func (cbu *CostBillUpdate) SetType(c costbill.Type) *CostBillUpdate {
 func (cbu *CostBillUpdate) SetNillableType(c *costbill.Type) *CostBillUpdate {
 	if c != nil {
 		cbu.SetType(*c)
+	}
+	return cbu
+}
+
+// SetWay sets the "way" field.
+func (cbu *CostBillUpdate) SetWay(c costbill.Way) *CostBillUpdate {
+	cbu.mutation.SetWay(c)
+	return cbu
+}
+
+// SetNillableWay sets the "way" field if the given value is not nil.
+func (cbu *CostBillUpdate) SetNillableWay(c *costbill.Way) *CostBillUpdate {
+	if c != nil {
+		cbu.SetWay(*c)
 	}
 	return cbu
 }
@@ -241,24 +256,17 @@ func (cbu *CostBillUpdate) SetNillableStatus(es *enums.BillStatus) *CostBillUpda
 	return cbu
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (cbu *CostBillUpdate) SetMarketBillID(i int64) *CostBillUpdate {
-	cbu.mutation.ResetMarketBillID()
-	cbu.mutation.SetMarketBillID(i)
+// SetMarketAccountID sets the "market_account_id" field.
+func (cbu *CostBillUpdate) SetMarketAccountID(i int64) *CostBillUpdate {
+	cbu.mutation.SetMarketAccountID(i)
 	return cbu
 }
 
-// SetNillableMarketBillID sets the "market_bill_id" field if the given value is not nil.
-func (cbu *CostBillUpdate) SetNillableMarketBillID(i *int64) *CostBillUpdate {
+// SetNillableMarketAccountID sets the "market_account_id" field if the given value is not nil.
+func (cbu *CostBillUpdate) SetNillableMarketAccountID(i *int64) *CostBillUpdate {
 	if i != nil {
-		cbu.SetMarketBillID(*i)
+		cbu.SetMarketAccountID(*i)
 	}
-	return cbu
-}
-
-// AddMarketBillID adds i to the "market_bill_id" field.
-func (cbu *CostBillUpdate) AddMarketBillID(i int64) *CostBillUpdate {
-	cbu.mutation.AddMarketBillID(i)
 	return cbu
 }
 
@@ -310,6 +318,17 @@ func (cbu *CostBillUpdate) SetMissionConsumeOrder(m *MissionConsumeOrder) *CostB
 	return cbu.SetMissionConsumeOrderID(m.ID)
 }
 
+// SetPlatformAccountID sets the "platform_account" edge to the PlatformAccount entity by ID.
+func (cbu *CostBillUpdate) SetPlatformAccountID(id int64) *CostBillUpdate {
+	cbu.mutation.SetPlatformAccountID(id)
+	return cbu
+}
+
+// SetPlatformAccount sets the "platform_account" edge to the PlatformAccount entity.
+func (cbu *CostBillUpdate) SetPlatformAccount(p *PlatformAccount) *CostBillUpdate {
+	return cbu.SetPlatformAccountID(p.ID)
+}
+
 // Mutation returns the CostBillMutation object of the builder.
 func (cbu *CostBillUpdate) Mutation() *CostBillMutation {
 	return cbu.mutation
@@ -336,6 +355,12 @@ func (cbu *CostBillUpdate) ClearRechargeOrder() *CostBillUpdate {
 // ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (cbu *CostBillUpdate) ClearMissionConsumeOrder() *CostBillUpdate {
 	cbu.mutation.ClearMissionConsumeOrder()
+	return cbu
+}
+
+// ClearPlatformAccount clears the "platform_account" edge to the PlatformAccount entity.
+func (cbu *CostBillUpdate) ClearPlatformAccount() *CostBillUpdate {
+	cbu.mutation.ClearPlatformAccount()
 	return cbu
 }
 
@@ -382,6 +407,11 @@ func (cbu *CostBillUpdate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.type": %w`, err)}
 		}
 	}
+	if v, ok := cbu.mutation.Way(); ok {
+		if err := costbill.WayValidator(v); err != nil {
+			return &ValidationError{Name: "way", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.way": %w`, err)}
+		}
+	}
 	if v, ok := cbu.mutation.Status(); ok {
 		if err := costbill.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.status": %w`, err)}
@@ -392,6 +422,9 @@ func (cbu *CostBillUpdate) check() error {
 	}
 	if _, ok := cbu.mutation.CostAccountID(); cbu.mutation.CostAccountCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "CostBill.cost_account"`)
+	}
+	if _, ok := cbu.mutation.PlatformAccountID(); cbu.mutation.PlatformAccountCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "CostBill.platform_account"`)
 	}
 	return nil
 }
@@ -429,6 +462,9 @@ func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := cbu.mutation.GetType(); ok {
 		_spec.SetField(costbill.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := cbu.mutation.Way(); ok {
+		_spec.SetField(costbill.FieldWay, field.TypeEnum, value)
+	}
 	if value, ok := cbu.mutation.IsAdd(); ok {
 		_spec.SetField(costbill.FieldIsAdd, field.TypeBool, value)
 	}
@@ -449,12 +485,6 @@ func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := cbu.mutation.Status(); ok {
 		_spec.SetField(costbill.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := cbu.mutation.MarketBillID(); ok {
-		_spec.SetField(costbill.FieldMarketBillID, field.TypeInt64, value)
-	}
-	if value, ok := cbu.mutation.AddedMarketBillID(); ok {
-		_spec.AddField(costbill.FieldMarketBillID, field.TypeInt64, value)
 	}
 	if cbu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -572,6 +602,35 @@ func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if cbu.mutation.PlatformAccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.PlatformAccountTable,
+			Columns: []string{costbill.PlatformAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cbu.mutation.PlatformAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.PlatformAccountTable,
+			Columns: []string{costbill.PlatformAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{costbill.Label}
@@ -664,6 +723,20 @@ func (cbuo *CostBillUpdateOne) SetType(c costbill.Type) *CostBillUpdateOne {
 func (cbuo *CostBillUpdateOne) SetNillableType(c *costbill.Type) *CostBillUpdateOne {
 	if c != nil {
 		cbuo.SetType(*c)
+	}
+	return cbuo
+}
+
+// SetWay sets the "way" field.
+func (cbuo *CostBillUpdateOne) SetWay(c costbill.Way) *CostBillUpdateOne {
+	cbuo.mutation.SetWay(c)
+	return cbuo
+}
+
+// SetNillableWay sets the "way" field if the given value is not nil.
+func (cbuo *CostBillUpdateOne) SetNillableWay(c *costbill.Way) *CostBillUpdateOne {
+	if c != nil {
+		cbuo.SetWay(*c)
 	}
 	return cbuo
 }
@@ -800,24 +873,17 @@ func (cbuo *CostBillUpdateOne) SetNillableStatus(es *enums.BillStatus) *CostBill
 	return cbuo
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (cbuo *CostBillUpdateOne) SetMarketBillID(i int64) *CostBillUpdateOne {
-	cbuo.mutation.ResetMarketBillID()
-	cbuo.mutation.SetMarketBillID(i)
+// SetMarketAccountID sets the "market_account_id" field.
+func (cbuo *CostBillUpdateOne) SetMarketAccountID(i int64) *CostBillUpdateOne {
+	cbuo.mutation.SetMarketAccountID(i)
 	return cbuo
 }
 
-// SetNillableMarketBillID sets the "market_bill_id" field if the given value is not nil.
-func (cbuo *CostBillUpdateOne) SetNillableMarketBillID(i *int64) *CostBillUpdateOne {
+// SetNillableMarketAccountID sets the "market_account_id" field if the given value is not nil.
+func (cbuo *CostBillUpdateOne) SetNillableMarketAccountID(i *int64) *CostBillUpdateOne {
 	if i != nil {
-		cbuo.SetMarketBillID(*i)
+		cbuo.SetMarketAccountID(*i)
 	}
-	return cbuo
-}
-
-// AddMarketBillID adds i to the "market_bill_id" field.
-func (cbuo *CostBillUpdateOne) AddMarketBillID(i int64) *CostBillUpdateOne {
-	cbuo.mutation.AddMarketBillID(i)
 	return cbuo
 }
 
@@ -869,6 +935,17 @@ func (cbuo *CostBillUpdateOne) SetMissionConsumeOrder(m *MissionConsumeOrder) *C
 	return cbuo.SetMissionConsumeOrderID(m.ID)
 }
 
+// SetPlatformAccountID sets the "platform_account" edge to the PlatformAccount entity by ID.
+func (cbuo *CostBillUpdateOne) SetPlatformAccountID(id int64) *CostBillUpdateOne {
+	cbuo.mutation.SetPlatformAccountID(id)
+	return cbuo
+}
+
+// SetPlatformAccount sets the "platform_account" edge to the PlatformAccount entity.
+func (cbuo *CostBillUpdateOne) SetPlatformAccount(p *PlatformAccount) *CostBillUpdateOne {
+	return cbuo.SetPlatformAccountID(p.ID)
+}
+
 // Mutation returns the CostBillMutation object of the builder.
 func (cbuo *CostBillUpdateOne) Mutation() *CostBillMutation {
 	return cbuo.mutation
@@ -895,6 +972,12 @@ func (cbuo *CostBillUpdateOne) ClearRechargeOrder() *CostBillUpdateOne {
 // ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (cbuo *CostBillUpdateOne) ClearMissionConsumeOrder() *CostBillUpdateOne {
 	cbuo.mutation.ClearMissionConsumeOrder()
+	return cbuo
+}
+
+// ClearPlatformAccount clears the "platform_account" edge to the PlatformAccount entity.
+func (cbuo *CostBillUpdateOne) ClearPlatformAccount() *CostBillUpdateOne {
+	cbuo.mutation.ClearPlatformAccount()
 	return cbuo
 }
 
@@ -954,6 +1037,11 @@ func (cbuo *CostBillUpdateOne) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.type": %w`, err)}
 		}
 	}
+	if v, ok := cbuo.mutation.Way(); ok {
+		if err := costbill.WayValidator(v); err != nil {
+			return &ValidationError{Name: "way", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.way": %w`, err)}
+		}
+	}
 	if v, ok := cbuo.mutation.Status(); ok {
 		if err := costbill.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CostBill.status": %w`, err)}
@@ -964,6 +1052,9 @@ func (cbuo *CostBillUpdateOne) check() error {
 	}
 	if _, ok := cbuo.mutation.CostAccountID(); cbuo.mutation.CostAccountCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "CostBill.cost_account"`)
+	}
+	if _, ok := cbuo.mutation.PlatformAccountID(); cbuo.mutation.PlatformAccountCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "CostBill.platform_account"`)
 	}
 	return nil
 }
@@ -1018,6 +1109,9 @@ func (cbuo *CostBillUpdateOne) sqlSave(ctx context.Context) (_node *CostBill, er
 	if value, ok := cbuo.mutation.GetType(); ok {
 		_spec.SetField(costbill.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := cbuo.mutation.Way(); ok {
+		_spec.SetField(costbill.FieldWay, field.TypeEnum, value)
+	}
 	if value, ok := cbuo.mutation.IsAdd(); ok {
 		_spec.SetField(costbill.FieldIsAdd, field.TypeBool, value)
 	}
@@ -1038,12 +1132,6 @@ func (cbuo *CostBillUpdateOne) sqlSave(ctx context.Context) (_node *CostBill, er
 	}
 	if value, ok := cbuo.mutation.Status(); ok {
 		_spec.SetField(costbill.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := cbuo.mutation.MarketBillID(); ok {
-		_spec.SetField(costbill.FieldMarketBillID, field.TypeInt64, value)
-	}
-	if value, ok := cbuo.mutation.AddedMarketBillID(); ok {
-		_spec.AddField(costbill.FieldMarketBillID, field.TypeInt64, value)
 	}
 	if cbuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1154,6 +1242,35 @@ func (cbuo *CostBillUpdateOne) sqlSave(ctx context.Context) (_node *CostBill, er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cbuo.mutation.PlatformAccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.PlatformAccountTable,
+			Columns: []string{costbill.PlatformAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cbuo.mutation.PlatformAccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.PlatformAccountTable,
+			Columns: []string{costbill.PlatformAccountColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -41,6 +41,8 @@ const (
 	FieldGiftCep = "gift_cep"
 	// EdgeEarnBills holds the string denoting the earn_bills edge name in mutations.
 	EdgeEarnBills = "earn_bills"
+	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
+	EdgeCostBills = "cost_bills"
 	// Table holds the table name of the platformaccount in the database.
 	Table = "platform_accounts"
 	// EarnBillsTable is the table that holds the earn_bills relation/edge.
@@ -50,6 +52,13 @@ const (
 	EarnBillsInverseTable = "earn_bills"
 	// EarnBillsColumn is the table column denoting the earn_bills relation/edge.
 	EarnBillsColumn = "platform_account_id"
+	// CostBillsTable is the table that holds the cost_bills relation/edge.
+	CostBillsTable = "cost_bills"
+	// CostBillsInverseTable is the table name for the CostBill entity.
+	// It exists in this package in order to avoid circular dependency with the "costbill" package.
+	CostBillsInverseTable = "cost_bills"
+	// CostBillsColumn is the table column denoting the cost_bills relation/edge.
+	CostBillsColumn = "market_account_id"
 )
 
 // Columns holds all SQL columns for platformaccount fields.
@@ -215,10 +224,31 @@ func ByEarnBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEarnBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByCostBillsCount orders the results by cost_bills count.
+func ByCostBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCostBillsStep(), opts...)
+	}
+}
+
+// ByCostBills orders the results by cost_bills terms.
+func ByCostBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCostBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newEarnBillsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EarnBillsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EarnBillsTable, EarnBillsColumn),
+	)
+}
+func newCostBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CostBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
 	)
 }

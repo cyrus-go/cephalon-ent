@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 )
@@ -218,6 +219,21 @@ func (pac *PlatformAccountCreate) AddEarnBills(e ...*EarnBill) *PlatformAccountC
 		ids[i] = e[i].ID
 	}
 	return pac.AddEarnBillIDs(ids...)
+}
+
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by IDs.
+func (pac *PlatformAccountCreate) AddCostBillIDs(ids ...int64) *PlatformAccountCreate {
+	pac.mutation.AddCostBillIDs(ids...)
+	return pac
+}
+
+// AddCostBills adds the "cost_bills" edges to the CostBill entity.
+func (pac *PlatformAccountCreate) AddCostBills(c ...*CostBill) *PlatformAccountCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return pac.AddCostBillIDs(ids...)
 }
 
 // Mutation returns the PlatformAccountMutation object of the builder.
@@ -442,6 +458,22 @@ func (pac *PlatformAccountCreate) createSpec() (*PlatformAccount, *sqlgraph.Crea
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pac.mutation.CostBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   platformaccount.CostBillsTable,
+			Columns: []string{platformaccount.CostBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

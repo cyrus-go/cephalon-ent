@@ -2559,6 +2559,7 @@ type CostBillMutation struct {
 	updated_at                   *time.Time
 	deleted_at                   *time.Time
 	_type                        *costbill.Type
+	way                          *costbill.Way
 	is_add                       *bool
 	serial_number                *string
 	pure_cep                     *int64
@@ -2566,8 +2567,6 @@ type CostBillMutation struct {
 	gift_cep                     *int64
 	addgift_cep                  *int64
 	status                       *enums.BillStatus
-	market_bill_id               *int64
-	addmarket_bill_id            *int64
 	clearedFields                map[string]struct{}
 	user                         *int64
 	cleareduser                  bool
@@ -2577,6 +2576,8 @@ type CostBillMutation struct {
 	clearedrecharge_order        bool
 	mission_consume_order        *int64
 	clearedmission_consume_order bool
+	platform_account             *int64
+	clearedplatform_account      bool
 	done                         bool
 	oldValue                     func(context.Context) (*CostBill, error)
 	predicates                   []predicate.CostBill
@@ -2942,6 +2943,42 @@ func (m *CostBillMutation) ResetType() {
 	m._type = nil
 }
 
+// SetWay sets the "way" field.
+func (m *CostBillMutation) SetWay(c costbill.Way) {
+	m.way = &c
+}
+
+// Way returns the value of the "way" field in the mutation.
+func (m *CostBillMutation) Way() (r costbill.Way, exists bool) {
+	v := m.way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWay returns the old "way" field's value of the CostBill entity.
+// If the CostBill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CostBillMutation) OldWay(ctx context.Context) (v costbill.Way, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWay: %w", err)
+	}
+	return oldValue.Way, nil
+}
+
+// ResetWay resets all changes to the "way" field.
+func (m *CostBillMutation) ResetWay() {
+	m.way = nil
+}
+
 // SetIsAdd sets the "is_add" field.
 func (m *CostBillMutation) SetIsAdd(b bool) {
 	m.is_add = &b
@@ -3283,60 +3320,40 @@ func (m *CostBillMutation) ResetStatus() {
 	m.status = nil
 }
 
-// SetMarketBillID sets the "market_bill_id" field.
-func (m *CostBillMutation) SetMarketBillID(i int64) {
-	m.market_bill_id = &i
-	m.addmarket_bill_id = nil
+// SetMarketAccountID sets the "market_account_id" field.
+func (m *CostBillMutation) SetMarketAccountID(i int64) {
+	m.platform_account = &i
 }
 
-// MarketBillID returns the value of the "market_bill_id" field in the mutation.
-func (m *CostBillMutation) MarketBillID() (r int64, exists bool) {
-	v := m.market_bill_id
+// MarketAccountID returns the value of the "market_account_id" field in the mutation.
+func (m *CostBillMutation) MarketAccountID() (r int64, exists bool) {
+	v := m.platform_account
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMarketBillID returns the old "market_bill_id" field's value of the CostBill entity.
+// OldMarketAccountID returns the old "market_account_id" field's value of the CostBill entity.
 // If the CostBill object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CostBillMutation) OldMarketBillID(ctx context.Context) (v int64, err error) {
+func (m *CostBillMutation) OldMarketAccountID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMarketBillID is only allowed on UpdateOne operations")
+		return v, errors.New("OldMarketAccountID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMarketBillID requires an ID field in the mutation")
+		return v, errors.New("OldMarketAccountID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMarketBillID: %w", err)
+		return v, fmt.Errorf("querying old value for OldMarketAccountID: %w", err)
 	}
-	return oldValue.MarketBillID, nil
+	return oldValue.MarketAccountID, nil
 }
 
-// AddMarketBillID adds i to the "market_bill_id" field.
-func (m *CostBillMutation) AddMarketBillID(i int64) {
-	if m.addmarket_bill_id != nil {
-		*m.addmarket_bill_id += i
-	} else {
-		m.addmarket_bill_id = &i
-	}
-}
-
-// AddedMarketBillID returns the value that was added to the "market_bill_id" field in this mutation.
-func (m *CostBillMutation) AddedMarketBillID() (r int64, exists bool) {
-	v := m.addmarket_bill_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetMarketBillID resets all changes to the "market_bill_id" field.
-func (m *CostBillMutation) ResetMarketBillID() {
-	m.market_bill_id = nil
-	m.addmarket_bill_id = nil
+// ResetMarketAccountID resets all changes to the "market_account_id" field.
+func (m *CostBillMutation) ResetMarketAccountID() {
+	m.platform_account = nil
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -3473,6 +3490,46 @@ func (m *CostBillMutation) ResetMissionConsumeOrder() {
 	m.clearedmission_consume_order = false
 }
 
+// SetPlatformAccountID sets the "platform_account" edge to the PlatformAccount entity by id.
+func (m *CostBillMutation) SetPlatformAccountID(id int64) {
+	m.platform_account = &id
+}
+
+// ClearPlatformAccount clears the "platform_account" edge to the PlatformAccount entity.
+func (m *CostBillMutation) ClearPlatformAccount() {
+	m.clearedplatform_account = true
+	m.clearedFields[costbill.FieldMarketAccountID] = struct{}{}
+}
+
+// PlatformAccountCleared reports if the "platform_account" edge to the PlatformAccount entity was cleared.
+func (m *CostBillMutation) PlatformAccountCleared() bool {
+	return m.clearedplatform_account
+}
+
+// PlatformAccountID returns the "platform_account" edge ID in the mutation.
+func (m *CostBillMutation) PlatformAccountID() (id int64, exists bool) {
+	if m.platform_account != nil {
+		return *m.platform_account, true
+	}
+	return
+}
+
+// PlatformAccountIDs returns the "platform_account" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PlatformAccountID instead. It exists only for internal usage by the builders.
+func (m *CostBillMutation) PlatformAccountIDs() (ids []int64) {
+	if id := m.platform_account; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPlatformAccount resets all changes to the "platform_account" edge.
+func (m *CostBillMutation) ResetPlatformAccount() {
+	m.platform_account = nil
+	m.clearedplatform_account = false
+}
+
 // Where appends a list predicates to the CostBillMutation builder.
 func (m *CostBillMutation) Where(ps ...predicate.CostBill) {
 	m.predicates = append(m.predicates, ps...)
@@ -3507,7 +3564,7 @@ func (m *CostBillMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CostBillMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, costbill.FieldCreatedBy)
 	}
@@ -3525,6 +3582,9 @@ func (m *CostBillMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, costbill.FieldType)
+	}
+	if m.way != nil {
+		fields = append(fields, costbill.FieldWay)
 	}
 	if m.is_add != nil {
 		fields = append(fields, costbill.FieldIsAdd)
@@ -3550,8 +3610,8 @@ func (m *CostBillMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, costbill.FieldStatus)
 	}
-	if m.market_bill_id != nil {
-		fields = append(fields, costbill.FieldMarketBillID)
+	if m.platform_account != nil {
+		fields = append(fields, costbill.FieldMarketAccountID)
 	}
 	return fields
 }
@@ -3573,6 +3633,8 @@ func (m *CostBillMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case costbill.FieldType:
 		return m.GetType()
+	case costbill.FieldWay:
+		return m.Way()
 	case costbill.FieldIsAdd:
 		return m.IsAdd()
 	case costbill.FieldUserID:
@@ -3589,8 +3651,8 @@ func (m *CostBillMutation) Field(name string) (ent.Value, bool) {
 		return m.ReasonID()
 	case costbill.FieldStatus:
 		return m.Status()
-	case costbill.FieldMarketBillID:
-		return m.MarketBillID()
+	case costbill.FieldMarketAccountID:
+		return m.MarketAccountID()
 	}
 	return nil, false
 }
@@ -3612,6 +3674,8 @@ func (m *CostBillMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDeletedAt(ctx)
 	case costbill.FieldType:
 		return m.OldType(ctx)
+	case costbill.FieldWay:
+		return m.OldWay(ctx)
 	case costbill.FieldIsAdd:
 		return m.OldIsAdd(ctx)
 	case costbill.FieldUserID:
@@ -3628,8 +3692,8 @@ func (m *CostBillMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldReasonID(ctx)
 	case costbill.FieldStatus:
 		return m.OldStatus(ctx)
-	case costbill.FieldMarketBillID:
-		return m.OldMarketBillID(ctx)
+	case costbill.FieldMarketAccountID:
+		return m.OldMarketAccountID(ctx)
 	}
 	return nil, fmt.Errorf("unknown CostBill field %s", name)
 }
@@ -3680,6 +3744,13 @@ func (m *CostBillMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
+		return nil
+	case costbill.FieldWay:
+		v, ok := value.(costbill.Way)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWay(v)
 		return nil
 	case costbill.FieldIsAdd:
 		v, ok := value.(bool)
@@ -3737,12 +3808,12 @@ func (m *CostBillMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
-	case costbill.FieldMarketBillID:
+	case costbill.FieldMarketAccountID:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMarketBillID(v)
+		m.SetMarketAccountID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CostBill field %s", name)
@@ -3764,9 +3835,6 @@ func (m *CostBillMutation) AddedFields() []string {
 	if m.addgift_cep != nil {
 		fields = append(fields, costbill.FieldGiftCep)
 	}
-	if m.addmarket_bill_id != nil {
-		fields = append(fields, costbill.FieldMarketBillID)
-	}
 	return fields
 }
 
@@ -3783,8 +3851,6 @@ func (m *CostBillMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedPureCep()
 	case costbill.FieldGiftCep:
 		return m.AddedGiftCep()
-	case costbill.FieldMarketBillID:
-		return m.AddedMarketBillID()
 	}
 	return nil, false
 }
@@ -3821,13 +3887,6 @@ func (m *CostBillMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddGiftCep(v)
-		return nil
-	case costbill.FieldMarketBillID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddMarketBillID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CostBill numeric field %s", name)
@@ -3883,6 +3942,9 @@ func (m *CostBillMutation) ResetField(name string) error {
 	case costbill.FieldType:
 		m.ResetType()
 		return nil
+	case costbill.FieldWay:
+		m.ResetWay()
+		return nil
 	case costbill.FieldIsAdd:
 		m.ResetIsAdd()
 		return nil
@@ -3907,8 +3969,8 @@ func (m *CostBillMutation) ResetField(name string) error {
 	case costbill.FieldStatus:
 		m.ResetStatus()
 		return nil
-	case costbill.FieldMarketBillID:
-		m.ResetMarketBillID()
+	case costbill.FieldMarketAccountID:
+		m.ResetMarketAccountID()
 		return nil
 	}
 	return fmt.Errorf("unknown CostBill field %s", name)
@@ -3916,7 +3978,7 @@ func (m *CostBillMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CostBillMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.user != nil {
 		edges = append(edges, costbill.EdgeUser)
 	}
@@ -3928,6 +3990,9 @@ func (m *CostBillMutation) AddedEdges() []string {
 	}
 	if m.mission_consume_order != nil {
 		edges = append(edges, costbill.EdgeMissionConsumeOrder)
+	}
+	if m.platform_account != nil {
+		edges = append(edges, costbill.EdgePlatformAccount)
 	}
 	return edges
 }
@@ -3952,13 +4017,17 @@ func (m *CostBillMutation) AddedIDs(name string) []ent.Value {
 		if id := m.mission_consume_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case costbill.EdgePlatformAccount:
+		if id := m.platform_account; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CostBillMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	return edges
 }
 
@@ -3970,7 +4039,7 @@ func (m *CostBillMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CostBillMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.cleareduser {
 		edges = append(edges, costbill.EdgeUser)
 	}
@@ -3982,6 +4051,9 @@ func (m *CostBillMutation) ClearedEdges() []string {
 	}
 	if m.clearedmission_consume_order {
 		edges = append(edges, costbill.EdgeMissionConsumeOrder)
+	}
+	if m.clearedplatform_account {
+		edges = append(edges, costbill.EdgePlatformAccount)
 	}
 	return edges
 }
@@ -3998,6 +4070,8 @@ func (m *CostBillMutation) EdgeCleared(name string) bool {
 		return m.clearedrecharge_order
 	case costbill.EdgeMissionConsumeOrder:
 		return m.clearedmission_consume_order
+	case costbill.EdgePlatformAccount:
+		return m.clearedplatform_account
 	}
 	return false
 }
@@ -4018,6 +4092,9 @@ func (m *CostBillMutation) ClearEdge(name string) error {
 	case costbill.EdgeMissionConsumeOrder:
 		m.ClearMissionConsumeOrder()
 		return nil
+	case costbill.EdgePlatformAccount:
+		m.ClearPlatformAccount()
+		return nil
 	}
 	return fmt.Errorf("unknown CostBill unique edge %s", name)
 }
@@ -4037,6 +4114,9 @@ func (m *CostBillMutation) ResetEdge(name string) error {
 		return nil
 	case costbill.EdgeMissionConsumeOrder:
 		m.ResetMissionConsumeOrder()
+		return nil
+	case costbill.EdgePlatformAccount:
+		m.ResetPlatformAccount()
 		return nil
 	}
 	return fmt.Errorf("unknown CostBill edge %s", name)
@@ -24948,6 +25028,9 @@ type PlatformAccountMutation struct {
 	earn_bills        map[int64]struct{}
 	removedearn_bills map[int64]struct{}
 	clearedearn_bills bool
+	cost_bills        map[int64]struct{}
+	removedcost_bills map[int64]struct{}
+	clearedcost_bills bool
 	done              bool
 	oldValue          func(context.Context) (*PlatformAccount, error)
 	predicates        []predicate.PlatformAccount
@@ -25703,6 +25786,60 @@ func (m *PlatformAccountMutation) ResetEarnBills() {
 	m.removedearn_bills = nil
 }
 
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by ids.
+func (m *PlatformAccountMutation) AddCostBillIDs(ids ...int64) {
+	if m.cost_bills == nil {
+		m.cost_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.cost_bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCostBills clears the "cost_bills" edge to the CostBill entity.
+func (m *PlatformAccountMutation) ClearCostBills() {
+	m.clearedcost_bills = true
+}
+
+// CostBillsCleared reports if the "cost_bills" edge to the CostBill entity was cleared.
+func (m *PlatformAccountMutation) CostBillsCleared() bool {
+	return m.clearedcost_bills
+}
+
+// RemoveCostBillIDs removes the "cost_bills" edge to the CostBill entity by IDs.
+func (m *PlatformAccountMutation) RemoveCostBillIDs(ids ...int64) {
+	if m.removedcost_bills == nil {
+		m.removedcost_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.cost_bills, ids[i])
+		m.removedcost_bills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCostBills returns the removed IDs of the "cost_bills" edge to the CostBill entity.
+func (m *PlatformAccountMutation) RemovedCostBillsIDs() (ids []int64) {
+	for id := range m.removedcost_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CostBillsIDs returns the "cost_bills" edge IDs in the mutation.
+func (m *PlatformAccountMutation) CostBillsIDs() (ids []int64) {
+	for id := range m.cost_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCostBills resets all changes to the "cost_bills" edge.
+func (m *PlatformAccountMutation) ResetCostBills() {
+	m.cost_bills = nil
+	m.clearedcost_bills = false
+	m.removedcost_bills = nil
+}
+
 // Where appends a list predicates to the PlatformAccountMutation builder.
 func (m *PlatformAccountMutation) Where(ps ...predicate.PlatformAccount) {
 	m.predicates = append(m.predicates, ps...)
@@ -26122,9 +26259,12 @@ func (m *PlatformAccountMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PlatformAccountMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.earn_bills != nil {
 		edges = append(edges, platformaccount.EdgeEarnBills)
+	}
+	if m.cost_bills != nil {
+		edges = append(edges, platformaccount.EdgeCostBills)
 	}
 	return edges
 }
@@ -26139,15 +26279,24 @@ func (m *PlatformAccountMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case platformaccount.EdgeCostBills:
+		ids := make([]ent.Value, 0, len(m.cost_bills))
+		for id := range m.cost_bills {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PlatformAccountMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedearn_bills != nil {
 		edges = append(edges, platformaccount.EdgeEarnBills)
+	}
+	if m.removedcost_bills != nil {
+		edges = append(edges, platformaccount.EdgeCostBills)
 	}
 	return edges
 }
@@ -26162,15 +26311,24 @@ func (m *PlatformAccountMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case platformaccount.EdgeCostBills:
+		ids := make([]ent.Value, 0, len(m.removedcost_bills))
+		for id := range m.removedcost_bills {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PlatformAccountMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedearn_bills {
 		edges = append(edges, platformaccount.EdgeEarnBills)
+	}
+	if m.clearedcost_bills {
+		edges = append(edges, platformaccount.EdgeCostBills)
 	}
 	return edges
 }
@@ -26181,6 +26339,8 @@ func (m *PlatformAccountMutation) EdgeCleared(name string) bool {
 	switch name {
 	case platformaccount.EdgeEarnBills:
 		return m.clearedearn_bills
+	case platformaccount.EdgeCostBills:
+		return m.clearedcost_bills
 	}
 	return false
 }
@@ -26199,6 +26359,9 @@ func (m *PlatformAccountMutation) ResetEdge(name string) error {
 	switch name {
 	case platformaccount.EdgeEarnBills:
 		m.ResetEarnBills()
+		return nil
+	case platformaccount.EdgeCostBills:
+		m.ResetCostBills()
 		return nil
 	}
 	return fmt.Errorf("unknown PlatformAccount edge %s", name)
