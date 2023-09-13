@@ -90,6 +90,11 @@ func PureCep(v int64) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldEQ(FieldPureCep, v))
 }
 
+// GiftCep applies equality check predicate on the "gift_cep" field. It's identical to GiftCepEQ.
+func GiftCep(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldGiftCep, v))
+}
+
 // SocialID applies equality check predicate on the "social_id" field. It's identical to SocialIDEQ.
 func SocialID(v int64) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldEQ(FieldSocialID, v))
@@ -393,6 +398,46 @@ func PureCepLT(v int64) predicate.RechargeOrder {
 // PureCepLTE applies the LTE predicate on the "pure_cep" field.
 func PureCepLTE(v int64) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldLTE(FieldPureCep, v))
+}
+
+// GiftCepEQ applies the EQ predicate on the "gift_cep" field.
+func GiftCepEQ(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldGiftCep, v))
+}
+
+// GiftCepNEQ applies the NEQ predicate on the "gift_cep" field.
+func GiftCepNEQ(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNEQ(FieldGiftCep, v))
+}
+
+// GiftCepIn applies the In predicate on the "gift_cep" field.
+func GiftCepIn(vs ...int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldIn(FieldGiftCep, vs...))
+}
+
+// GiftCepNotIn applies the NotIn predicate on the "gift_cep" field.
+func GiftCepNotIn(vs ...int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNotIn(FieldGiftCep, vs...))
+}
+
+// GiftCepGT applies the GT predicate on the "gift_cep" field.
+func GiftCepGT(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldGT(FieldGiftCep, v))
+}
+
+// GiftCepGTE applies the GTE predicate on the "gift_cep" field.
+func GiftCepGTE(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldGTE(FieldGiftCep, v))
+}
+
+// GiftCepLT applies the LT predicate on the "gift_cep" field.
+func GiftCepLT(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldLT(FieldGiftCep, v))
+}
+
+// GiftCepLTE applies the LTE predicate on the "gift_cep" field.
+func GiftCepLTE(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldLTE(FieldGiftCep, v))
 }
 
 // SocialIDEQ applies the EQ predicate on the "social_id" field.

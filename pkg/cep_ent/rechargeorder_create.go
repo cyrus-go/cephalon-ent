@@ -137,6 +137,20 @@ func (roc *RechargeOrderCreate) SetNillablePureCep(i *int64) *RechargeOrderCreat
 	return roc
 }
 
+// SetGiftCep sets the "gift_cep" field.
+func (roc *RechargeOrderCreate) SetGiftCep(i int64) *RechargeOrderCreate {
+	roc.mutation.SetGiftCep(i)
+	return roc
+}
+
+// SetNillableGiftCep sets the "gift_cep" field if the given value is not nil.
+func (roc *RechargeOrderCreate) SetNillableGiftCep(i *int64) *RechargeOrderCreate {
+	if i != nil {
+		roc.SetGiftCep(*i)
+	}
+	return roc
+}
+
 // SetSocialID sets the "social_id" field.
 func (roc *RechargeOrderCreate) SetSocialID(i int64) *RechargeOrderCreate {
 	roc.mutation.SetSocialID(i)
@@ -341,6 +355,10 @@ func (roc *RechargeOrderCreate) defaults() {
 		v := rechargeorder.DefaultPureCep
 		roc.mutation.SetPureCep(v)
 	}
+	if _, ok := roc.mutation.GiftCep(); !ok {
+		v := rechargeorder.DefaultGiftCep
+		roc.mutation.SetGiftCep(v)
+	}
 	if _, ok := roc.mutation.SocialID(); !ok {
 		v := rechargeorder.DefaultSocialID
 		roc.mutation.SetSocialID(v)
@@ -405,6 +423,14 @@ func (roc *RechargeOrderCreate) check() error {
 	if v, ok := roc.mutation.PureCep(); ok {
 		if err := rechargeorder.PureCepValidator(v); err != nil {
 			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
+		}
+	}
+	if _, ok := roc.mutation.GiftCep(); !ok {
+		return &ValidationError{Name: "gift_cep", err: errors.New(`cep_ent: missing required field "RechargeOrder.gift_cep"`)}
+	}
+	if v, ok := roc.mutation.GiftCep(); ok {
+		if err := rechargeorder.GiftCepValidator(v); err != nil {
+			return &ValidationError{Name: "gift_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.gift_cep": %w`, err)}
 		}
 	}
 	if _, ok := roc.mutation.GetType(); !ok {
@@ -490,6 +516,10 @@ func (roc *RechargeOrderCreate) createSpec() (*RechargeOrder, *sqlgraph.CreateSp
 	if value, ok := roc.mutation.PureCep(); ok {
 		_spec.SetField(rechargeorder.FieldPureCep, field.TypeInt64, value)
 		_node.PureCep = value
+	}
+	if value, ok := roc.mutation.GiftCep(); ok {
+		_spec.SetField(rechargeorder.FieldGiftCep, field.TypeInt64, value)
+		_node.GiftCep = value
 	}
 	if value, ok := roc.mutation.GetType(); ok {
 		_spec.SetField(rechargeorder.FieldType, field.TypeEnum, value)
@@ -712,6 +742,24 @@ func (u *RechargeOrderUpsert) UpdatePureCep() *RechargeOrderUpsert {
 // AddPureCep adds v to the "pure_cep" field.
 func (u *RechargeOrderUpsert) AddPureCep(v int64) *RechargeOrderUpsert {
 	u.Add(rechargeorder.FieldPureCep, v)
+	return u
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *RechargeOrderUpsert) SetGiftCep(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldGiftCep, v)
+	return u
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateGiftCep() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldGiftCep)
+	return u
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *RechargeOrderUpsert) AddGiftCep(v int64) *RechargeOrderUpsert {
+	u.Add(rechargeorder.FieldGiftCep, v)
 	return u
 }
 
@@ -966,6 +1014,27 @@ func (u *RechargeOrderUpsertOne) AddPureCep(v int64) *RechargeOrderUpsertOne {
 func (u *RechargeOrderUpsertOne) UpdatePureCep() *RechargeOrderUpsertOne {
 	return u.Update(func(s *RechargeOrderUpsert) {
 		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *RechargeOrderUpsertOne) SetGiftCep(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *RechargeOrderUpsertOne) AddGiftCep(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateGiftCep() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateGiftCep()
 	})
 }
 
@@ -1400,6 +1469,27 @@ func (u *RechargeOrderUpsertBulk) AddPureCep(v int64) *RechargeOrderUpsertBulk {
 func (u *RechargeOrderUpsertBulk) UpdatePureCep() *RechargeOrderUpsertBulk {
 	return u.Update(func(s *RechargeOrderUpsert) {
 		s.UpdatePureCep()
+	})
+}
+
+// SetGiftCep sets the "gift_cep" field.
+func (u *RechargeOrderUpsertBulk) SetGiftCep(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetGiftCep(v)
+	})
+}
+
+// AddGiftCep adds v to the "gift_cep" field.
+func (u *RechargeOrderUpsertBulk) AddGiftCep(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.AddGiftCep(v)
+	})
+}
+
+// UpdateGiftCep sets the "gift_cep" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateGiftCep() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateGiftCep()
 	})
 }
 

@@ -1450,24 +1450,30 @@ func init() {
 	rechargeorder.DefaultPureCep = rechargeorderDescPureCep.Default.(int64)
 	// rechargeorder.PureCepValidator is a validator for the "pure_cep" field. It is called by the builders before save.
 	rechargeorder.PureCepValidator = rechargeorderDescPureCep.Validators[0].(func(int64) error)
+	// rechargeorderDescGiftCep is the schema descriptor for gift_cep field.
+	rechargeorderDescGiftCep := rechargeorderFields[3].Descriptor()
+	// rechargeorder.DefaultGiftCep holds the default value on creation for the gift_cep field.
+	rechargeorder.DefaultGiftCep = rechargeorderDescGiftCep.Default.(int64)
+	// rechargeorder.GiftCepValidator is a validator for the "gift_cep" field. It is called by the builders before save.
+	rechargeorder.GiftCepValidator = rechargeorderDescGiftCep.Validators[0].(func(int64) error)
 	// rechargeorderDescSocialID is the schema descriptor for social_id field.
-	rechargeorderDescSocialID := rechargeorderFields[3].Descriptor()
+	rechargeorderDescSocialID := rechargeorderFields[4].Descriptor()
 	// rechargeorder.DefaultSocialID holds the default value on creation for the social_id field.
 	rechargeorder.DefaultSocialID = rechargeorderDescSocialID.Default.(int64)
 	// rechargeorderDescSerialNumber is the schema descriptor for serial_number field.
-	rechargeorderDescSerialNumber := rechargeorderFields[5].Descriptor()
+	rechargeorderDescSerialNumber := rechargeorderFields[6].Descriptor()
 	// rechargeorder.DefaultSerialNumber holds the default value on creation for the serial_number field.
 	rechargeorder.DefaultSerialNumber = rechargeorderDescSerialNumber.Default.(string)
 	// rechargeorderDescThirdAPIResp is the schema descriptor for third_api_resp field.
-	rechargeorderDescThirdAPIResp := rechargeorderFields[6].Descriptor()
+	rechargeorderDescThirdAPIResp := rechargeorderFields[7].Descriptor()
 	// rechargeorder.DefaultThirdAPIResp holds the default value on creation for the third_api_resp field.
 	rechargeorder.DefaultThirdAPIResp = rechargeorderDescThirdAPIResp.Default.(string)
 	// rechargeorderDescFromUserID is the schema descriptor for from_user_id field.
-	rechargeorderDescFromUserID := rechargeorderFields[7].Descriptor()
+	rechargeorderDescFromUserID := rechargeorderFields[8].Descriptor()
 	// rechargeorder.DefaultFromUserID holds the default value on creation for the from_user_id field.
 	rechargeorder.DefaultFromUserID = rechargeorderDescFromUserID.Default.(int64)
 	// rechargeorderDescOutTransactionID is the schema descriptor for out_transaction_id field.
-	rechargeorderDescOutTransactionID := rechargeorderFields[8].Descriptor()
+	rechargeorderDescOutTransactionID := rechargeorderFields[9].Descriptor()
 	// rechargeorder.DefaultOutTransactionID holds the default value on creation for the out_transaction_id field.
 	rechargeorder.DefaultOutTransactionID = rechargeorderDescOutTransactionID.Default.(string)
 	// rechargeorderDescID is the schema descriptor for id field.

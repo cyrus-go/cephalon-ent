@@ -837,6 +837,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "status", Type: field.TypeEnum, Comment: "充值订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "充值多少本金", Default: 0},
+		{Name: "gift_cep", Type: field.TypeInt64, Comment: "赠金", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"vx", "alipay", "manual"}, Default: "vx"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
@@ -853,13 +854,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "recharge_orders_users_recharge_orders",
-				Columns:    []*schema.Column{RechargeOrdersColumns[13]},
+				Columns:    []*schema.Column{RechargeOrdersColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "recharge_orders_vx_socials_recharge_orders",
-				Columns:    []*schema.Column{RechargeOrdersColumns[14]},
+				Columns:    []*schema.Column{RechargeOrdersColumns[15]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

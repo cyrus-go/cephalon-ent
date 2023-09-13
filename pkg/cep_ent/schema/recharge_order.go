@@ -17,6 +17,7 @@ func (RechargeOrder) Fields() []ent.Field {
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("充值的用户 id"),
 		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("充值订单的状态，比如微信发起支付后可能没完成支付"),
 		field.Int64("pure_cep").Default(0).Positive().StructTag(`json:"pure_cep"`).Comment("充值多少本金"),
+		field.Int64("gift_cep").Default(0).Positive().StructTag(`json:"gift_cep"`).Comment("赠金"),
 		field.Int64("social_id").Default(0).Optional().StructTag(`json:"social_id"`).Comment("关联充值来源的身份源 id"),
 		field.Enum("type").Values("vx", "alipay", "manual").Default("vx").StructTag(`json:"type"`).Comment("充值订单的类型"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("充值订单的序列号"),

@@ -31405,6 +31405,8 @@ type RechargeOrderMutation struct {
 	status             *rechargeorder.Status
 	pure_cep           *int64
 	addpure_cep        *int64
+	gift_cep           *int64
+	addgift_cep        *int64
 	_type              *rechargeorder.Type
 	serial_number      *string
 	third_api_resp     *string
@@ -31876,6 +31878,62 @@ func (m *RechargeOrderMutation) ResetPureCep() {
 	m.addpure_cep = nil
 }
 
+// SetGiftCep sets the "gift_cep" field.
+func (m *RechargeOrderMutation) SetGiftCep(i int64) {
+	m.gift_cep = &i
+	m.addgift_cep = nil
+}
+
+// GiftCep returns the value of the "gift_cep" field in the mutation.
+func (m *RechargeOrderMutation) GiftCep() (r int64, exists bool) {
+	v := m.gift_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGiftCep returns the old "gift_cep" field's value of the RechargeOrder entity.
+// If the RechargeOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeOrderMutation) OldGiftCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGiftCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGiftCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGiftCep: %w", err)
+	}
+	return oldValue.GiftCep, nil
+}
+
+// AddGiftCep adds i to the "gift_cep" field.
+func (m *RechargeOrderMutation) AddGiftCep(i int64) {
+	if m.addgift_cep != nil {
+		*m.addgift_cep += i
+	} else {
+		m.addgift_cep = &i
+	}
+}
+
+// AddedGiftCep returns the value that was added to the "gift_cep" field in this mutation.
+func (m *RechargeOrderMutation) AddedGiftCep() (r int64, exists bool) {
+	v := m.addgift_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGiftCep resets all changes to the "gift_cep" field.
+func (m *RechargeOrderMutation) ResetGiftCep() {
+	m.gift_cep = nil
+	m.addgift_cep = nil
+}
+
 // SetSocialID sets the "social_id" field.
 func (m *RechargeOrderMutation) SetSocialID(i int64) {
 	m.vx_social = &i
@@ -32280,7 +32338,7 @@ func (m *RechargeOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RechargeOrderMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, rechargeorder.FieldCreatedBy)
 	}
@@ -32304,6 +32362,9 @@ func (m *RechargeOrderMutation) Fields() []string {
 	}
 	if m.pure_cep != nil {
 		fields = append(fields, rechargeorder.FieldPureCep)
+	}
+	if m.gift_cep != nil {
+		fields = append(fields, rechargeorder.FieldGiftCep)
 	}
 	if m.vx_social != nil {
 		fields = append(fields, rechargeorder.FieldSocialID)
@@ -32347,6 +32408,8 @@ func (m *RechargeOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case rechargeorder.FieldPureCep:
 		return m.PureCep()
+	case rechargeorder.FieldGiftCep:
+		return m.GiftCep()
 	case rechargeorder.FieldSocialID:
 		return m.SocialID()
 	case rechargeorder.FieldType:
@@ -32384,6 +32447,8 @@ func (m *RechargeOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldStatus(ctx)
 	case rechargeorder.FieldPureCep:
 		return m.OldPureCep(ctx)
+	case rechargeorder.FieldGiftCep:
+		return m.OldGiftCep(ctx)
 	case rechargeorder.FieldSocialID:
 		return m.OldSocialID(ctx)
 	case rechargeorder.FieldType:
@@ -32461,6 +32526,13 @@ func (m *RechargeOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPureCep(v)
 		return nil
+	case rechargeorder.FieldGiftCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGiftCep(v)
+		return nil
 	case rechargeorder.FieldSocialID:
 		v, ok := value.(int64)
 		if !ok {
@@ -32520,6 +32592,9 @@ func (m *RechargeOrderMutation) AddedFields() []string {
 	if m.addpure_cep != nil {
 		fields = append(fields, rechargeorder.FieldPureCep)
 	}
+	if m.addgift_cep != nil {
+		fields = append(fields, rechargeorder.FieldGiftCep)
+	}
 	if m.addfrom_user_id != nil {
 		fields = append(fields, rechargeorder.FieldFromUserID)
 	}
@@ -32537,6 +32612,8 @@ func (m *RechargeOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case rechargeorder.FieldPureCep:
 		return m.AddedPureCep()
+	case rechargeorder.FieldGiftCep:
+		return m.AddedGiftCep()
 	case rechargeorder.FieldFromUserID:
 		return m.AddedFromUserID()
 	}
@@ -32568,6 +32645,13 @@ func (m *RechargeOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddPureCep(v)
+		return nil
+	case rechargeorder.FieldGiftCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGiftCep(v)
 		return nil
 	case rechargeorder.FieldFromUserID:
 		v, ok := value.(int64)
@@ -32635,6 +32719,9 @@ func (m *RechargeOrderMutation) ResetField(name string) error {
 		return nil
 	case rechargeorder.FieldPureCep:
 		m.ResetPureCep()
+		return nil
+	case rechargeorder.FieldGiftCep:
+		m.ResetGiftCep()
 		return nil
 	case rechargeorder.FieldSocialID:
 		m.ResetSocialID()

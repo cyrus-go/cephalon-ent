@@ -31,6 +31,8 @@ const (
 	FieldStatus = "status"
 	// FieldPureCep holds the string denoting the pure_cep field in the database.
 	FieldPureCep = "pure_cep"
+	// FieldGiftCep holds the string denoting the gift_cep field in the database.
+	FieldGiftCep = "gift_cep"
 	// FieldSocialID holds the string denoting the social_id field in the database.
 	FieldSocialID = "social_id"
 	// FieldType holds the string denoting the type field in the database.
@@ -85,6 +87,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldStatus,
 	FieldPureCep,
+	FieldGiftCep,
 	FieldSocialID,
 	FieldType,
 	FieldSerialNumber,
@@ -122,6 +125,10 @@ var (
 	DefaultPureCep int64
 	// PureCepValidator is a validator for the "pure_cep" field. It is called by the builders before save.
 	PureCepValidator func(int64) error
+	// DefaultGiftCep holds the default value on creation for the "gift_cep" field.
+	DefaultGiftCep int64
+	// GiftCepValidator is a validator for the "gift_cep" field. It is called by the builders before save.
+	GiftCepValidator func(int64) error
 	// DefaultSocialID holds the default value on creation for the "social_id" field.
 	DefaultSocialID int64
 	// DefaultSerialNumber holds the default value on creation for the "serial_number" field.
@@ -237,6 +244,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByPureCep orders the results by the pure_cep field.
 func ByPureCep(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPureCep, opts...).ToFunc()
+}
+
+// ByGiftCep orders the results by the gift_cep field.
+func ByGiftCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftCep, opts...).ToFunc()
 }
 
 // BySocialID orders the results by the social_id field.

@@ -142,6 +142,27 @@ func (rou *RechargeOrderUpdate) AddPureCep(i int64) *RechargeOrderUpdate {
 	return rou
 }
 
+// SetGiftCep sets the "gift_cep" field.
+func (rou *RechargeOrderUpdate) SetGiftCep(i int64) *RechargeOrderUpdate {
+	rou.mutation.ResetGiftCep()
+	rou.mutation.SetGiftCep(i)
+	return rou
+}
+
+// SetNillableGiftCep sets the "gift_cep" field if the given value is not nil.
+func (rou *RechargeOrderUpdate) SetNillableGiftCep(i *int64) *RechargeOrderUpdate {
+	if i != nil {
+		rou.SetGiftCep(*i)
+	}
+	return rou
+}
+
+// AddGiftCep adds i to the "gift_cep" field.
+func (rou *RechargeOrderUpdate) AddGiftCep(i int64) *RechargeOrderUpdate {
+	rou.mutation.AddGiftCep(i)
+	return rou
+}
+
 // SetSocialID sets the "social_id" field.
 func (rou *RechargeOrderUpdate) SetSocialID(i int64) *RechargeOrderUpdate {
 	rou.mutation.SetSocialID(i)
@@ -364,6 +385,11 @@ func (rou *RechargeOrderUpdate) check() error {
 			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
 		}
 	}
+	if v, ok := rou.mutation.GiftCep(); ok {
+		if err := rechargeorder.GiftCepValidator(v); err != nil {
+			return &ValidationError{Name: "gift_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.gift_cep": %w`, err)}
+		}
+	}
 	if v, ok := rou.mutation.GetType(); ok {
 		if err := rechargeorder.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.type": %w`, err)}
@@ -413,6 +439,12 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := rou.mutation.AddedPureCep(); ok {
 		_spec.AddField(rechargeorder.FieldPureCep, field.TypeInt64, value)
+	}
+	if value, ok := rou.mutation.GiftCep(); ok {
+		_spec.SetField(rechargeorder.FieldGiftCep, field.TypeInt64, value)
+	}
+	if value, ok := rou.mutation.AddedGiftCep(); ok {
+		_spec.AddField(rechargeorder.FieldGiftCep, field.TypeInt64, value)
 	}
 	if value, ok := rou.mutation.GetType(); ok {
 		_spec.SetField(rechargeorder.FieldType, field.TypeEnum, value)
@@ -666,6 +698,27 @@ func (rouo *RechargeOrderUpdateOne) AddPureCep(i int64) *RechargeOrderUpdateOne 
 	return rouo
 }
 
+// SetGiftCep sets the "gift_cep" field.
+func (rouo *RechargeOrderUpdateOne) SetGiftCep(i int64) *RechargeOrderUpdateOne {
+	rouo.mutation.ResetGiftCep()
+	rouo.mutation.SetGiftCep(i)
+	return rouo
+}
+
+// SetNillableGiftCep sets the "gift_cep" field if the given value is not nil.
+func (rouo *RechargeOrderUpdateOne) SetNillableGiftCep(i *int64) *RechargeOrderUpdateOne {
+	if i != nil {
+		rouo.SetGiftCep(*i)
+	}
+	return rouo
+}
+
+// AddGiftCep adds i to the "gift_cep" field.
+func (rouo *RechargeOrderUpdateOne) AddGiftCep(i int64) *RechargeOrderUpdateOne {
+	rouo.mutation.AddGiftCep(i)
+	return rouo
+}
+
 // SetSocialID sets the "social_id" field.
 func (rouo *RechargeOrderUpdateOne) SetSocialID(i int64) *RechargeOrderUpdateOne {
 	rouo.mutation.SetSocialID(i)
@@ -901,6 +954,11 @@ func (rouo *RechargeOrderUpdateOne) check() error {
 			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
 		}
 	}
+	if v, ok := rouo.mutation.GiftCep(); ok {
+		if err := rechargeorder.GiftCepValidator(v); err != nil {
+			return &ValidationError{Name: "gift_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.gift_cep": %w`, err)}
+		}
+	}
 	if v, ok := rouo.mutation.GetType(); ok {
 		if err := rechargeorder.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.type": %w`, err)}
@@ -967,6 +1025,12 @@ func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *Recharg
 	}
 	if value, ok := rouo.mutation.AddedPureCep(); ok {
 		_spec.AddField(rechargeorder.FieldPureCep, field.TypeInt64, value)
+	}
+	if value, ok := rouo.mutation.GiftCep(); ok {
+		_spec.SetField(rechargeorder.FieldGiftCep, field.TypeInt64, value)
+	}
+	if value, ok := rouo.mutation.AddedGiftCep(); ok {
+		_spec.AddField(rechargeorder.FieldGiftCep, field.TypeInt64, value)
 	}
 	if value, ok := rouo.mutation.GetType(); ok {
 		_spec.SetField(rechargeorder.FieldType, field.TypeEnum, value)

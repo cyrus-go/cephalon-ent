@@ -35,6 +35,8 @@ type RechargeOrder struct {
 	Status rechargeorder.Status `json:"status"`
 	// 充值多少本金
 	PureCep int64 `json:"pure_cep"`
+	// 赠金
+	GiftCep int64 `json:"gift_cep"`
 	// 关联充值来源的身份源 id
 	SocialID int64 `json:"social_id"`
 	// 充值订单的类型
@@ -106,7 +108,7 @@ func (*RechargeOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case rechargeorder.FieldID, rechargeorder.FieldCreatedBy, rechargeorder.FieldUpdatedBy, rechargeorder.FieldUserID, rechargeorder.FieldPureCep, rechargeorder.FieldSocialID, rechargeorder.FieldFromUserID:
+		case rechargeorder.FieldID, rechargeorder.FieldCreatedBy, rechargeorder.FieldUpdatedBy, rechargeorder.FieldUserID, rechargeorder.FieldPureCep, rechargeorder.FieldGiftCep, rechargeorder.FieldSocialID, rechargeorder.FieldFromUserID:
 			values[i] = new(sql.NullInt64)
 		case rechargeorder.FieldStatus, rechargeorder.FieldType, rechargeorder.FieldSerialNumber, rechargeorder.FieldThirdAPIResp, rechargeorder.FieldOutTransactionID:
 			values[i] = new(sql.NullString)
@@ -180,6 +182,12 @@ func (ro *RechargeOrder) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field pure_cep", values[i])
 			} else if value.Valid {
 				ro.PureCep = value.Int64
+			}
+		case rechargeorder.FieldGiftCep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gift_cep", values[i])
+			} else if value.Valid {
+				ro.GiftCep = value.Int64
 			}
 		case rechargeorder.FieldSocialID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -291,6 +299,9 @@ func (ro *RechargeOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("pure_cep=")
 	builder.WriteString(fmt.Sprintf("%v", ro.PureCep))
+	builder.WriteString(", ")
+	builder.WriteString("gift_cep=")
+	builder.WriteString(fmt.Sprintf("%v", ro.GiftCep))
 	builder.WriteString(", ")
 	builder.WriteString("social_id=")
 	builder.WriteString(fmt.Sprintf("%v", ro.SocialID))
