@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Campaign is the predicate function for campaign builders.
+type Campaign func(*sql.Selector)
+
 // Collect is the predicate function for collect builders.
 type Collect func(*sql.Selector)
 

@@ -21,6 +21,7 @@ func (Invite) Fields() []ent.Field {
 		field.String("type").Default("").StructTag(`json:"type"`).Comment("邀请码类型（可以用来区分不同的活动）"),
 
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键用户 id"),
+		field.Int64("campaign_id").StructTag(`json:"campaign_id"`).Default(0).Comment("外键活动 id"),
 	}
 }
 
@@ -29,6 +30,7 @@ func (Invite) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("invites").Field("user_id").Unique().Required(),
+		edge.From("campaign", Campaign.Type).Ref("invites").Field("campaign_id").Unique().Required(),
 	}
 }
 

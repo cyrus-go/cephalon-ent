@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
@@ -38,6 +39,8 @@ type Invite struct {
 	Type string `json:"type"`
 	// 外键用户 id
 	UserID int64 `json:"user_id"`
+	// 外键活动 id
+	CampaignID int64 `json:"campaign_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InviteQuery when eager-loading is set.
 	Edges        InviteEdges `json:"edges"`
@@ -48,9 +51,11 @@ type Invite struct {
 type InviteEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// Campaign holds the value of the campaign edge.
+	Campaign *Campaign `json:"campaign,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -66,12 +71,25 @@ func (e InviteEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
+// CampaignOrErr returns the Campaign value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e InviteEdges) CampaignOrErr() (*Campaign, error) {
+	if e.loadedTypes[1] {
+		if e.Campaign == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: campaign.Label}
+		}
+		return e.Campaign, nil
+	}
+	return nil, &NotLoadedError{edge: "campaign"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Invite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldShareCep, invite.FieldRegCep, invite.FieldUserID:
+		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldShareCep, invite.FieldRegCep, invite.FieldUserID, invite.FieldCampaignID:
 			values[i] = new(sql.NullInt64)
 		case invite.FieldInviteCode, invite.FieldType:
 			values[i] = new(sql.NullString)
@@ -158,6 +176,12 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				i.UserID = value.Int64
 			}
+		case invite.FieldCampaignID:
+			if value, ok := values[j].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field campaign_id", values[j])
+			} else if value.Valid {
+				i.CampaignID = value.Int64
+			}
 		default:
 			i.selectValues.Set(columns[j], values[j])
 		}
@@ -174,6 +198,11 @@ func (i *Invite) Value(name string) (ent.Value, error) {
 // QueryUser queries the "user" edge of the Invite entity.
 func (i *Invite) QueryUser() *UserQuery {
 	return NewInviteClient(i.config).QueryUser(i)
+}
+
+// QueryCampaign queries the "campaign" edge of the Invite entity.
+func (i *Invite) QueryCampaign() *CampaignQuery {
+	return NewInviteClient(i.config).QueryCampaign(i)
 }
 
 // Update returns a builder for updating this Invite.
@@ -228,6 +257,9 @@ func (i *Invite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", i.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("campaign_id=")
+	builder.WriteString(fmt.Sprintf("%v", i.CampaignID))
 	builder.WriteByte(')')
 	return builder.String()
 }

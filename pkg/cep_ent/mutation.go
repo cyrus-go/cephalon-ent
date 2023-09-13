@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -54,6 +55,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeCampaign            = "Campaign"
 	TypeCollect             = "Collect"
 	TypeCostAccount         = "CostAccount"
 	TypeCostBill            = "CostBill"
@@ -85,6 +87,1073 @@ const (
 	TypeVXAccount           = "VXAccount"
 	TypeVXSocial            = "VXSocial"
 )
+
+// CampaignMutation represents an operation that mutates the Campaign nodes in the graph.
+type CampaignMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int64
+	created_by     *int64
+	addcreated_by  *int64
+	updated_by     *int64
+	addupdated_by  *int64
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	name           *string
+	_type          *string
+	started_at     *time.Time
+	ended_at       *time.Time
+	status         *int
+	addstatus      *int
+	invite_id      *string
+	clearedFields  map[string]struct{}
+	invites        map[int64]struct{}
+	removedinvites map[int64]struct{}
+	clearedinvites bool
+	done           bool
+	oldValue       func(context.Context) (*Campaign, error)
+	predicates     []predicate.Campaign
+}
+
+var _ ent.Mutation = (*CampaignMutation)(nil)
+
+// campaignOption allows management of the mutation configuration using functional options.
+type campaignOption func(*CampaignMutation)
+
+// newCampaignMutation creates new mutation for the Campaign entity.
+func newCampaignMutation(c config, op Op, opts ...campaignOption) *CampaignMutation {
+	m := &CampaignMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCampaign,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCampaignID sets the ID field of the mutation.
+func withCampaignID(id int64) campaignOption {
+	return func(m *CampaignMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Campaign
+		)
+		m.oldValue = func(ctx context.Context) (*Campaign, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Campaign.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCampaign sets the old Campaign of the mutation.
+func withCampaign(node *Campaign) campaignOption {
+	return func(m *CampaignMutation) {
+		m.oldValue = func(context.Context) (*Campaign, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CampaignMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CampaignMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Campaign entities.
+func (m *CampaignMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CampaignMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CampaignMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Campaign.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CampaignMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CampaignMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *CampaignMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CampaignMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CampaignMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CampaignMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CampaignMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *CampaignMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CampaignMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CampaignMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CampaignMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CampaignMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CampaignMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CampaignMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CampaignMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CampaignMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CampaignMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CampaignMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CampaignMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *CampaignMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *CampaignMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *CampaignMutation) ResetName() {
+	m.name = nil
+}
+
+// SetType sets the "type" field.
+func (m *CampaignMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *CampaignMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *CampaignMutation) ResetType() {
+	m._type = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *CampaignMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *CampaignMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldStartedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *CampaignMutation) ResetStartedAt() {
+	m.started_at = nil
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (m *CampaignMutation) SetEndedAt(t time.Time) {
+	m.ended_at = &t
+}
+
+// EndedAt returns the value of the "ended_at" field in the mutation.
+func (m *CampaignMutation) EndedAt() (r time.Time, exists bool) {
+	v := m.ended_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndedAt returns the old "ended_at" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldEndedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndedAt: %w", err)
+	}
+	return oldValue.EndedAt, nil
+}
+
+// ResetEndedAt resets all changes to the "ended_at" field.
+func (m *CampaignMutation) ResetEndedAt() {
+	m.ended_at = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *CampaignMutation) SetStatus(i int) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *CampaignMutation) Status() (r int, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldStatus(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *CampaignMutation) AddStatus(i int) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *CampaignMutation) AddedStatus() (r int, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *CampaignMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetInviteID sets the "invite_id" field.
+func (m *CampaignMutation) SetInviteID(s string) {
+	m.invite_id = &s
+}
+
+// InviteID returns the value of the "invite_id" field in the mutation.
+func (m *CampaignMutation) InviteID() (r string, exists bool) {
+	v := m.invite_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInviteID returns the old "invite_id" field's value of the Campaign entity.
+// If the Campaign object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignMutation) OldInviteID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInviteID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInviteID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInviteID: %w", err)
+	}
+	return oldValue.InviteID, nil
+}
+
+// ResetInviteID resets all changes to the "invite_id" field.
+func (m *CampaignMutation) ResetInviteID() {
+	m.invite_id = nil
+}
+
+// AddInviteIDs adds the "invites" edge to the Invite entity by ids.
+func (m *CampaignMutation) AddInviteIDs(ids ...int64) {
+	if m.invites == nil {
+		m.invites = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.invites[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInvites clears the "invites" edge to the Invite entity.
+func (m *CampaignMutation) ClearInvites() {
+	m.clearedinvites = true
+}
+
+// InvitesCleared reports if the "invites" edge to the Invite entity was cleared.
+func (m *CampaignMutation) InvitesCleared() bool {
+	return m.clearedinvites
+}
+
+// RemoveInviteIDs removes the "invites" edge to the Invite entity by IDs.
+func (m *CampaignMutation) RemoveInviteIDs(ids ...int64) {
+	if m.removedinvites == nil {
+		m.removedinvites = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.invites, ids[i])
+		m.removedinvites[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInvites returns the removed IDs of the "invites" edge to the Invite entity.
+func (m *CampaignMutation) RemovedInvitesIDs() (ids []int64) {
+	for id := range m.removedinvites {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InvitesIDs returns the "invites" edge IDs in the mutation.
+func (m *CampaignMutation) InvitesIDs() (ids []int64) {
+	for id := range m.invites {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInvites resets all changes to the "invites" edge.
+func (m *CampaignMutation) ResetInvites() {
+	m.invites = nil
+	m.clearedinvites = false
+	m.removedinvites = nil
+}
+
+// Where appends a list predicates to the CampaignMutation builder.
+func (m *CampaignMutation) Where(ps ...predicate.Campaign) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CampaignMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CampaignMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Campaign, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CampaignMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CampaignMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Campaign).
+func (m *CampaignMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CampaignMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_by != nil {
+		fields = append(fields, campaign.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, campaign.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, campaign.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, campaign.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, campaign.FieldDeletedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, campaign.FieldName)
+	}
+	if m._type != nil {
+		fields = append(fields, campaign.FieldType)
+	}
+	if m.started_at != nil {
+		fields = append(fields, campaign.FieldStartedAt)
+	}
+	if m.ended_at != nil {
+		fields = append(fields, campaign.FieldEndedAt)
+	}
+	if m.status != nil {
+		fields = append(fields, campaign.FieldStatus)
+	}
+	if m.invite_id != nil {
+		fields = append(fields, campaign.FieldInviteID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CampaignMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case campaign.FieldCreatedBy:
+		return m.CreatedBy()
+	case campaign.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case campaign.FieldCreatedAt:
+		return m.CreatedAt()
+	case campaign.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case campaign.FieldDeletedAt:
+		return m.DeletedAt()
+	case campaign.FieldName:
+		return m.Name()
+	case campaign.FieldType:
+		return m.GetType()
+	case campaign.FieldStartedAt:
+		return m.StartedAt()
+	case campaign.FieldEndedAt:
+		return m.EndedAt()
+	case campaign.FieldStatus:
+		return m.Status()
+	case campaign.FieldInviteID:
+		return m.InviteID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CampaignMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case campaign.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case campaign.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case campaign.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case campaign.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case campaign.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case campaign.FieldName:
+		return m.OldName(ctx)
+	case campaign.FieldType:
+		return m.OldType(ctx)
+	case campaign.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case campaign.FieldEndedAt:
+		return m.OldEndedAt(ctx)
+	case campaign.FieldStatus:
+		return m.OldStatus(ctx)
+	case campaign.FieldInviteID:
+		return m.OldInviteID(ctx)
+	}
+	return nil, fmt.Errorf("unknown Campaign field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CampaignMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case campaign.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case campaign.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case campaign.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case campaign.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case campaign.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case campaign.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case campaign.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case campaign.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case campaign.FieldEndedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndedAt(v)
+		return nil
+	case campaign.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case campaign.FieldInviteID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInviteID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Campaign field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CampaignMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, campaign.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, campaign.FieldUpdatedBy)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, campaign.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CampaignMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case campaign.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case campaign.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case campaign.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CampaignMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case campaign.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case campaign.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case campaign.FieldStatus:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Campaign numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CampaignMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CampaignMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CampaignMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Campaign nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CampaignMutation) ResetField(name string) error {
+	switch name {
+	case campaign.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case campaign.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case campaign.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case campaign.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case campaign.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case campaign.FieldName:
+		m.ResetName()
+		return nil
+	case campaign.FieldType:
+		m.ResetType()
+		return nil
+	case campaign.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case campaign.FieldEndedAt:
+		m.ResetEndedAt()
+		return nil
+	case campaign.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case campaign.FieldInviteID:
+		m.ResetInviteID()
+		return nil
+	}
+	return fmt.Errorf("unknown Campaign field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CampaignMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.invites != nil {
+		edges = append(edges, campaign.EdgeInvites)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CampaignMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case campaign.EdgeInvites:
+		ids := make([]ent.Value, 0, len(m.invites))
+		for id := range m.invites {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CampaignMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedinvites != nil {
+		edges = append(edges, campaign.EdgeInvites)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CampaignMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case campaign.EdgeInvites:
+		ids := make([]ent.Value, 0, len(m.removedinvites))
+		for id := range m.removedinvites {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CampaignMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedinvites {
+		edges = append(edges, campaign.EdgeInvites)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CampaignMutation) EdgeCleared(name string) bool {
+	switch name {
+	case campaign.EdgeInvites:
+		return m.clearedinvites
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CampaignMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Campaign unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CampaignMutation) ResetEdge(name string) error {
+	switch name {
+	case campaign.EdgeInvites:
+		m.ResetInvites()
+		return nil
+	}
+	return fmt.Errorf("unknown Campaign edge %s", name)
+}
 
 // CollectMutation represents an operation that mutates the Collect nodes in the graph.
 type CollectMutation struct {
@@ -14891,28 +15960,30 @@ func (m *InputLogMutation) ResetEdge(name string) error {
 // InviteMutation represents an operation that mutates the Invite nodes in the graph.
 type InviteMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	created_by    *int64
-	addcreated_by *int64
-	updated_by    *int64
-	addupdated_by *int64
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	invite_code   *string
-	share_cep     *int64
-	addshare_cep  *int64
-	reg_cep       *int64
-	addreg_cep    *int64
-	_type         *string
-	clearedFields map[string]struct{}
-	user          *int64
-	cleareduser   bool
-	done          bool
-	oldValue      func(context.Context) (*Invite, error)
-	predicates    []predicate.Invite
+	op              Op
+	typ             string
+	id              *int64
+	created_by      *int64
+	addcreated_by   *int64
+	updated_by      *int64
+	addupdated_by   *int64
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	invite_code     *string
+	share_cep       *int64
+	addshare_cep    *int64
+	reg_cep         *int64
+	addreg_cep      *int64
+	_type           *string
+	clearedFields   map[string]struct{}
+	user            *int64
+	cleareduser     bool
+	campaign        *int64
+	clearedcampaign bool
+	done            bool
+	oldValue        func(context.Context) (*Invite, error)
+	predicates      []predicate.Invite
 }
 
 var _ ent.Mutation = (*InviteMutation)(nil)
@@ -15459,6 +16530,42 @@ func (m *InviteMutation) ResetUserID() {
 	m.user = nil
 }
 
+// SetCampaignID sets the "campaign_id" field.
+func (m *InviteMutation) SetCampaignID(i int64) {
+	m.campaign = &i
+}
+
+// CampaignID returns the value of the "campaign_id" field in the mutation.
+func (m *InviteMutation) CampaignID() (r int64, exists bool) {
+	v := m.campaign
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCampaignID returns the old "campaign_id" field's value of the Invite entity.
+// If the Invite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InviteMutation) OldCampaignID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCampaignID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCampaignID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCampaignID: %w", err)
+	}
+	return oldValue.CampaignID, nil
+}
+
+// ResetCampaignID resets all changes to the "campaign_id" field.
+func (m *InviteMutation) ResetCampaignID() {
+	m.campaign = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *InviteMutation) ClearUser() {
 	m.cleareduser = true
@@ -15484,6 +16591,33 @@ func (m *InviteMutation) UserIDs() (ids []int64) {
 func (m *InviteMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
+}
+
+// ClearCampaign clears the "campaign" edge to the Campaign entity.
+func (m *InviteMutation) ClearCampaign() {
+	m.clearedcampaign = true
+	m.clearedFields[invite.FieldCampaignID] = struct{}{}
+}
+
+// CampaignCleared reports if the "campaign" edge to the Campaign entity was cleared.
+func (m *InviteMutation) CampaignCleared() bool {
+	return m.clearedcampaign
+}
+
+// CampaignIDs returns the "campaign" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CampaignID instead. It exists only for internal usage by the builders.
+func (m *InviteMutation) CampaignIDs() (ids []int64) {
+	if id := m.campaign; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCampaign resets all changes to the "campaign" edge.
+func (m *InviteMutation) ResetCampaign() {
+	m.campaign = nil
+	m.clearedcampaign = false
 }
 
 // Where appends a list predicates to the InviteMutation builder.
@@ -15520,7 +16654,7 @@ func (m *InviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InviteMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_by != nil {
 		fields = append(fields, invite.FieldCreatedBy)
 	}
@@ -15551,6 +16685,9 @@ func (m *InviteMutation) Fields() []string {
 	if m.user != nil {
 		fields = append(fields, invite.FieldUserID)
 	}
+	if m.campaign != nil {
+		fields = append(fields, invite.FieldCampaignID)
+	}
 	return fields
 }
 
@@ -15579,6 +16716,8 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case invite.FieldUserID:
 		return m.UserID()
+	case invite.FieldCampaignID:
+		return m.CampaignID()
 	}
 	return nil, false
 }
@@ -15608,6 +16747,8 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldType(ctx)
 	case invite.FieldUserID:
 		return m.OldUserID(ctx)
+	case invite.FieldCampaignID:
+		return m.OldCampaignID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Invite field %s", name)
 }
@@ -15686,6 +16827,13 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
+		return nil
+	case invite.FieldCampaignID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCampaignID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Invite field %s", name)
@@ -15817,15 +16965,21 @@ func (m *InviteMutation) ResetField(name string) error {
 	case invite.FieldUserID:
 		m.ResetUserID()
 		return nil
+	case invite.FieldCampaignID:
+		m.ResetCampaignID()
+		return nil
 	}
 	return fmt.Errorf("unknown Invite field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *InviteMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.user != nil {
 		edges = append(edges, invite.EdgeUser)
+	}
+	if m.campaign != nil {
+		edges = append(edges, invite.EdgeCampaign)
 	}
 	return edges
 }
@@ -15838,13 +16992,17 @@ func (m *InviteMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case invite.EdgeCampaign:
+		if id := m.campaign; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *InviteMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -15856,9 +17014,12 @@ func (m *InviteMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *InviteMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareduser {
 		edges = append(edges, invite.EdgeUser)
+	}
+	if m.clearedcampaign {
+		edges = append(edges, invite.EdgeCampaign)
 	}
 	return edges
 }
@@ -15869,6 +17030,8 @@ func (m *InviteMutation) EdgeCleared(name string) bool {
 	switch name {
 	case invite.EdgeUser:
 		return m.cleareduser
+	case invite.EdgeCampaign:
+		return m.clearedcampaign
 	}
 	return false
 }
@@ -15880,6 +17043,9 @@ func (m *InviteMutation) ClearEdge(name string) error {
 	case invite.EdgeUser:
 		m.ClearUser()
 		return nil
+	case invite.EdgeCampaign:
+		m.ClearCampaign()
+		return nil
 	}
 	return fmt.Errorf("unknown Invite unique edge %s", name)
 }
@@ -15890,6 +17056,9 @@ func (m *InviteMutation) ResetEdge(name string) error {
 	switch name {
 	case invite.EdgeUser:
 		m.ResetUser()
+		return nil
+	case invite.EdgeCampaign:
+		m.ResetCampaign()
 		return nil
 	}
 	return fmt.Errorf("unknown Invite edge %s", name)

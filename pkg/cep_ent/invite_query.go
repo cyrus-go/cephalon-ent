@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -18,11 +19,12 @@ import (
 // InviteQuery is the builder for querying Invite entities.
 type InviteQuery struct {
 	config
-	ctx        *QueryContext
-	order      []invite.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Invite
-	withUser   *UserQuery
+	ctx          *QueryContext
+	order        []invite.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.Invite
+	withUser     *UserQuery
+	withCampaign *CampaignQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -74,6 +76,28 @@ func (iq *InviteQuery) QueryUser() *UserQuery {
 			sqlgraph.From(invite.Table, invite.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, invite.UserTable, invite.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCampaign chains the current query on the "campaign" edge.
+func (iq *InviteQuery) QueryCampaign() *CampaignQuery {
+	query := (&CampaignClient{config: iq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := iq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := iq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invite.Table, invite.FieldID, selector),
+			sqlgraph.To(campaign.Table, campaign.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invite.CampaignTable, invite.CampaignColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
 		return fromU, nil
@@ -268,12 +292,13 @@ func (iq *InviteQuery) Clone() *InviteQuery {
 		return nil
 	}
 	return &InviteQuery{
-		config:     iq.config,
-		ctx:        iq.ctx.Clone(),
-		order:      append([]invite.OrderOption{}, iq.order...),
-		inters:     append([]Interceptor{}, iq.inters...),
-		predicates: append([]predicate.Invite{}, iq.predicates...),
-		withUser:   iq.withUser.Clone(),
+		config:       iq.config,
+		ctx:          iq.ctx.Clone(),
+		order:        append([]invite.OrderOption{}, iq.order...),
+		inters:       append([]Interceptor{}, iq.inters...),
+		predicates:   append([]predicate.Invite{}, iq.predicates...),
+		withUser:     iq.withUser.Clone(),
+		withCampaign: iq.withCampaign.Clone(),
 		// clone intermediate query.
 		sql:  iq.sql.Clone(),
 		path: iq.path,
@@ -288,6 +313,17 @@ func (iq *InviteQuery) WithUser(opts ...func(*UserQuery)) *InviteQuery {
 		opt(query)
 	}
 	iq.withUser = query
+	return iq
+}
+
+// WithCampaign tells the query-builder to eager-load the nodes that are connected to
+// the "campaign" edge. The optional arguments are used to configure the query builder of the edge.
+func (iq *InviteQuery) WithCampaign(opts ...func(*CampaignQuery)) *InviteQuery {
+	query := (&CampaignClient{config: iq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	iq.withCampaign = query
 	return iq
 }
 
@@ -369,8 +405,9 @@ func (iq *InviteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Invit
 	var (
 		nodes       = []*Invite{}
 		_spec       = iq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			iq.withUser != nil,
+			iq.withCampaign != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -394,6 +431,12 @@ func (iq *InviteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Invit
 	if query := iq.withUser; query != nil {
 		if err := iq.loadUser(ctx, query, nodes, nil,
 			func(n *Invite, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := iq.withCampaign; query != nil {
+		if err := iq.loadCampaign(ctx, query, nodes, nil,
+			func(n *Invite, e *Campaign) { n.Edges.Campaign = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -429,6 +472,35 @@ func (iq *InviteQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*
 	}
 	return nil
 }
+func (iq *InviteQuery) loadCampaign(ctx context.Context, query *CampaignQuery, nodes []*Invite, init func(*Invite), assign func(*Invite, *Campaign)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*Invite)
+	for i := range nodes {
+		fk := nodes[i].CampaignID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(campaign.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "campaign_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (iq *InviteQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := iq.querySpec()
@@ -457,6 +529,9 @@ func (iq *InviteQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if iq.withUser != nil {
 			_spec.Node.AddColumnOnce(invite.FieldUserID)
+		}
+		if iq.withCampaign != nil {
+			_spec.Node.AddColumnOnce(invite.FieldCampaignID)
 		}
 	}
 	if ps := iq.predicates; len(ps) > 0 {

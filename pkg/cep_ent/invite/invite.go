@@ -34,8 +34,12 @@ const (
 	FieldType = "type"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldCampaignID holds the string denoting the campaign_id field in the database.
+	FieldCampaignID = "campaign_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeCampaign holds the string denoting the campaign edge name in mutations.
+	EdgeCampaign = "campaign"
 	// Table holds the table name of the invite in the database.
 	Table = "invites"
 	// UserTable is the table that holds the user relation/edge.
@@ -45,6 +49,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
+	// CampaignTable is the table that holds the campaign relation/edge.
+	CampaignTable = "invites"
+	// CampaignInverseTable is the table name for the Campaign entity.
+	// It exists in this package in order to avoid circular dependency with the "campaign" package.
+	CampaignInverseTable = "campaigns"
+	// CampaignColumn is the table column denoting the campaign relation/edge.
+	CampaignColumn = "campaign_id"
 )
 
 // Columns holds all SQL columns for invite fields.
@@ -60,6 +71,7 @@ var Columns = []string{
 	FieldRegCep,
 	FieldType,
 	FieldUserID,
+	FieldCampaignID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -95,6 +107,8 @@ var (
 	DefaultType string
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int64
+	// DefaultCampaignID holds the default value on creation for the "campaign_id" field.
+	DefaultCampaignID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -157,10 +171,22 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
+// ByCampaignID orders the results by the campaign_id field.
+func ByCampaignID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCampaignID, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByCampaignField orders the results by campaign field.
+func ByCampaignField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCampaignStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -168,5 +194,12 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newCampaignStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CampaignInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, CampaignTable, CampaignColumn),
 	)
 }

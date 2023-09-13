@@ -9,6 +9,27 @@ import (
 )
 
 var (
+	// CampaignsColumns holds the columns for the "campaigns" table.
+	CampaignsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Comment: "活动名称", Default: ""},
+		{Name: "type", Type: field.TypeString, Comment: "活动类型", Default: ""},
+		{Name: "started_at", Type: field.TypeTime, Comment: "活动开始时间"},
+		{Name: "ended_at", Type: field.TypeTime, Comment: "活动结束时间"},
+		{Name: "status", Type: field.TypeInt, Comment: "活动状态", Default: 0},
+		{Name: "invite_id", Type: field.TypeString, Comment: "外键邀请码 id", Default: ""},
+	}
+	// CampaignsTable holds the schema information for the "campaigns" table.
+	CampaignsTable = &schema.Table{
+		Name:       "campaigns",
+		Columns:    CampaignsColumns,
+		PrimaryKey: []*schema.Column{CampaignsColumns[0]},
+	}
 	// CollectsColumns holds the columns for the "collects" table.
 	CollectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -419,6 +440,7 @@ var (
 		{Name: "share_cep", Type: field.TypeInt64, Comment: "通过此邀请码分享能获得的收益", Default: 0},
 		{Name: "reg_cep", Type: field.TypeInt64, Comment: "通过此邀请码注册能获得的收益", Default: 0},
 		{Name: "type", Type: field.TypeString, Comment: "邀请码类型（可以用来区分不同的活动）", Default: ""},
+		{Name: "campaign_id", Type: field.TypeInt64, Comment: "外键活动 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// InvitesTable holds the schema information for the "invites" table.
@@ -428,8 +450,14 @@ var (
 		PrimaryKey: []*schema.Column{InvitesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "invites_users_invites",
+				Symbol:     "invites_campaigns_invites",
 				Columns:    []*schema.Column{InvitesColumns[10]},
+				RefColumns: []*schema.Column{CampaignsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "invites_users_invites",
+				Columns:    []*schema.Column{InvitesColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -943,6 +971,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		CampaignsTable,
 		CollectsTable,
 		CostAccountsTable,
 		CostBillsTable,
@@ -977,6 +1006,7 @@ var (
 )
 
 func init() {
+	CampaignsTable.Annotation = &entsql.Annotation{}
 	CollectsTable.ForeignKeys[0].RefTable = UsersTable
 	CollectsTable.Annotation = &entsql.Annotation{}
 	CostAccountsTable.ForeignKeys[0].RefTable = UsersTable
@@ -1007,7 +1037,8 @@ func init() {
 	GpusTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
 	InputLogsTable.Annotation = &entsql.Annotation{}
-	InvitesTable.ForeignKeys[0].RefTable = UsersTable
+	InvitesTable.ForeignKeys[0].RefTable = CampaignsTable
+	InvitesTable.ForeignKeys[1].RefTable = UsersTable
 	InvitesTable.Annotation = &entsql.Annotation{}
 	MissionsTable.ForeignKeys[0].RefTable = HmacKeyPairsTable
 	MissionsTable.Annotation = &entsql.Annotation{}

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -175,9 +176,28 @@ func (iu *InviteUpdate) SetNillableUserID(i *int64) *InviteUpdate {
 	return iu
 }
 
+// SetCampaignID sets the "campaign_id" field.
+func (iu *InviteUpdate) SetCampaignID(i int64) *InviteUpdate {
+	iu.mutation.SetCampaignID(i)
+	return iu
+}
+
+// SetNillableCampaignID sets the "campaign_id" field if the given value is not nil.
+func (iu *InviteUpdate) SetNillableCampaignID(i *int64) *InviteUpdate {
+	if i != nil {
+		iu.SetCampaignID(*i)
+	}
+	return iu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (iu *InviteUpdate) SetUser(u *User) *InviteUpdate {
 	return iu.SetUserID(u.ID)
+}
+
+// SetCampaign sets the "campaign" edge to the Campaign entity.
+func (iu *InviteUpdate) SetCampaign(c *Campaign) *InviteUpdate {
+	return iu.SetCampaignID(c.ID)
 }
 
 // Mutation returns the InviteMutation object of the builder.
@@ -188,6 +208,12 @@ func (iu *InviteUpdate) Mutation() *InviteMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (iu *InviteUpdate) ClearUser() *InviteUpdate {
 	iu.mutation.ClearUser()
+	return iu
+}
+
+// ClearCampaign clears the "campaign" edge to the Campaign entity.
+func (iu *InviteUpdate) ClearCampaign() *InviteUpdate {
+	iu.mutation.ClearCampaign()
 	return iu
 }
 
@@ -231,6 +257,9 @@ func (iu *InviteUpdate) defaults() {
 func (iu *InviteUpdate) check() error {
 	if _, ok := iu.mutation.UserID(); iu.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Invite.user"`)
+	}
+	if _, ok := iu.mutation.CampaignID(); iu.mutation.CampaignCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Invite.campaign"`)
 	}
 	return nil
 }
@@ -305,6 +334,35 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iu.mutation.CampaignCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   invite.CampaignTable,
+			Columns: []string{invite.CampaignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.CampaignIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   invite.CampaignTable,
+			Columns: []string{invite.CampaignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -478,9 +536,28 @@ func (iuo *InviteUpdateOne) SetNillableUserID(i *int64) *InviteUpdateOne {
 	return iuo
 }
 
+// SetCampaignID sets the "campaign_id" field.
+func (iuo *InviteUpdateOne) SetCampaignID(i int64) *InviteUpdateOne {
+	iuo.mutation.SetCampaignID(i)
+	return iuo
+}
+
+// SetNillableCampaignID sets the "campaign_id" field if the given value is not nil.
+func (iuo *InviteUpdateOne) SetNillableCampaignID(i *int64) *InviteUpdateOne {
+	if i != nil {
+		iuo.SetCampaignID(*i)
+	}
+	return iuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (iuo *InviteUpdateOne) SetUser(u *User) *InviteUpdateOne {
 	return iuo.SetUserID(u.ID)
+}
+
+// SetCampaign sets the "campaign" edge to the Campaign entity.
+func (iuo *InviteUpdateOne) SetCampaign(c *Campaign) *InviteUpdateOne {
+	return iuo.SetCampaignID(c.ID)
 }
 
 // Mutation returns the InviteMutation object of the builder.
@@ -491,6 +568,12 @@ func (iuo *InviteUpdateOne) Mutation() *InviteMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (iuo *InviteUpdateOne) ClearUser() *InviteUpdateOne {
 	iuo.mutation.ClearUser()
+	return iuo
+}
+
+// ClearCampaign clears the "campaign" edge to the Campaign entity.
+func (iuo *InviteUpdateOne) ClearCampaign() *InviteUpdateOne {
+	iuo.mutation.ClearCampaign()
 	return iuo
 }
 
@@ -547,6 +630,9 @@ func (iuo *InviteUpdateOne) defaults() {
 func (iuo *InviteUpdateOne) check() error {
 	if _, ok := iuo.mutation.UserID(); iuo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Invite.user"`)
+	}
+	if _, ok := iuo.mutation.CampaignID(); iuo.mutation.CampaignCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Invite.campaign"`)
 	}
 	return nil
 }
@@ -638,6 +724,35 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iuo.mutation.CampaignCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   invite.CampaignTable,
+			Columns: []string{invite.CampaignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.CampaignIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   invite.CampaignTable,
+			Columns: []string{invite.CampaignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

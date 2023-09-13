@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
@@ -163,6 +164,20 @@ func (ic *InviteCreate) SetNillableUserID(i *int64) *InviteCreate {
 	return ic
 }
 
+// SetCampaignID sets the "campaign_id" field.
+func (ic *InviteCreate) SetCampaignID(i int64) *InviteCreate {
+	ic.mutation.SetCampaignID(i)
+	return ic
+}
+
+// SetNillableCampaignID sets the "campaign_id" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableCampaignID(i *int64) *InviteCreate {
+	if i != nil {
+		ic.SetCampaignID(*i)
+	}
+	return ic
+}
+
 // SetID sets the "id" field.
 func (ic *InviteCreate) SetID(i int64) *InviteCreate {
 	ic.mutation.SetID(i)
@@ -180,6 +195,11 @@ func (ic *InviteCreate) SetNillableID(i *int64) *InviteCreate {
 // SetUser sets the "user" edge to the User entity.
 func (ic *InviteCreate) SetUser(u *User) *InviteCreate {
 	return ic.SetUserID(u.ID)
+}
+
+// SetCampaign sets the "campaign" edge to the Campaign entity.
+func (ic *InviteCreate) SetCampaign(c *Campaign) *InviteCreate {
+	return ic.SetCampaignID(c.ID)
 }
 
 // Mutation returns the InviteMutation object of the builder.
@@ -257,6 +277,10 @@ func (ic *InviteCreate) defaults() {
 		v := invite.DefaultUserID
 		ic.mutation.SetUserID(v)
 	}
+	if _, ok := ic.mutation.CampaignID(); !ok {
+		v := invite.DefaultCampaignID
+		ic.mutation.SetCampaignID(v)
+	}
 	if _, ok := ic.mutation.ID(); !ok {
 		v := invite.DefaultID()
 		ic.mutation.SetID(v)
@@ -295,8 +319,14 @@ func (ic *InviteCreate) check() error {
 	if _, ok := ic.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "Invite.user_id"`)}
 	}
+	if _, ok := ic.mutation.CampaignID(); !ok {
+		return &ValidationError{Name: "campaign_id", err: errors.New(`cep_ent: missing required field "Invite.campaign_id"`)}
+	}
 	if _, ok := ic.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Invite.user"`)}
+	}
+	if _, ok := ic.mutation.CampaignID(); !ok {
+		return &ValidationError{Name: "campaign", err: errors.New(`cep_ent: missing required edge "Invite.campaign"`)}
 	}
 	return nil
 }
@@ -382,6 +412,23 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.CampaignIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   invite.CampaignTable,
+			Columns: []string{invite.CampaignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.CampaignID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -565,6 +612,18 @@ func (u *InviteUpsert) SetUserID(v int64) *InviteUpsert {
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
 func (u *InviteUpsert) UpdateUserID() *InviteUpsert {
 	u.SetExcluded(invite.FieldUserID)
+	return u
+}
+
+// SetCampaignID sets the "campaign_id" field.
+func (u *InviteUpsert) SetCampaignID(v int64) *InviteUpsert {
+	u.Set(invite.FieldCampaignID, v)
+	return u
+}
+
+// UpdateCampaignID sets the "campaign_id" field to the value that was provided on create.
+func (u *InviteUpsert) UpdateCampaignID() *InviteUpsert {
+	u.SetExcluded(invite.FieldCampaignID)
 	return u
 }
 
@@ -770,6 +829,20 @@ func (u *InviteUpsertOne) SetUserID(v int64) *InviteUpsertOne {
 func (u *InviteUpsertOne) UpdateUserID() *InviteUpsertOne {
 	return u.Update(func(s *InviteUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetCampaignID sets the "campaign_id" field.
+func (u *InviteUpsertOne) SetCampaignID(v int64) *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.SetCampaignID(v)
+	})
+}
+
+// UpdateCampaignID sets the "campaign_id" field to the value that was provided on create.
+func (u *InviteUpsertOne) UpdateCampaignID() *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.UpdateCampaignID()
 	})
 }
 
@@ -1141,6 +1214,20 @@ func (u *InviteUpsertBulk) SetUserID(v int64) *InviteUpsertBulk {
 func (u *InviteUpsertBulk) UpdateUserID() *InviteUpsertBulk {
 	return u.Update(func(s *InviteUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// SetCampaignID sets the "campaign_id" field.
+func (u *InviteUpsertBulk) SetCampaignID(v int64) *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.SetCampaignID(v)
+	})
+}
+
+// UpdateCampaignID sets the "campaign_id" field to the value that was provided on create.
+func (u *InviteUpsertBulk) UpdateCampaignID() *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.UpdateCampaignID()
 	})
 }
 

@@ -105,6 +105,11 @@ func UserID(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldUserID, v))
 }
 
+// CampaignID applies equality check predicate on the "campaign_id" field. It's identical to CampaignIDEQ.
+func CampaignID(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldCampaignID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldCreatedBy, v))
@@ -535,6 +540,26 @@ func UserIDNotIn(vs ...int64) predicate.Invite {
 	return predicate.Invite(sql.FieldNotIn(FieldUserID, vs...))
 }
 
+// CampaignIDEQ applies the EQ predicate on the "campaign_id" field.
+func CampaignIDEQ(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldCampaignID, v))
+}
+
+// CampaignIDNEQ applies the NEQ predicate on the "campaign_id" field.
+func CampaignIDNEQ(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldNEQ(FieldCampaignID, v))
+}
+
+// CampaignIDIn applies the In predicate on the "campaign_id" field.
+func CampaignIDIn(vs ...int64) predicate.Invite {
+	return predicate.Invite(sql.FieldIn(FieldCampaignID, vs...))
+}
+
+// CampaignIDNotIn applies the NotIn predicate on the "campaign_id" field.
+func CampaignIDNotIn(vs ...int64) predicate.Invite {
+	return predicate.Invite(sql.FieldNotIn(FieldCampaignID, vs...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Invite {
 	return predicate.Invite(func(s *sql.Selector) {
@@ -550,6 +575,29 @@ func HasUser() predicate.Invite {
 func HasUserWith(preds ...predicate.User) predicate.Invite {
 	return predicate.Invite(func(s *sql.Selector) {
 		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCampaign applies the HasEdge predicate on the "campaign" edge.
+func HasCampaign() predicate.Invite {
+	return predicate.Invite(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CampaignTable, CampaignColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCampaignWith applies the HasEdge predicate on the "campaign" edge with a given conditions (other predicates).
+func HasCampaignWith(preds ...predicate.Campaign) predicate.Invite {
+	return predicate.Invite(func(s *sql.Selector) {
+		step := newCampaignStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

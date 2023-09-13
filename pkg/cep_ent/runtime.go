@@ -5,6 +5,7 @@ package cep_ent
 import (
 	"time"
 
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -42,6 +43,61 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	campaignMixin := schema.Campaign{}.Mixin()
+	campaignMixinFields0 := campaignMixin[0].Fields()
+	_ = campaignMixinFields0
+	campaignFields := schema.Campaign{}.Fields()
+	_ = campaignFields
+	// campaignDescCreatedBy is the schema descriptor for created_by field.
+	campaignDescCreatedBy := campaignMixinFields0[1].Descriptor()
+	// campaign.DefaultCreatedBy holds the default value on creation for the created_by field.
+	campaign.DefaultCreatedBy = campaignDescCreatedBy.Default.(int64)
+	// campaignDescUpdatedBy is the schema descriptor for updated_by field.
+	campaignDescUpdatedBy := campaignMixinFields0[2].Descriptor()
+	// campaign.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	campaign.DefaultUpdatedBy = campaignDescUpdatedBy.Default.(int64)
+	// campaignDescCreatedAt is the schema descriptor for created_at field.
+	campaignDescCreatedAt := campaignMixinFields0[3].Descriptor()
+	// campaign.DefaultCreatedAt holds the default value on creation for the created_at field.
+	campaign.DefaultCreatedAt = campaignDescCreatedAt.Default.(func() time.Time)
+	// campaignDescUpdatedAt is the schema descriptor for updated_at field.
+	campaignDescUpdatedAt := campaignMixinFields0[4].Descriptor()
+	// campaign.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	campaign.DefaultUpdatedAt = campaignDescUpdatedAt.Default.(func() time.Time)
+	// campaign.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	campaign.UpdateDefaultUpdatedAt = campaignDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// campaignDescDeletedAt is the schema descriptor for deleted_at field.
+	campaignDescDeletedAt := campaignMixinFields0[5].Descriptor()
+	// campaign.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	campaign.DefaultDeletedAt = campaignDescDeletedAt.Default.(time.Time)
+	// campaignDescName is the schema descriptor for name field.
+	campaignDescName := campaignFields[0].Descriptor()
+	// campaign.DefaultName holds the default value on creation for the name field.
+	campaign.DefaultName = campaignDescName.Default.(string)
+	// campaignDescType is the schema descriptor for type field.
+	campaignDescType := campaignFields[1].Descriptor()
+	// campaign.DefaultType holds the default value on creation for the type field.
+	campaign.DefaultType = campaignDescType.Default.(string)
+	// campaignDescStartedAt is the schema descriptor for started_at field.
+	campaignDescStartedAt := campaignFields[2].Descriptor()
+	// campaign.DefaultStartedAt holds the default value on creation for the started_at field.
+	campaign.DefaultStartedAt = campaignDescStartedAt.Default.(time.Time)
+	// campaignDescEndedAt is the schema descriptor for ended_at field.
+	campaignDescEndedAt := campaignFields[3].Descriptor()
+	// campaign.DefaultEndedAt holds the default value on creation for the ended_at field.
+	campaign.DefaultEndedAt = campaignDescEndedAt.Default.(time.Time)
+	// campaignDescStatus is the schema descriptor for status field.
+	campaignDescStatus := campaignFields[4].Descriptor()
+	// campaign.DefaultStatus holds the default value on creation for the status field.
+	campaign.DefaultStatus = campaignDescStatus.Default.(int)
+	// campaignDescInviteID is the schema descriptor for invite_id field.
+	campaignDescInviteID := campaignFields[5].Descriptor()
+	// campaign.DefaultInviteID holds the default value on creation for the invite_id field.
+	campaign.DefaultInviteID = campaignDescInviteID.Default.(string)
+	// campaignDescID is the schema descriptor for id field.
+	campaignDescID := campaignMixinFields0[0].Descriptor()
+	// campaign.DefaultID holds the default value on creation for the id field.
+	campaign.DefaultID = campaignDescID.Default.(func() int64)
 	collectMixin := schema.Collect{}.Mixin()
 	collectMixinFields0 := collectMixin[0].Fields()
 	_ = collectMixinFields0
@@ -752,6 +808,10 @@ func init() {
 	inviteDescUserID := inviteFields[4].Descriptor()
 	// invite.DefaultUserID holds the default value on creation for the user_id field.
 	invite.DefaultUserID = inviteDescUserID.Default.(int64)
+	// inviteDescCampaignID is the schema descriptor for campaign_id field.
+	inviteDescCampaignID := inviteFields[5].Descriptor()
+	// invite.DefaultCampaignID holds the default value on creation for the campaign_id field.
+	invite.DefaultCampaignID = inviteDescCampaignID.Default.(int64)
 	// inviteDescID is the schema descriptor for id field.
 	inviteDescID := inviteMixinFields0[0].Descriptor()
 	// invite.DefaultID holds the default value on creation for the id field.

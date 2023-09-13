@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -52,6 +53,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Campaign is the client for interacting with the Campaign builders.
+	Campaign *CampaignClient
 	// Collect is the client for interacting with the Collect builders.
 	Collect *CollectClient
 	// CostAccount is the client for interacting with the CostAccount builders.
@@ -125,6 +128,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Campaign = NewCampaignClient(c.config)
 	c.Collect = NewCollectClient(c.config)
 	c.CostAccount = NewCostAccountClient(c.config)
 	c.CostBill = NewCostBillClient(c.config)
@@ -240,6 +244,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
+		Campaign:            NewCampaignClient(cfg),
 		Collect:             NewCollectClient(cfg),
 		CostAccount:         NewCostAccountClient(cfg),
 		CostBill:            NewCostBillClient(cfg),
@@ -289,6 +294,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
+		Campaign:            NewCampaignClient(cfg),
 		Collect:             NewCollectClient(cfg),
 		CostAccount:         NewCostAccountClient(cfg),
 		CostBill:            NewCostBillClient(cfg),
@@ -325,7 +331,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Collect.
+//		Campaign.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -348,9 +354,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo, c.Gpu,
-		c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
+		c.Campaign, c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission,
+		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo,
+		c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
 		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
 		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
@@ -363,9 +369,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo, c.Gpu,
-		c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
+		c.Campaign, c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission,
+		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo,
+		c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
 		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
 		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
@@ -377,6 +383,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *CampaignMutation:
+		return c.Campaign.mutate(ctx, m)
 	case *CollectMutation:
 		return c.Collect.mutate(ctx, m)
 	case *CostAccountMutation:
@@ -439,6 +447,155 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.VXSocial.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown mutation type %T", m)
+	}
+}
+
+// CampaignClient is a client for the Campaign schema.
+type CampaignClient struct {
+	config
+}
+
+// NewCampaignClient returns a client for the Campaign from the given config.
+func NewCampaignClient(c config) *CampaignClient {
+	return &CampaignClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `campaign.Hooks(f(g(h())))`.
+func (c *CampaignClient) Use(hooks ...Hook) {
+	c.hooks.Campaign = append(c.hooks.Campaign, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `campaign.Intercept(f(g(h())))`.
+func (c *CampaignClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Campaign = append(c.inters.Campaign, interceptors...)
+}
+
+// Create returns a builder for creating a Campaign entity.
+func (c *CampaignClient) Create() *CampaignCreate {
+	mutation := newCampaignMutation(c.config, OpCreate)
+	return &CampaignCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Campaign entities.
+func (c *CampaignClient) CreateBulk(builders ...*CampaignCreate) *CampaignCreateBulk {
+	return &CampaignCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CampaignClient) MapCreateBulk(slice any, setFunc func(*CampaignCreate, int)) *CampaignCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CampaignCreateBulk{err: fmt.Errorf("calling to CampaignClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CampaignCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CampaignCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Campaign.
+func (c *CampaignClient) Update() *CampaignUpdate {
+	mutation := newCampaignMutation(c.config, OpUpdate)
+	return &CampaignUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CampaignClient) UpdateOne(ca *Campaign) *CampaignUpdateOne {
+	mutation := newCampaignMutation(c.config, OpUpdateOne, withCampaign(ca))
+	return &CampaignUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CampaignClient) UpdateOneID(id int64) *CampaignUpdateOne {
+	mutation := newCampaignMutation(c.config, OpUpdateOne, withCampaignID(id))
+	return &CampaignUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Campaign.
+func (c *CampaignClient) Delete() *CampaignDelete {
+	mutation := newCampaignMutation(c.config, OpDelete)
+	return &CampaignDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CampaignClient) DeleteOne(ca *Campaign) *CampaignDeleteOne {
+	return c.DeleteOneID(ca.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CampaignClient) DeleteOneID(id int64) *CampaignDeleteOne {
+	builder := c.Delete().Where(campaign.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CampaignDeleteOne{builder}
+}
+
+// Query returns a query builder for Campaign.
+func (c *CampaignClient) Query() *CampaignQuery {
+	return &CampaignQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCampaign},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Campaign entity by its id.
+func (c *CampaignClient) Get(ctx context.Context, id int64) (*Campaign, error) {
+	return c.Query().Where(campaign.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CampaignClient) GetX(ctx context.Context, id int64) *Campaign {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryInvites queries the invites edge of a Campaign.
+func (c *CampaignClient) QueryInvites(ca *Campaign) *InviteQuery {
+	query := (&InviteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ca.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaign.Table, campaign.FieldID, id),
+			sqlgraph.To(invite.Table, invite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, campaign.InvitesTable, campaign.InvitesColumn),
+		)
+		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CampaignClient) Hooks() []Hook {
+	return c.hooks.Campaign
+}
+
+// Interceptors returns the client interceptors.
+func (c *CampaignClient) Interceptors() []Interceptor {
+	return c.inters.Campaign
+}
+
+func (c *CampaignClient) mutate(ctx context.Context, m *CampaignMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CampaignCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CampaignUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CampaignUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CampaignDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Campaign mutation op: %q", m.Op())
 	}
 }
 
@@ -2704,6 +2861,22 @@ func (c *InviteClient) QueryUser(i *Invite) *UserQuery {
 			sqlgraph.From(invite.Table, invite.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, invite.UserTable, invite.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCampaign queries the campaign edge of a Invite.
+func (c *InviteClient) QueryCampaign(i *Invite) *CampaignQuery {
+	query := (&CampaignClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invite.Table, invite.FieldID, id),
+			sqlgraph.To(campaign.Table, campaign.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invite.CampaignTable, invite.CampaignColumn),
 		)
 		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
 		return fromV, nil
@@ -5619,7 +5792,7 @@ func (c *VXSocialClient) mutate(ctx context.Context, m *VXSocialMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
+		Campaign, Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
 		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
 		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
@@ -5627,7 +5800,7 @@ type (
 		VXSocial []ent.Hook
 	}
 	inters struct {
-		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
+		Campaign, Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
 		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
 		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
