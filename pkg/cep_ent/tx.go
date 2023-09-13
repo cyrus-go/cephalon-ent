@@ -64,6 +64,8 @@ type Tx struct {
 	ProfitAccount *ProfitAccountClient
 	// ProfitSetting is the client for interacting with the ProfitSetting builders.
 	ProfitSetting *ProfitSettingClient
+	// RechargeCampaignRule is the client for interacting with the RechargeCampaignRule builders.
+	RechargeCampaignRule *RechargeCampaignRuleClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
 	RechargeOrder *RechargeOrderClient
 	// User is the client for interacting with the User builders.
@@ -231,6 +233,7 @@ func (tx *Tx) init() {
 	tx.Price = NewPriceClient(tx.config)
 	tx.ProfitAccount = NewProfitAccountClient(tx.config)
 	tx.ProfitSetting = NewProfitSettingClient(tx.config)
+	tx.RechargeCampaignRule = NewRechargeCampaignRuleClient(tx.config)
 	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)

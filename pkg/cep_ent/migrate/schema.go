@@ -809,6 +809,24 @@ var (
 			},
 		},
 	}
+	// RechargeCampaignRulesColumns holds the columns for the "recharge_campaign_rules" table.
+	RechargeCampaignRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "little_value", Type: field.TypeInt64, Comment: "充值范围下限", Default: 0},
+		{Name: "large_value", Type: field.TypeInt64, Comment: "充值范围上限", Default: 0},
+		{Name: "gift_percent", Type: field.TypeInt64, Comment: "赠送的比例", Default: 0},
+	}
+	// RechargeCampaignRulesTable holds the schema information for the "recharge_campaign_rules" table.
+	RechargeCampaignRulesTable = &schema.Table{
+		Name:       "recharge_campaign_rules",
+		Columns:    RechargeCampaignRulesColumns,
+		PrimaryKey: []*schema.Column{RechargeCampaignRulesColumns[0]},
+	}
 	// RechargeOrdersColumns holds the columns for the "recharge_orders" table.
 	RechargeOrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -997,6 +1015,7 @@ var (
 		PricesTable,
 		ProfitAccountsTable,
 		ProfitSettingsTable,
+		RechargeCampaignRulesTable,
 		RechargeOrdersTable,
 		UsersTable,
 		UserDevicesTable,
@@ -1063,6 +1082,7 @@ func init() {
 	ProfitAccountsTable.Annotation = &entsql.Annotation{}
 	ProfitSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	ProfitSettingsTable.Annotation = &entsql.Annotation{}
+	RechargeCampaignRulesTable.Annotation = &entsql.Annotation{}
 	RechargeOrdersTable.ForeignKeys[0].RefTable = UsersTable
 	RechargeOrdersTable.ForeignKeys[1].RefTable = VxSocialsTable
 	RechargeOrdersTable.Annotation = &entsql.Annotation{}

@@ -31,6 +31,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/schema"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -1369,6 +1370,49 @@ func init() {
 	profitsettingDescID := profitsettingMixinFields0[0].Descriptor()
 	// profitsetting.DefaultID holds the default value on creation for the id field.
 	profitsetting.DefaultID = profitsettingDescID.Default.(func() int64)
+	rechargecampaignruleMixin := schema.RechargeCampaignRule{}.Mixin()
+	rechargecampaignruleMixinFields0 := rechargecampaignruleMixin[0].Fields()
+	_ = rechargecampaignruleMixinFields0
+	rechargecampaignruleFields := schema.RechargeCampaignRule{}.Fields()
+	_ = rechargecampaignruleFields
+	// rechargecampaignruleDescCreatedBy is the schema descriptor for created_by field.
+	rechargecampaignruleDescCreatedBy := rechargecampaignruleMixinFields0[1].Descriptor()
+	// rechargecampaignrule.DefaultCreatedBy holds the default value on creation for the created_by field.
+	rechargecampaignrule.DefaultCreatedBy = rechargecampaignruleDescCreatedBy.Default.(int64)
+	// rechargecampaignruleDescUpdatedBy is the schema descriptor for updated_by field.
+	rechargecampaignruleDescUpdatedBy := rechargecampaignruleMixinFields0[2].Descriptor()
+	// rechargecampaignrule.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	rechargecampaignrule.DefaultUpdatedBy = rechargecampaignruleDescUpdatedBy.Default.(int64)
+	// rechargecampaignruleDescCreatedAt is the schema descriptor for created_at field.
+	rechargecampaignruleDescCreatedAt := rechargecampaignruleMixinFields0[3].Descriptor()
+	// rechargecampaignrule.DefaultCreatedAt holds the default value on creation for the created_at field.
+	rechargecampaignrule.DefaultCreatedAt = rechargecampaignruleDescCreatedAt.Default.(func() time.Time)
+	// rechargecampaignruleDescUpdatedAt is the schema descriptor for updated_at field.
+	rechargecampaignruleDescUpdatedAt := rechargecampaignruleMixinFields0[4].Descriptor()
+	// rechargecampaignrule.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	rechargecampaignrule.DefaultUpdatedAt = rechargecampaignruleDescUpdatedAt.Default.(func() time.Time)
+	// rechargecampaignrule.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	rechargecampaignrule.UpdateDefaultUpdatedAt = rechargecampaignruleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// rechargecampaignruleDescDeletedAt is the schema descriptor for deleted_at field.
+	rechargecampaignruleDescDeletedAt := rechargecampaignruleMixinFields0[5].Descriptor()
+	// rechargecampaignrule.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	rechargecampaignrule.DefaultDeletedAt = rechargecampaignruleDescDeletedAt.Default.(time.Time)
+	// rechargecampaignruleDescLittleValue is the schema descriptor for little_value field.
+	rechargecampaignruleDescLittleValue := rechargecampaignruleFields[0].Descriptor()
+	// rechargecampaignrule.DefaultLittleValue holds the default value on creation for the little_value field.
+	rechargecampaignrule.DefaultLittleValue = rechargecampaignruleDescLittleValue.Default.(int64)
+	// rechargecampaignruleDescLargeValue is the schema descriptor for large_value field.
+	rechargecampaignruleDescLargeValue := rechargecampaignruleFields[1].Descriptor()
+	// rechargecampaignrule.DefaultLargeValue holds the default value on creation for the large_value field.
+	rechargecampaignrule.DefaultLargeValue = rechargecampaignruleDescLargeValue.Default.(int64)
+	// rechargecampaignruleDescGiftPercent is the schema descriptor for gift_percent field.
+	rechargecampaignruleDescGiftPercent := rechargecampaignruleFields[2].Descriptor()
+	// rechargecampaignrule.DefaultGiftPercent holds the default value on creation for the gift_percent field.
+	rechargecampaignrule.DefaultGiftPercent = rechargecampaignruleDescGiftPercent.Default.(int64)
+	// rechargecampaignruleDescID is the schema descriptor for id field.
+	rechargecampaignruleDescID := rechargecampaignruleMixinFields0[0].Descriptor()
+	// rechargecampaignrule.DefaultID holds the default value on creation for the id field.
+	rechargecampaignrule.DefaultID = rechargecampaignruleDescID.Default.(func() int64)
 	rechargeorderMixin := schema.RechargeOrder{}.Mixin()
 	rechargeorderMixinFields0 := rechargeorderMixin[0].Fields()
 	_ = rechargeorderMixinFields0

@@ -38,6 +38,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -55,37 +56,38 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeCampaign            = "Campaign"
-	TypeCollect             = "Collect"
-	TypeCostAccount         = "CostAccount"
-	TypeCostBill            = "CostBill"
-	TypeDevice              = "Device"
-	TypeDeviceGpuMission    = "DeviceGpuMission"
-	TypeEarnBill            = "EarnBill"
-	TypeEnumCondition       = "EnumCondition"
-	TypeEnumMissionStatus   = "EnumMissionStatus"
-	TypeFrpcInfo            = "FrpcInfo"
-	TypeFrpsInfo            = "FrpsInfo"
-	TypeGpu                 = "Gpu"
-	TypeHmacKeyPair         = "HmacKeyPair"
-	TypeInputLog            = "InputLog"
-	TypeInvite              = "Invite"
-	TypeMission             = "Mission"
-	TypeMissionBatch        = "MissionBatch"
-	TypeMissionConsumeOrder = "MissionConsumeOrder"
-	TypeMissionKeyPair      = "MissionKeyPair"
-	TypeMissionKind         = "MissionKind"
-	TypeMissionProduceOrder = "MissionProduceOrder"
-	TypeOutputLog           = "OutputLog"
-	TypePlatformAccount     = "PlatformAccount"
-	TypePrice               = "Price"
-	TypeProfitAccount       = "ProfitAccount"
-	TypeProfitSetting       = "ProfitSetting"
-	TypeRechargeOrder       = "RechargeOrder"
-	TypeUser                = "User"
-	TypeUserDevice          = "UserDevice"
-	TypeVXAccount           = "VXAccount"
-	TypeVXSocial            = "VXSocial"
+	TypeCampaign             = "Campaign"
+	TypeCollect              = "Collect"
+	TypeCostAccount          = "CostAccount"
+	TypeCostBill             = "CostBill"
+	TypeDevice               = "Device"
+	TypeDeviceGpuMission     = "DeviceGpuMission"
+	TypeEarnBill             = "EarnBill"
+	TypeEnumCondition        = "EnumCondition"
+	TypeEnumMissionStatus    = "EnumMissionStatus"
+	TypeFrpcInfo             = "FrpcInfo"
+	TypeFrpsInfo             = "FrpsInfo"
+	TypeGpu                  = "Gpu"
+	TypeHmacKeyPair          = "HmacKeyPair"
+	TypeInputLog             = "InputLog"
+	TypeInvite               = "Invite"
+	TypeMission              = "Mission"
+	TypeMissionBatch         = "MissionBatch"
+	TypeMissionConsumeOrder  = "MissionConsumeOrder"
+	TypeMissionKeyPair       = "MissionKeyPair"
+	TypeMissionKind          = "MissionKind"
+	TypeMissionProduceOrder  = "MissionProduceOrder"
+	TypeOutputLog            = "OutputLog"
+	TypePlatformAccount      = "PlatformAccount"
+	TypePrice                = "Price"
+	TypeProfitAccount        = "ProfitAccount"
+	TypeProfitSetting        = "ProfitSetting"
+	TypeRechargeCampaignRule = "RechargeCampaignRule"
+	TypeRechargeOrder        = "RechargeOrder"
+	TypeUser                 = "User"
+	TypeUserDevice           = "UserDevice"
+	TypeVXAccount            = "VXAccount"
+	TypeVXSocial             = "VXSocial"
 )
 
 // CampaignMutation represents an operation that mutates the Campaign nodes in the graph.
@@ -30507,6 +30509,884 @@ func (m *ProfitSettingMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown ProfitSetting edge %s", name)
+}
+
+// RechargeCampaignRuleMutation represents an operation that mutates the RechargeCampaignRule nodes in the graph.
+type RechargeCampaignRuleMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int64
+	created_by      *int64
+	addcreated_by   *int64
+	updated_by      *int64
+	addupdated_by   *int64
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	little_value    *int64
+	addlittle_value *int64
+	large_value     *int64
+	addlarge_value  *int64
+	gift_percent    *int64
+	addgift_percent *int64
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*RechargeCampaignRule, error)
+	predicates      []predicate.RechargeCampaignRule
+}
+
+var _ ent.Mutation = (*RechargeCampaignRuleMutation)(nil)
+
+// rechargecampaignruleOption allows management of the mutation configuration using functional options.
+type rechargecampaignruleOption func(*RechargeCampaignRuleMutation)
+
+// newRechargeCampaignRuleMutation creates new mutation for the RechargeCampaignRule entity.
+func newRechargeCampaignRuleMutation(c config, op Op, opts ...rechargecampaignruleOption) *RechargeCampaignRuleMutation {
+	m := &RechargeCampaignRuleMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRechargeCampaignRule,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRechargeCampaignRuleID sets the ID field of the mutation.
+func withRechargeCampaignRuleID(id int64) rechargecampaignruleOption {
+	return func(m *RechargeCampaignRuleMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RechargeCampaignRule
+		)
+		m.oldValue = func(ctx context.Context) (*RechargeCampaignRule, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RechargeCampaignRule.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRechargeCampaignRule sets the old RechargeCampaignRule of the mutation.
+func withRechargeCampaignRule(node *RechargeCampaignRule) rechargecampaignruleOption {
+	return func(m *RechargeCampaignRuleMutation) {
+		m.oldValue = func(context.Context) (*RechargeCampaignRule, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RechargeCampaignRuleMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RechargeCampaignRuleMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of RechargeCampaignRule entities.
+func (m *RechargeCampaignRuleMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RechargeCampaignRuleMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RechargeCampaignRuleMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RechargeCampaignRule.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *RechargeCampaignRuleMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *RechargeCampaignRuleMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *RechargeCampaignRuleMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *RechargeCampaignRuleMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *RechargeCampaignRuleMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *RechargeCampaignRuleMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *RechargeCampaignRuleMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *RechargeCampaignRuleMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *RechargeCampaignRuleMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RechargeCampaignRuleMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RechargeCampaignRuleMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RechargeCampaignRuleMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RechargeCampaignRuleMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RechargeCampaignRuleMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *RechargeCampaignRuleMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *RechargeCampaignRuleMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *RechargeCampaignRuleMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetLittleValue sets the "little_value" field.
+func (m *RechargeCampaignRuleMutation) SetLittleValue(i int64) {
+	m.little_value = &i
+	m.addlittle_value = nil
+}
+
+// LittleValue returns the value of the "little_value" field in the mutation.
+func (m *RechargeCampaignRuleMutation) LittleValue() (r int64, exists bool) {
+	v := m.little_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLittleValue returns the old "little_value" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldLittleValue(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLittleValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLittleValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLittleValue: %w", err)
+	}
+	return oldValue.LittleValue, nil
+}
+
+// AddLittleValue adds i to the "little_value" field.
+func (m *RechargeCampaignRuleMutation) AddLittleValue(i int64) {
+	if m.addlittle_value != nil {
+		*m.addlittle_value += i
+	} else {
+		m.addlittle_value = &i
+	}
+}
+
+// AddedLittleValue returns the value that was added to the "little_value" field in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedLittleValue() (r int64, exists bool) {
+	v := m.addlittle_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLittleValue resets all changes to the "little_value" field.
+func (m *RechargeCampaignRuleMutation) ResetLittleValue() {
+	m.little_value = nil
+	m.addlittle_value = nil
+}
+
+// SetLargeValue sets the "large_value" field.
+func (m *RechargeCampaignRuleMutation) SetLargeValue(i int64) {
+	m.large_value = &i
+	m.addlarge_value = nil
+}
+
+// LargeValue returns the value of the "large_value" field in the mutation.
+func (m *RechargeCampaignRuleMutation) LargeValue() (r int64, exists bool) {
+	v := m.large_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLargeValue returns the old "large_value" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldLargeValue(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLargeValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLargeValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLargeValue: %w", err)
+	}
+	return oldValue.LargeValue, nil
+}
+
+// AddLargeValue adds i to the "large_value" field.
+func (m *RechargeCampaignRuleMutation) AddLargeValue(i int64) {
+	if m.addlarge_value != nil {
+		*m.addlarge_value += i
+	} else {
+		m.addlarge_value = &i
+	}
+}
+
+// AddedLargeValue returns the value that was added to the "large_value" field in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedLargeValue() (r int64, exists bool) {
+	v := m.addlarge_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLargeValue resets all changes to the "large_value" field.
+func (m *RechargeCampaignRuleMutation) ResetLargeValue() {
+	m.large_value = nil
+	m.addlarge_value = nil
+}
+
+// SetGiftPercent sets the "gift_percent" field.
+func (m *RechargeCampaignRuleMutation) SetGiftPercent(i int64) {
+	m.gift_percent = &i
+	m.addgift_percent = nil
+}
+
+// GiftPercent returns the value of the "gift_percent" field in the mutation.
+func (m *RechargeCampaignRuleMutation) GiftPercent() (r int64, exists bool) {
+	v := m.gift_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGiftPercent returns the old "gift_percent" field's value of the RechargeCampaignRule entity.
+// If the RechargeCampaignRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeCampaignRuleMutation) OldGiftPercent(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGiftPercent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGiftPercent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGiftPercent: %w", err)
+	}
+	return oldValue.GiftPercent, nil
+}
+
+// AddGiftPercent adds i to the "gift_percent" field.
+func (m *RechargeCampaignRuleMutation) AddGiftPercent(i int64) {
+	if m.addgift_percent != nil {
+		*m.addgift_percent += i
+	} else {
+		m.addgift_percent = &i
+	}
+}
+
+// AddedGiftPercent returns the value that was added to the "gift_percent" field in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedGiftPercent() (r int64, exists bool) {
+	v := m.addgift_percent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGiftPercent resets all changes to the "gift_percent" field.
+func (m *RechargeCampaignRuleMutation) ResetGiftPercent() {
+	m.gift_percent = nil
+	m.addgift_percent = nil
+}
+
+// Where appends a list predicates to the RechargeCampaignRuleMutation builder.
+func (m *RechargeCampaignRuleMutation) Where(ps ...predicate.RechargeCampaignRule) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RechargeCampaignRuleMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RechargeCampaignRuleMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RechargeCampaignRule, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RechargeCampaignRuleMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RechargeCampaignRuleMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RechargeCampaignRule).
+func (m *RechargeCampaignRuleMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RechargeCampaignRuleMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_by != nil {
+		fields = append(fields, rechargecampaignrule.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, rechargecampaignrule.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, rechargecampaignrule.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, rechargecampaignrule.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, rechargecampaignrule.FieldDeletedAt)
+	}
+	if m.little_value != nil {
+		fields = append(fields, rechargecampaignrule.FieldLittleValue)
+	}
+	if m.large_value != nil {
+		fields = append(fields, rechargecampaignrule.FieldLargeValue)
+	}
+	if m.gift_percent != nil {
+		fields = append(fields, rechargecampaignrule.FieldGiftPercent)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RechargeCampaignRuleMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case rechargecampaignrule.FieldCreatedBy:
+		return m.CreatedBy()
+	case rechargecampaignrule.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case rechargecampaignrule.FieldCreatedAt:
+		return m.CreatedAt()
+	case rechargecampaignrule.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case rechargecampaignrule.FieldDeletedAt:
+		return m.DeletedAt()
+	case rechargecampaignrule.FieldLittleValue:
+		return m.LittleValue()
+	case rechargecampaignrule.FieldLargeValue:
+		return m.LargeValue()
+	case rechargecampaignrule.FieldGiftPercent:
+		return m.GiftPercent()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RechargeCampaignRuleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case rechargecampaignrule.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case rechargecampaignrule.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case rechargecampaignrule.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case rechargecampaignrule.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case rechargecampaignrule.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case rechargecampaignrule.FieldLittleValue:
+		return m.OldLittleValue(ctx)
+	case rechargecampaignrule.FieldLargeValue:
+		return m.OldLargeValue(ctx)
+	case rechargecampaignrule.FieldGiftPercent:
+		return m.OldGiftPercent(ctx)
+	}
+	return nil, fmt.Errorf("unknown RechargeCampaignRule field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RechargeCampaignRuleMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case rechargecampaignrule.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case rechargecampaignrule.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case rechargecampaignrule.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case rechargecampaignrule.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case rechargecampaignrule.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case rechargecampaignrule.FieldLittleValue:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLittleValue(v)
+		return nil
+	case rechargecampaignrule.FieldLargeValue:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLargeValue(v)
+		return nil
+	case rechargecampaignrule.FieldGiftPercent:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGiftPercent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RechargeCampaignRule field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RechargeCampaignRuleMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, rechargecampaignrule.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, rechargecampaignrule.FieldUpdatedBy)
+	}
+	if m.addlittle_value != nil {
+		fields = append(fields, rechargecampaignrule.FieldLittleValue)
+	}
+	if m.addlarge_value != nil {
+		fields = append(fields, rechargecampaignrule.FieldLargeValue)
+	}
+	if m.addgift_percent != nil {
+		fields = append(fields, rechargecampaignrule.FieldGiftPercent)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RechargeCampaignRuleMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case rechargecampaignrule.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case rechargecampaignrule.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case rechargecampaignrule.FieldLittleValue:
+		return m.AddedLittleValue()
+	case rechargecampaignrule.FieldLargeValue:
+		return m.AddedLargeValue()
+	case rechargecampaignrule.FieldGiftPercent:
+		return m.AddedGiftPercent()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RechargeCampaignRuleMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case rechargecampaignrule.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case rechargecampaignrule.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case rechargecampaignrule.FieldLittleValue:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLittleValue(v)
+		return nil
+	case rechargecampaignrule.FieldLargeValue:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLargeValue(v)
+		return nil
+	case rechargecampaignrule.FieldGiftPercent:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGiftPercent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RechargeCampaignRule numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RechargeCampaignRuleMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RechargeCampaignRuleMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RechargeCampaignRuleMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RechargeCampaignRule nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RechargeCampaignRuleMutation) ResetField(name string) error {
+	switch name {
+	case rechargecampaignrule.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case rechargecampaignrule.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case rechargecampaignrule.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case rechargecampaignrule.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case rechargecampaignrule.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case rechargecampaignrule.FieldLittleValue:
+		m.ResetLittleValue()
+		return nil
+	case rechargecampaignrule.FieldLargeValue:
+		m.ResetLargeValue()
+		return nil
+	case rechargecampaignrule.FieldGiftPercent:
+		m.ResetGiftPercent()
+		return nil
+	}
+	return fmt.Errorf("unknown RechargeCampaignRule field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RechargeCampaignRuleMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RechargeCampaignRuleMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RechargeCampaignRuleMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RechargeCampaignRuleMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RechargeCampaignRuleMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RechargeCampaignRuleMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown RechargeCampaignRule unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RechargeCampaignRuleMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown RechargeCampaignRule edge %s", name)
 }
 
 // RechargeOrderMutation represents an operation that mutates the RechargeOrder nodes in the graph.

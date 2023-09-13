@@ -38,6 +38,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -103,37 +104,38 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			campaign.Table:            campaign.ValidColumn,
-			collect.Table:             collect.ValidColumn,
-			costaccount.Table:         costaccount.ValidColumn,
-			costbill.Table:            costbill.ValidColumn,
-			device.Table:              device.ValidColumn,
-			devicegpumission.Table:    devicegpumission.ValidColumn,
-			earnbill.Table:            earnbill.ValidColumn,
-			enumcondition.Table:       enumcondition.ValidColumn,
-			enummissionstatus.Table:   enummissionstatus.ValidColumn,
-			frpcinfo.Table:            frpcinfo.ValidColumn,
-			frpsinfo.Table:            frpsinfo.ValidColumn,
-			gpu.Table:                 gpu.ValidColumn,
-			hmackeypair.Table:         hmackeypair.ValidColumn,
-			inputlog.Table:            inputlog.ValidColumn,
-			invite.Table:              invite.ValidColumn,
-			mission.Table:             mission.ValidColumn,
-			missionbatch.Table:        missionbatch.ValidColumn,
-			missionconsumeorder.Table: missionconsumeorder.ValidColumn,
-			missionkeypair.Table:      missionkeypair.ValidColumn,
-			missionkind.Table:         missionkind.ValidColumn,
-			missionproduceorder.Table: missionproduceorder.ValidColumn,
-			outputlog.Table:           outputlog.ValidColumn,
-			platformaccount.Table:     platformaccount.ValidColumn,
-			price.Table:               price.ValidColumn,
-			profitaccount.Table:       profitaccount.ValidColumn,
-			profitsetting.Table:       profitsetting.ValidColumn,
-			rechargeorder.Table:       rechargeorder.ValidColumn,
-			user.Table:                user.ValidColumn,
-			userdevice.Table:          userdevice.ValidColumn,
-			vxaccount.Table:           vxaccount.ValidColumn,
-			vxsocial.Table:            vxsocial.ValidColumn,
+			campaign.Table:             campaign.ValidColumn,
+			collect.Table:              collect.ValidColumn,
+			costaccount.Table:          costaccount.ValidColumn,
+			costbill.Table:             costbill.ValidColumn,
+			device.Table:               device.ValidColumn,
+			devicegpumission.Table:     devicegpumission.ValidColumn,
+			earnbill.Table:             earnbill.ValidColumn,
+			enumcondition.Table:        enumcondition.ValidColumn,
+			enummissionstatus.Table:    enummissionstatus.ValidColumn,
+			frpcinfo.Table:             frpcinfo.ValidColumn,
+			frpsinfo.Table:             frpsinfo.ValidColumn,
+			gpu.Table:                  gpu.ValidColumn,
+			hmackeypair.Table:          hmackeypair.ValidColumn,
+			inputlog.Table:             inputlog.ValidColumn,
+			invite.Table:               invite.ValidColumn,
+			mission.Table:              mission.ValidColumn,
+			missionbatch.Table:         missionbatch.ValidColumn,
+			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,
+			missionkeypair.Table:       missionkeypair.ValidColumn,
+			missionkind.Table:          missionkind.ValidColumn,
+			missionproduceorder.Table:  missionproduceorder.ValidColumn,
+			outputlog.Table:            outputlog.ValidColumn,
+			platformaccount.Table:      platformaccount.ValidColumn,
+			price.Table:                price.ValidColumn,
+			profitaccount.Table:        profitaccount.ValidColumn,
+			profitsetting.Table:        profitsetting.ValidColumn,
+			rechargecampaignrule.Table: rechargecampaignrule.ValidColumn,
+			rechargeorder.Table:        rechargeorder.ValidColumn,
+			user.Table:                 user.ValidColumn,
+			userdevice.Table:           userdevice.ValidColumn,
+			vxaccount.Table:            vxaccount.ValidColumn,
+			vxsocial.Table:             vxsocial.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

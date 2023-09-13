@@ -41,6 +41,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -105,6 +106,8 @@ type Client struct {
 	ProfitAccount *ProfitAccountClient
 	// ProfitSetting is the client for interacting with the ProfitSetting builders.
 	ProfitSetting *ProfitSettingClient
+	// RechargeCampaignRule is the client for interacting with the RechargeCampaignRule builders.
+	RechargeCampaignRule *RechargeCampaignRuleClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
 	RechargeOrder *RechargeOrderClient
 	// User is the client for interacting with the User builders.
@@ -154,6 +157,7 @@ func (c *Client) init() {
 	c.Price = NewPriceClient(c.config)
 	c.ProfitAccount = NewProfitAccountClient(c.config)
 	c.ProfitSetting = NewProfitSettingClient(c.config)
+	c.RechargeCampaignRule = NewRechargeCampaignRuleClient(c.config)
 	c.RechargeOrder = NewRechargeOrderClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserDevice = NewUserDeviceClient(c.config)
@@ -242,39 +246,40 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		Campaign:            NewCampaignClient(cfg),
-		Collect:             NewCollectClient(cfg),
-		CostAccount:         NewCostAccountClient(cfg),
-		CostBill:            NewCostBillClient(cfg),
-		Device:              NewDeviceClient(cfg),
-		DeviceGpuMission:    NewDeviceGpuMissionClient(cfg),
-		EarnBill:            NewEarnBillClient(cfg),
-		EnumCondition:       NewEnumConditionClient(cfg),
-		EnumMissionStatus:   NewEnumMissionStatusClient(cfg),
-		FrpcInfo:            NewFrpcInfoClient(cfg),
-		FrpsInfo:            NewFrpsInfoClient(cfg),
-		Gpu:                 NewGpuClient(cfg),
-		HmacKeyPair:         NewHmacKeyPairClient(cfg),
-		InputLog:            NewInputLogClient(cfg),
-		Invite:              NewInviteClient(cfg),
-		Mission:             NewMissionClient(cfg),
-		MissionBatch:        NewMissionBatchClient(cfg),
-		MissionConsumeOrder: NewMissionConsumeOrderClient(cfg),
-		MissionKeyPair:      NewMissionKeyPairClient(cfg),
-		MissionKind:         NewMissionKindClient(cfg),
-		MissionProduceOrder: NewMissionProduceOrderClient(cfg),
-		OutputLog:           NewOutputLogClient(cfg),
-		PlatformAccount:     NewPlatformAccountClient(cfg),
-		Price:               NewPriceClient(cfg),
-		ProfitAccount:       NewProfitAccountClient(cfg),
-		ProfitSetting:       NewProfitSettingClient(cfg),
-		RechargeOrder:       NewRechargeOrderClient(cfg),
-		User:                NewUserClient(cfg),
-		UserDevice:          NewUserDeviceClient(cfg),
-		VXAccount:           NewVXAccountClient(cfg),
-		VXSocial:            NewVXSocialClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		Campaign:             NewCampaignClient(cfg),
+		Collect:              NewCollectClient(cfg),
+		CostAccount:          NewCostAccountClient(cfg),
+		CostBill:             NewCostBillClient(cfg),
+		Device:               NewDeviceClient(cfg),
+		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
+		EarnBill:             NewEarnBillClient(cfg),
+		EnumCondition:        NewEnumConditionClient(cfg),
+		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
+		FrpcInfo:             NewFrpcInfoClient(cfg),
+		FrpsInfo:             NewFrpsInfoClient(cfg),
+		Gpu:                  NewGpuClient(cfg),
+		HmacKeyPair:          NewHmacKeyPairClient(cfg),
+		InputLog:             NewInputLogClient(cfg),
+		Invite:               NewInviteClient(cfg),
+		Mission:              NewMissionClient(cfg),
+		MissionBatch:         NewMissionBatchClient(cfg),
+		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
+		MissionKeyPair:       NewMissionKeyPairClient(cfg),
+		MissionKind:          NewMissionKindClient(cfg),
+		MissionProduceOrder:  NewMissionProduceOrderClient(cfg),
+		OutputLog:            NewOutputLogClient(cfg),
+		PlatformAccount:      NewPlatformAccountClient(cfg),
+		Price:                NewPriceClient(cfg),
+		ProfitAccount:        NewProfitAccountClient(cfg),
+		ProfitSetting:        NewProfitSettingClient(cfg),
+		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
+		RechargeOrder:        NewRechargeOrderClient(cfg),
+		User:                 NewUserClient(cfg),
+		UserDevice:           NewUserDeviceClient(cfg),
+		VXAccount:            NewVXAccountClient(cfg),
+		VXSocial:             NewVXSocialClient(cfg),
 	}, nil
 }
 
@@ -292,39 +297,40 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		Campaign:            NewCampaignClient(cfg),
-		Collect:             NewCollectClient(cfg),
-		CostAccount:         NewCostAccountClient(cfg),
-		CostBill:            NewCostBillClient(cfg),
-		Device:              NewDeviceClient(cfg),
-		DeviceGpuMission:    NewDeviceGpuMissionClient(cfg),
-		EarnBill:            NewEarnBillClient(cfg),
-		EnumCondition:       NewEnumConditionClient(cfg),
-		EnumMissionStatus:   NewEnumMissionStatusClient(cfg),
-		FrpcInfo:            NewFrpcInfoClient(cfg),
-		FrpsInfo:            NewFrpsInfoClient(cfg),
-		Gpu:                 NewGpuClient(cfg),
-		HmacKeyPair:         NewHmacKeyPairClient(cfg),
-		InputLog:            NewInputLogClient(cfg),
-		Invite:              NewInviteClient(cfg),
-		Mission:             NewMissionClient(cfg),
-		MissionBatch:        NewMissionBatchClient(cfg),
-		MissionConsumeOrder: NewMissionConsumeOrderClient(cfg),
-		MissionKeyPair:      NewMissionKeyPairClient(cfg),
-		MissionKind:         NewMissionKindClient(cfg),
-		MissionProduceOrder: NewMissionProduceOrderClient(cfg),
-		OutputLog:           NewOutputLogClient(cfg),
-		PlatformAccount:     NewPlatformAccountClient(cfg),
-		Price:               NewPriceClient(cfg),
-		ProfitAccount:       NewProfitAccountClient(cfg),
-		ProfitSetting:       NewProfitSettingClient(cfg),
-		RechargeOrder:       NewRechargeOrderClient(cfg),
-		User:                NewUserClient(cfg),
-		UserDevice:          NewUserDeviceClient(cfg),
-		VXAccount:           NewVXAccountClient(cfg),
-		VXSocial:            NewVXSocialClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		Campaign:             NewCampaignClient(cfg),
+		Collect:              NewCollectClient(cfg),
+		CostAccount:          NewCostAccountClient(cfg),
+		CostBill:             NewCostBillClient(cfg),
+		Device:               NewDeviceClient(cfg),
+		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
+		EarnBill:             NewEarnBillClient(cfg),
+		EnumCondition:        NewEnumConditionClient(cfg),
+		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
+		FrpcInfo:             NewFrpcInfoClient(cfg),
+		FrpsInfo:             NewFrpsInfoClient(cfg),
+		Gpu:                  NewGpuClient(cfg),
+		HmacKeyPair:          NewHmacKeyPairClient(cfg),
+		InputLog:             NewInputLogClient(cfg),
+		Invite:               NewInviteClient(cfg),
+		Mission:              NewMissionClient(cfg),
+		MissionBatch:         NewMissionBatchClient(cfg),
+		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
+		MissionKeyPair:       NewMissionKeyPairClient(cfg),
+		MissionKind:          NewMissionKindClient(cfg),
+		MissionProduceOrder:  NewMissionProduceOrderClient(cfg),
+		OutputLog:            NewOutputLogClient(cfg),
+		PlatformAccount:      NewPlatformAccountClient(cfg),
+		Price:                NewPriceClient(cfg),
+		ProfitAccount:        NewProfitAccountClient(cfg),
+		ProfitSetting:        NewProfitSettingClient(cfg),
+		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
+		RechargeOrder:        NewRechargeOrderClient(cfg),
+		User:                 NewUserClient(cfg),
+		UserDevice:           NewUserDeviceClient(cfg),
+		VXAccount:            NewVXAccountClient(cfg),
+		VXSocial:             NewVXSocialClient(cfg),
 	}, nil
 }
 
@@ -359,7 +365,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
 		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
 		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
+		c.RechargeCampaignRule, c.RechargeOrder, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial,
 	} {
 		n.Use(hooks...)
 	}
@@ -374,7 +381,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
 		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
 		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
+		c.RechargeCampaignRule, c.RechargeOrder, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -435,6 +443,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ProfitAccount.mutate(ctx, m)
 	case *ProfitSettingMutation:
 		return c.ProfitSetting.mutate(ctx, m)
+	case *RechargeCampaignRuleMutation:
+		return c.RechargeCampaignRule.mutate(ctx, m)
 	case *RechargeOrderMutation:
 		return c.RechargeOrder.mutate(ctx, m)
 	case *UserMutation:
@@ -4724,6 +4734,139 @@ func (c *ProfitSettingClient) mutate(ctx context.Context, m *ProfitSettingMutati
 	}
 }
 
+// RechargeCampaignRuleClient is a client for the RechargeCampaignRule schema.
+type RechargeCampaignRuleClient struct {
+	config
+}
+
+// NewRechargeCampaignRuleClient returns a client for the RechargeCampaignRule from the given config.
+func NewRechargeCampaignRuleClient(c config) *RechargeCampaignRuleClient {
+	return &RechargeCampaignRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `rechargecampaignrule.Hooks(f(g(h())))`.
+func (c *RechargeCampaignRuleClient) Use(hooks ...Hook) {
+	c.hooks.RechargeCampaignRule = append(c.hooks.RechargeCampaignRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `rechargecampaignrule.Intercept(f(g(h())))`.
+func (c *RechargeCampaignRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RechargeCampaignRule = append(c.inters.RechargeCampaignRule, interceptors...)
+}
+
+// Create returns a builder for creating a RechargeCampaignRule entity.
+func (c *RechargeCampaignRuleClient) Create() *RechargeCampaignRuleCreate {
+	mutation := newRechargeCampaignRuleMutation(c.config, OpCreate)
+	return &RechargeCampaignRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RechargeCampaignRule entities.
+func (c *RechargeCampaignRuleClient) CreateBulk(builders ...*RechargeCampaignRuleCreate) *RechargeCampaignRuleCreateBulk {
+	return &RechargeCampaignRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RechargeCampaignRuleClient) MapCreateBulk(slice any, setFunc func(*RechargeCampaignRuleCreate, int)) *RechargeCampaignRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RechargeCampaignRuleCreateBulk{err: fmt.Errorf("calling to RechargeCampaignRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RechargeCampaignRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RechargeCampaignRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RechargeCampaignRule.
+func (c *RechargeCampaignRuleClient) Update() *RechargeCampaignRuleUpdate {
+	mutation := newRechargeCampaignRuleMutation(c.config, OpUpdate)
+	return &RechargeCampaignRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RechargeCampaignRuleClient) UpdateOne(rcr *RechargeCampaignRule) *RechargeCampaignRuleUpdateOne {
+	mutation := newRechargeCampaignRuleMutation(c.config, OpUpdateOne, withRechargeCampaignRule(rcr))
+	return &RechargeCampaignRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RechargeCampaignRuleClient) UpdateOneID(id int64) *RechargeCampaignRuleUpdateOne {
+	mutation := newRechargeCampaignRuleMutation(c.config, OpUpdateOne, withRechargeCampaignRuleID(id))
+	return &RechargeCampaignRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RechargeCampaignRule.
+func (c *RechargeCampaignRuleClient) Delete() *RechargeCampaignRuleDelete {
+	mutation := newRechargeCampaignRuleMutation(c.config, OpDelete)
+	return &RechargeCampaignRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RechargeCampaignRuleClient) DeleteOne(rcr *RechargeCampaignRule) *RechargeCampaignRuleDeleteOne {
+	return c.DeleteOneID(rcr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RechargeCampaignRuleClient) DeleteOneID(id int64) *RechargeCampaignRuleDeleteOne {
+	builder := c.Delete().Where(rechargecampaignrule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RechargeCampaignRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for RechargeCampaignRule.
+func (c *RechargeCampaignRuleClient) Query() *RechargeCampaignRuleQuery {
+	return &RechargeCampaignRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRechargeCampaignRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RechargeCampaignRule entity by its id.
+func (c *RechargeCampaignRuleClient) Get(ctx context.Context, id int64) (*RechargeCampaignRule, error) {
+	return c.Query().Where(rechargecampaignrule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RechargeCampaignRuleClient) GetX(ctx context.Context, id int64) *RechargeCampaignRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *RechargeCampaignRuleClient) Hooks() []Hook {
+	return c.hooks.RechargeCampaignRule
+}
+
+// Interceptors returns the client interceptors.
+func (c *RechargeCampaignRuleClient) Interceptors() []Interceptor {
+	return c.inters.RechargeCampaignRule
+}
+
+func (c *RechargeCampaignRuleClient) mutate(ctx context.Context, m *RechargeCampaignRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RechargeCampaignRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RechargeCampaignRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RechargeCampaignRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RechargeCampaignRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown RechargeCampaignRule mutation op: %q", m.Op())
+	}
+}
+
 // RechargeOrderClient is a client for the RechargeOrder schema.
 type RechargeOrderClient struct {
 	config
@@ -5796,15 +5939,15 @@ type (
 		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
 		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
 		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
-		VXSocial []ent.Hook
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, User,
+		UserDevice, VXAccount, VXSocial []ent.Hook
 	}
 	inters struct {
 		Campaign, Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
 		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
 		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
 		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeOrder, User, UserDevice, VXAccount,
-		VXSocial []ent.Interceptor
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, User,
+		UserDevice, VXAccount, VXSocial []ent.Interceptor
 	}
 )

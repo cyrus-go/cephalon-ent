@@ -84,6 +84,9 @@ type ProfitAccount func(*sql.Selector)
 // ProfitSetting is the predicate function for profitsetting builders.
 type ProfitSetting func(*sql.Selector)
 
+// RechargeCampaignRule is the predicate function for rechargecampaignrule builders.
+type RechargeCampaignRule func(*sql.Selector)
+
 // RechargeOrder is the predicate function for rechargeorder builders.
 type RechargeOrder func(*sql.Selector)
 
