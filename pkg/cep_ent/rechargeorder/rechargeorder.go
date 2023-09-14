@@ -123,12 +123,8 @@ var (
 	DefaultUserID int64
 	// DefaultPureCep holds the default value on creation for the "pure_cep" field.
 	DefaultPureCep int64
-	// PureCepValidator is a validator for the "pure_cep" field. It is called by the builders before save.
-	PureCepValidator func(int64) error
 	// DefaultGiftCep holds the default value on creation for the "gift_cep" field.
 	DefaultGiftCep int64
-	// GiftCepValidator is a validator for the "gift_cep" field. It is called by the builders before save.
-	GiftCepValidator func(int64) error
 	// DefaultSocialID holds the default value on creation for the "social_id" field.
 	DefaultSocialID int64
 	// DefaultSerialNumber holds the default value on creation for the "serial_number" field.

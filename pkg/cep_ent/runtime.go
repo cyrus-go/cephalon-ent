@@ -1448,14 +1448,10 @@ func init() {
 	rechargeorderDescPureCep := rechargeorderFields[2].Descriptor()
 	// rechargeorder.DefaultPureCep holds the default value on creation for the pure_cep field.
 	rechargeorder.DefaultPureCep = rechargeorderDescPureCep.Default.(int64)
-	// rechargeorder.PureCepValidator is a validator for the "pure_cep" field. It is called by the builders before save.
-	rechargeorder.PureCepValidator = rechargeorderDescPureCep.Validators[0].(func(int64) error)
 	// rechargeorderDescGiftCep is the schema descriptor for gift_cep field.
 	rechargeorderDescGiftCep := rechargeorderFields[3].Descriptor()
 	// rechargeorder.DefaultGiftCep holds the default value on creation for the gift_cep field.
 	rechargeorder.DefaultGiftCep = rechargeorderDescGiftCep.Default.(int64)
-	// rechargeorder.GiftCepValidator is a validator for the "gift_cep" field. It is called by the builders before save.
-	rechargeorder.GiftCepValidator = rechargeorderDescGiftCep.Validators[0].(func(int64) error)
 	// rechargeorderDescSocialID is the schema descriptor for social_id field.
 	rechargeorderDescSocialID := rechargeorderFields[4].Descriptor()
 	// rechargeorder.DefaultSocialID holds the default value on creation for the social_id field.

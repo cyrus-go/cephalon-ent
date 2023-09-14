@@ -380,16 +380,6 @@ func (rou *RechargeOrderUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.status": %w`, err)}
 		}
 	}
-	if v, ok := rou.mutation.PureCep(); ok {
-		if err := rechargeorder.PureCepValidator(v); err != nil {
-			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
-		}
-	}
-	if v, ok := rou.mutation.GiftCep(); ok {
-		if err := rechargeorder.GiftCepValidator(v); err != nil {
-			return &ValidationError{Name: "gift_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.gift_cep": %w`, err)}
-		}
-	}
 	if v, ok := rou.mutation.GetType(); ok {
 		if err := rechargeorder.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.type": %w`, err)}
@@ -947,16 +937,6 @@ func (rouo *RechargeOrderUpdateOne) check() error {
 	if v, ok := rouo.mutation.Status(); ok {
 		if err := rechargeorder.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.status": %w`, err)}
-		}
-	}
-	if v, ok := rouo.mutation.PureCep(); ok {
-		if err := rechargeorder.PureCepValidator(v); err != nil {
-			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
-		}
-	}
-	if v, ok := rouo.mutation.GiftCep(); ok {
-		if err := rechargeorder.GiftCepValidator(v); err != nil {
-			return &ValidationError{Name: "gift_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.gift_cep": %w`, err)}
 		}
 	}
 	if v, ok := rouo.mutation.GetType(); ok {

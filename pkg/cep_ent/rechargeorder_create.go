@@ -420,18 +420,8 @@ func (roc *RechargeOrderCreate) check() error {
 	if _, ok := roc.mutation.PureCep(); !ok {
 		return &ValidationError{Name: "pure_cep", err: errors.New(`cep_ent: missing required field "RechargeOrder.pure_cep"`)}
 	}
-	if v, ok := roc.mutation.PureCep(); ok {
-		if err := rechargeorder.PureCepValidator(v); err != nil {
-			return &ValidationError{Name: "pure_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.pure_cep": %w`, err)}
-		}
-	}
 	if _, ok := roc.mutation.GiftCep(); !ok {
 		return &ValidationError{Name: "gift_cep", err: errors.New(`cep_ent: missing required field "RechargeOrder.gift_cep"`)}
-	}
-	if v, ok := roc.mutation.GiftCep(); ok {
-		if err := rechargeorder.GiftCepValidator(v); err != nil {
-			return &ValidationError{Name: "gift_cep", err: fmt.Errorf(`cep_ent: validator failed for field "RechargeOrder.gift_cep": %w`, err)}
-		}
 	}
 	if _, ok := roc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "RechargeOrder.type"`)}
