@@ -200,6 +200,7 @@ const (
 	WayUnknow          Way = "unknow"
 	WayRechargeWechat  Way = "recharge_wechat"
 	WayRechargeAlipay  Way = "recharge_alipay"
+	WayRechargeManual  Way = "recharge_manual"
 	WayMissionTiming   Way = "mission_timing"
 	WayMissionCounting Way = "mission_counting"
 	WayActiveRegister  Way = "active_register"
@@ -214,7 +215,7 @@ func (w Way) String() string {
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
 func WayValidator(w Way) error {
 	switch w {
-	case WayUnknow, WayRechargeWechat, WayRechargeAlipay, WayMissionTiming, WayMissionCounting, WayActiveRegister, WayActiveShare, WayActiveRecharge:
+	case WayUnknow, WayRechargeWechat, WayRechargeAlipay, WayRechargeManual, WayMissionTiming, WayMissionCounting, WayActiveRegister, WayActiveShare, WayActiveRecharge:
 		return nil
 	default:
 		return fmt.Errorf("costbill: invalid enum value for way field: %q", w)

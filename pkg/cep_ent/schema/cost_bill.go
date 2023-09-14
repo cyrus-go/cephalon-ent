@@ -16,7 +16,7 @@ type CostBill struct {
 func (CostBill) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").Values("unknow", "mission", "recharge", "active").Default("unknow").StructTag(`json:"type"`).Comment("额度账户流水的类型，充值或者任务消耗"),
-		field.Enum("way").Values("unknow", "recharge_wechat", "recharge_alipay", "mission_timing", "mission_counting", "active_register", "active_share", "active_recharge").Default("unknow").StructTag(`json:"way"`).Comment("额度账户流水的产生方式，微信、支付宝、计时消耗等"),
+		field.Enum("way").Values("unknow", "recharge_wechat", "recharge_alipay", "recharge_manual", "mission_timing", "mission_counting", "active_register", "active_share", "active_recharge").Default("unknow").StructTag(`json:"way"`).Comment("额度账户流水的产生方式，微信、支付宝、计时消耗等"),
 		field.Bool("is_add").Default(false).StructTag(`json:"is_add"`).Comment("是否增加余额，布尔值默认为否"),
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键用户 id"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("账单序列号"),
