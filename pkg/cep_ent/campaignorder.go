@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
@@ -47,9 +48,11 @@ type CampaignOrderEdges struct {
 	Campaign *Campaign `json:"campaign,omitempty"`
 	// CostBills holds the value of the cost_bills edge.
 	CostBills []*CostBill `json:"cost_bills,omitempty"`
+	// RechargeOrder holds the value of the recharge_order edge.
+	RechargeOrder *RechargeOrder `json:"recharge_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -85,6 +88,19 @@ func (e CampaignOrderEdges) CostBillsOrErr() ([]*CostBill, error) {
 		return e.CostBills, nil
 	}
 	return nil, &NotLoadedError{edge: "cost_bills"}
+}
+
+// RechargeOrderOrErr returns the RechargeOrder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CampaignOrderEdges) RechargeOrderOrErr() (*RechargeOrder, error) {
+	if e.loadedTypes[3] {
+		if e.RechargeOrder == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: rechargeorder.Label}
+		}
+		return e.RechargeOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "recharge_order"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -185,6 +201,11 @@ func (co *CampaignOrder) QueryCampaign() *CampaignQuery {
 // QueryCostBills queries the "cost_bills" edge of the CampaignOrder entity.
 func (co *CampaignOrder) QueryCostBills() *CostBillQuery {
 	return NewCampaignOrderClient(co.config).QueryCostBills(co)
+}
+
+// QueryRechargeOrder queries the "recharge_order" edge of the CampaignOrder entity.
+func (co *CampaignOrder) QueryRechargeOrder() *RechargeOrderQuery {
+	return NewCampaignOrderClient(co.config).QueryRechargeOrder(co)
 }
 
 // Update returns a builder for updating this CampaignOrder.

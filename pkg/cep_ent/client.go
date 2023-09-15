@@ -789,6 +789,22 @@ func (c *CampaignOrderClient) QueryCostBills(co *CampaignOrder) *CostBillQuery {
 	return query
 }
 
+// QueryRechargeOrder queries the recharge_order edge of a CampaignOrder.
+func (c *CampaignOrderClient) QueryRechargeOrder(co *CampaignOrder) *RechargeOrderQuery {
+	query := (&RechargeOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaignorder.Table, campaignorder.FieldID, id),
+			sqlgraph.To(rechargeorder.Table, rechargeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, campaignorder.RechargeOrderTable, campaignorder.RechargeOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CampaignOrderClient) Hooks() []Hook {
 	return c.hooks.CampaignOrder
@@ -5237,6 +5253,22 @@ func (c *RechargeOrderClient) QueryVxSocial(ro *RechargeOrder) *VXSocialQuery {
 			sqlgraph.From(rechargeorder.Table, rechargeorder.FieldID, id),
 			sqlgraph.To(vxsocial.Table, vxsocial.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, rechargeorder.VxSocialTable, rechargeorder.VxSocialColumn),
+		)
+		fromV = sqlgraph.Neighbors(ro.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCampaignOrder queries the campaign_order edge of a RechargeOrder.
+func (c *RechargeOrderClient) QueryCampaignOrder(ro *RechargeOrder) *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ro.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rechargeorder.Table, rechargeorder.FieldID, id),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, rechargeorder.CampaignOrderTable, rechargeorder.CampaignOrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(ro.driver.Dialect(), step)
 		return fromV, nil

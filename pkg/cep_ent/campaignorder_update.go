@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
@@ -146,6 +147,25 @@ func (cou *CampaignOrderUpdate) AddCostBills(c ...*CostBill) *CampaignOrderUpdat
 	return cou.AddCostBillIDs(ids...)
 }
 
+// SetRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by ID.
+func (cou *CampaignOrderUpdate) SetRechargeOrderID(id int64) *CampaignOrderUpdate {
+	cou.mutation.SetRechargeOrderID(id)
+	return cou
+}
+
+// SetNillableRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by ID if the given value is not nil.
+func (cou *CampaignOrderUpdate) SetNillableRechargeOrderID(id *int64) *CampaignOrderUpdate {
+	if id != nil {
+		cou = cou.SetRechargeOrderID(*id)
+	}
+	return cou
+}
+
+// SetRechargeOrder sets the "recharge_order" edge to the RechargeOrder entity.
+func (cou *CampaignOrderUpdate) SetRechargeOrder(r *RechargeOrder) *CampaignOrderUpdate {
+	return cou.SetRechargeOrderID(r.ID)
+}
+
 // Mutation returns the CampaignOrderMutation object of the builder.
 func (cou *CampaignOrderUpdate) Mutation() *CampaignOrderMutation {
 	return cou.mutation
@@ -182,6 +202,12 @@ func (cou *CampaignOrderUpdate) RemoveCostBills(c ...*CostBill) *CampaignOrderUp
 		ids[i] = c[i].ID
 	}
 	return cou.RemoveCostBillIDs(ids...)
+}
+
+// ClearRechargeOrder clears the "recharge_order" edge to the RechargeOrder entity.
+func (cou *CampaignOrderUpdate) ClearRechargeOrder() *CampaignOrderUpdate {
+	cou.mutation.ClearRechargeOrder()
+	return cou
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -364,6 +390,35 @@ func (cou *CampaignOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if cou.mutation.RechargeOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   campaignorder.RechargeOrderTable,
+			Columns: []string{campaignorder.RechargeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cou.mutation.RechargeOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   campaignorder.RechargeOrderTable,
+			Columns: []string{campaignorder.RechargeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{campaignorder.Label}
@@ -499,6 +554,25 @@ func (couo *CampaignOrderUpdateOne) AddCostBills(c ...*CostBill) *CampaignOrderU
 	return couo.AddCostBillIDs(ids...)
 }
 
+// SetRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by ID.
+func (couo *CampaignOrderUpdateOne) SetRechargeOrderID(id int64) *CampaignOrderUpdateOne {
+	couo.mutation.SetRechargeOrderID(id)
+	return couo
+}
+
+// SetNillableRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by ID if the given value is not nil.
+func (couo *CampaignOrderUpdateOne) SetNillableRechargeOrderID(id *int64) *CampaignOrderUpdateOne {
+	if id != nil {
+		couo = couo.SetRechargeOrderID(*id)
+	}
+	return couo
+}
+
+// SetRechargeOrder sets the "recharge_order" edge to the RechargeOrder entity.
+func (couo *CampaignOrderUpdateOne) SetRechargeOrder(r *RechargeOrder) *CampaignOrderUpdateOne {
+	return couo.SetRechargeOrderID(r.ID)
+}
+
 // Mutation returns the CampaignOrderMutation object of the builder.
 func (couo *CampaignOrderUpdateOne) Mutation() *CampaignOrderMutation {
 	return couo.mutation
@@ -535,6 +609,12 @@ func (couo *CampaignOrderUpdateOne) RemoveCostBills(c ...*CostBill) *CampaignOrd
 		ids[i] = c[i].ID
 	}
 	return couo.RemoveCostBillIDs(ids...)
+}
+
+// ClearRechargeOrder clears the "recharge_order" edge to the RechargeOrder entity.
+func (couo *CampaignOrderUpdateOne) ClearRechargeOrder() *CampaignOrderUpdateOne {
+	couo.mutation.ClearRechargeOrder()
+	return couo
 }
 
 // Where appends a list predicates to the CampaignOrderUpdate builder.
@@ -740,6 +820,35 @@ func (couo *CampaignOrderUpdateOne) sqlSave(ctx context.Context) (_node *Campaig
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if couo.mutation.RechargeOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   campaignorder.RechargeOrderTable,
+			Columns: []string{campaignorder.RechargeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := couo.mutation.RechargeOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   campaignorder.RechargeOrderTable,
+			Columns: []string{campaignorder.RechargeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -235,6 +236,20 @@ func (roc *RechargeOrderCreate) SetNillableOutTransactionID(s *string) *Recharge
 	return roc
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (roc *RechargeOrderCreate) SetCampaignOrderID(i int64) *RechargeOrderCreate {
+	roc.mutation.SetCampaignOrderID(i)
+	return roc
+}
+
+// SetNillableCampaignOrderID sets the "campaign_order_id" field if the given value is not nil.
+func (roc *RechargeOrderCreate) SetNillableCampaignOrderID(i *int64) *RechargeOrderCreate {
+	if i != nil {
+		roc.SetCampaignOrderID(*i)
+	}
+	return roc
+}
+
 // SetID sets the "id" field.
 func (roc *RechargeOrderCreate) SetID(i int64) *RechargeOrderCreate {
 	roc.mutation.SetID(i)
@@ -286,6 +301,11 @@ func (roc *RechargeOrderCreate) SetNillableVxSocialID(id *int64) *RechargeOrderC
 // SetVxSocial sets the "vx_social" edge to the VXSocial entity.
 func (roc *RechargeOrderCreate) SetVxSocial(v *VXSocial) *RechargeOrderCreate {
 	return roc.SetVxSocialID(v.ID)
+}
+
+// SetCampaignOrder sets the "campaign_order" edge to the CampaignOrder entity.
+func (roc *RechargeOrderCreate) SetCampaignOrder(c *CampaignOrder) *RechargeOrderCreate {
+	return roc.SetCampaignOrderID(c.ID)
 }
 
 // Mutation returns the RechargeOrderMutation object of the builder.
@@ -581,6 +601,23 @@ func (roc *RechargeOrderCreate) createSpec() (*RechargeOrder, *sqlgraph.CreateSp
 		_node.SocialID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := roc.mutation.CampaignOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   rechargeorder.CampaignOrderTable,
+			Columns: []string{rechargeorder.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.CampaignOrderID = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -834,6 +871,24 @@ func (u *RechargeOrderUpsert) SetOutTransactionID(v string) *RechargeOrderUpsert
 // UpdateOutTransactionID sets the "out_transaction_id" field to the value that was provided on create.
 func (u *RechargeOrderUpsert) UpdateOutTransactionID() *RechargeOrderUpsert {
 	u.SetExcluded(rechargeorder.FieldOutTransactionID)
+	return u
+}
+
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (u *RechargeOrderUpsert) SetCampaignOrderID(v int64) *RechargeOrderUpsert {
+	u.Set(rechargeorder.FieldCampaignOrderID, v)
+	return u
+}
+
+// UpdateCampaignOrderID sets the "campaign_order_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsert) UpdateCampaignOrderID() *RechargeOrderUpsert {
+	u.SetExcluded(rechargeorder.FieldCampaignOrderID)
+	return u
+}
+
+// ClearCampaignOrderID clears the value of the "campaign_order_id" field.
+func (u *RechargeOrderUpsert) ClearCampaignOrderID() *RechargeOrderUpsert {
+	u.SetNull(rechargeorder.FieldCampaignOrderID)
 	return u
 }
 
@@ -1123,6 +1178,27 @@ func (u *RechargeOrderUpsertOne) SetOutTransactionID(v string) *RechargeOrderUps
 func (u *RechargeOrderUpsertOne) UpdateOutTransactionID() *RechargeOrderUpsertOne {
 	return u.Update(func(s *RechargeOrderUpsert) {
 		s.UpdateOutTransactionID()
+	})
+}
+
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (u *RechargeOrderUpsertOne) SetCampaignOrderID(v int64) *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetCampaignOrderID(v)
+	})
+}
+
+// UpdateCampaignOrderID sets the "campaign_order_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertOne) UpdateCampaignOrderID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateCampaignOrderID()
+	})
+}
+
+// ClearCampaignOrderID clears the value of the "campaign_order_id" field.
+func (u *RechargeOrderUpsertOne) ClearCampaignOrderID() *RechargeOrderUpsertOne {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.ClearCampaignOrderID()
 	})
 }
 
@@ -1578,6 +1654,27 @@ func (u *RechargeOrderUpsertBulk) SetOutTransactionID(v string) *RechargeOrderUp
 func (u *RechargeOrderUpsertBulk) UpdateOutTransactionID() *RechargeOrderUpsertBulk {
 	return u.Update(func(s *RechargeOrderUpsert) {
 		s.UpdateOutTransactionID()
+	})
+}
+
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (u *RechargeOrderUpsertBulk) SetCampaignOrderID(v int64) *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.SetCampaignOrderID(v)
+	})
+}
+
+// UpdateCampaignOrderID sets the "campaign_order_id" field to the value that was provided on create.
+func (u *RechargeOrderUpsertBulk) UpdateCampaignOrderID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.UpdateCampaignOrderID()
+	})
+}
+
+// ClearCampaignOrderID clears the value of the "campaign_order_id" field.
+func (u *RechargeOrderUpsertBulk) ClearCampaignOrderID() *RechargeOrderUpsertBulk {
+	return u.Update(func(s *RechargeOrderUpsert) {
+		s.ClearCampaignOrderID()
 	})
 }
 

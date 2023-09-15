@@ -399,6 +399,29 @@ func HasCostBillsWith(preds ...predicate.CostBill) predicate.CampaignOrder {
 	})
 }
 
+// HasRechargeOrder applies the HasEdge predicate on the "recharge_order" edge.
+func HasRechargeOrder() predicate.CampaignOrder {
+	return predicate.CampaignOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, RechargeOrderTable, RechargeOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRechargeOrderWith applies the HasEdge predicate on the "recharge_order" edge with a given conditions (other predicates).
+func HasRechargeOrderWith(preds ...predicate.RechargeOrder) predicate.CampaignOrder {
+	return predicate.CampaignOrder(func(s *sql.Selector) {
+		step := newRechargeOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.CampaignOrder) predicate.CampaignOrder {
 	return predicate.CampaignOrder(sql.AndPredicates(predicates...))

@@ -34,6 +34,8 @@ const (
 	EdgeCampaign = "campaign"
 	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
 	EdgeCostBills = "cost_bills"
+	// EdgeRechargeOrder holds the string denoting the recharge_order edge name in mutations.
+	EdgeRechargeOrder = "recharge_order"
 	// Table holds the table name of the campaignorder in the database.
 	Table = "campaign_orders"
 	// UserTable is the table that holds the user relation/edge.
@@ -57,6 +59,13 @@ const (
 	CostBillsInverseTable = "cost_bills"
 	// CostBillsColumn is the table column denoting the cost_bills relation/edge.
 	CostBillsColumn = "campaign_order_id"
+	// RechargeOrderTable is the table that holds the recharge_order relation/edge.
+	RechargeOrderTable = "recharge_orders"
+	// RechargeOrderInverseTable is the table name for the RechargeOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "rechargeorder" package.
+	RechargeOrderInverseTable = "recharge_orders"
+	// RechargeOrderColumn is the table column denoting the recharge_order relation/edge.
+	RechargeOrderColumn = "campaign_order_id"
 )
 
 // Columns holds all SQL columns for campaignorder fields.
@@ -172,6 +181,13 @@ func ByCostBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCostBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRechargeOrderField orders the results by recharge_order field.
+func ByRechargeOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRechargeOrderStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -191,5 +207,12 @@ func newCostBillsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CostBillsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
+	)
+}
+func newRechargeOrderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RechargeOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, RechargeOrderTable, RechargeOrderColumn),
 	)
 }

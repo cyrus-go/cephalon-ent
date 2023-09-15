@@ -1245,27 +1245,29 @@ func (m *CampaignMutation) ResetEdge(name string) error {
 // CampaignOrderMutation represents an operation that mutates the CampaignOrder nodes in the graph.
 type CampaignOrderMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int64
-	created_by        *int64
-	addcreated_by     *int64
-	updated_by        *int64
-	addupdated_by     *int64
-	created_at        *time.Time
-	updated_at        *time.Time
-	deleted_at        *time.Time
-	clearedFields     map[string]struct{}
-	user              *int64
-	cleareduser       bool
-	campaign          *int64
-	clearedcampaign   bool
-	cost_bills        map[int64]struct{}
-	removedcost_bills map[int64]struct{}
-	clearedcost_bills bool
-	done              bool
-	oldValue          func(context.Context) (*CampaignOrder, error)
-	predicates        []predicate.CampaignOrder
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	clearedFields         map[string]struct{}
+	user                  *int64
+	cleareduser           bool
+	campaign              *int64
+	clearedcampaign       bool
+	cost_bills            map[int64]struct{}
+	removedcost_bills     map[int64]struct{}
+	clearedcost_bills     bool
+	recharge_order        *int64
+	clearedrecharge_order bool
+	done                  bool
+	oldValue              func(context.Context) (*CampaignOrder, error)
+	predicates            []predicate.CampaignOrder
 }
 
 var _ ent.Mutation = (*CampaignOrderMutation)(nil)
@@ -1772,6 +1774,45 @@ func (m *CampaignOrderMutation) ResetCostBills() {
 	m.removedcost_bills = nil
 }
 
+// SetRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by id.
+func (m *CampaignOrderMutation) SetRechargeOrderID(id int64) {
+	m.recharge_order = &id
+}
+
+// ClearRechargeOrder clears the "recharge_order" edge to the RechargeOrder entity.
+func (m *CampaignOrderMutation) ClearRechargeOrder() {
+	m.clearedrecharge_order = true
+}
+
+// RechargeOrderCleared reports if the "recharge_order" edge to the RechargeOrder entity was cleared.
+func (m *CampaignOrderMutation) RechargeOrderCleared() bool {
+	return m.clearedrecharge_order
+}
+
+// RechargeOrderID returns the "recharge_order" edge ID in the mutation.
+func (m *CampaignOrderMutation) RechargeOrderID() (id int64, exists bool) {
+	if m.recharge_order != nil {
+		return *m.recharge_order, true
+	}
+	return
+}
+
+// RechargeOrderIDs returns the "recharge_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RechargeOrderID instead. It exists only for internal usage by the builders.
+func (m *CampaignOrderMutation) RechargeOrderIDs() (ids []int64) {
+	if id := m.recharge_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRechargeOrder resets all changes to the "recharge_order" edge.
+func (m *CampaignOrderMutation) ResetRechargeOrder() {
+	m.recharge_order = nil
+	m.clearedrecharge_order = false
+}
+
 // Where appends a list predicates to the CampaignOrderMutation builder.
 func (m *CampaignOrderMutation) Where(ps ...predicate.CampaignOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -2034,7 +2075,7 @@ func (m *CampaignOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CampaignOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.user != nil {
 		edges = append(edges, campaignorder.EdgeUser)
 	}
@@ -2043,6 +2084,9 @@ func (m *CampaignOrderMutation) AddedEdges() []string {
 	}
 	if m.cost_bills != nil {
 		edges = append(edges, campaignorder.EdgeCostBills)
+	}
+	if m.recharge_order != nil {
+		edges = append(edges, campaignorder.EdgeRechargeOrder)
 	}
 	return edges
 }
@@ -2065,13 +2109,17 @@ func (m *CampaignOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case campaignorder.EdgeRechargeOrder:
+		if id := m.recharge_order; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CampaignOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedcost_bills != nil {
 		edges = append(edges, campaignorder.EdgeCostBills)
 	}
@@ -2094,7 +2142,7 @@ func (m *CampaignOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CampaignOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareduser {
 		edges = append(edges, campaignorder.EdgeUser)
 	}
@@ -2103,6 +2151,9 @@ func (m *CampaignOrderMutation) ClearedEdges() []string {
 	}
 	if m.clearedcost_bills {
 		edges = append(edges, campaignorder.EdgeCostBills)
+	}
+	if m.clearedrecharge_order {
+		edges = append(edges, campaignorder.EdgeRechargeOrder)
 	}
 	return edges
 }
@@ -2117,6 +2168,8 @@ func (m *CampaignOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedcampaign
 	case campaignorder.EdgeCostBills:
 		return m.clearedcost_bills
+	case campaignorder.EdgeRechargeOrder:
+		return m.clearedrecharge_order
 	}
 	return false
 }
@@ -2130,6 +2183,9 @@ func (m *CampaignOrderMutation) ClearEdge(name string) error {
 		return nil
 	case campaignorder.EdgeCampaign:
 		m.ClearCampaign()
+		return nil
+	case campaignorder.EdgeRechargeOrder:
+		m.ClearRechargeOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown CampaignOrder unique edge %s", name)
@@ -2147,6 +2203,9 @@ func (m *CampaignOrderMutation) ResetEdge(name string) error {
 		return nil
 	case campaignorder.EdgeCostBills:
 		m.ResetCostBills()
+		return nil
+	case campaignorder.EdgeRechargeOrder:
+		m.ResetRechargeOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown CampaignOrder edge %s", name)
@@ -32487,38 +32546,40 @@ func (m *RechargeCampaignRuleMutation) ResetEdge(name string) error {
 // RechargeOrderMutation represents an operation that mutates the RechargeOrder nodes in the graph.
 type RechargeOrderMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int64
-	created_by         *int64
-	addcreated_by      *int64
-	updated_by         *int64
-	addupdated_by      *int64
-	created_at         *time.Time
-	updated_at         *time.Time
-	deleted_at         *time.Time
-	status             *rechargeorder.Status
-	pure_cep           *int64
-	addpure_cep        *int64
-	gift_cep           *int64
-	addgift_cep        *int64
-	_type              *rechargeorder.Type
-	serial_number      *string
-	third_api_resp     *string
-	from_user_id       *int64
-	addfrom_user_id    *int64
-	out_transaction_id *string
-	clearedFields      map[string]struct{}
-	user               *int64
-	cleareduser        bool
-	cost_bills         map[int64]struct{}
-	removedcost_bills  map[int64]struct{}
-	clearedcost_bills  bool
-	vx_social          *int64
-	clearedvx_social   bool
-	done               bool
-	oldValue           func(context.Context) (*RechargeOrder, error)
-	predicates         []predicate.RechargeOrder
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	status                *rechargeorder.Status
+	pure_cep              *int64
+	addpure_cep           *int64
+	gift_cep              *int64
+	addgift_cep           *int64
+	_type                 *rechargeorder.Type
+	serial_number         *string
+	third_api_resp        *string
+	from_user_id          *int64
+	addfrom_user_id       *int64
+	out_transaction_id    *string
+	clearedFields         map[string]struct{}
+	user                  *int64
+	cleareduser           bool
+	cost_bills            map[int64]struct{}
+	removedcost_bills     map[int64]struct{}
+	clearedcost_bills     bool
+	vx_social             *int64
+	clearedvx_social      bool
+	campaign_order        *int64
+	clearedcampaign_order bool
+	done                  bool
+	oldValue              func(context.Context) (*RechargeOrder, error)
+	predicates            []predicate.RechargeOrder
 }
 
 var _ ent.Mutation = (*RechargeOrderMutation)(nil)
@@ -33278,6 +33339,55 @@ func (m *RechargeOrderMutation) ResetOutTransactionID() {
 	m.out_transaction_id = nil
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (m *RechargeOrderMutation) SetCampaignOrderID(i int64) {
+	m.campaign_order = &i
+}
+
+// CampaignOrderID returns the value of the "campaign_order_id" field in the mutation.
+func (m *RechargeOrderMutation) CampaignOrderID() (r int64, exists bool) {
+	v := m.campaign_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCampaignOrderID returns the old "campaign_order_id" field's value of the RechargeOrder entity.
+// If the RechargeOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RechargeOrderMutation) OldCampaignOrderID(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCampaignOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCampaignOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCampaignOrderID: %w", err)
+	}
+	return oldValue.CampaignOrderID, nil
+}
+
+// ClearCampaignOrderID clears the value of the "campaign_order_id" field.
+func (m *RechargeOrderMutation) ClearCampaignOrderID() {
+	m.campaign_order = nil
+	m.clearedFields[rechargeorder.FieldCampaignOrderID] = struct{}{}
+}
+
+// CampaignOrderIDCleared returns if the "campaign_order_id" field was cleared in this mutation.
+func (m *RechargeOrderMutation) CampaignOrderIDCleared() bool {
+	_, ok := m.clearedFields[rechargeorder.FieldCampaignOrderID]
+	return ok
+}
+
+// ResetCampaignOrderID resets all changes to the "campaign_order_id" field.
+func (m *RechargeOrderMutation) ResetCampaignOrderID() {
+	m.campaign_order = nil
+	delete(m.clearedFields, rechargeorder.FieldCampaignOrderID)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *RechargeOrderMutation) ClearUser() {
 	m.cleareduser = true
@@ -33399,6 +33509,33 @@ func (m *RechargeOrderMutation) ResetVxSocial() {
 	m.clearedvx_social = false
 }
 
+// ClearCampaignOrder clears the "campaign_order" edge to the CampaignOrder entity.
+func (m *RechargeOrderMutation) ClearCampaignOrder() {
+	m.clearedcampaign_order = true
+	m.clearedFields[rechargeorder.FieldCampaignOrderID] = struct{}{}
+}
+
+// CampaignOrderCleared reports if the "campaign_order" edge to the CampaignOrder entity was cleared.
+func (m *RechargeOrderMutation) CampaignOrderCleared() bool {
+	return m.CampaignOrderIDCleared() || m.clearedcampaign_order
+}
+
+// CampaignOrderIDs returns the "campaign_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CampaignOrderID instead. It exists only for internal usage by the builders.
+func (m *RechargeOrderMutation) CampaignOrderIDs() (ids []int64) {
+	if id := m.campaign_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCampaignOrder resets all changes to the "campaign_order" edge.
+func (m *RechargeOrderMutation) ResetCampaignOrder() {
+	m.campaign_order = nil
+	m.clearedcampaign_order = false
+}
+
 // Where appends a list predicates to the RechargeOrderMutation builder.
 func (m *RechargeOrderMutation) Where(ps ...predicate.RechargeOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -33433,7 +33570,7 @@ func (m *RechargeOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RechargeOrderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, rechargeorder.FieldCreatedBy)
 	}
@@ -33479,6 +33616,9 @@ func (m *RechargeOrderMutation) Fields() []string {
 	if m.out_transaction_id != nil {
 		fields = append(fields, rechargeorder.FieldOutTransactionID)
 	}
+	if m.campaign_order != nil {
+		fields = append(fields, rechargeorder.FieldCampaignOrderID)
+	}
 	return fields
 }
 
@@ -33517,6 +33657,8 @@ func (m *RechargeOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.FromUserID()
 	case rechargeorder.FieldOutTransactionID:
 		return m.OutTransactionID()
+	case rechargeorder.FieldCampaignOrderID:
+		return m.CampaignOrderID()
 	}
 	return nil, false
 }
@@ -33556,6 +33698,8 @@ func (m *RechargeOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldFromUserID(ctx)
 	case rechargeorder.FieldOutTransactionID:
 		return m.OldOutTransactionID(ctx)
+	case rechargeorder.FieldCampaignOrderID:
+		return m.OldCampaignOrderID(ctx)
 	}
 	return nil, fmt.Errorf("unknown RechargeOrder field %s", name)
 }
@@ -33670,6 +33814,13 @@ func (m *RechargeOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOutTransactionID(v)
 		return nil
+	case rechargeorder.FieldCampaignOrderID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCampaignOrderID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown RechargeOrder field %s", name)
 }
@@ -33766,6 +33917,9 @@ func (m *RechargeOrderMutation) ClearedFields() []string {
 	if m.FieldCleared(rechargeorder.FieldSocialID) {
 		fields = append(fields, rechargeorder.FieldSocialID)
 	}
+	if m.FieldCleared(rechargeorder.FieldCampaignOrderID) {
+		fields = append(fields, rechargeorder.FieldCampaignOrderID)
+	}
 	return fields
 }
 
@@ -33782,6 +33936,9 @@ func (m *RechargeOrderMutation) ClearField(name string) error {
 	switch name {
 	case rechargeorder.FieldSocialID:
 		m.ClearSocialID()
+		return nil
+	case rechargeorder.FieldCampaignOrderID:
+		m.ClearCampaignOrderID()
 		return nil
 	}
 	return fmt.Errorf("unknown RechargeOrder nullable field %s", name)
@@ -33836,13 +33993,16 @@ func (m *RechargeOrderMutation) ResetField(name string) error {
 	case rechargeorder.FieldOutTransactionID:
 		m.ResetOutTransactionID()
 		return nil
+	case rechargeorder.FieldCampaignOrderID:
+		m.ResetCampaignOrderID()
+		return nil
 	}
 	return fmt.Errorf("unknown RechargeOrder field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RechargeOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.user != nil {
 		edges = append(edges, rechargeorder.EdgeUser)
 	}
@@ -33851,6 +34011,9 @@ func (m *RechargeOrderMutation) AddedEdges() []string {
 	}
 	if m.vx_social != nil {
 		edges = append(edges, rechargeorder.EdgeVxSocial)
+	}
+	if m.campaign_order != nil {
+		edges = append(edges, rechargeorder.EdgeCampaignOrder)
 	}
 	return edges
 }
@@ -33873,13 +34036,17 @@ func (m *RechargeOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.vx_social; id != nil {
 			return []ent.Value{*id}
 		}
+	case rechargeorder.EdgeCampaignOrder:
+		if id := m.campaign_order; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RechargeOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedcost_bills != nil {
 		edges = append(edges, rechargeorder.EdgeCostBills)
 	}
@@ -33902,7 +34069,7 @@ func (m *RechargeOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RechargeOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareduser {
 		edges = append(edges, rechargeorder.EdgeUser)
 	}
@@ -33911,6 +34078,9 @@ func (m *RechargeOrderMutation) ClearedEdges() []string {
 	}
 	if m.clearedvx_social {
 		edges = append(edges, rechargeorder.EdgeVxSocial)
+	}
+	if m.clearedcampaign_order {
+		edges = append(edges, rechargeorder.EdgeCampaignOrder)
 	}
 	return edges
 }
@@ -33925,6 +34095,8 @@ func (m *RechargeOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedcost_bills
 	case rechargeorder.EdgeVxSocial:
 		return m.clearedvx_social
+	case rechargeorder.EdgeCampaignOrder:
+		return m.clearedcampaign_order
 	}
 	return false
 }
@@ -33938,6 +34110,9 @@ func (m *RechargeOrderMutation) ClearEdge(name string) error {
 		return nil
 	case rechargeorder.EdgeVxSocial:
 		m.ClearVxSocial()
+		return nil
+	case rechargeorder.EdgeCampaignOrder:
+		m.ClearCampaignOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown RechargeOrder unique edge %s", name)
@@ -33955,6 +34130,9 @@ func (m *RechargeOrderMutation) ResetEdge(name string) error {
 		return nil
 	case rechargeorder.EdgeVxSocial:
 		m.ResetVxSocial()
+		return nil
+	case rechargeorder.EdgeCampaignOrder:
+		m.ResetCampaignOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown RechargeOrder edge %s", name)

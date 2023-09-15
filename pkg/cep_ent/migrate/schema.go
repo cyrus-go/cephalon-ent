@@ -881,6 +881,7 @@ var (
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
 		{Name: "from_user_id", Type: field.TypeInt64, Comment: "由谁发起的充值", Default: 0},
 		{Name: "out_transaction_id", Type: field.TypeString, Comment: "平台方订单号", Default: ""},
+		{Name: "campaign_order_id", Type: field.TypeInt64, Unique: true, Nullable: true, Comment: "活动订单 id"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "充值的用户 id", Default: 0},
 		{Name: "social_id", Type: field.TypeInt64, Nullable: true, Comment: "关联充值来源的身份源 id", Default: 0},
 	}
@@ -891,14 +892,20 @@ var (
 		PrimaryKey: []*schema.Column{RechargeOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "recharge_orders_users_recharge_orders",
+				Symbol:     "recharge_orders_campaign_orders_recharge_order",
 				Columns:    []*schema.Column{RechargeOrdersColumns[14]},
+				RefColumns: []*schema.Column{CampaignOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "recharge_orders_users_recharge_orders",
+				Columns:    []*schema.Column{RechargeOrdersColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "recharge_orders_vx_socials_recharge_orders",
-				Columns:    []*schema.Column{RechargeOrdersColumns[15]},
+				Columns:    []*schema.Column{RechargeOrdersColumns[16]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1128,8 +1135,9 @@ func init() {
 	ProfitSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	ProfitSettingsTable.Annotation = &entsql.Annotation{}
 	RechargeCampaignRulesTable.Annotation = &entsql.Annotation{}
-	RechargeOrdersTable.ForeignKeys[0].RefTable = UsersTable
-	RechargeOrdersTable.ForeignKeys[1].RefTable = VxSocialsTable
+	RechargeOrdersTable.ForeignKeys[0].RefTable = CampaignOrdersTable
+	RechargeOrdersTable.ForeignKeys[1].RefTable = UsersTable
+	RechargeOrdersTable.ForeignKeys[2].RefTable = VxSocialsTable
 	RechargeOrdersTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}

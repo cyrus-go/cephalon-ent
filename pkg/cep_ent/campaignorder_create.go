@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
@@ -160,6 +161,25 @@ func (coc *CampaignOrderCreate) AddCostBills(c ...*CostBill) *CampaignOrderCreat
 		ids[i] = c[i].ID
 	}
 	return coc.AddCostBillIDs(ids...)
+}
+
+// SetRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by ID.
+func (coc *CampaignOrderCreate) SetRechargeOrderID(id int64) *CampaignOrderCreate {
+	coc.mutation.SetRechargeOrderID(id)
+	return coc
+}
+
+// SetNillableRechargeOrderID sets the "recharge_order" edge to the RechargeOrder entity by ID if the given value is not nil.
+func (coc *CampaignOrderCreate) SetNillableRechargeOrderID(id *int64) *CampaignOrderCreate {
+	if id != nil {
+		coc = coc.SetRechargeOrderID(*id)
+	}
+	return coc
+}
+
+// SetRechargeOrder sets the "recharge_order" edge to the RechargeOrder entity.
+func (coc *CampaignOrderCreate) SetRechargeOrder(r *RechargeOrder) *CampaignOrderCreate {
+	return coc.SetRechargeOrderID(r.ID)
 }
 
 // Mutation returns the CampaignOrderMutation object of the builder.
@@ -356,6 +376,22 @@ func (coc *CampaignOrderCreate) createSpec() (*CampaignOrder, *sqlgraph.CreateSp
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := coc.mutation.RechargeOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   campaignorder.RechargeOrderTable,
+			Columns: []string{campaignorder.RechargeOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

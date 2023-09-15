@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -260,6 +261,26 @@ func (rou *RechargeOrderUpdate) SetNillableOutTransactionID(s *string) *Recharge
 	return rou
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (rou *RechargeOrderUpdate) SetCampaignOrderID(i int64) *RechargeOrderUpdate {
+	rou.mutation.SetCampaignOrderID(i)
+	return rou
+}
+
+// SetNillableCampaignOrderID sets the "campaign_order_id" field if the given value is not nil.
+func (rou *RechargeOrderUpdate) SetNillableCampaignOrderID(i *int64) *RechargeOrderUpdate {
+	if i != nil {
+		rou.SetCampaignOrderID(*i)
+	}
+	return rou
+}
+
+// ClearCampaignOrderID clears the value of the "campaign_order_id" field.
+func (rou *RechargeOrderUpdate) ClearCampaignOrderID() *RechargeOrderUpdate {
+	rou.mutation.ClearCampaignOrderID()
+	return rou
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (rou *RechargeOrderUpdate) SetUser(u *User) *RechargeOrderUpdate {
 	return rou.SetUserID(u.ID)
@@ -299,6 +320,11 @@ func (rou *RechargeOrderUpdate) SetVxSocial(v *VXSocial) *RechargeOrderUpdate {
 	return rou.SetVxSocialID(v.ID)
 }
 
+// SetCampaignOrder sets the "campaign_order" edge to the CampaignOrder entity.
+func (rou *RechargeOrderUpdate) SetCampaignOrder(c *CampaignOrder) *RechargeOrderUpdate {
+	return rou.SetCampaignOrderID(c.ID)
+}
+
 // Mutation returns the RechargeOrderMutation object of the builder.
 func (rou *RechargeOrderUpdate) Mutation() *RechargeOrderMutation {
 	return rou.mutation
@@ -334,6 +360,12 @@ func (rou *RechargeOrderUpdate) RemoveCostBills(c ...*CostBill) *RechargeOrderUp
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
 func (rou *RechargeOrderUpdate) ClearVxSocial() *RechargeOrderUpdate {
 	rou.mutation.ClearVxSocial()
+	return rou
+}
+
+// ClearCampaignOrder clears the "campaign_order" edge to the CampaignOrder entity.
+func (rou *RechargeOrderUpdate) ClearCampaignOrder() *RechargeOrderUpdate {
+	rou.mutation.ClearCampaignOrder()
 	return rou
 }
 
@@ -550,6 +582,35 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(vxsocial.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rou.mutation.CampaignOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   rechargeorder.CampaignOrderTable,
+			Columns: []string{rechargeorder.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rou.mutation.CampaignOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   rechargeorder.CampaignOrderTable,
+			Columns: []string{rechargeorder.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -806,6 +867,26 @@ func (rouo *RechargeOrderUpdateOne) SetNillableOutTransactionID(s *string) *Rech
 	return rouo
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (rouo *RechargeOrderUpdateOne) SetCampaignOrderID(i int64) *RechargeOrderUpdateOne {
+	rouo.mutation.SetCampaignOrderID(i)
+	return rouo
+}
+
+// SetNillableCampaignOrderID sets the "campaign_order_id" field if the given value is not nil.
+func (rouo *RechargeOrderUpdateOne) SetNillableCampaignOrderID(i *int64) *RechargeOrderUpdateOne {
+	if i != nil {
+		rouo.SetCampaignOrderID(*i)
+	}
+	return rouo
+}
+
+// ClearCampaignOrderID clears the value of the "campaign_order_id" field.
+func (rouo *RechargeOrderUpdateOne) ClearCampaignOrderID() *RechargeOrderUpdateOne {
+	rouo.mutation.ClearCampaignOrderID()
+	return rouo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (rouo *RechargeOrderUpdateOne) SetUser(u *User) *RechargeOrderUpdateOne {
 	return rouo.SetUserID(u.ID)
@@ -845,6 +926,11 @@ func (rouo *RechargeOrderUpdateOne) SetVxSocial(v *VXSocial) *RechargeOrderUpdat
 	return rouo.SetVxSocialID(v.ID)
 }
 
+// SetCampaignOrder sets the "campaign_order" edge to the CampaignOrder entity.
+func (rouo *RechargeOrderUpdateOne) SetCampaignOrder(c *CampaignOrder) *RechargeOrderUpdateOne {
+	return rouo.SetCampaignOrderID(c.ID)
+}
+
 // Mutation returns the RechargeOrderMutation object of the builder.
 func (rouo *RechargeOrderUpdateOne) Mutation() *RechargeOrderMutation {
 	return rouo.mutation
@@ -880,6 +966,12 @@ func (rouo *RechargeOrderUpdateOne) RemoveCostBills(c ...*CostBill) *RechargeOrd
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
 func (rouo *RechargeOrderUpdateOne) ClearVxSocial() *RechargeOrderUpdateOne {
 	rouo.mutation.ClearVxSocial()
+	return rouo
+}
+
+// ClearCampaignOrder clears the "campaign_order" edge to the CampaignOrder entity.
+func (rouo *RechargeOrderUpdateOne) ClearCampaignOrder() *RechargeOrderUpdateOne {
+	rouo.mutation.ClearCampaignOrder()
 	return rouo
 }
 
@@ -1126,6 +1218,35 @@ func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *Recharg
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(vxsocial.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rouo.mutation.CampaignOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   rechargeorder.CampaignOrderTable,
+			Columns: []string{rechargeorder.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rouo.mutation.CampaignOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   rechargeorder.CampaignOrderTable,
+			Columns: []string{rechargeorder.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

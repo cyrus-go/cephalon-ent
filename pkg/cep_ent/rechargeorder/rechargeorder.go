@@ -45,12 +45,16 @@ const (
 	FieldFromUserID = "from_user_id"
 	// FieldOutTransactionID holds the string denoting the out_transaction_id field in the database.
 	FieldOutTransactionID = "out_transaction_id"
+	// FieldCampaignOrderID holds the string denoting the campaign_order_id field in the database.
+	FieldCampaignOrderID = "campaign_order_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
 	EdgeCostBills = "cost_bills"
 	// EdgeVxSocial holds the string denoting the vx_social edge name in mutations.
 	EdgeVxSocial = "vx_social"
+	// EdgeCampaignOrder holds the string denoting the campaign_order edge name in mutations.
+	EdgeCampaignOrder = "campaign_order"
 	// Table holds the table name of the rechargeorder in the database.
 	Table = "recharge_orders"
 	// UserTable is the table that holds the user relation/edge.
@@ -74,6 +78,13 @@ const (
 	VxSocialInverseTable = "vx_socials"
 	// VxSocialColumn is the table column denoting the vx_social relation/edge.
 	VxSocialColumn = "social_id"
+	// CampaignOrderTable is the table that holds the campaign_order relation/edge.
+	CampaignOrderTable = "recharge_orders"
+	// CampaignOrderInverseTable is the table name for the CampaignOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "campaignorder" package.
+	CampaignOrderInverseTable = "campaign_orders"
+	// CampaignOrderColumn is the table column denoting the campaign_order relation/edge.
+	CampaignOrderColumn = "campaign_order_id"
 )
 
 // Columns holds all SQL columns for rechargeorder fields.
@@ -94,6 +105,7 @@ var Columns = []string{
 	FieldThirdAPIResp,
 	FieldFromUserID,
 	FieldOutTransactionID,
+	FieldCampaignOrderID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -277,6 +289,11 @@ func ByOutTransactionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOutTransactionID, opts...).ToFunc()
 }
 
+// ByCampaignOrderID orders the results by the campaign_order_id field.
+func ByCampaignOrderID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCampaignOrderID, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -304,6 +321,13 @@ func ByVxSocialField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newVxSocialStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByCampaignOrderField orders the results by campaign_order field.
+func ByCampaignOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCampaignOrderStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -323,5 +347,12 @@ func newVxSocialStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(VxSocialInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, VxSocialTable, VxSocialColumn),
+	)
+}
+func newCampaignOrderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CampaignOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, CampaignOrderTable, CampaignOrderColumn),
 	)
 }

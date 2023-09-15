@@ -120,6 +120,11 @@ func OutTransactionID(v string) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldEQ(FieldOutTransactionID, v))
 }
 
+// CampaignOrderID applies equality check predicate on the "campaign_order_id" field. It's identical to CampaignOrderIDEQ.
+func CampaignOrderID(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldCampaignOrderID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -725,6 +730,36 @@ func OutTransactionIDContainsFold(v string) predicate.RechargeOrder {
 	return predicate.RechargeOrder(sql.FieldContainsFold(FieldOutTransactionID, v))
 }
 
+// CampaignOrderIDEQ applies the EQ predicate on the "campaign_order_id" field.
+func CampaignOrderIDEQ(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldEQ(FieldCampaignOrderID, v))
+}
+
+// CampaignOrderIDNEQ applies the NEQ predicate on the "campaign_order_id" field.
+func CampaignOrderIDNEQ(v int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNEQ(FieldCampaignOrderID, v))
+}
+
+// CampaignOrderIDIn applies the In predicate on the "campaign_order_id" field.
+func CampaignOrderIDIn(vs ...int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldIn(FieldCampaignOrderID, vs...))
+}
+
+// CampaignOrderIDNotIn applies the NotIn predicate on the "campaign_order_id" field.
+func CampaignOrderIDNotIn(vs ...int64) predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNotIn(FieldCampaignOrderID, vs...))
+}
+
+// CampaignOrderIDIsNil applies the IsNil predicate on the "campaign_order_id" field.
+func CampaignOrderIDIsNil() predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldIsNull(FieldCampaignOrderID))
+}
+
+// CampaignOrderIDNotNil applies the NotNil predicate on the "campaign_order_id" field.
+func CampaignOrderIDNotNil() predicate.RechargeOrder {
+	return predicate.RechargeOrder(sql.FieldNotNull(FieldCampaignOrderID))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.RechargeOrder {
 	return predicate.RechargeOrder(func(s *sql.Selector) {
@@ -786,6 +821,29 @@ func HasVxSocial() predicate.RechargeOrder {
 func HasVxSocialWith(preds ...predicate.VXSocial) predicate.RechargeOrder {
 	return predicate.RechargeOrder(func(s *sql.Selector) {
 		step := newVxSocialStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCampaignOrder applies the HasEdge predicate on the "campaign_order" edge.
+func HasCampaignOrder() predicate.RechargeOrder {
+	return predicate.RechargeOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, CampaignOrderTable, CampaignOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCampaignOrderWith applies the HasEdge predicate on the "campaign_order" edge with a given conditions (other predicates).
+func HasCampaignOrderWith(preds ...predicate.CampaignOrder) predicate.RechargeOrder {
+	return predicate.RechargeOrder(func(s *sql.Selector) {
+		step := newCampaignOrderStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

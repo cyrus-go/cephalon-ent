@@ -26,6 +26,7 @@ func (CampaignOrder) Edges() []ent.Edge {
 		edge.From("user", User.Type).Ref("campaign_orders").Field("user_id").Unique().Required(),
 		edge.From("campaign", Campaign.Type).Ref("campaign_orders").Field("campaign_id").Unique().Required(),
 		edge.To("cost_bills", CostBill.Type),
+		edge.To("recharge_order", RechargeOrder.Type).Unique(),
 	}
 }
 

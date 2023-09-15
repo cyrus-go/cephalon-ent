@@ -15,19 +15,21 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // CampaignOrderQuery is the builder for querying CampaignOrder entities.
 type CampaignOrderQuery struct {
 	config
-	ctx           *QueryContext
-	order         []campaignorder.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.CampaignOrder
-	withUser      *UserQuery
-	withCampaign  *CampaignQuery
-	withCostBills *CostBillQuery
+	ctx               *QueryContext
+	order             []campaignorder.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.CampaignOrder
+	withUser          *UserQuery
+	withCampaign      *CampaignQuery
+	withCostBills     *CostBillQuery
+	withRechargeOrder *RechargeOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -123,6 +125,28 @@ func (coq *CampaignOrderQuery) QueryCostBills() *CostBillQuery {
 			sqlgraph.From(campaignorder.Table, campaignorder.FieldID, selector),
 			sqlgraph.To(costbill.Table, costbill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, campaignorder.CostBillsTable, campaignorder.CostBillsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(coq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRechargeOrder chains the current query on the "recharge_order" edge.
+func (coq *CampaignOrderQuery) QueryRechargeOrder() *RechargeOrderQuery {
+	query := (&RechargeOrderClient{config: coq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := coq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := coq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaignorder.Table, campaignorder.FieldID, selector),
+			sqlgraph.To(rechargeorder.Table, rechargeorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, campaignorder.RechargeOrderTable, campaignorder.RechargeOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(coq.driver.Dialect(), step)
 		return fromU, nil
@@ -317,14 +341,15 @@ func (coq *CampaignOrderQuery) Clone() *CampaignOrderQuery {
 		return nil
 	}
 	return &CampaignOrderQuery{
-		config:        coq.config,
-		ctx:           coq.ctx.Clone(),
-		order:         append([]campaignorder.OrderOption{}, coq.order...),
-		inters:        append([]Interceptor{}, coq.inters...),
-		predicates:    append([]predicate.CampaignOrder{}, coq.predicates...),
-		withUser:      coq.withUser.Clone(),
-		withCampaign:  coq.withCampaign.Clone(),
-		withCostBills: coq.withCostBills.Clone(),
+		config:            coq.config,
+		ctx:               coq.ctx.Clone(),
+		order:             append([]campaignorder.OrderOption{}, coq.order...),
+		inters:            append([]Interceptor{}, coq.inters...),
+		predicates:        append([]predicate.CampaignOrder{}, coq.predicates...),
+		withUser:          coq.withUser.Clone(),
+		withCampaign:      coq.withCampaign.Clone(),
+		withCostBills:     coq.withCostBills.Clone(),
+		withRechargeOrder: coq.withRechargeOrder.Clone(),
 		// clone intermediate query.
 		sql:  coq.sql.Clone(),
 		path: coq.path,
@@ -361,6 +386,17 @@ func (coq *CampaignOrderQuery) WithCostBills(opts ...func(*CostBillQuery)) *Camp
 		opt(query)
 	}
 	coq.withCostBills = query
+	return coq
+}
+
+// WithRechargeOrder tells the query-builder to eager-load the nodes that are connected to
+// the "recharge_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (coq *CampaignOrderQuery) WithRechargeOrder(opts ...func(*RechargeOrderQuery)) *CampaignOrderQuery {
+	query := (&RechargeOrderClient{config: coq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	coq.withRechargeOrder = query
 	return coq
 }
 
@@ -442,10 +478,11 @@ func (coq *CampaignOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	var (
 		nodes       = []*CampaignOrder{}
 		_spec       = coq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			coq.withUser != nil,
 			coq.withCampaign != nil,
 			coq.withCostBills != nil,
+			coq.withRechargeOrder != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -482,6 +519,12 @@ func (coq *CampaignOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		if err := coq.loadCostBills(ctx, query, nodes,
 			func(n *CampaignOrder) { n.Edges.CostBills = []*CostBill{} },
 			func(n *CampaignOrder, e *CostBill) { n.Edges.CostBills = append(n.Edges.CostBills, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := coq.withRechargeOrder; query != nil {
+		if err := coq.loadRechargeOrder(ctx, query, nodes, nil,
+			func(n *CampaignOrder, e *RechargeOrder) { n.Edges.RechargeOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -571,6 +614,36 @@ func (coq *CampaignOrderQuery) loadCostBills(ctx context.Context, query *CostBil
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "campaign_order_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (coq *CampaignOrderQuery) loadRechargeOrder(ctx context.Context, query *RechargeOrderQuery, nodes []*CampaignOrder, init func(*CampaignOrder), assign func(*CampaignOrder, *RechargeOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*CampaignOrder)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(rechargeorder.FieldCampaignOrderID)
+	}
+	query.Where(predicate.RechargeOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(campaignorder.RechargeOrderColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.CampaignOrderID
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "campaign_order_id" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "campaign_order_id" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

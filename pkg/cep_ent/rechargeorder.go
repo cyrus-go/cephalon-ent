@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -49,6 +50,8 @@ type RechargeOrder struct {
 	FromUserID int64 `json:"from_user_id"`
 	// 平台方订单号
 	OutTransactionID string `json:"out_transaction_id"`
+	// 活动订单 id
+	CampaignOrderID *int64 `json:"campaign_order_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RechargeOrderQuery when eager-loading is set.
 	Edges        RechargeOrderEdges `json:"edges"`
@@ -63,9 +66,11 @@ type RechargeOrderEdges struct {
 	CostBills []*CostBill `json:"cost_bills,omitempty"`
 	// VxSocial holds the value of the vx_social edge.
 	VxSocial *VXSocial `json:"vx_social,omitempty"`
+	// CampaignOrder holds the value of the campaign_order edge.
+	CampaignOrder *CampaignOrder `json:"campaign_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -103,12 +108,25 @@ func (e RechargeOrderEdges) VxSocialOrErr() (*VXSocial, error) {
 	return nil, &NotLoadedError{edge: "vx_social"}
 }
 
+// CampaignOrderOrErr returns the CampaignOrder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e RechargeOrderEdges) CampaignOrderOrErr() (*CampaignOrder, error) {
+	if e.loadedTypes[3] {
+		if e.CampaignOrder == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: campaignorder.Label}
+		}
+		return e.CampaignOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "campaign_order"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*RechargeOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case rechargeorder.FieldID, rechargeorder.FieldCreatedBy, rechargeorder.FieldUpdatedBy, rechargeorder.FieldUserID, rechargeorder.FieldPureCep, rechargeorder.FieldGiftCep, rechargeorder.FieldSocialID, rechargeorder.FieldFromUserID:
+		case rechargeorder.FieldID, rechargeorder.FieldCreatedBy, rechargeorder.FieldUpdatedBy, rechargeorder.FieldUserID, rechargeorder.FieldPureCep, rechargeorder.FieldGiftCep, rechargeorder.FieldSocialID, rechargeorder.FieldFromUserID, rechargeorder.FieldCampaignOrderID:
 			values[i] = new(sql.NullInt64)
 		case rechargeorder.FieldStatus, rechargeorder.FieldType, rechargeorder.FieldSerialNumber, rechargeorder.FieldThirdAPIResp, rechargeorder.FieldOutTransactionID:
 			values[i] = new(sql.NullString)
@@ -225,6 +243,13 @@ func (ro *RechargeOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ro.OutTransactionID = value.String
 			}
+		case rechargeorder.FieldCampaignOrderID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field campaign_order_id", values[i])
+			} else if value.Valid {
+				ro.CampaignOrderID = new(int64)
+				*ro.CampaignOrderID = value.Int64
+			}
 		default:
 			ro.selectValues.Set(columns[i], values[i])
 		}
@@ -251,6 +276,11 @@ func (ro *RechargeOrder) QueryCostBills() *CostBillQuery {
 // QueryVxSocial queries the "vx_social" edge of the RechargeOrder entity.
 func (ro *RechargeOrder) QueryVxSocial() *VXSocialQuery {
 	return NewRechargeOrderClient(ro.config).QueryVxSocial(ro)
+}
+
+// QueryCampaignOrder queries the "campaign_order" edge of the RechargeOrder entity.
+func (ro *RechargeOrder) QueryCampaignOrder() *CampaignOrderQuery {
+	return NewRechargeOrderClient(ro.config).QueryCampaignOrder(ro)
 }
 
 // Update returns a builder for updating this RechargeOrder.
@@ -320,6 +350,11 @@ func (ro *RechargeOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("out_transaction_id=")
 	builder.WriteString(ro.OutTransactionID)
+	builder.WriteString(", ")
+	if v := ro.CampaignOrderID; v != nil {
+		builder.WriteString("campaign_order_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

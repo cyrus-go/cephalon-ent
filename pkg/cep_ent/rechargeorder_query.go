@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -21,13 +22,14 @@ import (
 // RechargeOrderQuery is the builder for querying RechargeOrder entities.
 type RechargeOrderQuery struct {
 	config
-	ctx           *QueryContext
-	order         []rechargeorder.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.RechargeOrder
-	withUser      *UserQuery
-	withCostBills *CostBillQuery
-	withVxSocial  *VXSocialQuery
+	ctx               *QueryContext
+	order             []rechargeorder.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.RechargeOrder
+	withUser          *UserQuery
+	withCostBills     *CostBillQuery
+	withVxSocial      *VXSocialQuery
+	withCampaignOrder *CampaignOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -123,6 +125,28 @@ func (roq *RechargeOrderQuery) QueryVxSocial() *VXSocialQuery {
 			sqlgraph.From(rechargeorder.Table, rechargeorder.FieldID, selector),
 			sqlgraph.To(vxsocial.Table, vxsocial.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, rechargeorder.VxSocialTable, rechargeorder.VxSocialColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(roq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCampaignOrder chains the current query on the "campaign_order" edge.
+func (roq *RechargeOrderQuery) QueryCampaignOrder() *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: roq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := roq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := roq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(rechargeorder.Table, rechargeorder.FieldID, selector),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, rechargeorder.CampaignOrderTable, rechargeorder.CampaignOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(roq.driver.Dialect(), step)
 		return fromU, nil
@@ -317,14 +341,15 @@ func (roq *RechargeOrderQuery) Clone() *RechargeOrderQuery {
 		return nil
 	}
 	return &RechargeOrderQuery{
-		config:        roq.config,
-		ctx:           roq.ctx.Clone(),
-		order:         append([]rechargeorder.OrderOption{}, roq.order...),
-		inters:        append([]Interceptor{}, roq.inters...),
-		predicates:    append([]predicate.RechargeOrder{}, roq.predicates...),
-		withUser:      roq.withUser.Clone(),
-		withCostBills: roq.withCostBills.Clone(),
-		withVxSocial:  roq.withVxSocial.Clone(),
+		config:            roq.config,
+		ctx:               roq.ctx.Clone(),
+		order:             append([]rechargeorder.OrderOption{}, roq.order...),
+		inters:            append([]Interceptor{}, roq.inters...),
+		predicates:        append([]predicate.RechargeOrder{}, roq.predicates...),
+		withUser:          roq.withUser.Clone(),
+		withCostBills:     roq.withCostBills.Clone(),
+		withVxSocial:      roq.withVxSocial.Clone(),
+		withCampaignOrder: roq.withCampaignOrder.Clone(),
 		// clone intermediate query.
 		sql:  roq.sql.Clone(),
 		path: roq.path,
@@ -361,6 +386,17 @@ func (roq *RechargeOrderQuery) WithVxSocial(opts ...func(*VXSocialQuery)) *Recha
 		opt(query)
 	}
 	roq.withVxSocial = query
+	return roq
+}
+
+// WithCampaignOrder tells the query-builder to eager-load the nodes that are connected to
+// the "campaign_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (roq *RechargeOrderQuery) WithCampaignOrder(opts ...func(*CampaignOrderQuery)) *RechargeOrderQuery {
+	query := (&CampaignOrderClient{config: roq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	roq.withCampaignOrder = query
 	return roq
 }
 
@@ -442,10 +478,11 @@ func (roq *RechargeOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	var (
 		nodes       = []*RechargeOrder{}
 		_spec       = roq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			roq.withUser != nil,
 			roq.withCostBills != nil,
 			roq.withVxSocial != nil,
+			roq.withCampaignOrder != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -482,6 +519,12 @@ func (roq *RechargeOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if query := roq.withVxSocial; query != nil {
 		if err := roq.loadVxSocial(ctx, query, nodes, nil,
 			func(n *RechargeOrder, e *VXSocial) { n.Edges.VxSocial = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := roq.withCampaignOrder; query != nil {
+		if err := roq.loadCampaignOrder(ctx, query, nodes, nil,
+			func(n *RechargeOrder, e *CampaignOrder) { n.Edges.CampaignOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -576,6 +619,38 @@ func (roq *RechargeOrderQuery) loadVxSocial(ctx context.Context, query *VXSocial
 	}
 	return nil
 }
+func (roq *RechargeOrderQuery) loadCampaignOrder(ctx context.Context, query *CampaignOrderQuery, nodes []*RechargeOrder, init func(*RechargeOrder), assign func(*RechargeOrder, *CampaignOrder)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*RechargeOrder)
+	for i := range nodes {
+		if nodes[i].CampaignOrderID == nil {
+			continue
+		}
+		fk := *nodes[i].CampaignOrderID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(campaignorder.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "campaign_order_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (roq *RechargeOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := roq.querySpec()
@@ -607,6 +682,9 @@ func (roq *RechargeOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if roq.withVxSocial != nil {
 			_spec.Node.AddColumnOnce(rechargeorder.FieldSocialID)
+		}
+		if roq.withCampaignOrder != nil {
+			_spec.Node.AddColumnOnce(rechargeorder.FieldCampaignOrderID)
 		}
 	}
 	if ps := roq.predicates; len(ps) > 0 {
