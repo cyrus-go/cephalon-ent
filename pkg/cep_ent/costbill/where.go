@@ -121,6 +121,11 @@ func MarketAccountID(v int64) predicate.CostBill {
 	return predicate.CostBill(sql.FieldEQ(FieldMarketAccountID, v))
 }
 
+// CampaignOrderID applies equality check predicate on the "campaign_order_id" field. It's identical to CampaignOrderIDEQ.
+func CampaignOrderID(v int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldEQ(FieldCampaignOrderID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.CostBill {
 	return predicate.CostBill(sql.FieldEQ(FieldCreatedBy, v))
@@ -636,6 +641,26 @@ func MarketAccountIDNotIn(vs ...int64) predicate.CostBill {
 	return predicate.CostBill(sql.FieldNotIn(FieldMarketAccountID, vs...))
 }
 
+// CampaignOrderIDEQ applies the EQ predicate on the "campaign_order_id" field.
+func CampaignOrderIDEQ(v int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldEQ(FieldCampaignOrderID, v))
+}
+
+// CampaignOrderIDNEQ applies the NEQ predicate on the "campaign_order_id" field.
+func CampaignOrderIDNEQ(v int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldNEQ(FieldCampaignOrderID, v))
+}
+
+// CampaignOrderIDIn applies the In predicate on the "campaign_order_id" field.
+func CampaignOrderIDIn(vs ...int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldIn(FieldCampaignOrderID, vs...))
+}
+
+// CampaignOrderIDNotIn applies the NotIn predicate on the "campaign_order_id" field.
+func CampaignOrderIDNotIn(vs ...int64) predicate.CostBill {
+	return predicate.CostBill(sql.FieldNotIn(FieldCampaignOrderID, vs...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.CostBill {
 	return predicate.CostBill(func(s *sql.Selector) {
@@ -743,6 +768,29 @@ func HasPlatformAccount() predicate.CostBill {
 func HasPlatformAccountWith(preds ...predicate.PlatformAccount) predicate.CostBill {
 	return predicate.CostBill(func(s *sql.Selector) {
 		step := newPlatformAccountStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCampaignOrder applies the HasEdge predicate on the "campaign_order" edge.
+func HasCampaignOrder() predicate.CostBill {
+	return predicate.CostBill(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CampaignOrderTable, CampaignOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCampaignOrderWith applies the HasEdge predicate on the "campaign_order" edge with a given conditions (other predicates).
+func HasCampaignOrderWith(preds ...predicate.CampaignOrder) predicate.CostBill {
+	return predicate.CostBill(func(s *sql.Selector) {
+		step := newCampaignOrderStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

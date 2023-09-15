@@ -91,9 +91,11 @@ type UserEdges struct {
 	Children []*User `json:"children,omitempty"`
 	// Invites holds the value of the invites edge.
 	Invites []*Invite `json:"invites,omitempty"`
+	// CampaignOrders holds the value of the campaign_orders edge.
+	CampaignOrders []*CampaignOrder `json:"campaign_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [17]bool
+	loadedTypes [18]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -259,6 +261,15 @@ func (e UserEdges) InvitesOrErr() ([]*Invite, error) {
 		return e.Invites, nil
 	}
 	return nil, &NotLoadedError{edge: "invites"}
+}
+
+// CampaignOrdersOrErr returns the CampaignOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CampaignOrdersOrErr() ([]*CampaignOrder, error) {
+	if e.loadedTypes[17] {
+		return e.CampaignOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "campaign_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -481,6 +492,11 @@ func (u *User) QueryChildren() *UserQuery {
 // QueryInvites queries the "invites" edge of the User entity.
 func (u *User) QueryInvites() *InviteQuery {
 	return NewUserClient(u.config).QueryInvites(u)
+}
+
+// QueryCampaignOrders queries the "campaign_orders" edge of the User entity.
+func (u *User) QueryCampaignOrders() *CampaignOrderQuery {
+	return NewUserClient(u.config).QueryCampaignOrders(u)
 }
 
 // Update returns a builder for updating this User.

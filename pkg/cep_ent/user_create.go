@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -512,6 +513,21 @@ func (uc *UserCreate) AddInvites(i ...*Invite) *UserCreate {
 		ids[j] = i[j].ID
 	}
 	return uc.AddInviteIDs(ids...)
+}
+
+// AddCampaignOrderIDs adds the "campaign_orders" edge to the CampaignOrder entity by IDs.
+func (uc *UserCreate) AddCampaignOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCampaignOrderIDs(ids...)
+	return uc
+}
+
+// AddCampaignOrders adds the "campaign_orders" edges to the CampaignOrder entity.
+func (uc *UserCreate) AddCampaignOrders(c ...*CampaignOrder) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCampaignOrderIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1025,6 +1041,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CampaignOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CampaignOrdersTable,
+			Columns: []string{user.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

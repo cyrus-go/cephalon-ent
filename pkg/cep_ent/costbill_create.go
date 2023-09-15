@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -252,6 +253,20 @@ func (cbc *CostBillCreate) SetNillableMarketAccountID(i *int64) *CostBillCreate 
 	return cbc
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (cbc *CostBillCreate) SetCampaignOrderID(i int64) *CostBillCreate {
+	cbc.mutation.SetCampaignOrderID(i)
+	return cbc
+}
+
+// SetNillableCampaignOrderID sets the "campaign_order_id" field if the given value is not nil.
+func (cbc *CostBillCreate) SetNillableCampaignOrderID(i *int64) *CostBillCreate {
+	if i != nil {
+		cbc.SetCampaignOrderID(*i)
+	}
+	return cbc
+}
+
 // SetID sets the "id" field.
 func (cbc *CostBillCreate) SetID(i int64) *CostBillCreate {
 	cbc.mutation.SetID(i)
@@ -323,6 +338,11 @@ func (cbc *CostBillCreate) SetPlatformAccountID(id int64) *CostBillCreate {
 // SetPlatformAccount sets the "platform_account" edge to the PlatformAccount entity.
 func (cbc *CostBillCreate) SetPlatformAccount(p *PlatformAccount) *CostBillCreate {
 	return cbc.SetPlatformAccountID(p.ID)
+}
+
+// SetCampaignOrder sets the "campaign_order" edge to the CampaignOrder entity.
+func (cbc *CostBillCreate) SetCampaignOrder(c *CampaignOrder) *CostBillCreate {
+	return cbc.SetCampaignOrderID(c.ID)
 }
 
 // Mutation returns the CostBillMutation object of the builder.
@@ -424,6 +444,10 @@ func (cbc *CostBillCreate) defaults() {
 		v := costbill.DefaultMarketAccountID
 		cbc.mutation.SetMarketAccountID(v)
 	}
+	if _, ok := cbc.mutation.CampaignOrderID(); !ok {
+		v := costbill.DefaultCampaignOrderID
+		cbc.mutation.SetCampaignOrderID(v)
+	}
 	if _, ok := cbc.mutation.ID(); !ok {
 		v := costbill.DefaultID()
 		cbc.mutation.SetID(v)
@@ -492,6 +516,9 @@ func (cbc *CostBillCreate) check() error {
 	if _, ok := cbc.mutation.MarketAccountID(); !ok {
 		return &ValidationError{Name: "market_account_id", err: errors.New(`cep_ent: missing required field "CostBill.market_account_id"`)}
 	}
+	if _, ok := cbc.mutation.CampaignOrderID(); !ok {
+		return &ValidationError{Name: "campaign_order_id", err: errors.New(`cep_ent: missing required field "CostBill.campaign_order_id"`)}
+	}
 	if _, ok := cbc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "CostBill.user"`)}
 	}
@@ -500,6 +527,9 @@ func (cbc *CostBillCreate) check() error {
 	}
 	if _, ok := cbc.mutation.PlatformAccountID(); !ok {
 		return &ValidationError{Name: "platform_account", err: errors.New(`cep_ent: missing required edge "CostBill.platform_account"`)}
+	}
+	if _, ok := cbc.mutation.CampaignOrderID(); !ok {
+		return &ValidationError{Name: "campaign_order", err: errors.New(`cep_ent: missing required edge "CostBill.campaign_order"`)}
 	}
 	return nil
 }
@@ -665,6 +695,23 @@ func (cbc *CostBillCreate) createSpec() (*CostBill, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MarketAccountID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cbc.mutation.CampaignOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.CampaignOrderTable,
+			Columns: []string{costbill.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.CampaignOrderID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -926,6 +973,18 @@ func (u *CostBillUpsert) SetMarketAccountID(v int64) *CostBillUpsert {
 // UpdateMarketAccountID sets the "market_account_id" field to the value that was provided on create.
 func (u *CostBillUpsert) UpdateMarketAccountID() *CostBillUpsert {
 	u.SetExcluded(costbill.FieldMarketAccountID)
+	return u
+}
+
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (u *CostBillUpsert) SetCampaignOrderID(v int64) *CostBillUpsert {
+	u.Set(costbill.FieldCampaignOrderID, v)
+	return u
+}
+
+// UpdateCampaignOrderID sets the "campaign_order_id" field to the value that was provided on create.
+func (u *CostBillUpsert) UpdateCampaignOrderID() *CostBillUpsert {
+	u.SetExcluded(costbill.FieldCampaignOrderID)
 	return u
 }
 
@@ -1222,6 +1281,20 @@ func (u *CostBillUpsertOne) SetMarketAccountID(v int64) *CostBillUpsertOne {
 func (u *CostBillUpsertOne) UpdateMarketAccountID() *CostBillUpsertOne {
 	return u.Update(func(s *CostBillUpsert) {
 		s.UpdateMarketAccountID()
+	})
+}
+
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (u *CostBillUpsertOne) SetCampaignOrderID(v int64) *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetCampaignOrderID(v)
+	})
+}
+
+// UpdateCampaignOrderID sets the "campaign_order_id" field to the value that was provided on create.
+func (u *CostBillUpsertOne) UpdateCampaignOrderID() *CostBillUpsertOne {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateCampaignOrderID()
 	})
 }
 
@@ -1684,6 +1757,20 @@ func (u *CostBillUpsertBulk) SetMarketAccountID(v int64) *CostBillUpsertBulk {
 func (u *CostBillUpsertBulk) UpdateMarketAccountID() *CostBillUpsertBulk {
 	return u.Update(func(s *CostBillUpsert) {
 		s.UpdateMarketAccountID()
+	})
+}
+
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (u *CostBillUpsertBulk) SetCampaignOrderID(v int64) *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.SetCampaignOrderID(v)
+	})
+}
+
+// UpdateCampaignOrderID sets the "campaign_order_id" field to the value that was provided on create.
+func (u *CostBillUpsertBulk) UpdateCampaignOrderID() *CostBillUpsertBulk {
+	return u.Update(func(s *CostBillUpsert) {
+		s.UpdateCampaignOrderID()
 	})
 }
 

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -99,6 +100,45 @@ func init() {
 	campaignDescID := campaignMixinFields0[0].Descriptor()
 	// campaign.DefaultID holds the default value on creation for the id field.
 	campaign.DefaultID = campaignDescID.Default.(func() int64)
+	campaignorderMixin := schema.CampaignOrder{}.Mixin()
+	campaignorderMixinFields0 := campaignorderMixin[0].Fields()
+	_ = campaignorderMixinFields0
+	campaignorderFields := schema.CampaignOrder{}.Fields()
+	_ = campaignorderFields
+	// campaignorderDescCreatedBy is the schema descriptor for created_by field.
+	campaignorderDescCreatedBy := campaignorderMixinFields0[1].Descriptor()
+	// campaignorder.DefaultCreatedBy holds the default value on creation for the created_by field.
+	campaignorder.DefaultCreatedBy = campaignorderDescCreatedBy.Default.(int64)
+	// campaignorderDescUpdatedBy is the schema descriptor for updated_by field.
+	campaignorderDescUpdatedBy := campaignorderMixinFields0[2].Descriptor()
+	// campaignorder.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	campaignorder.DefaultUpdatedBy = campaignorderDescUpdatedBy.Default.(int64)
+	// campaignorderDescCreatedAt is the schema descriptor for created_at field.
+	campaignorderDescCreatedAt := campaignorderMixinFields0[3].Descriptor()
+	// campaignorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	campaignorder.DefaultCreatedAt = campaignorderDescCreatedAt.Default.(func() time.Time)
+	// campaignorderDescUpdatedAt is the schema descriptor for updated_at field.
+	campaignorderDescUpdatedAt := campaignorderMixinFields0[4].Descriptor()
+	// campaignorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	campaignorder.DefaultUpdatedAt = campaignorderDescUpdatedAt.Default.(func() time.Time)
+	// campaignorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	campaignorder.UpdateDefaultUpdatedAt = campaignorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// campaignorderDescDeletedAt is the schema descriptor for deleted_at field.
+	campaignorderDescDeletedAt := campaignorderMixinFields0[5].Descriptor()
+	// campaignorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	campaignorder.DefaultDeletedAt = campaignorderDescDeletedAt.Default.(time.Time)
+	// campaignorderDescUserID is the schema descriptor for user_id field.
+	campaignorderDescUserID := campaignorderFields[0].Descriptor()
+	// campaignorder.DefaultUserID holds the default value on creation for the user_id field.
+	campaignorder.DefaultUserID = campaignorderDescUserID.Default.(int64)
+	// campaignorderDescCampaignID is the schema descriptor for campaign_id field.
+	campaignorderDescCampaignID := campaignorderFields[1].Descriptor()
+	// campaignorder.DefaultCampaignID holds the default value on creation for the campaign_id field.
+	campaignorder.DefaultCampaignID = campaignorderDescCampaignID.Default.(int64)
+	// campaignorderDescID is the schema descriptor for id field.
+	campaignorderDescID := campaignorderMixinFields0[0].Descriptor()
+	// campaignorder.DefaultID holds the default value on creation for the id field.
+	campaignorder.DefaultID = campaignorderDescID.Default.(func() int64)
 	collectMixin := schema.Collect{}.Mixin()
 	collectMixinFields0 := collectMixin[0].Fields()
 	_ = collectMixinFields0
@@ -272,6 +312,10 @@ func init() {
 	costbillDescMarketAccountID := costbillFields[10].Descriptor()
 	// costbill.DefaultMarketAccountID holds the default value on creation for the market_account_id field.
 	costbill.DefaultMarketAccountID = costbillDescMarketAccountID.Default.(int64)
+	// costbillDescCampaignOrderID is the schema descriptor for campaign_order_id field.
+	costbillDescCampaignOrderID := costbillFields[11].Descriptor()
+	// costbill.DefaultCampaignOrderID holds the default value on creation for the campaign_order_id field.
+	costbill.DefaultCampaignOrderID = costbillDescCampaignOrderID.Default.(int64)
 	// costbillDescID is the schema descriptor for id field.
 	costbillDescID := costbillMixinFields0[0].Descriptor()
 	// costbill.DefaultID holds the default value on creation for the id field.

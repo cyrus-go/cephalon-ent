@@ -1166,6 +1166,29 @@ func HasInvitesWith(preds ...predicate.Invite) predicate.User {
 	})
 }
 
+// HasCampaignOrders applies the HasEdge predicate on the "campaign_orders" edge.
+func HasCampaignOrders() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CampaignOrdersTable, CampaignOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCampaignOrdersWith applies the HasEdge predicate on the "campaign_orders" edge with a given conditions (other predicates).
+func HasCampaignOrdersWith(preds ...predicate.CampaignOrder) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newCampaignOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

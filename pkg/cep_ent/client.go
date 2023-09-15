@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -56,6 +57,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Campaign is the client for interacting with the Campaign builders.
 	Campaign *CampaignClient
+	// CampaignOrder is the client for interacting with the CampaignOrder builders.
+	CampaignOrder *CampaignOrderClient
 	// Collect is the client for interacting with the Collect builders.
 	Collect *CollectClient
 	// CostAccount is the client for interacting with the CostAccount builders.
@@ -132,6 +135,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Campaign = NewCampaignClient(c.config)
+	c.CampaignOrder = NewCampaignOrderClient(c.config)
 	c.Collect = NewCollectClient(c.config)
 	c.CostAccount = NewCostAccountClient(c.config)
 	c.CostBill = NewCostBillClient(c.config)
@@ -249,6 +253,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                  ctx,
 		config:               cfg,
 		Campaign:             NewCampaignClient(cfg),
+		CampaignOrder:        NewCampaignOrderClient(cfg),
 		Collect:              NewCollectClient(cfg),
 		CostAccount:          NewCostAccountClient(cfg),
 		CostBill:             NewCostBillClient(cfg),
@@ -300,6 +305,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:                  ctx,
 		config:               cfg,
 		Campaign:             NewCampaignClient(cfg),
+		CampaignOrder:        NewCampaignOrderClient(cfg),
 		Collect:              NewCollectClient(cfg),
 		CostAccount:          NewCostAccountClient(cfg),
 		CostBill:             NewCostBillClient(cfg),
@@ -360,13 +366,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Campaign, c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission,
-		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo,
-		c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
-		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
-		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial,
+		c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill, c.Device,
+		c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
+		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission,
+		c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind,
+		c.MissionProduceOrder, c.OutputLog, c.PlatformAccount, c.Price,
+		c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder,
+		c.User, c.UserDevice, c.VXAccount, c.VXSocial,
 	} {
 		n.Use(hooks...)
 	}
@@ -376,13 +382,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Campaign, c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission,
-		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.FrpcInfo, c.FrpsInfo,
-		c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission, c.MissionBatch,
-		c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind, c.MissionProduceOrder,
-		c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial,
+		c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill, c.Device,
+		c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
+		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission,
+		c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind,
+		c.MissionProduceOrder, c.OutputLog, c.PlatformAccount, c.Price,
+		c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder,
+		c.User, c.UserDevice, c.VXAccount, c.VXSocial,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -393,6 +399,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *CampaignMutation:
 		return c.Campaign.mutate(ctx, m)
+	case *CampaignOrderMutation:
+		return c.CampaignOrder.mutate(ctx, m)
 	case *CollectMutation:
 		return c.Collect.mutate(ctx, m)
 	case *CostAccountMutation:
@@ -584,6 +592,22 @@ func (c *CampaignClient) QueryInvites(ca *Campaign) *InviteQuery {
 	return query
 }
 
+// QueryCampaignOrders queries the campaign_orders edge of a Campaign.
+func (c *CampaignClient) QueryCampaignOrders(ca *Campaign) *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ca.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaign.Table, campaign.FieldID, id),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, campaign.CampaignOrdersTable, campaign.CampaignOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(ca.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CampaignClient) Hooks() []Hook {
 	return c.hooks.Campaign
@@ -606,6 +630,187 @@ func (c *CampaignClient) mutate(ctx context.Context, m *CampaignMutation) (Value
 		return (&CampaignDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Campaign mutation op: %q", m.Op())
+	}
+}
+
+// CampaignOrderClient is a client for the CampaignOrder schema.
+type CampaignOrderClient struct {
+	config
+}
+
+// NewCampaignOrderClient returns a client for the CampaignOrder from the given config.
+func NewCampaignOrderClient(c config) *CampaignOrderClient {
+	return &CampaignOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `campaignorder.Hooks(f(g(h())))`.
+func (c *CampaignOrderClient) Use(hooks ...Hook) {
+	c.hooks.CampaignOrder = append(c.hooks.CampaignOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `campaignorder.Intercept(f(g(h())))`.
+func (c *CampaignOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CampaignOrder = append(c.inters.CampaignOrder, interceptors...)
+}
+
+// Create returns a builder for creating a CampaignOrder entity.
+func (c *CampaignOrderClient) Create() *CampaignOrderCreate {
+	mutation := newCampaignOrderMutation(c.config, OpCreate)
+	return &CampaignOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CampaignOrder entities.
+func (c *CampaignOrderClient) CreateBulk(builders ...*CampaignOrderCreate) *CampaignOrderCreateBulk {
+	return &CampaignOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CampaignOrderClient) MapCreateBulk(slice any, setFunc func(*CampaignOrderCreate, int)) *CampaignOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CampaignOrderCreateBulk{err: fmt.Errorf("calling to CampaignOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CampaignOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CampaignOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CampaignOrder.
+func (c *CampaignOrderClient) Update() *CampaignOrderUpdate {
+	mutation := newCampaignOrderMutation(c.config, OpUpdate)
+	return &CampaignOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CampaignOrderClient) UpdateOne(co *CampaignOrder) *CampaignOrderUpdateOne {
+	mutation := newCampaignOrderMutation(c.config, OpUpdateOne, withCampaignOrder(co))
+	return &CampaignOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CampaignOrderClient) UpdateOneID(id int64) *CampaignOrderUpdateOne {
+	mutation := newCampaignOrderMutation(c.config, OpUpdateOne, withCampaignOrderID(id))
+	return &CampaignOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CampaignOrder.
+func (c *CampaignOrderClient) Delete() *CampaignOrderDelete {
+	mutation := newCampaignOrderMutation(c.config, OpDelete)
+	return &CampaignOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CampaignOrderClient) DeleteOne(co *CampaignOrder) *CampaignOrderDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CampaignOrderClient) DeleteOneID(id int64) *CampaignOrderDeleteOne {
+	builder := c.Delete().Where(campaignorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CampaignOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for CampaignOrder.
+func (c *CampaignOrderClient) Query() *CampaignOrderQuery {
+	return &CampaignOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCampaignOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CampaignOrder entity by its id.
+func (c *CampaignOrderClient) Get(ctx context.Context, id int64) (*CampaignOrder, error) {
+	return c.Query().Where(campaignorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CampaignOrderClient) GetX(ctx context.Context, id int64) *CampaignOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a CampaignOrder.
+func (c *CampaignOrderClient) QueryUser(co *CampaignOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaignorder.Table, campaignorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, campaignorder.UserTable, campaignorder.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCampaign queries the campaign edge of a CampaignOrder.
+func (c *CampaignOrderClient) QueryCampaign(co *CampaignOrder) *CampaignQuery {
+	query := (&CampaignClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaignorder.Table, campaignorder.FieldID, id),
+			sqlgraph.To(campaign.Table, campaign.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, campaignorder.CampaignTable, campaignorder.CampaignColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCostBills queries the cost_bills edge of a CampaignOrder.
+func (c *CampaignOrderClient) QueryCostBills(co *CampaignOrder) *CostBillQuery {
+	query := (&CostBillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := co.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaignorder.Table, campaignorder.FieldID, id),
+			sqlgraph.To(costbill.Table, costbill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, campaignorder.CostBillsTable, campaignorder.CostBillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CampaignOrderClient) Hooks() []Hook {
+	return c.hooks.CampaignOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *CampaignOrderClient) Interceptors() []Interceptor {
+	return c.inters.CampaignOrder
+}
+
+func (c *CampaignOrderClient) mutate(ctx context.Context, m *CampaignOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CampaignOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CampaignOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CampaignOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CampaignOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown CampaignOrder mutation op: %q", m.Op())
 	}
 }
 
@@ -1104,6 +1309,22 @@ func (c *CostBillClient) QueryPlatformAccount(cb *CostBill) *PlatformAccountQuer
 			sqlgraph.From(costbill.Table, costbill.FieldID, id),
 			sqlgraph.To(platformaccount.Table, platformaccount.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, costbill.PlatformAccountTable, costbill.PlatformAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCampaignOrder queries the campaign_order edge of a CostBill.
+func (c *CostBillClient) QueryCampaignOrder(cb *CostBill) *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, id),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.CampaignOrderTable, costbill.CampaignOrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(cb.driver.Dialect(), step)
 		return fromV, nil
@@ -5428,6 +5649,22 @@ func (c *UserClient) QueryInvites(u *User) *InviteQuery {
 	return query
 }
 
+// QueryCampaignOrders queries the campaign_orders edge of a User.
+func (c *UserClient) QueryCampaignOrders(u *User) *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CampaignOrdersTable, user.CampaignOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -5935,19 +6172,21 @@ func (c *VXSocialClient) mutate(ctx context.Context, m *VXSocialMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Campaign, Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
-		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
-		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, User,
-		UserDevice, VXAccount, VXSocial []ent.Hook
+		Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
+		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
+		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, Mission, MissionBatch,
+		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionProduceOrder,
+		OutputLog, PlatformAccount, Price, ProfitAccount, ProfitSetting,
+		RechargeCampaignRule, RechargeOrder, User, UserDevice, VXAccount,
+		VXSocial []ent.Hook
 	}
 	inters struct {
-		Campaign, Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
-		EnumCondition, EnumMissionStatus, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		InputLog, Invite, Mission, MissionBatch, MissionConsumeOrder, MissionKeyPair,
-		MissionKind, MissionProduceOrder, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, User,
-		UserDevice, VXAccount, VXSocial []ent.Interceptor
+		Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
+		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
+		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, Mission, MissionBatch,
+		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionProduceOrder,
+		OutputLog, PlatformAccount, Price, ProfitAccount, ProfitSetting,
+		RechargeCampaignRule, RechargeOrder, User, UserDevice, VXAccount,
+		VXSocial []ent.Interceptor
 	}
 )

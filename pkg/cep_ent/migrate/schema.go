@@ -30,6 +30,37 @@ var (
 		Columns:    CampaignsColumns,
 		PrimaryKey: []*schema.Column{CampaignsColumns[0]},
 	}
+	// CampaignOrdersColumns holds the columns for the "campaign_orders" table.
+	CampaignOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "campaign_id", Type: field.TypeInt64, Comment: "活动 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 id", Default: 0},
+	}
+	// CampaignOrdersTable holds the schema information for the "campaign_orders" table.
+	CampaignOrdersTable = &schema.Table{
+		Name:       "campaign_orders",
+		Columns:    CampaignOrdersColumns,
+		PrimaryKey: []*schema.Column{CampaignOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "campaign_orders_campaigns_campaign_orders",
+				Columns:    []*schema.Column{CampaignOrdersColumns[6]},
+				RefColumns: []*schema.Column{CampaignsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "campaign_orders_users_campaign_orders",
+				Columns:    []*schema.Column{CampaignOrdersColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// CollectsColumns holds the columns for the "collects" table.
 	CollectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -104,6 +135,7 @@ var (
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "消耗多少本金余额", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "消耗多少赠送余额", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "消耗流水一开始不能直接生效，确定关联的消耗时间成功后才可以扣费", Enums: []string{"pending", "canceled", "done"}, Default: "pending"},
+		{Name: "campaign_order_id", Type: field.TypeInt64, Comment: "活动订单 id", Default: 0},
 		{Name: "cost_account_id", Type: field.TypeInt64, Comment: "外键消耗账户 id", Default: 0},
 		{Name: "reason_id", Type: field.TypeInt64, Nullable: true, Comment: "关联消耗产生的来源外键 id，比如 type 为 mission 时关联任务订单", Default: 0},
 		{Name: "market_account_id", Type: field.TypeInt64, Comment: "营销账户 id，表示这是一条营销流水（此方案为临时方案）", Default: 0},
@@ -117,32 +149,38 @@ var (
 		PrimaryKey: []*schema.Column{CostBillsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "cost_bills_cost_accounts_cost_bills",
+				Symbol:     "cost_bills_campaign_orders_cost_bills",
 				Columns:    []*schema.Column{CostBillsColumns[13]},
+				RefColumns: []*schema.Column{CampaignOrdersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "cost_bills_cost_accounts_cost_bills",
+				Columns:    []*schema.Column{CostBillsColumns[14]},
 				RefColumns: []*schema.Column{CostAccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "cost_bills_mission_consume_orders_cost_bills",
-				Columns:    []*schema.Column{CostBillsColumns[14]},
+				Columns:    []*schema.Column{CostBillsColumns[15]},
 				RefColumns: []*schema.Column{MissionConsumeOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "cost_bills_platform_accounts_cost_bills",
-				Columns:    []*schema.Column{CostBillsColumns[15]},
+				Columns:    []*schema.Column{CostBillsColumns[16]},
 				RefColumns: []*schema.Column{PlatformAccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "cost_bills_recharge_orders_cost_bills",
-				Columns:    []*schema.Column{CostBillsColumns[14]},
+				Columns:    []*schema.Column{CostBillsColumns[15]},
 				RefColumns: []*schema.Column{RechargeOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "cost_bills_users_cost_bills",
-				Columns:    []*schema.Column{CostBillsColumns[16]},
+				Columns:    []*schema.Column{CostBillsColumns[17]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -992,6 +1030,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		CampaignsTable,
+		CampaignOrdersTable,
 		CollectsTable,
 		CostAccountsTable,
 		CostBillsTable,
@@ -1028,15 +1067,19 @@ var (
 
 func init() {
 	CampaignsTable.Annotation = &entsql.Annotation{}
+	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
+	CampaignOrdersTable.ForeignKeys[1].RefTable = UsersTable
+	CampaignOrdersTable.Annotation = &entsql.Annotation{}
 	CollectsTable.ForeignKeys[0].RefTable = UsersTable
 	CollectsTable.Annotation = &entsql.Annotation{}
 	CostAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	CostAccountsTable.Annotation = &entsql.Annotation{}
-	CostBillsTable.ForeignKeys[0].RefTable = CostAccountsTable
-	CostBillsTable.ForeignKeys[1].RefTable = MissionConsumeOrdersTable
-	CostBillsTable.ForeignKeys[2].RefTable = PlatformAccountsTable
-	CostBillsTable.ForeignKeys[3].RefTable = RechargeOrdersTable
-	CostBillsTable.ForeignKeys[4].RefTable = UsersTable
+	CostBillsTable.ForeignKeys[0].RefTable = CampaignOrdersTable
+	CostBillsTable.ForeignKeys[1].RefTable = CostAccountsTable
+	CostBillsTable.ForeignKeys[2].RefTable = MissionConsumeOrdersTable
+	CostBillsTable.ForeignKeys[3].RefTable = PlatformAccountsTable
+	CostBillsTable.ForeignKeys[4].RefTable = RechargeOrdersTable
+	CostBillsTable.ForeignKeys[5].RefTable = UsersTable
 	CostBillsTable.Annotation = &entsql.Annotation{}
 	DevicesTable.ForeignKeys[0].RefTable = UsersTable
 	DevicesTable.Annotation = &entsql.Annotation{}

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -57,6 +58,7 @@ const (
 
 	// Node types.
 	TypeCampaign             = "Campaign"
+	TypeCampaignOrder        = "CampaignOrder"
 	TypeCollect              = "Collect"
 	TypeCostAccount          = "CostAccount"
 	TypeCostBill             = "CostBill"
@@ -93,30 +95,33 @@ const (
 // CampaignMutation represents an operation that mutates the Campaign nodes in the graph.
 type CampaignMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int64
-	created_by     *int64
-	addcreated_by  *int64
-	updated_by     *int64
-	addupdated_by  *int64
-	created_at     *time.Time
-	updated_at     *time.Time
-	deleted_at     *time.Time
-	name           *string
-	_type          *string
-	started_at     *time.Time
-	ended_at       *time.Time
-	status         *int
-	addstatus      *int
-	invite_id      *string
-	clearedFields  map[string]struct{}
-	invites        map[int64]struct{}
-	removedinvites map[int64]struct{}
-	clearedinvites bool
-	done           bool
-	oldValue       func(context.Context) (*Campaign, error)
-	predicates     []predicate.Campaign
+	op                     Op
+	typ                    string
+	id                     *int64
+	created_by             *int64
+	addcreated_by          *int64
+	updated_by             *int64
+	addupdated_by          *int64
+	created_at             *time.Time
+	updated_at             *time.Time
+	deleted_at             *time.Time
+	name                   *string
+	_type                  *string
+	started_at             *time.Time
+	ended_at               *time.Time
+	status                 *int
+	addstatus              *int
+	invite_id              *string
+	clearedFields          map[string]struct{}
+	invites                map[int64]struct{}
+	removedinvites         map[int64]struct{}
+	clearedinvites         bool
+	campaign_orders        map[int64]struct{}
+	removedcampaign_orders map[int64]struct{}
+	clearedcampaign_orders bool
+	done                   bool
+	oldValue               func(context.Context) (*Campaign, error)
+	predicates             []predicate.Campaign
 }
 
 var _ ent.Mutation = (*CampaignMutation)(nil)
@@ -733,6 +738,60 @@ func (m *CampaignMutation) ResetInvites() {
 	m.removedinvites = nil
 }
 
+// AddCampaignOrderIDs adds the "campaign_orders" edge to the CampaignOrder entity by ids.
+func (m *CampaignMutation) AddCampaignOrderIDs(ids ...int64) {
+	if m.campaign_orders == nil {
+		m.campaign_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.campaign_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCampaignOrders clears the "campaign_orders" edge to the CampaignOrder entity.
+func (m *CampaignMutation) ClearCampaignOrders() {
+	m.clearedcampaign_orders = true
+}
+
+// CampaignOrdersCleared reports if the "campaign_orders" edge to the CampaignOrder entity was cleared.
+func (m *CampaignMutation) CampaignOrdersCleared() bool {
+	return m.clearedcampaign_orders
+}
+
+// RemoveCampaignOrderIDs removes the "campaign_orders" edge to the CampaignOrder entity by IDs.
+func (m *CampaignMutation) RemoveCampaignOrderIDs(ids ...int64) {
+	if m.removedcampaign_orders == nil {
+		m.removedcampaign_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.campaign_orders, ids[i])
+		m.removedcampaign_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCampaignOrders returns the removed IDs of the "campaign_orders" edge to the CampaignOrder entity.
+func (m *CampaignMutation) RemovedCampaignOrdersIDs() (ids []int64) {
+	for id := range m.removedcampaign_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CampaignOrdersIDs returns the "campaign_orders" edge IDs in the mutation.
+func (m *CampaignMutation) CampaignOrdersIDs() (ids []int64) {
+	for id := range m.campaign_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCampaignOrders resets all changes to the "campaign_orders" edge.
+func (m *CampaignMutation) ResetCampaignOrders() {
+	m.campaign_orders = nil
+	m.clearedcampaign_orders = false
+	m.removedcampaign_orders = nil
+}
+
 // Where appends a list predicates to the CampaignMutation builder.
 func (m *CampaignMutation) Where(ps ...predicate.Campaign) {
 	m.predicates = append(m.predicates, ps...)
@@ -1075,9 +1134,12 @@ func (m *CampaignMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CampaignMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.invites != nil {
 		edges = append(edges, campaign.EdgeInvites)
+	}
+	if m.campaign_orders != nil {
+		edges = append(edges, campaign.EdgeCampaignOrders)
 	}
 	return edges
 }
@@ -1092,15 +1154,24 @@ func (m *CampaignMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case campaign.EdgeCampaignOrders:
+		ids := make([]ent.Value, 0, len(m.campaign_orders))
+		for id := range m.campaign_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CampaignMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedinvites != nil {
 		edges = append(edges, campaign.EdgeInvites)
+	}
+	if m.removedcampaign_orders != nil {
+		edges = append(edges, campaign.EdgeCampaignOrders)
 	}
 	return edges
 }
@@ -1115,15 +1186,24 @@ func (m *CampaignMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case campaign.EdgeCampaignOrders:
+		ids := make([]ent.Value, 0, len(m.removedcampaign_orders))
+		for id := range m.removedcampaign_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CampaignMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedinvites {
 		edges = append(edges, campaign.EdgeInvites)
+	}
+	if m.clearedcampaign_orders {
+		edges = append(edges, campaign.EdgeCampaignOrders)
 	}
 	return edges
 }
@@ -1134,6 +1214,8 @@ func (m *CampaignMutation) EdgeCleared(name string) bool {
 	switch name {
 	case campaign.EdgeInvites:
 		return m.clearedinvites
+	case campaign.EdgeCampaignOrders:
+		return m.clearedcampaign_orders
 	}
 	return false
 }
@@ -1153,8 +1235,921 @@ func (m *CampaignMutation) ResetEdge(name string) error {
 	case campaign.EdgeInvites:
 		m.ResetInvites()
 		return nil
+	case campaign.EdgeCampaignOrders:
+		m.ResetCampaignOrders()
+		return nil
 	}
 	return fmt.Errorf("unknown Campaign edge %s", name)
+}
+
+// CampaignOrderMutation represents an operation that mutates the CampaignOrder nodes in the graph.
+type CampaignOrderMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	created_by        *int64
+	addcreated_by     *int64
+	updated_by        *int64
+	addupdated_by     *int64
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	clearedFields     map[string]struct{}
+	user              *int64
+	cleareduser       bool
+	campaign          *int64
+	clearedcampaign   bool
+	cost_bills        map[int64]struct{}
+	removedcost_bills map[int64]struct{}
+	clearedcost_bills bool
+	done              bool
+	oldValue          func(context.Context) (*CampaignOrder, error)
+	predicates        []predicate.CampaignOrder
+}
+
+var _ ent.Mutation = (*CampaignOrderMutation)(nil)
+
+// campaignorderOption allows management of the mutation configuration using functional options.
+type campaignorderOption func(*CampaignOrderMutation)
+
+// newCampaignOrderMutation creates new mutation for the CampaignOrder entity.
+func newCampaignOrderMutation(c config, op Op, opts ...campaignorderOption) *CampaignOrderMutation {
+	m := &CampaignOrderMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCampaignOrder,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCampaignOrderID sets the ID field of the mutation.
+func withCampaignOrderID(id int64) campaignorderOption {
+	return func(m *CampaignOrderMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CampaignOrder
+		)
+		m.oldValue = func(ctx context.Context) (*CampaignOrder, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CampaignOrder.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCampaignOrder sets the old CampaignOrder of the mutation.
+func withCampaignOrder(node *CampaignOrder) campaignorderOption {
+	return func(m *CampaignOrderMutation) {
+		m.oldValue = func(context.Context) (*CampaignOrder, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CampaignOrderMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CampaignOrderMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CampaignOrder entities.
+func (m *CampaignOrderMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CampaignOrderMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CampaignOrderMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CampaignOrder.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CampaignOrderMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CampaignOrderMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *CampaignOrderMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CampaignOrderMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CampaignOrderMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CampaignOrderMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CampaignOrderMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *CampaignOrderMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CampaignOrderMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CampaignOrderMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CampaignOrderMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CampaignOrderMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CampaignOrderMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CampaignOrderMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CampaignOrderMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CampaignOrderMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CampaignOrderMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CampaignOrderMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CampaignOrderMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *CampaignOrderMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *CampaignOrderMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *CampaignOrderMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetCampaignID sets the "campaign_id" field.
+func (m *CampaignOrderMutation) SetCampaignID(i int64) {
+	m.campaign = &i
+}
+
+// CampaignID returns the value of the "campaign_id" field in the mutation.
+func (m *CampaignOrderMutation) CampaignID() (r int64, exists bool) {
+	v := m.campaign
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCampaignID returns the old "campaign_id" field's value of the CampaignOrder entity.
+// If the CampaignOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CampaignOrderMutation) OldCampaignID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCampaignID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCampaignID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCampaignID: %w", err)
+	}
+	return oldValue.CampaignID, nil
+}
+
+// ResetCampaignID resets all changes to the "campaign_id" field.
+func (m *CampaignOrderMutation) ResetCampaignID() {
+	m.campaign = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *CampaignOrderMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[campaignorder.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *CampaignOrderMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *CampaignOrderMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *CampaignOrderMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearCampaign clears the "campaign" edge to the Campaign entity.
+func (m *CampaignOrderMutation) ClearCampaign() {
+	m.clearedcampaign = true
+	m.clearedFields[campaignorder.FieldCampaignID] = struct{}{}
+}
+
+// CampaignCleared reports if the "campaign" edge to the Campaign entity was cleared.
+func (m *CampaignOrderMutation) CampaignCleared() bool {
+	return m.clearedcampaign
+}
+
+// CampaignIDs returns the "campaign" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CampaignID instead. It exists only for internal usage by the builders.
+func (m *CampaignOrderMutation) CampaignIDs() (ids []int64) {
+	if id := m.campaign; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCampaign resets all changes to the "campaign" edge.
+func (m *CampaignOrderMutation) ResetCampaign() {
+	m.campaign = nil
+	m.clearedcampaign = false
+}
+
+// AddCostBillIDs adds the "cost_bills" edge to the CostBill entity by ids.
+func (m *CampaignOrderMutation) AddCostBillIDs(ids ...int64) {
+	if m.cost_bills == nil {
+		m.cost_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.cost_bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCostBills clears the "cost_bills" edge to the CostBill entity.
+func (m *CampaignOrderMutation) ClearCostBills() {
+	m.clearedcost_bills = true
+}
+
+// CostBillsCleared reports if the "cost_bills" edge to the CostBill entity was cleared.
+func (m *CampaignOrderMutation) CostBillsCleared() bool {
+	return m.clearedcost_bills
+}
+
+// RemoveCostBillIDs removes the "cost_bills" edge to the CostBill entity by IDs.
+func (m *CampaignOrderMutation) RemoveCostBillIDs(ids ...int64) {
+	if m.removedcost_bills == nil {
+		m.removedcost_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.cost_bills, ids[i])
+		m.removedcost_bills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCostBills returns the removed IDs of the "cost_bills" edge to the CostBill entity.
+func (m *CampaignOrderMutation) RemovedCostBillsIDs() (ids []int64) {
+	for id := range m.removedcost_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CostBillsIDs returns the "cost_bills" edge IDs in the mutation.
+func (m *CampaignOrderMutation) CostBillsIDs() (ids []int64) {
+	for id := range m.cost_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCostBills resets all changes to the "cost_bills" edge.
+func (m *CampaignOrderMutation) ResetCostBills() {
+	m.cost_bills = nil
+	m.clearedcost_bills = false
+	m.removedcost_bills = nil
+}
+
+// Where appends a list predicates to the CampaignOrderMutation builder.
+func (m *CampaignOrderMutation) Where(ps ...predicate.CampaignOrder) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CampaignOrderMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CampaignOrderMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CampaignOrder, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CampaignOrderMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CampaignOrderMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CampaignOrder).
+func (m *CampaignOrderMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CampaignOrderMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_by != nil {
+		fields = append(fields, campaignorder.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, campaignorder.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, campaignorder.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, campaignorder.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, campaignorder.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, campaignorder.FieldUserID)
+	}
+	if m.campaign != nil {
+		fields = append(fields, campaignorder.FieldCampaignID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CampaignOrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case campaignorder.FieldCreatedBy:
+		return m.CreatedBy()
+	case campaignorder.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case campaignorder.FieldCreatedAt:
+		return m.CreatedAt()
+	case campaignorder.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case campaignorder.FieldDeletedAt:
+		return m.DeletedAt()
+	case campaignorder.FieldUserID:
+		return m.UserID()
+	case campaignorder.FieldCampaignID:
+		return m.CampaignID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CampaignOrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case campaignorder.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case campaignorder.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case campaignorder.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case campaignorder.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case campaignorder.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case campaignorder.FieldUserID:
+		return m.OldUserID(ctx)
+	case campaignorder.FieldCampaignID:
+		return m.OldCampaignID(ctx)
+	}
+	return nil, fmt.Errorf("unknown CampaignOrder field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CampaignOrderMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case campaignorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case campaignorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case campaignorder.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case campaignorder.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case campaignorder.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case campaignorder.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case campaignorder.FieldCampaignID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCampaignID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CampaignOrder field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CampaignOrderMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, campaignorder.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, campaignorder.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CampaignOrderMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case campaignorder.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case campaignorder.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CampaignOrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case campaignorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case campaignorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CampaignOrder numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CampaignOrderMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CampaignOrderMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CampaignOrderMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown CampaignOrder nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CampaignOrderMutation) ResetField(name string) error {
+	switch name {
+	case campaignorder.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case campaignorder.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case campaignorder.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case campaignorder.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case campaignorder.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case campaignorder.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case campaignorder.FieldCampaignID:
+		m.ResetCampaignID()
+		return nil
+	}
+	return fmt.Errorf("unknown CampaignOrder field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CampaignOrderMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.user != nil {
+		edges = append(edges, campaignorder.EdgeUser)
+	}
+	if m.campaign != nil {
+		edges = append(edges, campaignorder.EdgeCampaign)
+	}
+	if m.cost_bills != nil {
+		edges = append(edges, campaignorder.EdgeCostBills)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CampaignOrderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case campaignorder.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case campaignorder.EdgeCampaign:
+		if id := m.campaign; id != nil {
+			return []ent.Value{*id}
+		}
+	case campaignorder.EdgeCostBills:
+		ids := make([]ent.Value, 0, len(m.cost_bills))
+		for id := range m.cost_bills {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CampaignOrderMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedcost_bills != nil {
+		edges = append(edges, campaignorder.EdgeCostBills)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CampaignOrderMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case campaignorder.EdgeCostBills:
+		ids := make([]ent.Value, 0, len(m.removedcost_bills))
+		for id := range m.removedcost_bills {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CampaignOrderMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.cleareduser {
+		edges = append(edges, campaignorder.EdgeUser)
+	}
+	if m.clearedcampaign {
+		edges = append(edges, campaignorder.EdgeCampaign)
+	}
+	if m.clearedcost_bills {
+		edges = append(edges, campaignorder.EdgeCostBills)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CampaignOrderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case campaignorder.EdgeUser:
+		return m.cleareduser
+	case campaignorder.EdgeCampaign:
+		return m.clearedcampaign
+	case campaignorder.EdgeCostBills:
+		return m.clearedcost_bills
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CampaignOrderMutation) ClearEdge(name string) error {
+	switch name {
+	case campaignorder.EdgeUser:
+		m.ClearUser()
+		return nil
+	case campaignorder.EdgeCampaign:
+		m.ClearCampaign()
+		return nil
+	}
+	return fmt.Errorf("unknown CampaignOrder unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CampaignOrderMutation) ResetEdge(name string) error {
+	switch name {
+	case campaignorder.EdgeUser:
+		m.ResetUser()
+		return nil
+	case campaignorder.EdgeCampaign:
+		m.ResetCampaign()
+		return nil
+	case campaignorder.EdgeCostBills:
+		m.ResetCostBills()
+		return nil
+	}
+	return fmt.Errorf("unknown CampaignOrder edge %s", name)
 }
 
 // CollectMutation represents an operation that mutates the Collect nodes in the graph.
@@ -3649,6 +4644,8 @@ type CostBillMutation struct {
 	clearedmission_consume_order bool
 	platform_account             *int64
 	clearedplatform_account      bool
+	campaign_order               *int64
+	clearedcampaign_order        bool
 	done                         bool
 	oldValue                     func(context.Context) (*CostBill, error)
 	predicates                   []predicate.CostBill
@@ -4427,6 +5424,42 @@ func (m *CostBillMutation) ResetMarketAccountID() {
 	m.platform_account = nil
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (m *CostBillMutation) SetCampaignOrderID(i int64) {
+	m.campaign_order = &i
+}
+
+// CampaignOrderID returns the value of the "campaign_order_id" field in the mutation.
+func (m *CostBillMutation) CampaignOrderID() (r int64, exists bool) {
+	v := m.campaign_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCampaignOrderID returns the old "campaign_order_id" field's value of the CostBill entity.
+// If the CostBill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CostBillMutation) OldCampaignOrderID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCampaignOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCampaignOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCampaignOrderID: %w", err)
+	}
+	return oldValue.CampaignOrderID, nil
+}
+
+// ResetCampaignOrderID resets all changes to the "campaign_order_id" field.
+func (m *CostBillMutation) ResetCampaignOrderID() {
+	m.campaign_order = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *CostBillMutation) ClearUser() {
 	m.cleareduser = true
@@ -4601,6 +5634,33 @@ func (m *CostBillMutation) ResetPlatformAccount() {
 	m.clearedplatform_account = false
 }
 
+// ClearCampaignOrder clears the "campaign_order" edge to the CampaignOrder entity.
+func (m *CostBillMutation) ClearCampaignOrder() {
+	m.clearedcampaign_order = true
+	m.clearedFields[costbill.FieldCampaignOrderID] = struct{}{}
+}
+
+// CampaignOrderCleared reports if the "campaign_order" edge to the CampaignOrder entity was cleared.
+func (m *CostBillMutation) CampaignOrderCleared() bool {
+	return m.clearedcampaign_order
+}
+
+// CampaignOrderIDs returns the "campaign_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CampaignOrderID instead. It exists only for internal usage by the builders.
+func (m *CostBillMutation) CampaignOrderIDs() (ids []int64) {
+	if id := m.campaign_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCampaignOrder resets all changes to the "campaign_order" edge.
+func (m *CostBillMutation) ResetCampaignOrder() {
+	m.campaign_order = nil
+	m.clearedcampaign_order = false
+}
+
 // Where appends a list predicates to the CostBillMutation builder.
 func (m *CostBillMutation) Where(ps ...predicate.CostBill) {
 	m.predicates = append(m.predicates, ps...)
@@ -4635,7 +5695,7 @@ func (m *CostBillMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CostBillMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_by != nil {
 		fields = append(fields, costbill.FieldCreatedBy)
 	}
@@ -4684,6 +5744,9 @@ func (m *CostBillMutation) Fields() []string {
 	if m.platform_account != nil {
 		fields = append(fields, costbill.FieldMarketAccountID)
 	}
+	if m.campaign_order != nil {
+		fields = append(fields, costbill.FieldCampaignOrderID)
+	}
 	return fields
 }
 
@@ -4724,6 +5787,8 @@ func (m *CostBillMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case costbill.FieldMarketAccountID:
 		return m.MarketAccountID()
+	case costbill.FieldCampaignOrderID:
+		return m.CampaignOrderID()
 	}
 	return nil, false
 }
@@ -4765,6 +5830,8 @@ func (m *CostBillMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldStatus(ctx)
 	case costbill.FieldMarketAccountID:
 		return m.OldMarketAccountID(ctx)
+	case costbill.FieldCampaignOrderID:
+		return m.OldCampaignOrderID(ctx)
 	}
 	return nil, fmt.Errorf("unknown CostBill field %s", name)
 }
@@ -4885,6 +5952,13 @@ func (m *CostBillMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMarketAccountID(v)
+		return nil
+	case costbill.FieldCampaignOrderID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCampaignOrderID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CostBill field %s", name)
@@ -5043,13 +6117,16 @@ func (m *CostBillMutation) ResetField(name string) error {
 	case costbill.FieldMarketAccountID:
 		m.ResetMarketAccountID()
 		return nil
+	case costbill.FieldCampaignOrderID:
+		m.ResetCampaignOrderID()
+		return nil
 	}
 	return fmt.Errorf("unknown CostBill field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CostBillMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.user != nil {
 		edges = append(edges, costbill.EdgeUser)
 	}
@@ -5064,6 +6141,9 @@ func (m *CostBillMutation) AddedEdges() []string {
 	}
 	if m.platform_account != nil {
 		edges = append(edges, costbill.EdgePlatformAccount)
+	}
+	if m.campaign_order != nil {
+		edges = append(edges, costbill.EdgeCampaignOrder)
 	}
 	return edges
 }
@@ -5092,13 +6172,17 @@ func (m *CostBillMutation) AddedIDs(name string) []ent.Value {
 		if id := m.platform_account; id != nil {
 			return []ent.Value{*id}
 		}
+	case costbill.EdgeCampaignOrder:
+		if id := m.campaign_order; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CostBillMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	return edges
 }
 
@@ -5110,7 +6194,7 @@ func (m *CostBillMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CostBillMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.cleareduser {
 		edges = append(edges, costbill.EdgeUser)
 	}
@@ -5125,6 +6209,9 @@ func (m *CostBillMutation) ClearedEdges() []string {
 	}
 	if m.clearedplatform_account {
 		edges = append(edges, costbill.EdgePlatformAccount)
+	}
+	if m.clearedcampaign_order {
+		edges = append(edges, costbill.EdgeCampaignOrder)
 	}
 	return edges
 }
@@ -5143,6 +6230,8 @@ func (m *CostBillMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_consume_order
 	case costbill.EdgePlatformAccount:
 		return m.clearedplatform_account
+	case costbill.EdgeCampaignOrder:
+		return m.clearedcampaign_order
 	}
 	return false
 }
@@ -5166,6 +6255,9 @@ func (m *CostBillMutation) ClearEdge(name string) error {
 	case costbill.EdgePlatformAccount:
 		m.ClearPlatformAccount()
 		return nil
+	case costbill.EdgeCampaignOrder:
+		m.ClearCampaignOrder()
+		return nil
 	}
 	return fmt.Errorf("unknown CostBill unique edge %s", name)
 }
@@ -5188,6 +6280,9 @@ func (m *CostBillMutation) ResetEdge(name string) error {
 		return nil
 	case costbill.EdgePlatformAccount:
 		m.ResetPlatformAccount()
+		return nil
+	case costbill.EdgeCampaignOrder:
+		m.ResetCampaignOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown CostBill edge %s", name)
@@ -32936,6 +34031,9 @@ type UserMutation struct {
 	invites                       map[int64]struct{}
 	removedinvites                map[int64]struct{}
 	clearedinvites                bool
+	campaign_orders               map[int64]struct{}
+	removedcampaign_orders        map[int64]struct{}
+	clearedcampaign_orders        bool
 	done                          bool
 	oldValue                      func(context.Context) (*User, error)
 	predicates                    []predicate.User
@@ -34486,6 +35584,60 @@ func (m *UserMutation) ResetInvites() {
 	m.removedinvites = nil
 }
 
+// AddCampaignOrderIDs adds the "campaign_orders" edge to the CampaignOrder entity by ids.
+func (m *UserMutation) AddCampaignOrderIDs(ids ...int64) {
+	if m.campaign_orders == nil {
+		m.campaign_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.campaign_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCampaignOrders clears the "campaign_orders" edge to the CampaignOrder entity.
+func (m *UserMutation) ClearCampaignOrders() {
+	m.clearedcampaign_orders = true
+}
+
+// CampaignOrdersCleared reports if the "campaign_orders" edge to the CampaignOrder entity was cleared.
+func (m *UserMutation) CampaignOrdersCleared() bool {
+	return m.clearedcampaign_orders
+}
+
+// RemoveCampaignOrderIDs removes the "campaign_orders" edge to the CampaignOrder entity by IDs.
+func (m *UserMutation) RemoveCampaignOrderIDs(ids ...int64) {
+	if m.removedcampaign_orders == nil {
+		m.removedcampaign_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.campaign_orders, ids[i])
+		m.removedcampaign_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCampaignOrders returns the removed IDs of the "campaign_orders" edge to the CampaignOrder entity.
+func (m *UserMutation) RemovedCampaignOrdersIDs() (ids []int64) {
+	for id := range m.removedcampaign_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CampaignOrdersIDs returns the "campaign_orders" edge IDs in the mutation.
+func (m *UserMutation) CampaignOrdersIDs() (ids []int64) {
+	for id := range m.campaign_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCampaignOrders resets all changes to the "campaign_orders" edge.
+func (m *UserMutation) ResetCampaignOrders() {
+	m.campaign_orders = nil
+	m.clearedcampaign_orders = false
+	m.removedcampaign_orders = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -34884,7 +36036,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 17)
+	edges := make([]string, 0, 18)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -34935,6 +36087,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.invites != nil {
 		edges = append(edges, user.EdgeInvites)
+	}
+	if m.campaign_orders != nil {
+		edges = append(edges, user.EdgeCampaignOrders)
 	}
 	return edges
 }
@@ -35039,13 +36194,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCampaignOrders:
+		ids := make([]ent.Value, 0, len(m.campaign_orders))
+		for id := range m.campaign_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 17)
+	edges := make([]string, 0, 18)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -35087,6 +36248,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedinvites != nil {
 		edges = append(edges, user.EdgeInvites)
+	}
+	if m.removedcampaign_orders != nil {
+		edges = append(edges, user.EdgeCampaignOrders)
 	}
 	return edges
 }
@@ -35179,13 +36343,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCampaignOrders:
+		ids := make([]ent.Value, 0, len(m.removedcampaign_orders))
+		for id := range m.removedcampaign_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 17)
+	edges := make([]string, 0, 18)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -35237,6 +36407,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedinvites {
 		edges = append(edges, user.EdgeInvites)
 	}
+	if m.clearedcampaign_orders {
+		edges = append(edges, user.EdgeCampaignOrders)
+	}
 	return edges
 }
 
@@ -35278,6 +36451,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedchildren
 	case user.EdgeInvites:
 		return m.clearedinvites
+	case user.EdgeCampaignOrders:
+		return m.clearedcampaign_orders
 	}
 	return false
 }
@@ -35353,6 +36528,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeInvites:
 		m.ResetInvites()
+		return nil
+	case user.EdgeCampaignOrders:
+		m.ResetCampaignOrders()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

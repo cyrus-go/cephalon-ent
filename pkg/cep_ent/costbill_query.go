@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -31,6 +32,7 @@ type CostBillQuery struct {
 	withRechargeOrder       *RechargeOrderQuery
 	withMissionConsumeOrder *MissionConsumeOrderQuery
 	withPlatformAccount     *PlatformAccountQuery
+	withCampaignOrder       *CampaignOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -170,6 +172,28 @@ func (cbq *CostBillQuery) QueryPlatformAccount() *PlatformAccountQuery {
 			sqlgraph.From(costbill.Table, costbill.FieldID, selector),
 			sqlgraph.To(platformaccount.Table, platformaccount.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, costbill.PlatformAccountTable, costbill.PlatformAccountColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cbq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCampaignOrder chains the current query on the "campaign_order" edge.
+func (cbq *CostBillQuery) QueryCampaignOrder() *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: cbq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cbq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cbq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(costbill.Table, costbill.FieldID, selector),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, costbill.CampaignOrderTable, costbill.CampaignOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cbq.driver.Dialect(), step)
 		return fromU, nil
@@ -374,6 +398,7 @@ func (cbq *CostBillQuery) Clone() *CostBillQuery {
 		withRechargeOrder:       cbq.withRechargeOrder.Clone(),
 		withMissionConsumeOrder: cbq.withMissionConsumeOrder.Clone(),
 		withPlatformAccount:     cbq.withPlatformAccount.Clone(),
+		withCampaignOrder:       cbq.withCampaignOrder.Clone(),
 		// clone intermediate query.
 		sql:  cbq.sql.Clone(),
 		path: cbq.path,
@@ -432,6 +457,17 @@ func (cbq *CostBillQuery) WithPlatformAccount(opts ...func(*PlatformAccountQuery
 		opt(query)
 	}
 	cbq.withPlatformAccount = query
+	return cbq
+}
+
+// WithCampaignOrder tells the query-builder to eager-load the nodes that are connected to
+// the "campaign_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (cbq *CostBillQuery) WithCampaignOrder(opts ...func(*CampaignOrderQuery)) *CostBillQuery {
+	query := (&CampaignOrderClient{config: cbq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	cbq.withCampaignOrder = query
 	return cbq
 }
 
@@ -513,12 +549,13 @@ func (cbq *CostBillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Co
 	var (
 		nodes       = []*CostBill{}
 		_spec       = cbq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			cbq.withUser != nil,
 			cbq.withCostAccount != nil,
 			cbq.withRechargeOrder != nil,
 			cbq.withMissionConsumeOrder != nil,
 			cbq.withPlatformAccount != nil,
+			cbq.withCampaignOrder != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -566,6 +603,12 @@ func (cbq *CostBillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Co
 	if query := cbq.withPlatformAccount; query != nil {
 		if err := cbq.loadPlatformAccount(ctx, query, nodes, nil,
 			func(n *CostBill, e *PlatformAccount) { n.Edges.PlatformAccount = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := cbq.withCampaignOrder; query != nil {
+		if err := cbq.loadCampaignOrder(ctx, query, nodes, nil,
+			func(n *CostBill, e *CampaignOrder) { n.Edges.CampaignOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -717,6 +760,35 @@ func (cbq *CostBillQuery) loadPlatformAccount(ctx context.Context, query *Platfo
 	}
 	return nil
 }
+func (cbq *CostBillQuery) loadCampaignOrder(ctx context.Context, query *CampaignOrderQuery, nodes []*CostBill, init func(*CostBill), assign func(*CostBill, *CampaignOrder)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*CostBill)
+	for i := range nodes {
+		fk := nodes[i].CampaignOrderID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(campaignorder.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "campaign_order_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (cbq *CostBillQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cbq.querySpec()
@@ -757,6 +829,9 @@ func (cbq *CostBillQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if cbq.withPlatformAccount != nil {
 			_spec.Node.AddColumnOnce(costbill.FieldMarketAccountID)
+		}
+		if cbq.withCampaignOrder != nil {
+			_spec.Node.AddColumnOnce(costbill.FieldCampaignOrderID)
 		}
 	}
 	if ps := cbq.predicates; len(ps) > 0 {

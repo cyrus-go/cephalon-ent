@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
@@ -197,6 +198,21 @@ func (cu *CampaignUpdate) AddInvites(i ...*Invite) *CampaignUpdate {
 	return cu.AddInviteIDs(ids...)
 }
 
+// AddCampaignOrderIDs adds the "campaign_orders" edge to the CampaignOrder entity by IDs.
+func (cu *CampaignUpdate) AddCampaignOrderIDs(ids ...int64) *CampaignUpdate {
+	cu.mutation.AddCampaignOrderIDs(ids...)
+	return cu
+}
+
+// AddCampaignOrders adds the "campaign_orders" edges to the CampaignOrder entity.
+func (cu *CampaignUpdate) AddCampaignOrders(c ...*CampaignOrder) *CampaignUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return cu.AddCampaignOrderIDs(ids...)
+}
+
 // Mutation returns the CampaignMutation object of the builder.
 func (cu *CampaignUpdate) Mutation() *CampaignMutation {
 	return cu.mutation
@@ -221,6 +237,27 @@ func (cu *CampaignUpdate) RemoveInvites(i ...*Invite) *CampaignUpdate {
 		ids[j] = i[j].ID
 	}
 	return cu.RemoveInviteIDs(ids...)
+}
+
+// ClearCampaignOrders clears all "campaign_orders" edges to the CampaignOrder entity.
+func (cu *CampaignUpdate) ClearCampaignOrders() *CampaignUpdate {
+	cu.mutation.ClearCampaignOrders()
+	return cu
+}
+
+// RemoveCampaignOrderIDs removes the "campaign_orders" edge to CampaignOrder entities by IDs.
+func (cu *CampaignUpdate) RemoveCampaignOrderIDs(ids ...int64) *CampaignUpdate {
+	cu.mutation.RemoveCampaignOrderIDs(ids...)
+	return cu
+}
+
+// RemoveCampaignOrders removes "campaign_orders" edges to CampaignOrder entities.
+func (cu *CampaignUpdate) RemoveCampaignOrders(c ...*CampaignOrder) *CampaignUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return cu.RemoveCampaignOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -345,6 +382,51 @@ func (cu *CampaignUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cu.mutation.CampaignOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   campaign.CampaignOrdersTable,
+			Columns: []string{campaign.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedCampaignOrdersIDs(); len(nodes) > 0 && !cu.mutation.CampaignOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   campaign.CampaignOrdersTable,
+			Columns: []string{campaign.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.CampaignOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   campaign.CampaignOrdersTable,
+			Columns: []string{campaign.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -540,6 +622,21 @@ func (cuo *CampaignUpdateOne) AddInvites(i ...*Invite) *CampaignUpdateOne {
 	return cuo.AddInviteIDs(ids...)
 }
 
+// AddCampaignOrderIDs adds the "campaign_orders" edge to the CampaignOrder entity by IDs.
+func (cuo *CampaignUpdateOne) AddCampaignOrderIDs(ids ...int64) *CampaignUpdateOne {
+	cuo.mutation.AddCampaignOrderIDs(ids...)
+	return cuo
+}
+
+// AddCampaignOrders adds the "campaign_orders" edges to the CampaignOrder entity.
+func (cuo *CampaignUpdateOne) AddCampaignOrders(c ...*CampaignOrder) *CampaignUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return cuo.AddCampaignOrderIDs(ids...)
+}
+
 // Mutation returns the CampaignMutation object of the builder.
 func (cuo *CampaignUpdateOne) Mutation() *CampaignMutation {
 	return cuo.mutation
@@ -564,6 +661,27 @@ func (cuo *CampaignUpdateOne) RemoveInvites(i ...*Invite) *CampaignUpdateOne {
 		ids[j] = i[j].ID
 	}
 	return cuo.RemoveInviteIDs(ids...)
+}
+
+// ClearCampaignOrders clears all "campaign_orders" edges to the CampaignOrder entity.
+func (cuo *CampaignUpdateOne) ClearCampaignOrders() *CampaignUpdateOne {
+	cuo.mutation.ClearCampaignOrders()
+	return cuo
+}
+
+// RemoveCampaignOrderIDs removes the "campaign_orders" edge to CampaignOrder entities by IDs.
+func (cuo *CampaignUpdateOne) RemoveCampaignOrderIDs(ids ...int64) *CampaignUpdateOne {
+	cuo.mutation.RemoveCampaignOrderIDs(ids...)
+	return cuo
+}
+
+// RemoveCampaignOrders removes "campaign_orders" edges to CampaignOrder entities.
+func (cuo *CampaignUpdateOne) RemoveCampaignOrders(c ...*CampaignOrder) *CampaignUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return cuo.RemoveCampaignOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the CampaignUpdate builder.
@@ -718,6 +836,51 @@ func (cuo *CampaignUpdateOne) sqlSave(ctx context.Context) (_node *Campaign, err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cuo.mutation.CampaignOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   campaign.CampaignOrdersTable,
+			Columns: []string{campaign.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedCampaignOrdersIDs(); len(nodes) > 0 && !cuo.mutation.CampaignOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   campaign.CampaignOrdersTable,
+			Columns: []string{campaign.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.CampaignOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   campaign.CampaignOrdersTable,
+			Columns: []string{campaign.CampaignOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

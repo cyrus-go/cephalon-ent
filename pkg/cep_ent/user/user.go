@@ -79,6 +79,8 @@ const (
 	EdgeChildren = "children"
 	// EdgeInvites holds the string denoting the invites edge name in mutations.
 	EdgeInvites = "invites"
+	// EdgeCampaignOrders holds the string denoting the campaign_orders edge name in mutations.
+	EdgeCampaignOrders = "campaign_orders"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -194,6 +196,13 @@ const (
 	InvitesInverseTable = "invites"
 	// InvitesColumn is the table column denoting the invites relation/edge.
 	InvitesColumn = "user_id"
+	// CampaignOrdersTable is the table that holds the campaign_orders relation/edge.
+	CampaignOrdersTable = "campaign_orders"
+	// CampaignOrdersInverseTable is the table name for the CampaignOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "campaignorder" package.
+	CampaignOrdersInverseTable = "campaign_orders"
+	// CampaignOrdersColumn is the table column denoting the campaign_orders relation/edge.
+	CampaignOrdersColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -586,6 +595,20 @@ func ByInvites(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newInvitesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByCampaignOrdersCount orders the results by campaign_orders count.
+func ByCampaignOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCampaignOrdersStep(), opts...)
+	}
+}
+
+// ByCampaignOrders orders the results by campaign_orders terms.
+func ByCampaignOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCampaignOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -703,5 +726,12 @@ func newInvitesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(InvitesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, InvitesTable, InvitesColumn),
+	)
+}
+func newCampaignOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CampaignOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CampaignOrdersTable, CampaignOrdersColumn),
 	)
 }

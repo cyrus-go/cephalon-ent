@@ -21,6 +21,18 @@ func (f CampaignFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.CampaignMutation", m)
 }
 
+// The CampaignOrderFunc type is an adapter to allow the use of ordinary
+// function as CampaignOrder mutator.
+type CampaignOrderFunc func(context.Context, *cep_ent.CampaignOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CampaignOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.CampaignOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.CampaignOrderMutation", m)
+}
+
 // The CollectFunc type is an adapter to allow the use of ordinary
 // function as Collect mutator.
 type CollectFunc func(context.Context, *cep_ent.CollectMutation) (cep_ent.Value, error)

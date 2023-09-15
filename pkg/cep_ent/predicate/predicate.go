@@ -9,6 +9,9 @@ import (
 // Campaign is the predicate function for campaign builders.
 type Campaign func(*sql.Selector)
 
+// CampaignOrder is the predicate function for campaignorder builders.
+type CampaignOrder func(*sql.Selector)
+
 // Collect is the predicate function for collect builders.
 type Collect func(*sql.Selector)
 

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
@@ -19,11 +20,12 @@ import (
 // CampaignQuery is the builder for querying Campaign entities.
 type CampaignQuery struct {
 	config
-	ctx         *QueryContext
-	order       []campaign.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.Campaign
-	withInvites *InviteQuery
+	ctx                *QueryContext
+	order              []campaign.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.Campaign
+	withInvites        *InviteQuery
+	withCampaignOrders *CampaignOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (cq *CampaignQuery) QueryInvites() *InviteQuery {
 			sqlgraph.From(campaign.Table, campaign.FieldID, selector),
 			sqlgraph.To(invite.Table, invite.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, campaign.InvitesTable, campaign.InvitesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCampaignOrders chains the current query on the "campaign_orders" edge.
+func (cq *CampaignQuery) QueryCampaignOrders() *CampaignOrderQuery {
+	query := (&CampaignOrderClient{config: cq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(campaign.Table, campaign.FieldID, selector),
+			sqlgraph.To(campaignorder.Table, campaignorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, campaign.CampaignOrdersTable, campaign.CampaignOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -269,12 +293,13 @@ func (cq *CampaignQuery) Clone() *CampaignQuery {
 		return nil
 	}
 	return &CampaignQuery{
-		config:      cq.config,
-		ctx:         cq.ctx.Clone(),
-		order:       append([]campaign.OrderOption{}, cq.order...),
-		inters:      append([]Interceptor{}, cq.inters...),
-		predicates:  append([]predicate.Campaign{}, cq.predicates...),
-		withInvites: cq.withInvites.Clone(),
+		config:             cq.config,
+		ctx:                cq.ctx.Clone(),
+		order:              append([]campaign.OrderOption{}, cq.order...),
+		inters:             append([]Interceptor{}, cq.inters...),
+		predicates:         append([]predicate.Campaign{}, cq.predicates...),
+		withInvites:        cq.withInvites.Clone(),
+		withCampaignOrders: cq.withCampaignOrders.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,
@@ -289,6 +314,17 @@ func (cq *CampaignQuery) WithInvites(opts ...func(*InviteQuery)) *CampaignQuery 
 		opt(query)
 	}
 	cq.withInvites = query
+	return cq
+}
+
+// WithCampaignOrders tells the query-builder to eager-load the nodes that are connected to
+// the "campaign_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CampaignQuery) WithCampaignOrders(opts ...func(*CampaignOrderQuery)) *CampaignQuery {
+	query := (&CampaignOrderClient{config: cq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withCampaignOrders = query
 	return cq
 }
 
@@ -370,8 +406,9 @@ func (cq *CampaignQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cam
 	var (
 		nodes       = []*Campaign{}
 		_spec       = cq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			cq.withInvites != nil,
+			cq.withCampaignOrders != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -399,6 +436,13 @@ func (cq *CampaignQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cam
 			return nil, err
 		}
 	}
+	if query := cq.withCampaignOrders; query != nil {
+		if err := cq.loadCampaignOrders(ctx, query, nodes,
+			func(n *Campaign) { n.Edges.CampaignOrders = []*CampaignOrder{} },
+			func(n *Campaign, e *CampaignOrder) { n.Edges.CampaignOrders = append(n.Edges.CampaignOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -417,6 +461,36 @@ func (cq *CampaignQuery) loadInvites(ctx context.Context, query *InviteQuery, no
 	}
 	query.Where(predicate.Invite(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(campaign.InvitesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.CampaignID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "campaign_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (cq *CampaignQuery) loadCampaignOrders(ctx context.Context, query *CampaignOrderQuery, nodes []*Campaign, init func(*Campaign), assign func(*Campaign, *CampaignOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Campaign)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(campaignorder.FieldCampaignID)
+	}
+	query.Where(predicate.CampaignOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(campaign.CampaignOrdersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

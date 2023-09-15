@@ -27,6 +27,7 @@ func (CostBill) Fields() []ent.Field {
 		field.Enum("status").GoType(enums.BillStatusPending).Default(string(enums.BillStatusPending)).StructTag(`json:"status"`).Comment("消耗流水一开始不能直接生效，确定关联的消耗时间成功后才可以扣费"),
 
 		field.Int64("market_account_id").Default(0).StructTag(`json:"market_account_id"`).Comment("营销账户 id，表示这是一条营销流水（此方案为临时方案）"),
+		field.Int64("campaign_order_id").Default(0).StructTag(`json:"campaign_order_id"`).Comment("活动订单 id"),
 	}
 }
 
@@ -39,6 +40,7 @@ func (CostBill) Edges() []ent.Edge {
 		edge.From("recharge_order", RechargeOrder.Type).Ref("cost_bills").Field("reason_id").Unique(),
 		edge.From("mission_consume_order", MissionConsumeOrder.Type).Ref("cost_bills").Field("reason_id").Unique(),
 		edge.From("platform_account", PlatformAccount.Type).Ref("cost_bills").Field("market_account_id").Unique().Required(),
+		edge.From("campaign_order", CampaignOrder.Type).Ref("cost_bills").Field("campaign_order_id").Unique().Required(),
 	}
 }
 

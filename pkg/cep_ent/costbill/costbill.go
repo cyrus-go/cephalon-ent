@@ -48,6 +48,8 @@ const (
 	FieldStatus = "status"
 	// FieldMarketAccountID holds the string denoting the market_account_id field in the database.
 	FieldMarketAccountID = "market_account_id"
+	// FieldCampaignOrderID holds the string denoting the campaign_order_id field in the database.
+	FieldCampaignOrderID = "campaign_order_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeCostAccount holds the string denoting the cost_account edge name in mutations.
@@ -58,6 +60,8 @@ const (
 	EdgeMissionConsumeOrder = "mission_consume_order"
 	// EdgePlatformAccount holds the string denoting the platform_account edge name in mutations.
 	EdgePlatformAccount = "platform_account"
+	// EdgeCampaignOrder holds the string denoting the campaign_order edge name in mutations.
+	EdgeCampaignOrder = "campaign_order"
 	// Table holds the table name of the costbill in the database.
 	Table = "cost_bills"
 	// UserTable is the table that holds the user relation/edge.
@@ -95,6 +99,13 @@ const (
 	PlatformAccountInverseTable = "platform_accounts"
 	// PlatformAccountColumn is the table column denoting the platform_account relation/edge.
 	PlatformAccountColumn = "market_account_id"
+	// CampaignOrderTable is the table that holds the campaign_order relation/edge.
+	CampaignOrderTable = "cost_bills"
+	// CampaignOrderInverseTable is the table name for the CampaignOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "campaignorder" package.
+	CampaignOrderInverseTable = "campaign_orders"
+	// CampaignOrderColumn is the table column denoting the campaign_order relation/edge.
+	CampaignOrderColumn = "campaign_order_id"
 )
 
 // Columns holds all SQL columns for costbill fields.
@@ -116,6 +127,7 @@ var Columns = []string{
 	FieldReasonID,
 	FieldStatus,
 	FieldMarketAccountID,
+	FieldCampaignOrderID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -157,6 +169,8 @@ var (
 	DefaultReasonID int64
 	// DefaultMarketAccountID holds the default value on creation for the "market_account_id" field.
 	DefaultMarketAccountID int64
+	// DefaultCampaignOrderID holds the default value on creation for the "campaign_order_id" field.
+	DefaultCampaignOrderID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -322,6 +336,11 @@ func ByMarketAccountID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMarketAccountID, opts...).ToFunc()
 }
 
+// ByCampaignOrderID orders the results by the campaign_order_id field.
+func ByCampaignOrderID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCampaignOrderID, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -354,6 +373,13 @@ func ByMissionConsumeOrderField(field string, opts ...sql.OrderTermOption) Order
 func ByPlatformAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newPlatformAccountStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByCampaignOrderField orders the results by campaign_order field.
+func ByCampaignOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCampaignOrderStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -389,5 +415,12 @@ func newPlatformAccountStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PlatformAccountInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, PlatformAccountTable, PlatformAccountColumn),
+	)
+}
+func newCampaignOrderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CampaignOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, CampaignOrderTable, CampaignOrderColumn),
 	)
 }

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -270,6 +271,20 @@ func (cbu *CostBillUpdate) SetNillableMarketAccountID(i *int64) *CostBillUpdate 
 	return cbu
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (cbu *CostBillUpdate) SetCampaignOrderID(i int64) *CostBillUpdate {
+	cbu.mutation.SetCampaignOrderID(i)
+	return cbu
+}
+
+// SetNillableCampaignOrderID sets the "campaign_order_id" field if the given value is not nil.
+func (cbu *CostBillUpdate) SetNillableCampaignOrderID(i *int64) *CostBillUpdate {
+	if i != nil {
+		cbu.SetCampaignOrderID(*i)
+	}
+	return cbu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (cbu *CostBillUpdate) SetUser(u *User) *CostBillUpdate {
 	return cbu.SetUserID(u.ID)
@@ -329,6 +344,11 @@ func (cbu *CostBillUpdate) SetPlatformAccount(p *PlatformAccount) *CostBillUpdat
 	return cbu.SetPlatformAccountID(p.ID)
 }
 
+// SetCampaignOrder sets the "campaign_order" edge to the CampaignOrder entity.
+func (cbu *CostBillUpdate) SetCampaignOrder(c *CampaignOrder) *CostBillUpdate {
+	return cbu.SetCampaignOrderID(c.ID)
+}
+
 // Mutation returns the CostBillMutation object of the builder.
 func (cbu *CostBillUpdate) Mutation() *CostBillMutation {
 	return cbu.mutation
@@ -361,6 +381,12 @@ func (cbu *CostBillUpdate) ClearMissionConsumeOrder() *CostBillUpdate {
 // ClearPlatformAccount clears the "platform_account" edge to the PlatformAccount entity.
 func (cbu *CostBillUpdate) ClearPlatformAccount() *CostBillUpdate {
 	cbu.mutation.ClearPlatformAccount()
+	return cbu
+}
+
+// ClearCampaignOrder clears the "campaign_order" edge to the CampaignOrder entity.
+func (cbu *CostBillUpdate) ClearCampaignOrder() *CostBillUpdate {
+	cbu.mutation.ClearCampaignOrder()
 	return cbu
 }
 
@@ -425,6 +451,9 @@ func (cbu *CostBillUpdate) check() error {
 	}
 	if _, ok := cbu.mutation.PlatformAccountID(); cbu.mutation.PlatformAccountCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "CostBill.platform_account"`)
+	}
+	if _, ok := cbu.mutation.CampaignOrderID(); cbu.mutation.CampaignOrderCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "CostBill.campaign_order"`)
 	}
 	return nil
 }
@@ -624,6 +653,35 @@ func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cbu.mutation.CampaignOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.CampaignOrderTable,
+			Columns: []string{costbill.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cbu.mutation.CampaignOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.CampaignOrderTable,
+			Columns: []string{costbill.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -887,6 +945,20 @@ func (cbuo *CostBillUpdateOne) SetNillableMarketAccountID(i *int64) *CostBillUpd
 	return cbuo
 }
 
+// SetCampaignOrderID sets the "campaign_order_id" field.
+func (cbuo *CostBillUpdateOne) SetCampaignOrderID(i int64) *CostBillUpdateOne {
+	cbuo.mutation.SetCampaignOrderID(i)
+	return cbuo
+}
+
+// SetNillableCampaignOrderID sets the "campaign_order_id" field if the given value is not nil.
+func (cbuo *CostBillUpdateOne) SetNillableCampaignOrderID(i *int64) *CostBillUpdateOne {
+	if i != nil {
+		cbuo.SetCampaignOrderID(*i)
+	}
+	return cbuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (cbuo *CostBillUpdateOne) SetUser(u *User) *CostBillUpdateOne {
 	return cbuo.SetUserID(u.ID)
@@ -946,6 +1018,11 @@ func (cbuo *CostBillUpdateOne) SetPlatformAccount(p *PlatformAccount) *CostBillU
 	return cbuo.SetPlatformAccountID(p.ID)
 }
 
+// SetCampaignOrder sets the "campaign_order" edge to the CampaignOrder entity.
+func (cbuo *CostBillUpdateOne) SetCampaignOrder(c *CampaignOrder) *CostBillUpdateOne {
+	return cbuo.SetCampaignOrderID(c.ID)
+}
+
 // Mutation returns the CostBillMutation object of the builder.
 func (cbuo *CostBillUpdateOne) Mutation() *CostBillMutation {
 	return cbuo.mutation
@@ -978,6 +1055,12 @@ func (cbuo *CostBillUpdateOne) ClearMissionConsumeOrder() *CostBillUpdateOne {
 // ClearPlatformAccount clears the "platform_account" edge to the PlatformAccount entity.
 func (cbuo *CostBillUpdateOne) ClearPlatformAccount() *CostBillUpdateOne {
 	cbuo.mutation.ClearPlatformAccount()
+	return cbuo
+}
+
+// ClearCampaignOrder clears the "campaign_order" edge to the CampaignOrder entity.
+func (cbuo *CostBillUpdateOne) ClearCampaignOrder() *CostBillUpdateOne {
+	cbuo.mutation.ClearCampaignOrder()
 	return cbuo
 }
 
@@ -1055,6 +1138,9 @@ func (cbuo *CostBillUpdateOne) check() error {
 	}
 	if _, ok := cbuo.mutation.PlatformAccountID(); cbuo.mutation.PlatformAccountCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "CostBill.platform_account"`)
+	}
+	if _, ok := cbuo.mutation.CampaignOrderID(); cbuo.mutation.CampaignOrderCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "CostBill.campaign_order"`)
 	}
 	return nil
 }
@@ -1271,6 +1357,35 @@ func (cbuo *CostBillUpdateOne) sqlSave(ctx context.Context) (_node *CostBill, er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(platformaccount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cbuo.mutation.CampaignOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.CampaignOrderTable,
+			Columns: []string{costbill.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cbuo.mutation.CampaignOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   costbill.CampaignOrderTable,
+			Columns: []string{costbill.CampaignOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -30,6 +30,7 @@ func (Campaign) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.To("invites", Invite.Type),
+		edge.To("campaign_orders", CampaignOrder.Type),
 	}
 }
 

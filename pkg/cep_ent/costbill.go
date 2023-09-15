@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -55,6 +56,8 @@ type CostBill struct {
 	Status enums.BillStatus `json:"status"`
 	// 营销账户 id，表示这是一条营销流水（此方案为临时方案）
 	MarketAccountID int64 `json:"market_account_id"`
+	// 活动订单 id
+	CampaignOrderID int64 `json:"campaign_order_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CostBillQuery when eager-loading is set.
 	Edges        CostBillEdges `json:"edges"`
@@ -73,9 +76,11 @@ type CostBillEdges struct {
 	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
 	// PlatformAccount holds the value of the platform_account edge.
 	PlatformAccount *PlatformAccount `json:"platform_account,omitempty"`
+	// CampaignOrder holds the value of the campaign_order edge.
+	CampaignOrder *CampaignOrder `json:"campaign_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -143,6 +148,19 @@ func (e CostBillEdges) PlatformAccountOrErr() (*PlatformAccount, error) {
 	return nil, &NotLoadedError{edge: "platform_account"}
 }
 
+// CampaignOrderOrErr returns the CampaignOrder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CostBillEdges) CampaignOrderOrErr() (*CampaignOrder, error) {
+	if e.loadedTypes[5] {
+		if e.CampaignOrder == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: campaignorder.Label}
+		}
+		return e.CampaignOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "campaign_order"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*CostBill) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -150,7 +168,7 @@ func (*CostBill) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case costbill.FieldIsAdd:
 			values[i] = new(sql.NullBool)
-		case costbill.FieldID, costbill.FieldCreatedBy, costbill.FieldUpdatedBy, costbill.FieldUserID, costbill.FieldCostAccountID, costbill.FieldPureCep, costbill.FieldGiftCep, costbill.FieldReasonID, costbill.FieldMarketAccountID:
+		case costbill.FieldID, costbill.FieldCreatedBy, costbill.FieldUpdatedBy, costbill.FieldUserID, costbill.FieldCostAccountID, costbill.FieldPureCep, costbill.FieldGiftCep, costbill.FieldReasonID, costbill.FieldMarketAccountID, costbill.FieldCampaignOrderID:
 			values[i] = new(sql.NullInt64)
 		case costbill.FieldType, costbill.FieldWay, costbill.FieldSerialNumber, costbill.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -273,6 +291,12 @@ func (cb *CostBill) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				cb.MarketAccountID = value.Int64
 			}
+		case costbill.FieldCampaignOrderID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field campaign_order_id", values[i])
+			} else if value.Valid {
+				cb.CampaignOrderID = value.Int64
+			}
 		default:
 			cb.selectValues.Set(columns[i], values[i])
 		}
@@ -309,6 +333,11 @@ func (cb *CostBill) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 // QueryPlatformAccount queries the "platform_account" edge of the CostBill entity.
 func (cb *CostBill) QueryPlatformAccount() *PlatformAccountQuery {
 	return NewCostBillClient(cb.config).QueryPlatformAccount(cb)
+}
+
+// QueryCampaignOrder queries the "campaign_order" edge of the CostBill entity.
+func (cb *CostBill) QueryCampaignOrder() *CampaignOrderQuery {
+	return NewCostBillClient(cb.config).QueryCampaignOrder(cb)
 }
 
 // Update returns a builder for updating this CostBill.
@@ -381,6 +410,9 @@ func (cb *CostBill) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("market_account_id=")
 	builder.WriteString(fmt.Sprintf("%v", cb.MarketAccountID))
+	builder.WriteString(", ")
+	builder.WriteString("campaign_order_id=")
+	builder.WriteString(fmt.Sprintf("%v", cb.CampaignOrderID))
 	builder.WriteByte(')')
 	return builder.String()
 }

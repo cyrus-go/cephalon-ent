@@ -49,9 +49,11 @@ type Campaign struct {
 type CampaignEdges struct {
 	// Invites holds the value of the invites edge.
 	Invites []*Invite `json:"invites,omitempty"`
+	// CampaignOrders holds the value of the campaign_orders edge.
+	CampaignOrders []*CampaignOrder `json:"campaign_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // InvitesOrErr returns the Invites value or an error if the edge
@@ -61,6 +63,15 @@ func (e CampaignEdges) InvitesOrErr() ([]*Invite, error) {
 		return e.Invites, nil
 	}
 	return nil, &NotLoadedError{edge: "invites"}
+}
+
+// CampaignOrdersOrErr returns the CampaignOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e CampaignEdges) CampaignOrdersOrErr() ([]*CampaignOrder, error) {
+	if e.loadedTypes[1] {
+		return e.CampaignOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "campaign_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -177,6 +188,11 @@ func (c *Campaign) Value(name string) (ent.Value, error) {
 // QueryInvites queries the "invites" edge of the Campaign entity.
 func (c *Campaign) QueryInvites() *InviteQuery {
 	return NewCampaignClient(c.config).QueryInvites(c)
+}
+
+// QueryCampaignOrders queries the "campaign_orders" edge of the Campaign entity.
+func (c *Campaign) QueryCampaignOrders() *CampaignOrderQuery {
+	return NewCampaignClient(c.config).QueryCampaignOrders(c)
 }
 
 // Update returns a builder for updating this Campaign.
