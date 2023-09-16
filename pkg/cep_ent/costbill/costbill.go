@@ -211,16 +211,16 @@ const DefaultWay = WayUnknow
 
 // Way values.
 const (
-	WayUnknow               Way = "unknow"
-	WayRechargeWechat       Way = "recharge_wechat"
-	WayRechargeAlipay       Way = "recharge_alipay"
-	WayRechargeManual       Way = "recharge_manual"
-	WayMissionTiming        Way = "mission_timing"
-	WayMissionCounting      Way = "mission_counting"
-	WayActiveRegister       Way = "active_register"
-	WayActiveShare          Way = "active_share"
-	WayActiveRecharge       Way = "active_recharge"
-	WayFirstInviteeRecharge Way = "first_invitee_recharge"
+	WayUnknow              Way = "unknow"
+	WayRechargeWechat      Way = "recharge_wechat"
+	WayRechargeAlipay      Way = "recharge_alipay"
+	WayRechargeManual      Way = "recharge_manual"
+	WayMissionTiming       Way = "mission_timing"
+	WayMissionCounting     Way = "mission_counting"
+	WayActiveRegister      Way = "active_register"
+	WayActiveShare         Way = "active_share"
+	WayActiveRecharge      Way = "active_recharge"
+	WayFirstInviteRecharge Way = "first_invite_recharge"
 )
 
 func (w Way) String() string {
@@ -230,7 +230,7 @@ func (w Way) String() string {
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
 func WayValidator(w Way) error {
 	switch w {
-	case WayUnknow, WayRechargeWechat, WayRechargeAlipay, WayRechargeManual, WayMissionTiming, WayMissionCounting, WayActiveRegister, WayActiveShare, WayActiveRecharge, WayFirstInviteeRecharge:
+	case WayUnknow, WayRechargeWechat, WayRechargeAlipay, WayRechargeManual, WayMissionTiming, WayMissionCounting, WayActiveRegister, WayActiveShare, WayActiveRecharge, WayFirstInviteRecharge:
 		return nil
 	default:
 		return fmt.Errorf("costbill: invalid enum value for way field: %q", w)
