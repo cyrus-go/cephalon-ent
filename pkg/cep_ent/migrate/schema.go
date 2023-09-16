@@ -129,7 +129,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "type", Type: field.TypeEnum, Comment: "额度账户流水的类型，充值或者任务消耗", Enums: []string{"unknow", "mission", "recharge", "active"}, Default: "unknow"},
-		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等", Enums: []string{"unknow", "recharge_wechat", "recharge_alipay", "recharge_manual", "mission_timing", "mission_counting", "active_register", "active_share", "active_recharge"}, Default: "unknow"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等", Enums: []string{"unknow", "recharge_wechat", "recharge_alipay", "recharge_manual", "mission_timing", "mission_counting", "active_register", "active_share", "active_recharge", "first_invitee_recharge"}, Default: "unknow"},
 		{Name: "is_add", Type: field.TypeBool, Comment: "是否增加余额，布尔值默认为否", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "账单序列号", Default: ""},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "消耗多少本金余额", Default: 0},
