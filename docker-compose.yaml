@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: harbor.rosabi.cn/library/cephalon-ent
+    image: starksim/cephalon-ent
     #ports:
     #  - "8080:8080"
     container_name: "cephalon-ent"
