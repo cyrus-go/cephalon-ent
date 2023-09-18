@@ -148,6 +148,27 @@ func (iu *InviteUpdate) AddRegCep(i int64) *InviteUpdate {
 	return iu
 }
 
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (iu *InviteUpdate) SetFirstRechargeCep(i int64) *InviteUpdate {
+	iu.mutation.ResetFirstRechargeCep()
+	iu.mutation.SetFirstRechargeCep(i)
+	return iu
+}
+
+// SetNillableFirstRechargeCep sets the "first_recharge_cep" field if the given value is not nil.
+func (iu *InviteUpdate) SetNillableFirstRechargeCep(i *int64) *InviteUpdate {
+	if i != nil {
+		iu.SetFirstRechargeCep(*i)
+	}
+	return iu
+}
+
+// AddFirstRechargeCep adds i to the "first_recharge_cep" field.
+func (iu *InviteUpdate) AddFirstRechargeCep(i int64) *InviteUpdate {
+	iu.mutation.AddFirstRechargeCep(i)
+	return iu
+}
+
 // SetType sets the "type" field.
 func (iu *InviteUpdate) SetType(s string) *InviteUpdate {
 	iu.mutation.SetType(s)
@@ -308,6 +329,12 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.AddedRegCep(); ok {
 		_spec.AddField(invite.FieldRegCep, field.TypeInt64, value)
+	}
+	if value, ok := iu.mutation.FirstRechargeCep(); ok {
+		_spec.SetField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
+	}
+	if value, ok := iu.mutation.AddedFirstRechargeCep(); ok {
+		_spec.AddField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
 	}
 	if value, ok := iu.mutation.GetType(); ok {
 		_spec.SetField(invite.FieldType, field.TypeString, value)
@@ -508,6 +535,27 @@ func (iuo *InviteUpdateOne) AddRegCep(i int64) *InviteUpdateOne {
 	return iuo
 }
 
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (iuo *InviteUpdateOne) SetFirstRechargeCep(i int64) *InviteUpdateOne {
+	iuo.mutation.ResetFirstRechargeCep()
+	iuo.mutation.SetFirstRechargeCep(i)
+	return iuo
+}
+
+// SetNillableFirstRechargeCep sets the "first_recharge_cep" field if the given value is not nil.
+func (iuo *InviteUpdateOne) SetNillableFirstRechargeCep(i *int64) *InviteUpdateOne {
+	if i != nil {
+		iuo.SetFirstRechargeCep(*i)
+	}
+	return iuo
+}
+
+// AddFirstRechargeCep adds i to the "first_recharge_cep" field.
+func (iuo *InviteUpdateOne) AddFirstRechargeCep(i int64) *InviteUpdateOne {
+	iuo.mutation.AddFirstRechargeCep(i)
+	return iuo
+}
+
 // SetType sets the "type" field.
 func (iuo *InviteUpdateOne) SetType(s string) *InviteUpdateOne {
 	iuo.mutation.SetType(s)
@@ -698,6 +746,12 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if value, ok := iuo.mutation.AddedRegCep(); ok {
 		_spec.AddField(invite.FieldRegCep, field.TypeInt64, value)
+	}
+	if value, ok := iuo.mutation.FirstRechargeCep(); ok {
+		_spec.SetField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
+	}
+	if value, ok := iuo.mutation.AddedFirstRechargeCep(); ok {
+		_spec.AddField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
 	}
 	if value, ok := iuo.mutation.GetType(); ok {
 		_spec.SetField(invite.FieldType, field.TypeString, value)

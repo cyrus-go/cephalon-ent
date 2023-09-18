@@ -30,6 +30,8 @@ const (
 	FieldShareCep = "share_cep"
 	// FieldRegCep holds the string denoting the reg_cep field in the database.
 	FieldRegCep = "reg_cep"
+	// FieldFirstRechargeCep holds the string denoting the first_recharge_cep field in the database.
+	FieldFirstRechargeCep = "first_recharge_cep"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -69,6 +71,7 @@ var Columns = []string{
 	FieldInviteCode,
 	FieldShareCep,
 	FieldRegCep,
+	FieldFirstRechargeCep,
 	FieldType,
 	FieldUserID,
 	FieldCampaignID,
@@ -103,6 +106,8 @@ var (
 	DefaultShareCep int64
 	// DefaultRegCep holds the default value on creation for the "reg_cep" field.
 	DefaultRegCep int64
+	// DefaultFirstRechargeCep holds the default value on creation for the "first_recharge_cep" field.
+	DefaultFirstRechargeCep int64
 	// DefaultType holds the default value on creation for the "type" field.
 	DefaultType string
 	// DefaultUserID holds the default value on creation for the "user_id" field.
@@ -159,6 +164,11 @@ func ByShareCep(opts ...sql.OrderTermOption) OrderOption {
 // ByRegCep orders the results by the reg_cep field.
 func ByRegCep(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRegCep, opts...).ToFunc()
+}
+
+// ByFirstRechargeCep orders the results by the first_recharge_cep field.
+func ByFirstRechargeCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstRechargeCep, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.

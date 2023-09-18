@@ -95,6 +95,11 @@ func RegCep(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldRegCep, v))
 }
 
+// FirstRechargeCep applies equality check predicate on the "first_recharge_cep" field. It's identical to FirstRechargeCepEQ.
+func FirstRechargeCep(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldFirstRechargeCep, v))
+}
+
 // Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
 func Type(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldType, v))
@@ -453,6 +458,46 @@ func RegCepLT(v int64) predicate.Invite {
 // RegCepLTE applies the LTE predicate on the "reg_cep" field.
 func RegCepLTE(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldLTE(FieldRegCep, v))
+}
+
+// FirstRechargeCepEQ applies the EQ predicate on the "first_recharge_cep" field.
+func FirstRechargeCepEQ(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldFirstRechargeCep, v))
+}
+
+// FirstRechargeCepNEQ applies the NEQ predicate on the "first_recharge_cep" field.
+func FirstRechargeCepNEQ(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldNEQ(FieldFirstRechargeCep, v))
+}
+
+// FirstRechargeCepIn applies the In predicate on the "first_recharge_cep" field.
+func FirstRechargeCepIn(vs ...int64) predicate.Invite {
+	return predicate.Invite(sql.FieldIn(FieldFirstRechargeCep, vs...))
+}
+
+// FirstRechargeCepNotIn applies the NotIn predicate on the "first_recharge_cep" field.
+func FirstRechargeCepNotIn(vs ...int64) predicate.Invite {
+	return predicate.Invite(sql.FieldNotIn(FieldFirstRechargeCep, vs...))
+}
+
+// FirstRechargeCepGT applies the GT predicate on the "first_recharge_cep" field.
+func FirstRechargeCepGT(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldGT(FieldFirstRechargeCep, v))
+}
+
+// FirstRechargeCepGTE applies the GTE predicate on the "first_recharge_cep" field.
+func FirstRechargeCepGTE(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldGTE(FieldFirstRechargeCep, v))
+}
+
+// FirstRechargeCepLT applies the LT predicate on the "first_recharge_cep" field.
+func FirstRechargeCepLT(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldLT(FieldFirstRechargeCep, v))
+}
+
+// FirstRechargeCepLTE applies the LTE predicate on the "first_recharge_cep" field.
+func FirstRechargeCepLTE(v int64) predicate.Invite {
+	return predicate.Invite(sql.FieldLTE(FieldFirstRechargeCep, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.

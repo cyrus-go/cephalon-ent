@@ -17116,30 +17116,32 @@ func (m *InputLogMutation) ResetEdge(name string) error {
 // InviteMutation represents an operation that mutates the Invite nodes in the graph.
 type InviteMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int64
-	created_by      *int64
-	addcreated_by   *int64
-	updated_by      *int64
-	addupdated_by   *int64
-	created_at      *time.Time
-	updated_at      *time.Time
-	deleted_at      *time.Time
-	invite_code     *string
-	share_cep       *int64
-	addshare_cep    *int64
-	reg_cep         *int64
-	addreg_cep      *int64
-	_type           *string
-	clearedFields   map[string]struct{}
-	user            *int64
-	cleareduser     bool
-	campaign        *int64
-	clearedcampaign bool
-	done            bool
-	oldValue        func(context.Context) (*Invite, error)
-	predicates      []predicate.Invite
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	invite_code           *string
+	share_cep             *int64
+	addshare_cep          *int64
+	reg_cep               *int64
+	addreg_cep            *int64
+	first_recharge_cep    *int64
+	addfirst_recharge_cep *int64
+	_type                 *string
+	clearedFields         map[string]struct{}
+	user                  *int64
+	cleareduser           bool
+	campaign              *int64
+	clearedcampaign       bool
+	done                  bool
+	oldValue              func(context.Context) (*Invite, error)
+	predicates            []predicate.Invite
 }
 
 var _ ent.Mutation = (*InviteMutation)(nil)
@@ -17614,6 +17616,62 @@ func (m *InviteMutation) ResetRegCep() {
 	m.addreg_cep = nil
 }
 
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (m *InviteMutation) SetFirstRechargeCep(i int64) {
+	m.first_recharge_cep = &i
+	m.addfirst_recharge_cep = nil
+}
+
+// FirstRechargeCep returns the value of the "first_recharge_cep" field in the mutation.
+func (m *InviteMutation) FirstRechargeCep() (r int64, exists bool) {
+	v := m.first_recharge_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstRechargeCep returns the old "first_recharge_cep" field's value of the Invite entity.
+// If the Invite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InviteMutation) OldFirstRechargeCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstRechargeCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstRechargeCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstRechargeCep: %w", err)
+	}
+	return oldValue.FirstRechargeCep, nil
+}
+
+// AddFirstRechargeCep adds i to the "first_recharge_cep" field.
+func (m *InviteMutation) AddFirstRechargeCep(i int64) {
+	if m.addfirst_recharge_cep != nil {
+		*m.addfirst_recharge_cep += i
+	} else {
+		m.addfirst_recharge_cep = &i
+	}
+}
+
+// AddedFirstRechargeCep returns the value that was added to the "first_recharge_cep" field in this mutation.
+func (m *InviteMutation) AddedFirstRechargeCep() (r int64, exists bool) {
+	v := m.addfirst_recharge_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFirstRechargeCep resets all changes to the "first_recharge_cep" field.
+func (m *InviteMutation) ResetFirstRechargeCep() {
+	m.first_recharge_cep = nil
+	m.addfirst_recharge_cep = nil
+}
+
 // SetType sets the "type" field.
 func (m *InviteMutation) SetType(s string) {
 	m._type = &s
@@ -17810,7 +17868,7 @@ func (m *InviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InviteMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, invite.FieldCreatedBy)
 	}
@@ -17834,6 +17892,9 @@ func (m *InviteMutation) Fields() []string {
 	}
 	if m.reg_cep != nil {
 		fields = append(fields, invite.FieldRegCep)
+	}
+	if m.first_recharge_cep != nil {
+		fields = append(fields, invite.FieldFirstRechargeCep)
 	}
 	if m._type != nil {
 		fields = append(fields, invite.FieldType)
@@ -17868,6 +17929,8 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.ShareCep()
 	case invite.FieldRegCep:
 		return m.RegCep()
+	case invite.FieldFirstRechargeCep:
+		return m.FirstRechargeCep()
 	case invite.FieldType:
 		return m.GetType()
 	case invite.FieldUserID:
@@ -17899,6 +17962,8 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldShareCep(ctx)
 	case invite.FieldRegCep:
 		return m.OldRegCep(ctx)
+	case invite.FieldFirstRechargeCep:
+		return m.OldFirstRechargeCep(ctx)
 	case invite.FieldType:
 		return m.OldType(ctx)
 	case invite.FieldUserID:
@@ -17970,6 +18035,13 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRegCep(v)
 		return nil
+	case invite.FieldFirstRechargeCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstRechargeCep(v)
+		return nil
 	case invite.FieldType:
 		v, ok := value.(string)
 		if !ok {
@@ -18011,6 +18083,9 @@ func (m *InviteMutation) AddedFields() []string {
 	if m.addreg_cep != nil {
 		fields = append(fields, invite.FieldRegCep)
 	}
+	if m.addfirst_recharge_cep != nil {
+		fields = append(fields, invite.FieldFirstRechargeCep)
+	}
 	return fields
 }
 
@@ -18027,6 +18102,8 @@ func (m *InviteMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedShareCep()
 	case invite.FieldRegCep:
 		return m.AddedRegCep()
+	case invite.FieldFirstRechargeCep:
+		return m.AddedFirstRechargeCep()
 	}
 	return nil, false
 }
@@ -18063,6 +18140,13 @@ func (m *InviteMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRegCep(v)
+		return nil
+	case invite.FieldFirstRechargeCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstRechargeCep(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Invite numeric field %s", name)
@@ -18114,6 +18198,9 @@ func (m *InviteMutation) ResetField(name string) error {
 		return nil
 	case invite.FieldRegCep:
 		m.ResetRegCep()
+		return nil
+	case invite.FieldFirstRechargeCep:
+		m.ResetFirstRechargeCep()
 		return nil
 	case invite.FieldType:
 		m.ResetType()

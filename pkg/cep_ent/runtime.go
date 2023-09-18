@@ -845,16 +845,20 @@ func init() {
 	inviteDescRegCep := inviteFields[2].Descriptor()
 	// invite.DefaultRegCep holds the default value on creation for the reg_cep field.
 	invite.DefaultRegCep = inviteDescRegCep.Default.(int64)
+	// inviteDescFirstRechargeCep is the schema descriptor for first_recharge_cep field.
+	inviteDescFirstRechargeCep := inviteFields[3].Descriptor()
+	// invite.DefaultFirstRechargeCep holds the default value on creation for the first_recharge_cep field.
+	invite.DefaultFirstRechargeCep = inviteDescFirstRechargeCep.Default.(int64)
 	// inviteDescType is the schema descriptor for type field.
-	inviteDescType := inviteFields[3].Descriptor()
+	inviteDescType := inviteFields[4].Descriptor()
 	// invite.DefaultType holds the default value on creation for the type field.
 	invite.DefaultType = inviteDescType.Default.(string)
 	// inviteDescUserID is the schema descriptor for user_id field.
-	inviteDescUserID := inviteFields[4].Descriptor()
+	inviteDescUserID := inviteFields[5].Descriptor()
 	// invite.DefaultUserID holds the default value on creation for the user_id field.
 	invite.DefaultUserID = inviteDescUserID.Default.(int64)
 	// inviteDescCampaignID is the schema descriptor for campaign_id field.
-	inviteDescCampaignID := inviteFields[5].Descriptor()
+	inviteDescCampaignID := inviteFields[6].Descriptor()
 	// invite.DefaultCampaignID holds the default value on creation for the campaign_id field.
 	invite.DefaultCampaignID = inviteDescCampaignID.Default.(int64)
 	// inviteDescID is the schema descriptor for id field.

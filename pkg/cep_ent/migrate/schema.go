@@ -477,6 +477,7 @@ var (
 		{Name: "invite_code", Type: field.TypeString, Comment: "邀请码", Default: ""},
 		{Name: "share_cep", Type: field.TypeInt64, Comment: "通过此邀请码分享能获得的收益", Default: 0},
 		{Name: "reg_cep", Type: field.TypeInt64, Comment: "通过此邀请码注册能获得的收益", Default: 0},
+		{Name: "first_recharge_cep", Type: field.TypeInt64, Comment: "通过此邀请码邀请用户注册并首次充值能获得的收益", Default: 0},
 		{Name: "type", Type: field.TypeString, Comment: "邀请码类型（可以用来区分不同的活动）", Default: ""},
 		{Name: "campaign_id", Type: field.TypeInt64, Comment: "外键活动 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
@@ -489,13 +490,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invites_campaigns_invites",
-				Columns:    []*schema.Column{InvitesColumns[10]},
+				Columns:    []*schema.Column{InvitesColumns[11]},
 				RefColumns: []*schema.Column{CampaignsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "invites_users_invites",
-				Columns:    []*schema.Column{InvitesColumns[11]},
+				Columns:    []*schema.Column{InvitesColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

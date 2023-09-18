@@ -136,6 +136,20 @@ func (ic *InviteCreate) SetNillableRegCep(i *int64) *InviteCreate {
 	return ic
 }
 
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (ic *InviteCreate) SetFirstRechargeCep(i int64) *InviteCreate {
+	ic.mutation.SetFirstRechargeCep(i)
+	return ic
+}
+
+// SetNillableFirstRechargeCep sets the "first_recharge_cep" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableFirstRechargeCep(i *int64) *InviteCreate {
+	if i != nil {
+		ic.SetFirstRechargeCep(*i)
+	}
+	return ic
+}
+
 // SetType sets the "type" field.
 func (ic *InviteCreate) SetType(s string) *InviteCreate {
 	ic.mutation.SetType(s)
@@ -269,6 +283,10 @@ func (ic *InviteCreate) defaults() {
 		v := invite.DefaultRegCep
 		ic.mutation.SetRegCep(v)
 	}
+	if _, ok := ic.mutation.FirstRechargeCep(); !ok {
+		v := invite.DefaultFirstRechargeCep
+		ic.mutation.SetFirstRechargeCep(v)
+	}
 	if _, ok := ic.mutation.GetType(); !ok {
 		v := invite.DefaultType
 		ic.mutation.SetType(v)
@@ -312,6 +330,9 @@ func (ic *InviteCreate) check() error {
 	}
 	if _, ok := ic.mutation.RegCep(); !ok {
 		return &ValidationError{Name: "reg_cep", err: errors.New(`cep_ent: missing required field "Invite.reg_cep"`)}
+	}
+	if _, ok := ic.mutation.FirstRechargeCep(); !ok {
+		return &ValidationError{Name: "first_recharge_cep", err: errors.New(`cep_ent: missing required field "Invite.first_recharge_cep"`)}
 	}
 	if _, ok := ic.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "Invite.type"`)}
@@ -392,6 +413,10 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.RegCep(); ok {
 		_spec.SetField(invite.FieldRegCep, field.TypeInt64, value)
 		_node.RegCep = value
+	}
+	if value, ok := ic.mutation.FirstRechargeCep(); ok {
+		_spec.SetField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
+		_node.FirstRechargeCep = value
 	}
 	if value, ok := ic.mutation.GetType(); ok {
 		_spec.SetField(invite.FieldType, field.TypeString, value)
@@ -588,6 +613,24 @@ func (u *InviteUpsert) UpdateRegCep() *InviteUpsert {
 // AddRegCep adds v to the "reg_cep" field.
 func (u *InviteUpsert) AddRegCep(v int64) *InviteUpsert {
 	u.Add(invite.FieldRegCep, v)
+	return u
+}
+
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (u *InviteUpsert) SetFirstRechargeCep(v int64) *InviteUpsert {
+	u.Set(invite.FieldFirstRechargeCep, v)
+	return u
+}
+
+// UpdateFirstRechargeCep sets the "first_recharge_cep" field to the value that was provided on create.
+func (u *InviteUpsert) UpdateFirstRechargeCep() *InviteUpsert {
+	u.SetExcluded(invite.FieldFirstRechargeCep)
+	return u
+}
+
+// AddFirstRechargeCep adds v to the "first_recharge_cep" field.
+func (u *InviteUpsert) AddFirstRechargeCep(v int64) *InviteUpsert {
+	u.Add(invite.FieldFirstRechargeCep, v)
 	return u
 }
 
@@ -801,6 +844,27 @@ func (u *InviteUpsertOne) AddRegCep(v int64) *InviteUpsertOne {
 func (u *InviteUpsertOne) UpdateRegCep() *InviteUpsertOne {
 	return u.Update(func(s *InviteUpsert) {
 		s.UpdateRegCep()
+	})
+}
+
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (u *InviteUpsertOne) SetFirstRechargeCep(v int64) *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.SetFirstRechargeCep(v)
+	})
+}
+
+// AddFirstRechargeCep adds v to the "first_recharge_cep" field.
+func (u *InviteUpsertOne) AddFirstRechargeCep(v int64) *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.AddFirstRechargeCep(v)
+	})
+}
+
+// UpdateFirstRechargeCep sets the "first_recharge_cep" field to the value that was provided on create.
+func (u *InviteUpsertOne) UpdateFirstRechargeCep() *InviteUpsertOne {
+	return u.Update(func(s *InviteUpsert) {
+		s.UpdateFirstRechargeCep()
 	})
 }
 
@@ -1186,6 +1250,27 @@ func (u *InviteUpsertBulk) AddRegCep(v int64) *InviteUpsertBulk {
 func (u *InviteUpsertBulk) UpdateRegCep() *InviteUpsertBulk {
 	return u.Update(func(s *InviteUpsert) {
 		s.UpdateRegCep()
+	})
+}
+
+// SetFirstRechargeCep sets the "first_recharge_cep" field.
+func (u *InviteUpsertBulk) SetFirstRechargeCep(v int64) *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.SetFirstRechargeCep(v)
+	})
+}
+
+// AddFirstRechargeCep adds v to the "first_recharge_cep" field.
+func (u *InviteUpsertBulk) AddFirstRechargeCep(v int64) *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.AddFirstRechargeCep(v)
+	})
+}
+
+// UpdateFirstRechargeCep sets the "first_recharge_cep" field to the value that was provided on create.
+func (u *InviteUpsertBulk) UpdateFirstRechargeCep() *InviteUpsertBulk {
+	return u.Update(func(s *InviteUpsert) {
+		s.UpdateFirstRechargeCep()
 	})
 }
 

@@ -35,6 +35,8 @@ type Invite struct {
 	ShareCep int64 `json:"share_cep"`
 	// 通过此邀请码注册能获得的收益
 	RegCep int64 `json:"reg_cep"`
+	// 通过此邀请码邀请用户注册并首次充值能获得的收益
+	FirstRechargeCep int64 `json:"first_recharge_cep"`
 	// 邀请码类型（可以用来区分不同的活动）
 	Type string `json:"type"`
 	// 外键用户 id
@@ -89,7 +91,7 @@ func (*Invite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldShareCep, invite.FieldRegCep, invite.FieldUserID, invite.FieldCampaignID:
+		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldShareCep, invite.FieldRegCep, invite.FieldFirstRechargeCep, invite.FieldUserID, invite.FieldCampaignID:
 			values[i] = new(sql.NullInt64)
 		case invite.FieldInviteCode, invite.FieldType:
 			values[i] = new(sql.NullString)
@@ -163,6 +165,12 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field reg_cep", values[j])
 			} else if value.Valid {
 				i.RegCep = value.Int64
+			}
+		case invite.FieldFirstRechargeCep:
+			if value, ok := values[j].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field first_recharge_cep", values[j])
+			} else if value.Valid {
+				i.FirstRechargeCep = value.Int64
 			}
 		case invite.FieldType:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -251,6 +259,9 @@ func (i *Invite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("reg_cep=")
 	builder.WriteString(fmt.Sprintf("%v", i.RegCep))
+	builder.WriteString(", ")
+	builder.WriteString("first_recharge_cep=")
+	builder.WriteString(fmt.Sprintf("%v", i.FirstRechargeCep))
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(i.Type)
