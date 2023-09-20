@@ -1316,6 +1316,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "wallet_user_id_symbol_id_deleted_at",
+				Unique:  true,
+				Columns: []*schema.Column{WalletsColumns[8], WalletsColumns[7], WalletsColumns[5]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
