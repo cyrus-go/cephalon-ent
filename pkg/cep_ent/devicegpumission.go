@@ -15,7 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 )
 
-// DeviceGpuMission is the model entity for the DeviceGpuMission schema.
+// 登记设备的显卡信息，以及设备的任务执行能力配置状态
 type DeviceGpuMission struct {
 	config `json:"-"`
 	// ID of the ent.

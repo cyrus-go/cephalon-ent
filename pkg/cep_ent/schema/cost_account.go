@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -40,5 +41,11 @@ func (CostAccount) Edges() []ent.Edge {
 func (CostAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (CostAccount) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("用户的消费账户，被 wallets 和 symbols 取代"),
 	}
 }

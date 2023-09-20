@@ -81,6 +81,20 @@ const (
 	EdgeInvites = "invites"
 	// EdgeCampaignOrders holds the string denoting the campaign_orders edge name in mutations.
 	EdgeCampaignOrders = "campaign_orders"
+	// EdgeWallets holds the string denoting the wallets edge name in mutations.
+	EdgeWallets = "wallets"
+	// EdgeIncomeBills holds the string denoting the income_bills edge name in mutations.
+	EdgeIncomeBills = "income_bills"
+	// EdgeOutcomeBills holds the string denoting the outcome_bills edge name in mutations.
+	EdgeOutcomeBills = "outcome_bills"
+	// EdgeMissionProductions holds the string denoting the mission_productions edge name in mutations.
+	EdgeMissionProductions = "mission_productions"
+	// EdgeMissions holds the string denoting the missions edge name in mutations.
+	EdgeMissions = "missions"
+	// EdgeIncomeTransferOrders holds the string denoting the income_transfer_orders edge name in mutations.
+	EdgeIncomeTransferOrders = "income_transfer_orders"
+	// EdgeOutcomeTransferOrders holds the string denoting the outcome_transfer_orders edge name in mutations.
+	EdgeOutcomeTransferOrders = "outcome_transfer_orders"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -203,6 +217,55 @@ const (
 	CampaignOrdersInverseTable = "campaign_orders"
 	// CampaignOrdersColumn is the table column denoting the campaign_orders relation/edge.
 	CampaignOrdersColumn = "user_id"
+	// WalletsTable is the table that holds the wallets relation/edge.
+	WalletsTable = "wallets"
+	// WalletsInverseTable is the table name for the Wallet entity.
+	// It exists in this package in order to avoid circular dependency with the "wallet" package.
+	WalletsInverseTable = "wallets"
+	// WalletsColumn is the table column denoting the wallets relation/edge.
+	WalletsColumn = "user_id"
+	// IncomeBillsTable is the table that holds the income_bills relation/edge.
+	IncomeBillsTable = "bills"
+	// IncomeBillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	IncomeBillsInverseTable = "bills"
+	// IncomeBillsColumn is the table column denoting the income_bills relation/edge.
+	IncomeBillsColumn = "target_user_id"
+	// OutcomeBillsTable is the table that holds the outcome_bills relation/edge.
+	OutcomeBillsTable = "bills"
+	// OutcomeBillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	OutcomeBillsInverseTable = "bills"
+	// OutcomeBillsColumn is the table column denoting the outcome_bills relation/edge.
+	OutcomeBillsColumn = "source_user_id"
+	// MissionProductionsTable is the table that holds the mission_productions relation/edge.
+	MissionProductionsTable = "mission_productions"
+	// MissionProductionsInverseTable is the table name for the MissionProduction entity.
+	// It exists in this package in order to avoid circular dependency with the "missionproduction" package.
+	MissionProductionsInverseTable = "mission_productions"
+	// MissionProductionsColumn is the table column denoting the mission_productions relation/edge.
+	MissionProductionsColumn = "user_id"
+	// MissionsTable is the table that holds the missions relation/edge.
+	MissionsTable = "missions"
+	// MissionsInverseTable is the table name for the Mission entity.
+	// It exists in this package in order to avoid circular dependency with the "mission" package.
+	MissionsInverseTable = "missions"
+	// MissionsColumn is the table column denoting the missions relation/edge.
+	MissionsColumn = "user_id"
+	// IncomeTransferOrdersTable is the table that holds the income_transfer_orders relation/edge.
+	IncomeTransferOrdersTable = "transfer_orders"
+	// IncomeTransferOrdersInverseTable is the table name for the TransferOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "transferorder" package.
+	IncomeTransferOrdersInverseTable = "transfer_orders"
+	// IncomeTransferOrdersColumn is the table column denoting the income_transfer_orders relation/edge.
+	IncomeTransferOrdersColumn = "target_user_id"
+	// OutcomeTransferOrdersTable is the table that holds the outcome_transfer_orders relation/edge.
+	OutcomeTransferOrdersTable = "transfer_orders"
+	// OutcomeTransferOrdersInverseTable is the table name for the TransferOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "transferorder" package.
+	OutcomeTransferOrdersInverseTable = "transfer_orders"
+	// OutcomeTransferOrdersColumn is the table column denoting the outcome_transfer_orders relation/edge.
+	OutcomeTransferOrdersColumn = "source_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -609,6 +672,104 @@ func ByCampaignOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCampaignOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByWalletsCount orders the results by wallets count.
+func ByWalletsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newWalletsStep(), opts...)
+	}
+}
+
+// ByWallets orders the results by wallets terms.
+func ByWallets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWalletsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByIncomeBillsCount orders the results by income_bills count.
+func ByIncomeBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncomeBillsStep(), opts...)
+	}
+}
+
+// ByIncomeBills orders the results by income_bills terms.
+func ByIncomeBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncomeBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByOutcomeBillsCount orders the results by outcome_bills count.
+func ByOutcomeBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOutcomeBillsStep(), opts...)
+	}
+}
+
+// ByOutcomeBills orders the results by outcome_bills terms.
+func ByOutcomeBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOutcomeBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMissionProductionsCount orders the results by mission_productions count.
+func ByMissionProductionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionProductionsStep(), opts...)
+	}
+}
+
+// ByMissionProductions orders the results by mission_productions terms.
+func ByMissionProductions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionProductionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByMissionsCount orders the results by missions count.
+func ByMissionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionsStep(), opts...)
+	}
+}
+
+// ByMissions orders the results by missions terms.
+func ByMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByIncomeTransferOrdersCount orders the results by income_transfer_orders count.
+func ByIncomeTransferOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncomeTransferOrdersStep(), opts...)
+	}
+}
+
+// ByIncomeTransferOrders orders the results by income_transfer_orders terms.
+func ByIncomeTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncomeTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByOutcomeTransferOrdersCount orders the results by outcome_transfer_orders count.
+func ByOutcomeTransferOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOutcomeTransferOrdersStep(), opts...)
+	}
+}
+
+// ByOutcomeTransferOrders orders the results by outcome_transfer_orders terms.
+func ByOutcomeTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOutcomeTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -733,5 +894,54 @@ func newCampaignOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CampaignOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CampaignOrdersTable, CampaignOrdersColumn),
+	)
+}
+func newWalletsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WalletsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, WalletsTable, WalletsColumn),
+	)
+}
+func newIncomeBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncomeBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncomeBillsTable, IncomeBillsColumn),
+	)
+}
+func newOutcomeBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OutcomeBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OutcomeBillsTable, OutcomeBillsColumn),
+	)
+}
+func newMissionProductionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionProductionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
+	)
+}
+func newMissionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionsTable, MissionsColumn),
+	)
+}
+func newIncomeTransferOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncomeTransferOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncomeTransferOrdersTable, IncomeTransferOrdersColumn),
+	)
+}
+func newOutcomeTransferOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OutcomeTransferOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OutcomeTransferOrdersTable, OutcomeTransferOrdersColumn),
 	)
 }

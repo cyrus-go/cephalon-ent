@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 )
 
@@ -32,5 +33,11 @@ func (OutputLog) Edges() []ent.Edge {
 func (OutputLog) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (OutputLog) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("输出日志，初期为风变专做的"),
 	}
 }

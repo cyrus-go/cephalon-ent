@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// CostAccount is the model entity for the CostAccount schema.
+// 用户的消费账户，被 wallets 和 symbols 取代
 type CostAccount struct {
 	config `json:"-"`
 	// ID of the ent.

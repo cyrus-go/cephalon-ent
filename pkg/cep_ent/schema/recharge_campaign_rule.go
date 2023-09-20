@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 )
 
@@ -30,5 +31,11 @@ func (RechargeCampaignRule) Edges() []ent.Edge {
 func (RechargeCampaignRule) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (RechargeCampaignRule) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("充值活动的规则，死表，为特定充值赠送逻辑服务"),
 	}
 }

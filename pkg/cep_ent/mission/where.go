@@ -81,6 +81,11 @@ func DeletedAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldDeletedAt, v))
 }
 
+// MissionKindID applies equality check predicate on the "mission_kind_id" field. It's identical to MissionKindIDEQ.
+func MissionKindID(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldMissionKindID, v))
+}
+
 // Body applies equality check predicate on the "body" field. It's identical to BodyEQ.
 func Body(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldBody, v))
@@ -91,9 +96,29 @@ func CallBackURL(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCallBackURL, v))
 }
 
+// CallBackInfo applies equality check predicate on the "call_back_info" field. It's identical to CallBackInfoEQ.
+func CallBackInfo(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldCallBackInfo, v))
+}
+
+// Urls applies equality check predicate on the "urls" field. It's identical to UrlsEQ.
+func Urls(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUrls, v))
+}
+
 // KeyPairID applies equality check predicate on the "key_pair_id" field. It's identical to KeyPairIDEQ.
 func KeyPairID(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldKeyPairID, v))
+}
+
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUserID, v))
+}
+
+// MissionBatchID applies equality check predicate on the "mission_batch_id" field. It's identical to MissionBatchIDEQ.
+func MissionBatchID(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldMissionBatchID, v))
 }
 
 // MissionBatchNumber applies equality check predicate on the "mission_batch_number" field. It's identical to MissionBatchNumberEQ.
@@ -366,6 +391,26 @@ func TypeNotIn(vs ...enums.MissionType) predicate.Mission {
 	return predicate.Mission(sql.FieldNotIn(FieldType, v...))
 }
 
+// MissionKindIDEQ applies the EQ predicate on the "mission_kind_id" field.
+func MissionKindIDEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldMissionKindID, v))
+}
+
+// MissionKindIDNEQ applies the NEQ predicate on the "mission_kind_id" field.
+func MissionKindIDNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldMissionKindID, v))
+}
+
+// MissionKindIDIn applies the In predicate on the "mission_kind_id" field.
+func MissionKindIDIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldMissionKindID, vs...))
+}
+
+// MissionKindIDNotIn applies the NotIn predicate on the "mission_kind_id" field.
+func MissionKindIDNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldMissionKindID, vs...))
+}
+
 // BodyEQ applies the EQ predicate on the "body" field.
 func BodyEQ(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldBody, v))
@@ -496,6 +541,81 @@ func CallBackURLContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldCallBackURL, v))
 }
 
+// CallBackInfoEQ applies the EQ predicate on the "call_back_info" field.
+func CallBackInfoEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldCallBackInfo, v))
+}
+
+// CallBackInfoNEQ applies the NEQ predicate on the "call_back_info" field.
+func CallBackInfoNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldCallBackInfo, v))
+}
+
+// CallBackInfoIn applies the In predicate on the "call_back_info" field.
+func CallBackInfoIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldCallBackInfo, vs...))
+}
+
+// CallBackInfoNotIn applies the NotIn predicate on the "call_back_info" field.
+func CallBackInfoNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldCallBackInfo, vs...))
+}
+
+// CallBackInfoGT applies the GT predicate on the "call_back_info" field.
+func CallBackInfoGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldCallBackInfo, v))
+}
+
+// CallBackInfoGTE applies the GTE predicate on the "call_back_info" field.
+func CallBackInfoGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldCallBackInfo, v))
+}
+
+// CallBackInfoLT applies the LT predicate on the "call_back_info" field.
+func CallBackInfoLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldCallBackInfo, v))
+}
+
+// CallBackInfoLTE applies the LTE predicate on the "call_back_info" field.
+func CallBackInfoLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldCallBackInfo, v))
+}
+
+// CallBackInfoContains applies the Contains predicate on the "call_back_info" field.
+func CallBackInfoContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldCallBackInfo, v))
+}
+
+// CallBackInfoHasPrefix applies the HasPrefix predicate on the "call_back_info" field.
+func CallBackInfoHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldCallBackInfo, v))
+}
+
+// CallBackInfoHasSuffix applies the HasSuffix predicate on the "call_back_info" field.
+func CallBackInfoHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldCallBackInfo, v))
+}
+
+// CallBackInfoIsNil applies the IsNil predicate on the "call_back_info" field.
+func CallBackInfoIsNil() predicate.Mission {
+	return predicate.Mission(sql.FieldIsNull(FieldCallBackInfo))
+}
+
+// CallBackInfoNotNil applies the NotNil predicate on the "call_back_info" field.
+func CallBackInfoNotNil() predicate.Mission {
+	return predicate.Mission(sql.FieldNotNull(FieldCallBackInfo))
+}
+
+// CallBackInfoEqualFold applies the EqualFold predicate on the "call_back_info" field.
+func CallBackInfoEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldCallBackInfo, v))
+}
+
+// CallBackInfoContainsFold applies the ContainsFold predicate on the "call_back_info" field.
+func CallBackInfoContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldCallBackInfo, v))
+}
+
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v enums.MissionStatus) predicate.Mission {
 	vc := v
@@ -556,6 +676,36 @@ func ResultNotIn(vs ...enums.MissionResult) predicate.Mission {
 	return predicate.Mission(sql.FieldNotIn(FieldResult, v...))
 }
 
+// StateEQ applies the EQ predicate on the "state" field.
+func StateEQ(v enums.MissionState) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldEQ(FieldState, vc))
+}
+
+// StateNEQ applies the NEQ predicate on the "state" field.
+func StateNEQ(v enums.MissionState) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldNEQ(FieldState, vc))
+}
+
+// StateIn applies the In predicate on the "state" field.
+func StateIn(vs ...enums.MissionState) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldIn(FieldState, v...))
+}
+
+// StateNotIn applies the NotIn predicate on the "state" field.
+func StateNotIn(vs ...enums.MissionState) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldNotIn(FieldState, v...))
+}
+
 // ResultUrlsIsNil applies the IsNil predicate on the "result_urls" field.
 func ResultUrlsIsNil() predicate.Mission {
 	return predicate.Mission(sql.FieldIsNull(FieldResultUrls))
@@ -564,6 +714,71 @@ func ResultUrlsIsNil() predicate.Mission {
 // ResultUrlsNotNil applies the NotNil predicate on the "result_urls" field.
 func ResultUrlsNotNil() predicate.Mission {
 	return predicate.Mission(sql.FieldNotNull(FieldResultUrls))
+}
+
+// UrlsEQ applies the EQ predicate on the "urls" field.
+func UrlsEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUrls, v))
+}
+
+// UrlsNEQ applies the NEQ predicate on the "urls" field.
+func UrlsNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldUrls, v))
+}
+
+// UrlsIn applies the In predicate on the "urls" field.
+func UrlsIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldUrls, vs...))
+}
+
+// UrlsNotIn applies the NotIn predicate on the "urls" field.
+func UrlsNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldUrls, vs...))
+}
+
+// UrlsGT applies the GT predicate on the "urls" field.
+func UrlsGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldUrls, v))
+}
+
+// UrlsGTE applies the GTE predicate on the "urls" field.
+func UrlsGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldUrls, v))
+}
+
+// UrlsLT applies the LT predicate on the "urls" field.
+func UrlsLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldUrls, v))
+}
+
+// UrlsLTE applies the LTE predicate on the "urls" field.
+func UrlsLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldUrls, v))
+}
+
+// UrlsContains applies the Contains predicate on the "urls" field.
+func UrlsContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldUrls, v))
+}
+
+// UrlsHasPrefix applies the HasPrefix predicate on the "urls" field.
+func UrlsHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldUrls, v))
+}
+
+// UrlsHasSuffix applies the HasSuffix predicate on the "urls" field.
+func UrlsHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldUrls, v))
+}
+
+// UrlsEqualFold applies the EqualFold predicate on the "urls" field.
+func UrlsEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldUrls, v))
+}
+
+// UrlsContainsFold applies the ContainsFold predicate on the "urls" field.
+func UrlsContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldUrls, v))
 }
 
 // KeyPairIDEQ applies the EQ predicate on the "key_pair_id" field.
@@ -584,6 +799,46 @@ func KeyPairIDIn(vs ...int64) predicate.Mission {
 // KeyPairIDNotIn applies the NotIn predicate on the "key_pair_id" field.
 func KeyPairIDNotIn(vs ...int64) predicate.Mission {
 	return predicate.Mission(sql.FieldNotIn(FieldKeyPairID, vs...))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// MissionBatchIDEQ applies the EQ predicate on the "mission_batch_id" field.
+func MissionBatchIDEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldMissionBatchID, v))
+}
+
+// MissionBatchIDNEQ applies the NEQ predicate on the "mission_batch_id" field.
+func MissionBatchIDNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldMissionBatchID, v))
+}
+
+// MissionBatchIDIn applies the In predicate on the "mission_batch_id" field.
+func MissionBatchIDIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldMissionBatchID, vs...))
+}
+
+// MissionBatchIDNotIn applies the NotIn predicate on the "mission_batch_id" field.
+func MissionBatchIDNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldMissionBatchID, vs...))
 }
 
 // MissionBatchNumberEQ applies the EQ predicate on the "mission_batch_number" field.
@@ -1116,6 +1371,52 @@ func SecondHmacKeyContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldSecondHmacKey, v))
 }
 
+// HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.
+func HasMissionKind() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionKindTable, MissionKindColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionKindWith applies the HasEdge predicate on the "mission_kind" edge with a given conditions (other predicates).
+func HasMissionKindWith(preds ...predicate.MissionKind) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionKindStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.
 func HasMissionKeyPairs() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
@@ -1177,6 +1478,75 @@ func HasMissionConsumeOrder() predicate.Mission {
 func HasMissionConsumeOrderWith(preds ...predicate.MissionConsumeOrder) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := newMissionConsumeOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionProduceOrders applies the HasEdge predicate on the "mission_produce_orders" edge.
+func HasMissionProduceOrders() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionProduceOrdersWith applies the HasEdge predicate on the "mission_produce_orders" edge with a given conditions (other predicates).
+func HasMissionProduceOrdersWith(preds ...predicate.MissionProduceOrder) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionProduceOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionBatch applies the HasEdge predicate on the "mission_batch" edge.
+func HasMissionBatch() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionBatchWith applies the HasEdge predicate on the "mission_batch" edge with a given conditions (other predicates).
+func HasMissionBatchWith(preds ...predicate.MissionBatch) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionBatchStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionProductions applies the HasEdge predicate on the "mission_productions" edge.
+func HasMissionProductions() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionProductionsWith applies the HasEdge predicate on the "mission_productions" edge with a given conditions (other predicates).
+func HasMissionProductionsWith(preds ...predicate.MissionProduction) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionProductionsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

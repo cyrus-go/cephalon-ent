@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
@@ -33,6 +34,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -41,10 +43,13 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -57,6 +62,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeBill                 = "Bill"
 	TypeCampaign             = "Campaign"
 	TypeCampaignOrder        = "CampaignOrder"
 	TypeCollect              = "Collect"
@@ -79,6 +85,7 @@ const (
 	TypeMissionKeyPair       = "MissionKeyPair"
 	TypeMissionKind          = "MissionKind"
 	TypeMissionProduceOrder  = "MissionProduceOrder"
+	TypeMissionProduction    = "MissionProduction"
 	TypeOutputLog            = "OutputLog"
 	TypePlatformAccount      = "PlatformAccount"
 	TypePrice                = "Price"
@@ -86,11 +93,1878 @@ const (
 	TypeProfitSetting        = "ProfitSetting"
 	TypeRechargeCampaignRule = "RechargeCampaignRule"
 	TypeRechargeOrder        = "RechargeOrder"
+	TypeSymbol               = "Symbol"
+	TypeTransferOrder        = "TransferOrder"
 	TypeUser                 = "User"
 	TypeUserDevice           = "UserDevice"
 	TypeVXAccount            = "VXAccount"
 	TypeVXSocial             = "VXSocial"
+	TypeWallet               = "Wallet"
 )
+
+// BillMutation represents an operation that mutates the Bill nodes in the graph.
+type BillMutation struct {
+	config
+	op                           Op
+	typ                          string
+	id                           *int64
+	created_by                   *int64
+	addcreated_by                *int64
+	updated_by                   *int64
+	addupdated_by                *int64
+	created_at                   *time.Time
+	updated_at                   *time.Time
+	deleted_at                   *time.Time
+	_type                        *enums.BillType
+	way                          *enums.BillWay
+	symbol_id                    *int64
+	addsymbol_id                 *int64
+	amount                       *int64
+	addamount                    *int64
+	target_before_amount         *int64
+	addtarget_before_amount      *int64
+	target_after_amount          *int64
+	addtarget_after_amount       *int64
+	source_before_amount         *int64
+	addsource_before_amount      *int64
+	source_after_amount          *int64
+	addsource_after_amount       *int64
+	serial_number                *string
+	clearedFields                map[string]struct{}
+	source_user                  *int64
+	clearedsource_user           bool
+	target_user                  *int64
+	clearedtarget_user           bool
+	transfer_order               *int64
+	clearedtransfer_order        bool
+	mission_consume_order        *int64
+	clearedmission_consume_order bool
+	mission_produce_order        *int64
+	clearedmission_produce_order bool
+	invite                       *int64
+	clearedinvite                bool
+	done                         bool
+	oldValue                     func(context.Context) (*Bill, error)
+	predicates                   []predicate.Bill
+}
+
+var _ ent.Mutation = (*BillMutation)(nil)
+
+// billOption allows management of the mutation configuration using functional options.
+type billOption func(*BillMutation)
+
+// newBillMutation creates new mutation for the Bill entity.
+func newBillMutation(c config, op Op, opts ...billOption) *BillMutation {
+	m := &BillMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeBill,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withBillID sets the ID field of the mutation.
+func withBillID(id int64) billOption {
+	return func(m *BillMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Bill
+		)
+		m.oldValue = func(ctx context.Context) (*Bill, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Bill.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withBill sets the old Bill of the mutation.
+func withBill(node *Bill) billOption {
+	return func(m *BillMutation) {
+		m.oldValue = func(context.Context) (*Bill, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m BillMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m BillMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Bill entities.
+func (m *BillMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *BillMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *BillMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Bill.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *BillMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *BillMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *BillMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *BillMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *BillMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *BillMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *BillMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *BillMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *BillMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *BillMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *BillMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *BillMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *BillMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *BillMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *BillMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *BillMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *BillMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *BillMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *BillMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetType sets the "type" field.
+func (m *BillMutation) SetType(et enums.BillType) {
+	m._type = &et
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *BillMutation) GetType() (r enums.BillType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldType(ctx context.Context) (v enums.BillType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *BillMutation) ResetType() {
+	m._type = nil
+}
+
+// SetOrderID sets the "order_id" field.
+func (m *BillMutation) SetOrderID(i int64) {
+	m.transfer_order = &i
+}
+
+// OrderID returns the value of the "order_id" field in the mutation.
+func (m *BillMutation) OrderID() (r int64, exists bool) {
+	v := m.transfer_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderID returns the old "order_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldOrderID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderID: %w", err)
+	}
+	return oldValue.OrderID, nil
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (m *BillMutation) ClearOrderID() {
+	m.transfer_order = nil
+	m.clearedFields[bill.FieldOrderID] = struct{}{}
+}
+
+// OrderIDCleared returns if the "order_id" field was cleared in this mutation.
+func (m *BillMutation) OrderIDCleared() bool {
+	_, ok := m.clearedFields[bill.FieldOrderID]
+	return ok
+}
+
+// ResetOrderID resets all changes to the "order_id" field.
+func (m *BillMutation) ResetOrderID() {
+	m.transfer_order = nil
+	delete(m.clearedFields, bill.FieldOrderID)
+}
+
+// SetWay sets the "way" field.
+func (m *BillMutation) SetWay(ew enums.BillWay) {
+	m.way = &ew
+}
+
+// Way returns the value of the "way" field in the mutation.
+func (m *BillMutation) Way() (r enums.BillWay, exists bool) {
+	v := m.way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWay returns the old "way" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldWay(ctx context.Context) (v enums.BillWay, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWay: %w", err)
+	}
+	return oldValue.Way, nil
+}
+
+// ResetWay resets all changes to the "way" field.
+func (m *BillMutation) ResetWay() {
+	m.way = nil
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (m *BillMutation) SetSymbolID(i int64) {
+	m.symbol_id = &i
+	m.addsymbol_id = nil
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *BillMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (m *BillMutation) AddSymbolID(i int64) {
+	if m.addsymbol_id != nil {
+		*m.addsymbol_id += i
+	} else {
+		m.addsymbol_id = &i
+	}
+}
+
+// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
+func (m *BillMutation) AddedSymbolID() (r int64, exists bool) {
+	v := m.addsymbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *BillMutation) ResetSymbolID() {
+	m.symbol_id = nil
+	m.addsymbol_id = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *BillMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *BillMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *BillMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *BillMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *BillMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// SetTargetUserID sets the "target_user_id" field.
+func (m *BillMutation) SetTargetUserID(i int64) {
+	m.target_user = &i
+}
+
+// TargetUserID returns the value of the "target_user_id" field in the mutation.
+func (m *BillMutation) TargetUserID() (r int64, exists bool) {
+	v := m.target_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetUserID returns the old "target_user_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldTargetUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetUserID: %w", err)
+	}
+	return oldValue.TargetUserID, nil
+}
+
+// ResetTargetUserID resets all changes to the "target_user_id" field.
+func (m *BillMutation) ResetTargetUserID() {
+	m.target_user = nil
+}
+
+// SetTargetBeforeAmount sets the "target_before_amount" field.
+func (m *BillMutation) SetTargetBeforeAmount(i int64) {
+	m.target_before_amount = &i
+	m.addtarget_before_amount = nil
+}
+
+// TargetBeforeAmount returns the value of the "target_before_amount" field in the mutation.
+func (m *BillMutation) TargetBeforeAmount() (r int64, exists bool) {
+	v := m.target_before_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetBeforeAmount returns the old "target_before_amount" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldTargetBeforeAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetBeforeAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetBeforeAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetBeforeAmount: %w", err)
+	}
+	return oldValue.TargetBeforeAmount, nil
+}
+
+// AddTargetBeforeAmount adds i to the "target_before_amount" field.
+func (m *BillMutation) AddTargetBeforeAmount(i int64) {
+	if m.addtarget_before_amount != nil {
+		*m.addtarget_before_amount += i
+	} else {
+		m.addtarget_before_amount = &i
+	}
+}
+
+// AddedTargetBeforeAmount returns the value that was added to the "target_before_amount" field in this mutation.
+func (m *BillMutation) AddedTargetBeforeAmount() (r int64, exists bool) {
+	v := m.addtarget_before_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTargetBeforeAmount resets all changes to the "target_before_amount" field.
+func (m *BillMutation) ResetTargetBeforeAmount() {
+	m.target_before_amount = nil
+	m.addtarget_before_amount = nil
+}
+
+// SetTargetAfterAmount sets the "target_after_amount" field.
+func (m *BillMutation) SetTargetAfterAmount(i int64) {
+	m.target_after_amount = &i
+	m.addtarget_after_amount = nil
+}
+
+// TargetAfterAmount returns the value of the "target_after_amount" field in the mutation.
+func (m *BillMutation) TargetAfterAmount() (r int64, exists bool) {
+	v := m.target_after_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetAfterAmount returns the old "target_after_amount" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldTargetAfterAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetAfterAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetAfterAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetAfterAmount: %w", err)
+	}
+	return oldValue.TargetAfterAmount, nil
+}
+
+// AddTargetAfterAmount adds i to the "target_after_amount" field.
+func (m *BillMutation) AddTargetAfterAmount(i int64) {
+	if m.addtarget_after_amount != nil {
+		*m.addtarget_after_amount += i
+	} else {
+		m.addtarget_after_amount = &i
+	}
+}
+
+// AddedTargetAfterAmount returns the value that was added to the "target_after_amount" field in this mutation.
+func (m *BillMutation) AddedTargetAfterAmount() (r int64, exists bool) {
+	v := m.addtarget_after_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTargetAfterAmount resets all changes to the "target_after_amount" field.
+func (m *BillMutation) ResetTargetAfterAmount() {
+	m.target_after_amount = nil
+	m.addtarget_after_amount = nil
+}
+
+// SetSourceUserID sets the "source_user_id" field.
+func (m *BillMutation) SetSourceUserID(i int64) {
+	m.source_user = &i
+}
+
+// SourceUserID returns the value of the "source_user_id" field in the mutation.
+func (m *BillMutation) SourceUserID() (r int64, exists bool) {
+	v := m.source_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceUserID returns the old "source_user_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldSourceUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceUserID: %w", err)
+	}
+	return oldValue.SourceUserID, nil
+}
+
+// ResetSourceUserID resets all changes to the "source_user_id" field.
+func (m *BillMutation) ResetSourceUserID() {
+	m.source_user = nil
+}
+
+// SetSourceBeforeAmount sets the "source_before_amount" field.
+func (m *BillMutation) SetSourceBeforeAmount(i int64) {
+	m.source_before_amount = &i
+	m.addsource_before_amount = nil
+}
+
+// SourceBeforeAmount returns the value of the "source_before_amount" field in the mutation.
+func (m *BillMutation) SourceBeforeAmount() (r int64, exists bool) {
+	v := m.source_before_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceBeforeAmount returns the old "source_before_amount" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldSourceBeforeAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceBeforeAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceBeforeAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceBeforeAmount: %w", err)
+	}
+	return oldValue.SourceBeforeAmount, nil
+}
+
+// AddSourceBeforeAmount adds i to the "source_before_amount" field.
+func (m *BillMutation) AddSourceBeforeAmount(i int64) {
+	if m.addsource_before_amount != nil {
+		*m.addsource_before_amount += i
+	} else {
+		m.addsource_before_amount = &i
+	}
+}
+
+// AddedSourceBeforeAmount returns the value that was added to the "source_before_amount" field in this mutation.
+func (m *BillMutation) AddedSourceBeforeAmount() (r int64, exists bool) {
+	v := m.addsource_before_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSourceBeforeAmount resets all changes to the "source_before_amount" field.
+func (m *BillMutation) ResetSourceBeforeAmount() {
+	m.source_before_amount = nil
+	m.addsource_before_amount = nil
+}
+
+// SetSourceAfterAmount sets the "source_after_amount" field.
+func (m *BillMutation) SetSourceAfterAmount(i int64) {
+	m.source_after_amount = &i
+	m.addsource_after_amount = nil
+}
+
+// SourceAfterAmount returns the value of the "source_after_amount" field in the mutation.
+func (m *BillMutation) SourceAfterAmount() (r int64, exists bool) {
+	v := m.source_after_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceAfterAmount returns the old "source_after_amount" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldSourceAfterAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceAfterAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceAfterAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceAfterAmount: %w", err)
+	}
+	return oldValue.SourceAfterAmount, nil
+}
+
+// AddSourceAfterAmount adds i to the "source_after_amount" field.
+func (m *BillMutation) AddSourceAfterAmount(i int64) {
+	if m.addsource_after_amount != nil {
+		*m.addsource_after_amount += i
+	} else {
+		m.addsource_after_amount = &i
+	}
+}
+
+// AddedSourceAfterAmount returns the value that was added to the "source_after_amount" field in this mutation.
+func (m *BillMutation) AddedSourceAfterAmount() (r int64, exists bool) {
+	v := m.addsource_after_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSourceAfterAmount resets all changes to the "source_after_amount" field.
+func (m *BillMutation) ResetSourceAfterAmount() {
+	m.source_after_amount = nil
+	m.addsource_after_amount = nil
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (m *BillMutation) SetSerialNumber(s string) {
+	m.serial_number = &s
+}
+
+// SerialNumber returns the value of the "serial_number" field in the mutation.
+func (m *BillMutation) SerialNumber() (r string, exists bool) {
+	v := m.serial_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSerialNumber returns the old "serial_number" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldSerialNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSerialNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSerialNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSerialNumber: %w", err)
+	}
+	return oldValue.SerialNumber, nil
+}
+
+// ResetSerialNumber resets all changes to the "serial_number" field.
+func (m *BillMutation) ResetSerialNumber() {
+	m.serial_number = nil
+}
+
+// SetInviteID sets the "invite_id" field.
+func (m *BillMutation) SetInviteID(i int64) {
+	m.invite = &i
+}
+
+// InviteID returns the value of the "invite_id" field in the mutation.
+func (m *BillMutation) InviteID() (r int64, exists bool) {
+	v := m.invite
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInviteID returns the old "invite_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldInviteID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInviteID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInviteID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInviteID: %w", err)
+	}
+	return oldValue.InviteID, nil
+}
+
+// ResetInviteID resets all changes to the "invite_id" field.
+func (m *BillMutation) ResetInviteID() {
+	m.invite = nil
+}
+
+// ClearSourceUser clears the "source_user" edge to the User entity.
+func (m *BillMutation) ClearSourceUser() {
+	m.clearedsource_user = true
+	m.clearedFields[bill.FieldSourceUserID] = struct{}{}
+}
+
+// SourceUserCleared reports if the "source_user" edge to the User entity was cleared.
+func (m *BillMutation) SourceUserCleared() bool {
+	return m.clearedsource_user
+}
+
+// SourceUserIDs returns the "source_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SourceUserID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) SourceUserIDs() (ids []int64) {
+	if id := m.source_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSourceUser resets all changes to the "source_user" edge.
+func (m *BillMutation) ResetSourceUser() {
+	m.source_user = nil
+	m.clearedsource_user = false
+}
+
+// ClearTargetUser clears the "target_user" edge to the User entity.
+func (m *BillMutation) ClearTargetUser() {
+	m.clearedtarget_user = true
+	m.clearedFields[bill.FieldTargetUserID] = struct{}{}
+}
+
+// TargetUserCleared reports if the "target_user" edge to the User entity was cleared.
+func (m *BillMutation) TargetUserCleared() bool {
+	return m.clearedtarget_user
+}
+
+// TargetUserIDs returns the "target_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TargetUserID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) TargetUserIDs() (ids []int64) {
+	if id := m.target_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTargetUser resets all changes to the "target_user" edge.
+func (m *BillMutation) ResetTargetUser() {
+	m.target_user = nil
+	m.clearedtarget_user = false
+}
+
+// SetTransferOrderID sets the "transfer_order" edge to the TransferOrder entity by id.
+func (m *BillMutation) SetTransferOrderID(id int64) {
+	m.transfer_order = &id
+}
+
+// ClearTransferOrder clears the "transfer_order" edge to the TransferOrder entity.
+func (m *BillMutation) ClearTransferOrder() {
+	m.clearedtransfer_order = true
+	m.clearedFields[bill.FieldOrderID] = struct{}{}
+}
+
+// TransferOrderCleared reports if the "transfer_order" edge to the TransferOrder entity was cleared.
+func (m *BillMutation) TransferOrderCleared() bool {
+	return m.OrderIDCleared() || m.clearedtransfer_order
+}
+
+// TransferOrderID returns the "transfer_order" edge ID in the mutation.
+func (m *BillMutation) TransferOrderID() (id int64, exists bool) {
+	if m.transfer_order != nil {
+		return *m.transfer_order, true
+	}
+	return
+}
+
+// TransferOrderIDs returns the "transfer_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TransferOrderID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) TransferOrderIDs() (ids []int64) {
+	if id := m.transfer_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTransferOrder resets all changes to the "transfer_order" edge.
+func (m *BillMutation) ResetTransferOrder() {
+	m.transfer_order = nil
+	m.clearedtransfer_order = false
+}
+
+// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by id.
+func (m *BillMutation) SetMissionConsumeOrderID(id int64) {
+	m.mission_consume_order = &id
+}
+
+// ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
+func (m *BillMutation) ClearMissionConsumeOrder() {
+	m.clearedmission_consume_order = true
+	m.clearedFields[bill.FieldOrderID] = struct{}{}
+}
+
+// MissionConsumeOrderCleared reports if the "mission_consume_order" edge to the MissionConsumeOrder entity was cleared.
+func (m *BillMutation) MissionConsumeOrderCleared() bool {
+	return m.OrderIDCleared() || m.clearedmission_consume_order
+}
+
+// MissionConsumeOrderID returns the "mission_consume_order" edge ID in the mutation.
+func (m *BillMutation) MissionConsumeOrderID() (id int64, exists bool) {
+	if m.mission_consume_order != nil {
+		return *m.mission_consume_order, true
+	}
+	return
+}
+
+// MissionConsumeOrderIDs returns the "mission_consume_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionConsumeOrderID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) MissionConsumeOrderIDs() (ids []int64) {
+	if id := m.mission_consume_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionConsumeOrder resets all changes to the "mission_consume_order" edge.
+func (m *BillMutation) ResetMissionConsumeOrder() {
+	m.mission_consume_order = nil
+	m.clearedmission_consume_order = false
+}
+
+// SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by id.
+func (m *BillMutation) SetMissionProduceOrderID(id int64) {
+	m.mission_produce_order = &id
+}
+
+// ClearMissionProduceOrder clears the "mission_produce_order" edge to the MissionProduceOrder entity.
+func (m *BillMutation) ClearMissionProduceOrder() {
+	m.clearedmission_produce_order = true
+	m.clearedFields[bill.FieldOrderID] = struct{}{}
+}
+
+// MissionProduceOrderCleared reports if the "mission_produce_order" edge to the MissionProduceOrder entity was cleared.
+func (m *BillMutation) MissionProduceOrderCleared() bool {
+	return m.OrderIDCleared() || m.clearedmission_produce_order
+}
+
+// MissionProduceOrderID returns the "mission_produce_order" edge ID in the mutation.
+func (m *BillMutation) MissionProduceOrderID() (id int64, exists bool) {
+	if m.mission_produce_order != nil {
+		return *m.mission_produce_order, true
+	}
+	return
+}
+
+// MissionProduceOrderIDs returns the "mission_produce_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionProduceOrderID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) MissionProduceOrderIDs() (ids []int64) {
+	if id := m.mission_produce_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionProduceOrder resets all changes to the "mission_produce_order" edge.
+func (m *BillMutation) ResetMissionProduceOrder() {
+	m.mission_produce_order = nil
+	m.clearedmission_produce_order = false
+}
+
+// ClearInvite clears the "invite" edge to the Invite entity.
+func (m *BillMutation) ClearInvite() {
+	m.clearedinvite = true
+	m.clearedFields[bill.FieldInviteID] = struct{}{}
+}
+
+// InviteCleared reports if the "invite" edge to the Invite entity was cleared.
+func (m *BillMutation) InviteCleared() bool {
+	return m.clearedinvite
+}
+
+// InviteIDs returns the "invite" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// InviteID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) InviteIDs() (ids []int64) {
+	if id := m.invite; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetInvite resets all changes to the "invite" edge.
+func (m *BillMutation) ResetInvite() {
+	m.invite = nil
+	m.clearedinvite = false
+}
+
+// Where appends a list predicates to the BillMutation builder.
+func (m *BillMutation) Where(ps ...predicate.Bill) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the BillMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *BillMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Bill, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *BillMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *BillMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Bill).
+func (m *BillMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *BillMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.created_by != nil {
+		fields = append(fields, bill.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, bill.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, bill.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, bill.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, bill.FieldDeletedAt)
+	}
+	if m._type != nil {
+		fields = append(fields, bill.FieldType)
+	}
+	if m.transfer_order != nil {
+		fields = append(fields, bill.FieldOrderID)
+	}
+	if m.way != nil {
+		fields = append(fields, bill.FieldWay)
+	}
+	if m.symbol_id != nil {
+		fields = append(fields, bill.FieldSymbolID)
+	}
+	if m.amount != nil {
+		fields = append(fields, bill.FieldAmount)
+	}
+	if m.target_user != nil {
+		fields = append(fields, bill.FieldTargetUserID)
+	}
+	if m.target_before_amount != nil {
+		fields = append(fields, bill.FieldTargetBeforeAmount)
+	}
+	if m.target_after_amount != nil {
+		fields = append(fields, bill.FieldTargetAfterAmount)
+	}
+	if m.source_user != nil {
+		fields = append(fields, bill.FieldSourceUserID)
+	}
+	if m.source_before_amount != nil {
+		fields = append(fields, bill.FieldSourceBeforeAmount)
+	}
+	if m.source_after_amount != nil {
+		fields = append(fields, bill.FieldSourceAfterAmount)
+	}
+	if m.serial_number != nil {
+		fields = append(fields, bill.FieldSerialNumber)
+	}
+	if m.invite != nil {
+		fields = append(fields, bill.FieldInviteID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *BillMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case bill.FieldCreatedBy:
+		return m.CreatedBy()
+	case bill.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case bill.FieldCreatedAt:
+		return m.CreatedAt()
+	case bill.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case bill.FieldDeletedAt:
+		return m.DeletedAt()
+	case bill.FieldType:
+		return m.GetType()
+	case bill.FieldOrderID:
+		return m.OrderID()
+	case bill.FieldWay:
+		return m.Way()
+	case bill.FieldSymbolID:
+		return m.SymbolID()
+	case bill.FieldAmount:
+		return m.Amount()
+	case bill.FieldTargetUserID:
+		return m.TargetUserID()
+	case bill.FieldTargetBeforeAmount:
+		return m.TargetBeforeAmount()
+	case bill.FieldTargetAfterAmount:
+		return m.TargetAfterAmount()
+	case bill.FieldSourceUserID:
+		return m.SourceUserID()
+	case bill.FieldSourceBeforeAmount:
+		return m.SourceBeforeAmount()
+	case bill.FieldSourceAfterAmount:
+		return m.SourceAfterAmount()
+	case bill.FieldSerialNumber:
+		return m.SerialNumber()
+	case bill.FieldInviteID:
+		return m.InviteID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *BillMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case bill.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case bill.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case bill.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case bill.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case bill.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case bill.FieldType:
+		return m.OldType(ctx)
+	case bill.FieldOrderID:
+		return m.OldOrderID(ctx)
+	case bill.FieldWay:
+		return m.OldWay(ctx)
+	case bill.FieldSymbolID:
+		return m.OldSymbolID(ctx)
+	case bill.FieldAmount:
+		return m.OldAmount(ctx)
+	case bill.FieldTargetUserID:
+		return m.OldTargetUserID(ctx)
+	case bill.FieldTargetBeforeAmount:
+		return m.OldTargetBeforeAmount(ctx)
+	case bill.FieldTargetAfterAmount:
+		return m.OldTargetAfterAmount(ctx)
+	case bill.FieldSourceUserID:
+		return m.OldSourceUserID(ctx)
+	case bill.FieldSourceBeforeAmount:
+		return m.OldSourceBeforeAmount(ctx)
+	case bill.FieldSourceAfterAmount:
+		return m.OldSourceAfterAmount(ctx)
+	case bill.FieldSerialNumber:
+		return m.OldSerialNumber(ctx)
+	case bill.FieldInviteID:
+		return m.OldInviteID(ctx)
+	}
+	return nil, fmt.Errorf("unknown Bill field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *BillMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case bill.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case bill.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case bill.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case bill.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case bill.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case bill.FieldType:
+		v, ok := value.(enums.BillType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case bill.FieldOrderID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderID(v)
+		return nil
+	case bill.FieldWay:
+		v, ok := value.(enums.BillWay)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWay(v)
+		return nil
+	case bill.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
+	case bill.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case bill.FieldTargetUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetUserID(v)
+		return nil
+	case bill.FieldTargetBeforeAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetBeforeAmount(v)
+		return nil
+	case bill.FieldTargetAfterAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetAfterAmount(v)
+		return nil
+	case bill.FieldSourceUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceUserID(v)
+		return nil
+	case bill.FieldSourceBeforeAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceBeforeAmount(v)
+		return nil
+	case bill.FieldSourceAfterAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceAfterAmount(v)
+		return nil
+	case bill.FieldSerialNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSerialNumber(v)
+		return nil
+	case bill.FieldInviteID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInviteID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Bill field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *BillMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, bill.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, bill.FieldUpdatedBy)
+	}
+	if m.addsymbol_id != nil {
+		fields = append(fields, bill.FieldSymbolID)
+	}
+	if m.addamount != nil {
+		fields = append(fields, bill.FieldAmount)
+	}
+	if m.addtarget_before_amount != nil {
+		fields = append(fields, bill.FieldTargetBeforeAmount)
+	}
+	if m.addtarget_after_amount != nil {
+		fields = append(fields, bill.FieldTargetAfterAmount)
+	}
+	if m.addsource_before_amount != nil {
+		fields = append(fields, bill.FieldSourceBeforeAmount)
+	}
+	if m.addsource_after_amount != nil {
+		fields = append(fields, bill.FieldSourceAfterAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *BillMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case bill.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case bill.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case bill.FieldSymbolID:
+		return m.AddedSymbolID()
+	case bill.FieldAmount:
+		return m.AddedAmount()
+	case bill.FieldTargetBeforeAmount:
+		return m.AddedTargetBeforeAmount()
+	case bill.FieldTargetAfterAmount:
+		return m.AddedTargetAfterAmount()
+	case bill.FieldSourceBeforeAmount:
+		return m.AddedSourceBeforeAmount()
+	case bill.FieldSourceAfterAmount:
+		return m.AddedSourceAfterAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *BillMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case bill.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case bill.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case bill.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSymbolID(v)
+		return nil
+	case bill.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	case bill.FieldTargetBeforeAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetBeforeAmount(v)
+		return nil
+	case bill.FieldTargetAfterAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetAfterAmount(v)
+		return nil
+	case bill.FieldSourceBeforeAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSourceBeforeAmount(v)
+		return nil
+	case bill.FieldSourceAfterAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSourceAfterAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Bill numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *BillMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(bill.FieldOrderID) {
+		fields = append(fields, bill.FieldOrderID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *BillMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *BillMutation) ClearField(name string) error {
+	switch name {
+	case bill.FieldOrderID:
+		m.ClearOrderID()
+		return nil
+	}
+	return fmt.Errorf("unknown Bill nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *BillMutation) ResetField(name string) error {
+	switch name {
+	case bill.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case bill.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case bill.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case bill.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case bill.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case bill.FieldType:
+		m.ResetType()
+		return nil
+	case bill.FieldOrderID:
+		m.ResetOrderID()
+		return nil
+	case bill.FieldWay:
+		m.ResetWay()
+		return nil
+	case bill.FieldSymbolID:
+		m.ResetSymbolID()
+		return nil
+	case bill.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case bill.FieldTargetUserID:
+		m.ResetTargetUserID()
+		return nil
+	case bill.FieldTargetBeforeAmount:
+		m.ResetTargetBeforeAmount()
+		return nil
+	case bill.FieldTargetAfterAmount:
+		m.ResetTargetAfterAmount()
+		return nil
+	case bill.FieldSourceUserID:
+		m.ResetSourceUserID()
+		return nil
+	case bill.FieldSourceBeforeAmount:
+		m.ResetSourceBeforeAmount()
+		return nil
+	case bill.FieldSourceAfterAmount:
+		m.ResetSourceAfterAmount()
+		return nil
+	case bill.FieldSerialNumber:
+		m.ResetSerialNumber()
+		return nil
+	case bill.FieldInviteID:
+		m.ResetInviteID()
+		return nil
+	}
+	return fmt.Errorf("unknown Bill field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *BillMutation) AddedEdges() []string {
+	edges := make([]string, 0, 6)
+	if m.source_user != nil {
+		edges = append(edges, bill.EdgeSourceUser)
+	}
+	if m.target_user != nil {
+		edges = append(edges, bill.EdgeTargetUser)
+	}
+	if m.transfer_order != nil {
+		edges = append(edges, bill.EdgeTransferOrder)
+	}
+	if m.mission_consume_order != nil {
+		edges = append(edges, bill.EdgeMissionConsumeOrder)
+	}
+	if m.mission_produce_order != nil {
+		edges = append(edges, bill.EdgeMissionProduceOrder)
+	}
+	if m.invite != nil {
+		edges = append(edges, bill.EdgeInvite)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *BillMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case bill.EdgeSourceUser:
+		if id := m.source_user; id != nil {
+			return []ent.Value{*id}
+		}
+	case bill.EdgeTargetUser:
+		if id := m.target_user; id != nil {
+			return []ent.Value{*id}
+		}
+	case bill.EdgeTransferOrder:
+		if id := m.transfer_order; id != nil {
+			return []ent.Value{*id}
+		}
+	case bill.EdgeMissionConsumeOrder:
+		if id := m.mission_consume_order; id != nil {
+			return []ent.Value{*id}
+		}
+	case bill.EdgeMissionProduceOrder:
+		if id := m.mission_produce_order; id != nil {
+			return []ent.Value{*id}
+		}
+	case bill.EdgeInvite:
+		if id := m.invite; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *BillMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 6)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *BillMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *BillMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 6)
+	if m.clearedsource_user {
+		edges = append(edges, bill.EdgeSourceUser)
+	}
+	if m.clearedtarget_user {
+		edges = append(edges, bill.EdgeTargetUser)
+	}
+	if m.clearedtransfer_order {
+		edges = append(edges, bill.EdgeTransferOrder)
+	}
+	if m.clearedmission_consume_order {
+		edges = append(edges, bill.EdgeMissionConsumeOrder)
+	}
+	if m.clearedmission_produce_order {
+		edges = append(edges, bill.EdgeMissionProduceOrder)
+	}
+	if m.clearedinvite {
+		edges = append(edges, bill.EdgeInvite)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *BillMutation) EdgeCleared(name string) bool {
+	switch name {
+	case bill.EdgeSourceUser:
+		return m.clearedsource_user
+	case bill.EdgeTargetUser:
+		return m.clearedtarget_user
+	case bill.EdgeTransferOrder:
+		return m.clearedtransfer_order
+	case bill.EdgeMissionConsumeOrder:
+		return m.clearedmission_consume_order
+	case bill.EdgeMissionProduceOrder:
+		return m.clearedmission_produce_order
+	case bill.EdgeInvite:
+		return m.clearedinvite
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *BillMutation) ClearEdge(name string) error {
+	switch name {
+	case bill.EdgeSourceUser:
+		m.ClearSourceUser()
+		return nil
+	case bill.EdgeTargetUser:
+		m.ClearTargetUser()
+		return nil
+	case bill.EdgeTransferOrder:
+		m.ClearTransferOrder()
+		return nil
+	case bill.EdgeMissionConsumeOrder:
+		m.ClearMissionConsumeOrder()
+		return nil
+	case bill.EdgeMissionProduceOrder:
+		m.ClearMissionProduceOrder()
+		return nil
+	case bill.EdgeInvite:
+		m.ClearInvite()
+		return nil
+	}
+	return fmt.Errorf("unknown Bill unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *BillMutation) ResetEdge(name string) error {
+	switch name {
+	case bill.EdgeSourceUser:
+		m.ResetSourceUser()
+		return nil
+	case bill.EdgeTargetUser:
+		m.ResetTargetUser()
+		return nil
+	case bill.EdgeTransferOrder:
+		m.ResetTransferOrder()
+		return nil
+	case bill.EdgeMissionConsumeOrder:
+		m.ResetMissionConsumeOrder()
+		return nil
+	case bill.EdgeMissionProduceOrder:
+		m.ResetMissionProduceOrder()
+		return nil
+	case bill.EdgeInvite:
+		m.ResetInvite()
+		return nil
+	}
+	return fmt.Errorf("unknown Bill edge %s", name)
+}
 
 // CampaignMutation represents an operation that mutates the Campaign nodes in the graph.
 type CampaignMutation struct {
@@ -17139,6 +19013,9 @@ type InviteMutation struct {
 	cleareduser           bool
 	campaign              *int64
 	clearedcampaign       bool
+	bills                 map[int64]struct{}
+	removedbills          map[int64]struct{}
+	clearedbills          bool
 	done                  bool
 	oldValue              func(context.Context) (*Invite, error)
 	predicates            []predicate.Invite
@@ -17834,6 +19711,60 @@ func (m *InviteMutation) ResetCampaign() {
 	m.clearedcampaign = false
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *InviteMutation) AddBillIDs(ids ...int64) {
+	if m.bills == nil {
+		m.bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBills clears the "bills" edge to the Bill entity.
+func (m *InviteMutation) ClearBills() {
+	m.clearedbills = true
+}
+
+// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
+func (m *InviteMutation) BillsCleared() bool {
+	return m.clearedbills
+}
+
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *InviteMutation) RemoveBillIDs(ids ...int64) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *InviteMutation) RemovedBillsIDs() (ids []int64) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BillsIDs returns the "bills" edge IDs in the mutation.
+func (m *InviteMutation) BillsIDs() (ids []int64) {
+	for id := range m.bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBills resets all changes to the "bills" edge.
+func (m *InviteMutation) ResetBills() {
+	m.bills = nil
+	m.clearedbills = false
+	m.removedbills = nil
+}
+
 // Where appends a list predicates to the InviteMutation builder.
 func (m *InviteMutation) Where(ps ...predicate.Invite) {
 	m.predicates = append(m.predicates, ps...)
@@ -18217,12 +20148,15 @@ func (m *InviteMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *InviteMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user != nil {
 		edges = append(edges, invite.EdgeUser)
 	}
 	if m.campaign != nil {
 		edges = append(edges, invite.EdgeCampaign)
+	}
+	if m.bills != nil {
+		edges = append(edges, invite.EdgeBills)
 	}
 	return edges
 }
@@ -18239,30 +20173,50 @@ func (m *InviteMutation) AddedIDs(name string) []ent.Value {
 		if id := m.campaign; id != nil {
 			return []ent.Value{*id}
 		}
+	case invite.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *InviteMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.removedbills != nil {
+		edges = append(edges, invite.EdgeBills)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *InviteMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case invite.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *InviteMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser {
 		edges = append(edges, invite.EdgeUser)
 	}
 	if m.clearedcampaign {
 		edges = append(edges, invite.EdgeCampaign)
+	}
+	if m.clearedbills {
+		edges = append(edges, invite.EdgeBills)
 	}
 	return edges
 }
@@ -18275,6 +20229,8 @@ func (m *InviteMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case invite.EdgeCampaign:
 		return m.clearedcampaign
+	case invite.EdgeBills:
+		return m.clearedbills
 	}
 	return false
 }
@@ -18303,6 +20259,9 @@ func (m *InviteMutation) ResetEdge(name string) error {
 	case invite.EdgeCampaign:
 		m.ResetCampaign()
 		return nil
+	case invite.EdgeBills:
+		m.ResetBills()
+		return nil
 	}
 	return fmt.Errorf("unknown Invite edge %s", name)
 }
@@ -18310,46 +20269,61 @@ func (m *InviteMutation) ResetEdge(name string) error {
 // MissionMutation represents an operation that mutates the Mission nodes in the graph.
 type MissionMutation struct {
 	config
-	op                           Op
-	typ                          string
-	id                           *int64
-	created_by                   *int64
-	addcreated_by                *int64
-	updated_by                   *int64
-	addupdated_by                *int64
-	created_at                   *time.Time
-	updated_at                   *time.Time
-	deleted_at                   *time.Time
-	_type                        *enums.MissionType
-	body                         *string
-	call_back_url                *string
-	status                       *enums.MissionStatus
-	result                       *enums.MissionResult
-	result_urls                  *[]string
-	appendresult_urls            []string
-	mission_batch_number         *string
-	gpu_version                  *enums.GpuVersion
-	unit_cep                     *int64
-	addunit_cep                  *int64
-	resp_status_code             *int32
-	addresp_status_code          *int32
-	resp_body                    *string
-	inner_uri                    *string
-	inner_method                 *enums.InnerMethod
-	temp_hmac_key                *string
-	temp_hmac_secret             *string
-	second_hmac_key              *string
-	clearedFields                map[string]struct{}
-	mission_key_pairs            map[int64]struct{}
-	removedmission_key_pairs     map[int64]struct{}
-	clearedmission_key_pairs     bool
-	key_pair                     *int64
-	clearedkey_pair              bool
-	mission_consume_order        *int64
-	clearedmission_consume_order bool
-	done                         bool
-	oldValue                     func(context.Context) (*Mission, error)
-	predicates                   []predicate.Mission
+	op                            Op
+	typ                           string
+	id                            *int64
+	created_by                    *int64
+	addcreated_by                 *int64
+	updated_by                    *int64
+	addupdated_by                 *int64
+	created_at                    *time.Time
+	updated_at                    *time.Time
+	deleted_at                    *time.Time
+	_type                         *enums.MissionType
+	body                          *string
+	call_back_url                 *string
+	call_back_info                *string
+	status                        *enums.MissionStatus
+	result                        *enums.MissionResult
+	state                         *enums.MissionState
+	result_urls                   *[]string
+	appendresult_urls             []string
+	urls                          *string
+	mission_batch_number          *string
+	gpu_version                   *enums.GpuVersion
+	unit_cep                      *int64
+	addunit_cep                   *int64
+	resp_status_code              *int32
+	addresp_status_code           *int32
+	resp_body                     *string
+	inner_uri                     *string
+	inner_method                  *enums.InnerMethod
+	temp_hmac_key                 *string
+	temp_hmac_secret              *string
+	second_hmac_key               *string
+	clearedFields                 map[string]struct{}
+	mission_kind                  *int64
+	clearedmission_kind           bool
+	user                          *int64
+	cleareduser                   bool
+	mission_key_pairs             map[int64]struct{}
+	removedmission_key_pairs      map[int64]struct{}
+	clearedmission_key_pairs      bool
+	key_pair                      *int64
+	clearedkey_pair               bool
+	mission_consume_order         *int64
+	clearedmission_consume_order  bool
+	mission_produce_orders        map[int64]struct{}
+	removedmission_produce_orders map[int64]struct{}
+	clearedmission_produce_orders bool
+	mission_batch                 *int64
+	clearedmission_batch          bool
+	mission_productions           map[int64]struct{}
+	removedmission_productions    map[int64]struct{}
+	clearedmission_productions    bool
+	done                          bool
+	oldValue                      func(context.Context) (*Mission, error)
+	predicates                    []predicate.Mission
 }
 
 var _ ent.Mutation = (*MissionMutation)(nil)
@@ -18712,6 +20686,42 @@ func (m *MissionMutation) ResetType() {
 	m._type = nil
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (m *MissionMutation) SetMissionKindID(i int64) {
+	m.mission_kind = &i
+}
+
+// MissionKindID returns the value of the "mission_kind_id" field in the mutation.
+func (m *MissionMutation) MissionKindID() (r int64, exists bool) {
+	v := m.mission_kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionKindID returns the old "mission_kind_id" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldMissionKindID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionKindID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionKindID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionKindID: %w", err)
+	}
+	return oldValue.MissionKindID, nil
+}
+
+// ResetMissionKindID resets all changes to the "mission_kind_id" field.
+func (m *MissionMutation) ResetMissionKindID() {
+	m.mission_kind = nil
+}
+
 // SetBody sets the "body" field.
 func (m *MissionMutation) SetBody(s string) {
 	m.body = &s
@@ -18782,6 +20792,55 @@ func (m *MissionMutation) OldCallBackURL(ctx context.Context) (v string, err err
 // ResetCallBackURL resets all changes to the "call_back_url" field.
 func (m *MissionMutation) ResetCallBackURL() {
 	m.call_back_url = nil
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (m *MissionMutation) SetCallBackInfo(s string) {
+	m.call_back_info = &s
+}
+
+// CallBackInfo returns the value of the "call_back_info" field in the mutation.
+func (m *MissionMutation) CallBackInfo() (r string, exists bool) {
+	v := m.call_back_info
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCallBackInfo returns the old "call_back_info" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldCallBackInfo(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCallBackInfo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCallBackInfo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCallBackInfo: %w", err)
+	}
+	return oldValue.CallBackInfo, nil
+}
+
+// ClearCallBackInfo clears the value of the "call_back_info" field.
+func (m *MissionMutation) ClearCallBackInfo() {
+	m.call_back_info = nil
+	m.clearedFields[mission.FieldCallBackInfo] = struct{}{}
+}
+
+// CallBackInfoCleared returns if the "call_back_info" field was cleared in this mutation.
+func (m *MissionMutation) CallBackInfoCleared() bool {
+	_, ok := m.clearedFields[mission.FieldCallBackInfo]
+	return ok
+}
+
+// ResetCallBackInfo resets all changes to the "call_back_info" field.
+func (m *MissionMutation) ResetCallBackInfo() {
+	m.call_back_info = nil
+	delete(m.clearedFields, mission.FieldCallBackInfo)
 }
 
 // SetStatus sets the "status" field.
@@ -18856,6 +20915,42 @@ func (m *MissionMutation) ResetResult() {
 	m.result = nil
 }
 
+// SetState sets the "state" field.
+func (m *MissionMutation) SetState(es enums.MissionState) {
+	m.state = &es
+}
+
+// State returns the value of the "state" field in the mutation.
+func (m *MissionMutation) State() (r enums.MissionState, exists bool) {
+	v := m.state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldState returns the old "state" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldState(ctx context.Context) (v enums.MissionState, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldState: %w", err)
+	}
+	return oldValue.State, nil
+}
+
+// ResetState resets all changes to the "state" field.
+func (m *MissionMutation) ResetState() {
+	m.state = nil
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (m *MissionMutation) SetResultUrls(s []string) {
 	m.result_urls = &s
@@ -18921,6 +21016,42 @@ func (m *MissionMutation) ResetResultUrls() {
 	delete(m.clearedFields, mission.FieldResultUrls)
 }
 
+// SetUrls sets the "urls" field.
+func (m *MissionMutation) SetUrls(s string) {
+	m.urls = &s
+}
+
+// Urls returns the value of the "urls" field in the mutation.
+func (m *MissionMutation) Urls() (r string, exists bool) {
+	v := m.urls
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUrls returns the old "urls" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldUrls(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUrls is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUrls requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUrls: %w", err)
+	}
+	return oldValue.Urls, nil
+}
+
+// ResetUrls resets all changes to the "urls" field.
+func (m *MissionMutation) ResetUrls() {
+	m.urls = nil
+}
+
 // SetKeyPairID sets the "key_pair_id" field.
 func (m *MissionMutation) SetKeyPairID(i int64) {
 	m.key_pair = &i
@@ -18955,6 +21086,78 @@ func (m *MissionMutation) OldKeyPairID(ctx context.Context) (v int64, err error)
 // ResetKeyPairID resets all changes to the "key_pair_id" field.
 func (m *MissionMutation) ResetKeyPairID() {
 	m.key_pair = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *MissionMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *MissionMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *MissionMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (m *MissionMutation) SetMissionBatchID(i int64) {
+	m.mission_batch = &i
+}
+
+// MissionBatchID returns the value of the "mission_batch_id" field in the mutation.
+func (m *MissionMutation) MissionBatchID() (r int64, exists bool) {
+	v := m.mission_batch
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionBatchID returns the old "mission_batch_id" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldMissionBatchID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionBatchID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionBatchID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionBatchID: %w", err)
+	}
+	return oldValue.MissionBatchID, nil
+}
+
+// ResetMissionBatchID resets all changes to the "mission_batch_id" field.
+func (m *MissionMutation) ResetMissionBatchID() {
+	m.mission_batch = nil
 }
 
 // SetMissionBatchNumber sets the "mission_batch_number" field.
@@ -19357,6 +21560,60 @@ func (m *MissionMutation) ResetSecondHmacKey() {
 	m.second_hmac_key = nil
 }
 
+// ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
+func (m *MissionMutation) ClearMissionKind() {
+	m.clearedmission_kind = true
+	m.clearedFields[mission.FieldMissionKindID] = struct{}{}
+}
+
+// MissionKindCleared reports if the "mission_kind" edge to the MissionKind entity was cleared.
+func (m *MissionMutation) MissionKindCleared() bool {
+	return m.clearedmission_kind
+}
+
+// MissionKindIDs returns the "mission_kind" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionKindID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) MissionKindIDs() (ids []int64) {
+	if id := m.mission_kind; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionKind resets all changes to the "mission_kind" edge.
+func (m *MissionMutation) ResetMissionKind() {
+	m.mission_kind = nil
+	m.clearedmission_kind = false
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *MissionMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[mission.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *MissionMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *MissionMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
 func (m *MissionMutation) AddMissionKeyPairIDs(ids ...int64) {
 	if m.mission_key_pairs == nil {
@@ -19477,6 +21734,141 @@ func (m *MissionMutation) ResetMissionConsumeOrder() {
 	m.clearedmission_consume_order = false
 }
 
+// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by ids.
+func (m *MissionMutation) AddMissionProduceOrderIDs(ids ...int64) {
+	if m.mission_produce_orders == nil {
+		m.mission_produce_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_produce_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionProduceOrders clears the "mission_produce_orders" edge to the MissionProduceOrder entity.
+func (m *MissionMutation) ClearMissionProduceOrders() {
+	m.clearedmission_produce_orders = true
+}
+
+// MissionProduceOrdersCleared reports if the "mission_produce_orders" edge to the MissionProduceOrder entity was cleared.
+func (m *MissionMutation) MissionProduceOrdersCleared() bool {
+	return m.clearedmission_produce_orders
+}
+
+// RemoveMissionProduceOrderIDs removes the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
+func (m *MissionMutation) RemoveMissionProduceOrderIDs(ids ...int64) {
+	if m.removedmission_produce_orders == nil {
+		m.removedmission_produce_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_produce_orders, ids[i])
+		m.removedmission_produce_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionProduceOrders returns the removed IDs of the "mission_produce_orders" edge to the MissionProduceOrder entity.
+func (m *MissionMutation) RemovedMissionProduceOrdersIDs() (ids []int64) {
+	for id := range m.removedmission_produce_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionProduceOrdersIDs returns the "mission_produce_orders" edge IDs in the mutation.
+func (m *MissionMutation) MissionProduceOrdersIDs() (ids []int64) {
+	for id := range m.mission_produce_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionProduceOrders resets all changes to the "mission_produce_orders" edge.
+func (m *MissionMutation) ResetMissionProduceOrders() {
+	m.mission_produce_orders = nil
+	m.clearedmission_produce_orders = false
+	m.removedmission_produce_orders = nil
+}
+
+// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
+func (m *MissionMutation) ClearMissionBatch() {
+	m.clearedmission_batch = true
+	m.clearedFields[mission.FieldMissionBatchID] = struct{}{}
+}
+
+// MissionBatchCleared reports if the "mission_batch" edge to the MissionBatch entity was cleared.
+func (m *MissionMutation) MissionBatchCleared() bool {
+	return m.clearedmission_batch
+}
+
+// MissionBatchIDs returns the "mission_batch" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionBatchID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) MissionBatchIDs() (ids []int64) {
+	if id := m.mission_batch; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionBatch resets all changes to the "mission_batch" edge.
+func (m *MissionMutation) ResetMissionBatch() {
+	m.mission_batch = nil
+	m.clearedmission_batch = false
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by ids.
+func (m *MissionMutation) AddMissionProductionIDs(ids ...int64) {
+	if m.mission_productions == nil {
+		m.mission_productions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_productions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionProductions clears the "mission_productions" edge to the MissionProduction entity.
+func (m *MissionMutation) ClearMissionProductions() {
+	m.clearedmission_productions = true
+}
+
+// MissionProductionsCleared reports if the "mission_productions" edge to the MissionProduction entity was cleared.
+func (m *MissionMutation) MissionProductionsCleared() bool {
+	return m.clearedmission_productions
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to the MissionProduction entity by IDs.
+func (m *MissionMutation) RemoveMissionProductionIDs(ids ...int64) {
+	if m.removedmission_productions == nil {
+		m.removedmission_productions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_productions, ids[i])
+		m.removedmission_productions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionProductions returns the removed IDs of the "mission_productions" edge to the MissionProduction entity.
+func (m *MissionMutation) RemovedMissionProductionsIDs() (ids []int64) {
+	for id := range m.removedmission_productions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionProductionsIDs returns the "mission_productions" edge IDs in the mutation.
+func (m *MissionMutation) MissionProductionsIDs() (ids []int64) {
+	for id := range m.mission_productions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionProductions resets all changes to the "mission_productions" edge.
+func (m *MissionMutation) ResetMissionProductions() {
+	m.mission_productions = nil
+	m.clearedmission_productions = false
+	m.removedmission_productions = nil
+}
+
 // Where appends a list predicates to the MissionMutation builder.
 func (m *MissionMutation) Where(ps ...predicate.Mission) {
 	m.predicates = append(m.predicates, ps...)
@@ -19511,7 +21903,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 28)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -19530,11 +21922,17 @@ func (m *MissionMutation) Fields() []string {
 	if m._type != nil {
 		fields = append(fields, mission.FieldType)
 	}
+	if m.mission_kind != nil {
+		fields = append(fields, mission.FieldMissionKindID)
+	}
 	if m.body != nil {
 		fields = append(fields, mission.FieldBody)
 	}
 	if m.call_back_url != nil {
 		fields = append(fields, mission.FieldCallBackURL)
+	}
+	if m.call_back_info != nil {
+		fields = append(fields, mission.FieldCallBackInfo)
 	}
 	if m.status != nil {
 		fields = append(fields, mission.FieldStatus)
@@ -19542,11 +21940,23 @@ func (m *MissionMutation) Fields() []string {
 	if m.result != nil {
 		fields = append(fields, mission.FieldResult)
 	}
+	if m.state != nil {
+		fields = append(fields, mission.FieldState)
+	}
 	if m.result_urls != nil {
 		fields = append(fields, mission.FieldResultUrls)
 	}
+	if m.urls != nil {
+		fields = append(fields, mission.FieldUrls)
+	}
 	if m.key_pair != nil {
 		fields = append(fields, mission.FieldKeyPairID)
+	}
+	if m.user != nil {
+		fields = append(fields, mission.FieldUserID)
+	}
+	if m.mission_batch != nil {
+		fields = append(fields, mission.FieldMissionBatchID)
 	}
 	if m.mission_batch_number != nil {
 		fields = append(fields, mission.FieldMissionBatchNumber)
@@ -19598,18 +22008,30 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case mission.FieldType:
 		return m.GetType()
+	case mission.FieldMissionKindID:
+		return m.MissionKindID()
 	case mission.FieldBody:
 		return m.Body()
 	case mission.FieldCallBackURL:
 		return m.CallBackURL()
+	case mission.FieldCallBackInfo:
+		return m.CallBackInfo()
 	case mission.FieldStatus:
 		return m.Status()
 	case mission.FieldResult:
 		return m.Result()
+	case mission.FieldState:
+		return m.State()
 	case mission.FieldResultUrls:
 		return m.ResultUrls()
+	case mission.FieldUrls:
+		return m.Urls()
 	case mission.FieldKeyPairID:
 		return m.KeyPairID()
+	case mission.FieldUserID:
+		return m.UserID()
+	case mission.FieldMissionBatchID:
+		return m.MissionBatchID()
 	case mission.FieldMissionBatchNumber:
 		return m.MissionBatchNumber()
 	case mission.FieldGpuVersion:
@@ -19651,18 +22073,30 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldDeletedAt(ctx)
 	case mission.FieldType:
 		return m.OldType(ctx)
+	case mission.FieldMissionKindID:
+		return m.OldMissionKindID(ctx)
 	case mission.FieldBody:
 		return m.OldBody(ctx)
 	case mission.FieldCallBackURL:
 		return m.OldCallBackURL(ctx)
+	case mission.FieldCallBackInfo:
+		return m.OldCallBackInfo(ctx)
 	case mission.FieldStatus:
 		return m.OldStatus(ctx)
 	case mission.FieldResult:
 		return m.OldResult(ctx)
+	case mission.FieldState:
+		return m.OldState(ctx)
 	case mission.FieldResultUrls:
 		return m.OldResultUrls(ctx)
+	case mission.FieldUrls:
+		return m.OldUrls(ctx)
 	case mission.FieldKeyPairID:
 		return m.OldKeyPairID(ctx)
+	case mission.FieldUserID:
+		return m.OldUserID(ctx)
+	case mission.FieldMissionBatchID:
+		return m.OldMissionBatchID(ctx)
 	case mission.FieldMissionBatchNumber:
 		return m.OldMissionBatchNumber(ctx)
 	case mission.FieldGpuVersion:
@@ -19734,6 +22168,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetType(v)
 		return nil
+	case mission.FieldMissionKindID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionKindID(v)
+		return nil
 	case mission.FieldBody:
 		v, ok := value.(string)
 		if !ok {
@@ -19747,6 +22188,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCallBackURL(v)
+		return nil
+	case mission.FieldCallBackInfo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCallBackInfo(v)
 		return nil
 	case mission.FieldStatus:
 		v, ok := value.(enums.MissionStatus)
@@ -19762,6 +22210,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetResult(v)
 		return nil
+	case mission.FieldState:
+		v, ok := value.(enums.MissionState)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetState(v)
+		return nil
 	case mission.FieldResultUrls:
 		v, ok := value.([]string)
 		if !ok {
@@ -19769,12 +22224,33 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetResultUrls(v)
 		return nil
+	case mission.FieldUrls:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUrls(v)
+		return nil
 	case mission.FieldKeyPairID:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetKeyPairID(v)
+		return nil
+	case mission.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case mission.FieldMissionBatchID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionBatchID(v)
 		return nil
 	case mission.FieldMissionBatchNumber:
 		v, ok := value.(string)
@@ -19927,6 +22403,9 @@ func (m *MissionMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *MissionMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(mission.FieldCallBackInfo) {
+		fields = append(fields, mission.FieldCallBackInfo)
+	}
 	if m.FieldCleared(mission.FieldResultUrls) {
 		fields = append(fields, mission.FieldResultUrls)
 	}
@@ -19944,6 +22423,9 @@ func (m *MissionMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *MissionMutation) ClearField(name string) error {
 	switch name {
+	case mission.FieldCallBackInfo:
+		m.ClearCallBackInfo()
+		return nil
 	case mission.FieldResultUrls:
 		m.ClearResultUrls()
 		return nil
@@ -19973,11 +22455,17 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldType:
 		m.ResetType()
 		return nil
+	case mission.FieldMissionKindID:
+		m.ResetMissionKindID()
+		return nil
 	case mission.FieldBody:
 		m.ResetBody()
 		return nil
 	case mission.FieldCallBackURL:
 		m.ResetCallBackURL()
+		return nil
+	case mission.FieldCallBackInfo:
+		m.ResetCallBackInfo()
 		return nil
 	case mission.FieldStatus:
 		m.ResetStatus()
@@ -19985,11 +22473,23 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldResult:
 		m.ResetResult()
 		return nil
+	case mission.FieldState:
+		m.ResetState()
+		return nil
 	case mission.FieldResultUrls:
 		m.ResetResultUrls()
 		return nil
+	case mission.FieldUrls:
+		m.ResetUrls()
+		return nil
 	case mission.FieldKeyPairID:
 		m.ResetKeyPairID()
+		return nil
+	case mission.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case mission.FieldMissionBatchID:
+		m.ResetMissionBatchID()
 		return nil
 	case mission.FieldMissionBatchNumber:
 		m.ResetMissionBatchNumber()
@@ -20027,7 +22527,13 @@ func (m *MissionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 8)
+	if m.mission_kind != nil {
+		edges = append(edges, mission.EdgeMissionKind)
+	}
+	if m.user != nil {
+		edges = append(edges, mission.EdgeUser)
+	}
 	if m.mission_key_pairs != nil {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
@@ -20037,6 +22543,15 @@ func (m *MissionMutation) AddedEdges() []string {
 	if m.mission_consume_order != nil {
 		edges = append(edges, mission.EdgeMissionConsumeOrder)
 	}
+	if m.mission_produce_orders != nil {
+		edges = append(edges, mission.EdgeMissionProduceOrders)
+	}
+	if m.mission_batch != nil {
+		edges = append(edges, mission.EdgeMissionBatch)
+	}
+	if m.mission_productions != nil {
+		edges = append(edges, mission.EdgeMissionProductions)
+	}
 	return edges
 }
 
@@ -20044,6 +22559,14 @@ func (m *MissionMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case mission.EdgeMissionKind:
+		if id := m.mission_kind; id != nil {
+			return []ent.Value{*id}
+		}
+	case mission.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
 	case mission.EdgeMissionKeyPairs:
 		ids := make([]ent.Value, 0, len(m.mission_key_pairs))
 		for id := range m.mission_key_pairs {
@@ -20058,15 +22581,37 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.mission_consume_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case mission.EdgeMissionProduceOrders:
+		ids := make([]ent.Value, 0, len(m.mission_produce_orders))
+		for id := range m.mission_produce_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	case mission.EdgeMissionBatch:
+		if id := m.mission_batch; id != nil {
+			return []ent.Value{*id}
+		}
+	case mission.EdgeMissionProductions:
+		ids := make([]ent.Value, 0, len(m.mission_productions))
+		for id := range m.mission_productions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 8)
 	if m.removedmission_key_pairs != nil {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
+	}
+	if m.removedmission_produce_orders != nil {
+		edges = append(edges, mission.EdgeMissionProduceOrders)
+	}
+	if m.removedmission_productions != nil {
+		edges = append(edges, mission.EdgeMissionProductions)
 	}
 	return edges
 }
@@ -20081,13 +22626,31 @@ func (m *MissionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeMissionProduceOrders:
+		ids := make([]ent.Value, 0, len(m.removedmission_produce_orders))
+		for id := range m.removedmission_produce_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	case mission.EdgeMissionProductions:
+		ids := make([]ent.Value, 0, len(m.removedmission_productions))
+		for id := range m.removedmission_productions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 8)
+	if m.clearedmission_kind {
+		edges = append(edges, mission.EdgeMissionKind)
+	}
+	if m.cleareduser {
+		edges = append(edges, mission.EdgeUser)
+	}
 	if m.clearedmission_key_pairs {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
@@ -20097,6 +22660,15 @@ func (m *MissionMutation) ClearedEdges() []string {
 	if m.clearedmission_consume_order {
 		edges = append(edges, mission.EdgeMissionConsumeOrder)
 	}
+	if m.clearedmission_produce_orders {
+		edges = append(edges, mission.EdgeMissionProduceOrders)
+	}
+	if m.clearedmission_batch {
+		edges = append(edges, mission.EdgeMissionBatch)
+	}
+	if m.clearedmission_productions {
+		edges = append(edges, mission.EdgeMissionProductions)
+	}
 	return edges
 }
 
@@ -20104,12 +22676,22 @@ func (m *MissionMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *MissionMutation) EdgeCleared(name string) bool {
 	switch name {
+	case mission.EdgeMissionKind:
+		return m.clearedmission_kind
+	case mission.EdgeUser:
+		return m.cleareduser
 	case mission.EdgeMissionKeyPairs:
 		return m.clearedmission_key_pairs
 	case mission.EdgeKeyPair:
 		return m.clearedkey_pair
 	case mission.EdgeMissionConsumeOrder:
 		return m.clearedmission_consume_order
+	case mission.EdgeMissionProduceOrders:
+		return m.clearedmission_produce_orders
+	case mission.EdgeMissionBatch:
+		return m.clearedmission_batch
+	case mission.EdgeMissionProductions:
+		return m.clearedmission_productions
 	}
 	return false
 }
@@ -20118,11 +22700,20 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *MissionMutation) ClearEdge(name string) error {
 	switch name {
+	case mission.EdgeMissionKind:
+		m.ClearMissionKind()
+		return nil
+	case mission.EdgeUser:
+		m.ClearUser()
+		return nil
 	case mission.EdgeKeyPair:
 		m.ClearKeyPair()
 		return nil
 	case mission.EdgeMissionConsumeOrder:
 		m.ClearMissionConsumeOrder()
+		return nil
+	case mission.EdgeMissionBatch:
+		m.ClearMissionBatch()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission unique edge %s", name)
@@ -20132,6 +22723,12 @@ func (m *MissionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *MissionMutation) ResetEdge(name string) error {
 	switch name {
+	case mission.EdgeMissionKind:
+		m.ResetMissionKind()
+		return nil
+	case mission.EdgeUser:
+		m.ResetUser()
+		return nil
 	case mission.EdgeMissionKeyPairs:
 		m.ResetMissionKeyPairs()
 		return nil
@@ -20140,6 +22737,15 @@ func (m *MissionMutation) ResetEdge(name string) error {
 		return nil
 	case mission.EdgeMissionConsumeOrder:
 		m.ResetMissionConsumeOrder()
+		return nil
+	case mission.EdgeMissionProduceOrders:
+		m.ResetMissionProduceOrders()
+		return nil
+	case mission.EdgeMissionBatch:
+		m.ResetMissionBatch()
+		return nil
+	case mission.EdgeMissionProductions:
+		m.ResetMissionProductions()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission edge %s", name)
@@ -20165,6 +22771,9 @@ type MissionBatchMutation struct {
 	mission_consume_orders        map[int64]struct{}
 	removedmission_consume_orders map[int64]struct{}
 	clearedmission_consume_orders bool
+	missions                      map[int64]struct{}
+	removedmissions               map[int64]struct{}
+	clearedmissions               bool
 	done                          bool
 	oldValue                      func(context.Context) (*MissionBatch, error)
 	predicates                    []predicate.MissionBatch
@@ -20647,6 +23256,60 @@ func (m *MissionBatchMutation) ResetMissionConsumeOrders() {
 	m.removedmission_consume_orders = nil
 }
 
+// AddMissionIDs adds the "missions" edge to the Mission entity by ids.
+func (m *MissionBatchMutation) AddMissionIDs(ids ...int64) {
+	if m.missions == nil {
+		m.missions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.missions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissions clears the "missions" edge to the Mission entity.
+func (m *MissionBatchMutation) ClearMissions() {
+	m.clearedmissions = true
+}
+
+// MissionsCleared reports if the "missions" edge to the Mission entity was cleared.
+func (m *MissionBatchMutation) MissionsCleared() bool {
+	return m.clearedmissions
+}
+
+// RemoveMissionIDs removes the "missions" edge to the Mission entity by IDs.
+func (m *MissionBatchMutation) RemoveMissionIDs(ids ...int64) {
+	if m.removedmissions == nil {
+		m.removedmissions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.missions, ids[i])
+		m.removedmissions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissions returns the removed IDs of the "missions" edge to the Mission entity.
+func (m *MissionBatchMutation) RemovedMissionsIDs() (ids []int64) {
+	for id := range m.removedmissions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionsIDs returns the "missions" edge IDs in the mutation.
+func (m *MissionBatchMutation) MissionsIDs() (ids []int64) {
+	for id := range m.missions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissions resets all changes to the "missions" edge.
+func (m *MissionBatchMutation) ResetMissions() {
+	m.missions = nil
+	m.clearedmissions = false
+	m.removedmissions = nil
+}
+
 // Where appends a list predicates to the MissionBatchMutation builder.
 func (m *MissionBatchMutation) Where(ps ...predicate.MissionBatch) {
 	m.predicates = append(m.predicates, ps...)
@@ -20909,12 +23572,15 @@ func (m *MissionBatchMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionBatchMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user != nil {
 		edges = append(edges, missionbatch.EdgeUser)
 	}
 	if m.mission_consume_orders != nil {
 		edges = append(edges, missionbatch.EdgeMissionConsumeOrders)
+	}
+	if m.missions != nil {
+		edges = append(edges, missionbatch.EdgeMissions)
 	}
 	return edges
 }
@@ -20933,15 +23599,24 @@ func (m *MissionBatchMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionbatch.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.missions))
+		for id := range m.missions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionBatchMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedmission_consume_orders != nil {
 		edges = append(edges, missionbatch.EdgeMissionConsumeOrders)
+	}
+	if m.removedmissions != nil {
+		edges = append(edges, missionbatch.EdgeMissions)
 	}
 	return edges
 }
@@ -20956,18 +23631,27 @@ func (m *MissionBatchMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionbatch.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.removedmissions))
+		for id := range m.removedmissions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionBatchMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser {
 		edges = append(edges, missionbatch.EdgeUser)
 	}
 	if m.clearedmission_consume_orders {
 		edges = append(edges, missionbatch.EdgeMissionConsumeOrders)
+	}
+	if m.clearedmissions {
+		edges = append(edges, missionbatch.EdgeMissions)
 	}
 	return edges
 }
@@ -20980,6 +23664,8 @@ func (m *MissionBatchMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case missionbatch.EdgeMissionConsumeOrders:
 		return m.clearedmission_consume_orders
+	case missionbatch.EdgeMissions:
+		return m.clearedmissions
 	}
 	return false
 }
@@ -21004,6 +23690,9 @@ func (m *MissionBatchMutation) ResetEdge(name string) error {
 		return nil
 	case missionbatch.EdgeMissionConsumeOrders:
 		m.ResetMissionConsumeOrders()
+		return nil
+	case missionbatch.EdgeMissions:
+		m.ResetMissions()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionBatch edge %s", name)
@@ -21040,6 +23729,9 @@ type MissionConsumeOrderMutation struct {
 	cost_bills                    map[int64]struct{}
 	removedcost_bills             map[int64]struct{}
 	clearedcost_bills             bool
+	bills                         map[int64]struct{}
+	removedbills                  map[int64]struct{}
+	clearedbills                  bool
 	mission_produce_orders        map[int64]struct{}
 	removedmission_produce_orders map[int64]struct{}
 	clearedmission_produce_orders bool
@@ -21965,6 +24657,60 @@ func (m *MissionConsumeOrderMutation) ResetCostBills() {
 	m.removedcost_bills = nil
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *MissionConsumeOrderMutation) AddBillIDs(ids ...int64) {
+	if m.bills == nil {
+		m.bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBills clears the "bills" edge to the Bill entity.
+func (m *MissionConsumeOrderMutation) ClearBills() {
+	m.clearedbills = true
+}
+
+// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
+func (m *MissionConsumeOrderMutation) BillsCleared() bool {
+	return m.clearedbills
+}
+
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *MissionConsumeOrderMutation) RemoveBillIDs(ids ...int64) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *MissionConsumeOrderMutation) RemovedBillsIDs() (ids []int64) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BillsIDs returns the "bills" edge IDs in the mutation.
+func (m *MissionConsumeOrderMutation) BillsIDs() (ids []int64) {
+	for id := range m.bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBills resets all changes to the "bills" edge.
+func (m *MissionConsumeOrderMutation) ResetBills() {
+	m.bills = nil
+	m.clearedbills = false
+	m.removedbills = nil
+}
+
 // AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by ids.
 func (m *MissionConsumeOrderMutation) AddMissionProduceOrderIDs(ids ...int64) {
 	if m.mission_produce_orders == nil {
@@ -22546,12 +25292,15 @@ func (m *MissionConsumeOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionConsumeOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.user != nil {
 		edges = append(edges, missionconsumeorder.EdgeUser)
 	}
 	if m.cost_bills != nil {
 		edges = append(edges, missionconsumeorder.EdgeCostBills)
+	}
+	if m.bills != nil {
+		edges = append(edges, missionconsumeorder.EdgeBills)
 	}
 	if m.mission_produce_orders != nil {
 		edges = append(edges, missionconsumeorder.EdgeMissionProduceOrders)
@@ -22579,6 +25328,12 @@ func (m *MissionConsumeOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionconsumeorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
+		}
+		return ids
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		ids := make([]ent.Value, 0, len(m.mission_produce_orders))
 		for id := range m.mission_produce_orders {
@@ -22599,9 +25354,12 @@ func (m *MissionConsumeOrderMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionConsumeOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedcost_bills != nil {
 		edges = append(edges, missionconsumeorder.EdgeCostBills)
+	}
+	if m.removedbills != nil {
+		edges = append(edges, missionconsumeorder.EdgeBills)
 	}
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, missionconsumeorder.EdgeMissionProduceOrders)
@@ -22619,6 +25377,12 @@ func (m *MissionConsumeOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionconsumeorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		ids := make([]ent.Value, 0, len(m.removedmission_produce_orders))
 		for id := range m.removedmission_produce_orders {
@@ -22631,12 +25395,15 @@ func (m *MissionConsumeOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionConsumeOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.cleareduser {
 		edges = append(edges, missionconsumeorder.EdgeUser)
 	}
 	if m.clearedcost_bills {
 		edges = append(edges, missionconsumeorder.EdgeCostBills)
+	}
+	if m.clearedbills {
+		edges = append(edges, missionconsumeorder.EdgeBills)
 	}
 	if m.clearedmission_produce_orders {
 		edges = append(edges, missionconsumeorder.EdgeMissionProduceOrders)
@@ -22658,6 +25425,8 @@ func (m *MissionConsumeOrderMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case missionconsumeorder.EdgeCostBills:
 		return m.clearedcost_bills
+	case missionconsumeorder.EdgeBills:
+		return m.clearedbills
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		return m.clearedmission_produce_orders
 	case missionconsumeorder.EdgeMissionBatch:
@@ -22694,6 +25463,9 @@ func (m *MissionConsumeOrderMutation) ResetEdge(name string) error {
 		return nil
 	case missionconsumeorder.EdgeCostBills:
 		m.ResetCostBills()
+		return nil
+	case missionconsumeorder.EdgeBills:
+		m.ResetBills()
 		return nil
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		m.ResetMissionProduceOrders()
@@ -23895,6 +26667,9 @@ type MissionKindMutation struct {
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
 	cleareddevice_gpu_missions bool
+	missions                   map[int64]struct{}
+	removedmissions            map[int64]struct{}
+	clearedmissions            bool
 	done                       bool
 	oldValue                   func(context.Context) (*MissionKind, error)
 	predicates                 []predicate.MissionKind
@@ -24386,6 +27161,60 @@ func (m *MissionKindMutation) ResetDeviceGpuMissions() {
 	m.removeddevice_gpu_missions = nil
 }
 
+// AddMissionIDs adds the "missions" edge to the Mission entity by ids.
+func (m *MissionKindMutation) AddMissionIDs(ids ...int64) {
+	if m.missions == nil {
+		m.missions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.missions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissions clears the "missions" edge to the Mission entity.
+func (m *MissionKindMutation) ClearMissions() {
+	m.clearedmissions = true
+}
+
+// MissionsCleared reports if the "missions" edge to the Mission entity was cleared.
+func (m *MissionKindMutation) MissionsCleared() bool {
+	return m.clearedmissions
+}
+
+// RemoveMissionIDs removes the "missions" edge to the Mission entity by IDs.
+func (m *MissionKindMutation) RemoveMissionIDs(ids ...int64) {
+	if m.removedmissions == nil {
+		m.removedmissions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.missions, ids[i])
+		m.removedmissions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissions returns the removed IDs of the "missions" edge to the Mission entity.
+func (m *MissionKindMutation) RemovedMissionsIDs() (ids []int64) {
+	for id := range m.removedmissions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionsIDs returns the "missions" edge IDs in the mutation.
+func (m *MissionKindMutation) MissionsIDs() (ids []int64) {
+	for id := range m.missions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissions resets all changes to the "missions" edge.
+func (m *MissionKindMutation) ResetMissions() {
+	m.missions = nil
+	m.clearedmissions = false
+	m.removedmissions = nil
+}
+
 // Where appends a list predicates to the MissionKindMutation builder.
 func (m *MissionKindMutation) Where(ps ...predicate.MissionKind) {
 	m.predicates = append(m.predicates, ps...)
@@ -24665,9 +27494,12 @@ func (m *MissionKindMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionKindMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.device_gpu_missions != nil {
 		edges = append(edges, missionkind.EdgeDeviceGpuMissions)
+	}
+	if m.missions != nil {
+		edges = append(edges, missionkind.EdgeMissions)
 	}
 	return edges
 }
@@ -24682,15 +27514,24 @@ func (m *MissionKindMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionkind.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.missions))
+		for id := range m.missions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionKindMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removeddevice_gpu_missions != nil {
 		edges = append(edges, missionkind.EdgeDeviceGpuMissions)
+	}
+	if m.removedmissions != nil {
+		edges = append(edges, missionkind.EdgeMissions)
 	}
 	return edges
 }
@@ -24705,15 +27546,24 @@ func (m *MissionKindMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionkind.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.removedmissions))
+		for id := range m.removedmissions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionKindMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareddevice_gpu_missions {
 		edges = append(edges, missionkind.EdgeDeviceGpuMissions)
+	}
+	if m.clearedmissions {
+		edges = append(edges, missionkind.EdgeMissions)
 	}
 	return edges
 }
@@ -24724,6 +27574,8 @@ func (m *MissionKindMutation) EdgeCleared(name string) bool {
 	switch name {
 	case missionkind.EdgeDeviceGpuMissions:
 		return m.cleareddevice_gpu_missions
+	case missionkind.EdgeMissions:
+		return m.clearedmissions
 	}
 	return false
 }
@@ -24742,6 +27594,9 @@ func (m *MissionKindMutation) ResetEdge(name string) error {
 	switch name {
 	case missionkind.EdgeDeviceGpuMissions:
 		m.ResetDeviceGpuMissions()
+		return nil
+	case missionkind.EdgeMissions:
+		m.ResetMissions()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionKind edge %s", name)
@@ -24767,6 +27622,10 @@ type MissionProduceOrderMutation struct {
 	addpure_cep                  *int64
 	gift_cep                     *int64
 	addgift_cep                  *int64
+	symbol_id                    *int64
+	addsymbol_id                 *int64
+	amount                       *int64
+	addamount                    *int64
 	_type                        *enums.MissionType
 	is_time                      *bool
 	serial_number                *string
@@ -24776,10 +27635,15 @@ type MissionProduceOrderMutation struct {
 	earn_bills                   map[int64]struct{}
 	removedearn_bills            map[int64]struct{}
 	clearedearn_bills            bool
+	bills                        map[int64]struct{}
+	removedbills                 map[int64]struct{}
+	clearedbills                 bool
 	device                       *int64
 	cleareddevice                bool
 	mission_consume_order        *int64
 	clearedmission_consume_order bool
+	mission_production           *int64
+	clearedmission_production    bool
 	done                         bool
 	oldValue                     func(context.Context) (*MissionProduceOrder, error)
 	predicates                   []predicate.MissionProduceOrder
@@ -25201,6 +28065,55 @@ func (m *MissionProduceOrderMutation) ResetMissionID() {
 	m.addmission_id = nil
 }
 
+// SetMissionProductionID sets the "mission_production_id" field.
+func (m *MissionProduceOrderMutation) SetMissionProductionID(i int64) {
+	m.mission_production = &i
+}
+
+// MissionProductionID returns the value of the "mission_production_id" field in the mutation.
+func (m *MissionProduceOrderMutation) MissionProductionID() (r int64, exists bool) {
+	v := m.mission_production
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionProductionID returns the old "mission_production_id" field's value of the MissionProduceOrder entity.
+// If the MissionProduceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProduceOrderMutation) OldMissionProductionID(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionProductionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionProductionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionProductionID: %w", err)
+	}
+	return oldValue.MissionProductionID, nil
+}
+
+// ClearMissionProductionID clears the value of the "mission_production_id" field.
+func (m *MissionProduceOrderMutation) ClearMissionProductionID() {
+	m.mission_production = nil
+	m.clearedFields[missionproduceorder.FieldMissionProductionID] = struct{}{}
+}
+
+// MissionProductionIDCleared returns if the "mission_production_id" field was cleared in this mutation.
+func (m *MissionProduceOrderMutation) MissionProductionIDCleared() bool {
+	_, ok := m.clearedFields[missionproduceorder.FieldMissionProductionID]
+	return ok
+}
+
+// ResetMissionProductionID resets all changes to the "mission_production_id" field.
+func (m *MissionProduceOrderMutation) ResetMissionProductionID() {
+	m.mission_production = nil
+	delete(m.clearedFields, missionproduceorder.FieldMissionProductionID)
+}
+
 // SetStatus sets the "status" field.
 func (m *MissionProduceOrderMutation) SetStatus(eos enums.MissionOrderStatus) {
 	m.status = &eos
@@ -25347,6 +28260,118 @@ func (m *MissionProduceOrderMutation) AddedGiftCep() (r int64, exists bool) {
 func (m *MissionProduceOrderMutation) ResetGiftCep() {
 	m.gift_cep = nil
 	m.addgift_cep = nil
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (m *MissionProduceOrderMutation) SetSymbolID(i int64) {
+	m.symbol_id = &i
+	m.addsymbol_id = nil
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *MissionProduceOrderMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the MissionProduceOrder entity.
+// If the MissionProduceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProduceOrderMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (m *MissionProduceOrderMutation) AddSymbolID(i int64) {
+	if m.addsymbol_id != nil {
+		*m.addsymbol_id += i
+	} else {
+		m.addsymbol_id = &i
+	}
+}
+
+// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
+func (m *MissionProduceOrderMutation) AddedSymbolID() (r int64, exists bool) {
+	v := m.addsymbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *MissionProduceOrderMutation) ResetSymbolID() {
+	m.symbol_id = nil
+	m.addsymbol_id = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *MissionProduceOrderMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *MissionProduceOrderMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the MissionProduceOrder entity.
+// If the MissionProduceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProduceOrderMutation) OldAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *MissionProduceOrderMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *MissionProduceOrderMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *MissionProduceOrderMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
 }
 
 // SetType sets the "type" field.
@@ -25610,6 +28635,60 @@ func (m *MissionProduceOrderMutation) ResetEarnBills() {
 	m.removedearn_bills = nil
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *MissionProduceOrderMutation) AddBillIDs(ids ...int64) {
+	if m.bills == nil {
+		m.bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBills clears the "bills" edge to the Bill entity.
+func (m *MissionProduceOrderMutation) ClearBills() {
+	m.clearedbills = true
+}
+
+// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
+func (m *MissionProduceOrderMutation) BillsCleared() bool {
+	return m.clearedbills
+}
+
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *MissionProduceOrderMutation) RemoveBillIDs(ids ...int64) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *MissionProduceOrderMutation) RemovedBillsIDs() (ids []int64) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BillsIDs returns the "bills" edge IDs in the mutation.
+func (m *MissionProduceOrderMutation) BillsIDs() (ids []int64) {
+	for id := range m.bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBills resets all changes to the "bills" edge.
+func (m *MissionProduceOrderMutation) ResetBills() {
+	m.bills = nil
+	m.clearedbills = false
+	m.removedbills = nil
+}
+
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *MissionProduceOrderMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -25664,6 +28743,33 @@ func (m *MissionProduceOrderMutation) ResetMissionConsumeOrder() {
 	m.clearedmission_consume_order = false
 }
 
+// ClearMissionProduction clears the "mission_production" edge to the MissionProduction entity.
+func (m *MissionProduceOrderMutation) ClearMissionProduction() {
+	m.clearedmission_production = true
+	m.clearedFields[missionproduceorder.FieldMissionProductionID] = struct{}{}
+}
+
+// MissionProductionCleared reports if the "mission_production" edge to the MissionProduction entity was cleared.
+func (m *MissionProduceOrderMutation) MissionProductionCleared() bool {
+	return m.MissionProductionIDCleared() || m.clearedmission_production
+}
+
+// MissionProductionIDs returns the "mission_production" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionProductionID instead. It exists only for internal usage by the builders.
+func (m *MissionProduceOrderMutation) MissionProductionIDs() (ids []int64) {
+	if id := m.mission_production; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionProduction resets all changes to the "mission_production" edge.
+func (m *MissionProduceOrderMutation) ResetMissionProduction() {
+	m.mission_production = nil
+	m.clearedmission_production = false
+}
+
 // Where appends a list predicates to the MissionProduceOrderMutation builder.
 func (m *MissionProduceOrderMutation) Where(ps ...predicate.MissionProduceOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -25698,7 +28804,7 @@ func (m *MissionProduceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionProduceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, missionproduceorder.FieldCreatedBy)
 	}
@@ -25720,6 +28826,9 @@ func (m *MissionProduceOrderMutation) Fields() []string {
 	if m.mission_id != nil {
 		fields = append(fields, missionproduceorder.FieldMissionID)
 	}
+	if m.mission_production != nil {
+		fields = append(fields, missionproduceorder.FieldMissionProductionID)
+	}
 	if m.status != nil {
 		fields = append(fields, missionproduceorder.FieldStatus)
 	}
@@ -25728,6 +28837,12 @@ func (m *MissionProduceOrderMutation) Fields() []string {
 	}
 	if m.gift_cep != nil {
 		fields = append(fields, missionproduceorder.FieldGiftCep)
+	}
+	if m.symbol_id != nil {
+		fields = append(fields, missionproduceorder.FieldSymbolID)
+	}
+	if m.amount != nil {
+		fields = append(fields, missionproduceorder.FieldAmount)
 	}
 	if m._type != nil {
 		fields = append(fields, missionproduceorder.FieldType)
@@ -25766,12 +28881,18 @@ func (m *MissionProduceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case missionproduceorder.FieldMissionID:
 		return m.MissionID()
+	case missionproduceorder.FieldMissionProductionID:
+		return m.MissionProductionID()
 	case missionproduceorder.FieldStatus:
 		return m.Status()
 	case missionproduceorder.FieldPureCep:
 		return m.PureCep()
 	case missionproduceorder.FieldGiftCep:
 		return m.GiftCep()
+	case missionproduceorder.FieldSymbolID:
+		return m.SymbolID()
+	case missionproduceorder.FieldAmount:
+		return m.Amount()
 	case missionproduceorder.FieldType:
 		return m.GetType()
 	case missionproduceorder.FieldIsTime:
@@ -25805,12 +28926,18 @@ func (m *MissionProduceOrderMutation) OldField(ctx context.Context, name string)
 		return m.OldUserID(ctx)
 	case missionproduceorder.FieldMissionID:
 		return m.OldMissionID(ctx)
+	case missionproduceorder.FieldMissionProductionID:
+		return m.OldMissionProductionID(ctx)
 	case missionproduceorder.FieldStatus:
 		return m.OldStatus(ctx)
 	case missionproduceorder.FieldPureCep:
 		return m.OldPureCep(ctx)
 	case missionproduceorder.FieldGiftCep:
 		return m.OldGiftCep(ctx)
+	case missionproduceorder.FieldSymbolID:
+		return m.OldSymbolID(ctx)
+	case missionproduceorder.FieldAmount:
+		return m.OldAmount(ctx)
 	case missionproduceorder.FieldType:
 		return m.OldType(ctx)
 	case missionproduceorder.FieldIsTime:
@@ -25879,6 +29006,13 @@ func (m *MissionProduceOrderMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetMissionID(v)
 		return nil
+	case missionproduceorder.FieldMissionProductionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionProductionID(v)
+		return nil
 	case missionproduceorder.FieldStatus:
 		v, ok := value.(enums.MissionOrderStatus)
 		if !ok {
@@ -25899,6 +29033,20 @@ func (m *MissionProduceOrderMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGiftCep(v)
+		return nil
+	case missionproduceorder.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
+	case missionproduceorder.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
 		return nil
 	case missionproduceorder.FieldType:
 		v, ok := value.(enums.MissionType)
@@ -25958,6 +29106,12 @@ func (m *MissionProduceOrderMutation) AddedFields() []string {
 	if m.addgift_cep != nil {
 		fields = append(fields, missionproduceorder.FieldGiftCep)
 	}
+	if m.addsymbol_id != nil {
+		fields = append(fields, missionproduceorder.FieldSymbolID)
+	}
+	if m.addamount != nil {
+		fields = append(fields, missionproduceorder.FieldAmount)
+	}
 	return fields
 }
 
@@ -25976,6 +29130,10 @@ func (m *MissionProduceOrderMutation) AddedField(name string) (ent.Value, bool) 
 		return m.AddedPureCep()
 	case missionproduceorder.FieldGiftCep:
 		return m.AddedGiftCep()
+	case missionproduceorder.FieldSymbolID:
+		return m.AddedSymbolID()
+	case missionproduceorder.FieldAmount:
+		return m.AddedAmount()
 	}
 	return nil, false
 }
@@ -26020,6 +29178,20 @@ func (m *MissionProduceOrderMutation) AddField(name string, value ent.Value) err
 		}
 		m.AddGiftCep(v)
 		return nil
+	case missionproduceorder.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSymbolID(v)
+		return nil
+	case missionproduceorder.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder numeric field %s", name)
 }
@@ -26027,7 +29199,11 @@ func (m *MissionProduceOrderMutation) AddField(name string, value ent.Value) err
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *MissionProduceOrderMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(missionproduceorder.FieldMissionProductionID) {
+		fields = append(fields, missionproduceorder.FieldMissionProductionID)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -26040,6 +29216,11 @@ func (m *MissionProduceOrderMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *MissionProduceOrderMutation) ClearField(name string) error {
+	switch name {
+	case missionproduceorder.FieldMissionProductionID:
+		m.ClearMissionProductionID()
+		return nil
+	}
 	return fmt.Errorf("unknown MissionProduceOrder nullable field %s", name)
 }
 
@@ -26068,6 +29249,9 @@ func (m *MissionProduceOrderMutation) ResetField(name string) error {
 	case missionproduceorder.FieldMissionID:
 		m.ResetMissionID()
 		return nil
+	case missionproduceorder.FieldMissionProductionID:
+		m.ResetMissionProductionID()
+		return nil
 	case missionproduceorder.FieldStatus:
 		m.ResetStatus()
 		return nil
@@ -26076,6 +29260,12 @@ func (m *MissionProduceOrderMutation) ResetField(name string) error {
 		return nil
 	case missionproduceorder.FieldGiftCep:
 		m.ResetGiftCep()
+		return nil
+	case missionproduceorder.FieldSymbolID:
+		m.ResetSymbolID()
+		return nil
+	case missionproduceorder.FieldAmount:
+		m.ResetAmount()
 		return nil
 	case missionproduceorder.FieldType:
 		m.ResetType()
@@ -26098,18 +29288,24 @@ func (m *MissionProduceOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionProduceOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.user != nil {
 		edges = append(edges, missionproduceorder.EdgeUser)
 	}
 	if m.earn_bills != nil {
 		edges = append(edges, missionproduceorder.EdgeEarnBills)
 	}
+	if m.bills != nil {
+		edges = append(edges, missionproduceorder.EdgeBills)
+	}
 	if m.device != nil {
 		edges = append(edges, missionproduceorder.EdgeDevice)
 	}
 	if m.mission_consume_order != nil {
 		edges = append(edges, missionproduceorder.EdgeMissionConsumeOrder)
+	}
+	if m.mission_production != nil {
+		edges = append(edges, missionproduceorder.EdgeMissionProduction)
 	}
 	return edges
 }
@@ -26128,6 +29324,12 @@ func (m *MissionProduceOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionproduceorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
+		}
+		return ids
 	case missionproduceorder.EdgeDevice:
 		if id := m.device; id != nil {
 			return []ent.Value{*id}
@@ -26136,15 +29338,22 @@ func (m *MissionProduceOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.mission_consume_order; id != nil {
 			return []ent.Value{*id}
 		}
+	case missionproduceorder.EdgeMissionProduction:
+		if id := m.mission_production; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionProduceOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.removedearn_bills != nil {
 		edges = append(edges, missionproduceorder.EdgeEarnBills)
+	}
+	if m.removedbills != nil {
+		edges = append(edges, missionproduceorder.EdgeBills)
 	}
 	return edges
 }
@@ -26159,24 +29368,36 @@ func (m *MissionProduceOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionproduceorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionProduceOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.cleareduser {
 		edges = append(edges, missionproduceorder.EdgeUser)
 	}
 	if m.clearedearn_bills {
 		edges = append(edges, missionproduceorder.EdgeEarnBills)
 	}
+	if m.clearedbills {
+		edges = append(edges, missionproduceorder.EdgeBills)
+	}
 	if m.cleareddevice {
 		edges = append(edges, missionproduceorder.EdgeDevice)
 	}
 	if m.clearedmission_consume_order {
 		edges = append(edges, missionproduceorder.EdgeMissionConsumeOrder)
+	}
+	if m.clearedmission_production {
+		edges = append(edges, missionproduceorder.EdgeMissionProduction)
 	}
 	return edges
 }
@@ -26189,10 +29410,14 @@ func (m *MissionProduceOrderMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case missionproduceorder.EdgeEarnBills:
 		return m.clearedearn_bills
+	case missionproduceorder.EdgeBills:
+		return m.clearedbills
 	case missionproduceorder.EdgeDevice:
 		return m.cleareddevice
 	case missionproduceorder.EdgeMissionConsumeOrder:
 		return m.clearedmission_consume_order
+	case missionproduceorder.EdgeMissionProduction:
+		return m.clearedmission_production
 	}
 	return false
 }
@@ -26210,6 +29435,9 @@ func (m *MissionProduceOrderMutation) ClearEdge(name string) error {
 	case missionproduceorder.EdgeMissionConsumeOrder:
 		m.ClearMissionConsumeOrder()
 		return nil
+	case missionproduceorder.EdgeMissionProduction:
+		m.ClearMissionProduction()
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder unique edge %s", name)
 }
@@ -26224,14 +29452,1402 @@ func (m *MissionProduceOrderMutation) ResetEdge(name string) error {
 	case missionproduceorder.EdgeEarnBills:
 		m.ResetEarnBills()
 		return nil
+	case missionproduceorder.EdgeBills:
+		m.ResetBills()
+		return nil
 	case missionproduceorder.EdgeDevice:
 		m.ResetDevice()
 		return nil
 	case missionproduceorder.EdgeMissionConsumeOrder:
 		m.ResetMissionConsumeOrder()
 		return nil
+	case missionproduceorder.EdgeMissionProduction:
+		m.ResetMissionProduction()
+		return nil
 	}
 	return fmt.Errorf("unknown MissionProduceOrder edge %s", name)
+}
+
+// MissionProductionMutation represents an operation that mutates the MissionProduction nodes in the graph.
+type MissionProductionMutation struct {
+	config
+	op                           Op
+	typ                          string
+	id                           *int64
+	created_by                   *int64
+	addcreated_by                *int64
+	updated_by                   *int64
+	addupdated_by                *int64
+	created_at                   *time.Time
+	updated_at                   *time.Time
+	deleted_at                   *time.Time
+	started_at                   *time.Time
+	finished_at                  *time.Time
+	state                        *enums.MissionState
+	device_id                    *int64
+	adddevice_id                 *int64
+	gpu_version                  *enums.GpuVersion
+	urls                         *string
+	resp_status_code             *int32
+	addresp_status_code          *int32
+	resp_body                    *string
+	clearedFields                map[string]struct{}
+	mission                      *int64
+	clearedmission               bool
+	user                         *int64
+	cleareduser                  bool
+	mission_produce_order        *int64
+	clearedmission_produce_order bool
+	done                         bool
+	oldValue                     func(context.Context) (*MissionProduction, error)
+	predicates                   []predicate.MissionProduction
+}
+
+var _ ent.Mutation = (*MissionProductionMutation)(nil)
+
+// missionproductionOption allows management of the mutation configuration using functional options.
+type missionproductionOption func(*MissionProductionMutation)
+
+// newMissionProductionMutation creates new mutation for the MissionProduction entity.
+func newMissionProductionMutation(c config, op Op, opts ...missionproductionOption) *MissionProductionMutation {
+	m := &MissionProductionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMissionProduction,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMissionProductionID sets the ID field of the mutation.
+func withMissionProductionID(id int64) missionproductionOption {
+	return func(m *MissionProductionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MissionProduction
+		)
+		m.oldValue = func(ctx context.Context) (*MissionProduction, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MissionProduction.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMissionProduction sets the old MissionProduction of the mutation.
+func withMissionProduction(node *MissionProduction) missionproductionOption {
+	return func(m *MissionProductionMutation) {
+		m.oldValue = func(context.Context) (*MissionProduction, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MissionProductionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MissionProductionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MissionProduction entities.
+func (m *MissionProductionMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MissionProductionMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MissionProductionMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MissionProduction.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MissionProductionMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MissionProductionMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *MissionProductionMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MissionProductionMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MissionProductionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MissionProductionMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MissionProductionMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *MissionProductionMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MissionProductionMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MissionProductionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MissionProductionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MissionProductionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MissionProductionMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MissionProductionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MissionProductionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MissionProductionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MissionProductionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MissionProductionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MissionProductionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetMissionID sets the "mission_id" field.
+func (m *MissionProductionMutation) SetMissionID(i int64) {
+	m.mission = &i
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *MissionProductionMutation) MissionID() (r int64, exists bool) {
+	v := m.mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *MissionProductionMutation) ResetMissionID() {
+	m.mission = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *MissionProductionMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *MissionProductionMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *MissionProductionMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *MissionProductionMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *MissionProductionMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldStartedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *MissionProductionMutation) ResetStartedAt() {
+	m.started_at = nil
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *MissionProductionMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *MissionProductionMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldFinishedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *MissionProductionMutation) ResetFinishedAt() {
+	m.finished_at = nil
+}
+
+// SetState sets the "state" field.
+func (m *MissionProductionMutation) SetState(es enums.MissionState) {
+	m.state = &es
+}
+
+// State returns the value of the "state" field in the mutation.
+func (m *MissionProductionMutation) State() (r enums.MissionState, exists bool) {
+	v := m.state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldState returns the old "state" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldState(ctx context.Context) (v enums.MissionState, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldState: %w", err)
+	}
+	return oldValue.State, nil
+}
+
+// ResetState resets all changes to the "state" field.
+func (m *MissionProductionMutation) ResetState() {
+	m.state = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *MissionProductionMutation) SetDeviceID(i int64) {
+	m.device_id = &i
+	m.adddevice_id = nil
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *MissionProductionMutation) DeviceID() (r int64, exists bool) {
+	v := m.device_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// AddDeviceID adds i to the "device_id" field.
+func (m *MissionProductionMutation) AddDeviceID(i int64) {
+	if m.adddevice_id != nil {
+		*m.adddevice_id += i
+	} else {
+		m.adddevice_id = &i
+	}
+}
+
+// AddedDeviceID returns the value that was added to the "device_id" field in this mutation.
+func (m *MissionProductionMutation) AddedDeviceID() (r int64, exists bool) {
+	v := m.adddevice_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *MissionProductionMutation) ResetDeviceID() {
+	m.device_id = nil
+	m.adddevice_id = nil
+}
+
+// SetGpuVersion sets the "gpu_version" field.
+func (m *MissionProductionMutation) SetGpuVersion(ev enums.GpuVersion) {
+	m.gpu_version = &ev
+}
+
+// GpuVersion returns the value of the "gpu_version" field in the mutation.
+func (m *MissionProductionMutation) GpuVersion() (r enums.GpuVersion, exists bool) {
+	v := m.gpu_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuVersion returns the old "gpu_version" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldGpuVersion(ctx context.Context) (v enums.GpuVersion, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuVersion: %w", err)
+	}
+	return oldValue.GpuVersion, nil
+}
+
+// ResetGpuVersion resets all changes to the "gpu_version" field.
+func (m *MissionProductionMutation) ResetGpuVersion() {
+	m.gpu_version = nil
+}
+
+// SetUrls sets the "urls" field.
+func (m *MissionProductionMutation) SetUrls(s string) {
+	m.urls = &s
+}
+
+// Urls returns the value of the "urls" field in the mutation.
+func (m *MissionProductionMutation) Urls() (r string, exists bool) {
+	v := m.urls
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUrls returns the old "urls" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldUrls(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUrls is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUrls requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUrls: %w", err)
+	}
+	return oldValue.Urls, nil
+}
+
+// ResetUrls resets all changes to the "urls" field.
+func (m *MissionProductionMutation) ResetUrls() {
+	m.urls = nil
+}
+
+// SetRespStatusCode sets the "resp_status_code" field.
+func (m *MissionProductionMutation) SetRespStatusCode(i int32) {
+	m.resp_status_code = &i
+	m.addresp_status_code = nil
+}
+
+// RespStatusCode returns the value of the "resp_status_code" field in the mutation.
+func (m *MissionProductionMutation) RespStatusCode() (r int32, exists bool) {
+	v := m.resp_status_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRespStatusCode returns the old "resp_status_code" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldRespStatusCode(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRespStatusCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRespStatusCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRespStatusCode: %w", err)
+	}
+	return oldValue.RespStatusCode, nil
+}
+
+// AddRespStatusCode adds i to the "resp_status_code" field.
+func (m *MissionProductionMutation) AddRespStatusCode(i int32) {
+	if m.addresp_status_code != nil {
+		*m.addresp_status_code += i
+	} else {
+		m.addresp_status_code = &i
+	}
+}
+
+// AddedRespStatusCode returns the value that was added to the "resp_status_code" field in this mutation.
+func (m *MissionProductionMutation) AddedRespStatusCode() (r int32, exists bool) {
+	v := m.addresp_status_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRespStatusCode resets all changes to the "resp_status_code" field.
+func (m *MissionProductionMutation) ResetRespStatusCode() {
+	m.resp_status_code = nil
+	m.addresp_status_code = nil
+}
+
+// SetRespBody sets the "resp_body" field.
+func (m *MissionProductionMutation) SetRespBody(s string) {
+	m.resp_body = &s
+}
+
+// RespBody returns the value of the "resp_body" field in the mutation.
+func (m *MissionProductionMutation) RespBody() (r string, exists bool) {
+	v := m.resp_body
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRespBody returns the old "resp_body" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldRespBody(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRespBody is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRespBody requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRespBody: %w", err)
+	}
+	return oldValue.RespBody, nil
+}
+
+// ResetRespBody resets all changes to the "resp_body" field.
+func (m *MissionProductionMutation) ResetRespBody() {
+	m.resp_body = nil
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (m *MissionProductionMutation) ClearMission() {
+	m.clearedmission = true
+	m.clearedFields[missionproduction.FieldMissionID] = struct{}{}
+}
+
+// MissionCleared reports if the "mission" edge to the Mission entity was cleared.
+func (m *MissionProductionMutation) MissionCleared() bool {
+	return m.clearedmission
+}
+
+// MissionIDs returns the "mission" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionID instead. It exists only for internal usage by the builders.
+func (m *MissionProductionMutation) MissionIDs() (ids []int64) {
+	if id := m.mission; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMission resets all changes to the "mission" edge.
+func (m *MissionProductionMutation) ResetMission() {
+	m.mission = nil
+	m.clearedmission = false
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *MissionProductionMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[missionproduction.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *MissionProductionMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *MissionProductionMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *MissionProductionMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by id.
+func (m *MissionProductionMutation) SetMissionProduceOrderID(id int64) {
+	m.mission_produce_order = &id
+}
+
+// ClearMissionProduceOrder clears the "mission_produce_order" edge to the MissionProduceOrder entity.
+func (m *MissionProductionMutation) ClearMissionProduceOrder() {
+	m.clearedmission_produce_order = true
+}
+
+// MissionProduceOrderCleared reports if the "mission_produce_order" edge to the MissionProduceOrder entity was cleared.
+func (m *MissionProductionMutation) MissionProduceOrderCleared() bool {
+	return m.clearedmission_produce_order
+}
+
+// MissionProduceOrderID returns the "mission_produce_order" edge ID in the mutation.
+func (m *MissionProductionMutation) MissionProduceOrderID() (id int64, exists bool) {
+	if m.mission_produce_order != nil {
+		return *m.mission_produce_order, true
+	}
+	return
+}
+
+// MissionProduceOrderIDs returns the "mission_produce_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionProduceOrderID instead. It exists only for internal usage by the builders.
+func (m *MissionProductionMutation) MissionProduceOrderIDs() (ids []int64) {
+	if id := m.mission_produce_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionProduceOrder resets all changes to the "mission_produce_order" edge.
+func (m *MissionProductionMutation) ResetMissionProduceOrder() {
+	m.mission_produce_order = nil
+	m.clearedmission_produce_order = false
+}
+
+// Where appends a list predicates to the MissionProductionMutation builder.
+func (m *MissionProductionMutation) Where(ps ...predicate.MissionProduction) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MissionProductionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MissionProductionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MissionProduction, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MissionProductionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MissionProductionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MissionProduction).
+func (m *MissionProductionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MissionProductionMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.created_by != nil {
+		fields = append(fields, missionproduction.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, missionproduction.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, missionproduction.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, missionproduction.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, missionproduction.FieldDeletedAt)
+	}
+	if m.mission != nil {
+		fields = append(fields, missionproduction.FieldMissionID)
+	}
+	if m.user != nil {
+		fields = append(fields, missionproduction.FieldUserID)
+	}
+	if m.started_at != nil {
+		fields = append(fields, missionproduction.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, missionproduction.FieldFinishedAt)
+	}
+	if m.state != nil {
+		fields = append(fields, missionproduction.FieldState)
+	}
+	if m.device_id != nil {
+		fields = append(fields, missionproduction.FieldDeviceID)
+	}
+	if m.gpu_version != nil {
+		fields = append(fields, missionproduction.FieldGpuVersion)
+	}
+	if m.urls != nil {
+		fields = append(fields, missionproduction.FieldUrls)
+	}
+	if m.resp_status_code != nil {
+		fields = append(fields, missionproduction.FieldRespStatusCode)
+	}
+	if m.resp_body != nil {
+		fields = append(fields, missionproduction.FieldRespBody)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MissionProductionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case missionproduction.FieldCreatedBy:
+		return m.CreatedBy()
+	case missionproduction.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case missionproduction.FieldCreatedAt:
+		return m.CreatedAt()
+	case missionproduction.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case missionproduction.FieldDeletedAt:
+		return m.DeletedAt()
+	case missionproduction.FieldMissionID:
+		return m.MissionID()
+	case missionproduction.FieldUserID:
+		return m.UserID()
+	case missionproduction.FieldStartedAt:
+		return m.StartedAt()
+	case missionproduction.FieldFinishedAt:
+		return m.FinishedAt()
+	case missionproduction.FieldState:
+		return m.State()
+	case missionproduction.FieldDeviceID:
+		return m.DeviceID()
+	case missionproduction.FieldGpuVersion:
+		return m.GpuVersion()
+	case missionproduction.FieldUrls:
+		return m.Urls()
+	case missionproduction.FieldRespStatusCode:
+		return m.RespStatusCode()
+	case missionproduction.FieldRespBody:
+		return m.RespBody()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MissionProductionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case missionproduction.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case missionproduction.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case missionproduction.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case missionproduction.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case missionproduction.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case missionproduction.FieldMissionID:
+		return m.OldMissionID(ctx)
+	case missionproduction.FieldUserID:
+		return m.OldUserID(ctx)
+	case missionproduction.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case missionproduction.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	case missionproduction.FieldState:
+		return m.OldState(ctx)
+	case missionproduction.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	case missionproduction.FieldGpuVersion:
+		return m.OldGpuVersion(ctx)
+	case missionproduction.FieldUrls:
+		return m.OldUrls(ctx)
+	case missionproduction.FieldRespStatusCode:
+		return m.OldRespStatusCode(ctx)
+	case missionproduction.FieldRespBody:
+		return m.OldRespBody(ctx)
+	}
+	return nil, fmt.Errorf("unknown MissionProduction field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionProductionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case missionproduction.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case missionproduction.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case missionproduction.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case missionproduction.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case missionproduction.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case missionproduction.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
+		return nil
+	case missionproduction.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case missionproduction.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case missionproduction.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	case missionproduction.FieldState:
+		v, ok := value.(enums.MissionState)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetState(v)
+		return nil
+	case missionproduction.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	case missionproduction.FieldGpuVersion:
+		v, ok := value.(enums.GpuVersion)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuVersion(v)
+		return nil
+	case missionproduction.FieldUrls:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUrls(v)
+		return nil
+	case missionproduction.FieldRespStatusCode:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRespStatusCode(v)
+		return nil
+	case missionproduction.FieldRespBody:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRespBody(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionProduction field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MissionProductionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, missionproduction.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, missionproduction.FieldUpdatedBy)
+	}
+	if m.adddevice_id != nil {
+		fields = append(fields, missionproduction.FieldDeviceID)
+	}
+	if m.addresp_status_code != nil {
+		fields = append(fields, missionproduction.FieldRespStatusCode)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MissionProductionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case missionproduction.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case missionproduction.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case missionproduction.FieldDeviceID:
+		return m.AddedDeviceID()
+	case missionproduction.FieldRespStatusCode:
+		return m.AddedRespStatusCode()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionProductionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case missionproduction.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case missionproduction.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case missionproduction.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeviceID(v)
+		return nil
+	case missionproduction.FieldRespStatusCode:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRespStatusCode(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionProduction numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MissionProductionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MissionProductionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MissionProductionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown MissionProduction nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MissionProductionMutation) ResetField(name string) error {
+	switch name {
+	case missionproduction.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case missionproduction.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case missionproduction.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case missionproduction.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case missionproduction.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case missionproduction.FieldMissionID:
+		m.ResetMissionID()
+		return nil
+	case missionproduction.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case missionproduction.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case missionproduction.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	case missionproduction.FieldState:
+		m.ResetState()
+		return nil
+	case missionproduction.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case missionproduction.FieldGpuVersion:
+		m.ResetGpuVersion()
+		return nil
+	case missionproduction.FieldUrls:
+		m.ResetUrls()
+		return nil
+	case missionproduction.FieldRespStatusCode:
+		m.ResetRespStatusCode()
+		return nil
+	case missionproduction.FieldRespBody:
+		m.ResetRespBody()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionProduction field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MissionProductionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.mission != nil {
+		edges = append(edges, missionproduction.EdgeMission)
+	}
+	if m.user != nil {
+		edges = append(edges, missionproduction.EdgeUser)
+	}
+	if m.mission_produce_order != nil {
+		edges = append(edges, missionproduction.EdgeMissionProduceOrder)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MissionProductionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case missionproduction.EdgeMission:
+		if id := m.mission; id != nil {
+			return []ent.Value{*id}
+		}
+	case missionproduction.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case missionproduction.EdgeMissionProduceOrder:
+		if id := m.mission_produce_order; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MissionProductionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MissionProductionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MissionProductionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedmission {
+		edges = append(edges, missionproduction.EdgeMission)
+	}
+	if m.cleareduser {
+		edges = append(edges, missionproduction.EdgeUser)
+	}
+	if m.clearedmission_produce_order {
+		edges = append(edges, missionproduction.EdgeMissionProduceOrder)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MissionProductionMutation) EdgeCleared(name string) bool {
+	switch name {
+	case missionproduction.EdgeMission:
+		return m.clearedmission
+	case missionproduction.EdgeUser:
+		return m.cleareduser
+	case missionproduction.EdgeMissionProduceOrder:
+		return m.clearedmission_produce_order
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MissionProductionMutation) ClearEdge(name string) error {
+	switch name {
+	case missionproduction.EdgeMission:
+		m.ClearMission()
+		return nil
+	case missionproduction.EdgeUser:
+		m.ClearUser()
+		return nil
+	case missionproduction.EdgeMissionProduceOrder:
+		m.ClearMissionProduceOrder()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionProduction unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MissionProductionMutation) ResetEdge(name string) error {
+	switch name {
+	case missionproduction.EdgeMission:
+		m.ResetMission()
+		return nil
+	case missionproduction.EdgeUser:
+		m.ResetUser()
+		return nil
+	case missionproduction.EdgeMissionProduceOrder:
+		m.ResetMissionProduceOrder()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionProduction edge %s", name)
 }
 
 // OutputLogMutation represents an operation that mutates the OutputLog nodes in the graph.
@@ -34225,83 +38841,2357 @@ func (m *RechargeOrderMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RechargeOrder edge %s", name)
 }
 
+// SymbolMutation represents an operation that mutates the Symbol nodes in the graph.
+type SymbolMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int64
+	created_by     *int64
+	addcreated_by  *int64
+	updated_by     *int64
+	addupdated_by  *int64
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	name           *string
+	clearedFields  map[string]struct{}
+	wallets        map[int64]struct{}
+	removedwallets map[int64]struct{}
+	clearedwallets bool
+	done           bool
+	oldValue       func(context.Context) (*Symbol, error)
+	predicates     []predicate.Symbol
+}
+
+var _ ent.Mutation = (*SymbolMutation)(nil)
+
+// symbolOption allows management of the mutation configuration using functional options.
+type symbolOption func(*SymbolMutation)
+
+// newSymbolMutation creates new mutation for the Symbol entity.
+func newSymbolMutation(c config, op Op, opts ...symbolOption) *SymbolMutation {
+	m := &SymbolMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSymbol,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSymbolID sets the ID field of the mutation.
+func withSymbolID(id int64) symbolOption {
+	return func(m *SymbolMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Symbol
+		)
+		m.oldValue = func(ctx context.Context) (*Symbol, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Symbol.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSymbol sets the old Symbol of the mutation.
+func withSymbol(node *Symbol) symbolOption {
+	return func(m *SymbolMutation) {
+		m.oldValue = func(context.Context) (*Symbol, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SymbolMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SymbolMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Symbol entities.
+func (m *SymbolMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SymbolMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SymbolMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Symbol.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SymbolMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SymbolMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Symbol entity.
+// If the Symbol object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SymbolMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *SymbolMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SymbolMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SymbolMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SymbolMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SymbolMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Symbol entity.
+// If the Symbol object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SymbolMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *SymbolMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SymbolMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SymbolMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SymbolMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SymbolMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Symbol entity.
+// If the Symbol object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SymbolMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SymbolMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SymbolMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SymbolMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Symbol entity.
+// If the Symbol object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SymbolMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SymbolMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SymbolMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SymbolMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Symbol entity.
+// If the Symbol object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SymbolMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SymbolMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *SymbolMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SymbolMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Symbol entity.
+// If the Symbol object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SymbolMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SymbolMutation) ResetName() {
+	m.name = nil
+}
+
+// AddWalletIDs adds the "wallets" edge to the Wallet entity by ids.
+func (m *SymbolMutation) AddWalletIDs(ids ...int64) {
+	if m.wallets == nil {
+		m.wallets = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.wallets[ids[i]] = struct{}{}
+	}
+}
+
+// ClearWallets clears the "wallets" edge to the Wallet entity.
+func (m *SymbolMutation) ClearWallets() {
+	m.clearedwallets = true
+}
+
+// WalletsCleared reports if the "wallets" edge to the Wallet entity was cleared.
+func (m *SymbolMutation) WalletsCleared() bool {
+	return m.clearedwallets
+}
+
+// RemoveWalletIDs removes the "wallets" edge to the Wallet entity by IDs.
+func (m *SymbolMutation) RemoveWalletIDs(ids ...int64) {
+	if m.removedwallets == nil {
+		m.removedwallets = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.wallets, ids[i])
+		m.removedwallets[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWallets returns the removed IDs of the "wallets" edge to the Wallet entity.
+func (m *SymbolMutation) RemovedWalletsIDs() (ids []int64) {
+	for id := range m.removedwallets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WalletsIDs returns the "wallets" edge IDs in the mutation.
+func (m *SymbolMutation) WalletsIDs() (ids []int64) {
+	for id := range m.wallets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWallets resets all changes to the "wallets" edge.
+func (m *SymbolMutation) ResetWallets() {
+	m.wallets = nil
+	m.clearedwallets = false
+	m.removedwallets = nil
+}
+
+// Where appends a list predicates to the SymbolMutation builder.
+func (m *SymbolMutation) Where(ps ...predicate.Symbol) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SymbolMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SymbolMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Symbol, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SymbolMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SymbolMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Symbol).
+func (m *SymbolMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SymbolMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_by != nil {
+		fields = append(fields, symbol.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, symbol.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, symbol.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, symbol.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, symbol.FieldDeletedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, symbol.FieldName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SymbolMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case symbol.FieldCreatedBy:
+		return m.CreatedBy()
+	case symbol.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case symbol.FieldCreatedAt:
+		return m.CreatedAt()
+	case symbol.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case symbol.FieldDeletedAt:
+		return m.DeletedAt()
+	case symbol.FieldName:
+		return m.Name()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SymbolMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case symbol.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case symbol.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case symbol.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case symbol.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case symbol.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case symbol.FieldName:
+		return m.OldName(ctx)
+	}
+	return nil, fmt.Errorf("unknown Symbol field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SymbolMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case symbol.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case symbol.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case symbol.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case symbol.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case symbol.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case symbol.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Symbol field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SymbolMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, symbol.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, symbol.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SymbolMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case symbol.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case symbol.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SymbolMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case symbol.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case symbol.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Symbol numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SymbolMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SymbolMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SymbolMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Symbol nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SymbolMutation) ResetField(name string) error {
+	switch name {
+	case symbol.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case symbol.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case symbol.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case symbol.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case symbol.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case symbol.FieldName:
+		m.ResetName()
+		return nil
+	}
+	return fmt.Errorf("unknown Symbol field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SymbolMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.wallets != nil {
+		edges = append(edges, symbol.EdgeWallets)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SymbolMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case symbol.EdgeWallets:
+		ids := make([]ent.Value, 0, len(m.wallets))
+		for id := range m.wallets {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SymbolMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedwallets != nil {
+		edges = append(edges, symbol.EdgeWallets)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SymbolMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case symbol.EdgeWallets:
+		ids := make([]ent.Value, 0, len(m.removedwallets))
+		for id := range m.removedwallets {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SymbolMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedwallets {
+		edges = append(edges, symbol.EdgeWallets)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SymbolMutation) EdgeCleared(name string) bool {
+	switch name {
+	case symbol.EdgeWallets:
+		return m.clearedwallets
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SymbolMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Symbol unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SymbolMutation) ResetEdge(name string) error {
+	switch name {
+	case symbol.EdgeWallets:
+		m.ResetWallets()
+		return nil
+	}
+	return fmt.Errorf("unknown Symbol edge %s", name)
+}
+
+// TransferOrderMutation represents an operation that mutates the TransferOrder nodes in the graph.
+type TransferOrderMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *int64
+	created_by         *int64
+	addcreated_by      *int64
+	updated_by         *int64
+	addupdated_by      *int64
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
+	status             *transferorder.Status
+	symbol_id          *int64
+	addsymbol_id       *int64
+	amount             *int64
+	addamount          *int64
+	_type              *transferorder.Type
+	serial_number      *string
+	third_api_resp     *string
+	out_transaction_id *string
+	clearedFields      map[string]struct{}
+	source_user        *int64
+	clearedsource_user bool
+	target_user        *int64
+	clearedtarget_user bool
+	bills              map[int64]struct{}
+	removedbills       map[int64]struct{}
+	clearedbills       bool
+	vx_social          *int64
+	clearedvx_social   bool
+	done               bool
+	oldValue           func(context.Context) (*TransferOrder, error)
+	predicates         []predicate.TransferOrder
+}
+
+var _ ent.Mutation = (*TransferOrderMutation)(nil)
+
+// transferorderOption allows management of the mutation configuration using functional options.
+type transferorderOption func(*TransferOrderMutation)
+
+// newTransferOrderMutation creates new mutation for the TransferOrder entity.
+func newTransferOrderMutation(c config, op Op, opts ...transferorderOption) *TransferOrderMutation {
+	m := &TransferOrderMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTransferOrder,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTransferOrderID sets the ID field of the mutation.
+func withTransferOrderID(id int64) transferorderOption {
+	return func(m *TransferOrderMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TransferOrder
+		)
+		m.oldValue = func(ctx context.Context) (*TransferOrder, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TransferOrder.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTransferOrder sets the old TransferOrder of the mutation.
+func withTransferOrder(node *TransferOrder) transferorderOption {
+	return func(m *TransferOrderMutation) {
+		m.oldValue = func(context.Context) (*TransferOrder, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TransferOrderMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TransferOrderMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of TransferOrder entities.
+func (m *TransferOrderMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TransferOrderMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TransferOrderMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().TransferOrder.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *TransferOrderMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *TransferOrderMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *TransferOrderMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *TransferOrderMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *TransferOrderMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TransferOrderMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TransferOrderMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *TransferOrderMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *TransferOrderMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TransferOrderMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TransferOrderMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TransferOrderMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TransferOrderMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TransferOrderMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TransferOrderMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TransferOrderMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TransferOrderMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TransferOrderMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TransferOrderMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetSourceUserID sets the "source_user_id" field.
+func (m *TransferOrderMutation) SetSourceUserID(i int64) {
+	m.source_user = &i
+}
+
+// SourceUserID returns the value of the "source_user_id" field in the mutation.
+func (m *TransferOrderMutation) SourceUserID() (r int64, exists bool) {
+	v := m.source_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceUserID returns the old "source_user_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldSourceUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceUserID: %w", err)
+	}
+	return oldValue.SourceUserID, nil
+}
+
+// ResetSourceUserID resets all changes to the "source_user_id" field.
+func (m *TransferOrderMutation) ResetSourceUserID() {
+	m.source_user = nil
+}
+
+// SetTargetUserID sets the "target_user_id" field.
+func (m *TransferOrderMutation) SetTargetUserID(i int64) {
+	m.target_user = &i
+}
+
+// TargetUserID returns the value of the "target_user_id" field in the mutation.
+func (m *TransferOrderMutation) TargetUserID() (r int64, exists bool) {
+	v := m.target_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetUserID returns the old "target_user_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldTargetUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetUserID: %w", err)
+	}
+	return oldValue.TargetUserID, nil
+}
+
+// ResetTargetUserID resets all changes to the "target_user_id" field.
+func (m *TransferOrderMutation) ResetTargetUserID() {
+	m.target_user = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *TransferOrderMutation) SetStatus(t transferorder.Status) {
+	m.status = &t
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *TransferOrderMutation) Status() (r transferorder.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldStatus(ctx context.Context) (v transferorder.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *TransferOrderMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (m *TransferOrderMutation) SetSymbolID(i int64) {
+	m.symbol_id = &i
+	m.addsymbol_id = nil
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *TransferOrderMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (m *TransferOrderMutation) AddSymbolID(i int64) {
+	if m.addsymbol_id != nil {
+		*m.addsymbol_id += i
+	} else {
+		m.addsymbol_id = &i
+	}
+}
+
+// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
+func (m *TransferOrderMutation) AddedSymbolID() (r int64, exists bool) {
+	v := m.addsymbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *TransferOrderMutation) ResetSymbolID() {
+	m.symbol_id = nil
+	m.addsymbol_id = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *TransferOrderMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *TransferOrderMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *TransferOrderMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *TransferOrderMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *TransferOrderMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// SetType sets the "type" field.
+func (m *TransferOrderMutation) SetType(t transferorder.Type) {
+	m._type = &t
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *TransferOrderMutation) GetType() (r transferorder.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldType(ctx context.Context) (v transferorder.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *TransferOrderMutation) ResetType() {
+	m._type = nil
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (m *TransferOrderMutation) SetSerialNumber(s string) {
+	m.serial_number = &s
+}
+
+// SerialNumber returns the value of the "serial_number" field in the mutation.
+func (m *TransferOrderMutation) SerialNumber() (r string, exists bool) {
+	v := m.serial_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSerialNumber returns the old "serial_number" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldSerialNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSerialNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSerialNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSerialNumber: %w", err)
+	}
+	return oldValue.SerialNumber, nil
+}
+
+// ResetSerialNumber resets all changes to the "serial_number" field.
+func (m *TransferOrderMutation) ResetSerialNumber() {
+	m.serial_number = nil
+}
+
+// SetSocialID sets the "social_id" field.
+func (m *TransferOrderMutation) SetSocialID(i int64) {
+	m.vx_social = &i
+}
+
+// SocialID returns the value of the "social_id" field in the mutation.
+func (m *TransferOrderMutation) SocialID() (r int64, exists bool) {
+	v := m.vx_social
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSocialID returns the old "social_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldSocialID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSocialID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSocialID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSocialID: %w", err)
+	}
+	return oldValue.SocialID, nil
+}
+
+// ClearSocialID clears the value of the "social_id" field.
+func (m *TransferOrderMutation) ClearSocialID() {
+	m.vx_social = nil
+	m.clearedFields[transferorder.FieldSocialID] = struct{}{}
+}
+
+// SocialIDCleared returns if the "social_id" field was cleared in this mutation.
+func (m *TransferOrderMutation) SocialIDCleared() bool {
+	_, ok := m.clearedFields[transferorder.FieldSocialID]
+	return ok
+}
+
+// ResetSocialID resets all changes to the "social_id" field.
+func (m *TransferOrderMutation) ResetSocialID() {
+	m.vx_social = nil
+	delete(m.clearedFields, transferorder.FieldSocialID)
+}
+
+// SetThirdAPIResp sets the "third_api_resp" field.
+func (m *TransferOrderMutation) SetThirdAPIResp(s string) {
+	m.third_api_resp = &s
+}
+
+// ThirdAPIResp returns the value of the "third_api_resp" field in the mutation.
+func (m *TransferOrderMutation) ThirdAPIResp() (r string, exists bool) {
+	v := m.third_api_resp
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldThirdAPIResp returns the old "third_api_resp" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldThirdAPIResp(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldThirdAPIResp is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldThirdAPIResp requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldThirdAPIResp: %w", err)
+	}
+	return oldValue.ThirdAPIResp, nil
+}
+
+// ResetThirdAPIResp resets all changes to the "third_api_resp" field.
+func (m *TransferOrderMutation) ResetThirdAPIResp() {
+	m.third_api_resp = nil
+}
+
+// SetOutTransactionID sets the "out_transaction_id" field.
+func (m *TransferOrderMutation) SetOutTransactionID(s string) {
+	m.out_transaction_id = &s
+}
+
+// OutTransactionID returns the value of the "out_transaction_id" field in the mutation.
+func (m *TransferOrderMutation) OutTransactionID() (r string, exists bool) {
+	v := m.out_transaction_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutTransactionID returns the old "out_transaction_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldOutTransactionID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOutTransactionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOutTransactionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutTransactionID: %w", err)
+	}
+	return oldValue.OutTransactionID, nil
+}
+
+// ResetOutTransactionID resets all changes to the "out_transaction_id" field.
+func (m *TransferOrderMutation) ResetOutTransactionID() {
+	m.out_transaction_id = nil
+}
+
+// ClearSourceUser clears the "source_user" edge to the User entity.
+func (m *TransferOrderMutation) ClearSourceUser() {
+	m.clearedsource_user = true
+	m.clearedFields[transferorder.FieldSourceUserID] = struct{}{}
+}
+
+// SourceUserCleared reports if the "source_user" edge to the User entity was cleared.
+func (m *TransferOrderMutation) SourceUserCleared() bool {
+	return m.clearedsource_user
+}
+
+// SourceUserIDs returns the "source_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SourceUserID instead. It exists only for internal usage by the builders.
+func (m *TransferOrderMutation) SourceUserIDs() (ids []int64) {
+	if id := m.source_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSourceUser resets all changes to the "source_user" edge.
+func (m *TransferOrderMutation) ResetSourceUser() {
+	m.source_user = nil
+	m.clearedsource_user = false
+}
+
+// ClearTargetUser clears the "target_user" edge to the User entity.
+func (m *TransferOrderMutation) ClearTargetUser() {
+	m.clearedtarget_user = true
+	m.clearedFields[transferorder.FieldTargetUserID] = struct{}{}
+}
+
+// TargetUserCleared reports if the "target_user" edge to the User entity was cleared.
+func (m *TransferOrderMutation) TargetUserCleared() bool {
+	return m.clearedtarget_user
+}
+
+// TargetUserIDs returns the "target_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TargetUserID instead. It exists only for internal usage by the builders.
+func (m *TransferOrderMutation) TargetUserIDs() (ids []int64) {
+	if id := m.target_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTargetUser resets all changes to the "target_user" edge.
+func (m *TransferOrderMutation) ResetTargetUser() {
+	m.target_user = nil
+	m.clearedtarget_user = false
+}
+
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *TransferOrderMutation) AddBillIDs(ids ...int64) {
+	if m.bills == nil {
+		m.bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBills clears the "bills" edge to the Bill entity.
+func (m *TransferOrderMutation) ClearBills() {
+	m.clearedbills = true
+}
+
+// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
+func (m *TransferOrderMutation) BillsCleared() bool {
+	return m.clearedbills
+}
+
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *TransferOrderMutation) RemoveBillIDs(ids ...int64) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *TransferOrderMutation) RemovedBillsIDs() (ids []int64) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BillsIDs returns the "bills" edge IDs in the mutation.
+func (m *TransferOrderMutation) BillsIDs() (ids []int64) {
+	for id := range m.bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBills resets all changes to the "bills" edge.
+func (m *TransferOrderMutation) ResetBills() {
+	m.bills = nil
+	m.clearedbills = false
+	m.removedbills = nil
+}
+
+// SetVxSocialID sets the "vx_social" edge to the VXSocial entity by id.
+func (m *TransferOrderMutation) SetVxSocialID(id int64) {
+	m.vx_social = &id
+}
+
+// ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
+func (m *TransferOrderMutation) ClearVxSocial() {
+	m.clearedvx_social = true
+	m.clearedFields[transferorder.FieldSocialID] = struct{}{}
+}
+
+// VxSocialCleared reports if the "vx_social" edge to the VXSocial entity was cleared.
+func (m *TransferOrderMutation) VxSocialCleared() bool {
+	return m.SocialIDCleared() || m.clearedvx_social
+}
+
+// VxSocialID returns the "vx_social" edge ID in the mutation.
+func (m *TransferOrderMutation) VxSocialID() (id int64, exists bool) {
+	if m.vx_social != nil {
+		return *m.vx_social, true
+	}
+	return
+}
+
+// VxSocialIDs returns the "vx_social" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// VxSocialID instead. It exists only for internal usage by the builders.
+func (m *TransferOrderMutation) VxSocialIDs() (ids []int64) {
+	if id := m.vx_social; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetVxSocial resets all changes to the "vx_social" edge.
+func (m *TransferOrderMutation) ResetVxSocial() {
+	m.vx_social = nil
+	m.clearedvx_social = false
+}
+
+// Where appends a list predicates to the TransferOrderMutation builder.
+func (m *TransferOrderMutation) Where(ps ...predicate.TransferOrder) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TransferOrderMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TransferOrderMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TransferOrder, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TransferOrderMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TransferOrderMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (TransferOrder).
+func (m *TransferOrderMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TransferOrderMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.created_by != nil {
+		fields = append(fields, transferorder.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, transferorder.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, transferorder.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, transferorder.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, transferorder.FieldDeletedAt)
+	}
+	if m.source_user != nil {
+		fields = append(fields, transferorder.FieldSourceUserID)
+	}
+	if m.target_user != nil {
+		fields = append(fields, transferorder.FieldTargetUserID)
+	}
+	if m.status != nil {
+		fields = append(fields, transferorder.FieldStatus)
+	}
+	if m.symbol_id != nil {
+		fields = append(fields, transferorder.FieldSymbolID)
+	}
+	if m.amount != nil {
+		fields = append(fields, transferorder.FieldAmount)
+	}
+	if m._type != nil {
+		fields = append(fields, transferorder.FieldType)
+	}
+	if m.serial_number != nil {
+		fields = append(fields, transferorder.FieldSerialNumber)
+	}
+	if m.vx_social != nil {
+		fields = append(fields, transferorder.FieldSocialID)
+	}
+	if m.third_api_resp != nil {
+		fields = append(fields, transferorder.FieldThirdAPIResp)
+	}
+	if m.out_transaction_id != nil {
+		fields = append(fields, transferorder.FieldOutTransactionID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case transferorder.FieldCreatedBy:
+		return m.CreatedBy()
+	case transferorder.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case transferorder.FieldCreatedAt:
+		return m.CreatedAt()
+	case transferorder.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case transferorder.FieldDeletedAt:
+		return m.DeletedAt()
+	case transferorder.FieldSourceUserID:
+		return m.SourceUserID()
+	case transferorder.FieldTargetUserID:
+		return m.TargetUserID()
+	case transferorder.FieldStatus:
+		return m.Status()
+	case transferorder.FieldSymbolID:
+		return m.SymbolID()
+	case transferorder.FieldAmount:
+		return m.Amount()
+	case transferorder.FieldType:
+		return m.GetType()
+	case transferorder.FieldSerialNumber:
+		return m.SerialNumber()
+	case transferorder.FieldSocialID:
+		return m.SocialID()
+	case transferorder.FieldThirdAPIResp:
+		return m.ThirdAPIResp()
+	case transferorder.FieldOutTransactionID:
+		return m.OutTransactionID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case transferorder.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case transferorder.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case transferorder.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case transferorder.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case transferorder.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case transferorder.FieldSourceUserID:
+		return m.OldSourceUserID(ctx)
+	case transferorder.FieldTargetUserID:
+		return m.OldTargetUserID(ctx)
+	case transferorder.FieldStatus:
+		return m.OldStatus(ctx)
+	case transferorder.FieldSymbolID:
+		return m.OldSymbolID(ctx)
+	case transferorder.FieldAmount:
+		return m.OldAmount(ctx)
+	case transferorder.FieldType:
+		return m.OldType(ctx)
+	case transferorder.FieldSerialNumber:
+		return m.OldSerialNumber(ctx)
+	case transferorder.FieldSocialID:
+		return m.OldSocialID(ctx)
+	case transferorder.FieldThirdAPIResp:
+		return m.OldThirdAPIResp(ctx)
+	case transferorder.FieldOutTransactionID:
+		return m.OldOutTransactionID(ctx)
+	}
+	return nil, fmt.Errorf("unknown TransferOrder field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case transferorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case transferorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case transferorder.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case transferorder.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case transferorder.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case transferorder.FieldSourceUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceUserID(v)
+		return nil
+	case transferorder.FieldTargetUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetUserID(v)
+		return nil
+	case transferorder.FieldStatus:
+		v, ok := value.(transferorder.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case transferorder.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
+	case transferorder.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case transferorder.FieldType:
+		v, ok := value.(transferorder.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case transferorder.FieldSerialNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSerialNumber(v)
+		return nil
+	case transferorder.FieldSocialID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSocialID(v)
+		return nil
+	case transferorder.FieldThirdAPIResp:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetThirdAPIResp(v)
+		return nil
+	case transferorder.FieldOutTransactionID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutTransactionID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TransferOrder field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TransferOrderMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, transferorder.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, transferorder.FieldUpdatedBy)
+	}
+	if m.addsymbol_id != nil {
+		fields = append(fields, transferorder.FieldSymbolID)
+	}
+	if m.addamount != nil {
+		fields = append(fields, transferorder.FieldAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TransferOrderMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case transferorder.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case transferorder.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case transferorder.FieldSymbolID:
+		return m.AddedSymbolID()
+	case transferorder.FieldAmount:
+		return m.AddedAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TransferOrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case transferorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case transferorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case transferorder.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSymbolID(v)
+		return nil
+	case transferorder.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TransferOrder numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TransferOrderMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(transferorder.FieldSocialID) {
+		fields = append(fields, transferorder.FieldSocialID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TransferOrderMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TransferOrderMutation) ClearField(name string) error {
+	switch name {
+	case transferorder.FieldSocialID:
+		m.ClearSocialID()
+		return nil
+	}
+	return fmt.Errorf("unknown TransferOrder nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TransferOrderMutation) ResetField(name string) error {
+	switch name {
+	case transferorder.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case transferorder.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case transferorder.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case transferorder.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case transferorder.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case transferorder.FieldSourceUserID:
+		m.ResetSourceUserID()
+		return nil
+	case transferorder.FieldTargetUserID:
+		m.ResetTargetUserID()
+		return nil
+	case transferorder.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case transferorder.FieldSymbolID:
+		m.ResetSymbolID()
+		return nil
+	case transferorder.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case transferorder.FieldType:
+		m.ResetType()
+		return nil
+	case transferorder.FieldSerialNumber:
+		m.ResetSerialNumber()
+		return nil
+	case transferorder.FieldSocialID:
+		m.ResetSocialID()
+		return nil
+	case transferorder.FieldThirdAPIResp:
+		m.ResetThirdAPIResp()
+		return nil
+	case transferorder.FieldOutTransactionID:
+		m.ResetOutTransactionID()
+		return nil
+	}
+	return fmt.Errorf("unknown TransferOrder field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TransferOrderMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.source_user != nil {
+		edges = append(edges, transferorder.EdgeSourceUser)
+	}
+	if m.target_user != nil {
+		edges = append(edges, transferorder.EdgeTargetUser)
+	}
+	if m.bills != nil {
+		edges = append(edges, transferorder.EdgeBills)
+	}
+	if m.vx_social != nil {
+		edges = append(edges, transferorder.EdgeVxSocial)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TransferOrderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case transferorder.EdgeSourceUser:
+		if id := m.source_user; id != nil {
+			return []ent.Value{*id}
+		}
+	case transferorder.EdgeTargetUser:
+		if id := m.target_user; id != nil {
+			return []ent.Value{*id}
+		}
+	case transferorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
+		}
+		return ids
+	case transferorder.EdgeVxSocial:
+		if id := m.vx_social; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TransferOrderMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.removedbills != nil {
+		edges = append(edges, transferorder.EdgeBills)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TransferOrderMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case transferorder.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TransferOrderMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedsource_user {
+		edges = append(edges, transferorder.EdgeSourceUser)
+	}
+	if m.clearedtarget_user {
+		edges = append(edges, transferorder.EdgeTargetUser)
+	}
+	if m.clearedbills {
+		edges = append(edges, transferorder.EdgeBills)
+	}
+	if m.clearedvx_social {
+		edges = append(edges, transferorder.EdgeVxSocial)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TransferOrderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case transferorder.EdgeSourceUser:
+		return m.clearedsource_user
+	case transferorder.EdgeTargetUser:
+		return m.clearedtarget_user
+	case transferorder.EdgeBills:
+		return m.clearedbills
+	case transferorder.EdgeVxSocial:
+		return m.clearedvx_social
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TransferOrderMutation) ClearEdge(name string) error {
+	switch name {
+	case transferorder.EdgeSourceUser:
+		m.ClearSourceUser()
+		return nil
+	case transferorder.EdgeTargetUser:
+		m.ClearTargetUser()
+		return nil
+	case transferorder.EdgeVxSocial:
+		m.ClearVxSocial()
+		return nil
+	}
+	return fmt.Errorf("unknown TransferOrder unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TransferOrderMutation) ResetEdge(name string) error {
+	switch name {
+	case transferorder.EdgeSourceUser:
+		m.ResetSourceUser()
+		return nil
+	case transferorder.EdgeTargetUser:
+		m.ResetTargetUser()
+		return nil
+	case transferorder.EdgeBills:
+		m.ResetBills()
+		return nil
+	case transferorder.EdgeVxSocial:
+		m.ResetVxSocial()
+		return nil
+	}
+	return fmt.Errorf("unknown TransferOrder edge %s", name)
+}
+
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *int64
-	created_by                    *int64
-	addcreated_by                 *int64
-	updated_by                    *int64
-	addupdated_by                 *int64
-	created_at                    *time.Time
-	updated_at                    *time.Time
-	deleted_at                    *time.Time
-	name                          *string
-	jpg_url                       *string
-	key                           *string
-	secret                        *string
-	phone                         *string
-	password                      *string
-	is_frozen                     *bool
-	is_recharge                   *bool
-	user_type                     *user.UserType
-	clearedFields                 map[string]struct{}
-	vx_accounts                   map[int64]struct{}
-	removedvx_accounts            map[int64]struct{}
-	clearedvx_accounts            bool
-	collects                      map[int64]struct{}
-	removedcollects               map[int64]struct{}
-	clearedcollects               bool
-	devices                       map[int64]struct{}
-	removeddevices                map[int64]struct{}
-	cleareddevices                bool
-	profit_settings               map[int64]struct{}
-	removedprofit_settings        map[int64]struct{}
-	clearedprofit_settings        bool
-	cost_account                  *int64
-	clearedcost_account           bool
-	profit_account                *int64
-	clearedprofit_account         bool
-	cost_bills                    map[int64]struct{}
-	removedcost_bills             map[int64]struct{}
-	clearedcost_bills             bool
-	earn_bills                    map[int64]struct{}
-	removedearn_bills             map[int64]struct{}
-	clearedearn_bills             bool
-	mission_consume_orders        map[int64]struct{}
-	removedmission_consume_orders map[int64]struct{}
-	clearedmission_consume_orders bool
-	mission_produce_orders        map[int64]struct{}
-	removedmission_produce_orders map[int64]struct{}
-	clearedmission_produce_orders bool
-	recharge_orders               map[int64]struct{}
-	removedrecharge_orders        map[int64]struct{}
-	clearedrecharge_orders        bool
-	vx_socials                    map[int64]struct{}
-	removedvx_socials             map[int64]struct{}
-	clearedvx_socials             bool
-	mission_batches               map[int64]struct{}
-	removedmission_batches        map[int64]struct{}
-	clearedmission_batches        bool
-	user_devices                  map[int64]struct{}
-	removeduser_devices           map[int64]struct{}
-	cleareduser_devices           bool
-	parent                        *int64
-	clearedparent                 bool
-	children                      map[int64]struct{}
-	removedchildren               map[int64]struct{}
-	clearedchildren               bool
-	invites                       map[int64]struct{}
-	removedinvites                map[int64]struct{}
-	clearedinvites                bool
-	campaign_orders               map[int64]struct{}
-	removedcampaign_orders        map[int64]struct{}
-	clearedcampaign_orders        bool
-	done                          bool
-	oldValue                      func(context.Context) (*User, error)
-	predicates                    []predicate.User
+	op                             Op
+	typ                            string
+	id                             *int64
+	created_by                     *int64
+	addcreated_by                  *int64
+	updated_by                     *int64
+	addupdated_by                  *int64
+	created_at                     *time.Time
+	updated_at                     *time.Time
+	deleted_at                     *time.Time
+	name                           *string
+	jpg_url                        *string
+	key                            *string
+	secret                         *string
+	phone                          *string
+	password                       *string
+	is_frozen                      *bool
+	is_recharge                    *bool
+	user_type                      *user.UserType
+	clearedFields                  map[string]struct{}
+	vx_accounts                    map[int64]struct{}
+	removedvx_accounts             map[int64]struct{}
+	clearedvx_accounts             bool
+	collects                       map[int64]struct{}
+	removedcollects                map[int64]struct{}
+	clearedcollects                bool
+	devices                        map[int64]struct{}
+	removeddevices                 map[int64]struct{}
+	cleareddevices                 bool
+	profit_settings                map[int64]struct{}
+	removedprofit_settings         map[int64]struct{}
+	clearedprofit_settings         bool
+	cost_account                   *int64
+	clearedcost_account            bool
+	profit_account                 *int64
+	clearedprofit_account          bool
+	cost_bills                     map[int64]struct{}
+	removedcost_bills              map[int64]struct{}
+	clearedcost_bills              bool
+	earn_bills                     map[int64]struct{}
+	removedearn_bills              map[int64]struct{}
+	clearedearn_bills              bool
+	mission_consume_orders         map[int64]struct{}
+	removedmission_consume_orders  map[int64]struct{}
+	clearedmission_consume_orders  bool
+	mission_produce_orders         map[int64]struct{}
+	removedmission_produce_orders  map[int64]struct{}
+	clearedmission_produce_orders  bool
+	recharge_orders                map[int64]struct{}
+	removedrecharge_orders         map[int64]struct{}
+	clearedrecharge_orders         bool
+	vx_socials                     map[int64]struct{}
+	removedvx_socials              map[int64]struct{}
+	clearedvx_socials              bool
+	mission_batches                map[int64]struct{}
+	removedmission_batches         map[int64]struct{}
+	clearedmission_batches         bool
+	user_devices                   map[int64]struct{}
+	removeduser_devices            map[int64]struct{}
+	cleareduser_devices            bool
+	parent                         *int64
+	clearedparent                  bool
+	children                       map[int64]struct{}
+	removedchildren                map[int64]struct{}
+	clearedchildren                bool
+	invites                        map[int64]struct{}
+	removedinvites                 map[int64]struct{}
+	clearedinvites                 bool
+	campaign_orders                map[int64]struct{}
+	removedcampaign_orders         map[int64]struct{}
+	clearedcampaign_orders         bool
+	wallets                        map[int64]struct{}
+	removedwallets                 map[int64]struct{}
+	clearedwallets                 bool
+	income_bills                   map[int64]struct{}
+	removedincome_bills            map[int64]struct{}
+	clearedincome_bills            bool
+	outcome_bills                  map[int64]struct{}
+	removedoutcome_bills           map[int64]struct{}
+	clearedoutcome_bills           bool
+	mission_productions            map[int64]struct{}
+	removedmission_productions     map[int64]struct{}
+	clearedmission_productions     bool
+	missions                       map[int64]struct{}
+	removedmissions                map[int64]struct{}
+	clearedmissions                bool
+	income_transfer_orders         map[int64]struct{}
+	removedincome_transfer_orders  map[int64]struct{}
+	clearedincome_transfer_orders  bool
+	outcome_transfer_orders        map[int64]struct{}
+	removedoutcome_transfer_orders map[int64]struct{}
+	clearedoutcome_transfer_orders bool
+	done                           bool
+	oldValue                       func(context.Context) (*User, error)
+	predicates                     []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -35903,6 +42793,384 @@ func (m *UserMutation) ResetCampaignOrders() {
 	m.removedcampaign_orders = nil
 }
 
+// AddWalletIDs adds the "wallets" edge to the Wallet entity by ids.
+func (m *UserMutation) AddWalletIDs(ids ...int64) {
+	if m.wallets == nil {
+		m.wallets = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.wallets[ids[i]] = struct{}{}
+	}
+}
+
+// ClearWallets clears the "wallets" edge to the Wallet entity.
+func (m *UserMutation) ClearWallets() {
+	m.clearedwallets = true
+}
+
+// WalletsCleared reports if the "wallets" edge to the Wallet entity was cleared.
+func (m *UserMutation) WalletsCleared() bool {
+	return m.clearedwallets
+}
+
+// RemoveWalletIDs removes the "wallets" edge to the Wallet entity by IDs.
+func (m *UserMutation) RemoveWalletIDs(ids ...int64) {
+	if m.removedwallets == nil {
+		m.removedwallets = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.wallets, ids[i])
+		m.removedwallets[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWallets returns the removed IDs of the "wallets" edge to the Wallet entity.
+func (m *UserMutation) RemovedWalletsIDs() (ids []int64) {
+	for id := range m.removedwallets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WalletsIDs returns the "wallets" edge IDs in the mutation.
+func (m *UserMutation) WalletsIDs() (ids []int64) {
+	for id := range m.wallets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWallets resets all changes to the "wallets" edge.
+func (m *UserMutation) ResetWallets() {
+	m.wallets = nil
+	m.clearedwallets = false
+	m.removedwallets = nil
+}
+
+// AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by ids.
+func (m *UserMutation) AddIncomeBillIDs(ids ...int64) {
+	if m.income_bills == nil {
+		m.income_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.income_bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearIncomeBills clears the "income_bills" edge to the Bill entity.
+func (m *UserMutation) ClearIncomeBills() {
+	m.clearedincome_bills = true
+}
+
+// IncomeBillsCleared reports if the "income_bills" edge to the Bill entity was cleared.
+func (m *UserMutation) IncomeBillsCleared() bool {
+	return m.clearedincome_bills
+}
+
+// RemoveIncomeBillIDs removes the "income_bills" edge to the Bill entity by IDs.
+func (m *UserMutation) RemoveIncomeBillIDs(ids ...int64) {
+	if m.removedincome_bills == nil {
+		m.removedincome_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.income_bills, ids[i])
+		m.removedincome_bills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedIncomeBills returns the removed IDs of the "income_bills" edge to the Bill entity.
+func (m *UserMutation) RemovedIncomeBillsIDs() (ids []int64) {
+	for id := range m.removedincome_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// IncomeBillsIDs returns the "income_bills" edge IDs in the mutation.
+func (m *UserMutation) IncomeBillsIDs() (ids []int64) {
+	for id := range m.income_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetIncomeBills resets all changes to the "income_bills" edge.
+func (m *UserMutation) ResetIncomeBills() {
+	m.income_bills = nil
+	m.clearedincome_bills = false
+	m.removedincome_bills = nil
+}
+
+// AddOutcomeBillIDs adds the "outcome_bills" edge to the Bill entity by ids.
+func (m *UserMutation) AddOutcomeBillIDs(ids ...int64) {
+	if m.outcome_bills == nil {
+		m.outcome_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.outcome_bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOutcomeBills clears the "outcome_bills" edge to the Bill entity.
+func (m *UserMutation) ClearOutcomeBills() {
+	m.clearedoutcome_bills = true
+}
+
+// OutcomeBillsCleared reports if the "outcome_bills" edge to the Bill entity was cleared.
+func (m *UserMutation) OutcomeBillsCleared() bool {
+	return m.clearedoutcome_bills
+}
+
+// RemoveOutcomeBillIDs removes the "outcome_bills" edge to the Bill entity by IDs.
+func (m *UserMutation) RemoveOutcomeBillIDs(ids ...int64) {
+	if m.removedoutcome_bills == nil {
+		m.removedoutcome_bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.outcome_bills, ids[i])
+		m.removedoutcome_bills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOutcomeBills returns the removed IDs of the "outcome_bills" edge to the Bill entity.
+func (m *UserMutation) RemovedOutcomeBillsIDs() (ids []int64) {
+	for id := range m.removedoutcome_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OutcomeBillsIDs returns the "outcome_bills" edge IDs in the mutation.
+func (m *UserMutation) OutcomeBillsIDs() (ids []int64) {
+	for id := range m.outcome_bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOutcomeBills resets all changes to the "outcome_bills" edge.
+func (m *UserMutation) ResetOutcomeBills() {
+	m.outcome_bills = nil
+	m.clearedoutcome_bills = false
+	m.removedoutcome_bills = nil
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by ids.
+func (m *UserMutation) AddMissionProductionIDs(ids ...int64) {
+	if m.mission_productions == nil {
+		m.mission_productions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_productions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionProductions clears the "mission_productions" edge to the MissionProduction entity.
+func (m *UserMutation) ClearMissionProductions() {
+	m.clearedmission_productions = true
+}
+
+// MissionProductionsCleared reports if the "mission_productions" edge to the MissionProduction entity was cleared.
+func (m *UserMutation) MissionProductionsCleared() bool {
+	return m.clearedmission_productions
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to the MissionProduction entity by IDs.
+func (m *UserMutation) RemoveMissionProductionIDs(ids ...int64) {
+	if m.removedmission_productions == nil {
+		m.removedmission_productions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_productions, ids[i])
+		m.removedmission_productions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionProductions returns the removed IDs of the "mission_productions" edge to the MissionProduction entity.
+func (m *UserMutation) RemovedMissionProductionsIDs() (ids []int64) {
+	for id := range m.removedmission_productions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionProductionsIDs returns the "mission_productions" edge IDs in the mutation.
+func (m *UserMutation) MissionProductionsIDs() (ids []int64) {
+	for id := range m.mission_productions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionProductions resets all changes to the "mission_productions" edge.
+func (m *UserMutation) ResetMissionProductions() {
+	m.mission_productions = nil
+	m.clearedmission_productions = false
+	m.removedmission_productions = nil
+}
+
+// AddMissionIDs adds the "missions" edge to the Mission entity by ids.
+func (m *UserMutation) AddMissionIDs(ids ...int64) {
+	if m.missions == nil {
+		m.missions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.missions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissions clears the "missions" edge to the Mission entity.
+func (m *UserMutation) ClearMissions() {
+	m.clearedmissions = true
+}
+
+// MissionsCleared reports if the "missions" edge to the Mission entity was cleared.
+func (m *UserMutation) MissionsCleared() bool {
+	return m.clearedmissions
+}
+
+// RemoveMissionIDs removes the "missions" edge to the Mission entity by IDs.
+func (m *UserMutation) RemoveMissionIDs(ids ...int64) {
+	if m.removedmissions == nil {
+		m.removedmissions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.missions, ids[i])
+		m.removedmissions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissions returns the removed IDs of the "missions" edge to the Mission entity.
+func (m *UserMutation) RemovedMissionsIDs() (ids []int64) {
+	for id := range m.removedmissions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionsIDs returns the "missions" edge IDs in the mutation.
+func (m *UserMutation) MissionsIDs() (ids []int64) {
+	for id := range m.missions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissions resets all changes to the "missions" edge.
+func (m *UserMutation) ResetMissions() {
+	m.missions = nil
+	m.clearedmissions = false
+	m.removedmissions = nil
+}
+
+// AddIncomeTransferOrderIDs adds the "income_transfer_orders" edge to the TransferOrder entity by ids.
+func (m *UserMutation) AddIncomeTransferOrderIDs(ids ...int64) {
+	if m.income_transfer_orders == nil {
+		m.income_transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.income_transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearIncomeTransferOrders clears the "income_transfer_orders" edge to the TransferOrder entity.
+func (m *UserMutation) ClearIncomeTransferOrders() {
+	m.clearedincome_transfer_orders = true
+}
+
+// IncomeTransferOrdersCleared reports if the "income_transfer_orders" edge to the TransferOrder entity was cleared.
+func (m *UserMutation) IncomeTransferOrdersCleared() bool {
+	return m.clearedincome_transfer_orders
+}
+
+// RemoveIncomeTransferOrderIDs removes the "income_transfer_orders" edge to the TransferOrder entity by IDs.
+func (m *UserMutation) RemoveIncomeTransferOrderIDs(ids ...int64) {
+	if m.removedincome_transfer_orders == nil {
+		m.removedincome_transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.income_transfer_orders, ids[i])
+		m.removedincome_transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedIncomeTransferOrders returns the removed IDs of the "income_transfer_orders" edge to the TransferOrder entity.
+func (m *UserMutation) RemovedIncomeTransferOrdersIDs() (ids []int64) {
+	for id := range m.removedincome_transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// IncomeTransferOrdersIDs returns the "income_transfer_orders" edge IDs in the mutation.
+func (m *UserMutation) IncomeTransferOrdersIDs() (ids []int64) {
+	for id := range m.income_transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetIncomeTransferOrders resets all changes to the "income_transfer_orders" edge.
+func (m *UserMutation) ResetIncomeTransferOrders() {
+	m.income_transfer_orders = nil
+	m.clearedincome_transfer_orders = false
+	m.removedincome_transfer_orders = nil
+}
+
+// AddOutcomeTransferOrderIDs adds the "outcome_transfer_orders" edge to the TransferOrder entity by ids.
+func (m *UserMutation) AddOutcomeTransferOrderIDs(ids ...int64) {
+	if m.outcome_transfer_orders == nil {
+		m.outcome_transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.outcome_transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOutcomeTransferOrders clears the "outcome_transfer_orders" edge to the TransferOrder entity.
+func (m *UserMutation) ClearOutcomeTransferOrders() {
+	m.clearedoutcome_transfer_orders = true
+}
+
+// OutcomeTransferOrdersCleared reports if the "outcome_transfer_orders" edge to the TransferOrder entity was cleared.
+func (m *UserMutation) OutcomeTransferOrdersCleared() bool {
+	return m.clearedoutcome_transfer_orders
+}
+
+// RemoveOutcomeTransferOrderIDs removes the "outcome_transfer_orders" edge to the TransferOrder entity by IDs.
+func (m *UserMutation) RemoveOutcomeTransferOrderIDs(ids ...int64) {
+	if m.removedoutcome_transfer_orders == nil {
+		m.removedoutcome_transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.outcome_transfer_orders, ids[i])
+		m.removedoutcome_transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOutcomeTransferOrders returns the removed IDs of the "outcome_transfer_orders" edge to the TransferOrder entity.
+func (m *UserMutation) RemovedOutcomeTransferOrdersIDs() (ids []int64) {
+	for id := range m.removedoutcome_transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OutcomeTransferOrdersIDs returns the "outcome_transfer_orders" edge IDs in the mutation.
+func (m *UserMutation) OutcomeTransferOrdersIDs() (ids []int64) {
+	for id := range m.outcome_transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOutcomeTransferOrders resets all changes to the "outcome_transfer_orders" edge.
+func (m *UserMutation) ResetOutcomeTransferOrders() {
+	m.outcome_transfer_orders = nil
+	m.clearedoutcome_transfer_orders = false
+	m.removedoutcome_transfer_orders = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -36301,7 +43569,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 18)
+	edges := make([]string, 0, 25)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -36355,6 +43623,27 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.campaign_orders != nil {
 		edges = append(edges, user.EdgeCampaignOrders)
+	}
+	if m.wallets != nil {
+		edges = append(edges, user.EdgeWallets)
+	}
+	if m.income_bills != nil {
+		edges = append(edges, user.EdgeIncomeBills)
+	}
+	if m.outcome_bills != nil {
+		edges = append(edges, user.EdgeOutcomeBills)
+	}
+	if m.mission_productions != nil {
+		edges = append(edges, user.EdgeMissionProductions)
+	}
+	if m.missions != nil {
+		edges = append(edges, user.EdgeMissions)
+	}
+	if m.income_transfer_orders != nil {
+		edges = append(edges, user.EdgeIncomeTransferOrders)
+	}
+	if m.outcome_transfer_orders != nil {
+		edges = append(edges, user.EdgeOutcomeTransferOrders)
 	}
 	return edges
 }
@@ -36465,13 +43754,55 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeWallets:
+		ids := make([]ent.Value, 0, len(m.wallets))
+		for id := range m.wallets {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeIncomeBills:
+		ids := make([]ent.Value, 0, len(m.income_bills))
+		for id := range m.income_bills {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeOutcomeBills:
+		ids := make([]ent.Value, 0, len(m.outcome_bills))
+		for id := range m.outcome_bills {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeMissionProductions:
+		ids := make([]ent.Value, 0, len(m.mission_productions))
+		for id := range m.mission_productions {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.missions))
+		for id := range m.missions {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeIncomeTransferOrders:
+		ids := make([]ent.Value, 0, len(m.income_transfer_orders))
+		for id := range m.income_transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeOutcomeTransferOrders:
+		ids := make([]ent.Value, 0, len(m.outcome_transfer_orders))
+		for id := range m.outcome_transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 18)
+	edges := make([]string, 0, 25)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -36516,6 +43847,27 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedcampaign_orders != nil {
 		edges = append(edges, user.EdgeCampaignOrders)
+	}
+	if m.removedwallets != nil {
+		edges = append(edges, user.EdgeWallets)
+	}
+	if m.removedincome_bills != nil {
+		edges = append(edges, user.EdgeIncomeBills)
+	}
+	if m.removedoutcome_bills != nil {
+		edges = append(edges, user.EdgeOutcomeBills)
+	}
+	if m.removedmission_productions != nil {
+		edges = append(edges, user.EdgeMissionProductions)
+	}
+	if m.removedmissions != nil {
+		edges = append(edges, user.EdgeMissions)
+	}
+	if m.removedincome_transfer_orders != nil {
+		edges = append(edges, user.EdgeIncomeTransferOrders)
+	}
+	if m.removedoutcome_transfer_orders != nil {
+		edges = append(edges, user.EdgeOutcomeTransferOrders)
 	}
 	return edges
 }
@@ -36614,13 +43966,55 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeWallets:
+		ids := make([]ent.Value, 0, len(m.removedwallets))
+		for id := range m.removedwallets {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeIncomeBills:
+		ids := make([]ent.Value, 0, len(m.removedincome_bills))
+		for id := range m.removedincome_bills {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeOutcomeBills:
+		ids := make([]ent.Value, 0, len(m.removedoutcome_bills))
+		for id := range m.removedoutcome_bills {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeMissionProductions:
+		ids := make([]ent.Value, 0, len(m.removedmission_productions))
+		for id := range m.removedmission_productions {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.removedmissions))
+		for id := range m.removedmissions {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeIncomeTransferOrders:
+		ids := make([]ent.Value, 0, len(m.removedincome_transfer_orders))
+		for id := range m.removedincome_transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeOutcomeTransferOrders:
+		ids := make([]ent.Value, 0, len(m.removedoutcome_transfer_orders))
+		for id := range m.removedoutcome_transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 18)
+	edges := make([]string, 0, 25)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -36675,6 +44069,27 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedcampaign_orders {
 		edges = append(edges, user.EdgeCampaignOrders)
 	}
+	if m.clearedwallets {
+		edges = append(edges, user.EdgeWallets)
+	}
+	if m.clearedincome_bills {
+		edges = append(edges, user.EdgeIncomeBills)
+	}
+	if m.clearedoutcome_bills {
+		edges = append(edges, user.EdgeOutcomeBills)
+	}
+	if m.clearedmission_productions {
+		edges = append(edges, user.EdgeMissionProductions)
+	}
+	if m.clearedmissions {
+		edges = append(edges, user.EdgeMissions)
+	}
+	if m.clearedincome_transfer_orders {
+		edges = append(edges, user.EdgeIncomeTransferOrders)
+	}
+	if m.clearedoutcome_transfer_orders {
+		edges = append(edges, user.EdgeOutcomeTransferOrders)
+	}
 	return edges
 }
 
@@ -36718,6 +44133,20 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedinvites
 	case user.EdgeCampaignOrders:
 		return m.clearedcampaign_orders
+	case user.EdgeWallets:
+		return m.clearedwallets
+	case user.EdgeIncomeBills:
+		return m.clearedincome_bills
+	case user.EdgeOutcomeBills:
+		return m.clearedoutcome_bills
+	case user.EdgeMissionProductions:
+		return m.clearedmission_productions
+	case user.EdgeMissions:
+		return m.clearedmissions
+	case user.EdgeIncomeTransferOrders:
+		return m.clearedincome_transfer_orders
+	case user.EdgeOutcomeTransferOrders:
+		return m.clearedoutcome_transfer_orders
 	}
 	return false
 }
@@ -36796,6 +44225,27 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeCampaignOrders:
 		m.ResetCampaignOrders()
+		return nil
+	case user.EdgeWallets:
+		m.ResetWallets()
+		return nil
+	case user.EdgeIncomeBills:
+		m.ResetIncomeBills()
+		return nil
+	case user.EdgeOutcomeBills:
+		m.ResetOutcomeBills()
+		return nil
+	case user.EdgeMissionProductions:
+		m.ResetMissionProductions()
+		return nil
+	case user.EdgeMissions:
+		m.ResetMissions()
+		return nil
+	case user.EdgeIncomeTransferOrders:
+		m.ResetIncomeTransferOrders()
+		return nil
+	case user.EdgeOutcomeTransferOrders:
+		m.ResetOutcomeTransferOrders()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
@@ -38593,6 +46043,9 @@ type VXSocialMutation struct {
 	recharge_orders        map[int64]struct{}
 	removedrecharge_orders map[int64]struct{}
 	clearedrecharge_orders bool
+	transfer_orders        map[int64]struct{}
+	removedtransfer_orders map[int64]struct{}
+	clearedtransfer_orders bool
 	done                   bool
 	oldValue               func(context.Context) (*VXSocial, error)
 	predicates             []predicate.VXSocial
@@ -39291,6 +46744,60 @@ func (m *VXSocialMutation) ResetRechargeOrders() {
 	m.removedrecharge_orders = nil
 }
 
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by ids.
+func (m *VXSocialMutation) AddTransferOrderIDs(ids ...int64) {
+	if m.transfer_orders == nil {
+		m.transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTransferOrders clears the "transfer_orders" edge to the TransferOrder entity.
+func (m *VXSocialMutation) ClearTransferOrders() {
+	m.clearedtransfer_orders = true
+}
+
+// TransferOrdersCleared reports if the "transfer_orders" edge to the TransferOrder entity was cleared.
+func (m *VXSocialMutation) TransferOrdersCleared() bool {
+	return m.clearedtransfer_orders
+}
+
+// RemoveTransferOrderIDs removes the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (m *VXSocialMutation) RemoveTransferOrderIDs(ids ...int64) {
+	if m.removedtransfer_orders == nil {
+		m.removedtransfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.transfer_orders, ids[i])
+		m.removedtransfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTransferOrders returns the removed IDs of the "transfer_orders" edge to the TransferOrder entity.
+func (m *VXSocialMutation) RemovedTransferOrdersIDs() (ids []int64) {
+	for id := range m.removedtransfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TransferOrdersIDs returns the "transfer_orders" edge IDs in the mutation.
+func (m *VXSocialMutation) TransferOrdersIDs() (ids []int64) {
+	for id := range m.transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTransferOrders resets all changes to the "transfer_orders" edge.
+func (m *VXSocialMutation) ResetTransferOrders() {
+	m.transfer_orders = nil
+	m.clearedtransfer_orders = false
+	m.removedtransfer_orders = nil
+}
+
 // Where appends a list predicates to the VXSocialMutation builder.
 func (m *VXSocialMutation) Where(ps ...predicate.VXSocial) {
 	m.predicates = append(m.predicates, ps...)
@@ -39655,12 +47162,15 @@ func (m *VXSocialMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *VXSocialMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user != nil {
 		edges = append(edges, vxsocial.EdgeUser)
 	}
 	if m.recharge_orders != nil {
 		edges = append(edges, vxsocial.EdgeRechargeOrders)
+	}
+	if m.transfer_orders != nil {
+		edges = append(edges, vxsocial.EdgeTransferOrders)
 	}
 	return edges
 }
@@ -39679,15 +47189,24 @@ func (m *VXSocialMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case vxsocial.EdgeTransferOrders:
+		ids := make([]ent.Value, 0, len(m.transfer_orders))
+		for id := range m.transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *VXSocialMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedrecharge_orders != nil {
 		edges = append(edges, vxsocial.EdgeRechargeOrders)
+	}
+	if m.removedtransfer_orders != nil {
+		edges = append(edges, vxsocial.EdgeTransferOrders)
 	}
 	return edges
 }
@@ -39702,18 +47221,27 @@ func (m *VXSocialMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case vxsocial.EdgeTransferOrders:
+		ids := make([]ent.Value, 0, len(m.removedtransfer_orders))
+		for id := range m.removedtransfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *VXSocialMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser {
 		edges = append(edges, vxsocial.EdgeUser)
 	}
 	if m.clearedrecharge_orders {
 		edges = append(edges, vxsocial.EdgeRechargeOrders)
+	}
+	if m.clearedtransfer_orders {
+		edges = append(edges, vxsocial.EdgeTransferOrders)
 	}
 	return edges
 }
@@ -39726,6 +47254,8 @@ func (m *VXSocialMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case vxsocial.EdgeRechargeOrders:
 		return m.clearedrecharge_orders
+	case vxsocial.EdgeTransferOrders:
+		return m.clearedtransfer_orders
 	}
 	return false
 }
@@ -39751,6 +47281,921 @@ func (m *VXSocialMutation) ResetEdge(name string) error {
 	case vxsocial.EdgeRechargeOrders:
 		m.ResetRechargeOrders()
 		return nil
+	case vxsocial.EdgeTransferOrders:
+		m.ResetTransferOrders()
+		return nil
 	}
 	return fmt.Errorf("unknown VXSocial edge %s", name)
+}
+
+// WalletMutation represents an operation that mutates the Wallet nodes in the graph.
+type WalletMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	amount        *int64
+	addamount     *int64
+	clearedFields map[string]struct{}
+	user          *int64
+	cleareduser   bool
+	symbol        *int64
+	clearedsymbol bool
+	done          bool
+	oldValue      func(context.Context) (*Wallet, error)
+	predicates    []predicate.Wallet
+}
+
+var _ ent.Mutation = (*WalletMutation)(nil)
+
+// walletOption allows management of the mutation configuration using functional options.
+type walletOption func(*WalletMutation)
+
+// newWalletMutation creates new mutation for the Wallet entity.
+func newWalletMutation(c config, op Op, opts ...walletOption) *WalletMutation {
+	m := &WalletMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeWallet,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withWalletID sets the ID field of the mutation.
+func withWalletID(id int64) walletOption {
+	return func(m *WalletMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Wallet
+		)
+		m.oldValue = func(ctx context.Context) (*Wallet, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Wallet.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withWallet sets the old Wallet of the mutation.
+func withWallet(node *Wallet) walletOption {
+	return func(m *WalletMutation) {
+		m.oldValue = func(context.Context) (*Wallet, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m WalletMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m WalletMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Wallet entities.
+func (m *WalletMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *WalletMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *WalletMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Wallet.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *WalletMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *WalletMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *WalletMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *WalletMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *WalletMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *WalletMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *WalletMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *WalletMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *WalletMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *WalletMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *WalletMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *WalletMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *WalletMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *WalletMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *WalletMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *WalletMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *WalletMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *WalletMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *WalletMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *WalletMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *WalletMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *WalletMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (m *WalletMutation) SetSymbolID(i int64) {
+	m.symbol = &i
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *WalletMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *WalletMutation) ResetSymbolID() {
+	m.symbol = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *WalletMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *WalletMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *WalletMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *WalletMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *WalletMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *WalletMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[wallet.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *WalletMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *WalletMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *WalletMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (m *WalletMutation) ClearSymbol() {
+	m.clearedsymbol = true
+	m.clearedFields[wallet.FieldSymbolID] = struct{}{}
+}
+
+// SymbolCleared reports if the "symbol" edge to the Symbol entity was cleared.
+func (m *WalletMutation) SymbolCleared() bool {
+	return m.clearedsymbol
+}
+
+// SymbolIDs returns the "symbol" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SymbolID instead. It exists only for internal usage by the builders.
+func (m *WalletMutation) SymbolIDs() (ids []int64) {
+	if id := m.symbol; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSymbol resets all changes to the "symbol" edge.
+func (m *WalletMutation) ResetSymbol() {
+	m.symbol = nil
+	m.clearedsymbol = false
+}
+
+// Where appends a list predicates to the WalletMutation builder.
+func (m *WalletMutation) Where(ps ...predicate.Wallet) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the WalletMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *WalletMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Wallet, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *WalletMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *WalletMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Wallet).
+func (m *WalletMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *WalletMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_by != nil {
+		fields = append(fields, wallet.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, wallet.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, wallet.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, wallet.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, wallet.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, wallet.FieldUserID)
+	}
+	if m.symbol != nil {
+		fields = append(fields, wallet.FieldSymbolID)
+	}
+	if m.amount != nil {
+		fields = append(fields, wallet.FieldAmount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *WalletMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case wallet.FieldCreatedBy:
+		return m.CreatedBy()
+	case wallet.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case wallet.FieldCreatedAt:
+		return m.CreatedAt()
+	case wallet.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case wallet.FieldDeletedAt:
+		return m.DeletedAt()
+	case wallet.FieldUserID:
+		return m.UserID()
+	case wallet.FieldSymbolID:
+		return m.SymbolID()
+	case wallet.FieldAmount:
+		return m.Amount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *WalletMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case wallet.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case wallet.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case wallet.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case wallet.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case wallet.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case wallet.FieldUserID:
+		return m.OldUserID(ctx)
+	case wallet.FieldSymbolID:
+		return m.OldSymbolID(ctx)
+	case wallet.FieldAmount:
+		return m.OldAmount(ctx)
+	}
+	return nil, fmt.Errorf("unknown Wallet field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *WalletMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case wallet.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case wallet.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case wallet.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case wallet.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case wallet.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case wallet.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case wallet.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
+	case wallet.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Wallet field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *WalletMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, wallet.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, wallet.FieldUpdatedBy)
+	}
+	if m.addamount != nil {
+		fields = append(fields, wallet.FieldAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *WalletMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case wallet.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case wallet.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case wallet.FieldAmount:
+		return m.AddedAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *WalletMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case wallet.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case wallet.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case wallet.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Wallet numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *WalletMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *WalletMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *WalletMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Wallet nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *WalletMutation) ResetField(name string) error {
+	switch name {
+	case wallet.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case wallet.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case wallet.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case wallet.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case wallet.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case wallet.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case wallet.FieldSymbolID:
+		m.ResetSymbolID()
+		return nil
+	case wallet.FieldAmount:
+		m.ResetAmount()
+		return nil
+	}
+	return fmt.Errorf("unknown Wallet field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *WalletMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, wallet.EdgeUser)
+	}
+	if m.symbol != nil {
+		edges = append(edges, wallet.EdgeSymbol)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *WalletMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case wallet.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case wallet.EdgeSymbol:
+		if id := m.symbol; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *WalletMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *WalletMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *WalletMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, wallet.EdgeUser)
+	}
+	if m.clearedsymbol {
+		edges = append(edges, wallet.EdgeSymbol)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *WalletMutation) EdgeCleared(name string) bool {
+	switch name {
+	case wallet.EdgeUser:
+		return m.cleareduser
+	case wallet.EdgeSymbol:
+		return m.clearedsymbol
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *WalletMutation) ClearEdge(name string) error {
+	switch name {
+	case wallet.EdgeUser:
+		m.ClearUser()
+		return nil
+	case wallet.EdgeSymbol:
+		m.ClearSymbol()
+		return nil
+	}
+	return fmt.Errorf("unknown Wallet unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *WalletMutation) ResetEdge(name string) error {
+	switch name {
+	case wallet.EdgeUser:
+		m.ResetUser()
+		return nil
+	case wallet.EdgeSymbol:
+		m.ResetSymbol()
+		return nil
+	}
+	return fmt.Errorf("unknown Wallet edge %s", name)
 }

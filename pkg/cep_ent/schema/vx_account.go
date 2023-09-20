@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -34,5 +35,11 @@ func (VXAccount) Edges() []ent.Edge {
 func (VXAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (VXAccount) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("原微信身份源，被 vx_socials 取代"),
 	}
 }

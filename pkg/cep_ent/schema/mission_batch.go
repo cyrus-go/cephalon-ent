@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -23,6 +24,7 @@ func (MissionBatch) Edges() []ent.Edge {
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("mission_batches").Field("user_id").Unique().Required(),
 		edge.To("mission_consume_orders", MissionConsumeOrder.Type),
+		edge.To("missions", Mission.Type),
 	}
 }
 
@@ -30,5 +32,11 @@ func (MissionBatch) Edges() []ent.Edge {
 func (MissionBatch) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (MissionBatch) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("任务批次，为同一次性创建的多个任务赋予关系记录"),
 	}
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 )
 
-// OutputLog is the model entity for the OutputLog schema.
+// 输出日志，初期为风变专做的
 type OutputLog struct {
 	config `json:"-"`
 	// ID of the ent.

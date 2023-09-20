@@ -14,7 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// User is the model entity for the User schema.
+// 用户表
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -93,9 +93,23 @@ type UserEdges struct {
 	Invites []*Invite `json:"invites,omitempty"`
 	// CampaignOrders holds the value of the campaign_orders edge.
 	CampaignOrders []*CampaignOrder `json:"campaign_orders,omitempty"`
+	// Wallets holds the value of the wallets edge.
+	Wallets []*Wallet `json:"wallets,omitempty"`
+	// IncomeBills holds the value of the income_bills edge.
+	IncomeBills []*Bill `json:"income_bills,omitempty"`
+	// OutcomeBills holds the value of the outcome_bills edge.
+	OutcomeBills []*Bill `json:"outcome_bills,omitempty"`
+	// MissionProductions holds the value of the mission_productions edge.
+	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
+	// Missions holds the value of the missions edge.
+	Missions []*Mission `json:"missions,omitempty"`
+	// IncomeTransferOrders holds the value of the income_transfer_orders edge.
+	IncomeTransferOrders []*TransferOrder `json:"income_transfer_orders,omitempty"`
+	// OutcomeTransferOrders holds the value of the outcome_transfer_orders edge.
+	OutcomeTransferOrders []*TransferOrder `json:"outcome_transfer_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [18]bool
+	loadedTypes [25]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -270,6 +284,69 @@ func (e UserEdges) CampaignOrdersOrErr() ([]*CampaignOrder, error) {
 		return e.CampaignOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "campaign_orders"}
+}
+
+// WalletsOrErr returns the Wallets value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) WalletsOrErr() ([]*Wallet, error) {
+	if e.loadedTypes[18] {
+		return e.Wallets, nil
+	}
+	return nil, &NotLoadedError{edge: "wallets"}
+}
+
+// IncomeBillsOrErr returns the IncomeBills value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) IncomeBillsOrErr() ([]*Bill, error) {
+	if e.loadedTypes[19] {
+		return e.IncomeBills, nil
+	}
+	return nil, &NotLoadedError{edge: "income_bills"}
+}
+
+// OutcomeBillsOrErr returns the OutcomeBills value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OutcomeBillsOrErr() ([]*Bill, error) {
+	if e.loadedTypes[20] {
+		return e.OutcomeBills, nil
+	}
+	return nil, &NotLoadedError{edge: "outcome_bills"}
+}
+
+// MissionProductionsOrErr returns the MissionProductions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
+	if e.loadedTypes[21] {
+		return e.MissionProductions, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_productions"}
+}
+
+// MissionsOrErr returns the Missions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) MissionsOrErr() ([]*Mission, error) {
+	if e.loadedTypes[22] {
+		return e.Missions, nil
+	}
+	return nil, &NotLoadedError{edge: "missions"}
+}
+
+// IncomeTransferOrdersOrErr returns the IncomeTransferOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) IncomeTransferOrdersOrErr() ([]*TransferOrder, error) {
+	if e.loadedTypes[23] {
+		return e.IncomeTransferOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "income_transfer_orders"}
+}
+
+// OutcomeTransferOrdersOrErr returns the OutcomeTransferOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OutcomeTransferOrdersOrErr() ([]*TransferOrder, error) {
+	if e.loadedTypes[24] {
+		return e.OutcomeTransferOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "outcome_transfer_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -497,6 +574,41 @@ func (u *User) QueryInvites() *InviteQuery {
 // QueryCampaignOrders queries the "campaign_orders" edge of the User entity.
 func (u *User) QueryCampaignOrders() *CampaignOrderQuery {
 	return NewUserClient(u.config).QueryCampaignOrders(u)
+}
+
+// QueryWallets queries the "wallets" edge of the User entity.
+func (u *User) QueryWallets() *WalletQuery {
+	return NewUserClient(u.config).QueryWallets(u)
+}
+
+// QueryIncomeBills queries the "income_bills" edge of the User entity.
+func (u *User) QueryIncomeBills() *BillQuery {
+	return NewUserClient(u.config).QueryIncomeBills(u)
+}
+
+// QueryOutcomeBills queries the "outcome_bills" edge of the User entity.
+func (u *User) QueryOutcomeBills() *BillQuery {
+	return NewUserClient(u.config).QueryOutcomeBills(u)
+}
+
+// QueryMissionProductions queries the "mission_productions" edge of the User entity.
+func (u *User) QueryMissionProductions() *MissionProductionQuery {
+	return NewUserClient(u.config).QueryMissionProductions(u)
+}
+
+// QueryMissions queries the "missions" edge of the User entity.
+func (u *User) QueryMissions() *MissionQuery {
+	return NewUserClient(u.config).QueryMissions(u)
+}
+
+// QueryIncomeTransferOrders queries the "income_transfer_orders" edge of the User entity.
+func (u *User) QueryIncomeTransferOrders() *TransferOrderQuery {
+	return NewUserClient(u.config).QueryIncomeTransferOrders(u)
+}
+
+// QueryOutcomeTransferOrders queries the "outcome_transfer_orders" edge of the User entity.
+func (u *User) QueryOutcomeTransferOrders() *TransferOrderQuery {
+	return NewUserClient(u.config).QueryOutcomeTransferOrders(u)
 }
 
 // Update returns a builder for updating this User.

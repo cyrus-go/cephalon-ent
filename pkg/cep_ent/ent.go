@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
@@ -34,6 +35,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -41,10 +43,13 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -105,6 +110,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			bill.Table:                 bill.ValidColumn,
 			campaign.Table:             campaign.ValidColumn,
 			campaignorder.Table:        campaignorder.ValidColumn,
 			collect.Table:              collect.ValidColumn,
@@ -127,6 +133,7 @@ func checkColumn(table, column string) error {
 			missionkeypair.Table:       missionkeypair.ValidColumn,
 			missionkind.Table:          missionkind.ValidColumn,
 			missionproduceorder.Table:  missionproduceorder.ValidColumn,
+			missionproduction.Table:    missionproduction.ValidColumn,
 			outputlog.Table:            outputlog.ValidColumn,
 			platformaccount.Table:      platformaccount.ValidColumn,
 			price.Table:                price.ValidColumn,
@@ -134,10 +141,13 @@ func checkColumn(table, column string) error {
 			profitsetting.Table:        profitsetting.ValidColumn,
 			rechargecampaignrule.Table: rechargecampaignrule.ValidColumn,
 			rechargeorder.Table:        rechargeorder.ValidColumn,
+			symbol.Table:               symbol.ValidColumn,
+			transferorder.Table:        transferorder.ValidColumn,
 			user.Table:                 user.ValidColumn,
 			userdevice.Table:           userdevice.ValidColumn,
 			vxaccount.Table:            vxaccount.ValidColumn,
 			vxsocial.Table:             vxsocial.ValidColumn,
+			wallet.Table:               wallet.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

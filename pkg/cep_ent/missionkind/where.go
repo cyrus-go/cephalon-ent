@@ -394,6 +394,29 @@ func HasDeviceGpuMissionsWith(preds ...predicate.DeviceGpuMission) predicate.Mis
 	})
 }
 
+// HasMissions applies the HasEdge predicate on the "missions" edge.
+func HasMissions() predicate.MissionKind {
+	return predicate.MissionKind(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionsTable, MissionsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionsWith applies the HasEdge predicate on the "missions" edge with a given conditions (other predicates).
+func HasMissionsWith(preds ...predicate.Mission) predicate.MissionKind {
+	return predicate.MissionKind(func(s *sql.Selector) {
+		step := newMissionsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.MissionKind) predicate.MissionKind {
 	return predicate.MissionKind(sql.AndPredicates(predicates...))

@@ -3,6 +3,7 @@ package enums
 type MissionOrderStatus string
 
 const (
+	MissionOrderStatusUnknown   MissionOrderStatus = "unknown"
 	MissionOrderStatusWaiting   MissionOrderStatus = "waiting"
 	MissionOrderStatusCanceled  MissionOrderStatus = "canceled"
 	MissionOrderStatusDoing     MissionOrderStatus = "doing"
@@ -13,6 +14,7 @@ const (
 
 func (obj MissionOrderStatus) Values() []string {
 	return []string{
+		string(MissionOrderStatusUnknown),
 		string(MissionOrderStatusWaiting),
 		string(MissionOrderStatusCanceled),
 		string(MissionOrderStatusDoing),

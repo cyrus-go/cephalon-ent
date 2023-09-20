@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -140,6 +141,21 @@ func (mbu *MissionBatchUpdate) AddMissionConsumeOrders(m ...*MissionConsumeOrder
 	return mbu.AddMissionConsumeOrderIDs(ids...)
 }
 
+// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
+func (mbu *MissionBatchUpdate) AddMissionIDs(ids ...int64) *MissionBatchUpdate {
+	mbu.mutation.AddMissionIDs(ids...)
+	return mbu
+}
+
+// AddMissions adds the "missions" edges to the Mission entity.
+func (mbu *MissionBatchUpdate) AddMissions(m ...*Mission) *MissionBatchUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mbu.AddMissionIDs(ids...)
+}
+
 // Mutation returns the MissionBatchMutation object of the builder.
 func (mbu *MissionBatchUpdate) Mutation() *MissionBatchMutation {
 	return mbu.mutation
@@ -170,6 +186,27 @@ func (mbu *MissionBatchUpdate) RemoveMissionConsumeOrders(m ...*MissionConsumeOr
 		ids[i] = m[i].ID
 	}
 	return mbu.RemoveMissionConsumeOrderIDs(ids...)
+}
+
+// ClearMissions clears all "missions" edges to the Mission entity.
+func (mbu *MissionBatchUpdate) ClearMissions() *MissionBatchUpdate {
+	mbu.mutation.ClearMissions()
+	return mbu
+}
+
+// RemoveMissionIDs removes the "missions" edge to Mission entities by IDs.
+func (mbu *MissionBatchUpdate) RemoveMissionIDs(ids ...int64) *MissionBatchUpdate {
+	mbu.mutation.RemoveMissionIDs(ids...)
+	return mbu
+}
+
+// RemoveMissions removes "missions" edges to Mission entities.
+func (mbu *MissionBatchUpdate) RemoveMissions(m ...*Mission) *MissionBatchUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mbu.RemoveMissionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -323,6 +360,51 @@ func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if mbu.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionsTable,
+			Columns: []string{missionbatch.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbu.mutation.RemovedMissionsIDs(); len(nodes) > 0 && !mbu.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionsTable,
+			Columns: []string{missionbatch.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbu.mutation.MissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionsTable,
+			Columns: []string{missionbatch.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionbatch.Label}
@@ -453,6 +535,21 @@ func (mbuo *MissionBatchUpdateOne) AddMissionConsumeOrders(m ...*MissionConsumeO
 	return mbuo.AddMissionConsumeOrderIDs(ids...)
 }
 
+// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
+func (mbuo *MissionBatchUpdateOne) AddMissionIDs(ids ...int64) *MissionBatchUpdateOne {
+	mbuo.mutation.AddMissionIDs(ids...)
+	return mbuo
+}
+
+// AddMissions adds the "missions" edges to the Mission entity.
+func (mbuo *MissionBatchUpdateOne) AddMissions(m ...*Mission) *MissionBatchUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mbuo.AddMissionIDs(ids...)
+}
+
 // Mutation returns the MissionBatchMutation object of the builder.
 func (mbuo *MissionBatchUpdateOne) Mutation() *MissionBatchMutation {
 	return mbuo.mutation
@@ -483,6 +580,27 @@ func (mbuo *MissionBatchUpdateOne) RemoveMissionConsumeOrders(m ...*MissionConsu
 		ids[i] = m[i].ID
 	}
 	return mbuo.RemoveMissionConsumeOrderIDs(ids...)
+}
+
+// ClearMissions clears all "missions" edges to the Mission entity.
+func (mbuo *MissionBatchUpdateOne) ClearMissions() *MissionBatchUpdateOne {
+	mbuo.mutation.ClearMissions()
+	return mbuo
+}
+
+// RemoveMissionIDs removes the "missions" edge to Mission entities by IDs.
+func (mbuo *MissionBatchUpdateOne) RemoveMissionIDs(ids ...int64) *MissionBatchUpdateOne {
+	mbuo.mutation.RemoveMissionIDs(ids...)
+	return mbuo
+}
+
+// RemoveMissions removes "missions" edges to Mission entities.
+func (mbuo *MissionBatchUpdateOne) RemoveMissions(m ...*Mission) *MissionBatchUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mbuo.RemoveMissionIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionBatchUpdate builder.
@@ -659,6 +777,51 @@ func (mbuo *MissionBatchUpdateOne) sqlSave(ctx context.Context) (_node *MissionB
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mbuo.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionsTable,
+			Columns: []string{missionbatch.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbuo.mutation.RemovedMissionsIDs(); len(nodes) > 0 && !mbuo.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionsTable,
+			Columns: []string{missionbatch.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbuo.mutation.MissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionsTable,
+			Columns: []string{missionbatch.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

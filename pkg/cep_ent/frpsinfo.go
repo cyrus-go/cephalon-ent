@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 )
 
-// FrpsInfo is the model entity for the FrpsInfo schema.
+// fRPS 服务器列表
 type FrpsInfo struct {
 	config `json:"-"`
 	// ID of the ent.

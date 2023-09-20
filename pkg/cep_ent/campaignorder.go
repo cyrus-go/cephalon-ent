@@ -15,7 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// CampaignOrder is the model entity for the CampaignOrder schema.
+// 活动订单，计划废弃
 type CampaignOrder struct {
 	config `json:"-"`
 	// ID of the ent.

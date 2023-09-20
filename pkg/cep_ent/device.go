@@ -14,7 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// Device is the model entity for the Device schema.
+// 设备，对应客户端 core，记录心跳等信息
 type Device struct {
 	config `json:"-"`
 	// ID of the ent.

@@ -12,11 +12,12 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// MissionProduceOrder is the model entity for the MissionProduceOrder schema.
+// 任务生产订单，记录任务生产情况对应的订单业务，比如分润情况，分润比例等信息
 type MissionProduceOrder struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -35,12 +36,18 @@ type MissionProduceOrder struct {
 	UserID int64 `json:"user_id"`
 	// 任务 id，关联任务中枢的任务
 	MissionID int64 `json:"mission_id"`
+	// 任务执行情况 id
+	MissionProductionID *int64 `json:"mission_production_id"`
 	// 任务订单的状态，注意不强关联任务的状态
 	Status enums.MissionOrderStatus `json:"status"`
 	// 任务收益的本金 cep 量
 	PureCep int64 `json:"pure_cep"`
 	// 任务收益的赠送 cep 量
 	GiftCep int64 `json:"gift_cep"`
+	// 币种 id
+	SymbolID int64 `json:"symbol_id""`
+	// 任务订单分润
+	Amount int64 `json:"amount"`
 	// 任务类型，计时或者次数任务
 	Type enums.MissionType `json:"type"`
 	// 是否为计时类型任务
@@ -53,8 +60,9 @@ type MissionProduceOrder struct {
 	MissionConsumeOrderID int64 `json:"mission_consume_order_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionProduceOrderQuery when eager-loading is set.
-	Edges        MissionProduceOrderEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                          MissionProduceOrderEdges `json:"edges"`
+	mission_mission_produce_orders *int64
+	selectValues                   sql.SelectValues
 }
 
 // MissionProduceOrderEdges holds the relations/edges for other nodes in the graph.
@@ -63,13 +71,17 @@ type MissionProduceOrderEdges struct {
 	User *User `json:"user,omitempty"`
 	// EarnBills holds the value of the earn_bills edge.
 	EarnBills []*EarnBill `json:"earn_bills,omitempty"`
+	// Bills holds the value of the bills edge.
+	Bills []*Bill `json:"bills,omitempty"`
 	// Device holds the value of the device edge.
 	Device *Device `json:"device,omitempty"`
 	// MissionConsumeOrder holds the value of the mission_consume_order edge.
 	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
+	// MissionProduction holds the value of the mission_production edge.
+	MissionProduction *MissionProduction `json:"mission_production,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [6]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -94,10 +106,19 @@ func (e MissionProduceOrderEdges) EarnBillsOrErr() ([]*EarnBill, error) {
 	return nil, &NotLoadedError{edge: "earn_bills"}
 }
 
+// BillsOrErr returns the Bills value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionProduceOrderEdges) BillsOrErr() ([]*Bill, error) {
+	if e.loadedTypes[2] {
+		return e.Bills, nil
+	}
+	return nil, &NotLoadedError{edge: "bills"}
+}
+
 // DeviceOrErr returns the Device value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionProduceOrderEdges) DeviceOrErr() (*Device, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		if e.Device == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: device.Label}
@@ -110,7 +131,7 @@ func (e MissionProduceOrderEdges) DeviceOrErr() (*Device, error) {
 // MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionProduceOrderEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		if e.MissionConsumeOrder == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionconsumeorder.Label}
@@ -120,6 +141,19 @@ func (e MissionProduceOrderEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrd
 	return nil, &NotLoadedError{edge: "mission_consume_order"}
 }
 
+// MissionProductionOrErr returns the MissionProduction value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionProduceOrderEdges) MissionProductionOrErr() (*MissionProduction, error) {
+	if e.loadedTypes[5] {
+		if e.MissionProduction == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionproduction.Label}
+		}
+		return e.MissionProduction, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_production"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*MissionProduceOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -127,12 +161,14 @@ func (*MissionProduceOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionproduceorder.FieldIsTime:
 			values[i] = new(sql.NullBool)
-		case missionproduceorder.FieldID, missionproduceorder.FieldCreatedBy, missionproduceorder.FieldUpdatedBy, missionproduceorder.FieldUserID, missionproduceorder.FieldMissionID, missionproduceorder.FieldPureCep, missionproduceorder.FieldGiftCep, missionproduceorder.FieldDeviceID, missionproduceorder.FieldMissionConsumeOrderID:
+		case missionproduceorder.FieldID, missionproduceorder.FieldCreatedBy, missionproduceorder.FieldUpdatedBy, missionproduceorder.FieldUserID, missionproduceorder.FieldMissionID, missionproduceorder.FieldMissionProductionID, missionproduceorder.FieldPureCep, missionproduceorder.FieldGiftCep, missionproduceorder.FieldSymbolID, missionproduceorder.FieldAmount, missionproduceorder.FieldDeviceID, missionproduceorder.FieldMissionConsumeOrderID:
 			values[i] = new(sql.NullInt64)
 		case missionproduceorder.FieldStatus, missionproduceorder.FieldType, missionproduceorder.FieldSerialNumber:
 			values[i] = new(sql.NullString)
 		case missionproduceorder.FieldCreatedAt, missionproduceorder.FieldUpdatedAt, missionproduceorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case missionproduceorder.ForeignKeys[0]: // mission_mission_produce_orders
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -196,6 +232,13 @@ func (mpo *MissionProduceOrder) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				mpo.MissionID = value.Int64
 			}
+		case missionproduceorder.FieldMissionProductionID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field mission_production_id", values[i])
+			} else if value.Valid {
+				mpo.MissionProductionID = new(int64)
+				*mpo.MissionProductionID = value.Int64
+			}
 		case missionproduceorder.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
@@ -213,6 +256,18 @@ func (mpo *MissionProduceOrder) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field gift_cep", values[i])
 			} else if value.Valid {
 				mpo.GiftCep = value.Int64
+			}
+		case missionproduceorder.FieldSymbolID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
+			} else if value.Valid {
+				mpo.SymbolID = value.Int64
+			}
+		case missionproduceorder.FieldAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field amount", values[i])
+			} else if value.Valid {
+				mpo.Amount = value.Int64
 			}
 		case missionproduceorder.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -244,6 +299,13 @@ func (mpo *MissionProduceOrder) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				mpo.MissionConsumeOrderID = value.Int64
 			}
+		case missionproduceorder.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field mission_mission_produce_orders", value)
+			} else if value.Valid {
+				mpo.mission_mission_produce_orders = new(int64)
+				*mpo.mission_mission_produce_orders = int64(value.Int64)
+			}
 		default:
 			mpo.selectValues.Set(columns[i], values[i])
 		}
@@ -267,6 +329,11 @@ func (mpo *MissionProduceOrder) QueryEarnBills() *EarnBillQuery {
 	return NewMissionProduceOrderClient(mpo.config).QueryEarnBills(mpo)
 }
 
+// QueryBills queries the "bills" edge of the MissionProduceOrder entity.
+func (mpo *MissionProduceOrder) QueryBills() *BillQuery {
+	return NewMissionProduceOrderClient(mpo.config).QueryBills(mpo)
+}
+
 // QueryDevice queries the "device" edge of the MissionProduceOrder entity.
 func (mpo *MissionProduceOrder) QueryDevice() *DeviceQuery {
 	return NewMissionProduceOrderClient(mpo.config).QueryDevice(mpo)
@@ -275,6 +342,11 @@ func (mpo *MissionProduceOrder) QueryDevice() *DeviceQuery {
 // QueryMissionConsumeOrder queries the "mission_consume_order" edge of the MissionProduceOrder entity.
 func (mpo *MissionProduceOrder) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 	return NewMissionProduceOrderClient(mpo.config).QueryMissionConsumeOrder(mpo)
+}
+
+// QueryMissionProduction queries the "mission_production" edge of the MissionProduceOrder entity.
+func (mpo *MissionProduceOrder) QueryMissionProduction() *MissionProductionQuery {
+	return NewMissionProduceOrderClient(mpo.config).QueryMissionProduction(mpo)
 }
 
 // Update returns a builder for updating this MissionProduceOrder.
@@ -321,6 +393,11 @@ func (mpo *MissionProduceOrder) String() string {
 	builder.WriteString("mission_id=")
 	builder.WriteString(fmt.Sprintf("%v", mpo.MissionID))
 	builder.WriteString(", ")
+	if v := mpo.MissionProductionID; v != nil {
+		builder.WriteString("mission_production_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", mpo.Status))
 	builder.WriteString(", ")
@@ -329,6 +406,12 @@ func (mpo *MissionProduceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("gift_cep=")
 	builder.WriteString(fmt.Sprintf("%v", mpo.GiftCep))
+	builder.WriteString(", ")
+	builder.WriteString("symbol_id=")
+	builder.WriteString(fmt.Sprintf("%v", mpo.SymbolID))
+	builder.WriteString(", ")
+	builder.WriteString("amount=")
+	builder.WriteString(fmt.Sprintf("%v", mpo.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", mpo.Type))

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -39,5 +40,11 @@ func (Device) Edges() []ent.Edge {
 func (Device) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (Device) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("设备，对应客户端 core，记录心跳等信息"),
 	}
 }

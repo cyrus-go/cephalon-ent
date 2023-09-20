@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// ProfitSetting is the model entity for the ProfitSetting schema.
+// 任务分润比例设置，属于用户的信息，所有人默认 75%
 type ProfitSetting struct {
 	config `json:"-"`
 	// ID of the ent.

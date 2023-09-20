@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/common"
@@ -37,5 +38,11 @@ func (MissionKeyPair) Edges() []ent.Edge {
 func (MissionKeyPair) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (MissionKeyPair) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("原任务执行情况，被 mission_productions 取代"),
 	}
 }

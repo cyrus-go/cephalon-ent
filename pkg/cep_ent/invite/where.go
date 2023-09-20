@@ -651,6 +651,29 @@ func HasCampaignWith(preds ...predicate.Campaign) predicate.Invite {
 	})
 }
 
+// HasBills applies the HasEdge predicate on the "bills" edge.
+func HasBills() predicate.Invite {
+	return predicate.Invite(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasBillsWith applies the HasEdge predicate on the "bills" edge with a given conditions (other predicates).
+func HasBillsWith(preds ...predicate.Bill) predicate.Invite {
+	return predicate.Invite(func(s *sql.Selector) {
+		step := newBillsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Invite) predicate.Invite {
 	return predicate.Invite(sql.AndPredicates(predicates...))

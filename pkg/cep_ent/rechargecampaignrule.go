@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 )
 
-// RechargeCampaignRule is the model entity for the RechargeCampaignRule schema.
+// 充值活动的规则，死表，为特定充值赠送逻辑服务
 type RechargeCampaignRule struct {
 	config `json:"-"`
 	// ID of the ent.

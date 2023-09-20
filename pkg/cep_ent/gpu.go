@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// Gpu is the model entity for the Gpu schema.
+// 显卡信息，在表里有显卡型号的，才能在系统中选择使用等
 type Gpu struct {
 	config `json:"-"`
 	// ID of the ent.

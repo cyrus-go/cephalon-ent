@@ -618,6 +618,7 @@ func (dq *DeviceQuery) loadMissionProduceOrders(ctx context.Context, query *Miss
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(missionproduceorder.FieldDeviceID)
 	}

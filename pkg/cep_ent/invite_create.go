@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -214,6 +215,21 @@ func (ic *InviteCreate) SetUser(u *User) *InviteCreate {
 // SetCampaign sets the "campaign" edge to the Campaign entity.
 func (ic *InviteCreate) SetCampaign(c *Campaign) *InviteCreate {
 	return ic.SetCampaignID(c.ID)
+}
+
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (ic *InviteCreate) AddBillIDs(ids ...int64) *InviteCreate {
+	ic.mutation.AddBillIDs(ids...)
+	return ic
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (ic *InviteCreate) AddBills(b ...*Bill) *InviteCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return ic.AddBillIDs(ids...)
 }
 
 // Mutation returns the InviteMutation object of the builder.
@@ -454,6 +470,22 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.CampaignID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

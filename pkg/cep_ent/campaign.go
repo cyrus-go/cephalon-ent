@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 )
 
-// Campaign is the model entity for the Campaign schema.
+// 活动，计划废弃
 type Campaign struct {
 	config `json:"-"`
 	// ID of the ent.

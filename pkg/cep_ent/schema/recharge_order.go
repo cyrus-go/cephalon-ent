@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -44,5 +45,11 @@ func (RechargeOrder) Edges() []ent.Edge {
 func (RechargeOrder) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (RechargeOrder) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("充值订单，被 transfer_orders 取代，充值定义为从上帝账户转账到用户"),
 	}
 }

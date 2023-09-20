@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 )
 
-// HmacKeyPair is the model entity for the HmacKeyPair schema.
+// 密钥对，由于必须有用户才能使用密钥对，所以直接并入 user 的 key 和 secret 两个字段，废弃该表
 type HmacKeyPair struct {
 	config `json:"-"`
 	// ID of the ent.

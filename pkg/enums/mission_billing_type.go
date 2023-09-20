@@ -3,6 +3,7 @@ package enums
 type MissionBillingType string
 
 const (
+	MissionBillingTypeUnknown MissionBillingType = "unknown"
 	// MissionBillingTypeTime 按时，时间 * 分钟单价，特点是有供应中状态 supplying
 	MissionBillingTypeTime MissionBillingType = "time"
 	// MissionBillingTypeCount 按次，特点是单次任务不管干啥，都算单价钱
@@ -15,6 +16,7 @@ const (
 
 func (obj MissionBillingType) Values() []string {
 	return []string{
+		string(MissionBillingTypeUnknown),
 		string(MissionBillingTypeTime),
 		string(MissionBillingTypeCount),
 		string(MissionBillingTypeHold),

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 )
@@ -26,6 +27,7 @@ type VXSocialQuery struct {
 	predicates         []predicate.VXSocial
 	withUser           *UserQuery
 	withRechargeOrders *RechargeOrderQuery
+	withTransferOrders *TransferOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -99,6 +101,28 @@ func (vsq *VXSocialQuery) QueryRechargeOrders() *RechargeOrderQuery {
 			sqlgraph.From(vxsocial.Table, vxsocial.FieldID, selector),
 			sqlgraph.To(rechargeorder.Table, rechargeorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, vxsocial.RechargeOrdersTable, vxsocial.RechargeOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(vsq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTransferOrders chains the current query on the "transfer_orders" edge.
+func (vsq *VXSocialQuery) QueryTransferOrders() *TransferOrderQuery {
+	query := (&TransferOrderClient{config: vsq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := vsq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := vsq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(vxsocial.Table, vxsocial.FieldID, selector),
+			sqlgraph.To(transferorder.Table, transferorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, vxsocial.TransferOrdersTable, vxsocial.TransferOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(vsq.driver.Dialect(), step)
 		return fromU, nil
@@ -300,6 +324,7 @@ func (vsq *VXSocialQuery) Clone() *VXSocialQuery {
 		predicates:         append([]predicate.VXSocial{}, vsq.predicates...),
 		withUser:           vsq.withUser.Clone(),
 		withRechargeOrders: vsq.withRechargeOrders.Clone(),
+		withTransferOrders: vsq.withTransferOrders.Clone(),
 		// clone intermediate query.
 		sql:  vsq.sql.Clone(),
 		path: vsq.path,
@@ -325,6 +350,17 @@ func (vsq *VXSocialQuery) WithRechargeOrders(opts ...func(*RechargeOrderQuery)) 
 		opt(query)
 	}
 	vsq.withRechargeOrders = query
+	return vsq
+}
+
+// WithTransferOrders tells the query-builder to eager-load the nodes that are connected to
+// the "transfer_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (vsq *VXSocialQuery) WithTransferOrders(opts ...func(*TransferOrderQuery)) *VXSocialQuery {
+	query := (&TransferOrderClient{config: vsq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	vsq.withTransferOrders = query
 	return vsq
 }
 
@@ -406,9 +442,10 @@ func (vsq *VXSocialQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*VX
 	var (
 		nodes       = []*VXSocial{}
 		_spec       = vsq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			vsq.withUser != nil,
 			vsq.withRechargeOrders != nil,
+			vsq.withTransferOrders != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -439,6 +476,13 @@ func (vsq *VXSocialQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*VX
 		if err := vsq.loadRechargeOrders(ctx, query, nodes,
 			func(n *VXSocial) { n.Edges.RechargeOrders = []*RechargeOrder{} },
 			func(n *VXSocial, e *RechargeOrder) { n.Edges.RechargeOrders = append(n.Edges.RechargeOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := vsq.withTransferOrders; query != nil {
+		if err := vsq.loadTransferOrders(ctx, query, nodes,
+			func(n *VXSocial) { n.Edges.TransferOrders = []*TransferOrder{} },
+			func(n *VXSocial, e *TransferOrder) { n.Edges.TransferOrders = append(n.Edges.TransferOrders, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -489,6 +533,36 @@ func (vsq *VXSocialQuery) loadRechargeOrders(ctx context.Context, query *Recharg
 	}
 	query.Where(predicate.RechargeOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(vxsocial.RechargeOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.SocialID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "social_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (vsq *VXSocialQuery) loadTransferOrders(ctx context.Context, query *TransferOrderQuery, nodes []*VXSocial, init func(*VXSocial), assign func(*VXSocial, *TransferOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*VXSocial)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(transferorder.FieldSocialID)
+	}
+	query.Where(predicate.TransferOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(vxsocial.TransferOrdersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

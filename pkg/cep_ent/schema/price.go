@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -35,5 +36,11 @@ func (Price) Edges() []ent.Edge {
 func (Price) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (Price) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("任务定价表，表里有数据，任务才有单价，才可以被创建"),
 	}
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 )
 
-// FrpcInfo is the model entity for the FrpcInfo schema.
+// fRPC 客户端端口分配情况
 type FrpcInfo struct {
 	config `json:"-"`
 	// ID of the ent.

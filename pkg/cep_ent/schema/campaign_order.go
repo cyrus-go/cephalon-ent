@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -34,5 +35,11 @@ func (CampaignOrder) Edges() []ent.Edge {
 func (CampaignOrder) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (CampaignOrder) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("活动订单，计划废弃"),
 	}
 }

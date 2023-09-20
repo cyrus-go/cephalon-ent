@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -30,5 +31,11 @@ func (Gpu) Edges() []ent.Edge {
 func (Gpu) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (Gpu) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("显卡信息，在表里有显卡型号的，才能在系统中选择使用等"),
 	}
 }

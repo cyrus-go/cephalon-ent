@@ -30,12 +30,18 @@ const (
 	FieldUserID = "user_id"
 	// FieldMissionID holds the string denoting the mission_id field in the database.
 	FieldMissionID = "mission_id"
+	// FieldMissionProductionID holds the string denoting the mission_production_id field in the database.
+	FieldMissionProductionID = "mission_production_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldPureCep holds the string denoting the pure_cep field in the database.
 	FieldPureCep = "pure_cep"
 	// FieldGiftCep holds the string denoting the gift_cep field in the database.
 	FieldGiftCep = "gift_cep"
+	// FieldSymbolID holds the string denoting the symbol_id field in the database.
+	FieldSymbolID = "symbol_id"
+	// FieldAmount holds the string denoting the amount field in the database.
+	FieldAmount = "amount"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldIsTime holds the string denoting the is_time field in the database.
@@ -50,10 +56,14 @@ const (
 	EdgeUser = "user"
 	// EdgeEarnBills holds the string denoting the earn_bills edge name in mutations.
 	EdgeEarnBills = "earn_bills"
+	// EdgeBills holds the string denoting the bills edge name in mutations.
+	EdgeBills = "bills"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
 	EdgeMissionConsumeOrder = "mission_consume_order"
+	// EdgeMissionProduction holds the string denoting the mission_production edge name in mutations.
+	EdgeMissionProduction = "mission_production"
 	// Table holds the table name of the missionproduceorder in the database.
 	Table = "mission_produce_orders"
 	// UserTable is the table that holds the user relation/edge.
@@ -70,6 +80,13 @@ const (
 	EarnBillsInverseTable = "earn_bills"
 	// EarnBillsColumn is the table column denoting the earn_bills relation/edge.
 	EarnBillsColumn = "reason_id"
+	// BillsTable is the table that holds the bills relation/edge.
+	BillsTable = "bills"
+	// BillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	BillsInverseTable = "bills"
+	// BillsColumn is the table column denoting the bills relation/edge.
+	BillsColumn = "order_id"
 	// DeviceTable is the table that holds the device relation/edge.
 	DeviceTable = "mission_produce_orders"
 	// DeviceInverseTable is the table name for the Device entity.
@@ -84,6 +101,13 @@ const (
 	MissionConsumeOrderInverseTable = "mission_consume_orders"
 	// MissionConsumeOrderColumn is the table column denoting the mission_consume_order relation/edge.
 	MissionConsumeOrderColumn = "mission_consume_order_id"
+	// MissionProductionTable is the table that holds the mission_production relation/edge.
+	MissionProductionTable = "mission_produce_orders"
+	// MissionProductionInverseTable is the table name for the MissionProduction entity.
+	// It exists in this package in order to avoid circular dependency with the "missionproduction" package.
+	MissionProductionInverseTable = "mission_productions"
+	// MissionProductionColumn is the table column denoting the mission_production relation/edge.
+	MissionProductionColumn = "mission_production_id"
 )
 
 // Columns holds all SQL columns for missionproduceorder fields.
@@ -96,9 +120,12 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldMissionID,
+	FieldMissionProductionID,
 	FieldStatus,
 	FieldPureCep,
 	FieldGiftCep,
+	FieldSymbolID,
+	FieldAmount,
 	FieldType,
 	FieldIsTime,
 	FieldDeviceID,
@@ -106,10 +133,21 @@ var Columns = []string{
 	FieldMissionConsumeOrderID,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "mission_produce_orders"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"mission_mission_produce_orders",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -137,6 +175,10 @@ var (
 	DefaultPureCep int64
 	// DefaultGiftCep holds the default value on creation for the "gift_cep" field.
 	DefaultGiftCep int64
+	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
+	DefaultSymbolID int64
+	// DefaultAmount holds the default value on creation for the "amount" field.
+	DefaultAmount int64
 	// DefaultIsTime holds the default value on creation for the "is_time" field.
 	DefaultIsTime bool
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
@@ -154,19 +196,19 @@ const DefaultStatus enums.MissionOrderStatus = "waiting"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.MissionOrderStatus) error {
 	switch s {
-	case "waiting", "canceled", "doing", "supplying", "failed", "succeed":
+	case "unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed":
 		return nil
 	default:
 		return fmt.Errorf("missionproduceorder: invalid enum value for status field: %q", s)
 	}
 }
 
-const DefaultType enums.MissionType = "txt2img"
+const DefaultType enums.MissionType = "unknown"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
 		return nil
 	default:
 		return fmt.Errorf("missionproduceorder: invalid enum value for type field: %q", _type)
@@ -216,6 +258,11 @@ func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionID, opts...).ToFunc()
 }
 
+// ByMissionProductionID orders the results by the mission_production_id field.
+func ByMissionProductionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMissionProductionID, opts...).ToFunc()
+}
+
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
@@ -229,6 +276,16 @@ func ByPureCep(opts ...sql.OrderTermOption) OrderOption {
 // ByGiftCep orders the results by the gift_cep field.
 func ByGiftCep(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGiftCep, opts...).ToFunc()
+}
+
+// BySymbolID orders the results by the symbol_id field.
+func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
+}
+
+// ByAmount orders the results by the amount field.
+func ByAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAmount, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.
@@ -277,6 +334,20 @@ func ByEarnBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByBillsCount orders the results by bills count.
+func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+	}
+}
+
+// ByBills orders the results by bills terms.
+func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByDeviceField orders the results by device field.
 func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -288,6 +359,13 @@ func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
 func ByMissionConsumeOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrderStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByMissionProductionField orders the results by mission_production field.
+func ByMissionProductionField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionProductionStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -304,6 +382,13 @@ func newEarnBillsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, EarnBillsTable, EarnBillsColumn),
 	)
 }
+func newBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+	)
+}
 func newDeviceStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -316,5 +401,12 @@ func newMissionConsumeOrderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionConsumeOrderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionConsumeOrderTable, MissionConsumeOrderColumn),
+	)
+}
+func newMissionProductionStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionProductionInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, MissionProductionTable, MissionProductionColumn),
 	)
 }

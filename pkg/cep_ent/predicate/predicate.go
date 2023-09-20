@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Bill is the predicate function for bill builders.
+type Bill func(*sql.Selector)
+
 // Campaign is the predicate function for campaign builders.
 type Campaign func(*sql.Selector)
 
@@ -72,6 +75,9 @@ type MissionKind func(*sql.Selector)
 // MissionProduceOrder is the predicate function for missionproduceorder builders.
 type MissionProduceOrder func(*sql.Selector)
 
+// MissionProduction is the predicate function for missionproduction builders.
+type MissionProduction func(*sql.Selector)
+
 // OutputLog is the predicate function for outputlog builders.
 type OutputLog func(*sql.Selector)
 
@@ -93,6 +99,12 @@ type RechargeCampaignRule func(*sql.Selector)
 // RechargeOrder is the predicate function for rechargeorder builders.
 type RechargeOrder func(*sql.Selector)
 
+// Symbol is the predicate function for symbol builders.
+type Symbol func(*sql.Selector)
+
+// TransferOrder is the predicate function for transferorder builders.
+type TransferOrder func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
@@ -104,3 +116,6 @@ type VXAccount func(*sql.Selector)
 
 // VXSocial is the predicate function for vxsocial builders.
 type VXSocial func(*sql.Selector)
+
+// Wallet is the predicate function for wallet builders.
+type Wallet func(*sql.Selector)

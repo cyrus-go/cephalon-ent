@@ -45,6 +45,8 @@ const (
 	EdgeUser = "user"
 	// EdgeRechargeOrders holds the string denoting the recharge_orders edge name in mutations.
 	EdgeRechargeOrders = "recharge_orders"
+	// EdgeTransferOrders holds the string denoting the transfer_orders edge name in mutations.
+	EdgeTransferOrders = "transfer_orders"
 	// Table holds the table name of the vxsocial in the database.
 	Table = "vx_socials"
 	// UserTable is the table that holds the user relation/edge.
@@ -61,6 +63,13 @@ const (
 	RechargeOrdersInverseTable = "recharge_orders"
 	// RechargeOrdersColumn is the table column denoting the recharge_orders relation/edge.
 	RechargeOrdersColumn = "social_id"
+	// TransferOrdersTable is the table that holds the transfer_orders relation/edge.
+	TransferOrdersTable = "transfer_orders"
+	// TransferOrdersInverseTable is the table name for the TransferOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "transferorder" package.
+	TransferOrdersInverseTable = "transfer_orders"
+	// TransferOrdersColumn is the table column denoting the transfer_orders relation/edge.
+	TransferOrdersColumn = "social_id"
 )
 
 // Columns holds all SQL columns for vxsocial fields.
@@ -240,6 +249,20 @@ func ByRechargeOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newRechargeOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTransferOrdersCount orders the results by transfer_orders count.
+func ByTransferOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTransferOrdersStep(), opts...)
+	}
+}
+
+// ByTransferOrders orders the results by transfer_orders terms.
+func ByTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -252,5 +275,12 @@ func newRechargeOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RechargeOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RechargeOrdersTable, RechargeOrdersColumn),
+	)
+}
+func newTransferOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransferOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransferOrdersTable, TransferOrdersColumn),
 	)
 }

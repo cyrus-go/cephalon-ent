@@ -16,7 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// EarnBill is the model entity for the EarnBill schema.
+// 分润流水，被 bill 取代
 type EarnBill struct {
 	config `json:"-"`
 	// ID of the ent.

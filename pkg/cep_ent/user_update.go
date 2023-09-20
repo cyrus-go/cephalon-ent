@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
@@ -18,17 +19,21 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -514,6 +519,111 @@ func (uu *UserUpdate) AddCampaignOrders(c ...*CampaignOrder) *UserUpdate {
 	return uu.AddCampaignOrderIDs(ids...)
 }
 
+// AddWalletIDs adds the "wallets" edge to the Wallet entity by IDs.
+func (uu *UserUpdate) AddWalletIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddWalletIDs(ids...)
+	return uu
+}
+
+// AddWallets adds the "wallets" edges to the Wallet entity.
+func (uu *UserUpdate) AddWallets(w ...*Wallet) *UserUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uu.AddWalletIDs(ids...)
+}
+
+// AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
+func (uu *UserUpdate) AddIncomeBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddIncomeBillIDs(ids...)
+	return uu
+}
+
+// AddIncomeBills adds the "income_bills" edges to the Bill entity.
+func (uu *UserUpdate) AddIncomeBills(b ...*Bill) *UserUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uu.AddIncomeBillIDs(ids...)
+}
+
+// AddOutcomeBillIDs adds the "outcome_bills" edge to the Bill entity by IDs.
+func (uu *UserUpdate) AddOutcomeBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddOutcomeBillIDs(ids...)
+	return uu
+}
+
+// AddOutcomeBills adds the "outcome_bills" edges to the Bill entity.
+func (uu *UserUpdate) AddOutcomeBills(b ...*Bill) *UserUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uu.AddOutcomeBillIDs(ids...)
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (uu *UserUpdate) AddMissionProductionIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddMissionProductionIDs(ids...)
+	return uu
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (uu *UserUpdate) AddMissionProductions(m ...*MissionProduction) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddMissionProductionIDs(ids...)
+}
+
+// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
+func (uu *UserUpdate) AddMissionIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddMissionIDs(ids...)
+	return uu
+}
+
+// AddMissions adds the "missions" edges to the Mission entity.
+func (uu *UserUpdate) AddMissions(m ...*Mission) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddMissionIDs(ids...)
+}
+
+// AddIncomeTransferOrderIDs adds the "income_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uu *UserUpdate) AddIncomeTransferOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddIncomeTransferOrderIDs(ids...)
+	return uu
+}
+
+// AddIncomeTransferOrders adds the "income_transfer_orders" edges to the TransferOrder entity.
+func (uu *UserUpdate) AddIncomeTransferOrders(t ...*TransferOrder) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddIncomeTransferOrderIDs(ids...)
+}
+
+// AddOutcomeTransferOrderIDs adds the "outcome_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uu *UserUpdate) AddOutcomeTransferOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddOutcomeTransferOrderIDs(ids...)
+	return uu
+}
+
+// AddOutcomeTransferOrders adds the "outcome_transfer_orders" edges to the TransferOrder entity.
+func (uu *UserUpdate) AddOutcomeTransferOrders(t ...*TransferOrder) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddOutcomeTransferOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -850,6 +960,153 @@ func (uu *UserUpdate) RemoveCampaignOrders(c ...*CampaignOrder) *UserUpdate {
 		ids[i] = c[i].ID
 	}
 	return uu.RemoveCampaignOrderIDs(ids...)
+}
+
+// ClearWallets clears all "wallets" edges to the Wallet entity.
+func (uu *UserUpdate) ClearWallets() *UserUpdate {
+	uu.mutation.ClearWallets()
+	return uu
+}
+
+// RemoveWalletIDs removes the "wallets" edge to Wallet entities by IDs.
+func (uu *UserUpdate) RemoveWalletIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveWalletIDs(ids...)
+	return uu
+}
+
+// RemoveWallets removes "wallets" edges to Wallet entities.
+func (uu *UserUpdate) RemoveWallets(w ...*Wallet) *UserUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uu.RemoveWalletIDs(ids...)
+}
+
+// ClearIncomeBills clears all "income_bills" edges to the Bill entity.
+func (uu *UserUpdate) ClearIncomeBills() *UserUpdate {
+	uu.mutation.ClearIncomeBills()
+	return uu
+}
+
+// RemoveIncomeBillIDs removes the "income_bills" edge to Bill entities by IDs.
+func (uu *UserUpdate) RemoveIncomeBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveIncomeBillIDs(ids...)
+	return uu
+}
+
+// RemoveIncomeBills removes "income_bills" edges to Bill entities.
+func (uu *UserUpdate) RemoveIncomeBills(b ...*Bill) *UserUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uu.RemoveIncomeBillIDs(ids...)
+}
+
+// ClearOutcomeBills clears all "outcome_bills" edges to the Bill entity.
+func (uu *UserUpdate) ClearOutcomeBills() *UserUpdate {
+	uu.mutation.ClearOutcomeBills()
+	return uu
+}
+
+// RemoveOutcomeBillIDs removes the "outcome_bills" edge to Bill entities by IDs.
+func (uu *UserUpdate) RemoveOutcomeBillIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveOutcomeBillIDs(ids...)
+	return uu
+}
+
+// RemoveOutcomeBills removes "outcome_bills" edges to Bill entities.
+func (uu *UserUpdate) RemoveOutcomeBills(b ...*Bill) *UserUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uu.RemoveOutcomeBillIDs(ids...)
+}
+
+// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
+func (uu *UserUpdate) ClearMissionProductions() *UserUpdate {
+	uu.mutation.ClearMissionProductions()
+	return uu
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
+func (uu *UserUpdate) RemoveMissionProductionIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveMissionProductionIDs(ids...)
+	return uu
+}
+
+// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
+func (uu *UserUpdate) RemoveMissionProductions(m ...*MissionProduction) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveMissionProductionIDs(ids...)
+}
+
+// ClearMissions clears all "missions" edges to the Mission entity.
+func (uu *UserUpdate) ClearMissions() *UserUpdate {
+	uu.mutation.ClearMissions()
+	return uu
+}
+
+// RemoveMissionIDs removes the "missions" edge to Mission entities by IDs.
+func (uu *UserUpdate) RemoveMissionIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveMissionIDs(ids...)
+	return uu
+}
+
+// RemoveMissions removes "missions" edges to Mission entities.
+func (uu *UserUpdate) RemoveMissions(m ...*Mission) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveMissionIDs(ids...)
+}
+
+// ClearIncomeTransferOrders clears all "income_transfer_orders" edges to the TransferOrder entity.
+func (uu *UserUpdate) ClearIncomeTransferOrders() *UserUpdate {
+	uu.mutation.ClearIncomeTransferOrders()
+	return uu
+}
+
+// RemoveIncomeTransferOrderIDs removes the "income_transfer_orders" edge to TransferOrder entities by IDs.
+func (uu *UserUpdate) RemoveIncomeTransferOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveIncomeTransferOrderIDs(ids...)
+	return uu
+}
+
+// RemoveIncomeTransferOrders removes "income_transfer_orders" edges to TransferOrder entities.
+func (uu *UserUpdate) RemoveIncomeTransferOrders(t ...*TransferOrder) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveIncomeTransferOrderIDs(ids...)
+}
+
+// ClearOutcomeTransferOrders clears all "outcome_transfer_orders" edges to the TransferOrder entity.
+func (uu *UserUpdate) ClearOutcomeTransferOrders() *UserUpdate {
+	uu.mutation.ClearOutcomeTransferOrders()
+	return uu
+}
+
+// RemoveOutcomeTransferOrderIDs removes the "outcome_transfer_orders" edge to TransferOrder entities by IDs.
+func (uu *UserUpdate) RemoveOutcomeTransferOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveOutcomeTransferOrderIDs(ids...)
+	return uu
+}
+
+// RemoveOutcomeTransferOrders removes "outcome_transfer_orders" edges to TransferOrder entities.
+func (uu *UserUpdate) RemoveOutcomeTransferOrders(t ...*TransferOrder) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveOutcomeTransferOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1720,6 +1977,321 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.WalletsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedWalletsIDs(); len(nodes) > 0 && !uu.mutation.WalletsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.WalletsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.IncomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedIncomeBillsIDs(); len(nodes) > 0 && !uu.mutation.IncomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.IncomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.OutcomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOutcomeBillsIDs(); len(nodes) > 0 && !uu.mutation.OutcomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OutcomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !uu.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedMissionsIDs(); len(nodes) > 0 && !uu.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.MissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.IncomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedIncomeTransferOrdersIDs(); len(nodes) > 0 && !uu.mutation.IncomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.IncomeTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.OutcomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOutcomeTransferOrdersIDs(); len(nodes) > 0 && !uu.mutation.OutcomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OutcomeTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -2210,6 +2782,111 @@ func (uuo *UserUpdateOne) AddCampaignOrders(c ...*CampaignOrder) *UserUpdateOne 
 	return uuo.AddCampaignOrderIDs(ids...)
 }
 
+// AddWalletIDs adds the "wallets" edge to the Wallet entity by IDs.
+func (uuo *UserUpdateOne) AddWalletIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddWalletIDs(ids...)
+	return uuo
+}
+
+// AddWallets adds the "wallets" edges to the Wallet entity.
+func (uuo *UserUpdateOne) AddWallets(w ...*Wallet) *UserUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uuo.AddWalletIDs(ids...)
+}
+
+// AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
+func (uuo *UserUpdateOne) AddIncomeBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddIncomeBillIDs(ids...)
+	return uuo
+}
+
+// AddIncomeBills adds the "income_bills" edges to the Bill entity.
+func (uuo *UserUpdateOne) AddIncomeBills(b ...*Bill) *UserUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uuo.AddIncomeBillIDs(ids...)
+}
+
+// AddOutcomeBillIDs adds the "outcome_bills" edge to the Bill entity by IDs.
+func (uuo *UserUpdateOne) AddOutcomeBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddOutcomeBillIDs(ids...)
+	return uuo
+}
+
+// AddOutcomeBills adds the "outcome_bills" edges to the Bill entity.
+func (uuo *UserUpdateOne) AddOutcomeBills(b ...*Bill) *UserUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uuo.AddOutcomeBillIDs(ids...)
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (uuo *UserUpdateOne) AddMissionProductionIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddMissionProductionIDs(ids...)
+	return uuo
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (uuo *UserUpdateOne) AddMissionProductions(m ...*MissionProduction) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddMissionProductionIDs(ids...)
+}
+
+// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
+func (uuo *UserUpdateOne) AddMissionIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddMissionIDs(ids...)
+	return uuo
+}
+
+// AddMissions adds the "missions" edges to the Mission entity.
+func (uuo *UserUpdateOne) AddMissions(m ...*Mission) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddMissionIDs(ids...)
+}
+
+// AddIncomeTransferOrderIDs adds the "income_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uuo *UserUpdateOne) AddIncomeTransferOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddIncomeTransferOrderIDs(ids...)
+	return uuo
+}
+
+// AddIncomeTransferOrders adds the "income_transfer_orders" edges to the TransferOrder entity.
+func (uuo *UserUpdateOne) AddIncomeTransferOrders(t ...*TransferOrder) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddIncomeTransferOrderIDs(ids...)
+}
+
+// AddOutcomeTransferOrderIDs adds the "outcome_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uuo *UserUpdateOne) AddOutcomeTransferOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddOutcomeTransferOrderIDs(ids...)
+	return uuo
+}
+
+// AddOutcomeTransferOrders adds the "outcome_transfer_orders" edges to the TransferOrder entity.
+func (uuo *UserUpdateOne) AddOutcomeTransferOrders(t ...*TransferOrder) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddOutcomeTransferOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -2546,6 +3223,153 @@ func (uuo *UserUpdateOne) RemoveCampaignOrders(c ...*CampaignOrder) *UserUpdateO
 		ids[i] = c[i].ID
 	}
 	return uuo.RemoveCampaignOrderIDs(ids...)
+}
+
+// ClearWallets clears all "wallets" edges to the Wallet entity.
+func (uuo *UserUpdateOne) ClearWallets() *UserUpdateOne {
+	uuo.mutation.ClearWallets()
+	return uuo
+}
+
+// RemoveWalletIDs removes the "wallets" edge to Wallet entities by IDs.
+func (uuo *UserUpdateOne) RemoveWalletIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveWalletIDs(ids...)
+	return uuo
+}
+
+// RemoveWallets removes "wallets" edges to Wallet entities.
+func (uuo *UserUpdateOne) RemoveWallets(w ...*Wallet) *UserUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uuo.RemoveWalletIDs(ids...)
+}
+
+// ClearIncomeBills clears all "income_bills" edges to the Bill entity.
+func (uuo *UserUpdateOne) ClearIncomeBills() *UserUpdateOne {
+	uuo.mutation.ClearIncomeBills()
+	return uuo
+}
+
+// RemoveIncomeBillIDs removes the "income_bills" edge to Bill entities by IDs.
+func (uuo *UserUpdateOne) RemoveIncomeBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveIncomeBillIDs(ids...)
+	return uuo
+}
+
+// RemoveIncomeBills removes "income_bills" edges to Bill entities.
+func (uuo *UserUpdateOne) RemoveIncomeBills(b ...*Bill) *UserUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uuo.RemoveIncomeBillIDs(ids...)
+}
+
+// ClearOutcomeBills clears all "outcome_bills" edges to the Bill entity.
+func (uuo *UserUpdateOne) ClearOutcomeBills() *UserUpdateOne {
+	uuo.mutation.ClearOutcomeBills()
+	return uuo
+}
+
+// RemoveOutcomeBillIDs removes the "outcome_bills" edge to Bill entities by IDs.
+func (uuo *UserUpdateOne) RemoveOutcomeBillIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveOutcomeBillIDs(ids...)
+	return uuo
+}
+
+// RemoveOutcomeBills removes "outcome_bills" edges to Bill entities.
+func (uuo *UserUpdateOne) RemoveOutcomeBills(b ...*Bill) *UserUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uuo.RemoveOutcomeBillIDs(ids...)
+}
+
+// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
+func (uuo *UserUpdateOne) ClearMissionProductions() *UserUpdateOne {
+	uuo.mutation.ClearMissionProductions()
+	return uuo
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
+func (uuo *UserUpdateOne) RemoveMissionProductionIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveMissionProductionIDs(ids...)
+	return uuo
+}
+
+// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
+func (uuo *UserUpdateOne) RemoveMissionProductions(m ...*MissionProduction) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveMissionProductionIDs(ids...)
+}
+
+// ClearMissions clears all "missions" edges to the Mission entity.
+func (uuo *UserUpdateOne) ClearMissions() *UserUpdateOne {
+	uuo.mutation.ClearMissions()
+	return uuo
+}
+
+// RemoveMissionIDs removes the "missions" edge to Mission entities by IDs.
+func (uuo *UserUpdateOne) RemoveMissionIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveMissionIDs(ids...)
+	return uuo
+}
+
+// RemoveMissions removes "missions" edges to Mission entities.
+func (uuo *UserUpdateOne) RemoveMissions(m ...*Mission) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveMissionIDs(ids...)
+}
+
+// ClearIncomeTransferOrders clears all "income_transfer_orders" edges to the TransferOrder entity.
+func (uuo *UserUpdateOne) ClearIncomeTransferOrders() *UserUpdateOne {
+	uuo.mutation.ClearIncomeTransferOrders()
+	return uuo
+}
+
+// RemoveIncomeTransferOrderIDs removes the "income_transfer_orders" edge to TransferOrder entities by IDs.
+func (uuo *UserUpdateOne) RemoveIncomeTransferOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveIncomeTransferOrderIDs(ids...)
+	return uuo
+}
+
+// RemoveIncomeTransferOrders removes "income_transfer_orders" edges to TransferOrder entities.
+func (uuo *UserUpdateOne) RemoveIncomeTransferOrders(t ...*TransferOrder) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveIncomeTransferOrderIDs(ids...)
+}
+
+// ClearOutcomeTransferOrders clears all "outcome_transfer_orders" edges to the TransferOrder entity.
+func (uuo *UserUpdateOne) ClearOutcomeTransferOrders() *UserUpdateOne {
+	uuo.mutation.ClearOutcomeTransferOrders()
+	return uuo
+}
+
+// RemoveOutcomeTransferOrderIDs removes the "outcome_transfer_orders" edge to TransferOrder entities by IDs.
+func (uuo *UserUpdateOne) RemoveOutcomeTransferOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveOutcomeTransferOrderIDs(ids...)
+	return uuo
+}
+
+// RemoveOutcomeTransferOrders removes "outcome_transfer_orders" edges to TransferOrder entities.
+func (uuo *UserUpdateOne) RemoveOutcomeTransferOrders(t ...*TransferOrder) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveOutcomeTransferOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -3439,6 +4263,321 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.WalletsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedWalletsIDs(); len(nodes) > 0 && !uuo.mutation.WalletsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.WalletsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.IncomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedIncomeBillsIDs(); len(nodes) > 0 && !uuo.mutation.IncomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.IncomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OutcomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOutcomeBillsIDs(); len(nodes) > 0 && !uuo.mutation.OutcomeBillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OutcomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !uuo.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedMissionsIDs(); len(nodes) > 0 && !uuo.mutation.MissionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.MissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.IncomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedIncomeTransferOrdersIDs(); len(nodes) > 0 && !uuo.mutation.IncomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.IncomeTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OutcomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOutcomeTransferOrdersIDs(); len(nodes) > 0 && !uuo.mutation.OutcomeTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OutcomeTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

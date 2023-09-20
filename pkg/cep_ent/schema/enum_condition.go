@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 )
 
@@ -26,5 +27,11 @@ func (EnumCondition) Edges() []ent.Edge {
 func (EnumCondition) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (EnumCondition) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("任务类型枚举值对应表，计划用代码实现取代"),
 	}
 }

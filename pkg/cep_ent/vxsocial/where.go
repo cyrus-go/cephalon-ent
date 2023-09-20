@@ -791,6 +791,29 @@ func HasRechargeOrdersWith(preds ...predicate.RechargeOrder) predicate.VXSocial 
 	})
 }
 
+// HasTransferOrders applies the HasEdge predicate on the "transfer_orders" edge.
+func HasTransferOrders() predicate.VXSocial {
+	return predicate.VXSocial(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransferOrdersTable, TransferOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTransferOrdersWith applies the HasEdge predicate on the "transfer_orders" edge with a given conditions (other predicates).
+func HasTransferOrdersWith(preds ...predicate.TransferOrder) predicate.VXSocial {
+	return predicate.VXSocial(func(s *sql.Selector) {
+		step := newTransferOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.VXSocial) predicate.VXSocial {
 	return predicate.VXSocial(sql.AndPredicates(predicates...))

@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// ProfitAccount is the model entity for the ProfitAccount schema.
+// 分润账户，被 wallets 和 symbols 取代
 type ProfitAccount struct {
 	config `json:"-"`
 	// ID of the ent.

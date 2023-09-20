@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -30,5 +31,11 @@ func (ProfitSetting) Edges() []ent.Edge {
 func (ProfitSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (ProfitSetting) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("任务分润比例设置，属于用户的信息，所有人默认 75%"),
 	}
 }

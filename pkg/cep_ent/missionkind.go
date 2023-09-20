@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// MissionKind is the model entity for the MissionKind schema.
+// 任务种类，任务类型的抽象层，记录了任务计费类型等信息
 type MissionKind struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -44,9 +44,11 @@ type MissionKind struct {
 type MissionKindEdges struct {
 	// DeviceGpuMissions holds the value of the device_gpu_missions edge.
 	DeviceGpuMissions []*DeviceGpuMission `json:"device_gpu_missions,omitempty"`
+	// Missions holds the value of the missions edge.
+	Missions []*Mission `json:"missions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // DeviceGpuMissionsOrErr returns the DeviceGpuMissions value or an error if the edge
@@ -56,6 +58,15 @@ func (e MissionKindEdges) DeviceGpuMissionsOrErr() ([]*DeviceGpuMission, error) 
 		return e.DeviceGpuMissions, nil
 	}
 	return nil, &NotLoadedError{edge: "device_gpu_missions"}
+}
+
+// MissionsOrErr returns the Missions value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionKindEdges) MissionsOrErr() ([]*Mission, error) {
+	if e.loadedTypes[1] {
+		return e.Missions, nil
+	}
+	return nil, &NotLoadedError{edge: "missions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -154,6 +165,11 @@ func (mk *MissionKind) Value(name string) (ent.Value, error) {
 // QueryDeviceGpuMissions queries the "device_gpu_missions" edge of the MissionKind entity.
 func (mk *MissionKind) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
 	return NewMissionKindClient(mk.config).QueryDeviceGpuMissions(mk)
+}
+
+// QueryMissions queries the "missions" edge of the MissionKind entity.
+func (mk *MissionKind) QueryMissions() *MissionQuery {
+	return NewMissionKindClient(mk.config).QueryMissions(mk)
 }
 
 // Update returns a builder for updating this MissionKind.

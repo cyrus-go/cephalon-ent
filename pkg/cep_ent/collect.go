@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// Collect is the model entity for the Collect schema.
+// 用户的图片收藏
 type Collect struct {
 	config `json:"-"`
 	// ID of the ent.

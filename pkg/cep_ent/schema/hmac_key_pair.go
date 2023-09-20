@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -38,5 +39,11 @@ func (HmacKeyPair) Mixin() []ent.Mixin {
 func (HmacKeyPair) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("key"),
+	}
+}
+
+func (HmacKeyPair) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("密钥对，由于必须有用户才能使用密钥对，所以直接并入 user 的 key 和 secret 两个字段，废弃该表"),
 	}
 }

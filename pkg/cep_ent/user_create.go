@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
@@ -18,16 +19,20 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -528,6 +533,111 @@ func (uc *UserCreate) AddCampaignOrders(c ...*CampaignOrder) *UserCreate {
 		ids[i] = c[i].ID
 	}
 	return uc.AddCampaignOrderIDs(ids...)
+}
+
+// AddWalletIDs adds the "wallets" edge to the Wallet entity by IDs.
+func (uc *UserCreate) AddWalletIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddWalletIDs(ids...)
+	return uc
+}
+
+// AddWallets adds the "wallets" edges to the Wallet entity.
+func (uc *UserCreate) AddWallets(w ...*Wallet) *UserCreate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uc.AddWalletIDs(ids...)
+}
+
+// AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
+func (uc *UserCreate) AddIncomeBillIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddIncomeBillIDs(ids...)
+	return uc
+}
+
+// AddIncomeBills adds the "income_bills" edges to the Bill entity.
+func (uc *UserCreate) AddIncomeBills(b ...*Bill) *UserCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uc.AddIncomeBillIDs(ids...)
+}
+
+// AddOutcomeBillIDs adds the "outcome_bills" edge to the Bill entity by IDs.
+func (uc *UserCreate) AddOutcomeBillIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddOutcomeBillIDs(ids...)
+	return uc
+}
+
+// AddOutcomeBills adds the "outcome_bills" edges to the Bill entity.
+func (uc *UserCreate) AddOutcomeBills(b ...*Bill) *UserCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return uc.AddOutcomeBillIDs(ids...)
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (uc *UserCreate) AddMissionProductionIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddMissionProductionIDs(ids...)
+	return uc
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (uc *UserCreate) AddMissionProductions(m ...*MissionProduction) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddMissionProductionIDs(ids...)
+}
+
+// AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
+func (uc *UserCreate) AddMissionIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddMissionIDs(ids...)
+	return uc
+}
+
+// AddMissions adds the "missions" edges to the Mission entity.
+func (uc *UserCreate) AddMissions(m ...*Mission) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddMissionIDs(ids...)
+}
+
+// AddIncomeTransferOrderIDs adds the "income_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uc *UserCreate) AddIncomeTransferOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddIncomeTransferOrderIDs(ids...)
+	return uc
+}
+
+// AddIncomeTransferOrders adds the "income_transfer_orders" edges to the TransferOrder entity.
+func (uc *UserCreate) AddIncomeTransferOrders(t ...*TransferOrder) *UserCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddIncomeTransferOrderIDs(ids...)
+}
+
+// AddOutcomeTransferOrderIDs adds the "outcome_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uc *UserCreate) AddOutcomeTransferOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddOutcomeTransferOrderIDs(ids...)
+	return uc
+}
+
+// AddOutcomeTransferOrders adds the "outcome_transfer_orders" edges to the TransferOrder entity.
+func (uc *UserCreate) AddOutcomeTransferOrders(t ...*TransferOrder) *UserCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddOutcomeTransferOrderIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1057,6 +1167,118 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(campaignorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.WalletsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WalletsTable,
+			Columns: []string{user.WalletsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.IncomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeBillsTable,
+			Columns: []string{user.IncomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OutcomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeBillsTable,
+			Columns: []string{user.OutcomeBillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionProductionsTable,
+			Columns: []string{user.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.MissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionsTable,
+			Columns: []string{user.MissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.IncomeTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeTransferOrdersTable,
+			Columns: []string{user.IncomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OutcomeTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OutcomeTransferOrdersTable,
+			Columns: []string{user.OutcomeTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

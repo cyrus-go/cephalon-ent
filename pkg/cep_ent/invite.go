@@ -14,7 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// Invite is the model entity for the Invite schema.
+// 邀请码表，可横行拓展，为邀请码赋予额外功能；具备第一条数据，默认邀请码，id 为 1
 type Invite struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -55,9 +55,11 @@ type InviteEdges struct {
 	User *User `json:"user,omitempty"`
 	// Campaign holds the value of the campaign edge.
 	Campaign *Campaign `json:"campaign,omitempty"`
+	// Bills holds the value of the bills edge.
+	Bills []*Bill `json:"bills,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -84,6 +86,15 @@ func (e InviteEdges) CampaignOrErr() (*Campaign, error) {
 		return e.Campaign, nil
 	}
 	return nil, &NotLoadedError{edge: "campaign"}
+}
+
+// BillsOrErr returns the Bills value or an error if the edge
+// was not loaded in eager-loading.
+func (e InviteEdges) BillsOrErr() ([]*Bill, error) {
+	if e.loadedTypes[2] {
+		return e.Bills, nil
+	}
+	return nil, &NotLoadedError{edge: "bills"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -211,6 +222,11 @@ func (i *Invite) QueryUser() *UserQuery {
 // QueryCampaign queries the "campaign" edge of the Invite entity.
 func (i *Invite) QueryCampaign() *CampaignQuery {
 	return NewInviteClient(i.config).QueryCampaign(i)
+}
+
+// QueryBills queries the "bills" edge of the Invite entity.
+func (i *Invite) QueryBills() *BillQuery {
+	return NewInviteClient(i.config).QueryBills(i)
 }
 
 // Update returns a builder for updating this Invite.

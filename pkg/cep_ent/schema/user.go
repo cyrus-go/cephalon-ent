@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -47,6 +48,13 @@ func (User) Edges() []ent.Edge {
 		edge.To("children", User.Type).From("parent").Unique().Required().Field("parent_id"),
 		edge.To("invites", Invite.Type),
 		edge.To("campaign_orders", CampaignOrder.Type),
+		edge.To("wallets", Wallet.Type),
+		edge.To("income_bills", Bill.Type),
+		edge.To("outcome_bills", Bill.Type),
+		edge.To("mission_productions", MissionProduction.Type),
+		edge.To("missions", Mission.Type),
+		edge.To("income_transfer_orders", TransferOrder.Type),
+		edge.To("outcome_transfer_orders", TransferOrder.Type),
 	}
 }
 
@@ -54,5 +62,11 @@ func (User) Edges() []ent.Edge {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (User) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("用户表"),
 	}
 }

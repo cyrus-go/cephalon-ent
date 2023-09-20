@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// MissionBatch is the model entity for the MissionBatch schema.
+// 任务批次，为同一次性创建的多个任务赋予关系记录
 type MissionBatch struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -44,9 +44,11 @@ type MissionBatchEdges struct {
 	User *User `json:"user,omitempty"`
 	// MissionConsumeOrders holds the value of the mission_consume_orders edge.
 	MissionConsumeOrders []*MissionConsumeOrder `json:"mission_consume_orders,omitempty"`
+	// Missions holds the value of the missions edge.
+	Missions []*Mission `json:"missions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -69,6 +71,15 @@ func (e MissionBatchEdges) MissionConsumeOrdersOrErr() ([]*MissionConsumeOrder, 
 		return e.MissionConsumeOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_consume_orders"}
+}
+
+// MissionsOrErr returns the Missions value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionBatchEdges) MissionsOrErr() ([]*Mission, error) {
+	if e.loadedTypes[2] {
+		return e.Missions, nil
+	}
+	return nil, &NotLoadedError{edge: "missions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -166,6 +177,11 @@ func (mb *MissionBatch) QueryUser() *UserQuery {
 // QueryMissionConsumeOrders queries the "mission_consume_orders" edge of the MissionBatch entity.
 func (mb *MissionBatch) QueryMissionConsumeOrders() *MissionConsumeOrderQuery {
 	return NewMissionBatchClient(mb.config).QueryMissionConsumeOrders(mb)
+}
+
+// QueryMissions queries the "missions" edge of the MissionBatch entity.
+func (mb *MissionBatch) QueryMissions() *MissionQuery {
+	return NewMissionBatchClient(mb.config).QueryMissions(mb)
 }
 
 // Update returns a builder for updating this MissionBatch.

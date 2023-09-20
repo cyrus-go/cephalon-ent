@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
 )
 
-// EnumMissionStatus is the model entity for the EnumMissionStatus schema.
+// 任务状态枚举值对应表，计划废弃，代码中实现
 type EnumMissionStatus struct {
 	config `json:"-"`
 	// ID of the ent.

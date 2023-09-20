@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -33,5 +34,11 @@ func (ProfitAccount) Edges() []ent.Edge {
 func (ProfitAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (ProfitAccount) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("分润账户，被 wallets 和 symbols 取代"),
 	}
 }

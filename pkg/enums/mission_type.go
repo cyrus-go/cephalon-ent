@@ -3,6 +3,7 @@ package enums
 type MissionType string
 
 const (
+	MissionTypeUnknown            MissionType = "unknown"
 	MissionTypeSdTime             MissionType = "sd_time"
 	MissionTypeSdTxt2Img          MissionType = "txt2img"
 	MissionTypeSdImg2Img          MissionType = "img2img"
@@ -16,6 +17,7 @@ const (
 
 func (obj MissionType) Values() []string {
 	return []string{
+		string(MissionTypeUnknown),
 		string(MissionTypeSdTime),
 		string(MissionTypeSdTxt2Img),
 		string(MissionTypeSdImg2Img),

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -32,6 +33,7 @@ func (Invite) Edges() []ent.Edge {
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("invites").Field("user_id").Unique().Required(),
 		edge.From("campaign", Campaign.Type).Ref("invites").Field("campaign_id").Unique().Required(),
+		edge.To("bills", Bill.Type),
 	}
 }
 
@@ -47,5 +49,10 @@ func (Invite) Indexes() []ent.Index {
 func (Invite) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+func (Invite) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("邀请码表，可横行拓展，为邀请码赋予额外功能；具备第一条数据，默认邀请码，id 为 1"),
 	}
 }

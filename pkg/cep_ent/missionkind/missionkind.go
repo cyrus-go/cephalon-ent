@@ -34,6 +34,8 @@ const (
 	FieldBillingType = "billing_type"
 	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
 	EdgeDeviceGpuMissions = "device_gpu_missions"
+	// EdgeMissions holds the string denoting the missions edge name in mutations.
+	EdgeMissions = "missions"
 	// Table holds the table name of the missionkind in the database.
 	Table = "mission_kinds"
 	// DeviceGpuMissionsTable is the table that holds the device_gpu_missions relation/edge.
@@ -43,6 +45,13 @@ const (
 	DeviceGpuMissionsInverseTable = "device_gpu_missions"
 	// DeviceGpuMissionsColumn is the table column denoting the device_gpu_missions relation/edge.
 	DeviceGpuMissionsColumn = "mission_kind_id"
+	// MissionsTable is the table that holds the missions relation/edge.
+	MissionsTable = "missions"
+	// MissionsInverseTable is the table name for the Mission entity.
+	// It exists in this package in order to avoid circular dependency with the "mission" package.
+	MissionsInverseTable = "missions"
+	// MissionsColumn is the table column denoting the missions relation/edge.
+	MissionsColumn = "mission_kind_id"
 )
 
 // Columns holds all SQL columns for missionkind fields.
@@ -85,36 +94,36 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultType enums.MissionType = "txt2img"
+const DefaultType enums.MissionType = "unknown"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
 		return nil
 	default:
 		return fmt.Errorf("missionkind: invalid enum value for type field: %q", _type)
 	}
 }
 
-const DefaultCategory enums.MissionCategory = "SD"
+const DefaultCategory enums.MissionCategory = "unknown"
 
 // CategoryValidator is a validator for the "category" field enum values. It is called by the builders before save.
 func CategoryValidator(c enums.MissionCategory) error {
 	switch c {
-	case "SD", "JP", "WT", "JP_DK":
+	case "unknown", "SD", "JP", "WT", "JP_DK":
 		return nil
 	default:
 		return fmt.Errorf("missionkind: invalid enum value for category field: %q", c)
 	}
 }
 
-const DefaultBillingType enums.MissionBillingType = "count"
+const DefaultBillingType enums.MissionBillingType = "unknown"
 
 // BillingTypeValidator is a validator for the "billing_type" field enum values. It is called by the builders before save.
 func BillingTypeValidator(bt enums.MissionBillingType) error {
 	switch bt {
-	case "time", "count", "hold", "volume":
+	case "unknown", "time", "count", "hold", "volume":
 		return nil
 	default:
 		return fmt.Errorf("missionkind: invalid enum value for billing_type field: %q", bt)
@@ -182,10 +191,31 @@ func ByDeviceGpuMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newDeviceGpuMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionsCount orders the results by missions count.
+func ByMissionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionsStep(), opts...)
+	}
+}
+
+// ByMissions orders the results by missions terms.
+func ByMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newDeviceGpuMissionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceGpuMissionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, DeviceGpuMissionsTable, DeviceGpuMissionsColumn),
+	)
+}
+func newMissionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionsTable, MissionsColumn),
 	)
 }

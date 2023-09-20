@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -39,5 +40,11 @@ func (FrpcInfo) Edges() []ent.Edge {
 func (FrpcInfo) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (FrpcInfo) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("fRPC 客户端端口分配情况"),
 	}
 }

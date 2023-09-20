@@ -3,14 +3,16 @@ package enums
 type MissionCategory string
 
 const (
-	MissionCategorySD   MissionCategory = "SD"
-	MissionCategoryJP   MissionCategory = "JP"
-	MissionCategoryWT   MissionCategory = "WT"
-	MissionCategoryJPDK MissionCategory = "JP_DK"
+	MissionCategoryUnknown MissionCategory = "unknown"
+	MissionCategorySD      MissionCategory = "SD"
+	MissionCategoryJP      MissionCategory = "JP"
+	MissionCategoryWT      MissionCategory = "WT"
+	MissionCategoryJPDK    MissionCategory = "JP_DK"
 )
 
 func (obj MissionCategory) Values() []string {
 	return []string{
+		string(MissionCategoryUnknown),
 		string(MissionCategorySD),
 		string(MissionCategoryJP),
 		string(MissionCategoryWT),

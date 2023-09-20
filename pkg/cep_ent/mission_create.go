@@ -13,8 +13,13 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -110,6 +115,20 @@ func (mc *MissionCreate) SetNillableType(et *enums.MissionType) *MissionCreate {
 	return mc
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (mc *MissionCreate) SetMissionKindID(i int64) *MissionCreate {
+	mc.mutation.SetMissionKindID(i)
+	return mc
+}
+
+// SetNillableMissionKindID sets the "mission_kind_id" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableMissionKindID(i *int64) *MissionCreate {
+	if i != nil {
+		mc.SetMissionKindID(*i)
+	}
+	return mc
+}
+
 // SetBody sets the "body" field.
 func (mc *MissionCreate) SetBody(s string) *MissionCreate {
 	mc.mutation.SetBody(s)
@@ -134,6 +153,20 @@ func (mc *MissionCreate) SetCallBackURL(s string) *MissionCreate {
 func (mc *MissionCreate) SetNillableCallBackURL(s *string) *MissionCreate {
 	if s != nil {
 		mc.SetCallBackURL(*s)
+	}
+	return mc
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (mc *MissionCreate) SetCallBackInfo(s string) *MissionCreate {
+	mc.mutation.SetCallBackInfo(s)
+	return mc
+}
+
+// SetNillableCallBackInfo sets the "call_back_info" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableCallBackInfo(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetCallBackInfo(*s)
 	}
 	return mc
 }
@@ -166,9 +199,37 @@ func (mc *MissionCreate) SetNillableResult(er *enums.MissionResult) *MissionCrea
 	return mc
 }
 
+// SetState sets the "state" field.
+func (mc *MissionCreate) SetState(es enums.MissionState) *MissionCreate {
+	mc.mutation.SetState(es)
+	return mc
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableState(es *enums.MissionState) *MissionCreate {
+	if es != nil {
+		mc.SetState(*es)
+	}
+	return mc
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (mc *MissionCreate) SetResultUrls(s []string) *MissionCreate {
 	mc.mutation.SetResultUrls(s)
+	return mc
+}
+
+// SetUrls sets the "urls" field.
+func (mc *MissionCreate) SetUrls(s string) *MissionCreate {
+	mc.mutation.SetUrls(s)
+	return mc
+}
+
+// SetNillableUrls sets the "urls" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableUrls(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetUrls(*s)
+	}
 	return mc
 }
 
@@ -182,6 +243,34 @@ func (mc *MissionCreate) SetKeyPairID(i int64) *MissionCreate {
 func (mc *MissionCreate) SetNillableKeyPairID(i *int64) *MissionCreate {
 	if i != nil {
 		mc.SetKeyPairID(*i)
+	}
+	return mc
+}
+
+// SetUserID sets the "user_id" field.
+func (mc *MissionCreate) SetUserID(i int64) *MissionCreate {
+	mc.mutation.SetUserID(i)
+	return mc
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableUserID(i *int64) *MissionCreate {
+	if i != nil {
+		mc.SetUserID(*i)
+	}
+	return mc
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (mc *MissionCreate) SetMissionBatchID(i int64) *MissionCreate {
+	mc.mutation.SetMissionBatchID(i)
+	return mc
+}
+
+// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableMissionBatchID(i *int64) *MissionCreate {
+	if i != nil {
+		mc.SetMissionBatchID(*i)
 	}
 	return mc
 }
@@ -340,6 +429,16 @@ func (mc *MissionCreate) SetNillableID(i *int64) *MissionCreate {
 	return mc
 }
 
+// SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
+func (mc *MissionCreate) SetMissionKind(m *MissionKind) *MissionCreate {
+	return mc.SetMissionKindID(m.ID)
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (mc *MissionCreate) SetUser(u *User) *MissionCreate {
+	return mc.SetUserID(u.ID)
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mc *MissionCreate) AddMissionKeyPairIDs(ids ...int64) *MissionCreate {
 	mc.mutation.AddMissionKeyPairIDs(ids...)
@@ -377,6 +476,41 @@ func (mc *MissionCreate) SetNillableMissionConsumeOrderID(id *int64) *MissionCre
 // SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mc *MissionCreate) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionCreate {
 	return mc.SetMissionConsumeOrderID(m.ID)
+}
+
+// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
+func (mc *MissionCreate) AddMissionProduceOrderIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddMissionProduceOrderIDs(ids...)
+	return mc
+}
+
+// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
+func (mc *MissionCreate) AddMissionProduceOrders(m ...*MissionProduceOrder) *MissionCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mc.AddMissionProduceOrderIDs(ids...)
+}
+
+// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
+func (mc *MissionCreate) SetMissionBatch(m *MissionBatch) *MissionCreate {
+	return mc.SetMissionBatchID(m.ID)
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (mc *MissionCreate) AddMissionProductionIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddMissionProductionIDs(ids...)
+	return mc
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (mc *MissionCreate) AddMissionProductions(m ...*MissionProduction) *MissionCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mc.AddMissionProductionIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -438,6 +572,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultType
 		mc.mutation.SetType(v)
 	}
+	if _, ok := mc.mutation.MissionKindID(); !ok {
+		v := mission.DefaultMissionKindID
+		mc.mutation.SetMissionKindID(v)
+	}
 	if _, ok := mc.mutation.Body(); !ok {
 		v := mission.DefaultBody
 		mc.mutation.SetBody(v)
@@ -454,9 +592,25 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultResult
 		mc.mutation.SetResult(v)
 	}
+	if _, ok := mc.mutation.State(); !ok {
+		v := mission.DefaultState
+		mc.mutation.SetState(v)
+	}
+	if _, ok := mc.mutation.Urls(); !ok {
+		v := mission.DefaultUrls
+		mc.mutation.SetUrls(v)
+	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		v := mission.DefaultKeyPairID
 		mc.mutation.SetKeyPairID(v)
+	}
+	if _, ok := mc.mutation.UserID(); !ok {
+		v := mission.DefaultUserID
+		mc.mutation.SetUserID(v)
+	}
+	if _, ok := mc.mutation.MissionBatchID(); !ok {
+		v := mission.DefaultMissionBatchID
+		mc.mutation.SetMissionBatchID(v)
 	}
 	if _, ok := mc.mutation.MissionBatchNumber(); !ok {
 		v := mission.DefaultMissionBatchNumber
@@ -529,6 +683,9 @@ func (mc *MissionCreate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.type": %w`, err)}
 		}
 	}
+	if _, ok := mc.mutation.MissionKindID(); !ok {
+		return &ValidationError{Name: "mission_kind_id", err: errors.New(`cep_ent: missing required field "Mission.mission_kind_id"`)}
+	}
 	if _, ok := mc.mutation.Body(); !ok {
 		return &ValidationError{Name: "body", err: errors.New(`cep_ent: missing required field "Mission.body"`)}
 	}
@@ -551,8 +708,25 @@ func (mc *MissionCreate) check() error {
 			return &ValidationError{Name: "result", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.result": %w`, err)}
 		}
 	}
+	if _, ok := mc.mutation.State(); !ok {
+		return &ValidationError{Name: "state", err: errors.New(`cep_ent: missing required field "Mission.state"`)}
+	}
+	if v, ok := mc.mutation.State(); ok {
+		if err := mission.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.state": %w`, err)}
+		}
+	}
+	if _, ok := mc.mutation.Urls(); !ok {
+		return &ValidationError{Name: "urls", err: errors.New(`cep_ent: missing required field "Mission.urls"`)}
+	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair_id", err: errors.New(`cep_ent: missing required field "Mission.key_pair_id"`)}
+	}
+	if _, ok := mc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "Mission.user_id"`)}
+	}
+	if _, ok := mc.mutation.MissionBatchID(); !ok {
+		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "Mission.mission_batch_id"`)}
 	}
 	if _, ok := mc.mutation.MissionBatchNumber(); !ok {
 		return &ValidationError{Name: "mission_batch_number", err: errors.New(`cep_ent: missing required field "Mission.mission_batch_number"`)}
@@ -594,8 +768,17 @@ func (mc *MissionCreate) check() error {
 	if _, ok := mc.mutation.SecondHmacKey(); !ok {
 		return &ValidationError{Name: "second_hmac_key", err: errors.New(`cep_ent: missing required field "Mission.second_hmac_key"`)}
 	}
+	if _, ok := mc.mutation.MissionKindID(); !ok {
+		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
+	}
+	if _, ok := mc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Mission.user"`)}
+	}
 	if _, ok := mc.mutation.KeyPairID(); !ok {
 		return &ValidationError{Name: "key_pair", err: errors.New(`cep_ent: missing required edge "Mission.key_pair"`)}
+	}
+	if _, ok := mc.mutation.MissionBatchID(); !ok {
+		return &ValidationError{Name: "mission_batch", err: errors.New(`cep_ent: missing required edge "Mission.mission_batch"`)}
 	}
 	return nil
 }
@@ -662,6 +845,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_spec.SetField(mission.FieldCallBackURL, field.TypeString, value)
 		_node.CallBackURL = value
 	}
+	if value, ok := mc.mutation.CallBackInfo(); ok {
+		_spec.SetField(mission.FieldCallBackInfo, field.TypeString, value)
+		_node.CallBackInfo = &value
+	}
 	if value, ok := mc.mutation.Status(); ok {
 		_spec.SetField(mission.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
@@ -670,9 +857,17 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_spec.SetField(mission.FieldResult, field.TypeEnum, value)
 		_node.Result = value
 	}
+	if value, ok := mc.mutation.State(); ok {
+		_spec.SetField(mission.FieldState, field.TypeEnum, value)
+		_node.State = value
+	}
 	if value, ok := mc.mutation.ResultUrls(); ok {
 		_spec.SetField(mission.FieldResultUrls, field.TypeJSON, value)
 		_node.ResultUrls = value
+	}
+	if value, ok := mc.mutation.Urls(); ok {
+		_spec.SetField(mission.FieldUrls, field.TypeString, value)
+		_node.Urls = value
 	}
 	if value, ok := mc.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(mission.FieldMissionBatchNumber, field.TypeString, value)
@@ -713,6 +908,40 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.SecondHmacKey(); ok {
 		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
 		_node.SecondHmacKey = value
+	}
+	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionKindTable,
+			Columns: []string{mission.MissionKindColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionKindID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.UserTable,
+			Columns: []string{mission.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -756,6 +985,55 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionBatchIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionBatchTable,
+			Columns: []string{mission.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionBatchID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -887,6 +1165,18 @@ func (u *MissionUpsert) UpdateType() *MissionUpsert {
 	return u
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (u *MissionUpsert) SetMissionKindID(v int64) *MissionUpsert {
+	u.Set(mission.FieldMissionKindID, v)
+	return u
+}
+
+// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateMissionKindID() *MissionUpsert {
+	u.SetExcluded(mission.FieldMissionKindID)
+	return u
+}
+
 // SetBody sets the "body" field.
 func (u *MissionUpsert) SetBody(v string) *MissionUpsert {
 	u.Set(mission.FieldBody, v)
@@ -908,6 +1198,24 @@ func (u *MissionUpsert) SetCallBackURL(v string) *MissionUpsert {
 // UpdateCallBackURL sets the "call_back_url" field to the value that was provided on create.
 func (u *MissionUpsert) UpdateCallBackURL() *MissionUpsert {
 	u.SetExcluded(mission.FieldCallBackURL)
+	return u
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (u *MissionUpsert) SetCallBackInfo(v string) *MissionUpsert {
+	u.Set(mission.FieldCallBackInfo, v)
+	return u
+}
+
+// UpdateCallBackInfo sets the "call_back_info" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateCallBackInfo() *MissionUpsert {
+	u.SetExcluded(mission.FieldCallBackInfo)
+	return u
+}
+
+// ClearCallBackInfo clears the value of the "call_back_info" field.
+func (u *MissionUpsert) ClearCallBackInfo() *MissionUpsert {
+	u.SetNull(mission.FieldCallBackInfo)
 	return u
 }
 
@@ -935,6 +1243,18 @@ func (u *MissionUpsert) UpdateResult() *MissionUpsert {
 	return u
 }
 
+// SetState sets the "state" field.
+func (u *MissionUpsert) SetState(v enums.MissionState) *MissionUpsert {
+	u.Set(mission.FieldState, v)
+	return u
+}
+
+// UpdateState sets the "state" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateState() *MissionUpsert {
+	u.SetExcluded(mission.FieldState)
+	return u
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (u *MissionUpsert) SetResultUrls(v []string) *MissionUpsert {
 	u.Set(mission.FieldResultUrls, v)
@@ -953,6 +1273,18 @@ func (u *MissionUpsert) ClearResultUrls() *MissionUpsert {
 	return u
 }
 
+// SetUrls sets the "urls" field.
+func (u *MissionUpsert) SetUrls(v string) *MissionUpsert {
+	u.Set(mission.FieldUrls, v)
+	return u
+}
+
+// UpdateUrls sets the "urls" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateUrls() *MissionUpsert {
+	u.SetExcluded(mission.FieldUrls)
+	return u
+}
+
 // SetKeyPairID sets the "key_pair_id" field.
 func (u *MissionUpsert) SetKeyPairID(v int64) *MissionUpsert {
 	u.Set(mission.FieldKeyPairID, v)
@@ -962,6 +1294,30 @@ func (u *MissionUpsert) SetKeyPairID(v int64) *MissionUpsert {
 // UpdateKeyPairID sets the "key_pair_id" field to the value that was provided on create.
 func (u *MissionUpsert) UpdateKeyPairID() *MissionUpsert {
 	u.SetExcluded(mission.FieldKeyPairID)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionUpsert) SetUserID(v int64) *MissionUpsert {
+	u.Set(mission.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateUserID() *MissionUpsert {
+	u.SetExcluded(mission.FieldUserID)
+	return u
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (u *MissionUpsert) SetMissionBatchID(v int64) *MissionUpsert {
+	u.Set(mission.FieldMissionBatchID, v)
+	return u
+}
+
+// UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateMissionBatchID() *MissionUpsert {
+	u.SetExcluded(mission.FieldMissionBatchID)
 	return u
 }
 
@@ -1232,6 +1588,20 @@ func (u *MissionUpsertOne) UpdateType() *MissionUpsertOne {
 	})
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (u *MissionUpsertOne) SetMissionKindID(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetMissionKindID(v)
+	})
+}
+
+// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateMissionKindID() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateMissionKindID()
+	})
+}
+
 // SetBody sets the "body" field.
 func (u *MissionUpsertOne) SetBody(v string) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
@@ -1257,6 +1627,27 @@ func (u *MissionUpsertOne) SetCallBackURL(v string) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateCallBackURL() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateCallBackURL()
+	})
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (u *MissionUpsertOne) SetCallBackInfo(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCallBackInfo(v)
+	})
+}
+
+// UpdateCallBackInfo sets the "call_back_info" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateCallBackInfo() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCallBackInfo()
+	})
+}
+
+// ClearCallBackInfo clears the value of the "call_back_info" field.
+func (u *MissionUpsertOne) ClearCallBackInfo() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearCallBackInfo()
 	})
 }
 
@@ -1288,6 +1679,20 @@ func (u *MissionUpsertOne) UpdateResult() *MissionUpsertOne {
 	})
 }
 
+// SetState sets the "state" field.
+func (u *MissionUpsertOne) SetState(v enums.MissionState) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetState(v)
+	})
+}
+
+// UpdateState sets the "state" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateState() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateState()
+	})
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (u *MissionUpsertOne) SetResultUrls(v []string) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
@@ -1309,6 +1714,20 @@ func (u *MissionUpsertOne) ClearResultUrls() *MissionUpsertOne {
 	})
 }
 
+// SetUrls sets the "urls" field.
+func (u *MissionUpsertOne) SetUrls(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUrls(v)
+	})
+}
+
+// UpdateUrls sets the "urls" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateUrls() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUrls()
+	})
+}
+
 // SetKeyPairID sets the "key_pair_id" field.
 func (u *MissionUpsertOne) SetKeyPairID(v int64) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
@@ -1320,6 +1739,34 @@ func (u *MissionUpsertOne) SetKeyPairID(v int64) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateKeyPairID() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateKeyPairID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionUpsertOne) SetUserID(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateUserID() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (u *MissionUpsertOne) SetMissionBatchID(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetMissionBatchID(v)
+	})
+}
+
+// UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateMissionBatchID() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateMissionBatchID()
 	})
 }
 
@@ -1778,6 +2225,20 @@ func (u *MissionUpsertBulk) UpdateType() *MissionUpsertBulk {
 	})
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (u *MissionUpsertBulk) SetMissionKindID(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetMissionKindID(v)
+	})
+}
+
+// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateMissionKindID() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateMissionKindID()
+	})
+}
+
 // SetBody sets the "body" field.
 func (u *MissionUpsertBulk) SetBody(v string) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
@@ -1803,6 +2264,27 @@ func (u *MissionUpsertBulk) SetCallBackURL(v string) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateCallBackURL() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateCallBackURL()
+	})
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (u *MissionUpsertBulk) SetCallBackInfo(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCallBackInfo(v)
+	})
+}
+
+// UpdateCallBackInfo sets the "call_back_info" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateCallBackInfo() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCallBackInfo()
+	})
+}
+
+// ClearCallBackInfo clears the value of the "call_back_info" field.
+func (u *MissionUpsertBulk) ClearCallBackInfo() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearCallBackInfo()
 	})
 }
 
@@ -1834,6 +2316,20 @@ func (u *MissionUpsertBulk) UpdateResult() *MissionUpsertBulk {
 	})
 }
 
+// SetState sets the "state" field.
+func (u *MissionUpsertBulk) SetState(v enums.MissionState) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetState(v)
+	})
+}
+
+// UpdateState sets the "state" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateState() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateState()
+	})
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (u *MissionUpsertBulk) SetResultUrls(v []string) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
@@ -1855,6 +2351,20 @@ func (u *MissionUpsertBulk) ClearResultUrls() *MissionUpsertBulk {
 	})
 }
 
+// SetUrls sets the "urls" field.
+func (u *MissionUpsertBulk) SetUrls(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUrls(v)
+	})
+}
+
+// UpdateUrls sets the "urls" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateUrls() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUrls()
+	})
+}
+
 // SetKeyPairID sets the "key_pair_id" field.
 func (u *MissionUpsertBulk) SetKeyPairID(v int64) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
@@ -1866,6 +2376,34 @@ func (u *MissionUpsertBulk) SetKeyPairID(v int64) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateKeyPairID() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateKeyPairID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *MissionUpsertBulk) SetUserID(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateUserID() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (u *MissionUpsertBulk) SetMissionBatchID(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetMissionBatchID(v)
+	})
+}
+
+// UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateMissionBatchID() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateMissionBatchID()
 	})
 }
 

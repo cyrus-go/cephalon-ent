@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 )
 
-// PlatformAccount is the model entity for the PlatformAccount schema.
+// 平台账户，被 wallets 和 symbols 取代，使用特殊的 user_id 表示平台账户
 type PlatformAccount struct {
 	config `json:"-"`
 	// ID of the ent.

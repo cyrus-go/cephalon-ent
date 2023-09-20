@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 )
 
-// EnumCondition is the model entity for the EnumCondition schema.
+// 任务类型枚举值对应表，计划用代码实现取代
 type EnumCondition struct {
 	config `json:"-"`
 	// ID of the ent.

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -31,6 +32,7 @@ func (VXSocial) Edges() []ent.Edge {
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("vx_socials").Field("user_id").Unique().Required(),
 		edge.To("recharge_orders", RechargeOrder.Type),
+		edge.To("transfer_orders", TransferOrder.Type),
 	}
 }
 
@@ -38,5 +40,11 @@ func (VXSocial) Edges() []ent.Edge {
 func (VXSocial) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (VXSocial) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("微信社会源信息，记录用户在微信方的身份信息"),
 	}
 }

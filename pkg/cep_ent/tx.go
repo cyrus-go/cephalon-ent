@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Bill is the client for interacting with the Bill builders.
+	Bill *BillClient
 	// Campaign is the client for interacting with the Campaign builders.
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
@@ -56,6 +58,8 @@ type Tx struct {
 	MissionKind *MissionKindClient
 	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
 	MissionProduceOrder *MissionProduceOrderClient
+	// MissionProduction is the client for interacting with the MissionProduction builders.
+	MissionProduction *MissionProductionClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
@@ -70,6 +74,10 @@ type Tx struct {
 	RechargeCampaignRule *RechargeCampaignRuleClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
 	RechargeOrder *RechargeOrderClient
+	// Symbol is the client for interacting with the Symbol builders.
+	Symbol *SymbolClient
+	// TransferOrder is the client for interacting with the TransferOrder builders.
+	TransferOrder *TransferOrderClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
@@ -78,6 +86,8 @@ type Tx struct {
 	VXAccount *VXAccountClient
 	// VXSocial is the client for interacting with the VXSocial builders.
 	VXSocial *VXSocialClient
+	// Wallet is the client for interacting with the Wallet builders.
+	Wallet *WalletClient
 
 	// lazily loaded.
 	client     *Client
@@ -209,6 +219,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Bill = NewBillClient(tx.config)
 	tx.Campaign = NewCampaignClient(tx.config)
 	tx.CampaignOrder = NewCampaignOrderClient(tx.config)
 	tx.Collect = NewCollectClient(tx.config)
@@ -231,6 +242,7 @@ func (tx *Tx) init() {
 	tx.MissionKeyPair = NewMissionKeyPairClient(tx.config)
 	tx.MissionKind = NewMissionKindClient(tx.config)
 	tx.MissionProduceOrder = NewMissionProduceOrderClient(tx.config)
+	tx.MissionProduction = NewMissionProductionClient(tx.config)
 	tx.OutputLog = NewOutputLogClient(tx.config)
 	tx.PlatformAccount = NewPlatformAccountClient(tx.config)
 	tx.Price = NewPriceClient(tx.config)
@@ -238,10 +250,13 @@ func (tx *Tx) init() {
 	tx.ProfitSetting = NewProfitSettingClient(tx.config)
 	tx.RechargeCampaignRule = NewRechargeCampaignRuleClient(tx.config)
 	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
+	tx.Symbol = NewSymbolClient(tx.config)
+	tx.TransferOrder = NewTransferOrderClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)
 	tx.VXAccount = NewVXAccountClient(tx.config)
 	tx.VXSocial = NewVXSocialClient(tx.config)
+	tx.Wallet = NewWalletClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -251,7 +266,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Campaign.QueryXXX(), the query will be executed
+// applies a query, for example: Bill.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

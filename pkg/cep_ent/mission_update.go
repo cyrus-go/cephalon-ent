@@ -14,9 +14,14 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -109,6 +114,20 @@ func (mu *MissionUpdate) SetNillableType(et *enums.MissionType) *MissionUpdate {
 	return mu
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (mu *MissionUpdate) SetMissionKindID(i int64) *MissionUpdate {
+	mu.mutation.SetMissionKindID(i)
+	return mu
+}
+
+// SetNillableMissionKindID sets the "mission_kind_id" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableMissionKindID(i *int64) *MissionUpdate {
+	if i != nil {
+		mu.SetMissionKindID(*i)
+	}
+	return mu
+}
+
 // SetBody sets the "body" field.
 func (mu *MissionUpdate) SetBody(s string) *MissionUpdate {
 	mu.mutation.SetBody(s)
@@ -134,6 +153,26 @@ func (mu *MissionUpdate) SetNillableCallBackURL(s *string) *MissionUpdate {
 	if s != nil {
 		mu.SetCallBackURL(*s)
 	}
+	return mu
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (mu *MissionUpdate) SetCallBackInfo(s string) *MissionUpdate {
+	mu.mutation.SetCallBackInfo(s)
+	return mu
+}
+
+// SetNillableCallBackInfo sets the "call_back_info" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableCallBackInfo(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetCallBackInfo(*s)
+	}
+	return mu
+}
+
+// ClearCallBackInfo clears the value of the "call_back_info" field.
+func (mu *MissionUpdate) ClearCallBackInfo() *MissionUpdate {
+	mu.mutation.ClearCallBackInfo()
 	return mu
 }
 
@@ -165,6 +204,20 @@ func (mu *MissionUpdate) SetNillableResult(er *enums.MissionResult) *MissionUpda
 	return mu
 }
 
+// SetState sets the "state" field.
+func (mu *MissionUpdate) SetState(es enums.MissionState) *MissionUpdate {
+	mu.mutation.SetState(es)
+	return mu
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableState(es *enums.MissionState) *MissionUpdate {
+	if es != nil {
+		mu.SetState(*es)
+	}
+	return mu
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (mu *MissionUpdate) SetResultUrls(s []string) *MissionUpdate {
 	mu.mutation.SetResultUrls(s)
@@ -183,6 +236,20 @@ func (mu *MissionUpdate) ClearResultUrls() *MissionUpdate {
 	return mu
 }
 
+// SetUrls sets the "urls" field.
+func (mu *MissionUpdate) SetUrls(s string) *MissionUpdate {
+	mu.mutation.SetUrls(s)
+	return mu
+}
+
+// SetNillableUrls sets the "urls" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableUrls(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetUrls(*s)
+	}
+	return mu
+}
+
 // SetKeyPairID sets the "key_pair_id" field.
 func (mu *MissionUpdate) SetKeyPairID(i int64) *MissionUpdate {
 	mu.mutation.SetKeyPairID(i)
@@ -193,6 +260,34 @@ func (mu *MissionUpdate) SetKeyPairID(i int64) *MissionUpdate {
 func (mu *MissionUpdate) SetNillableKeyPairID(i *int64) *MissionUpdate {
 	if i != nil {
 		mu.SetKeyPairID(*i)
+	}
+	return mu
+}
+
+// SetUserID sets the "user_id" field.
+func (mu *MissionUpdate) SetUserID(i int64) *MissionUpdate {
+	mu.mutation.SetUserID(i)
+	return mu
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableUserID(i *int64) *MissionUpdate {
+	if i != nil {
+		mu.SetUserID(*i)
+	}
+	return mu
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (mu *MissionUpdate) SetMissionBatchID(i int64) *MissionUpdate {
+	mu.mutation.SetMissionBatchID(i)
+	return mu
+}
+
+// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableMissionBatchID(i *int64) *MissionUpdate {
+	if i != nil {
+		mu.SetMissionBatchID(*i)
 	}
 	return mu
 }
@@ -351,6 +446,16 @@ func (mu *MissionUpdate) SetNillableSecondHmacKey(s *string) *MissionUpdate {
 	return mu
 }
 
+// SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
+func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
+	return mu.SetMissionKindID(m.ID)
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (mu *MissionUpdate) SetUser(u *User) *MissionUpdate {
+	return mu.SetUserID(u.ID)
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mu *MissionUpdate) AddMissionKeyPairIDs(ids ...int64) *MissionUpdate {
 	mu.mutation.AddMissionKeyPairIDs(ids...)
@@ -390,9 +495,56 @@ func (mu *MissionUpdate) SetMissionConsumeOrder(m *MissionConsumeOrder) *Mission
 	return mu.SetMissionConsumeOrderID(m.ID)
 }
 
+// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
+func (mu *MissionUpdate) AddMissionProduceOrderIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.AddMissionProduceOrderIDs(ids...)
+	return mu
+}
+
+// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
+func (mu *MissionUpdate) AddMissionProduceOrders(m ...*MissionProduceOrder) *MissionUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.AddMissionProduceOrderIDs(ids...)
+}
+
+// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
+func (mu *MissionUpdate) SetMissionBatch(m *MissionBatch) *MissionUpdate {
+	return mu.SetMissionBatchID(m.ID)
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (mu *MissionUpdate) AddMissionProductionIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.AddMissionProductionIDs(ids...)
+	return mu
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (mu *MissionUpdate) AddMissionProductions(m ...*MissionProduction) *MissionUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.AddMissionProductionIDs(ids...)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (mu *MissionUpdate) Mutation() *MissionMutation {
 	return mu.mutation
+}
+
+// ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
+func (mu *MissionUpdate) ClearMissionKind() *MissionUpdate {
+	mu.mutation.ClearMissionKind()
+	return mu
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (mu *MissionUpdate) ClearUser() *MissionUpdate {
+	mu.mutation.ClearUser()
+	return mu
 }
 
 // ClearMissionKeyPairs clears all "mission_key_pairs" edges to the MissionKeyPair entity.
@@ -426,6 +578,54 @@ func (mu *MissionUpdate) ClearKeyPair() *MissionUpdate {
 func (mu *MissionUpdate) ClearMissionConsumeOrder() *MissionUpdate {
 	mu.mutation.ClearMissionConsumeOrder()
 	return mu
+}
+
+// ClearMissionProduceOrders clears all "mission_produce_orders" edges to the MissionProduceOrder entity.
+func (mu *MissionUpdate) ClearMissionProduceOrders() *MissionUpdate {
+	mu.mutation.ClearMissionProduceOrders()
+	return mu
+}
+
+// RemoveMissionProduceOrderIDs removes the "mission_produce_orders" edge to MissionProduceOrder entities by IDs.
+func (mu *MissionUpdate) RemoveMissionProduceOrderIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.RemoveMissionProduceOrderIDs(ids...)
+	return mu
+}
+
+// RemoveMissionProduceOrders removes "mission_produce_orders" edges to MissionProduceOrder entities.
+func (mu *MissionUpdate) RemoveMissionProduceOrders(m ...*MissionProduceOrder) *MissionUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.RemoveMissionProduceOrderIDs(ids...)
+}
+
+// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
+func (mu *MissionUpdate) ClearMissionBatch() *MissionUpdate {
+	mu.mutation.ClearMissionBatch()
+	return mu
+}
+
+// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
+func (mu *MissionUpdate) ClearMissionProductions() *MissionUpdate {
+	mu.mutation.ClearMissionProductions()
+	return mu
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
+func (mu *MissionUpdate) RemoveMissionProductionIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.RemoveMissionProductionIDs(ids...)
+	return mu
+}
+
+// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
+func (mu *MissionUpdate) RemoveMissionProductions(m ...*MissionProduction) *MissionUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.RemoveMissionProductionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -481,6 +681,11 @@ func (mu *MissionUpdate) check() error {
 			return &ValidationError{Name: "result", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.result": %w`, err)}
 		}
 	}
+	if v, ok := mu.mutation.State(); ok {
+		if err := mission.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.state": %w`, err)}
+		}
+	}
 	if v, ok := mu.mutation.GpuVersion(); ok {
 		if err := mission.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
@@ -491,8 +696,17 @@ func (mu *MissionUpdate) check() error {
 			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
 		}
 	}
+	if _, ok := mu.mutation.MissionKindID(); mu.mutation.MissionKindCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Mission.mission_kind"`)
+	}
+	if _, ok := mu.mutation.UserID(); mu.mutation.UserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Mission.user"`)
+	}
 	if _, ok := mu.mutation.KeyPairID(); mu.mutation.KeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.key_pair"`)
+	}
+	if _, ok := mu.mutation.MissionBatchID(); mu.mutation.MissionBatchCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Mission.mission_batch"`)
 	}
 	return nil
 }
@@ -536,11 +750,20 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.CallBackURL(); ok {
 		_spec.SetField(mission.FieldCallBackURL, field.TypeString, value)
 	}
+	if value, ok := mu.mutation.CallBackInfo(); ok {
+		_spec.SetField(mission.FieldCallBackInfo, field.TypeString, value)
+	}
+	if mu.mutation.CallBackInfoCleared() {
+		_spec.ClearField(mission.FieldCallBackInfo, field.TypeString)
+	}
 	if value, ok := mu.mutation.Status(); ok {
 		_spec.SetField(mission.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := mu.mutation.Result(); ok {
 		_spec.SetField(mission.FieldResult, field.TypeEnum, value)
+	}
+	if value, ok := mu.mutation.State(); ok {
+		_spec.SetField(mission.FieldState, field.TypeEnum, value)
 	}
 	if value, ok := mu.mutation.ResultUrls(); ok {
 		_spec.SetField(mission.FieldResultUrls, field.TypeJSON, value)
@@ -552,6 +775,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.ResultUrlsCleared() {
 		_spec.ClearField(mission.FieldResultUrls, field.TypeJSON)
+	}
+	if value, ok := mu.mutation.Urls(); ok {
+		_spec.SetField(mission.FieldUrls, field.TypeString, value)
 	}
 	if value, ok := mu.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(mission.FieldMissionBatchNumber, field.TypeString, value)
@@ -588,6 +814,64 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.SecondHmacKey(); ok {
 		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
+	}
+	if mu.mutation.MissionKindCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionKindTable,
+			Columns: []string{mission.MissionKindColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionKindIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionKindTable,
+			Columns: []string{mission.MissionKindColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.UserTable,
+			Columns: []string{mission.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.UserTable,
+			Columns: []string{mission.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if mu.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -692,6 +976,125 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if mu.mutation.MissionProduceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedMissionProduceOrdersIDs(); len(nodes) > 0 && !mu.mutation.MissionProduceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.MissionBatchCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionBatchTable,
+			Columns: []string{mission.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionBatchIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionBatchTable,
+			Columns: []string{mission.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !mu.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{mission.Label}
@@ -788,6 +1191,20 @@ func (muo *MissionUpdateOne) SetNillableType(et *enums.MissionType) *MissionUpda
 	return muo
 }
 
+// SetMissionKindID sets the "mission_kind_id" field.
+func (muo *MissionUpdateOne) SetMissionKindID(i int64) *MissionUpdateOne {
+	muo.mutation.SetMissionKindID(i)
+	return muo
+}
+
+// SetNillableMissionKindID sets the "mission_kind_id" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableMissionKindID(i *int64) *MissionUpdateOne {
+	if i != nil {
+		muo.SetMissionKindID(*i)
+	}
+	return muo
+}
+
 // SetBody sets the "body" field.
 func (muo *MissionUpdateOne) SetBody(s string) *MissionUpdateOne {
 	muo.mutation.SetBody(s)
@@ -813,6 +1230,26 @@ func (muo *MissionUpdateOne) SetNillableCallBackURL(s *string) *MissionUpdateOne
 	if s != nil {
 		muo.SetCallBackURL(*s)
 	}
+	return muo
+}
+
+// SetCallBackInfo sets the "call_back_info" field.
+func (muo *MissionUpdateOne) SetCallBackInfo(s string) *MissionUpdateOne {
+	muo.mutation.SetCallBackInfo(s)
+	return muo
+}
+
+// SetNillableCallBackInfo sets the "call_back_info" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableCallBackInfo(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetCallBackInfo(*s)
+	}
+	return muo
+}
+
+// ClearCallBackInfo clears the value of the "call_back_info" field.
+func (muo *MissionUpdateOne) ClearCallBackInfo() *MissionUpdateOne {
+	muo.mutation.ClearCallBackInfo()
 	return muo
 }
 
@@ -844,6 +1281,20 @@ func (muo *MissionUpdateOne) SetNillableResult(er *enums.MissionResult) *Mission
 	return muo
 }
 
+// SetState sets the "state" field.
+func (muo *MissionUpdateOne) SetState(es enums.MissionState) *MissionUpdateOne {
+	muo.mutation.SetState(es)
+	return muo
+}
+
+// SetNillableState sets the "state" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableState(es *enums.MissionState) *MissionUpdateOne {
+	if es != nil {
+		muo.SetState(*es)
+	}
+	return muo
+}
+
 // SetResultUrls sets the "result_urls" field.
 func (muo *MissionUpdateOne) SetResultUrls(s []string) *MissionUpdateOne {
 	muo.mutation.SetResultUrls(s)
@@ -862,6 +1313,20 @@ func (muo *MissionUpdateOne) ClearResultUrls() *MissionUpdateOne {
 	return muo
 }
 
+// SetUrls sets the "urls" field.
+func (muo *MissionUpdateOne) SetUrls(s string) *MissionUpdateOne {
+	muo.mutation.SetUrls(s)
+	return muo
+}
+
+// SetNillableUrls sets the "urls" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableUrls(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetUrls(*s)
+	}
+	return muo
+}
+
 // SetKeyPairID sets the "key_pair_id" field.
 func (muo *MissionUpdateOne) SetKeyPairID(i int64) *MissionUpdateOne {
 	muo.mutation.SetKeyPairID(i)
@@ -872,6 +1337,34 @@ func (muo *MissionUpdateOne) SetKeyPairID(i int64) *MissionUpdateOne {
 func (muo *MissionUpdateOne) SetNillableKeyPairID(i *int64) *MissionUpdateOne {
 	if i != nil {
 		muo.SetKeyPairID(*i)
+	}
+	return muo
+}
+
+// SetUserID sets the "user_id" field.
+func (muo *MissionUpdateOne) SetUserID(i int64) *MissionUpdateOne {
+	muo.mutation.SetUserID(i)
+	return muo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableUserID(i *int64) *MissionUpdateOne {
+	if i != nil {
+		muo.SetUserID(*i)
+	}
+	return muo
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (muo *MissionUpdateOne) SetMissionBatchID(i int64) *MissionUpdateOne {
+	muo.mutation.SetMissionBatchID(i)
+	return muo
+}
+
+// SetNillableMissionBatchID sets the "mission_batch_id" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableMissionBatchID(i *int64) *MissionUpdateOne {
+	if i != nil {
+		muo.SetMissionBatchID(*i)
 	}
 	return muo
 }
@@ -1030,6 +1523,16 @@ func (muo *MissionUpdateOne) SetNillableSecondHmacKey(s *string) *MissionUpdateO
 	return muo
 }
 
+// SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
+func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
+	return muo.SetMissionKindID(m.ID)
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (muo *MissionUpdateOne) SetUser(u *User) *MissionUpdateOne {
+	return muo.SetUserID(u.ID)
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (muo *MissionUpdateOne) AddMissionKeyPairIDs(ids ...int64) *MissionUpdateOne {
 	muo.mutation.AddMissionKeyPairIDs(ids...)
@@ -1069,9 +1572,56 @@ func (muo *MissionUpdateOne) SetMissionConsumeOrder(m *MissionConsumeOrder) *Mis
 	return muo.SetMissionConsumeOrderID(m.ID)
 }
 
+// AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
+func (muo *MissionUpdateOne) AddMissionProduceOrderIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.AddMissionProduceOrderIDs(ids...)
+	return muo
+}
+
+// AddMissionProduceOrders adds the "mission_produce_orders" edges to the MissionProduceOrder entity.
+func (muo *MissionUpdateOne) AddMissionProduceOrders(m ...*MissionProduceOrder) *MissionUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.AddMissionProduceOrderIDs(ids...)
+}
+
+// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
+func (muo *MissionUpdateOne) SetMissionBatch(m *MissionBatch) *MissionUpdateOne {
+	return muo.SetMissionBatchID(m.ID)
+}
+
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (muo *MissionUpdateOne) AddMissionProductionIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.AddMissionProductionIDs(ids...)
+	return muo
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (muo *MissionUpdateOne) AddMissionProductions(m ...*MissionProduction) *MissionUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.AddMissionProductionIDs(ids...)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (muo *MissionUpdateOne) Mutation() *MissionMutation {
 	return muo.mutation
+}
+
+// ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
+func (muo *MissionUpdateOne) ClearMissionKind() *MissionUpdateOne {
+	muo.mutation.ClearMissionKind()
+	return muo
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (muo *MissionUpdateOne) ClearUser() *MissionUpdateOne {
+	muo.mutation.ClearUser()
+	return muo
 }
 
 // ClearMissionKeyPairs clears all "mission_key_pairs" edges to the MissionKeyPair entity.
@@ -1105,6 +1655,54 @@ func (muo *MissionUpdateOne) ClearKeyPair() *MissionUpdateOne {
 func (muo *MissionUpdateOne) ClearMissionConsumeOrder() *MissionUpdateOne {
 	muo.mutation.ClearMissionConsumeOrder()
 	return muo
+}
+
+// ClearMissionProduceOrders clears all "mission_produce_orders" edges to the MissionProduceOrder entity.
+func (muo *MissionUpdateOne) ClearMissionProduceOrders() *MissionUpdateOne {
+	muo.mutation.ClearMissionProduceOrders()
+	return muo
+}
+
+// RemoveMissionProduceOrderIDs removes the "mission_produce_orders" edge to MissionProduceOrder entities by IDs.
+func (muo *MissionUpdateOne) RemoveMissionProduceOrderIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.RemoveMissionProduceOrderIDs(ids...)
+	return muo
+}
+
+// RemoveMissionProduceOrders removes "mission_produce_orders" edges to MissionProduceOrder entities.
+func (muo *MissionUpdateOne) RemoveMissionProduceOrders(m ...*MissionProduceOrder) *MissionUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.RemoveMissionProduceOrderIDs(ids...)
+}
+
+// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
+func (muo *MissionUpdateOne) ClearMissionBatch() *MissionUpdateOne {
+	muo.mutation.ClearMissionBatch()
+	return muo
+}
+
+// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
+func (muo *MissionUpdateOne) ClearMissionProductions() *MissionUpdateOne {
+	muo.mutation.ClearMissionProductions()
+	return muo
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
+func (muo *MissionUpdateOne) RemoveMissionProductionIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.RemoveMissionProductionIDs(ids...)
+	return muo
+}
+
+// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
+func (muo *MissionUpdateOne) RemoveMissionProductions(m ...*MissionProduction) *MissionUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.RemoveMissionProductionIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionUpdate builder.
@@ -1173,6 +1771,11 @@ func (muo *MissionUpdateOne) check() error {
 			return &ValidationError{Name: "result", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.result": %w`, err)}
 		}
 	}
+	if v, ok := muo.mutation.State(); ok {
+		if err := mission.StateValidator(v); err != nil {
+			return &ValidationError{Name: "state", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.state": %w`, err)}
+		}
+	}
 	if v, ok := muo.mutation.GpuVersion(); ok {
 		if err := mission.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.gpu_version": %w`, err)}
@@ -1183,8 +1786,17 @@ func (muo *MissionUpdateOne) check() error {
 			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
 		}
 	}
+	if _, ok := muo.mutation.MissionKindID(); muo.mutation.MissionKindCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Mission.mission_kind"`)
+	}
+	if _, ok := muo.mutation.UserID(); muo.mutation.UserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Mission.user"`)
+	}
 	if _, ok := muo.mutation.KeyPairID(); muo.mutation.KeyPairCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.key_pair"`)
+	}
+	if _, ok := muo.mutation.MissionBatchID(); muo.mutation.MissionBatchCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Mission.mission_batch"`)
 	}
 	return nil
 }
@@ -1245,11 +1857,20 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	if value, ok := muo.mutation.CallBackURL(); ok {
 		_spec.SetField(mission.FieldCallBackURL, field.TypeString, value)
 	}
+	if value, ok := muo.mutation.CallBackInfo(); ok {
+		_spec.SetField(mission.FieldCallBackInfo, field.TypeString, value)
+	}
+	if muo.mutation.CallBackInfoCleared() {
+		_spec.ClearField(mission.FieldCallBackInfo, field.TypeString)
+	}
 	if value, ok := muo.mutation.Status(); ok {
 		_spec.SetField(mission.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := muo.mutation.Result(); ok {
 		_spec.SetField(mission.FieldResult, field.TypeEnum, value)
+	}
+	if value, ok := muo.mutation.State(); ok {
+		_spec.SetField(mission.FieldState, field.TypeEnum, value)
 	}
 	if value, ok := muo.mutation.ResultUrls(); ok {
 		_spec.SetField(mission.FieldResultUrls, field.TypeJSON, value)
@@ -1261,6 +1882,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if muo.mutation.ResultUrlsCleared() {
 		_spec.ClearField(mission.FieldResultUrls, field.TypeJSON)
+	}
+	if value, ok := muo.mutation.Urls(); ok {
+		_spec.SetField(mission.FieldUrls, field.TypeString, value)
 	}
 	if value, ok := muo.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(mission.FieldMissionBatchNumber, field.TypeString, value)
@@ -1297,6 +1921,64 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.SecondHmacKey(); ok {
 		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
+	}
+	if muo.mutation.MissionKindCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionKindTable,
+			Columns: []string{mission.MissionKindColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionKindIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionKindTable,
+			Columns: []string{mission.MissionKindColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.UserTable,
+			Columns: []string{mission.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.UserTable,
+			Columns: []string{mission.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if muo.mutation.MissionKeyPairsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1394,6 +2076,125 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.MissionProduceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedMissionProduceOrdersIDs(); len(nodes) > 0 && !muo.mutation.MissionProduceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionProduceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProduceOrdersTable,
+			Columns: []string{mission.MissionProduceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.MissionBatchCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionBatchTable,
+			Columns: []string{mission.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionBatchIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionBatchTable,
+			Columns: []string{mission.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !muo.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionProductionsTable,
+			Columns: []string{mission.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

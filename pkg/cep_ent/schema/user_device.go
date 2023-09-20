@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -30,5 +31,11 @@ func (UserDevice) Edges() []ent.Edge {
 func (UserDevice) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (UserDevice) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("用户与设备的中间关系，依赖时间字段记录用户与设备的解绑换绑等操作"),
 	}
 }

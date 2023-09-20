@@ -12,7 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 )
 
-// InputLog is the model entity for the InputLog schema.
+// 输入日志，初期风变专用
 type InputLog struct {
 	config `json:"-"`
 	// ID of the ent.

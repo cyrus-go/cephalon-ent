@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
@@ -24,6 +25,7 @@ type MissionKindQuery struct {
 	inters                []Interceptor
 	predicates            []predicate.MissionKind
 	withDeviceGpuMissions *DeviceGpuMissionQuery
+	withMissions          *MissionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (mkq *MissionKindQuery) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
 			sqlgraph.From(missionkind.Table, missionkind.FieldID, selector),
 			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, missionkind.DeviceGpuMissionsTable, missionkind.DeviceGpuMissionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mkq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissions chains the current query on the "missions" edge.
+func (mkq *MissionKindQuery) QueryMissions() *MissionQuery {
+	query := (&MissionClient{config: mkq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mkq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mkq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionkind.Table, missionkind.FieldID, selector),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionkind.MissionsTable, missionkind.MissionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mkq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +299,7 @@ func (mkq *MissionKindQuery) Clone() *MissionKindQuery {
 		inters:                append([]Interceptor{}, mkq.inters...),
 		predicates:            append([]predicate.MissionKind{}, mkq.predicates...),
 		withDeviceGpuMissions: mkq.withDeviceGpuMissions.Clone(),
+		withMissions:          mkq.withMissions.Clone(),
 		// clone intermediate query.
 		sql:  mkq.sql.Clone(),
 		path: mkq.path,
@@ -289,6 +314,17 @@ func (mkq *MissionKindQuery) WithDeviceGpuMissions(opts ...func(*DeviceGpuMissio
 		opt(query)
 	}
 	mkq.withDeviceGpuMissions = query
+	return mkq
+}
+
+// WithMissions tells the query-builder to eager-load the nodes that are connected to
+// the "missions" edge. The optional arguments are used to configure the query builder of the edge.
+func (mkq *MissionKindQuery) WithMissions(opts ...func(*MissionQuery)) *MissionKindQuery {
+	query := (&MissionClient{config: mkq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mkq.withMissions = query
 	return mkq
 }
 
@@ -370,8 +406,9 @@ func (mkq *MissionKindQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*MissionKind{}
 		_spec       = mkq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			mkq.withDeviceGpuMissions != nil,
+			mkq.withMissions != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -401,6 +438,13 @@ func (mkq *MissionKindQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := mkq.withMissions; query != nil {
+		if err := mkq.loadMissions(ctx, query, nodes,
+			func(n *MissionKind) { n.Edges.Missions = []*Mission{} },
+			func(n *MissionKind, e *Mission) { n.Edges.Missions = append(n.Edges.Missions, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -419,6 +463,36 @@ func (mkq *MissionKindQuery) loadDeviceGpuMissions(ctx context.Context, query *D
 	}
 	query.Where(predicate.DeviceGpuMission(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(missionkind.DeviceGpuMissionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionKindID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_kind_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mkq *MissionKindQuery) loadMissions(ctx context.Context, query *MissionQuery, nodes []*MissionKind, init func(*MissionKind), assign func(*MissionKind, *Mission)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*MissionKind)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(mission.FieldMissionKindID)
+	}
+	query.Where(predicate.Mission(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(missionkind.MissionsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

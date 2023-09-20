@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -221,6 +222,21 @@ func (iu *InviteUpdate) SetCampaign(c *Campaign) *InviteUpdate {
 	return iu.SetCampaignID(c.ID)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (iu *InviteUpdate) AddBillIDs(ids ...int64) *InviteUpdate {
+	iu.mutation.AddBillIDs(ids...)
+	return iu
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (iu *InviteUpdate) AddBills(b ...*Bill) *InviteUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return iu.AddBillIDs(ids...)
+}
+
 // Mutation returns the InviteMutation object of the builder.
 func (iu *InviteUpdate) Mutation() *InviteMutation {
 	return iu.mutation
@@ -236,6 +252,27 @@ func (iu *InviteUpdate) ClearUser() *InviteUpdate {
 func (iu *InviteUpdate) ClearCampaign() *InviteUpdate {
 	iu.mutation.ClearCampaign()
 	return iu
+}
+
+// ClearBills clears all "bills" edges to the Bill entity.
+func (iu *InviteUpdate) ClearBills() *InviteUpdate {
+	iu.mutation.ClearBills()
+	return iu
+}
+
+// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
+func (iu *InviteUpdate) RemoveBillIDs(ids ...int64) *InviteUpdate {
+	iu.mutation.RemoveBillIDs(ids...)
+	return iu
+}
+
+// RemoveBills removes "bills" edges to Bill entities.
+func (iu *InviteUpdate) RemoveBills(b ...*Bill) *InviteUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return iu.RemoveBillIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -390,6 +427,51 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iu.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.RemovedBillsIDs(); len(nodes) > 0 && !iu.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -608,6 +690,21 @@ func (iuo *InviteUpdateOne) SetCampaign(c *Campaign) *InviteUpdateOne {
 	return iuo.SetCampaignID(c.ID)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (iuo *InviteUpdateOne) AddBillIDs(ids ...int64) *InviteUpdateOne {
+	iuo.mutation.AddBillIDs(ids...)
+	return iuo
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (iuo *InviteUpdateOne) AddBills(b ...*Bill) *InviteUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return iuo.AddBillIDs(ids...)
+}
+
 // Mutation returns the InviteMutation object of the builder.
 func (iuo *InviteUpdateOne) Mutation() *InviteMutation {
 	return iuo.mutation
@@ -623,6 +720,27 @@ func (iuo *InviteUpdateOne) ClearUser() *InviteUpdateOne {
 func (iuo *InviteUpdateOne) ClearCampaign() *InviteUpdateOne {
 	iuo.mutation.ClearCampaign()
 	return iuo
+}
+
+// ClearBills clears all "bills" edges to the Bill entity.
+func (iuo *InviteUpdateOne) ClearBills() *InviteUpdateOne {
+	iuo.mutation.ClearBills()
+	return iuo
+}
+
+// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
+func (iuo *InviteUpdateOne) RemoveBillIDs(ids ...int64) *InviteUpdateOne {
+	iuo.mutation.RemoveBillIDs(ids...)
+	return iuo
+}
+
+// RemoveBills removes "bills" edges to Bill entities.
+func (iuo *InviteUpdateOne) RemoveBills(b ...*Bill) *InviteUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return iuo.RemoveBillIDs(ids...)
 }
 
 // Where appends a list predicates to the InviteUpdate builder.
@@ -807,6 +925,51 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iuo.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !iuo.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   invite.BillsTable,
+			Columns: []string{invite.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

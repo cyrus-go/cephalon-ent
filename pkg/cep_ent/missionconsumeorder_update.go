@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
@@ -312,6 +313,21 @@ func (mcou *MissionConsumeOrderUpdate) AddCostBills(c ...*CostBill) *MissionCons
 	return mcou.AddCostBillIDs(ids...)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (mcou *MissionConsumeOrderUpdate) AddBillIDs(ids ...int64) *MissionConsumeOrderUpdate {
+	mcou.mutation.AddBillIDs(ids...)
+	return mcou
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (mcou *MissionConsumeOrderUpdate) AddBills(b ...*Bill) *MissionConsumeOrderUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return mcou.AddBillIDs(ids...)
+}
+
 // AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
 func (mcou *MissionConsumeOrderUpdate) AddMissionProduceOrderIDs(ids ...int64) *MissionConsumeOrderUpdate {
 	mcou.mutation.AddMissionProduceOrderIDs(ids...)
@@ -367,6 +383,27 @@ func (mcou *MissionConsumeOrderUpdate) RemoveCostBills(c ...*CostBill) *MissionC
 		ids[i] = c[i].ID
 	}
 	return mcou.RemoveCostBillIDs(ids...)
+}
+
+// ClearBills clears all "bills" edges to the Bill entity.
+func (mcou *MissionConsumeOrderUpdate) ClearBills() *MissionConsumeOrderUpdate {
+	mcou.mutation.ClearBills()
+	return mcou
+}
+
+// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
+func (mcou *MissionConsumeOrderUpdate) RemoveBillIDs(ids ...int64) *MissionConsumeOrderUpdate {
+	mcou.mutation.RemoveBillIDs(ids...)
+	return mcou
+}
+
+// RemoveBills removes "bills" edges to Bill entities.
+func (mcou *MissionConsumeOrderUpdate) RemoveBills(b ...*Bill) *MissionConsumeOrderUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return mcou.RemoveBillIDs(ids...)
 }
 
 // ClearMissionProduceOrders clears all "mission_produce_orders" edges to the MissionProduceOrder entity.
@@ -600,6 +637,51 @@ func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mcou.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionconsumeorder.BillsTable,
+			Columns: []string{missionconsumeorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mcou.mutation.RemovedBillsIDs(); len(nodes) > 0 && !mcou.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionconsumeorder.BillsTable,
+			Columns: []string{missionconsumeorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mcou.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionconsumeorder.BillsTable,
+			Columns: []string{missionconsumeorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1008,6 +1090,21 @@ func (mcouo *MissionConsumeOrderUpdateOne) AddCostBills(c ...*CostBill) *Mission
 	return mcouo.AddCostBillIDs(ids...)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (mcouo *MissionConsumeOrderUpdateOne) AddBillIDs(ids ...int64) *MissionConsumeOrderUpdateOne {
+	mcouo.mutation.AddBillIDs(ids...)
+	return mcouo
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (mcouo *MissionConsumeOrderUpdateOne) AddBills(b ...*Bill) *MissionConsumeOrderUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return mcouo.AddBillIDs(ids...)
+}
+
 // AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by IDs.
 func (mcouo *MissionConsumeOrderUpdateOne) AddMissionProduceOrderIDs(ids ...int64) *MissionConsumeOrderUpdateOne {
 	mcouo.mutation.AddMissionProduceOrderIDs(ids...)
@@ -1063,6 +1160,27 @@ func (mcouo *MissionConsumeOrderUpdateOne) RemoveCostBills(c ...*CostBill) *Miss
 		ids[i] = c[i].ID
 	}
 	return mcouo.RemoveCostBillIDs(ids...)
+}
+
+// ClearBills clears all "bills" edges to the Bill entity.
+func (mcouo *MissionConsumeOrderUpdateOne) ClearBills() *MissionConsumeOrderUpdateOne {
+	mcouo.mutation.ClearBills()
+	return mcouo
+}
+
+// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
+func (mcouo *MissionConsumeOrderUpdateOne) RemoveBillIDs(ids ...int64) *MissionConsumeOrderUpdateOne {
+	mcouo.mutation.RemoveBillIDs(ids...)
+	return mcouo
+}
+
+// RemoveBills removes "bills" edges to Bill entities.
+func (mcouo *MissionConsumeOrderUpdateOne) RemoveBills(b ...*Bill) *MissionConsumeOrderUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return mcouo.RemoveBillIDs(ids...)
 }
 
 // ClearMissionProduceOrders clears all "mission_produce_orders" edges to the MissionProduceOrder entity.
@@ -1326,6 +1444,51 @@ func (mcouo *MissionConsumeOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(costbill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mcouo.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionconsumeorder.BillsTable,
+			Columns: []string{missionconsumeorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mcouo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !mcouo.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionconsumeorder.BillsTable,
+			Columns: []string{missionconsumeorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mcouo.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionconsumeorder.BillsTable,
+			Columns: []string{missionconsumeorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

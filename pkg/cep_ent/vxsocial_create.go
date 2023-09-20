@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 )
@@ -238,6 +239,21 @@ func (vsc *VXSocialCreate) AddRechargeOrders(r ...*RechargeOrder) *VXSocialCreat
 		ids[i] = r[i].ID
 	}
 	return vsc.AddRechargeOrderIDs(ids...)
+}
+
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (vsc *VXSocialCreate) AddTransferOrderIDs(ids ...int64) *VXSocialCreate {
+	vsc.mutation.AddTransferOrderIDs(ids...)
+	return vsc
+}
+
+// AddTransferOrders adds the "transfer_orders" edges to the TransferOrder entity.
+func (vsc *VXSocialCreate) AddTransferOrders(t ...*TransferOrder) *VXSocialCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return vsc.AddTransferOrderIDs(ids...)
 }
 
 // Mutation returns the VXSocialMutation object of the builder.
@@ -489,6 +505,22 @@ func (vsc *VXSocialCreate) createSpec() (*VXSocial, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := vsc.mutation.TransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

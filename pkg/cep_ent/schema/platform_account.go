@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -46,5 +47,11 @@ func (PlatformAccount) Indexes() []ent.Index {
 func (PlatformAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (PlatformAccount) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("平台账户，被 wallets 和 symbols 取代，使用特殊的 user_id 表示平台账户"),
 	}
 }

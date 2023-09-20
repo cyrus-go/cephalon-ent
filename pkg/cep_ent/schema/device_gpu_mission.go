@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -32,5 +33,11 @@ func (DeviceGpuMission) Edges() []ent.Edge {
 func (DeviceGpuMission) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (DeviceGpuMission) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("登记设备的显卡信息，以及设备的任务执行能力配置状态"),
 	}
 }

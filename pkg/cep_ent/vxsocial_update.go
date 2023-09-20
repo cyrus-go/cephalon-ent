@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 )
@@ -224,6 +225,21 @@ func (vsu *VXSocialUpdate) AddRechargeOrders(r ...*RechargeOrder) *VXSocialUpdat
 	return vsu.AddRechargeOrderIDs(ids...)
 }
 
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (vsu *VXSocialUpdate) AddTransferOrderIDs(ids ...int64) *VXSocialUpdate {
+	vsu.mutation.AddTransferOrderIDs(ids...)
+	return vsu
+}
+
+// AddTransferOrders adds the "transfer_orders" edges to the TransferOrder entity.
+func (vsu *VXSocialUpdate) AddTransferOrders(t ...*TransferOrder) *VXSocialUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return vsu.AddTransferOrderIDs(ids...)
+}
+
 // Mutation returns the VXSocialMutation object of the builder.
 func (vsu *VXSocialUpdate) Mutation() *VXSocialMutation {
 	return vsu.mutation
@@ -254,6 +270,27 @@ func (vsu *VXSocialUpdate) RemoveRechargeOrders(r ...*RechargeOrder) *VXSocialUp
 		ids[i] = r[i].ID
 	}
 	return vsu.RemoveRechargeOrderIDs(ids...)
+}
+
+// ClearTransferOrders clears all "transfer_orders" edges to the TransferOrder entity.
+func (vsu *VXSocialUpdate) ClearTransferOrders() *VXSocialUpdate {
+	vsu.mutation.ClearTransferOrders()
+	return vsu
+}
+
+// RemoveTransferOrderIDs removes the "transfer_orders" edge to TransferOrder entities by IDs.
+func (vsu *VXSocialUpdate) RemoveTransferOrderIDs(ids ...int64) *VXSocialUpdate {
+	vsu.mutation.RemoveTransferOrderIDs(ids...)
+	return vsu
+}
+
+// RemoveTransferOrders removes "transfer_orders" edges to TransferOrder entities.
+func (vsu *VXSocialUpdate) RemoveTransferOrders(t ...*TransferOrder) *VXSocialUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return vsu.RemoveTransferOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -423,6 +460,51 @@ func (vsu *VXSocialUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vsu.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vsu.mutation.RemovedTransferOrdersIDs(); len(nodes) > 0 && !vsu.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vsu.mutation.TransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -644,6 +726,21 @@ func (vsuo *VXSocialUpdateOne) AddRechargeOrders(r ...*RechargeOrder) *VXSocialU
 	return vsuo.AddRechargeOrderIDs(ids...)
 }
 
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (vsuo *VXSocialUpdateOne) AddTransferOrderIDs(ids ...int64) *VXSocialUpdateOne {
+	vsuo.mutation.AddTransferOrderIDs(ids...)
+	return vsuo
+}
+
+// AddTransferOrders adds the "transfer_orders" edges to the TransferOrder entity.
+func (vsuo *VXSocialUpdateOne) AddTransferOrders(t ...*TransferOrder) *VXSocialUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return vsuo.AddTransferOrderIDs(ids...)
+}
+
 // Mutation returns the VXSocialMutation object of the builder.
 func (vsuo *VXSocialUpdateOne) Mutation() *VXSocialMutation {
 	return vsuo.mutation
@@ -674,6 +771,27 @@ func (vsuo *VXSocialUpdateOne) RemoveRechargeOrders(r ...*RechargeOrder) *VXSoci
 		ids[i] = r[i].ID
 	}
 	return vsuo.RemoveRechargeOrderIDs(ids...)
+}
+
+// ClearTransferOrders clears all "transfer_orders" edges to the TransferOrder entity.
+func (vsuo *VXSocialUpdateOne) ClearTransferOrders() *VXSocialUpdateOne {
+	vsuo.mutation.ClearTransferOrders()
+	return vsuo
+}
+
+// RemoveTransferOrderIDs removes the "transfer_orders" edge to TransferOrder entities by IDs.
+func (vsuo *VXSocialUpdateOne) RemoveTransferOrderIDs(ids ...int64) *VXSocialUpdateOne {
+	vsuo.mutation.RemoveTransferOrderIDs(ids...)
+	return vsuo
+}
+
+// RemoveTransferOrders removes "transfer_orders" edges to TransferOrder entities.
+func (vsuo *VXSocialUpdateOne) RemoveTransferOrders(t ...*TransferOrder) *VXSocialUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return vsuo.RemoveTransferOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the VXSocialUpdate builder.
@@ -873,6 +991,51 @@ func (vsuo *VXSocialUpdateOne) sqlSave(ctx context.Context) (_node *VXSocial, er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(rechargeorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if vsuo.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vsuo.mutation.RemovedTransferOrdersIDs(); len(nodes) > 0 && !vsuo.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := vsuo.mutation.TransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   vxsocial.TransferOrdersTable,
+			Columns: []string{vxsocial.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -15,7 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 )
 
-// RechargeOrder is the model entity for the RechargeOrder schema.
+// 充值订单，被 transfer_orders 取代，充值定义为从上帝账户转账到用户
 type RechargeOrder struct {
 	config `json:"-"`
 	// ID of the ent.

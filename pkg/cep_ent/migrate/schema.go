@@ -9,6 +9,73 @@ import (
 )
 
 var (
+	// BillsColumns holds the columns for the "bills" table.
+	BillsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge"}, Default: "unknown"},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
+		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
+		{Name: "target_after_amount", Type: field.TypeInt64, Comment: "目标钱包期末金额", Default: 0},
+		{Name: "source_before_amount", Type: field.TypeInt64, Comment: "来源钱包期初金额", Default: 0},
+		{Name: "source_after_amount", Type: field.TypeInt64, Comment: "来源钱包期初金额", Default: 0},
+		{Name: "serial_number", Type: field.TypeString, Comment: "流水号，唯一", Default: ""},
+		{Name: "invite_id", Type: field.TypeInt64, Comment: "外键关联某个邀请码", Default: 0},
+		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息", Default: 0},
+		{Name: "target_user_id", Type: field.TypeInt64, Comment: "流水目标钱包 id", Default: 0},
+		{Name: "source_user_id", Type: field.TypeInt64, Comment: "流水来源钱包 id", Default: 0},
+	}
+	// BillsTable holds the schema information for the "bills" table.
+	BillsTable = &schema.Table{
+		Name:       "bills",
+		Comment:    "记录用户账户的变动，流水记录",
+		Columns:    BillsColumns,
+		PrimaryKey: []*schema.Column{BillsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "bills_invites_bills",
+				Columns:    []*schema.Column{BillsColumns[15]},
+				RefColumns: []*schema.Column{InvitesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "bills_mission_consume_orders_bills",
+				Columns:    []*schema.Column{BillsColumns[16]},
+				RefColumns: []*schema.Column{MissionConsumeOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "bills_mission_produce_orders_bills",
+				Columns:    []*schema.Column{BillsColumns[16]},
+				RefColumns: []*schema.Column{MissionProduceOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "bills_transfer_orders_bills",
+				Columns:    []*schema.Column{BillsColumns[16]},
+				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "bills_users_income_bills",
+				Columns:    []*schema.Column{BillsColumns[17]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "bills_users_outcome_bills",
+				Columns:    []*schema.Column{BillsColumns[18]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// CampaignsColumns holds the columns for the "campaigns" table.
 	CampaignsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -27,6 +94,7 @@ var (
 	// CampaignsTable holds the schema information for the "campaigns" table.
 	CampaignsTable = &schema.Table{
 		Name:       "campaigns",
+		Comment:    "活动，计划废弃",
 		Columns:    CampaignsColumns,
 		PrimaryKey: []*schema.Column{CampaignsColumns[0]},
 	}
@@ -44,6 +112,7 @@ var (
 	// CampaignOrdersTable holds the schema information for the "campaign_orders" table.
 	CampaignOrdersTable = &schema.Table{
 		Name:       "campaign_orders",
+		Comment:    "活动订单，计划废弃",
 		Columns:    CampaignOrdersColumns,
 		PrimaryKey: []*schema.Column{CampaignOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -76,6 +145,7 @@ var (
 	// CollectsTable holds the schema information for the "collects" table.
 	CollectsTable = &schema.Table{
 		Name:       "collects",
+		Comment:    "用户的图片收藏",
 		Columns:    CollectsColumns,
 		PrimaryKey: []*schema.Column{CollectsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -109,6 +179,7 @@ var (
 	// CostAccountsTable holds the schema information for the "cost_accounts" table.
 	CostAccountsTable = &schema.Table{
 		Name:       "cost_accounts",
+		Comment:    "用户的消费账户，被 wallets 和 symbols 取代",
 		Columns:    CostAccountsColumns,
 		PrimaryKey: []*schema.Column{CostAccountsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -205,6 +276,7 @@ var (
 	// DevicesTable holds the schema information for the "devices" table.
 	DevicesTable = &schema.Table{
 		Name:       "devices",
+		Comment:    "设备，对应客户端 core，记录心跳等信息",
 		Columns:    DevicesColumns,
 		PrimaryKey: []*schema.Column{DevicesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -231,6 +303,7 @@ var (
 	// DeviceGpuMissionsTable holds the schema information for the "device_gpu_missions" table.
 	DeviceGpuMissionsTable = &schema.Table{
 		Name:       "device_gpu_missions",
+		Comment:    "登记设备的显卡信息，以及设备的任务执行能力配置状态",
 		Columns:    DeviceGpuMissionsColumns,
 		PrimaryKey: []*schema.Column{DeviceGpuMissionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -277,6 +350,7 @@ var (
 	// EarnBillsTable holds the schema information for the "earn_bills" table.
 	EarnBillsTable = &schema.Table{
 		Name:       "earn_bills",
+		Comment:    "分润流水，被 bill 取代",
 		Columns:    EarnBillsColumns,
 		PrimaryKey: []*schema.Column{EarnBillsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -321,6 +395,7 @@ var (
 	// EnumConditionsTable holds the schema information for the "enum_conditions" table.
 	EnumConditionsTable = &schema.Table{
 		Name:       "enum_conditions",
+		Comment:    "任务类型枚举值对应表，计划用代码实现取代",
 		Columns:    EnumConditionsColumns,
 		PrimaryKey: []*schema.Column{EnumConditionsColumns[0]},
 	}
@@ -339,6 +414,7 @@ var (
 	// EnumMissionStatusTable holds the schema information for the "enum_mission_status" table.
 	EnumMissionStatusTable = &schema.Table{
 		Name:       "enum_mission_status",
+		Comment:    "任务状态枚举值对应表，计划废弃，代码中实现",
 		Columns:    EnumMissionStatusColumns,
 		PrimaryKey: []*schema.Column{EnumMissionStatusColumns[0]},
 	}
@@ -362,6 +438,7 @@ var (
 	// FrpcInfosTable holds the schema information for the "frpc_infos" table.
 	FrpcInfosTable = &schema.Table{
 		Name:       "frpc_infos",
+		Comment:    "fRPC 客户端端口分配情况",
 		Columns:    FrpcInfosColumns,
 		PrimaryKey: []*schema.Column{FrpcInfosColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -397,6 +474,7 @@ var (
 	// FrpsInfosTable holds the schema information for the "frps_infos" table.
 	FrpsInfosTable = &schema.Table{
 		Name:       "frps_infos",
+		Comment:    "fRPS 服务器列表",
 		Columns:    FrpsInfosColumns,
 		PrimaryKey: []*schema.Column{FrpsInfosColumns[0]},
 	}
@@ -408,12 +486,13 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
+		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
 		{Name: "power", Type: field.TypeInt, Comment: "显卡能力值", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{
 		Name:       "gpus",
+		Comment:    "显卡信息，在表里有显卡型号的，才能在系统中选择使用等",
 		Columns:    GpusColumns,
 		PrimaryKey: []*schema.Column{GpusColumns[0]},
 	}
@@ -432,6 +511,7 @@ var (
 	// HmacKeyPairsTable holds the schema information for the "hmac_key_pairs" table.
 	HmacKeyPairsTable = &schema.Table{
 		Name:       "hmac_key_pairs",
+		Comment:    "密钥对，由于必须有用户才能使用密钥对，所以直接并入 user 的 key 和 secret 两个字段，废弃该表",
 		Columns:    HmacKeyPairsColumns,
 		PrimaryKey: []*schema.Column{HmacKeyPairsColumns[0]},
 		Indexes: []*schema.Index{
@@ -463,6 +543,7 @@ var (
 	// InputLogsTable holds the schema information for the "input_logs" table.
 	InputLogsTable = &schema.Table{
 		Name:       "input_logs",
+		Comment:    "输入日志，初期风变专用",
 		Columns:    InputLogsColumns,
 		PrimaryKey: []*schema.Column{InputLogsColumns[0]},
 	}
@@ -485,6 +566,7 @@ var (
 	// InvitesTable holds the schema information for the "invites" table.
 	InvitesTable = &schema.Table{
 		Name:       "invites",
+		Comment:    "邀请码表，可横行拓展，为邀请码赋予额外功能；具备第一条数据，默认邀请码，id 为 1",
 		Columns:    InvitesColumns,
 		PrimaryKey: []*schema.Column{InvitesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -517,14 +599,17 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "txt2img"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "unknown"},
 		{Name: "body", Type: field.TypeString, Comment: "任务的请求参数体", Default: ""},
 		{Name: "call_back_url", Type: field.TypeString, Comment: "回调地址，空字符串表示不回调", Default: ""},
+		{Name: "call_back_info", Type: field.TypeString, Nullable: true, Comment: "回调时带上的参数，接收任何类型数据后 json 压缩"},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "closing", "done"}, Default: "waiting"},
 		{Name: "result", Type: field.TypeEnum, Comment: "任务结果，pending 表示还没有结果", Enums: []string{"pending", "succeed", "failed"}, Default: "pending"},
+		{Name: "state", Type: field.TypeEnum, Comment: "新任务状态，整合原状态和结果", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "unknown"},
 		{Name: "result_urls", Type: field.TypeJSON, Nullable: true, Comment: "任务结果资源位置列表序列化"},
+		{Name: "urls", Type: field.TypeString, Comment: "任务结果链接列表，json 序列化后存储", Default: ""},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号", Default: ""},
-		{Name: "gpu_version", Type: field.TypeEnum, Comment: "最低可接显卡", Enums: []string{"RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "最低可接显卡", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "unknown"},
 		{Name: "unit_cep", Type: field.TypeInt64, Comment: "任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟", Default: 0},
 		{Name: "resp_status_code", Type: field.TypeInt32, Comment: "内部功能返回码", Default: 0},
 		{Name: "resp_body", Type: field.TypeString, Comment: "返回内容体 json 转 string", Default: ""},
@@ -534,17 +619,39 @@ var (
 		{Name: "temp_hmac_secret", Type: field.TypeString, Comment: "当 type 为 key_pair 时，使用的临时密钥对的值", Default: ""},
 		{Name: "second_hmac_key", Type: field.TypeString, Comment: "创建任务时使用了的 二级 hmac_key", Default: ""},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
+		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键关联任务批次", Default: 0},
+		{Name: "mission_kind_id", Type: field.TypeInt64, Comment: "外键，任务种类 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键任务的创建者 id", Default: 0},
 	}
 	// MissionsTable holds the schema information for the "missions" table.
 	MissionsTable = &schema.Table{
 		Name:       "missions",
+		Comment:    "任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_consume_orders 等订单侧",
 		Columns:    MissionsColumns,
 		PrimaryKey: []*schema.Column{MissionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[22]},
+				Columns:    []*schema.Column{MissionsColumns[25]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "missions_mission_batches_missions",
+				Columns:    []*schema.Column{MissionsColumns[26]},
+				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "missions_mission_kinds_missions",
+				Columns:    []*schema.Column{MissionsColumns[27]},
+				RefColumns: []*schema.Column{MissionKindsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "missions_users_missions",
+				Columns:    []*schema.Column{MissionsColumns[28]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -563,6 +670,7 @@ var (
 	// MissionBatchesTable holds the schema information for the "mission_batches" table.
 	MissionBatchesTable = &schema.Table{
 		Name:       "mission_batches",
+		Comment:    "任务批次，为同一次性创建的多个任务赋予关系记录",
 		Columns:    MissionBatchesColumns,
 		PrimaryKey: []*schema.Column{MissionBatchesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -582,23 +690,24 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
+		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "unknown"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务消耗的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务消耗的赠送 cep 量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "txt2img"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "unknown"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
 		{Name: "call_way", Type: field.TypeEnum, Comment: "调用方式，API 调用或者微信小程序调用", Enums: []string{"api", "yuan_hui", "dev_platform"}, Default: "api"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始执行时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务结束执行时刻"},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号，用于方便检索", Default: ""},
-		{Name: "mission_id", Type: field.TypeInt64, Unique: true, Comment: "任务 id，关联任务中枢的任务", Default: 0},
+		{Name: "mission_id", Type: field.TypeInt64, Unique: true, Comment: "任务 id，外键关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键关联用户 id", Default: 0},
 	}
 	// MissionConsumeOrdersTable holds the schema information for the "mission_consume_orders" table.
 	MissionConsumeOrdersTable = &schema.Table{
 		Name:       "mission_consume_orders",
+		Comment:    "任务消费订单，记录由任务消费产生的一些金额变动情况",
 		Columns:    MissionConsumeOrdersColumns,
 		PrimaryKey: []*schema.Column{MissionConsumeOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -641,6 +750,7 @@ var (
 	// MissionKeyPairsTable holds the schema information for the "mission_key_pairs" table.
 	MissionKeyPairsTable = &schema.Table{
 		Name:       "mission_key_pairs",
+		Comment:    "原任务执行情况，被 mission_productions 取代",
 		Columns:    MissionKeyPairsColumns,
 		PrimaryKey: []*schema.Column{MissionKeyPairsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -666,13 +776,14 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "txt2img"},
-		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"SD", "JP", "WT", "JP_DK"}, Default: "SD"},
-		{Name: "billing_type", Type: field.TypeEnum, Comment: "计费类型", Enums: []string{"time", "count", "hold", "volume"}, Default: "count"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "unknown"},
+		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK"}, Default: "unknown"},
+		{Name: "billing_type", Type: field.TypeEnum, Comment: "计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume"}, Default: "unknown"},
 	}
 	// MissionKindsTable holds the schema information for the "mission_kinds" table.
 	MissionKindsTable = &schema.Table{
 		Name:       "mission_kinds",
+		Comment:    "任务种类，任务类型的抽象层，记录了任务计费类型等信息",
 		Columns:    MissionKindsColumns,
 		PrimaryKey: []*schema.Column{MissionKindsColumns[0]},
 	}
@@ -685,37 +796,94 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，关联任务中枢的任务", Default: 0},
-		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
+		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务收益的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务收益的赠送 cep 量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "txt2img"},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Comment: "任务订单分润", Default: 0},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "unknown"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "生产者接该任务用的设备 id", Default: 0},
+		{Name: "mission_mission_produce_orders", Type: field.TypeInt64, Nullable: true},
 		{Name: "mission_consume_order_id", Type: field.TypeInt64, Comment: "外键任务消费订单，一个任务消费订单可能会对应多个任务生产订单", Default: 0},
+		{Name: "mission_production_id", Type: field.TypeInt64, Unique: true, Nullable: true, Comment: "任务执行情况 id"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键关联用户 id", Default: 0},
 	}
 	// MissionProduceOrdersTable holds the schema information for the "mission_produce_orders" table.
 	MissionProduceOrdersTable = &schema.Table{
 		Name:       "mission_produce_orders",
+		Comment:    "任务生产订单，记录任务生产情况对应的订单业务，比如分润情况，分润比例等信息",
 		Columns:    MissionProduceOrdersColumns,
 		PrimaryKey: []*schema.Column{MissionProduceOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "mission_produce_orders_devices_mission_produce_orders",
-				Columns:    []*schema.Column{MissionProduceOrdersColumns[13]},
+				Columns:    []*schema.Column{MissionProduceOrdersColumns[15]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
+				Symbol:     "mission_produce_orders_missions_mission_produce_orders",
+				Columns:    []*schema.Column{MissionProduceOrdersColumns[16]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:     "mission_produce_orders_mission_consume_orders_mission_produce_orders",
-				Columns:    []*schema.Column{MissionProduceOrdersColumns[14]},
+				Columns:    []*schema.Column{MissionProduceOrdersColumns[17]},
 				RefColumns: []*schema.Column{MissionConsumeOrdersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
+				Symbol:     "mission_produce_orders_mission_productions_mission_produce_order",
+				Columns:    []*schema.Column{MissionProduceOrdersColumns[18]},
+				RefColumns: []*schema.Column{MissionProductionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:     "mission_produce_orders_users_mission_produce_orders",
-				Columns:    []*schema.Column{MissionProduceOrdersColumns[15]},
+				Columns:    []*schema.Column{MissionProduceOrdersColumns[19]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// MissionProductionsColumns holds the columns for the "mission_productions" table.
+	MissionProductionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始时刻"},
+		{Name: "finished_at", Type: field.TypeTime, Comment: "任务完成时刻"},
+		{Name: "state", Type: field.TypeEnum, Comment: "任务执行状态情况", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "unknown"},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "领到任务的设备 ID", Default: 0},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "任务使用什么显卡在执行", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "unknown"},
+		{Name: "urls", Type: field.TypeString, Comment: "任务结果链接列表，json 序列化后存储", Default: ""},
+		{Name: "resp_status_code", Type: field.TypeInt32, Comment: "内部功能返回码", Default: 0},
+		{Name: "resp_body", Type: field.TypeString, Comment: "返回内容体 json 转 string", Default: ""},
+		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 ID"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 ID"},
+	}
+	// MissionProductionsTable holds the schema information for the "mission_productions" table.
+	MissionProductionsTable = &schema.Table{
+		Name:       "mission_productions",
+		Comment:    "任务执行情况，记录谁接了什么任务，用什么接，做得怎么样",
+		Columns:    MissionProductionsColumns,
+		PrimaryKey: []*schema.Column{MissionProductionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mission_productions_missions_mission_productions",
+				Columns:    []*schema.Column{MissionProductionsColumns[14]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "mission_productions_users_mission_productions",
+				Columns:    []*schema.Column{MissionProductionsColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -741,6 +909,7 @@ var (
 	// OutputLogsTable holds the schema information for the "output_logs" table.
 	OutputLogsTable = &schema.Table{
 		Name:       "output_logs",
+		Comment:    "输出日志，初期为风变专做的",
 		Columns:    OutputLogsColumns,
 		PrimaryKey: []*schema.Column{OutputLogsColumns[0]},
 	}
@@ -763,6 +932,7 @@ var (
 	// PlatformAccountsTable holds the schema information for the "platform_accounts" table.
 	PlatformAccountsTable = &schema.Table{
 		Name:       "platform_accounts",
+		Comment:    "平台账户，被 wallets 和 symbols 取代，使用特殊的 user_id 表示平台账户",
 		Columns:    PlatformAccountsColumns,
 		PrimaryKey: []*schema.Column{PlatformAccountsColumns[0]},
 		Indexes: []*schema.Index{
@@ -781,10 +951,10 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
-		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "txt2img"},
-		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"SD", "JP", "WT", "JP_DK"}, Default: "SD"},
-		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"time", "count", "hold", "volume"}, Default: "count"},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
+		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time"}, Default: "txt2img"},
+		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK"}, Default: "SD"},
+		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume"}, Default: "count"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
@@ -794,6 +964,7 @@ var (
 	// PricesTable holds the schema information for the "prices" table.
 	PricesTable = &schema.Table{
 		Name:       "prices",
+		Comment:    "任务定价表，表里有数据，任务才有单价，才可以被创建",
 		Columns:    PricesColumns,
 		PrimaryKey: []*schema.Column{PricesColumns[0]},
 	}
@@ -812,6 +983,7 @@ var (
 	// ProfitAccountsTable holds the schema information for the "profit_accounts" table.
 	ProfitAccountsTable = &schema.Table{
 		Name:       "profit_accounts",
+		Comment:    "分润账户，被 wallets 和 symbols 取代",
 		Columns:    ProfitAccountsColumns,
 		PrimaryKey: []*schema.Column{ProfitAccountsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -837,6 +1009,7 @@ var (
 	// ProfitSettingsTable holds the schema information for the "profit_settings" table.
 	ProfitSettingsTable = &schema.Table{
 		Name:       "profit_settings",
+		Comment:    "任务分润比例设置，属于用户的信息，所有人默认 75%",
 		Columns:    ProfitSettingsColumns,
 		PrimaryKey: []*schema.Column{ProfitSettingsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -863,6 +1036,7 @@ var (
 	// RechargeCampaignRulesTable holds the schema information for the "recharge_campaign_rules" table.
 	RechargeCampaignRulesTable = &schema.Table{
 		Name:       "recharge_campaign_rules",
+		Comment:    "充值活动的规则，死表，为特定充值赠送逻辑服务",
 		Columns:    RechargeCampaignRulesColumns,
 		PrimaryKey: []*schema.Column{RechargeCampaignRulesColumns[0]},
 	}
@@ -889,6 +1063,7 @@ var (
 	// RechargeOrdersTable holds the schema information for the "recharge_orders" table.
 	RechargeOrdersTable = &schema.Table{
 		Name:       "recharge_orders",
+		Comment:    "充值订单，被 transfer_orders 取代，充值定义为从上帝账户转账到用户",
 		Columns:    RechargeOrdersColumns,
 		PrimaryKey: []*schema.Column{RechargeOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -907,6 +1082,76 @@ var (
 			{
 				Symbol:     "recharge_orders_vx_socials_recharge_orders",
 				Columns:    []*schema.Column{RechargeOrdersColumns[16]},
+				RefColumns: []*schema.Column{VxSocialsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// SymbolsColumns holds the columns for the "symbols" table.
+	SymbolsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Comment: "币种名称，唯一", Default: ""},
+	}
+	// SymbolsTable holds the schema information for the "symbols" table.
+	SymbolsTable = &schema.Table{
+		Name:       "symbols",
+		Comment:    "币种，与用户多对多，通过钱包 Wallet",
+		Columns:    SymbolsColumns,
+		PrimaryKey: []*schema.Column{SymbolsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "symbol_name_deleted_at",
+				Unique:  true,
+				Columns: []*schema.Column{SymbolsColumns[6], SymbolsColumns[5]},
+			},
+		},
+	}
+	// TransferOrdersColumns holds the columns for the "transfer_orders" table.
+	TransferOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Comment: "充值多少货币量", Default: 0},
+		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"manual", "vx", "alipay", "unknown"}, Default: "unknown"},
+		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
+		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
+		{Name: "out_transaction_id", Type: field.TypeString, Comment: "平台方订单号", Default: ""},
+		{Name: "target_user_id", Type: field.TypeInt64, Comment: "转账目标的用户 id", Default: 0},
+		{Name: "source_user_id", Type: field.TypeInt64, Comment: "转账来源的用户 id", Default: 0},
+		{Name: "social_id", Type: field.TypeInt64, Nullable: true, Comment: "关联充值来源的身份源 id", Default: 0},
+	}
+	// TransferOrdersTable holds the schema information for the "transfer_orders" table.
+	TransferOrdersTable = &schema.Table{
+		Name:       "transfer_orders",
+		Comment:    "转账订单，谁给谁转了多少什么货币",
+		Columns:    TransferOrdersColumns,
+		PrimaryKey: []*schema.Column{TransferOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "transfer_orders_users_income_transfer_orders",
+				Columns:    []*schema.Column{TransferOrdersColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transfer_orders_users_outcome_transfer_orders",
+				Columns:    []*schema.Column{TransferOrdersColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Columns:    []*schema.Column{TransferOrdersColumns[15]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -934,6 +1179,7 @@ var (
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
+		Comment:    "用户表",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -959,6 +1205,7 @@ var (
 	// UserDevicesTable holds the schema information for the "user_devices" table.
 	UserDevicesTable = &schema.Table{
 		Name:       "user_devices",
+		Comment:    "用户与设备的中间关系，依赖时间字段记录用户与设备的解绑换绑等操作",
 		Columns:    UserDevicesColumns,
 		PrimaryKey: []*schema.Column{UserDevicesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -993,6 +1240,7 @@ var (
 	// VxAccountsTable holds the schema information for the "vx_accounts" table.
 	VxAccountsTable = &schema.Table{
 		Name:       "vx_accounts",
+		Comment:    "原微信身份源，被 vx_socials 取代",
 		Columns:    VxAccountsColumns,
 		PrimaryKey: []*schema.Column{VxAccountsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -1024,6 +1272,7 @@ var (
 	// VxSocialsTable holds the schema information for the "vx_socials" table.
 	VxSocialsTable = &schema.Table{
 		Name:       "vx_socials",
+		Comment:    "微信社会源信息，记录用户在微信方的身份信息",
 		Columns:    VxSocialsColumns,
 		PrimaryKey: []*schema.Column{VxSocialsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -1035,8 +1284,42 @@ var (
 			},
 		},
 	}
+	// WalletsColumns holds the columns for the "wallets" table.
+	WalletsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "amount", Type: field.TypeInt64, Comment: "货币余额", Default: 0},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
+	}
+	// WalletsTable holds the schema information for the "wallets" table.
+	WalletsTable = &schema.Table{
+		Name:       "wallets",
+		Comment:    "钱包，作为用户和各币种的中间关系，记录各余额",
+		Columns:    WalletsColumns,
+		PrimaryKey: []*schema.Column{WalletsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "wallets_symbols_wallets",
+				Columns:    []*schema.Column{WalletsColumns[7]},
+				RefColumns: []*schema.Column{SymbolsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "wallets_users_wallets",
+				Columns:    []*schema.Column{WalletsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		BillsTable,
 		CampaignsTable,
 		CampaignOrdersTable,
 		CollectsTable,
@@ -1059,6 +1342,7 @@ var (
 		MissionKeyPairsTable,
 		MissionKindsTable,
 		MissionProduceOrdersTable,
+		MissionProductionsTable,
 		OutputLogsTable,
 		PlatformAccountsTable,
 		PricesTable,
@@ -1066,14 +1350,24 @@ var (
 		ProfitSettingsTable,
 		RechargeCampaignRulesTable,
 		RechargeOrdersTable,
+		SymbolsTable,
+		TransferOrdersTable,
 		UsersTable,
 		UserDevicesTable,
 		VxAccountsTable,
 		VxSocialsTable,
+		WalletsTable,
 	}
 )
 
 func init() {
+	BillsTable.ForeignKeys[0].RefTable = InvitesTable
+	BillsTable.ForeignKeys[1].RefTable = MissionConsumeOrdersTable
+	BillsTable.ForeignKeys[2].RefTable = MissionProduceOrdersTable
+	BillsTable.ForeignKeys[3].RefTable = TransferOrdersTable
+	BillsTable.ForeignKeys[4].RefTable = UsersTable
+	BillsTable.ForeignKeys[5].RefTable = UsersTable
+	BillsTable.Annotation = &entsql.Annotation{}
 	CampaignsTable.Annotation = &entsql.Annotation{}
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
 	CampaignOrdersTable.ForeignKeys[1].RefTable = UsersTable
@@ -1113,6 +1407,9 @@ func init() {
 	InvitesTable.ForeignKeys[1].RefTable = UsersTable
 	InvitesTable.Annotation = &entsql.Annotation{}
 	MissionsTable.ForeignKeys[0].RefTable = HmacKeyPairsTable
+	MissionsTable.ForeignKeys[1].RefTable = MissionBatchesTable
+	MissionsTable.ForeignKeys[2].RefTable = MissionKindsTable
+	MissionsTable.ForeignKeys[3].RefTable = UsersTable
 	MissionsTable.Annotation = &entsql.Annotation{}
 	MissionBatchesTable.ForeignKeys[0].RefTable = UsersTable
 	MissionBatchesTable.Annotation = &entsql.Annotation{}
@@ -1125,9 +1422,14 @@ func init() {
 	MissionKeyPairsTable.Annotation = &entsql.Annotation{}
 	MissionKindsTable.Annotation = &entsql.Annotation{}
 	MissionProduceOrdersTable.ForeignKeys[0].RefTable = DevicesTable
-	MissionProduceOrdersTable.ForeignKeys[1].RefTable = MissionConsumeOrdersTable
-	MissionProduceOrdersTable.ForeignKeys[2].RefTable = UsersTable
+	MissionProduceOrdersTable.ForeignKeys[1].RefTable = MissionsTable
+	MissionProduceOrdersTable.ForeignKeys[2].RefTable = MissionConsumeOrdersTable
+	MissionProduceOrdersTable.ForeignKeys[3].RefTable = MissionProductionsTable
+	MissionProduceOrdersTable.ForeignKeys[4].RefTable = UsersTable
 	MissionProduceOrdersTable.Annotation = &entsql.Annotation{}
+	MissionProductionsTable.ForeignKeys[0].RefTable = MissionsTable
+	MissionProductionsTable.ForeignKeys[1].RefTable = UsersTable
+	MissionProductionsTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}
 	PricesTable.Annotation = &entsql.Annotation{}
@@ -1140,6 +1442,11 @@ func init() {
 	RechargeOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	RechargeOrdersTable.ForeignKeys[2].RefTable = VxSocialsTable
 	RechargeOrdersTable.Annotation = &entsql.Annotation{}
+	SymbolsTable.Annotation = &entsql.Annotation{}
+	TransferOrdersTable.ForeignKeys[0].RefTable = UsersTable
+	TransferOrdersTable.ForeignKeys[1].RefTable = UsersTable
+	TransferOrdersTable.ForeignKeys[2].RefTable = VxSocialsTable
+	TransferOrdersTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}
 	UserDevicesTable.ForeignKeys[0].RefTable = DevicesTable
@@ -1149,4 +1456,7 @@ func init() {
 	VxAccountsTable.Annotation = &entsql.Annotation{}
 	VxSocialsTable.ForeignKeys[0].RefTable = UsersTable
 	VxSocialsTable.Annotation = &entsql.Annotation{}
+	WalletsTable.ForeignKeys[0].RefTable = SymbolsTable
+	WalletsTable.ForeignKeys[1].RefTable = UsersTable
+	WalletsTable.Annotation = &entsql.Annotation{}
 }

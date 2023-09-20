@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 )
 
-// VXAccount is the model entity for the VXAccount schema.
+// 原微信身份源，被 vx_socials 取代
 type VXAccount struct {
 	config `json:"-"`
 	// ID of the ent.

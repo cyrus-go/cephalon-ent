@@ -16,7 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// MissionKeyPair is the model entity for the MissionKeyPair schema.
+// 原任务执行情况，被 mission_productions 取代
 type MissionKeyPair struct {
 	config `json:"-"`
 	// ID of the ent.

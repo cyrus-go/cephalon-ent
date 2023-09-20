@@ -14,7 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 )
 
-// UserDevice is the model entity for the UserDevice schema.
+// 用户与设备的中间关系，依赖时间字段记录用户与设备的解绑换绑等操作
 type UserDevice struct {
 	config `json:"-"`
 	// ID of the ent.

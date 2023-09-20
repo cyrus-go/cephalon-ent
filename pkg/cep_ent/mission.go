@@ -12,11 +12,14 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// Mission is the model entity for the Mission schema.
+// 任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_consume_orders 等订单侧
 type Mission struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -33,18 +36,30 @@ type Mission struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 任务类型
 	Type enums.MissionType `json:"type"`
+	// 外键，任务种类 id
+	MissionKindID int64 `json:"mission_kind_id"`
 	// 任务的请求参数体
 	Body string `json:"body"`
 	// 回调地址，空字符串表示不回调
 	CallBackURL string `json:"call_back_url"`
+	// 回调时带上的参数，接收任何类型数据后 json 压缩
+	CallBackInfo *string `json:"call_back_info"`
 	// 任务状态
 	Status enums.MissionStatus `json:"status"`
 	// 任务结果，pending 表示还没有结果
 	Result enums.MissionResult `json:"result"`
+	// 新任务状态，整合原状态和结果
+	State enums.MissionState `json:"state"`
 	// 任务结果资源位置列表序列化
 	ResultUrls []string `json:"-"`
+	// 任务结果链接列表，json 序列化后存储
+	Urls string `json:"urls"`
 	// 任务创建者的密钥对 ID
 	KeyPairID int64 `json:"key_pair_id"`
+	// 外键任务的创建者 id
+	UserID int64 `json:"user_id"`
+	// 外键关联任务批次
+	MissionBatchID int64 `json:"mission_batch_id"`
 	// 任务批次号
 	MissionBatchNumber string `json:"mission_batch_number"`
 	// 最低可接显卡
@@ -73,21 +88,57 @@ type Mission struct {
 
 // MissionEdges holds the relations/edges for other nodes in the graph.
 type MissionEdges struct {
+	// MissionKind holds the value of the mission_kind edge.
+	MissionKind *MissionKind `json:"mission_kind,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// MissionKeyPairs holds the value of the mission_key_pairs edge.
 	MissionKeyPairs []*MissionKeyPair `json:"mission_key_pairs,omitempty"`
 	// KeyPair holds the value of the key_pair edge.
 	KeyPair *HmacKeyPair `json:"key_pair,omitempty"`
 	// MissionConsumeOrder holds the value of the mission_consume_order edge.
 	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
+	// MissionProduceOrders holds the value of the mission_produce_orders edge.
+	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
+	// MissionBatch holds the value of the mission_batch edge.
+	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
+	// MissionProductions holds the value of the mission_productions edge.
+	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [8]bool
+}
+
+// MissionKindOrErr returns the MissionKind value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) MissionKindOrErr() (*MissionKind, error) {
+	if e.loadedTypes[0] {
+		if e.MissionKind == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionkind.Label}
+		}
+		return e.MissionKind, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_kind"}
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) UserOrErr() (*User, error) {
+	if e.loadedTypes[1] {
+		if e.User == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.User, nil
+	}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // MissionKeyPairsOrErr returns the MissionKeyPairs value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) MissionKeyPairsOrErr() ([]*MissionKeyPair, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[2] {
 		return e.MissionKeyPairs, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_key_pairs"}
@@ -96,7 +147,7 @@ func (e MissionEdges) MissionKeyPairsOrErr() ([]*MissionKeyPair, error) {
 // KeyPairOrErr returns the KeyPair value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionEdges) KeyPairOrErr() (*HmacKeyPair, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[3] {
 		if e.KeyPair == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: hmackeypair.Label}
@@ -109,7 +160,7 @@ func (e MissionEdges) KeyPairOrErr() (*HmacKeyPair, error) {
 // MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[4] {
 		if e.MissionConsumeOrder == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionconsumeorder.Label}
@@ -119,6 +170,37 @@ func (e MissionEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
 	return nil, &NotLoadedError{edge: "mission_consume_order"}
 }
 
+// MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
+	if e.loadedTypes[5] {
+		return e.MissionProduceOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_produce_orders"}
+}
+
+// MissionBatchOrErr returns the MissionBatch value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) MissionBatchOrErr() (*MissionBatch, error) {
+	if e.loadedTypes[6] {
+		if e.MissionBatch == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionbatch.Label}
+		}
+		return e.MissionBatch, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_batch"}
+}
+
+// MissionProductionsOrErr returns the MissionProductions value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
+	if e.loadedTypes[7] {
+		return e.MissionProductions, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_productions"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Mission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -126,9 +208,9 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case mission.FieldResultUrls:
 			values[i] = new([]byte)
-		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldKeyPairID, mission.FieldUnitCep, mission.FieldRespStatusCode:
+		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldStatus, mission.FieldResult, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -189,6 +271,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Type = enums.MissionType(value.String)
 			}
+		case mission.FieldMissionKindID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field mission_kind_id", values[i])
+			} else if value.Valid {
+				m.MissionKindID = value.Int64
+			}
 		case mission.FieldBody:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field body", values[i])
@@ -200,6 +288,13 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field call_back_url", values[i])
 			} else if value.Valid {
 				m.CallBackURL = value.String
+			}
+		case mission.FieldCallBackInfo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field call_back_info", values[i])
+			} else if value.Valid {
+				m.CallBackInfo = new(string)
+				*m.CallBackInfo = value.String
 			}
 		case mission.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -213,6 +308,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Result = enums.MissionResult(value.String)
 			}
+		case mission.FieldState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field state", values[i])
+			} else if value.Valid {
+				m.State = enums.MissionState(value.String)
+			}
 		case mission.FieldResultUrls:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field result_urls", values[i])
@@ -221,11 +322,29 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field result_urls: %w", err)
 				}
 			}
+		case mission.FieldUrls:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field urls", values[i])
+			} else if value.Valid {
+				m.Urls = value.String
+			}
 		case mission.FieldKeyPairID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field key_pair_id", values[i])
 			} else if value.Valid {
 				m.KeyPairID = value.Int64
+			}
+		case mission.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				m.UserID = value.Int64
+			}
+		case mission.FieldMissionBatchID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field mission_batch_id", values[i])
+			} else if value.Valid {
+				m.MissionBatchID = value.Int64
 			}
 		case mission.FieldMissionBatchNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -300,6 +419,16 @@ func (m *Mission) Value(name string) (ent.Value, error) {
 	return m.selectValues.Get(name)
 }
 
+// QueryMissionKind queries the "mission_kind" edge of the Mission entity.
+func (m *Mission) QueryMissionKind() *MissionKindQuery {
+	return NewMissionClient(m.config).QueryMissionKind(m)
+}
+
+// QueryUser queries the "user" edge of the Mission entity.
+func (m *Mission) QueryUser() *UserQuery {
+	return NewMissionClient(m.config).QueryUser(m)
+}
+
 // QueryMissionKeyPairs queries the "mission_key_pairs" edge of the Mission entity.
 func (m *Mission) QueryMissionKeyPairs() *MissionKeyPairQuery {
 	return NewMissionClient(m.config).QueryMissionKeyPairs(m)
@@ -313,6 +442,21 @@ func (m *Mission) QueryKeyPair() *HmacKeyPairQuery {
 // QueryMissionConsumeOrder queries the "mission_consume_order" edge of the Mission entity.
 func (m *Mission) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 	return NewMissionClient(m.config).QueryMissionConsumeOrder(m)
+}
+
+// QueryMissionProduceOrders queries the "mission_produce_orders" edge of the Mission entity.
+func (m *Mission) QueryMissionProduceOrders() *MissionProduceOrderQuery {
+	return NewMissionClient(m.config).QueryMissionProduceOrders(m)
+}
+
+// QueryMissionBatch queries the "mission_batch" edge of the Mission entity.
+func (m *Mission) QueryMissionBatch() *MissionBatchQuery {
+	return NewMissionClient(m.config).QueryMissionBatch(m)
+}
+
+// QueryMissionProductions queries the "mission_productions" edge of the Mission entity.
+func (m *Mission) QueryMissionProductions() *MissionProductionQuery {
+	return NewMissionClient(m.config).QueryMissionProductions(m)
 }
 
 // Update returns a builder for updating this Mission.
@@ -356,11 +500,19 @@ func (m *Mission) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", m.Type))
 	builder.WriteString(", ")
+	builder.WriteString("mission_kind_id=")
+	builder.WriteString(fmt.Sprintf("%v", m.MissionKindID))
+	builder.WriteString(", ")
 	builder.WriteString("body=")
 	builder.WriteString(m.Body)
 	builder.WriteString(", ")
 	builder.WriteString("call_back_url=")
 	builder.WriteString(m.CallBackURL)
+	builder.WriteString(", ")
+	if v := m.CallBackInfo; v != nil {
+		builder.WriteString("call_back_info=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", m.Status))
@@ -368,10 +520,22 @@ func (m *Mission) String() string {
 	builder.WriteString("result=")
 	builder.WriteString(fmt.Sprintf("%v", m.Result))
 	builder.WriteString(", ")
+	builder.WriteString("state=")
+	builder.WriteString(fmt.Sprintf("%v", m.State))
+	builder.WriteString(", ")
 	builder.WriteString("result_urls=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("urls=")
+	builder.WriteString(m.Urls)
 	builder.WriteString(", ")
 	builder.WriteString("key_pair_id=")
 	builder.WriteString(fmt.Sprintf("%v", m.KeyPairID))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("mission_batch_id=")
+	builder.WriteString(fmt.Sprintf("%v", m.MissionBatchID))
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_number=")
 	builder.WriteString(m.MissionBatchNumber)

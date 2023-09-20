@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -35,5 +36,11 @@ func (FrpsInfo) Edges() []ent.Edge {
 func (FrpsInfo) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (FrpsInfo) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("fRPS 服务器列表"),
 	}
 }

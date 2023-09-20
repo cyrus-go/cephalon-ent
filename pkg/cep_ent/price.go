@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// Price is the model entity for the Price schema.
+// 任务定价表，表里有数据，任务才有单价，才可以被创建
 type Price struct {
 	config `json:"-"`
 	// ID of the ent.

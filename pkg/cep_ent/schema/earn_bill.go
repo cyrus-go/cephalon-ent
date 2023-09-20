@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -42,5 +43,11 @@ func (EarnBill) Edges() []ent.Edge {
 func (EarnBill) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (EarnBill) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("分润流水，被 bill 取代"),
 	}
 }

@@ -11,10 +11,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -125,6 +127,20 @@ func (mpoc *MissionProduceOrderCreate) SetNillableMissionID(i *int64) *MissionPr
 	return mpoc
 }
 
+// SetMissionProductionID sets the "mission_production_id" field.
+func (mpoc *MissionProduceOrderCreate) SetMissionProductionID(i int64) *MissionProduceOrderCreate {
+	mpoc.mutation.SetMissionProductionID(i)
+	return mpoc
+}
+
+// SetNillableMissionProductionID sets the "mission_production_id" field if the given value is not nil.
+func (mpoc *MissionProduceOrderCreate) SetNillableMissionProductionID(i *int64) *MissionProduceOrderCreate {
+	if i != nil {
+		mpoc.SetMissionProductionID(*i)
+	}
+	return mpoc
+}
+
 // SetStatus sets the "status" field.
 func (mpoc *MissionProduceOrderCreate) SetStatus(eos enums.MissionOrderStatus) *MissionProduceOrderCreate {
 	mpoc.mutation.SetStatus(eos)
@@ -163,6 +179,34 @@ func (mpoc *MissionProduceOrderCreate) SetGiftCep(i int64) *MissionProduceOrderC
 func (mpoc *MissionProduceOrderCreate) SetNillableGiftCep(i *int64) *MissionProduceOrderCreate {
 	if i != nil {
 		mpoc.SetGiftCep(*i)
+	}
+	return mpoc
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (mpoc *MissionProduceOrderCreate) SetSymbolID(i int64) *MissionProduceOrderCreate {
+	mpoc.mutation.SetSymbolID(i)
+	return mpoc
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (mpoc *MissionProduceOrderCreate) SetNillableSymbolID(i *int64) *MissionProduceOrderCreate {
+	if i != nil {
+		mpoc.SetSymbolID(*i)
+	}
+	return mpoc
+}
+
+// SetAmount sets the "amount" field.
+func (mpoc *MissionProduceOrderCreate) SetAmount(i int64) *MissionProduceOrderCreate {
+	mpoc.mutation.SetAmount(i)
+	return mpoc
+}
+
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (mpoc *MissionProduceOrderCreate) SetNillableAmount(i *int64) *MissionProduceOrderCreate {
+	if i != nil {
+		mpoc.SetAmount(*i)
 	}
 	return mpoc
 }
@@ -271,6 +315,21 @@ func (mpoc *MissionProduceOrderCreate) AddEarnBills(e ...*EarnBill) *MissionProd
 	return mpoc.AddEarnBillIDs(ids...)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (mpoc *MissionProduceOrderCreate) AddBillIDs(ids ...int64) *MissionProduceOrderCreate {
+	mpoc.mutation.AddBillIDs(ids...)
+	return mpoc
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (mpoc *MissionProduceOrderCreate) AddBills(b ...*Bill) *MissionProduceOrderCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return mpoc.AddBillIDs(ids...)
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (mpoc *MissionProduceOrderCreate) SetDevice(d *Device) *MissionProduceOrderCreate {
 	return mpoc.SetDeviceID(d.ID)
@@ -279,6 +338,11 @@ func (mpoc *MissionProduceOrderCreate) SetDevice(d *Device) *MissionProduceOrder
 // SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
 func (mpoc *MissionProduceOrderCreate) SetMissionConsumeOrder(m *MissionConsumeOrder) *MissionProduceOrderCreate {
 	return mpoc.SetMissionConsumeOrderID(m.ID)
+}
+
+// SetMissionProduction sets the "mission_production" edge to the MissionProduction entity.
+func (mpoc *MissionProduceOrderCreate) SetMissionProduction(m *MissionProduction) *MissionProduceOrderCreate {
+	return mpoc.SetMissionProductionID(m.ID)
 }
 
 // Mutation returns the MissionProduceOrderMutation object of the builder.
@@ -356,6 +420,14 @@ func (mpoc *MissionProduceOrderCreate) defaults() {
 		v := missionproduceorder.DefaultGiftCep
 		mpoc.mutation.SetGiftCep(v)
 	}
+	if _, ok := mpoc.mutation.SymbolID(); !ok {
+		v := missionproduceorder.DefaultSymbolID
+		mpoc.mutation.SetSymbolID(v)
+	}
+	if _, ok := mpoc.mutation.Amount(); !ok {
+		v := missionproduceorder.DefaultAmount
+		mpoc.mutation.SetAmount(v)
+	}
 	if _, ok := mpoc.mutation.GetType(); !ok {
 		v := missionproduceorder.DefaultType
 		mpoc.mutation.SetType(v)
@@ -418,6 +490,12 @@ func (mpoc *MissionProduceOrderCreate) check() error {
 	}
 	if _, ok := mpoc.mutation.GiftCep(); !ok {
 		return &ValidationError{Name: "gift_cep", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.gift_cep"`)}
+	}
+	if _, ok := mpoc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.symbol_id"`)}
+	}
+	if _, ok := mpoc.mutation.Amount(); !ok {
+		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.amount"`)}
 	}
 	if _, ok := mpoc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "MissionProduceOrder.type"`)}
@@ -517,6 +595,14 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 		_spec.SetField(missionproduceorder.FieldGiftCep, field.TypeInt64, value)
 		_node.GiftCep = value
 	}
+	if value, ok := mpoc.mutation.SymbolID(); ok {
+		_spec.SetField(missionproduceorder.FieldSymbolID, field.TypeInt64, value)
+		_node.SymbolID = value
+	}
+	if value, ok := mpoc.mutation.Amount(); ok {
+		_spec.SetField(missionproduceorder.FieldAmount, field.TypeInt64, value)
+		_node.Amount = value
+	}
 	if value, ok := mpoc.mutation.GetType(); ok {
 		_spec.SetField(missionproduceorder.FieldType, field.TypeEnum, value)
 		_node.Type = value
@@ -562,6 +648,22 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := mpoc.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionproduceorder.BillsTable,
+			Columns: []string{missionproduceorder.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := mpoc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -594,6 +696,23 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MissionConsumeOrderID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mpoc.mutation.MissionProductionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   missionproduceorder.MissionProductionTable,
+			Columns: []string{missionproduceorder.MissionProductionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionProductionID = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -738,6 +857,24 @@ func (u *MissionProduceOrderUpsert) AddMissionID(v int64) *MissionProduceOrderUp
 	return u
 }
 
+// SetMissionProductionID sets the "mission_production_id" field.
+func (u *MissionProduceOrderUpsert) SetMissionProductionID(v int64) *MissionProduceOrderUpsert {
+	u.Set(missionproduceorder.FieldMissionProductionID, v)
+	return u
+}
+
+// UpdateMissionProductionID sets the "mission_production_id" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsert) UpdateMissionProductionID() *MissionProduceOrderUpsert {
+	u.SetExcluded(missionproduceorder.FieldMissionProductionID)
+	return u
+}
+
+// ClearMissionProductionID clears the value of the "mission_production_id" field.
+func (u *MissionProduceOrderUpsert) ClearMissionProductionID() *MissionProduceOrderUpsert {
+	u.SetNull(missionproduceorder.FieldMissionProductionID)
+	return u
+}
+
 // SetStatus sets the "status" field.
 func (u *MissionProduceOrderUpsert) SetStatus(v enums.MissionOrderStatus) *MissionProduceOrderUpsert {
 	u.Set(missionproduceorder.FieldStatus, v)
@@ -783,6 +920,42 @@ func (u *MissionProduceOrderUpsert) UpdateGiftCep() *MissionProduceOrderUpsert {
 // AddGiftCep adds v to the "gift_cep" field.
 func (u *MissionProduceOrderUpsert) AddGiftCep(v int64) *MissionProduceOrderUpsert {
 	u.Add(missionproduceorder.FieldGiftCep, v)
+	return u
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *MissionProduceOrderUpsert) SetSymbolID(v int64) *MissionProduceOrderUpsert {
+	u.Set(missionproduceorder.FieldSymbolID, v)
+	return u
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsert) UpdateSymbolID() *MissionProduceOrderUpsert {
+	u.SetExcluded(missionproduceorder.FieldSymbolID)
+	return u
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *MissionProduceOrderUpsert) AddSymbolID(v int64) *MissionProduceOrderUpsert {
+	u.Add(missionproduceorder.FieldSymbolID, v)
+	return u
+}
+
+// SetAmount sets the "amount" field.
+func (u *MissionProduceOrderUpsert) SetAmount(v int64) *MissionProduceOrderUpsert {
+	u.Set(missionproduceorder.FieldAmount, v)
+	return u
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsert) UpdateAmount() *MissionProduceOrderUpsert {
+	u.SetExcluded(missionproduceorder.FieldAmount)
+	return u
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *MissionProduceOrderUpsert) AddAmount(v int64) *MissionProduceOrderUpsert {
+	u.Add(missionproduceorder.FieldAmount, v)
 	return u
 }
 
@@ -1002,6 +1175,27 @@ func (u *MissionProduceOrderUpsertOne) UpdateMissionID() *MissionProduceOrderUps
 	})
 }
 
+// SetMissionProductionID sets the "mission_production_id" field.
+func (u *MissionProduceOrderUpsertOne) SetMissionProductionID(v int64) *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.SetMissionProductionID(v)
+	})
+}
+
+// UpdateMissionProductionID sets the "mission_production_id" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsertOne) UpdateMissionProductionID() *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.UpdateMissionProductionID()
+	})
+}
+
+// ClearMissionProductionID clears the value of the "mission_production_id" field.
+func (u *MissionProduceOrderUpsertOne) ClearMissionProductionID() *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.ClearMissionProductionID()
+	})
+}
+
 // SetStatus sets the "status" field.
 func (u *MissionProduceOrderUpsertOne) SetStatus(v enums.MissionOrderStatus) *MissionProduceOrderUpsertOne {
 	return u.Update(func(s *MissionProduceOrderUpsert) {
@@ -1055,6 +1249,48 @@ func (u *MissionProduceOrderUpsertOne) AddGiftCep(v int64) *MissionProduceOrderU
 func (u *MissionProduceOrderUpsertOne) UpdateGiftCep() *MissionProduceOrderUpsertOne {
 	return u.Update(func(s *MissionProduceOrderUpsert) {
 		s.UpdateGiftCep()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *MissionProduceOrderUpsertOne) SetSymbolID(v int64) *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *MissionProduceOrderUpsertOne) AddSymbolID(v int64) *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.AddSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsertOne) UpdateSymbolID() *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.UpdateSymbolID()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *MissionProduceOrderUpsertOne) SetAmount(v int64) *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *MissionProduceOrderUpsertOne) AddAmount(v int64) *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.AddAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsertOne) UpdateAmount() *MissionProduceOrderUpsertOne {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.UpdateAmount()
 	})
 }
 
@@ -1450,6 +1686,27 @@ func (u *MissionProduceOrderUpsertBulk) UpdateMissionID() *MissionProduceOrderUp
 	})
 }
 
+// SetMissionProductionID sets the "mission_production_id" field.
+func (u *MissionProduceOrderUpsertBulk) SetMissionProductionID(v int64) *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.SetMissionProductionID(v)
+	})
+}
+
+// UpdateMissionProductionID sets the "mission_production_id" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsertBulk) UpdateMissionProductionID() *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.UpdateMissionProductionID()
+	})
+}
+
+// ClearMissionProductionID clears the value of the "mission_production_id" field.
+func (u *MissionProduceOrderUpsertBulk) ClearMissionProductionID() *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.ClearMissionProductionID()
+	})
+}
+
 // SetStatus sets the "status" field.
 func (u *MissionProduceOrderUpsertBulk) SetStatus(v enums.MissionOrderStatus) *MissionProduceOrderUpsertBulk {
 	return u.Update(func(s *MissionProduceOrderUpsert) {
@@ -1503,6 +1760,48 @@ func (u *MissionProduceOrderUpsertBulk) AddGiftCep(v int64) *MissionProduceOrder
 func (u *MissionProduceOrderUpsertBulk) UpdateGiftCep() *MissionProduceOrderUpsertBulk {
 	return u.Update(func(s *MissionProduceOrderUpsert) {
 		s.UpdateGiftCep()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *MissionProduceOrderUpsertBulk) SetSymbolID(v int64) *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *MissionProduceOrderUpsertBulk) AddSymbolID(v int64) *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.AddSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsertBulk) UpdateSymbolID() *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.UpdateSymbolID()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *MissionProduceOrderUpsertBulk) SetAmount(v int64) *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *MissionProduceOrderUpsertBulk) AddAmount(v int64) *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.AddAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *MissionProduceOrderUpsertBulk) UpdateAmount() *MissionProduceOrderUpsertBulk {
+	return u.Update(func(s *MissionProduceOrderUpsert) {
+		s.UpdateAmount()
 	})
 }
 

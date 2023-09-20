@@ -91,6 +91,11 @@ func MissionID(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldEQ(FieldMissionID, v))
 }
 
+// MissionProductionID applies equality check predicate on the "mission_production_id" field. It's identical to MissionProductionIDEQ.
+func MissionProductionID(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldMissionProductionID, v))
+}
+
 // PureCep applies equality check predicate on the "pure_cep" field. It's identical to PureCepEQ.
 func PureCep(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldEQ(FieldPureCep, v))
@@ -99,6 +104,16 @@ func PureCep(v int64) predicate.MissionProduceOrder {
 // GiftCep applies equality check predicate on the "gift_cep" field. It's identical to GiftCepEQ.
 func GiftCep(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldEQ(FieldGiftCep, v))
+}
+
+// SymbolID applies equality check predicate on the "symbol_id" field. It's identical to SymbolIDEQ.
+func SymbolID(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldSymbolID, v))
+}
+
+// Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
+func Amount(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldAmount, v))
 }
 
 // IsTime applies equality check predicate on the "is_time" field. It's identical to IsTimeEQ.
@@ -381,6 +396,36 @@ func MissionIDLTE(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldLTE(FieldMissionID, v))
 }
 
+// MissionProductionIDEQ applies the EQ predicate on the "mission_production_id" field.
+func MissionProductionIDEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldMissionProductionID, v))
+}
+
+// MissionProductionIDNEQ applies the NEQ predicate on the "mission_production_id" field.
+func MissionProductionIDNEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNEQ(FieldMissionProductionID, v))
+}
+
+// MissionProductionIDIn applies the In predicate on the "mission_production_id" field.
+func MissionProductionIDIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldIn(FieldMissionProductionID, vs...))
+}
+
+// MissionProductionIDNotIn applies the NotIn predicate on the "mission_production_id" field.
+func MissionProductionIDNotIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldMissionProductionID, vs...))
+}
+
+// MissionProductionIDIsNil applies the IsNil predicate on the "mission_production_id" field.
+func MissionProductionIDIsNil() predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldIsNull(FieldMissionProductionID))
+}
+
+// MissionProductionIDNotNil applies the NotNil predicate on the "mission_production_id" field.
+func MissionProductionIDNotNil() predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNotNull(FieldMissionProductionID))
+}
+
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v enums.MissionOrderStatus) predicate.MissionProduceOrder {
 	vc := v
@@ -489,6 +534,86 @@ func GiftCepLT(v int64) predicate.MissionProduceOrder {
 // GiftCepLTE applies the LTE predicate on the "gift_cep" field.
 func GiftCepLTE(v int64) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(sql.FieldLTE(FieldGiftCep, v))
+}
+
+// SymbolIDEQ applies the EQ predicate on the "symbol_id" field.
+func SymbolIDEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldSymbolID, v))
+}
+
+// SymbolIDNEQ applies the NEQ predicate on the "symbol_id" field.
+func SymbolIDNEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNEQ(FieldSymbolID, v))
+}
+
+// SymbolIDIn applies the In predicate on the "symbol_id" field.
+func SymbolIDIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
+func SymbolIDNotIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDGT applies the GT predicate on the "symbol_id" field.
+func SymbolIDGT(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldGT(FieldSymbolID, v))
+}
+
+// SymbolIDGTE applies the GTE predicate on the "symbol_id" field.
+func SymbolIDGTE(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldGTE(FieldSymbolID, v))
+}
+
+// SymbolIDLT applies the LT predicate on the "symbol_id" field.
+func SymbolIDLT(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldLT(FieldSymbolID, v))
+}
+
+// SymbolIDLTE applies the LTE predicate on the "symbol_id" field.
+func SymbolIDLTE(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldLTE(FieldSymbolID, v))
+}
+
+// AmountEQ applies the EQ predicate on the "amount" field.
+func AmountEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldEQ(FieldAmount, v))
+}
+
+// AmountNEQ applies the NEQ predicate on the "amount" field.
+func AmountNEQ(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNEQ(FieldAmount, v))
+}
+
+// AmountIn applies the In predicate on the "amount" field.
+func AmountIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldIn(FieldAmount, vs...))
+}
+
+// AmountNotIn applies the NotIn predicate on the "amount" field.
+func AmountNotIn(vs ...int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldNotIn(FieldAmount, vs...))
+}
+
+// AmountGT applies the GT predicate on the "amount" field.
+func AmountGT(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldGT(FieldAmount, v))
+}
+
+// AmountGTE applies the GTE predicate on the "amount" field.
+func AmountGTE(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldGTE(FieldAmount, v))
+}
+
+// AmountLT applies the LT predicate on the "amount" field.
+func AmountLT(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldLT(FieldAmount, v))
+}
+
+// AmountLTE applies the LTE predicate on the "amount" field.
+func AmountLTE(v int64) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(sql.FieldLTE(FieldAmount, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
@@ -682,6 +807,29 @@ func HasEarnBillsWith(preds ...predicate.EarnBill) predicate.MissionProduceOrder
 	})
 }
 
+// HasBills applies the HasEdge predicate on the "bills" edge.
+func HasBills() predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasBillsWith applies the HasEdge predicate on the "bills" edge with a given conditions (other predicates).
+func HasBillsWith(preds ...predicate.Bill) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(func(s *sql.Selector) {
+		step := newBillsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasDevice applies the HasEdge predicate on the "device" edge.
 func HasDevice() predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(func(s *sql.Selector) {
@@ -720,6 +868,29 @@ func HasMissionConsumeOrder() predicate.MissionProduceOrder {
 func HasMissionConsumeOrderWith(preds ...predicate.MissionConsumeOrder) predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(func(s *sql.Selector) {
 		step := newMissionConsumeOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionProduction applies the HasEdge predicate on the "mission_production" edge.
+func HasMissionProduction() predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, MissionProductionTable, MissionProductionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionProductionWith applies the HasEdge predicate on the "mission_production" edge with a given conditions (other predicates).
+func HasMissionProductionWith(preds ...predicate.MissionProduction) predicate.MissionProduceOrder {
+	return predicate.MissionProduceOrder(func(s *sql.Selector) {
+		step := newMissionProductionStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

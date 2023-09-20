@@ -42,6 +42,8 @@ const (
 	EdgeUser = "user"
 	// EdgeCampaign holds the string denoting the campaign edge name in mutations.
 	EdgeCampaign = "campaign"
+	// EdgeBills holds the string denoting the bills edge name in mutations.
+	EdgeBills = "bills"
 	// Table holds the table name of the invite in the database.
 	Table = "invites"
 	// UserTable is the table that holds the user relation/edge.
@@ -58,6 +60,13 @@ const (
 	CampaignInverseTable = "campaigns"
 	// CampaignColumn is the table column denoting the campaign relation/edge.
 	CampaignColumn = "campaign_id"
+	// BillsTable is the table that holds the bills relation/edge.
+	BillsTable = "bills"
+	// BillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	BillsInverseTable = "bills"
+	// BillsColumn is the table column denoting the bills relation/edge.
+	BillsColumn = "invite_id"
 )
 
 // Columns holds all SQL columns for invite fields.
@@ -199,6 +208,20 @@ func ByCampaignField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCampaignStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByBillsCount orders the results by bills count.
+func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+	}
+}
+
+// ByBills orders the results by bills terms.
+func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -211,5 +234,12 @@ func newCampaignStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CampaignInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, CampaignTable, CampaignColumn),
+	)
+}
+func newBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
 	)
 }

@@ -56,6 +56,8 @@ const (
 	EdgeUser = "user"
 	// EdgeCostBills holds the string denoting the cost_bills edge name in mutations.
 	EdgeCostBills = "cost_bills"
+	// EdgeBills holds the string denoting the bills edge name in mutations.
+	EdgeBills = "bills"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
 	EdgeMissionProduceOrders = "mission_produce_orders"
 	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
@@ -78,6 +80,13 @@ const (
 	CostBillsInverseTable = "cost_bills"
 	// CostBillsColumn is the table column denoting the cost_bills relation/edge.
 	CostBillsColumn = "reason_id"
+	// BillsTable is the table that holds the bills relation/edge.
+	BillsTable = "bills"
+	// BillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	BillsInverseTable = "bills"
+	// BillsColumn is the table column denoting the bills relation/edge.
+	BillsColumn = "order_id"
 	// MissionProduceOrdersTable is the table that holds the mission_produce_orders relation/edge.
 	MissionProduceOrdersTable = "mission_produce_orders"
 	// MissionProduceOrdersInverseTable is the table name for the MissionProduceOrder entity.
@@ -171,24 +180,24 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.MissionOrderStatus = "waiting"
+const DefaultStatus enums.MissionOrderStatus = "unknown"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.MissionOrderStatus) error {
 	switch s {
-	case "waiting", "canceled", "doing", "supplying", "failed", "succeed":
+	case "unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for status field: %q", s)
 	}
 }
 
-const DefaultType enums.MissionType = "txt2img"
+const DefaultType enums.MissionType = "unknown"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
 		return nil
 	default:
 		return fmt.Errorf("missionconsumeorder: invalid enum value for type field: %q", _type)
@@ -326,6 +335,20 @@ func ByCostBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByBillsCount orders the results by bills count.
+func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+	}
+}
+
+// ByBills orders the results by bills terms.
+func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByMissionProduceOrdersCount orders the results by mission_produce_orders count.
 func ByMissionProduceOrdersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -365,6 +388,13 @@ func newCostBillsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CostBillsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CostBillsTable, CostBillsColumn),
+	)
+}
+func newBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
 	)
 }
 func newMissionProduceOrdersStep() *sqlgraph.Step {

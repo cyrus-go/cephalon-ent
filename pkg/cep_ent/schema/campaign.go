@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/common"
@@ -38,5 +39,11 @@ func (Campaign) Edges() []ent.Edge {
 func (Campaign) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (Campaign) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		schema.Comment("活动，计划废弃"),
 	}
 }

@@ -104,7 +104,7 @@ const DefaultGpuVersion enums.GpuVersion = "RTX2060"
 // GpuVersionValidator is a validator for the "gpu_version" field enum values. It is called by the builders before save.
 func GpuVersionValidator(gv enums.GpuVersion) error {
 	switch gv {
-	case "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100":
+	case "unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for gpu_version field: %q", gv)
@@ -116,7 +116,7 @@ const DefaultMissionType enums.MissionType = "txt2img"
 // MissionTypeValidator is a validator for the "mission_type" field enum values. It is called by the builders before save.
 func MissionTypeValidator(mt enums.MissionType) error {
 	switch mt {
-	case "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_type field: %q", mt)
@@ -128,7 +128,7 @@ const DefaultMissionCategory enums.MissionCategory = "SD"
 // MissionCategoryValidator is a validator for the "mission_category" field enum values. It is called by the builders before save.
 func MissionCategoryValidator(mc enums.MissionCategory) error {
 	switch mc {
-	case "SD", "JP", "WT", "JP_DK":
+	case "unknown", "SD", "JP", "WT", "JP_DK":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_category field: %q", mc)
@@ -140,7 +140,7 @@ const DefaultMissionBillingType enums.MissionBillingType = "count"
 // MissionBillingTypeValidator is a validator for the "mission_billing_type" field enum values. It is called by the builders before save.
 func MissionBillingTypeValidator(mbt enums.MissionBillingType) error {
 	switch mbt {
-	case "time", "count", "hold", "volume":
+	case "unknown", "time", "count", "hold", "volume":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_billing_type field: %q", mbt)

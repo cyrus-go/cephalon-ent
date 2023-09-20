@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 )
 
-// VXSocial is the model entity for the VXSocial schema.
+// 微信社会源信息，记录用户在微信方的身份信息
 type VXSocial struct {
 	config `json:"-"`
 	// ID of the ent.
@@ -56,9 +56,11 @@ type VXSocialEdges struct {
 	User *User `json:"user,omitempty"`
 	// RechargeOrders holds the value of the recharge_orders edge.
 	RechargeOrders []*RechargeOrder `json:"recharge_orders,omitempty"`
+	// TransferOrders holds the value of the transfer_orders edge.
+	TransferOrders []*TransferOrder `json:"transfer_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -81,6 +83,15 @@ func (e VXSocialEdges) RechargeOrdersOrErr() ([]*RechargeOrder, error) {
 		return e.RechargeOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "recharge_orders"}
+}
+
+// TransferOrdersOrErr returns the TransferOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e VXSocialEdges) TransferOrdersOrErr() ([]*TransferOrder, error) {
+	if e.loadedTypes[2] {
+		return e.TransferOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "transfer_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -214,6 +225,11 @@ func (vs *VXSocial) QueryUser() *UserQuery {
 // QueryRechargeOrders queries the "recharge_orders" edge of the VXSocial entity.
 func (vs *VXSocial) QueryRechargeOrders() *RechargeOrderQuery {
 	return NewVXSocialClient(vs.config).QueryRechargeOrders(vs)
+}
+
+// QueryTransferOrders queries the "transfer_orders" edge of the VXSocial entity.
+func (vs *VXSocial) QueryTransferOrders() *TransferOrderQuery {
+	return NewVXSocialClient(vs.config).QueryTransferOrders(vs)
 }
 
 // Update returns a builder for updating this VXSocial.
