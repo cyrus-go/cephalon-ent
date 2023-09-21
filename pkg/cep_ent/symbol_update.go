@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -120,6 +121,21 @@ func (su *SymbolUpdate) AddWallets(w ...*Wallet) *SymbolUpdate {
 	return su.AddWalletIDs(ids...)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (su *SymbolUpdate) AddBillIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.AddBillIDs(ids...)
+	return su
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (su *SymbolUpdate) AddBills(b ...*Bill) *SymbolUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return su.AddBillIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (su *SymbolUpdate) Mutation() *SymbolMutation {
 	return su.mutation
@@ -144,6 +160,27 @@ func (su *SymbolUpdate) RemoveWallets(w ...*Wallet) *SymbolUpdate {
 		ids[i] = w[i].ID
 	}
 	return su.RemoveWalletIDs(ids...)
+}
+
+// ClearBills clears all "bills" edges to the Bill entity.
+func (su *SymbolUpdate) ClearBills() *SymbolUpdate {
+	su.mutation.ClearBills()
+	return su
+}
+
+// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
+func (su *SymbolUpdate) RemoveBillIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.RemoveBillIDs(ids...)
+	return su
+}
+
+// RemoveBills removes "bills" edges to Bill entities.
+func (su *SymbolUpdate) RemoveBills(b ...*Bill) *SymbolUpdate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return su.RemoveBillIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -250,6 +287,51 @@ func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if su.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedBillsIDs(); len(nodes) > 0 && !su.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -368,6 +450,21 @@ func (suo *SymbolUpdateOne) AddWallets(w ...*Wallet) *SymbolUpdateOne {
 	return suo.AddWalletIDs(ids...)
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (suo *SymbolUpdateOne) AddBillIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.AddBillIDs(ids...)
+	return suo
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (suo *SymbolUpdateOne) AddBills(b ...*Bill) *SymbolUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return suo.AddBillIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (suo *SymbolUpdateOne) Mutation() *SymbolMutation {
 	return suo.mutation
@@ -392,6 +489,27 @@ func (suo *SymbolUpdateOne) RemoveWallets(w ...*Wallet) *SymbolUpdateOne {
 		ids[i] = w[i].ID
 	}
 	return suo.RemoveWalletIDs(ids...)
+}
+
+// ClearBills clears all "bills" edges to the Bill entity.
+func (suo *SymbolUpdateOne) ClearBills() *SymbolUpdateOne {
+	suo.mutation.ClearBills()
+	return suo
+}
+
+// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
+func (suo *SymbolUpdateOne) RemoveBillIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.RemoveBillIDs(ids...)
+	return suo
+}
+
+// RemoveBills removes "bills" edges to Bill entities.
+func (suo *SymbolUpdateOne) RemoveBills(b ...*Bill) *SymbolUpdateOne {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return suo.RemoveBillIDs(ids...)
 }
 
 // Where appends a list predicates to the SymbolUpdate builder.
@@ -528,6 +646,51 @@ func (suo *SymbolUpdateOne) sqlSave(ctx context.Context) (_node *Symbol, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !suo.mutation.BillsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -64,6 +64,8 @@ const (
 	EdgeMissionProduceOrder = "mission_produce_order"
 	// EdgeInvite holds the string denoting the invite edge name in mutations.
 	EdgeInvite = "invite"
+	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
+	EdgeSymbol = "symbol"
 	// Table holds the table name of the bill in the database.
 	Table = "bills"
 	// SourceUserTable is the table that holds the source_user relation/edge.
@@ -108,6 +110,13 @@ const (
 	InviteInverseTable = "invites"
 	// InviteColumn is the table column denoting the invite relation/edge.
 	InviteColumn = "invite_id"
+	// SymbolTable is the table that holds the symbol relation/edge.
+	SymbolTable = "bills"
+	// SymbolInverseTable is the table name for the Symbol entity.
+	// It exists in this package in order to avoid circular dependency with the "symbol" package.
+	SymbolInverseTable = "symbols"
+	// SymbolColumn is the table column denoting the symbol relation/edge.
+	SymbolColumn = "symbol_id"
 )
 
 // Columns holds all SQL columns for bill fields.
@@ -345,6 +354,13 @@ func ByInviteField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newInviteStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// BySymbolField orders the results by symbol field.
+func BySymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSymbolStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newSourceUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -385,5 +401,12 @@ func newInviteStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(InviteInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, InviteTable, InviteColumn),
+	)
+}
+func newSymbolStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SymbolInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
 	)
 }

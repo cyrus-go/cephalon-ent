@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -79,9 +80,11 @@ type BillEdges struct {
 	MissionProduceOrder *MissionProduceOrder `json:"mission_produce_order,omitempty"`
 	// Invite holds the value of the invite edge.
 	Invite *Invite `json:"invite,omitempty"`
+	// Symbol holds the value of the symbol edge.
+	Symbol *Symbol `json:"symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // SourceUserOrErr returns the SourceUser value or an error if the edge
@@ -160,6 +163,19 @@ func (e BillEdges) InviteOrErr() (*Invite, error) {
 		return e.Invite, nil
 	}
 	return nil, &NotLoadedError{edge: "invite"}
+}
+
+// SymbolOrErr returns the Symbol value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BillEdges) SymbolOrErr() (*Symbol, error) {
+	if e.loadedTypes[6] {
+		if e.Symbol == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: symbol.Label}
+		}
+		return e.Symbol, nil
+	}
+	return nil, &NotLoadedError{edge: "symbol"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -343,6 +359,11 @@ func (b *Bill) QueryMissionProduceOrder() *MissionProduceOrderQuery {
 // QueryInvite queries the "invite" edge of the Bill entity.
 func (b *Bill) QueryInvite() *InviteQuery {
 	return NewBillClient(b.config).QueryInvite(b)
+}
+
+// QuerySymbol queries the "symbol" edge of the Bill entity.
+func (b *Bill) QuerySymbol() *SymbolQuery {
+	return NewBillClient(b.config).QuerySymbol(b)
 }
 
 // Update returns a builder for updating this Bill.

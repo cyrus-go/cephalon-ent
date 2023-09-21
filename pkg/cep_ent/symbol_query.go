@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -24,6 +25,7 @@ type SymbolQuery struct {
 	inters      []Interceptor
 	predicates  []predicate.Symbol
 	withWallets *WalletQuery
+	withBills   *BillQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (sq *SymbolQuery) QueryWallets() *WalletQuery {
 			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
 			sqlgraph.To(wallet.Table, wallet.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, symbol.WalletsTable, symbol.WalletsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryBills chains the current query on the "bills" edge.
+func (sq *SymbolQuery) QueryBills() *BillQuery {
+	query := (&BillClient{config: sq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := sq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := sq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
+			sqlgraph.To(bill.Table, bill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.BillsTable, symbol.BillsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +299,7 @@ func (sq *SymbolQuery) Clone() *SymbolQuery {
 		inters:      append([]Interceptor{}, sq.inters...),
 		predicates:  append([]predicate.Symbol{}, sq.predicates...),
 		withWallets: sq.withWallets.Clone(),
+		withBills:   sq.withBills.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,
@@ -289,6 +314,17 @@ func (sq *SymbolQuery) WithWallets(opts ...func(*WalletQuery)) *SymbolQuery {
 		opt(query)
 	}
 	sq.withWallets = query
+	return sq
+}
+
+// WithBills tells the query-builder to eager-load the nodes that are connected to
+// the "bills" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *SymbolQuery) WithBills(opts ...func(*BillQuery)) *SymbolQuery {
+	query := (&BillClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	sq.withBills = query
 	return sq
 }
 
@@ -370,8 +406,9 @@ func (sq *SymbolQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Symbo
 	var (
 		nodes       = []*Symbol{}
 		_spec       = sq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			sq.withWallets != nil,
+			sq.withBills != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -399,6 +436,13 @@ func (sq *SymbolQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Symbo
 			return nil, err
 		}
 	}
+	if query := sq.withBills; query != nil {
+		if err := sq.loadBills(ctx, query, nodes,
+			func(n *Symbol) { n.Edges.Bills = []*Bill{} },
+			func(n *Symbol, e *Bill) { n.Edges.Bills = append(n.Edges.Bills, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -417,6 +461,36 @@ func (sq *SymbolQuery) loadWallets(ctx context.Context, query *WalletQuery, node
 	}
 	query.Where(predicate.Wallet(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(symbol.WalletsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.SymbolID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "symbol_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (sq *SymbolQuery) loadBills(ctx context.Context, query *BillQuery, nodes []*Symbol, init func(*Symbol), assign func(*Symbol, *Bill)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Symbol)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(bill.FieldSymbolID)
+	}
+	query.Where(predicate.Bill(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(symbol.BillsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

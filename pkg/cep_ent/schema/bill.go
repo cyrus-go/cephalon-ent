@@ -41,6 +41,7 @@ func (Bill) Edges() []ent.Edge {
 		edge.From("mission_consume_order", MissionConsumeOrder.Type).Ref("bills").Field("order_id").Unique(),
 		edge.From("mission_produce_order", MissionProduceOrder.Type).Ref("bills").Field("order_id").Unique(),
 		edge.From("invite", Invite.Type).Ref("bills").Field("invite_id").Unique().Required(),
+		edge.From("symbol", Symbol.Type).Ref("bills").Field("symbol_id").Unique().Required(),
 	}
 }
 

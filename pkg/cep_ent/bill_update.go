@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -146,7 +147,6 @@ func (bu *BillUpdate) SetNillableWay(ew *enums.BillWay) *BillUpdate {
 
 // SetSymbolID sets the "symbol_id" field.
 func (bu *BillUpdate) SetSymbolID(i int64) *BillUpdate {
-	bu.mutation.ResetSymbolID()
 	bu.mutation.SetSymbolID(i)
 	return bu
 }
@@ -156,12 +156,6 @@ func (bu *BillUpdate) SetNillableSymbolID(i *int64) *BillUpdate {
 	if i != nil {
 		bu.SetSymbolID(*i)
 	}
-	return bu
-}
-
-// AddSymbolID adds i to the "symbol_id" field.
-func (bu *BillUpdate) AddSymbolID(i int64) *BillUpdate {
-	bu.mutation.AddSymbolID(i)
 	return bu
 }
 
@@ -398,6 +392,11 @@ func (bu *BillUpdate) SetInvite(i *Invite) *BillUpdate {
 	return bu.SetInviteID(i.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (bu *BillUpdate) SetSymbol(s *Symbol) *BillUpdate {
+	return bu.SetSymbolID(s.ID)
+}
+
 // Mutation returns the BillMutation object of the builder.
 func (bu *BillUpdate) Mutation() *BillMutation {
 	return bu.mutation
@@ -436,6 +435,12 @@ func (bu *BillUpdate) ClearMissionProduceOrder() *BillUpdate {
 // ClearInvite clears the "invite" edge to the Invite entity.
 func (bu *BillUpdate) ClearInvite() *BillUpdate {
 	bu.mutation.ClearInvite()
+	return bu
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (bu *BillUpdate) ClearSymbol() *BillUpdate {
+	bu.mutation.ClearSymbol()
 	return bu
 }
 
@@ -496,6 +501,9 @@ func (bu *BillUpdate) check() error {
 	if _, ok := bu.mutation.InviteID(); bu.mutation.InviteCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Bill.invite"`)
 	}
+	if _, ok := bu.mutation.SymbolID(); bu.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Bill.symbol"`)
+	}
 	return nil
 }
 
@@ -534,12 +542,6 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := bu.mutation.Way(); ok {
 		_spec.SetField(bill.FieldWay, field.TypeEnum, value)
-	}
-	if value, ok := bu.mutation.SymbolID(); ok {
-		_spec.SetField(bill.FieldSymbolID, field.TypeInt64, value)
-	}
-	if value, ok := bu.mutation.AddedSymbolID(); ok {
-		_spec.AddField(bill.FieldSymbolID, field.TypeInt64, value)
 	}
 	if value, ok := bu.mutation.Amount(); ok {
 		_spec.SetField(bill.FieldAmount, field.TypeInt64, value)
@@ -748,6 +750,35 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if bu.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.SymbolTable,
+			Columns: []string{bill.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.SymbolTable,
+			Columns: []string{bill.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{bill.Label}
@@ -880,7 +911,6 @@ func (buo *BillUpdateOne) SetNillableWay(ew *enums.BillWay) *BillUpdateOne {
 
 // SetSymbolID sets the "symbol_id" field.
 func (buo *BillUpdateOne) SetSymbolID(i int64) *BillUpdateOne {
-	buo.mutation.ResetSymbolID()
 	buo.mutation.SetSymbolID(i)
 	return buo
 }
@@ -890,12 +920,6 @@ func (buo *BillUpdateOne) SetNillableSymbolID(i *int64) *BillUpdateOne {
 	if i != nil {
 		buo.SetSymbolID(*i)
 	}
-	return buo
-}
-
-// AddSymbolID adds i to the "symbol_id" field.
-func (buo *BillUpdateOne) AddSymbolID(i int64) *BillUpdateOne {
-	buo.mutation.AddSymbolID(i)
 	return buo
 }
 
@@ -1132,6 +1156,11 @@ func (buo *BillUpdateOne) SetInvite(i *Invite) *BillUpdateOne {
 	return buo.SetInviteID(i.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (buo *BillUpdateOne) SetSymbol(s *Symbol) *BillUpdateOne {
+	return buo.SetSymbolID(s.ID)
+}
+
 // Mutation returns the BillMutation object of the builder.
 func (buo *BillUpdateOne) Mutation() *BillMutation {
 	return buo.mutation
@@ -1170,6 +1199,12 @@ func (buo *BillUpdateOne) ClearMissionProduceOrder() *BillUpdateOne {
 // ClearInvite clears the "invite" edge to the Invite entity.
 func (buo *BillUpdateOne) ClearInvite() *BillUpdateOne {
 	buo.mutation.ClearInvite()
+	return buo
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (buo *BillUpdateOne) ClearSymbol() *BillUpdateOne {
+	buo.mutation.ClearSymbol()
 	return buo
 }
 
@@ -1243,6 +1278,9 @@ func (buo *BillUpdateOne) check() error {
 	if _, ok := buo.mutation.InviteID(); buo.mutation.InviteCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Bill.invite"`)
 	}
+	if _, ok := buo.mutation.SymbolID(); buo.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Bill.symbol"`)
+	}
 	return nil
 }
 
@@ -1298,12 +1336,6 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 	}
 	if value, ok := buo.mutation.Way(); ok {
 		_spec.SetField(bill.FieldWay, field.TypeEnum, value)
-	}
-	if value, ok := buo.mutation.SymbolID(); ok {
-		_spec.SetField(bill.FieldSymbolID, field.TypeInt64, value)
-	}
-	if value, ok := buo.mutation.AddedSymbolID(); ok {
-		_spec.AddField(bill.FieldSymbolID, field.TypeInt64, value)
 	}
 	if value, ok := buo.mutation.Amount(); ok {
 		_spec.SetField(bill.FieldAmount, field.TypeInt64, value)
@@ -1505,6 +1537,35 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.SymbolTable,
+			Columns: []string{bill.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.SymbolTable,
+			Columns: []string{bill.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

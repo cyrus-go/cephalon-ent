@@ -28,6 +28,8 @@ const (
 	FieldName = "name"
 	// EdgeWallets holds the string denoting the wallets edge name in mutations.
 	EdgeWallets = "wallets"
+	// EdgeBills holds the string denoting the bills edge name in mutations.
+	EdgeBills = "bills"
 	// Table holds the table name of the symbol in the database.
 	Table = "symbols"
 	// WalletsTable is the table that holds the wallets relation/edge.
@@ -37,6 +39,13 @@ const (
 	WalletsInverseTable = "wallets"
 	// WalletsColumn is the table column denoting the wallets relation/edge.
 	WalletsColumn = "symbol_id"
+	// BillsTable is the table that holds the bills relation/edge.
+	BillsTable = "bills"
+	// BillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	BillsInverseTable = "bills"
+	// BillsColumn is the table column denoting the bills relation/edge.
+	BillsColumn = "symbol_id"
 )
 
 // Columns holds all SQL columns for symbol fields.
@@ -130,10 +139,31 @@ func ByWallets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newWalletsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByBillsCount orders the results by bills count.
+func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
+	}
+}
+
+// ByBills orders the results by bills terms.
+func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newWalletsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(WalletsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, WalletsTable, WalletsColumn),
+	)
+}
+func newBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(BillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
 	)
 }

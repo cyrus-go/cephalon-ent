@@ -39,9 +39,11 @@ type Symbol struct {
 type SymbolEdges struct {
 	// Wallets holds the value of the wallets edge.
 	Wallets []*Wallet `json:"wallets,omitempty"`
+	// Bills holds the value of the bills edge.
+	Bills []*Bill `json:"bills,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // WalletsOrErr returns the Wallets value or an error if the edge
@@ -51,6 +53,15 @@ func (e SymbolEdges) WalletsOrErr() ([]*Wallet, error) {
 		return e.Wallets, nil
 	}
 	return nil, &NotLoadedError{edge: "wallets"}
+}
+
+// BillsOrErr returns the Bills value or an error if the edge
+// was not loaded in eager-loading.
+func (e SymbolEdges) BillsOrErr() ([]*Bill, error) {
+	if e.loadedTypes[1] {
+		return e.Bills, nil
+	}
+	return nil, &NotLoadedError{edge: "bills"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -137,6 +148,11 @@ func (s *Symbol) Value(name string) (ent.Value, error) {
 // QueryWallets queries the "wallets" edge of the Symbol entity.
 func (s *Symbol) QueryWallets() *WalletQuery {
 	return NewSymbolClient(s.config).QueryWallets(s)
+}
+
+// QueryBills queries the "bills" edge of the Symbol entity.
+func (s *Symbol) QueryBills() *BillQuery {
+	return NewSymbolClient(s.config).QueryBills(s)
 }
 
 // Update returns a builder for updating this Symbol.

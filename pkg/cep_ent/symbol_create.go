@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 )
@@ -134,6 +135,21 @@ func (sc *SymbolCreate) AddWallets(w ...*Wallet) *SymbolCreate {
 		ids[i] = w[i].ID
 	}
 	return sc.AddWalletIDs(ids...)
+}
+
+// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
+func (sc *SymbolCreate) AddBillIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddBillIDs(ids...)
+	return sc
+}
+
+// AddBills adds the "bills" edges to the Bill entity.
+func (sc *SymbolCreate) AddBills(b ...*Bill) *SymbolCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return sc.AddBillIDs(ids...)
 }
 
 // Mutation returns the SymbolMutation object of the builder.
@@ -287,6 +303,22 @@ func (sc *SymbolCreate) createSpec() (*Symbol, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.BillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.BillsTable,
+			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

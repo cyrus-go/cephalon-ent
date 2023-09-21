@@ -117,8 +117,6 @@ type BillMutation struct {
 	deleted_at                   *time.Time
 	_type                        *enums.BillType
 	way                          *enums.BillWay
-	symbol_id                    *int64
-	addsymbol_id                 *int64
 	amount                       *int64
 	addamount                    *int64
 	target_before_amount         *int64
@@ -143,6 +141,8 @@ type BillMutation struct {
 	clearedmission_produce_order bool
 	invite                       *int64
 	clearedinvite                bool
+	symbol                       *int64
+	clearedsymbol                bool
 	done                         bool
 	oldValue                     func(context.Context) (*Bill, error)
 	predicates                   []predicate.Bill
@@ -595,13 +595,12 @@ func (m *BillMutation) ResetWay() {
 
 // SetSymbolID sets the "symbol_id" field.
 func (m *BillMutation) SetSymbolID(i int64) {
-	m.symbol_id = &i
-	m.addsymbol_id = nil
+	m.symbol = &i
 }
 
 // SymbolID returns the value of the "symbol_id" field in the mutation.
 func (m *BillMutation) SymbolID() (r int64, exists bool) {
-	v := m.symbol_id
+	v := m.symbol
 	if v == nil {
 		return
 	}
@@ -625,28 +624,9 @@ func (m *BillMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
 	return oldValue.SymbolID, nil
 }
 
-// AddSymbolID adds i to the "symbol_id" field.
-func (m *BillMutation) AddSymbolID(i int64) {
-	if m.addsymbol_id != nil {
-		*m.addsymbol_id += i
-	} else {
-		m.addsymbol_id = &i
-	}
-}
-
-// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
-func (m *BillMutation) AddedSymbolID() (r int64, exists bool) {
-	v := m.addsymbol_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetSymbolID resets all changes to the "symbol_id" field.
 func (m *BillMutation) ResetSymbolID() {
-	m.symbol_id = nil
-	m.addsymbol_id = nil
+	m.symbol = nil
 }
 
 // SetAmount sets the "amount" field.
@@ -1274,6 +1254,33 @@ func (m *BillMutation) ResetInvite() {
 	m.clearedinvite = false
 }
 
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (m *BillMutation) ClearSymbol() {
+	m.clearedsymbol = true
+	m.clearedFields[bill.FieldSymbolID] = struct{}{}
+}
+
+// SymbolCleared reports if the "symbol" edge to the Symbol entity was cleared.
+func (m *BillMutation) SymbolCleared() bool {
+	return m.clearedsymbol
+}
+
+// SymbolIDs returns the "symbol" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SymbolID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) SymbolIDs() (ids []int64) {
+	if id := m.symbol; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSymbol resets all changes to the "symbol" edge.
+func (m *BillMutation) ResetSymbol() {
+	m.symbol = nil
+	m.clearedsymbol = false
+}
+
 // Where appends a list predicates to the BillMutation builder.
 func (m *BillMutation) Where(ps ...predicate.Bill) {
 	m.predicates = append(m.predicates, ps...)
@@ -1333,7 +1340,7 @@ func (m *BillMutation) Fields() []string {
 	if m.way != nil {
 		fields = append(fields, bill.FieldWay)
 	}
-	if m.symbol_id != nil {
+	if m.symbol != nil {
 		fields = append(fields, bill.FieldSymbolID)
 	}
 	if m.amount != nil {
@@ -1601,9 +1608,6 @@ func (m *BillMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, bill.FieldUpdatedBy)
 	}
-	if m.addsymbol_id != nil {
-		fields = append(fields, bill.FieldSymbolID)
-	}
 	if m.addamount != nil {
 		fields = append(fields, bill.FieldAmount)
 	}
@@ -1631,8 +1635,6 @@ func (m *BillMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case bill.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case bill.FieldSymbolID:
-		return m.AddedSymbolID()
 	case bill.FieldAmount:
 		return m.AddedAmount()
 	case bill.FieldTargetBeforeAmount:
@@ -1665,13 +1667,6 @@ func (m *BillMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case bill.FieldSymbolID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddSymbolID(v)
 		return nil
 	case bill.FieldAmount:
 		v, ok := value.(int64)
@@ -1804,7 +1799,7 @@ func (m *BillMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BillMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.source_user != nil {
 		edges = append(edges, bill.EdgeSourceUser)
 	}
@@ -1822,6 +1817,9 @@ func (m *BillMutation) AddedEdges() []string {
 	}
 	if m.invite != nil {
 		edges = append(edges, bill.EdgeInvite)
+	}
+	if m.symbol != nil {
+		edges = append(edges, bill.EdgeSymbol)
 	}
 	return edges
 }
@@ -1854,13 +1852,17 @@ func (m *BillMutation) AddedIDs(name string) []ent.Value {
 		if id := m.invite; id != nil {
 			return []ent.Value{*id}
 		}
+	case bill.EdgeSymbol:
+		if id := m.symbol; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BillMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	return edges
 }
 
@@ -1872,7 +1874,7 @@ func (m *BillMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BillMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.clearedsource_user {
 		edges = append(edges, bill.EdgeSourceUser)
 	}
@@ -1890,6 +1892,9 @@ func (m *BillMutation) ClearedEdges() []string {
 	}
 	if m.clearedinvite {
 		edges = append(edges, bill.EdgeInvite)
+	}
+	if m.clearedsymbol {
+		edges = append(edges, bill.EdgeSymbol)
 	}
 	return edges
 }
@@ -1910,6 +1915,8 @@ func (m *BillMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_produce_order
 	case bill.EdgeInvite:
 		return m.clearedinvite
+	case bill.EdgeSymbol:
+		return m.clearedsymbol
 	}
 	return false
 }
@@ -1936,6 +1943,9 @@ func (m *BillMutation) ClearEdge(name string) error {
 	case bill.EdgeInvite:
 		m.ClearInvite()
 		return nil
+	case bill.EdgeSymbol:
+		m.ClearSymbol()
+		return nil
 	}
 	return fmt.Errorf("unknown Bill unique edge %s", name)
 }
@@ -1961,6 +1971,9 @@ func (m *BillMutation) ResetEdge(name string) error {
 		return nil
 	case bill.EdgeInvite:
 		m.ResetInvite()
+		return nil
+	case bill.EdgeSymbol:
+		m.ResetSymbol()
 		return nil
 	}
 	return fmt.Errorf("unknown Bill edge %s", name)
@@ -38859,6 +38872,9 @@ type SymbolMutation struct {
 	wallets        map[int64]struct{}
 	removedwallets map[int64]struct{}
 	clearedwallets bool
+	bills          map[int64]struct{}
+	removedbills   map[int64]struct{}
+	clearedbills   bool
 	done           bool
 	oldValue       func(context.Context) (*Symbol, error)
 	predicates     []predicate.Symbol
@@ -39278,6 +39294,60 @@ func (m *SymbolMutation) ResetWallets() {
 	m.removedwallets = nil
 }
 
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *SymbolMutation) AddBillIDs(ids ...int64) {
+	if m.bills == nil {
+		m.bills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBills clears the "bills" edge to the Bill entity.
+func (m *SymbolMutation) ClearBills() {
+	m.clearedbills = true
+}
+
+// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
+func (m *SymbolMutation) BillsCleared() bool {
+	return m.clearedbills
+}
+
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *SymbolMutation) RemoveBillIDs(ids ...int64) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *SymbolMutation) RemovedBillsIDs() (ids []int64) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BillsIDs returns the "bills" edge IDs in the mutation.
+func (m *SymbolMutation) BillsIDs() (ids []int64) {
+	for id := range m.bills {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBills resets all changes to the "bills" edge.
+func (m *SymbolMutation) ResetBills() {
+	m.bills = nil
+	m.clearedbills = false
+	m.removedbills = nil
+}
+
 // Where appends a list predicates to the SymbolMutation builder.
 func (m *SymbolMutation) Where(ps ...predicate.Symbol) {
 	m.predicates = append(m.predicates, ps...)
@@ -39523,9 +39593,12 @@ func (m *SymbolMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SymbolMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.wallets != nil {
 		edges = append(edges, symbol.EdgeWallets)
+	}
+	if m.bills != nil {
+		edges = append(edges, symbol.EdgeBills)
 	}
 	return edges
 }
@@ -39540,15 +39613,24 @@ func (m *SymbolMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case symbol.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SymbolMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedwallets != nil {
 		edges = append(edges, symbol.EdgeWallets)
+	}
+	if m.removedbills != nil {
+		edges = append(edges, symbol.EdgeBills)
 	}
 	return edges
 }
@@ -39563,15 +39645,24 @@ func (m *SymbolMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case symbol.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SymbolMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedwallets {
 		edges = append(edges, symbol.EdgeWallets)
+	}
+	if m.clearedbills {
+		edges = append(edges, symbol.EdgeBills)
 	}
 	return edges
 }
@@ -39582,6 +39673,8 @@ func (m *SymbolMutation) EdgeCleared(name string) bool {
 	switch name {
 	case symbol.EdgeWallets:
 		return m.clearedwallets
+	case symbol.EdgeBills:
+		return m.clearedbills
 	}
 	return false
 }
@@ -39600,6 +39693,9 @@ func (m *SymbolMutation) ResetEdge(name string) error {
 	switch name {
 	case symbol.EdgeWallets:
 		m.ResetWallets()
+		return nil
+	case symbol.EdgeBills:
+		m.ResetBills()
 		return nil
 	}
 	return fmt.Errorf("unknown Symbol edge %s", name)

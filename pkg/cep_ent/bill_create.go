@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -366,6 +367,11 @@ func (bc *BillCreate) SetInvite(i *Invite) *BillCreate {
 	return bc.SetInviteID(i.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (bc *BillCreate) SetSymbol(s *Symbol) *BillCreate {
+	return bc.SetSymbolID(s.ID)
+}
+
 // Mutation returns the BillMutation object of the builder.
 func (bc *BillCreate) Mutation() *BillMutation {
 	return bc.mutation
@@ -551,6 +557,9 @@ func (bc *BillCreate) check() error {
 	if _, ok := bc.mutation.InviteID(); !ok {
 		return &ValidationError{Name: "invite", err: errors.New(`cep_ent: missing required edge "Bill.invite"`)}
 	}
+	if _, ok := bc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "Bill.symbol"`)}
+	}
 	return nil
 }
 
@@ -611,10 +620,6 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 	if value, ok := bc.mutation.Way(); ok {
 		_spec.SetField(bill.FieldWay, field.TypeEnum, value)
 		_node.Way = value
-	}
-	if value, ok := bc.mutation.SymbolID(); ok {
-		_spec.SetField(bill.FieldSymbolID, field.TypeInt64, value)
-		_node.SymbolID = value
 	}
 	if value, ok := bc.mutation.Amount(); ok {
 		_spec.SetField(bill.FieldAmount, field.TypeInt64, value)
@@ -740,6 +745,23 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.InviteID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.SymbolTable,
+			Columns: []string{bill.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.SymbolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -905,12 +927,6 @@ func (u *BillUpsert) SetSymbolID(v int64) *BillUpsert {
 // UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
 func (u *BillUpsert) UpdateSymbolID() *BillUpsert {
 	u.SetExcluded(bill.FieldSymbolID)
-	return u
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *BillUpsert) AddSymbolID(v int64) *BillUpsert {
-	u.Add(bill.FieldSymbolID, v)
 	return u
 }
 
@@ -1226,13 +1242,6 @@ func (u *BillUpsertOne) UpdateWay() *BillUpsertOne {
 func (u *BillUpsertOne) SetSymbolID(v int64) *BillUpsertOne {
 	return u.Update(func(s *BillUpsert) {
 		s.SetSymbolID(v)
-	})
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *BillUpsertOne) AddSymbolID(v int64) *BillUpsertOne {
-	return u.Update(func(s *BillUpsert) {
-		s.AddSymbolID(v)
 	})
 }
 
@@ -1744,13 +1753,6 @@ func (u *BillUpsertBulk) UpdateWay() *BillUpsertBulk {
 func (u *BillUpsertBulk) SetSymbolID(v int64) *BillUpsertBulk {
 	return u.Update(func(s *BillUpsert) {
 		s.SetSymbolID(v)
-	})
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *BillUpsertBulk) AddSymbolID(v int64) *BillUpsertBulk {
-	return u.Update(func(s *BillUpsert) {
-		s.AddSymbolID(v)
 	})
 }
 

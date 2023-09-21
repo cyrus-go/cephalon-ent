@@ -19,7 +19,6 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active"}, Default: "unknown"},
 		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge"}, Default: "unknown"},
-		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
 		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
 		{Name: "target_after_amount", Type: field.TypeInt64, Comment: "目标钱包期末金额", Default: 0},
@@ -28,6 +27,7 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Comment: "流水号，唯一", Default: ""},
 		{Name: "invite_id", Type: field.TypeInt64, Comment: "外键关联某个邀请码", Default: 0},
 		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息", Default: 0},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "流水目标钱包 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "流水来源钱包 id", Default: 0},
 	}
@@ -40,25 +40,31 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "bills_invites_bills",
-				Columns:    []*schema.Column{BillsColumns[15]},
+				Columns:    []*schema.Column{BillsColumns[14]},
 				RefColumns: []*schema.Column{InvitesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "bills_mission_consume_orders_bills",
-				Columns:    []*schema.Column{BillsColumns[16]},
+				Columns:    []*schema.Column{BillsColumns[15]},
 				RefColumns: []*schema.Column{MissionConsumeOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "bills_mission_produce_orders_bills",
-				Columns:    []*schema.Column{BillsColumns[16]},
+				Columns:    []*schema.Column{BillsColumns[15]},
 				RefColumns: []*schema.Column{MissionProduceOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "bills_transfer_orders_bills",
+				Symbol:     "bills_symbols_bills",
 				Columns:    []*schema.Column{BillsColumns[16]},
+				RefColumns: []*schema.Column{SymbolsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "bills_transfer_orders_bills",
+				Columns:    []*schema.Column{BillsColumns[15]},
 				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1371,9 +1377,10 @@ func init() {
 	BillsTable.ForeignKeys[0].RefTable = InvitesTable
 	BillsTable.ForeignKeys[1].RefTable = MissionConsumeOrdersTable
 	BillsTable.ForeignKeys[2].RefTable = MissionProduceOrdersTable
-	BillsTable.ForeignKeys[3].RefTable = TransferOrdersTable
-	BillsTable.ForeignKeys[4].RefTable = UsersTable
+	BillsTable.ForeignKeys[3].RefTable = SymbolsTable
+	BillsTable.ForeignKeys[4].RefTable = TransferOrdersTable
 	BillsTable.ForeignKeys[5].RefTable = UsersTable
+	BillsTable.ForeignKeys[6].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
 	CampaignsTable.Annotation = &entsql.Annotation{}
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
