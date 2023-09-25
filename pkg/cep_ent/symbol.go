@@ -41,9 +41,13 @@ type SymbolEdges struct {
 	Wallets []*Wallet `json:"wallets,omitempty"`
 	// Bills holds the value of the bills edge.
 	Bills []*Bill `json:"bills,omitempty"`
+	// MissionOrders holds the value of the mission_orders edge.
+	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
+	// TransferOrders holds the value of the transfer_orders edge.
+	TransferOrders []*TransferOrder `json:"transfer_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // WalletsOrErr returns the Wallets value or an error if the edge
@@ -62,6 +66,24 @@ func (e SymbolEdges) BillsOrErr() ([]*Bill, error) {
 		return e.Bills, nil
 	}
 	return nil, &NotLoadedError{edge: "bills"}
+}
+
+// MissionOrdersOrErr returns the MissionOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e SymbolEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
+	if e.loadedTypes[2] {
+		return e.MissionOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_orders"}
+}
+
+// TransferOrdersOrErr returns the TransferOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e SymbolEdges) TransferOrdersOrErr() ([]*TransferOrder, error) {
+	if e.loadedTypes[3] {
+		return e.TransferOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "transfer_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -153,6 +175,16 @@ func (s *Symbol) QueryWallets() *WalletQuery {
 // QueryBills queries the "bills" edge of the Symbol entity.
 func (s *Symbol) QueryBills() *BillQuery {
 	return NewSymbolClient(s.config).QueryBills(s)
+}
+
+// QueryMissionOrders queries the "mission_orders" edge of the Symbol entity.
+func (s *Symbol) QueryMissionOrders() *MissionOrderQuery {
+	return NewSymbolClient(s.config).QueryMissionOrders(s)
+}
+
+// QueryTransferOrders queries the "transfer_orders" edge of the Symbol entity.
+func (s *Symbol) QueryTransferOrders() *TransferOrderQuery {
+	return NewSymbolClient(s.config).QueryTransferOrders(s)
 }
 
 // Update returns a builder for updating this Symbol.

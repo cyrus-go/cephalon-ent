@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -137,7 +138,6 @@ func (tou *TransferOrderUpdate) SetNillableStatus(t *transferorder.Status) *Tran
 
 // SetSymbolID sets the "symbol_id" field.
 func (tou *TransferOrderUpdate) SetSymbolID(i int64) *TransferOrderUpdate {
-	tou.mutation.ResetSymbolID()
 	tou.mutation.SetSymbolID(i)
 	return tou
 }
@@ -147,12 +147,6 @@ func (tou *TransferOrderUpdate) SetNillableSymbolID(i *int64) *TransferOrderUpda
 	if i != nil {
 		tou.SetSymbolID(*i)
 	}
-	return tou
-}
-
-// AddSymbolID adds i to the "symbol_id" field.
-func (tou *TransferOrderUpdate) AddSymbolID(i int64) *TransferOrderUpdate {
-	tou.mutation.AddSymbolID(i)
 	return tou
 }
 
@@ -297,6 +291,11 @@ func (tou *TransferOrderUpdate) SetVxSocial(v *VXSocial) *TransferOrderUpdate {
 	return tou.SetVxSocialID(v.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (tou *TransferOrderUpdate) SetSymbol(s *Symbol) *TransferOrderUpdate {
+	return tou.SetSymbolID(s.ID)
+}
+
 // Mutation returns the TransferOrderMutation object of the builder.
 func (tou *TransferOrderUpdate) Mutation() *TransferOrderMutation {
 	return tou.mutation
@@ -338,6 +337,12 @@ func (tou *TransferOrderUpdate) RemoveBills(b ...*Bill) *TransferOrderUpdate {
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
 func (tou *TransferOrderUpdate) ClearVxSocial() *TransferOrderUpdate {
 	tou.mutation.ClearVxSocial()
+	return tou
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (tou *TransferOrderUpdate) ClearSymbol() *TransferOrderUpdate {
+	tou.mutation.ClearSymbol()
 	return tou
 }
 
@@ -395,6 +400,9 @@ func (tou *TransferOrderUpdate) check() error {
 	if _, ok := tou.mutation.TargetUserID(); tou.mutation.TargetUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.target_user"`)
 	}
+	if _, ok := tou.mutation.SymbolID(); tou.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.symbol"`)
+	}
 	return nil
 }
 
@@ -430,12 +438,6 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tou.mutation.Status(); ok {
 		_spec.SetField(transferorder.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := tou.mutation.SymbolID(); ok {
-		_spec.SetField(transferorder.FieldSymbolID, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.AddedSymbolID(); ok {
-		_spec.AddField(transferorder.FieldSymbolID, field.TypeInt64, value)
 	}
 	if value, ok := tou.mutation.Amount(); ok {
 		_spec.SetField(transferorder.FieldAmount, field.TypeInt64, value)
@@ -587,6 +589,35 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tou.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.SymbolTable,
+			Columns: []string{transferorder.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tou.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.SymbolTable,
+			Columns: []string{transferorder.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transferorder.Label}
@@ -713,7 +744,6 @@ func (touo *TransferOrderUpdateOne) SetNillableStatus(t *transferorder.Status) *
 
 // SetSymbolID sets the "symbol_id" field.
 func (touo *TransferOrderUpdateOne) SetSymbolID(i int64) *TransferOrderUpdateOne {
-	touo.mutation.ResetSymbolID()
 	touo.mutation.SetSymbolID(i)
 	return touo
 }
@@ -723,12 +753,6 @@ func (touo *TransferOrderUpdateOne) SetNillableSymbolID(i *int64) *TransferOrder
 	if i != nil {
 		touo.SetSymbolID(*i)
 	}
-	return touo
-}
-
-// AddSymbolID adds i to the "symbol_id" field.
-func (touo *TransferOrderUpdateOne) AddSymbolID(i int64) *TransferOrderUpdateOne {
-	touo.mutation.AddSymbolID(i)
 	return touo
 }
 
@@ -873,6 +897,11 @@ func (touo *TransferOrderUpdateOne) SetVxSocial(v *VXSocial) *TransferOrderUpdat
 	return touo.SetVxSocialID(v.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (touo *TransferOrderUpdateOne) SetSymbol(s *Symbol) *TransferOrderUpdateOne {
+	return touo.SetSymbolID(s.ID)
+}
+
 // Mutation returns the TransferOrderMutation object of the builder.
 func (touo *TransferOrderUpdateOne) Mutation() *TransferOrderMutation {
 	return touo.mutation
@@ -914,6 +943,12 @@ func (touo *TransferOrderUpdateOne) RemoveBills(b ...*Bill) *TransferOrderUpdate
 // ClearVxSocial clears the "vx_social" edge to the VXSocial entity.
 func (touo *TransferOrderUpdateOne) ClearVxSocial() *TransferOrderUpdateOne {
 	touo.mutation.ClearVxSocial()
+	return touo
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (touo *TransferOrderUpdateOne) ClearSymbol() *TransferOrderUpdateOne {
+	touo.mutation.ClearSymbol()
 	return touo
 }
 
@@ -984,6 +1019,9 @@ func (touo *TransferOrderUpdateOne) check() error {
 	if _, ok := touo.mutation.TargetUserID(); touo.mutation.TargetUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.target_user"`)
 	}
+	if _, ok := touo.mutation.SymbolID(); touo.mutation.SymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.symbol"`)
+	}
 	return nil
 }
 
@@ -1036,12 +1074,6 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 	}
 	if value, ok := touo.mutation.Status(); ok {
 		_spec.SetField(transferorder.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := touo.mutation.SymbolID(); ok {
-		_spec.SetField(transferorder.FieldSymbolID, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.AddedSymbolID(); ok {
-		_spec.AddField(transferorder.FieldSymbolID, field.TypeInt64, value)
 	}
 	if value, ok := touo.mutation.Amount(); ok {
 		_spec.SetField(transferorder.FieldAmount, field.TypeInt64, value)
@@ -1186,6 +1218,35 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(vxsocial.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if touo.mutation.SymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.SymbolTable,
+			Columns: []string{transferorder.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := touo.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.SymbolTable,
+			Columns: []string{transferorder.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

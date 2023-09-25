@@ -34,6 +34,7 @@ type BillQuery struct {
 	withMissionProduceOrder *MissionProduceOrderQuery
 	withInvite              *InviteQuery
 	withSymbol              *SymbolQuery
+	withFKs                 bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -583,6 +584,7 @@ func (bq *BillQuery) prepareQuery(ctx context.Context) error {
 func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, error) {
 	var (
 		nodes       = []*Bill{}
+		withFKs     = bq.withFKs
 		_spec       = bq.querySpec()
 		loadedTypes = [7]bool{
 			bq.withSourceUser != nil,
@@ -594,6 +596,9 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 			bq.withSymbol != nil,
 		}
 	)
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, bill.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Bill).scanValues(nil, columns)
 	}

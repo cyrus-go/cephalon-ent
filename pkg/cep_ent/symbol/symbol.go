@@ -30,6 +30,10 @@ const (
 	EdgeWallets = "wallets"
 	// EdgeBills holds the string denoting the bills edge name in mutations.
 	EdgeBills = "bills"
+	// EdgeMissionOrders holds the string denoting the mission_orders edge name in mutations.
+	EdgeMissionOrders = "mission_orders"
+	// EdgeTransferOrders holds the string denoting the transfer_orders edge name in mutations.
+	EdgeTransferOrders = "transfer_orders"
 	// Table holds the table name of the symbol in the database.
 	Table = "symbols"
 	// WalletsTable is the table that holds the wallets relation/edge.
@@ -46,6 +50,20 @@ const (
 	BillsInverseTable = "bills"
 	// BillsColumn is the table column denoting the bills relation/edge.
 	BillsColumn = "symbol_id"
+	// MissionOrdersTable is the table that holds the mission_orders relation/edge.
+	MissionOrdersTable = "mission_orders"
+	// MissionOrdersInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	MissionOrdersInverseTable = "mission_orders"
+	// MissionOrdersColumn is the table column denoting the mission_orders relation/edge.
+	MissionOrdersColumn = "symbol_id"
+	// TransferOrdersTable is the table that holds the transfer_orders relation/edge.
+	TransferOrdersTable = "transfer_orders"
+	// TransferOrdersInverseTable is the table name for the TransferOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "transferorder" package.
+	TransferOrdersInverseTable = "transfer_orders"
+	// TransferOrdersColumn is the table column denoting the transfer_orders relation/edge.
+	TransferOrdersColumn = "symbol_id"
 )
 
 // Columns holds all SQL columns for symbol fields.
@@ -153,6 +171,34 @@ func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionOrdersCount orders the results by mission_orders count.
+func ByMissionOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionOrdersStep(), opts...)
+	}
+}
+
+// ByMissionOrders orders the results by mission_orders terms.
+func ByMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTransferOrdersCount orders the results by transfer_orders count.
+func ByTransferOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTransferOrdersStep(), opts...)
+	}
+}
+
+// ByTransferOrders orders the results by transfer_orders terms.
+func ByTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newWalletsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -165,5 +211,19 @@ func newBillsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(BillsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+	)
+}
+func newMissionOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionOrdersTable, MissionOrdersColumn),
+	)
+}
+func newTransferOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransferOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransferOrdersTable, TransferOrdersColumn),
 	)
 }

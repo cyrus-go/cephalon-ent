@@ -34,6 +34,8 @@ const (
 	EdgeMissionConsumeOrders = "mission_consume_orders"
 	// EdgeMissions holds the string denoting the missions edge name in mutations.
 	EdgeMissions = "missions"
+	// EdgeMissionOrders holds the string denoting the mission_orders edge name in mutations.
+	EdgeMissionOrders = "mission_orders"
 	// Table holds the table name of the missionbatch in the database.
 	Table = "mission_batches"
 	// UserTable is the table that holds the user relation/edge.
@@ -57,6 +59,13 @@ const (
 	MissionsInverseTable = "missions"
 	// MissionsColumn is the table column denoting the missions relation/edge.
 	MissionsColumn = "mission_batch_id"
+	// MissionOrdersTable is the table that holds the mission_orders relation/edge.
+	MissionOrdersTable = "mission_orders"
+	// MissionOrdersInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	MissionOrdersInverseTable = "mission_orders"
+	// MissionOrdersColumn is the table column denoting the mission_orders relation/edge.
+	MissionOrdersColumn = "mission_batch_id"
 )
 
 // Columns holds all SQL columns for missionbatch fields.
@@ -179,6 +188,20 @@ func ByMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionOrdersCount orders the results by mission_orders count.
+func ByMissionOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionOrdersStep(), opts...)
+	}
+}
+
+// ByMissionOrders orders the results by mission_orders terms.
+func ByMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -198,5 +221,12 @@ func newMissionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionsTable, MissionsColumn),
+	)
+}
+func newMissionOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionOrdersTable, MissionOrdersColumn),
 	)
 }

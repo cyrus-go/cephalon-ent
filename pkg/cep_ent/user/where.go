@@ -1350,6 +1350,52 @@ func HasOutcomeTransferOrdersWith(preds ...predicate.TransferOrder) predicate.Us
 	})
 }
 
+// HasConsumeMissionOrders applies the HasEdge predicate on the "consume_mission_orders" edge.
+func HasConsumeMissionOrders() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ConsumeMissionOrdersTable, ConsumeMissionOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasConsumeMissionOrdersWith applies the HasEdge predicate on the "consume_mission_orders" edge with a given conditions (other predicates).
+func HasConsumeMissionOrdersWith(preds ...predicate.MissionOrder) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newConsumeMissionOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasProduceMissionOrders applies the HasEdge predicate on the "produce_mission_orders" edge.
+func HasProduceMissionOrders() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProduceMissionOrdersTable, ProduceMissionOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasProduceMissionOrdersWith applies the HasEdge predicate on the "produce_mission_orders" edge with a given conditions (other predicates).
+func HasProduceMissionOrdersWith(preds ...predicate.MissionOrder) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newProduceMissionOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

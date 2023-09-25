@@ -12,7 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 )
 
@@ -150,6 +152,36 @@ func (sc *SymbolCreate) AddBills(b ...*Bill) *SymbolCreate {
 		ids[i] = b[i].ID
 	}
 	return sc.AddBillIDs(ids...)
+}
+
+// AddMissionOrderIDs adds the "mission_orders" edge to the MissionOrder entity by IDs.
+func (sc *SymbolCreate) AddMissionOrderIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddMissionOrderIDs(ids...)
+	return sc
+}
+
+// AddMissionOrders adds the "mission_orders" edges to the MissionOrder entity.
+func (sc *SymbolCreate) AddMissionOrders(m ...*MissionOrder) *SymbolCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return sc.AddMissionOrderIDs(ids...)
+}
+
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (sc *SymbolCreate) AddTransferOrderIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddTransferOrderIDs(ids...)
+	return sc
+}
+
+// AddTransferOrders adds the "transfer_orders" edges to the TransferOrder entity.
+func (sc *SymbolCreate) AddTransferOrders(t ...*TransferOrder) *SymbolCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return sc.AddTransferOrderIDs(ids...)
 }
 
 // Mutation returns the SymbolMutation object of the builder.
@@ -319,6 +351,38 @@ func (sc *SymbolCreate) createSpec() (*Symbol, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.MissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.TransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

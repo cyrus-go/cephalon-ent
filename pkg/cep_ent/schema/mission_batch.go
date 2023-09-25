@@ -25,6 +25,7 @@ func (MissionBatch) Edges() []ent.Edge {
 		edge.From("user", User.Type).Ref("mission_batches").Field("user_id").Unique().Required(),
 		edge.To("mission_consume_orders", MissionConsumeOrder.Type),
 		edge.To("missions", Mission.Type),
+		edge.To("mission_orders", MissionOrder.Type),
 	}
 }
 

@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -624,6 +625,36 @@ func (uu *UserUpdate) AddOutcomeTransferOrders(t ...*TransferOrder) *UserUpdate 
 	return uu.AddOutcomeTransferOrderIDs(ids...)
 }
 
+// AddConsumeMissionOrderIDs adds the "consume_mission_orders" edge to the MissionOrder entity by IDs.
+func (uu *UserUpdate) AddConsumeMissionOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddConsumeMissionOrderIDs(ids...)
+	return uu
+}
+
+// AddConsumeMissionOrders adds the "consume_mission_orders" edges to the MissionOrder entity.
+func (uu *UserUpdate) AddConsumeMissionOrders(m ...*MissionOrder) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddConsumeMissionOrderIDs(ids...)
+}
+
+// AddProduceMissionOrderIDs adds the "produce_mission_orders" edge to the MissionOrder entity by IDs.
+func (uu *UserUpdate) AddProduceMissionOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddProduceMissionOrderIDs(ids...)
+	return uu
+}
+
+// AddProduceMissionOrders adds the "produce_mission_orders" edges to the MissionOrder entity.
+func (uu *UserUpdate) AddProduceMissionOrders(m ...*MissionOrder) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddProduceMissionOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1107,6 +1138,48 @@ func (uu *UserUpdate) RemoveOutcomeTransferOrders(t ...*TransferOrder) *UserUpda
 		ids[i] = t[i].ID
 	}
 	return uu.RemoveOutcomeTransferOrderIDs(ids...)
+}
+
+// ClearConsumeMissionOrders clears all "consume_mission_orders" edges to the MissionOrder entity.
+func (uu *UserUpdate) ClearConsumeMissionOrders() *UserUpdate {
+	uu.mutation.ClearConsumeMissionOrders()
+	return uu
+}
+
+// RemoveConsumeMissionOrderIDs removes the "consume_mission_orders" edge to MissionOrder entities by IDs.
+func (uu *UserUpdate) RemoveConsumeMissionOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveConsumeMissionOrderIDs(ids...)
+	return uu
+}
+
+// RemoveConsumeMissionOrders removes "consume_mission_orders" edges to MissionOrder entities.
+func (uu *UserUpdate) RemoveConsumeMissionOrders(m ...*MissionOrder) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveConsumeMissionOrderIDs(ids...)
+}
+
+// ClearProduceMissionOrders clears all "produce_mission_orders" edges to the MissionOrder entity.
+func (uu *UserUpdate) ClearProduceMissionOrders() *UserUpdate {
+	uu.mutation.ClearProduceMissionOrders()
+	return uu
+}
+
+// RemoveProduceMissionOrderIDs removes the "produce_mission_orders" edge to MissionOrder entities by IDs.
+func (uu *UserUpdate) RemoveProduceMissionOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveProduceMissionOrderIDs(ids...)
+	return uu
+}
+
+// RemoveProduceMissionOrders removes "produce_mission_orders" edges to MissionOrder entities.
+func (uu *UserUpdate) RemoveProduceMissionOrders(m ...*MissionOrder) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveProduceMissionOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2292,6 +2365,96 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.ConsumeMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedConsumeMissionOrdersIDs(); len(nodes) > 0 && !uu.mutation.ConsumeMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ConsumeMissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ProduceMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedProduceMissionOrdersIDs(); len(nodes) > 0 && !uu.mutation.ProduceMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ProduceMissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -2887,6 +3050,36 @@ func (uuo *UserUpdateOne) AddOutcomeTransferOrders(t ...*TransferOrder) *UserUpd
 	return uuo.AddOutcomeTransferOrderIDs(ids...)
 }
 
+// AddConsumeMissionOrderIDs adds the "consume_mission_orders" edge to the MissionOrder entity by IDs.
+func (uuo *UserUpdateOne) AddConsumeMissionOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddConsumeMissionOrderIDs(ids...)
+	return uuo
+}
+
+// AddConsumeMissionOrders adds the "consume_mission_orders" edges to the MissionOrder entity.
+func (uuo *UserUpdateOne) AddConsumeMissionOrders(m ...*MissionOrder) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddConsumeMissionOrderIDs(ids...)
+}
+
+// AddProduceMissionOrderIDs adds the "produce_mission_orders" edge to the MissionOrder entity by IDs.
+func (uuo *UserUpdateOne) AddProduceMissionOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddProduceMissionOrderIDs(ids...)
+	return uuo
+}
+
+// AddProduceMissionOrders adds the "produce_mission_orders" edges to the MissionOrder entity.
+func (uuo *UserUpdateOne) AddProduceMissionOrders(m ...*MissionOrder) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddProduceMissionOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -3370,6 +3563,48 @@ func (uuo *UserUpdateOne) RemoveOutcomeTransferOrders(t ...*TransferOrder) *User
 		ids[i] = t[i].ID
 	}
 	return uuo.RemoveOutcomeTransferOrderIDs(ids...)
+}
+
+// ClearConsumeMissionOrders clears all "consume_mission_orders" edges to the MissionOrder entity.
+func (uuo *UserUpdateOne) ClearConsumeMissionOrders() *UserUpdateOne {
+	uuo.mutation.ClearConsumeMissionOrders()
+	return uuo
+}
+
+// RemoveConsumeMissionOrderIDs removes the "consume_mission_orders" edge to MissionOrder entities by IDs.
+func (uuo *UserUpdateOne) RemoveConsumeMissionOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveConsumeMissionOrderIDs(ids...)
+	return uuo
+}
+
+// RemoveConsumeMissionOrders removes "consume_mission_orders" edges to MissionOrder entities.
+func (uuo *UserUpdateOne) RemoveConsumeMissionOrders(m ...*MissionOrder) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveConsumeMissionOrderIDs(ids...)
+}
+
+// ClearProduceMissionOrders clears all "produce_mission_orders" edges to the MissionOrder entity.
+func (uuo *UserUpdateOne) ClearProduceMissionOrders() *UserUpdateOne {
+	uuo.mutation.ClearProduceMissionOrders()
+	return uuo
+}
+
+// RemoveProduceMissionOrderIDs removes the "produce_mission_orders" edge to MissionOrder entities by IDs.
+func (uuo *UserUpdateOne) RemoveProduceMissionOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveProduceMissionOrderIDs(ids...)
+	return uuo
+}
+
+// RemoveProduceMissionOrders removes "produce_mission_orders" edges to MissionOrder entities.
+func (uuo *UserUpdateOne) RemoveProduceMissionOrders(m ...*MissionOrder) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveProduceMissionOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -4578,6 +4813,96 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ConsumeMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedConsumeMissionOrdersIDs(); len(nodes) > 0 && !uuo.mutation.ConsumeMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ConsumeMissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ProduceMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedProduceMissionOrdersIDs(); len(nodes) > 0 && !uuo.mutation.ProduceMissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ProduceMissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

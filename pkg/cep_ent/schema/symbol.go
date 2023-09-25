@@ -26,6 +26,8 @@ func (Symbol) Edges() []ent.Edge {
 		// 逻辑外键
 		edge.To("wallets", Wallet.Type),
 		edge.To("bills", Bill.Type),
+		edge.To("mission_orders", MissionOrder.Type),
+		edge.To("transfer_orders", TransferOrder.Type),
 	}
 }
 

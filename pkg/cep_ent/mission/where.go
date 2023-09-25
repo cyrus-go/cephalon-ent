@@ -1555,6 +1555,29 @@ func HasMissionProductionsWith(preds ...predicate.MissionProduction) predicate.M
 	})
 }
 
+// HasMissionOrders applies the HasEdge predicate on the "mission_orders" edge.
+func HasMissionOrders() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionOrdersTable, MissionOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionOrdersWith applies the HasEdge predicate on the "mission_orders" edge with a given conditions (other predicates).
+func HasMissionOrdersWith(preds ...predicate.MissionOrder) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Mission) predicate.Mission {
 	return predicate.Mission(sql.AndPredicates(predicates...))

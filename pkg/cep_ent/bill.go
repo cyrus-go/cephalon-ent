@@ -62,8 +62,9 @@ type Bill struct {
 	InviteID int64 `json:"invite_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BillQuery when eager-loading is set.
-	Edges        BillEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges               BillEdges `json:"edges"`
+	mission_order_bills *int64
+	selectValues        sql.SelectValues
 }
 
 // BillEdges holds the relations/edges for other nodes in the graph.
@@ -189,6 +190,8 @@ func (*Bill) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case bill.FieldCreatedAt, bill.FieldUpdatedAt, bill.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case bill.ForeignKeys[0]: // mission_order_bills
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -317,6 +320,13 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field invite_id", values[i])
 			} else if value.Valid {
 				b.InviteID = value.Int64
+			}
+		case bill.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field mission_order_bills", value)
+			} else if value.Valid {
+				b.mission_order_bills = new(int64)
+				*b.mission_order_bills = int64(value.Int64)
 			}
 		default:
 			b.selectValues.Set(columns[i], values[i])

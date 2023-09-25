@@ -400,26 +400,6 @@ func SymbolIDNotIn(vs ...int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldNotIn(FieldSymbolID, vs...))
 }
 
-// SymbolIDGT applies the GT predicate on the "symbol_id" field.
-func SymbolIDGT(v int64) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldGT(FieldSymbolID, v))
-}
-
-// SymbolIDGTE applies the GTE predicate on the "symbol_id" field.
-func SymbolIDGTE(v int64) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldGTE(FieldSymbolID, v))
-}
-
-// SymbolIDLT applies the LT predicate on the "symbol_id" field.
-func SymbolIDLT(v int64) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldLT(FieldSymbolID, v))
-}
-
-// SymbolIDLTE applies the LTE predicate on the "symbol_id" field.
-func SymbolIDLTE(v int64) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldLTE(FieldSymbolID, v))
-}
-
 // AmountEQ applies the EQ predicate on the "amount" field.
 func AmountEQ(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldAmount, v))
@@ -789,6 +769,29 @@ func HasVxSocial() predicate.TransferOrder {
 func HasVxSocialWith(preds ...predicate.VXSocial) predicate.TransferOrder {
 	return predicate.TransferOrder(func(s *sql.Selector) {
 		step := newVxSocialStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSymbol applies the HasEdge predicate on the "symbol" edge.
+func HasSymbol() predicate.TransferOrder {
+	return predicate.TransferOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSymbolWith applies the HasEdge predicate on the "symbol" edge with a given conditions (other predicates).
+func HasSymbolWith(preds ...predicate.Symbol) predicate.TransferOrder {
+	return predicate.TransferOrder(func(s *sql.Selector) {
+		step := newSymbolStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -17,6 +17,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -38,6 +39,7 @@ type MissionQuery struct {
 	withMissionProduceOrders *MissionProduceOrderQuery
 	withMissionBatch         *MissionBatchQuery
 	withMissionProductions   *MissionProductionQuery
+	withMissionOrders        *MissionOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -250,6 +252,28 @@ func (mq *MissionQuery) QueryMissionProductions() *MissionProductionQuery {
 	return query
 }
 
+// QueryMissionOrders chains the current query on the "mission_orders" edge.
+func (mq *MissionQuery) QueryMissionOrders() *MissionOrderQuery {
+	query := (&MissionOrderClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionOrdersTable, mission.MissionOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Mission entity from the query.
 // Returns a *NotFoundError when no Mission was found.
 func (mq *MissionQuery) First(ctx context.Context) (*Mission, error) {
@@ -450,6 +474,7 @@ func (mq *MissionQuery) Clone() *MissionQuery {
 		withMissionProduceOrders: mq.withMissionProduceOrders.Clone(),
 		withMissionBatch:         mq.withMissionBatch.Clone(),
 		withMissionProductions:   mq.withMissionProductions.Clone(),
+		withMissionOrders:        mq.withMissionOrders.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -544,6 +569,17 @@ func (mq *MissionQuery) WithMissionProductions(opts ...func(*MissionProductionQu
 	return mq
 }
 
+// WithMissionOrders tells the query-builder to eager-load the nodes that are connected to
+// the "mission_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithMissionOrders(opts ...func(*MissionOrderQuery)) *MissionQuery {
+	query := (&MissionOrderClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withMissionOrders = query
+	return mq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -622,7 +658,7 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 	var (
 		nodes       = []*Mission{}
 		_spec       = mq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [9]bool{
 			mq.withMissionKind != nil,
 			mq.withUser != nil,
 			mq.withMissionKeyPairs != nil,
@@ -631,6 +667,7 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 			mq.withMissionProduceOrders != nil,
 			mq.withMissionBatch != nil,
 			mq.withMissionProductions != nil,
+			mq.withMissionOrders != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -703,6 +740,13 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 			func(n *Mission, e *MissionProduction) {
 				n.Edges.MissionProductions = append(n.Edges.MissionProductions, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withMissionOrders; query != nil {
+		if err := mq.loadMissionOrders(ctx, query, nodes,
+			func(n *Mission) { n.Edges.MissionOrders = []*MissionOrder{} },
+			func(n *Mission, e *MissionOrder) { n.Edges.MissionOrders = append(n.Edges.MissionOrders, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -928,6 +972,36 @@ func (mq *MissionQuery) loadMissionProductions(ctx context.Context, query *Missi
 	}
 	query.Where(predicate.MissionProduction(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(mission.MissionProductionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mq *MissionQuery) loadMissionOrders(ctx context.Context, query *MissionOrderQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionorder.FieldMissionID)
+	}
+	query.Where(predicate.MissionOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.MissionOrdersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -12,8 +12,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 )
 
@@ -136,6 +138,36 @@ func (su *SymbolUpdate) AddBills(b ...*Bill) *SymbolUpdate {
 	return su.AddBillIDs(ids...)
 }
 
+// AddMissionOrderIDs adds the "mission_orders" edge to the MissionOrder entity by IDs.
+func (su *SymbolUpdate) AddMissionOrderIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.AddMissionOrderIDs(ids...)
+	return su
+}
+
+// AddMissionOrders adds the "mission_orders" edges to the MissionOrder entity.
+func (su *SymbolUpdate) AddMissionOrders(m ...*MissionOrder) *SymbolUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return su.AddMissionOrderIDs(ids...)
+}
+
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (su *SymbolUpdate) AddTransferOrderIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.AddTransferOrderIDs(ids...)
+	return su
+}
+
+// AddTransferOrders adds the "transfer_orders" edges to the TransferOrder entity.
+func (su *SymbolUpdate) AddTransferOrders(t ...*TransferOrder) *SymbolUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return su.AddTransferOrderIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (su *SymbolUpdate) Mutation() *SymbolMutation {
 	return su.mutation
@@ -181,6 +213,48 @@ func (su *SymbolUpdate) RemoveBills(b ...*Bill) *SymbolUpdate {
 		ids[i] = b[i].ID
 	}
 	return su.RemoveBillIDs(ids...)
+}
+
+// ClearMissionOrders clears all "mission_orders" edges to the MissionOrder entity.
+func (su *SymbolUpdate) ClearMissionOrders() *SymbolUpdate {
+	su.mutation.ClearMissionOrders()
+	return su
+}
+
+// RemoveMissionOrderIDs removes the "mission_orders" edge to MissionOrder entities by IDs.
+func (su *SymbolUpdate) RemoveMissionOrderIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.RemoveMissionOrderIDs(ids...)
+	return su
+}
+
+// RemoveMissionOrders removes "mission_orders" edges to MissionOrder entities.
+func (su *SymbolUpdate) RemoveMissionOrders(m ...*MissionOrder) *SymbolUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return su.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearTransferOrders clears all "transfer_orders" edges to the TransferOrder entity.
+func (su *SymbolUpdate) ClearTransferOrders() *SymbolUpdate {
+	su.mutation.ClearTransferOrders()
+	return su
+}
+
+// RemoveTransferOrderIDs removes the "transfer_orders" edge to TransferOrder entities by IDs.
+func (su *SymbolUpdate) RemoveTransferOrderIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.RemoveTransferOrderIDs(ids...)
+	return su
+}
+
+// RemoveTransferOrders removes "transfer_orders" edges to TransferOrder entities.
+func (su *SymbolUpdate) RemoveTransferOrders(t ...*TransferOrder) *SymbolUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return su.RemoveTransferOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -339,6 +413,96 @@ func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if su.mutation.MissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedMissionOrdersIDs(); len(nodes) > 0 && !su.mutation.MissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.MissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if su.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedTransferOrdersIDs(); len(nodes) > 0 && !su.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.TransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{symbol.Label}
@@ -465,6 +629,36 @@ func (suo *SymbolUpdateOne) AddBills(b ...*Bill) *SymbolUpdateOne {
 	return suo.AddBillIDs(ids...)
 }
 
+// AddMissionOrderIDs adds the "mission_orders" edge to the MissionOrder entity by IDs.
+func (suo *SymbolUpdateOne) AddMissionOrderIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.AddMissionOrderIDs(ids...)
+	return suo
+}
+
+// AddMissionOrders adds the "mission_orders" edges to the MissionOrder entity.
+func (suo *SymbolUpdateOne) AddMissionOrders(m ...*MissionOrder) *SymbolUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return suo.AddMissionOrderIDs(ids...)
+}
+
+// AddTransferOrderIDs adds the "transfer_orders" edge to the TransferOrder entity by IDs.
+func (suo *SymbolUpdateOne) AddTransferOrderIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.AddTransferOrderIDs(ids...)
+	return suo
+}
+
+// AddTransferOrders adds the "transfer_orders" edges to the TransferOrder entity.
+func (suo *SymbolUpdateOne) AddTransferOrders(t ...*TransferOrder) *SymbolUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return suo.AddTransferOrderIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (suo *SymbolUpdateOne) Mutation() *SymbolMutation {
 	return suo.mutation
@@ -510,6 +704,48 @@ func (suo *SymbolUpdateOne) RemoveBills(b ...*Bill) *SymbolUpdateOne {
 		ids[i] = b[i].ID
 	}
 	return suo.RemoveBillIDs(ids...)
+}
+
+// ClearMissionOrders clears all "mission_orders" edges to the MissionOrder entity.
+func (suo *SymbolUpdateOne) ClearMissionOrders() *SymbolUpdateOne {
+	suo.mutation.ClearMissionOrders()
+	return suo
+}
+
+// RemoveMissionOrderIDs removes the "mission_orders" edge to MissionOrder entities by IDs.
+func (suo *SymbolUpdateOne) RemoveMissionOrderIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.RemoveMissionOrderIDs(ids...)
+	return suo
+}
+
+// RemoveMissionOrders removes "mission_orders" edges to MissionOrder entities.
+func (suo *SymbolUpdateOne) RemoveMissionOrders(m ...*MissionOrder) *SymbolUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return suo.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearTransferOrders clears all "transfer_orders" edges to the TransferOrder entity.
+func (suo *SymbolUpdateOne) ClearTransferOrders() *SymbolUpdateOne {
+	suo.mutation.ClearTransferOrders()
+	return suo
+}
+
+// RemoveTransferOrderIDs removes the "transfer_orders" edge to TransferOrder entities by IDs.
+func (suo *SymbolUpdateOne) RemoveTransferOrderIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.RemoveTransferOrderIDs(ids...)
+	return suo
+}
+
+// RemoveTransferOrders removes "transfer_orders" edges to TransferOrder entities.
+func (suo *SymbolUpdateOne) RemoveTransferOrders(t ...*TransferOrder) *SymbolUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return suo.RemoveTransferOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the SymbolUpdate builder.
@@ -691,6 +927,96 @@ func (suo *SymbolUpdateOne) sqlSave(ctx context.Context) (_node *Symbol, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.MissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedMissionOrdersIDs(); len(nodes) > 0 && !suo.mutation.MissionOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.MissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.MissionOrdersTable,
+			Columns: []string{symbol.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedTransferOrdersIDs(); len(nodes) > 0 && !suo.mutation.TransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.TransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.TransferOrdersTable,
+			Columns: []string{symbol.TransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

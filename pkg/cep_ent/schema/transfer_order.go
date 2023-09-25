@@ -36,6 +36,7 @@ func (TransferOrder) Edges() []ent.Edge {
 		edge.From("target_user", User.Type).Ref("income_transfer_orders").Field("target_user_id").Unique().Required(),
 		edge.To("bills", Bill.Type),
 		edge.From("vx_social", VXSocial.Type).Ref("transfer_orders").Field("social_id").Unique(),
+		edge.From("symbol", Symbol.Type).Ref("transfer_orders").Field("symbol_id").Unique().Required(),
 	}
 }
 

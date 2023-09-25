@@ -95,6 +95,10 @@ const (
 	EdgeIncomeTransferOrders = "income_transfer_orders"
 	// EdgeOutcomeTransferOrders holds the string denoting the outcome_transfer_orders edge name in mutations.
 	EdgeOutcomeTransferOrders = "outcome_transfer_orders"
+	// EdgeConsumeMissionOrders holds the string denoting the consume_mission_orders edge name in mutations.
+	EdgeConsumeMissionOrders = "consume_mission_orders"
+	// EdgeProduceMissionOrders holds the string denoting the produce_mission_orders edge name in mutations.
+	EdgeProduceMissionOrders = "produce_mission_orders"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -266,6 +270,20 @@ const (
 	OutcomeTransferOrdersInverseTable = "transfer_orders"
 	// OutcomeTransferOrdersColumn is the table column denoting the outcome_transfer_orders relation/edge.
 	OutcomeTransferOrdersColumn = "source_user_id"
+	// ConsumeMissionOrdersTable is the table that holds the consume_mission_orders relation/edge.
+	ConsumeMissionOrdersTable = "mission_orders"
+	// ConsumeMissionOrdersInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	ConsumeMissionOrdersInverseTable = "mission_orders"
+	// ConsumeMissionOrdersColumn is the table column denoting the consume_mission_orders relation/edge.
+	ConsumeMissionOrdersColumn = "consume_user_id"
+	// ProduceMissionOrdersTable is the table that holds the produce_mission_orders relation/edge.
+	ProduceMissionOrdersTable = "mission_orders"
+	// ProduceMissionOrdersInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	ProduceMissionOrdersInverseTable = "mission_orders"
+	// ProduceMissionOrdersColumn is the table column denoting the produce_mission_orders relation/edge.
+	ProduceMissionOrdersColumn = "produce_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -770,6 +788,34 @@ func ByOutcomeTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOp
 		sqlgraph.OrderByNeighborTerms(s, newOutcomeTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByConsumeMissionOrdersCount orders the results by consume_mission_orders count.
+func ByConsumeMissionOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newConsumeMissionOrdersStep(), opts...)
+	}
+}
+
+// ByConsumeMissionOrders orders the results by consume_mission_orders terms.
+func ByConsumeMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newConsumeMissionOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByProduceMissionOrdersCount orders the results by produce_mission_orders count.
+func ByProduceMissionOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProduceMissionOrdersStep(), opts...)
+	}
+}
+
+// ByProduceMissionOrders orders the results by produce_mission_orders terms.
+func ByProduceMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProduceMissionOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -943,5 +989,19 @@ func newOutcomeTransferOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OutcomeTransferOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, OutcomeTransferOrdersTable, OutcomeTransferOrdersColumn),
+	)
+}
+func newConsumeMissionOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ConsumeMissionOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ConsumeMissionOrdersTable, ConsumeMissionOrdersColumn),
+	)
+}
+func newProduceMissionOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProduceMissionOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProduceMissionOrdersTable, ProduceMissionOrdersColumn),
 	)
 }

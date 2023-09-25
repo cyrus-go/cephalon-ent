@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
@@ -638,6 +639,36 @@ func (uc *UserCreate) AddOutcomeTransferOrders(t ...*TransferOrder) *UserCreate 
 		ids[i] = t[i].ID
 	}
 	return uc.AddOutcomeTransferOrderIDs(ids...)
+}
+
+// AddConsumeMissionOrderIDs adds the "consume_mission_orders" edge to the MissionOrder entity by IDs.
+func (uc *UserCreate) AddConsumeMissionOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddConsumeMissionOrderIDs(ids...)
+	return uc
+}
+
+// AddConsumeMissionOrders adds the "consume_mission_orders" edges to the MissionOrder entity.
+func (uc *UserCreate) AddConsumeMissionOrders(m ...*MissionOrder) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddConsumeMissionOrderIDs(ids...)
+}
+
+// AddProduceMissionOrderIDs adds the "produce_mission_orders" edge to the MissionOrder entity by IDs.
+func (uc *UserCreate) AddProduceMissionOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddProduceMissionOrderIDs(ids...)
+	return uc
+}
+
+// AddProduceMissionOrders adds the "produce_mission_orders" edges to the MissionOrder entity.
+func (uc *UserCreate) AddProduceMissionOrders(m ...*MissionOrder) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddProduceMissionOrderIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1279,6 +1310,38 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ConsumeMissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ConsumeMissionOrdersTable,
+			Columns: []string{user.ConsumeMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ProduceMissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProduceMissionOrdersTable,
+			Columns: []string{user.ProduceMissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

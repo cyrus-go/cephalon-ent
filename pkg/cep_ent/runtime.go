@@ -27,6 +27,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
@@ -1220,6 +1221,85 @@ func init() {
 	missionkindDescID := missionkindMixinFields0[0].Descriptor()
 	// missionkind.DefaultID holds the default value on creation for the id field.
 	missionkind.DefaultID = missionkindDescID.Default.(func() int64)
+	missionorderMixin := schema.MissionOrder{}.Mixin()
+	missionorderMixinFields0 := missionorderMixin[0].Fields()
+	_ = missionorderMixinFields0
+	missionorderFields := schema.MissionOrder{}.Fields()
+	_ = missionorderFields
+	// missionorderDescCreatedBy is the schema descriptor for created_by field.
+	missionorderDescCreatedBy := missionorderMixinFields0[1].Descriptor()
+	// missionorder.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionorder.DefaultCreatedBy = missionorderDescCreatedBy.Default.(int64)
+	// missionorderDescUpdatedBy is the schema descriptor for updated_by field.
+	missionorderDescUpdatedBy := missionorderMixinFields0[2].Descriptor()
+	// missionorder.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionorder.DefaultUpdatedBy = missionorderDescUpdatedBy.Default.(int64)
+	// missionorderDescCreatedAt is the schema descriptor for created_at field.
+	missionorderDescCreatedAt := missionorderMixinFields0[3].Descriptor()
+	// missionorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionorder.DefaultCreatedAt = missionorderDescCreatedAt.Default.(func() time.Time)
+	// missionorderDescUpdatedAt is the schema descriptor for updated_at field.
+	missionorderDescUpdatedAt := missionorderMixinFields0[4].Descriptor()
+	// missionorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionorder.DefaultUpdatedAt = missionorderDescUpdatedAt.Default.(func() time.Time)
+	// missionorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionorder.UpdateDefaultUpdatedAt = missionorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionorderDescDeletedAt is the schema descriptor for deleted_at field.
+	missionorderDescDeletedAt := missionorderMixinFields0[5].Descriptor()
+	// missionorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionorder.DefaultDeletedAt = missionorderDescDeletedAt.Default.(time.Time)
+	// missionorderDescMissionID is the schema descriptor for mission_id field.
+	missionorderDescMissionID := missionorderFields[0].Descriptor()
+	// missionorder.DefaultMissionID holds the default value on creation for the mission_id field.
+	missionorder.DefaultMissionID = missionorderDescMissionID.Default.(int64)
+	// missionorderDescSymbolID is the schema descriptor for symbol_id field.
+	missionorderDescSymbolID := missionorderFields[2].Descriptor()
+	// missionorder.DefaultSymbolID holds the default value on creation for the symbol_id field.
+	missionorder.DefaultSymbolID = missionorderDescSymbolID.Default.(int64)
+	// missionorderDescConsumeUserID is the schema descriptor for consume_user_id field.
+	missionorderDescConsumeUserID := missionorderFields[3].Descriptor()
+	// missionorder.DefaultConsumeUserID holds the default value on creation for the consume_user_id field.
+	missionorder.DefaultConsumeUserID = missionorderDescConsumeUserID.Default.(int64)
+	// missionorderDescConsumeAmount is the schema descriptor for consume_amount field.
+	missionorderDescConsumeAmount := missionorderFields[4].Descriptor()
+	// missionorder.DefaultConsumeAmount holds the default value on creation for the consume_amount field.
+	missionorder.DefaultConsumeAmount = missionorderDescConsumeAmount.Default.(int64)
+	// missionorderDescProduceUserID is the schema descriptor for produce_user_id field.
+	missionorderDescProduceUserID := missionorderFields[5].Descriptor()
+	// missionorder.DefaultProduceUserID holds the default value on creation for the produce_user_id field.
+	missionorder.DefaultProduceUserID = missionorderDescProduceUserID.Default.(int64)
+	// missionorderDescProduceAmount is the schema descriptor for produce_amount field.
+	missionorderDescProduceAmount := missionorderFields[6].Descriptor()
+	// missionorder.DefaultProduceAmount holds the default value on creation for the produce_amount field.
+	missionorder.DefaultProduceAmount = missionorderDescProduceAmount.Default.(int64)
+	// missionorderDescGasAmount is the schema descriptor for gas_amount field.
+	missionorderDescGasAmount := missionorderFields[7].Descriptor()
+	// missionorder.DefaultGasAmount holds the default value on creation for the gas_amount field.
+	missionorder.DefaultGasAmount = missionorderDescGasAmount.Default.(int64)
+	// missionorderDescSerialNumber is the schema descriptor for serial_number field.
+	missionorderDescSerialNumber := missionorderFields[11].Descriptor()
+	// missionorder.DefaultSerialNumber holds the default value on creation for the serial_number field.
+	missionorder.DefaultSerialNumber = missionorderDescSerialNumber.Default.(string)
+	// missionorderDescStartedAt is the schema descriptor for started_at field.
+	missionorderDescStartedAt := missionorderFields[12].Descriptor()
+	// missionorder.DefaultStartedAt holds the default value on creation for the started_at field.
+	missionorder.DefaultStartedAt = missionorderDescStartedAt.Default.(time.Time)
+	// missionorderDescFinishedAt is the schema descriptor for finished_at field.
+	missionorderDescFinishedAt := missionorderFields[13].Descriptor()
+	// missionorder.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	missionorder.DefaultFinishedAt = missionorderDescFinishedAt.Default.(time.Time)
+	// missionorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
+	missionorderDescMissionBatchID := missionorderFields[14].Descriptor()
+	// missionorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
+	missionorder.DefaultMissionBatchID = missionorderDescMissionBatchID.Default.(int64)
+	// missionorderDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
+	missionorderDescMissionBatchNumber := missionorderFields[15].Descriptor()
+	// missionorder.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
+	missionorder.DefaultMissionBatchNumber = missionorderDescMissionBatchNumber.Default.(string)
+	// missionorderDescID is the schema descriptor for id field.
+	missionorderDescID := missionorderMixinFields0[0].Descriptor()
+	// missionorder.DefaultID holds the default value on creation for the id field.
+	missionorder.DefaultID = missionorderDescID.Default.(func() int64)
 	missionproduceorderMixin := schema.MissionProduceOrder{}.Mixin()
 	missionproduceorderMixinFields0 := missionproduceorderMixin[0].Fields()
 	_ = missionproduceorderMixinFields0

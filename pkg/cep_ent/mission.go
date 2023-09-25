@@ -104,9 +104,11 @@ type MissionEdges struct {
 	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
 	// MissionProductions holds the value of the mission_productions edge.
 	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
+	// MissionOrders holds the value of the mission_orders edge.
+	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 }
 
 // MissionKindOrErr returns the MissionKind value or an error if the edge
@@ -199,6 +201,15 @@ func (e MissionEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
 		return e.MissionProductions, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_productions"}
+}
+
+// MissionOrdersOrErr returns the MissionOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
+	if e.loadedTypes[8] {
+		return e.MissionOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -457,6 +468,11 @@ func (m *Mission) QueryMissionBatch() *MissionBatchQuery {
 // QueryMissionProductions queries the "mission_productions" edge of the Mission entity.
 func (m *Mission) QueryMissionProductions() *MissionProductionQuery {
 	return NewMissionClient(m.config).QueryMissionProductions(m)
+}
+
+// QueryMissionOrders queries the "mission_orders" edge of the Mission entity.
+func (m *Mission) QueryMissionOrders() *MissionOrderQuery {
+	return NewMissionClient(m.config).QueryMissionOrders(m)
 }
 
 // Update returns a builder for updating this Mission.

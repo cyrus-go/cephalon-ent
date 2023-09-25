@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -29,6 +30,7 @@ type TransferOrderQuery struct {
 	withTargetUser *UserQuery
 	withBills      *BillQuery
 	withVxSocial   *VXSocialQuery
+	withSymbol     *SymbolQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -146,6 +148,28 @@ func (toq *TransferOrderQuery) QueryVxSocial() *VXSocialQuery {
 			sqlgraph.From(transferorder.Table, transferorder.FieldID, selector),
 			sqlgraph.To(vxsocial.Table, vxsocial.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.VxSocialTable, transferorder.VxSocialColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(toq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySymbol chains the current query on the "symbol" edge.
+func (toq *TransferOrderQuery) QuerySymbol() *SymbolQuery {
+	query := (&SymbolClient{config: toq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := toq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := toq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transferorder.Table, transferorder.FieldID, selector),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.SymbolTable, transferorder.SymbolColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(toq.driver.Dialect(), step)
 		return fromU, nil
@@ -349,6 +373,7 @@ func (toq *TransferOrderQuery) Clone() *TransferOrderQuery {
 		withTargetUser: toq.withTargetUser.Clone(),
 		withBills:      toq.withBills.Clone(),
 		withVxSocial:   toq.withVxSocial.Clone(),
+		withSymbol:     toq.withSymbol.Clone(),
 		// clone intermediate query.
 		sql:  toq.sql.Clone(),
 		path: toq.path,
@@ -396,6 +421,17 @@ func (toq *TransferOrderQuery) WithVxSocial(opts ...func(*VXSocialQuery)) *Trans
 		opt(query)
 	}
 	toq.withVxSocial = query
+	return toq
+}
+
+// WithSymbol tells the query-builder to eager-load the nodes that are connected to
+// the "symbol" edge. The optional arguments are used to configure the query builder of the edge.
+func (toq *TransferOrderQuery) WithSymbol(opts ...func(*SymbolQuery)) *TransferOrderQuery {
+	query := (&SymbolClient{config: toq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	toq.withSymbol = query
 	return toq
 }
 
@@ -477,11 +513,12 @@ func (toq *TransferOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	var (
 		nodes       = []*TransferOrder{}
 		_spec       = toq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			toq.withSourceUser != nil,
 			toq.withTargetUser != nil,
 			toq.withBills != nil,
 			toq.withVxSocial != nil,
+			toq.withSymbol != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -524,6 +561,12 @@ func (toq *TransferOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if query := toq.withVxSocial; query != nil {
 		if err := toq.loadVxSocial(ctx, query, nodes, nil,
 			func(n *TransferOrder, e *VXSocial) { n.Edges.VxSocial = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := toq.withSymbol; query != nil {
+		if err := toq.loadSymbol(ctx, query, nodes, nil,
+			func(n *TransferOrder, e *Symbol) { n.Edges.Symbol = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -598,6 +641,7 @@ func (toq *TransferOrderQuery) loadBills(ctx context.Context, query *BillQuery, 
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(bill.FieldOrderID)
 	}
@@ -647,6 +691,35 @@ func (toq *TransferOrderQuery) loadVxSocial(ctx context.Context, query *VXSocial
 	}
 	return nil
 }
+func (toq *TransferOrderQuery) loadSymbol(ctx context.Context, query *SymbolQuery, nodes []*TransferOrder, init func(*TransferOrder), assign func(*TransferOrder, *Symbol)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*TransferOrder)
+	for i := range nodes {
+		fk := nodes[i].SymbolID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(symbol.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "symbol_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (toq *TransferOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := toq.querySpec()
@@ -681,6 +754,9 @@ func (toq *TransferOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if toq.withVxSocial != nil {
 			_spec.Node.AddColumnOnce(transferorder.FieldSocialID)
+		}
+		if toq.withSymbol != nil {
+			_spec.Node.AddColumnOnce(transferorder.FieldSymbolID)
 		}
 	}
 	if ps := toq.predicates; len(ps) > 0 {

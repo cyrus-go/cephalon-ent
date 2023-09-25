@@ -273,6 +273,18 @@ func (f MissionKindFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionKindMutation", m)
 }
 
+// The MissionOrderFunc type is an adapter to allow the use of ordinary
+// function as MissionOrder mutator.
+type MissionOrderFunc func(context.Context, *cep_ent.MissionOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionOrderMutation", m)
+}
+
 // The MissionProduceOrderFunc type is an adapter to allow the use of ordinary
 // function as MissionProduceOrder mutator.
 type MissionProduceOrderFunc func(context.Context, *cep_ent.MissionProduceOrderMutation) (cep_ent.Value, error)

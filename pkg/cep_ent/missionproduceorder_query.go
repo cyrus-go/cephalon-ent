@@ -692,6 +692,7 @@ func (mpoq *MissionProduceOrderQuery) loadBills(ctx context.Context, query *Bill
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(bill.FieldOrderID)
 	}

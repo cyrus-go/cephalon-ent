@@ -72,6 +72,9 @@ type MissionKeyPair func(*sql.Selector)
 // MissionKind is the predicate function for missionkind builders.
 type MissionKind func(*sql.Selector)
 
+// MissionOrder is the predicate function for missionorder builders.
+type MissionOrder func(*sql.Selector)
+
 // MissionProduceOrder is the predicate function for missionproduceorder builders.
 type MissionProduceOrder func(*sql.Selector)
 

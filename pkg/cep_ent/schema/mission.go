@@ -53,6 +53,7 @@ func (Mission) Edges() []ent.Edge {
 		edge.To("mission_produce_orders", MissionProduceOrder.Type),
 		edge.From("mission_batch", MissionBatch.Type).Ref("missions").Field("mission_batch_id").Unique().Required(),
 		edge.To("mission_productions", MissionProduction.Type),
+		edge.To("mission_orders", MissionOrder.Type),
 	}
 }
 

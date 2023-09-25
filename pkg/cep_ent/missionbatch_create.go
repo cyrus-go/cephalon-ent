@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
@@ -170,6 +171,21 @@ func (mbc *MissionBatchCreate) AddMissions(m ...*Mission) *MissionBatchCreate {
 		ids[i] = m[i].ID
 	}
 	return mbc.AddMissionIDs(ids...)
+}
+
+// AddMissionOrderIDs adds the "mission_orders" edge to the MissionOrder entity by IDs.
+func (mbc *MissionBatchCreate) AddMissionOrderIDs(ids ...int64) *MissionBatchCreate {
+	mbc.mutation.AddMissionOrderIDs(ids...)
+	return mbc
+}
+
+// AddMissionOrders adds the "mission_orders" edges to the MissionOrder entity.
+func (mbc *MissionBatchCreate) AddMissionOrders(m ...*MissionOrder) *MissionBatchCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mbc.AddMissionOrderIDs(ids...)
 }
 
 // Mutation returns the MissionBatchMutation object of the builder.
@@ -366,6 +382,22 @@ func (mbc *MissionBatchCreate) createSpec() (*MissionBatch, *sqlgraph.CreateSpec
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mbc.mutation.MissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.MissionOrdersTable,
+			Columns: []string{missionbatch.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

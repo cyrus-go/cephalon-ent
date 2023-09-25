@@ -3,6 +3,7 @@ package enums
 type MissionCallWay string
 
 const (
+	MissionCallWayUnknown     MissionCallWay = "unknown"
 	MissionCallWayApi         MissionCallWay = "api"
 	MissionCallWayYuanHui     MissionCallWay = "yuan_hui"
 	MissionCallWayDevPlatform MissionCallWay = "dev_platform"
@@ -10,6 +11,7 @@ const (
 
 func (obj MissionCallWay) Values() []string {
 	return []string{
+		string(MissionCallWayUnknown),
 		string(MissionCallWayApi),
 		string(MissionCallWayYuanHui),
 		string(MissionCallWayDevPlatform),

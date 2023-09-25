@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -293,6 +294,11 @@ func (toc *TransferOrderCreate) SetVxSocial(v *VXSocial) *TransferOrderCreate {
 	return toc.SetVxSocialID(v.ID)
 }
 
+// SetSymbol sets the "symbol" edge to the Symbol entity.
+func (toc *TransferOrderCreate) SetSymbol(s *Symbol) *TransferOrderCreate {
+	return toc.SetSymbolID(s.ID)
+}
+
 // Mutation returns the TransferOrderMutation object of the builder.
 func (toc *TransferOrderCreate) Mutation() *TransferOrderMutation {
 	return toc.mutation
@@ -454,6 +460,9 @@ func (toc *TransferOrderCreate) check() error {
 	if _, ok := toc.mutation.TargetUserID(); !ok {
 		return &ValidationError{Name: "target_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.target_user"`)}
 	}
+	if _, ok := toc.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "TransferOrder.symbol"`)}
+	}
 	return nil
 }
 
@@ -510,10 +519,6 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 	if value, ok := toc.mutation.Status(); ok {
 		_spec.SetField(transferorder.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
-	}
-	if value, ok := toc.mutation.SymbolID(); ok {
-		_spec.SetField(transferorder.FieldSymbolID, field.TypeInt64, value)
-		_node.SymbolID = value
 	}
 	if value, ok := toc.mutation.Amount(); ok {
 		_spec.SetField(transferorder.FieldAmount, field.TypeInt64, value)
@@ -600,6 +605,23 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.SocialID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := toc.mutation.SymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.SymbolTable,
+			Columns: []string{transferorder.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.SymbolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -759,12 +781,6 @@ func (u *TransferOrderUpsert) SetSymbolID(v int64) *TransferOrderUpsert {
 // UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
 func (u *TransferOrderUpsert) UpdateSymbolID() *TransferOrderUpsert {
 	u.SetExcluded(transferorder.FieldSymbolID)
-	return u
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *TransferOrderUpsert) AddSymbolID(v int64) *TransferOrderUpsert {
-	u.Add(transferorder.FieldSymbolID, v)
 	return u
 }
 
@@ -1019,13 +1035,6 @@ func (u *TransferOrderUpsertOne) UpdateStatus() *TransferOrderUpsertOne {
 func (u *TransferOrderUpsertOne) SetSymbolID(v int64) *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.SetSymbolID(v)
-	})
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *TransferOrderUpsertOne) AddSymbolID(v int64) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.AddSymbolID(v)
 	})
 }
 
@@ -1467,13 +1476,6 @@ func (u *TransferOrderUpsertBulk) UpdateStatus() *TransferOrderUpsertBulk {
 func (u *TransferOrderUpsertBulk) SetSymbolID(v int64) *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.SetSymbolID(v)
-	})
-}
-
-// AddSymbolID adds v to the "symbol_id" field.
-func (u *TransferOrderUpsertBulk) AddSymbolID(v int64) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.AddSymbolID(v)
 	})
 }
 

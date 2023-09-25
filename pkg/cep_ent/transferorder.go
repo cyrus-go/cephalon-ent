@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -65,9 +66,11 @@ type TransferOrderEdges struct {
 	Bills []*Bill `json:"bills,omitempty"`
 	// VxSocial holds the value of the vx_social edge.
 	VxSocial *VXSocial `json:"vx_social,omitempty"`
+	// Symbol holds the value of the symbol edge.
+	Symbol *Symbol `json:"symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // SourceUserOrErr returns the SourceUser value or an error if the edge
@@ -116,6 +119,19 @@ func (e TransferOrderEdges) VxSocialOrErr() (*VXSocial, error) {
 		return e.VxSocial, nil
 	}
 	return nil, &NotLoadedError{edge: "vx_social"}
+}
+
+// SymbolOrErr returns the Symbol value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransferOrderEdges) SymbolOrErr() (*Symbol, error) {
+	if e.loadedTypes[4] {
+		if e.Symbol == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: symbol.Label}
+		}
+		return e.Symbol, nil
+	}
+	return nil, &NotLoadedError{edge: "symbol"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -271,6 +287,11 @@ func (to *TransferOrder) QueryBills() *BillQuery {
 // QueryVxSocial queries the "vx_social" edge of the TransferOrder entity.
 func (to *TransferOrder) QueryVxSocial() *VXSocialQuery {
 	return NewTransferOrderClient(to.config).QueryVxSocial(to)
+}
+
+// QuerySymbol queries the "symbol" edge of the TransferOrder entity.
+func (to *TransferOrder) QuerySymbol() *SymbolQuery {
+	return NewTransferOrderClient(to.config).QuerySymbol(to)
 }
 
 // Update returns a builder for updating this TransferOrder.

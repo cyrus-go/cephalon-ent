@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -68,6 +69,8 @@ type UserQuery struct {
 	withMissions              *MissionQuery
 	withIncomeTransferOrders  *TransferOrderQuery
 	withOutcomeTransferOrders *TransferOrderQuery
+	withConsumeMissionOrders  *MissionOrderQuery
+	withProduceMissionOrders  *MissionOrderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -654,6 +657,50 @@ func (uq *UserQuery) QueryOutcomeTransferOrders() *TransferOrderQuery {
 	return query
 }
 
+// QueryConsumeMissionOrders chains the current query on the "consume_mission_orders" edge.
+func (uq *UserQuery) QueryConsumeMissionOrders() *MissionOrderQuery {
+	query := (&MissionOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ConsumeMissionOrdersTable, user.ConsumeMissionOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProduceMissionOrders chains the current query on the "produce_mission_orders" edge.
+func (uq *UserQuery) QueryProduceMissionOrders() *MissionOrderQuery {
+	query := (&MissionOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProduceMissionOrdersTable, user.ProduceMissionOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -871,6 +918,8 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withMissions:              uq.withMissions.Clone(),
 		withIncomeTransferOrders:  uq.withIncomeTransferOrders.Clone(),
 		withOutcomeTransferOrders: uq.withOutcomeTransferOrders.Clone(),
+		withConsumeMissionOrders:  uq.withConsumeMissionOrders.Clone(),
+		withProduceMissionOrders:  uq.withProduceMissionOrders.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1152,6 +1201,28 @@ func (uq *UserQuery) WithOutcomeTransferOrders(opts ...func(*TransferOrderQuery)
 	return uq
 }
 
+// WithConsumeMissionOrders tells the query-builder to eager-load the nodes that are connected to
+// the "consume_mission_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithConsumeMissionOrders(opts ...func(*MissionOrderQuery)) *UserQuery {
+	query := (&MissionOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withConsumeMissionOrders = query
+	return uq
+}
+
+// WithProduceMissionOrders tells the query-builder to eager-load the nodes that are connected to
+// the "produce_mission_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithProduceMissionOrders(opts ...func(*MissionOrderQuery)) *UserQuery {
+	query := (&MissionOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withProduceMissionOrders = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1230,7 +1301,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [25]bool{
+		loadedTypes = [27]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1256,6 +1327,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withMissions != nil,
 			uq.withIncomeTransferOrders != nil,
 			uq.withOutcomeTransferOrders != nil,
+			uq.withConsumeMissionOrders != nil,
+			uq.withProduceMissionOrders != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1455,6 +1528,20 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			func(n *User, e *TransferOrder) {
 				n.Edges.OutcomeTransferOrders = append(n.Edges.OutcomeTransferOrders, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withConsumeMissionOrders; query != nil {
+		if err := uq.loadConsumeMissionOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.ConsumeMissionOrders = []*MissionOrder{} },
+			func(n *User, e *MissionOrder) { n.Edges.ConsumeMissionOrders = append(n.Edges.ConsumeMissionOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withProduceMissionOrders; query != nil {
+		if err := uq.loadProduceMissionOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.ProduceMissionOrders = []*MissionOrder{} },
+			func(n *User, e *MissionOrder) { n.Edges.ProduceMissionOrders = append(n.Edges.ProduceMissionOrders, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2035,6 +2122,7 @@ func (uq *UserQuery) loadIncomeBills(ctx context.Context, query *BillQuery, node
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(bill.FieldTargetUserID)
 	}
@@ -2065,6 +2153,7 @@ func (uq *UserQuery) loadOutcomeBills(ctx context.Context, query *BillQuery, nod
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(bill.FieldSourceUserID)
 	}
@@ -2200,6 +2289,66 @@ func (uq *UserQuery) loadOutcomeTransferOrders(ctx context.Context, query *Trans
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "source_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadConsumeMissionOrders(ctx context.Context, query *MissionOrderQuery, nodes []*User, init func(*User), assign func(*User, *MissionOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionorder.FieldConsumeUserID)
+	}
+	query.Where(predicate.MissionOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ConsumeMissionOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ConsumeUserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "consume_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadProduceMissionOrders(ctx context.Context, query *MissionOrderQuery, nodes []*User, init func(*User), assign func(*User, *MissionOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionorder.FieldProduceUserID)
+	}
+	query.Where(predicate.MissionOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ProduceMissionOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProduceUserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "produce_user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

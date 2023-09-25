@@ -396,6 +396,52 @@ func HasBillsWith(preds ...predicate.Bill) predicate.Symbol {
 	})
 }
 
+// HasMissionOrders applies the HasEdge predicate on the "mission_orders" edge.
+func HasMissionOrders() predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionOrdersTable, MissionOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionOrdersWith applies the HasEdge predicate on the "mission_orders" edge with a given conditions (other predicates).
+func HasMissionOrdersWith(preds ...predicate.MissionOrder) predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := newMissionOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTransferOrders applies the HasEdge predicate on the "transfer_orders" edge.
+func HasTransferOrders() predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransferOrdersTable, TransferOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTransferOrdersWith applies the HasEdge predicate on the "transfer_orders" edge with a given conditions (other predicates).
+func HasTransferOrdersWith(preds ...predicate.TransferOrder) predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := newTransferOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Symbol) predicate.Symbol {
 	return predicate.Symbol(sql.AndPredicates(predicates...))

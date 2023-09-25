@@ -34,6 +34,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
@@ -132,6 +133,7 @@ func checkColumn(table, column string) error {
 			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,
 			missionkeypair.Table:       missionkeypair.ValidColumn,
 			missionkind.Table:          missionkind.ValidColumn,
+			missionorder.Table:         missionorder.ValidColumn,
 			missionproduceorder.Table:  missionproduceorder.ValidColumn,
 			missionproduction.Table:    missionproduction.ValidColumn,
 			outputlog.Table:            outputlog.ValidColumn,

@@ -37,6 +37,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
@@ -104,6 +105,8 @@ type Client struct {
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
 	MissionKind *MissionKindClient
+	// MissionOrder is the client for interacting with the MissionOrder builders.
+	MissionOrder *MissionOrderClient
 	// MissionProduceOrder is the client for interacting with the MissionProduceOrder builders.
 	MissionProduceOrder *MissionProduceOrderClient
 	// MissionProduction is the client for interacting with the MissionProduction builders.
@@ -171,6 +174,7 @@ func (c *Client) init() {
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
 	c.MissionKeyPair = NewMissionKeyPairClient(c.config)
 	c.MissionKind = NewMissionKindClient(c.config)
+	c.MissionOrder = NewMissionOrderClient(c.config)
 	c.MissionProduceOrder = NewMissionProduceOrderClient(c.config)
 	c.MissionProduction = NewMissionProductionClient(c.config)
 	c.OutputLog = NewOutputLogClient(c.config)
@@ -294,6 +298,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
 		MissionKeyPair:       NewMissionKeyPairClient(cfg),
 		MissionKind:          NewMissionKindClient(cfg),
+		MissionOrder:         NewMissionOrderClient(cfg),
 		MissionProduceOrder:  NewMissionProduceOrderClient(cfg),
 		MissionProduction:    NewMissionProductionClient(cfg),
 		OutputLog:            NewOutputLogClient(cfg),
@@ -351,6 +356,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
 		MissionKeyPair:       NewMissionKeyPairClient(cfg),
 		MissionKind:          NewMissionKindClient(cfg),
+		MissionOrder:         NewMissionOrderClient(cfg),
 		MissionProduceOrder:  NewMissionProduceOrderClient(cfg),
 		MissionProduction:    NewMissionProductionClient(cfg),
 		OutputLog:            NewOutputLogClient(cfg),
@@ -400,10 +406,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
 		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission,
 		c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind,
-		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
-		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
-		c.RechargeOrder, c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet,
+		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeCampaignRule, c.RechargeOrder, c.Symbol, c.TransferOrder, c.User,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
 	} {
 		n.Use(hooks...)
 	}
@@ -417,10 +423,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
 		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission,
 		c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind,
-		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
-		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
-		c.RechargeOrder, c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet,
+		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeCampaignRule, c.RechargeOrder, c.Symbol, c.TransferOrder, c.User,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -473,6 +479,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MissionKeyPair.mutate(ctx, m)
 	case *MissionKindMutation:
 		return c.MissionKind.mutate(ctx, m)
+	case *MissionOrderMutation:
+		return c.MissionOrder.mutate(ctx, m)
 	case *MissionProduceOrderMutation:
 		return c.MissionProduceOrder.mutate(ctx, m)
 	case *MissionProductionMutation:
@@ -3695,6 +3703,22 @@ func (c *MissionClient) QueryMissionProductions(m *Mission) *MissionProductionQu
 	return query
 }
 
+// QueryMissionOrders queries the mission_orders edge of a Mission.
+func (c *MissionClient) QueryMissionOrders(m *Mission) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionOrdersTable, mission.MissionOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MissionClient) Hooks() []Hook {
 	return c.hooks.Mission
@@ -3869,6 +3893,22 @@ func (c *MissionBatchClient) QueryMissions(mb *MissionBatch) *MissionQuery {
 			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
 			sqlgraph.To(mission.Table, mission.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.MissionsTable, missionbatch.MissionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionOrders queries the mission_orders edge of a MissionBatch.
+func (c *MissionBatchClient) QueryMissionOrders(mb *MissionBatch) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.MissionOrdersTable, missionbatch.MissionOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
 		return fromV, nil
@@ -4457,6 +4497,235 @@ func (c *MissionKindClient) mutate(ctx context.Context, m *MissionKindMutation) 
 		return (&MissionKindDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown MissionKind mutation op: %q", m.Op())
+	}
+}
+
+// MissionOrderClient is a client for the MissionOrder schema.
+type MissionOrderClient struct {
+	config
+}
+
+// NewMissionOrderClient returns a client for the MissionOrder from the given config.
+func NewMissionOrderClient(c config) *MissionOrderClient {
+	return &MissionOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionorder.Hooks(f(g(h())))`.
+func (c *MissionOrderClient) Use(hooks ...Hook) {
+	c.hooks.MissionOrder = append(c.hooks.MissionOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionorder.Intercept(f(g(h())))`.
+func (c *MissionOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionOrder = append(c.inters.MissionOrder, interceptors...)
+}
+
+// Create returns a builder for creating a MissionOrder entity.
+func (c *MissionOrderClient) Create() *MissionOrderCreate {
+	mutation := newMissionOrderMutation(c.config, OpCreate)
+	return &MissionOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionOrder entities.
+func (c *MissionOrderClient) CreateBulk(builders ...*MissionOrderCreate) *MissionOrderCreateBulk {
+	return &MissionOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MissionOrderClient) MapCreateBulk(slice any, setFunc func(*MissionOrderCreate, int)) *MissionOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MissionOrderCreateBulk{err: fmt.Errorf("calling to MissionOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MissionOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MissionOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionOrder.
+func (c *MissionOrderClient) Update() *MissionOrderUpdate {
+	mutation := newMissionOrderMutation(c.config, OpUpdate)
+	return &MissionOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionOrderClient) UpdateOne(mo *MissionOrder) *MissionOrderUpdateOne {
+	mutation := newMissionOrderMutation(c.config, OpUpdateOne, withMissionOrder(mo))
+	return &MissionOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionOrderClient) UpdateOneID(id int64) *MissionOrderUpdateOne {
+	mutation := newMissionOrderMutation(c.config, OpUpdateOne, withMissionOrderID(id))
+	return &MissionOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionOrder.
+func (c *MissionOrderClient) Delete() *MissionOrderDelete {
+	mutation := newMissionOrderMutation(c.config, OpDelete)
+	return &MissionOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionOrderClient) DeleteOne(mo *MissionOrder) *MissionOrderDeleteOne {
+	return c.DeleteOneID(mo.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionOrderClient) DeleteOneID(id int64) *MissionOrderDeleteOne {
+	builder := c.Delete().Where(missionorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionOrder.
+func (c *MissionOrderClient) Query() *MissionOrderQuery {
+	return &MissionOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionOrder entity by its id.
+func (c *MissionOrderClient) Get(ctx context.Context, id int64) (*MissionOrder, error) {
+	return c.Query().Where(missionorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionOrderClient) GetX(ctx context.Context, id int64) *MissionOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryConsumeUser queries the consume_user edge of a MissionOrder.
+func (c *MissionOrderClient) QueryConsumeUser(mo *MissionOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.ConsumeUserTable, missionorder.ConsumeUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProduceUser queries the produce_user edge of a MissionOrder.
+func (c *MissionOrderClient) QueryProduceUser(mo *MissionOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.ProduceUserTable, missionorder.ProduceUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySymbol queries the symbol edge of a MissionOrder.
+func (c *MissionOrderClient) QuerySymbol(mo *MissionOrder) *SymbolQuery {
+	query := (&SymbolClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.SymbolTable, missionorder.SymbolColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBills queries the bills edge of a MissionOrder.
+func (c *MissionOrderClient) QueryBills(mo *MissionOrder) *BillQuery {
+	query := (&BillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(bill.Table, bill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionorder.BillsTable, missionorder.BillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionBatch queries the mission_batch edge of a MissionOrder.
+func (c *MissionOrderClient) QueryMissionBatch(mo *MissionOrder) *MissionBatchQuery {
+	query := (&MissionBatchClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.MissionBatchTable, missionorder.MissionBatchColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMission queries the mission edge of a MissionOrder.
+func (c *MissionOrderClient) QueryMission(mo *MissionOrder) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.MissionTable, missionorder.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MissionOrderClient) Hooks() []Hook {
+	return c.hooks.MissionOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionOrderClient) Interceptors() []Interceptor {
+	return c.inters.MissionOrder
+}
+
+func (c *MissionOrderClient) mutate(ctx context.Context, m *MissionOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionOrder mutation op: %q", m.Op())
 	}
 }
 
@@ -6085,6 +6354,38 @@ func (c *SymbolClient) QueryBills(s *Symbol) *BillQuery {
 	return query
 }
 
+// QueryMissionOrders queries the mission_orders edge of a Symbol.
+func (c *SymbolClient) QueryMissionOrders(s *Symbol) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.MissionOrdersTable, symbol.MissionOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransferOrders queries the transfer_orders edge of a Symbol.
+func (c *SymbolClient) QueryTransferOrders(s *Symbol) *TransferOrderQuery {
+	query := (&TransferOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, id),
+			sqlgraph.To(transferorder.Table, transferorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.TransferOrdersTable, symbol.TransferOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *SymbolClient) Hooks() []Hook {
 	return c.hooks.Symbol
@@ -6275,6 +6576,22 @@ func (c *TransferOrderClient) QueryVxSocial(to *TransferOrder) *VXSocialQuery {
 			sqlgraph.From(transferorder.Table, transferorder.FieldID, id),
 			sqlgraph.To(vxsocial.Table, vxsocial.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.VxSocialTable, transferorder.VxSocialColumn),
+		)
+		fromV = sqlgraph.Neighbors(to.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySymbol queries the symbol edge of a TransferOrder.
+func (c *TransferOrderClient) QuerySymbol(to *TransferOrder) *SymbolQuery {
+	query := (&SymbolClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := to.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transferorder.Table, transferorder.FieldID, id),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.SymbolTable, transferorder.SymbolColumn),
 		)
 		fromV = sqlgraph.Neighbors(to.driver.Dialect(), step)
 		return fromV, nil
@@ -6808,6 +7125,38 @@ func (c *UserClient) QueryOutcomeTransferOrders(u *User) *TransferOrderQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(transferorder.Table, transferorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.OutcomeTransferOrdersTable, user.OutcomeTransferOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryConsumeMissionOrders queries the consume_mission_orders edge of a User.
+func (c *UserClient) QueryConsumeMissionOrders(u *User) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ConsumeMissionOrdersTable, user.ConsumeMissionOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProduceMissionOrders queries the produce_mission_orders edge of a User.
+func (c *UserClient) QueryProduceMissionOrders(u *User) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProduceMissionOrdersTable, user.ProduceMissionOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -7506,18 +7855,18 @@ type (
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
 		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
 		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, Mission, MissionBatch,
-		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionProduceOrder,
-		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol, TransferOrder,
-		User, UserDevice, VXAccount, VXSocial, Wallet []ent.Hook
+		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol,
+		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet []ent.Hook
 	}
 	inters struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
 		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
 		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, Mission, MissionBatch,
-		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionProduceOrder,
-		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol, TransferOrder,
-		User, UserDevice, VXAccount, VXSocial, Wallet []ent.Interceptor
+		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol,
+		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet []ent.Interceptor
 	}
 )

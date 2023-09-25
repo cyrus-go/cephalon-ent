@@ -107,9 +107,13 @@ type UserEdges struct {
 	IncomeTransferOrders []*TransferOrder `json:"income_transfer_orders,omitempty"`
 	// OutcomeTransferOrders holds the value of the outcome_transfer_orders edge.
 	OutcomeTransferOrders []*TransferOrder `json:"outcome_transfer_orders,omitempty"`
+	// ConsumeMissionOrders holds the value of the consume_mission_orders edge.
+	ConsumeMissionOrders []*MissionOrder `json:"consume_mission_orders,omitempty"`
+	// ProduceMissionOrders holds the value of the produce_mission_orders edge.
+	ProduceMissionOrders []*MissionOrder `json:"produce_mission_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [25]bool
+	loadedTypes [27]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -347,6 +351,24 @@ func (e UserEdges) OutcomeTransferOrdersOrErr() ([]*TransferOrder, error) {
 		return e.OutcomeTransferOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "outcome_transfer_orders"}
+}
+
+// ConsumeMissionOrdersOrErr returns the ConsumeMissionOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ConsumeMissionOrdersOrErr() ([]*MissionOrder, error) {
+	if e.loadedTypes[25] {
+		return e.ConsumeMissionOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "consume_mission_orders"}
+}
+
+// ProduceMissionOrdersOrErr returns the ProduceMissionOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ProduceMissionOrdersOrErr() ([]*MissionOrder, error) {
+	if e.loadedTypes[26] {
+		return e.ProduceMissionOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "produce_mission_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -609,6 +631,16 @@ func (u *User) QueryIncomeTransferOrders() *TransferOrderQuery {
 // QueryOutcomeTransferOrders queries the "outcome_transfer_orders" edge of the User entity.
 func (u *User) QueryOutcomeTransferOrders() *TransferOrderQuery {
 	return NewUserClient(u.config).QueryOutcomeTransferOrders(u)
+}
+
+// QueryConsumeMissionOrders queries the "consume_mission_orders" edge of the User entity.
+func (u *User) QueryConsumeMissionOrders() *MissionOrderQuery {
+	return NewUserClient(u.config).QueryConsumeMissionOrders(u)
+}
+
+// QueryProduceMissionOrders queries the "produce_mission_orders" edge of the User entity.
+func (u *User) QueryProduceMissionOrders() *MissionOrderQuery {
+	return NewUserClient(u.config).QueryProduceMissionOrders(u)
 }
 
 // Update returns a builder for updating this User.
