@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -30,7 +29,6 @@ type MissionProduceOrderQuery struct {
 	predicates              []predicate.MissionProduceOrder
 	withUser                *UserQuery
 	withEarnBills           *EarnBillQuery
-	withBills               *BillQuery
 	withDevice              *DeviceQuery
 	withMissionConsumeOrder *MissionConsumeOrderQuery
 	withMissionProduction   *MissionProductionQuery
@@ -108,28 +106,6 @@ func (mpoq *MissionProduceOrderQuery) QueryEarnBills() *EarnBillQuery {
 			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, selector),
 			sqlgraph.To(earnbill.Table, earnbill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, missionproduceorder.EarnBillsTable, missionproduceorder.EarnBillsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(mpoq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryBills chains the current query on the "bills" edge.
-func (mpoq *MissionProduceOrderQuery) QueryBills() *BillQuery {
-	query := (&BillClient{config: mpoq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := mpoq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := mpoq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, selector),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionproduceorder.BillsTable, missionproduceorder.BillsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mpoq.driver.Dialect(), step)
 		return fromU, nil
@@ -397,7 +373,6 @@ func (mpoq *MissionProduceOrderQuery) Clone() *MissionProduceOrderQuery {
 		predicates:              append([]predicate.MissionProduceOrder{}, mpoq.predicates...),
 		withUser:                mpoq.withUser.Clone(),
 		withEarnBills:           mpoq.withEarnBills.Clone(),
-		withBills:               mpoq.withBills.Clone(),
 		withDevice:              mpoq.withDevice.Clone(),
 		withMissionConsumeOrder: mpoq.withMissionConsumeOrder.Clone(),
 		withMissionProduction:   mpoq.withMissionProduction.Clone(),
@@ -426,17 +401,6 @@ func (mpoq *MissionProduceOrderQuery) WithEarnBills(opts ...func(*EarnBillQuery)
 		opt(query)
 	}
 	mpoq.withEarnBills = query
-	return mpoq
-}
-
-// WithBills tells the query-builder to eager-load the nodes that are connected to
-// the "bills" edge. The optional arguments are used to configure the query builder of the edge.
-func (mpoq *MissionProduceOrderQuery) WithBills(opts ...func(*BillQuery)) *MissionProduceOrderQuery {
-	query := (&BillClient{config: mpoq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	mpoq.withBills = query
 	return mpoq
 }
 
@@ -552,10 +516,9 @@ func (mpoq *MissionProduceOrderQuery) sqlAll(ctx context.Context, hooks ...query
 		nodes       = []*MissionProduceOrder{}
 		withFKs     = mpoq.withFKs
 		_spec       = mpoq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [5]bool{
 			mpoq.withUser != nil,
 			mpoq.withEarnBills != nil,
-			mpoq.withBills != nil,
 			mpoq.withDevice != nil,
 			mpoq.withMissionConsumeOrder != nil,
 			mpoq.withMissionProduction != nil,
@@ -592,13 +555,6 @@ func (mpoq *MissionProduceOrderQuery) sqlAll(ctx context.Context, hooks ...query
 		if err := mpoq.loadEarnBills(ctx, query, nodes,
 			func(n *MissionProduceOrder) { n.Edges.EarnBills = []*EarnBill{} },
 			func(n *MissionProduceOrder, e *EarnBill) { n.Edges.EarnBills = append(n.Edges.EarnBills, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := mpoq.withBills; query != nil {
-		if err := mpoq.loadBills(ctx, query, nodes,
-			func(n *MissionProduceOrder) { n.Edges.Bills = []*Bill{} },
-			func(n *MissionProduceOrder, e *Bill) { n.Edges.Bills = append(n.Edges.Bills, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -677,37 +633,6 @@ func (mpoq *MissionProduceOrderQuery) loadEarnBills(ctx context.Context, query *
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "reason_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (mpoq *MissionProduceOrderQuery) loadBills(ctx context.Context, query *BillQuery, nodes []*MissionProduceOrder, init func(*MissionProduceOrder), assign func(*MissionProduceOrder, *Bill)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*MissionProduceOrder)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(bill.FieldOrderID)
-	}
-	query.Where(predicate.Bill(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(missionproduceorder.BillsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.OrderID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "order_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

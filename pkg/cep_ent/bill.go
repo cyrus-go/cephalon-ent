@@ -11,8 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -62,9 +61,8 @@ type Bill struct {
 	InviteID int64 `json:"invite_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BillQuery when eager-loading is set.
-	Edges               BillEdges `json:"edges"`
-	mission_order_bills *int64
-	selectValues        sql.SelectValues
+	Edges        BillEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // BillEdges holds the relations/edges for other nodes in the graph.
@@ -75,17 +73,15 @@ type BillEdges struct {
 	TargetUser *User `json:"target_user,omitempty"`
 	// TransferOrder holds the value of the transfer_order edge.
 	TransferOrder *TransferOrder `json:"transfer_order,omitempty"`
-	// MissionConsumeOrder holds the value of the mission_consume_order edge.
-	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
-	// MissionProduceOrder holds the value of the mission_produce_order edge.
-	MissionProduceOrder *MissionProduceOrder `json:"mission_produce_order,omitempty"`
+	// MissionOrder holds the value of the mission_order edge.
+	MissionOrder *MissionOrder `json:"mission_order,omitempty"`
 	// Invite holds the value of the invite edge.
 	Invite *Invite `json:"invite,omitempty"`
 	// Symbol holds the value of the symbol edge.
 	Symbol *Symbol `json:"symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [6]bool
 }
 
 // SourceUserOrErr returns the SourceUser value or an error if the edge
@@ -127,36 +123,23 @@ func (e BillEdges) TransferOrderOrErr() (*TransferOrder, error) {
 	return nil, &NotLoadedError{edge: "transfer_order"}
 }
 
-// MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
+// MissionOrderOrErr returns the MissionOrder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e BillEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
+func (e BillEdges) MissionOrderOrErr() (*MissionOrder, error) {
 	if e.loadedTypes[3] {
-		if e.MissionConsumeOrder == nil {
+		if e.MissionOrder == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: missionconsumeorder.Label}
+			return nil, &NotFoundError{label: missionorder.Label}
 		}
-		return e.MissionConsumeOrder, nil
+		return e.MissionOrder, nil
 	}
-	return nil, &NotLoadedError{edge: "mission_consume_order"}
-}
-
-// MissionProduceOrderOrErr returns the MissionProduceOrder value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e BillEdges) MissionProduceOrderOrErr() (*MissionProduceOrder, error) {
-	if e.loadedTypes[4] {
-		if e.MissionProduceOrder == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: missionproduceorder.Label}
-		}
-		return e.MissionProduceOrder, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_produce_order"}
+	return nil, &NotLoadedError{edge: "mission_order"}
 }
 
 // InviteOrErr returns the Invite value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BillEdges) InviteOrErr() (*Invite, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		if e.Invite == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: invite.Label}
@@ -169,7 +152,7 @@ func (e BillEdges) InviteOrErr() (*Invite, error) {
 // SymbolOrErr returns the Symbol value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BillEdges) SymbolOrErr() (*Symbol, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		if e.Symbol == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: symbol.Label}
@@ -190,8 +173,6 @@ func (*Bill) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case bill.FieldCreatedAt, bill.FieldUpdatedAt, bill.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case bill.ForeignKeys[0]: // mission_order_bills
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -321,13 +302,6 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				b.InviteID = value.Int64
 			}
-		case bill.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field mission_order_bills", value)
-			} else if value.Valid {
-				b.mission_order_bills = new(int64)
-				*b.mission_order_bills = int64(value.Int64)
-			}
 		default:
 			b.selectValues.Set(columns[i], values[i])
 		}
@@ -356,14 +330,9 @@ func (b *Bill) QueryTransferOrder() *TransferOrderQuery {
 	return NewBillClient(b.config).QueryTransferOrder(b)
 }
 
-// QueryMissionConsumeOrder queries the "mission_consume_order" edge of the Bill entity.
-func (b *Bill) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
-	return NewBillClient(b.config).QueryMissionConsumeOrder(b)
-}
-
-// QueryMissionProduceOrder queries the "mission_produce_order" edge of the Bill entity.
-func (b *Bill) QueryMissionProduceOrder() *MissionProduceOrderQuery {
-	return NewBillClient(b.config).QueryMissionProduceOrder(b)
+// QueryMissionOrder queries the "mission_order" edge of the Bill entity.
+func (b *Bill) QueryMissionOrder() *MissionOrderQuery {
+	return NewBillClient(b.config).QueryMissionOrder(b)
 }
 
 // QueryInvite queries the "invite" edge of the Bill entity.

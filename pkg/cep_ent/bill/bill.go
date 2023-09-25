@@ -58,10 +58,8 @@ const (
 	EdgeTargetUser = "target_user"
 	// EdgeTransferOrder holds the string denoting the transfer_order edge name in mutations.
 	EdgeTransferOrder = "transfer_order"
-	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
-	EdgeMissionConsumeOrder = "mission_consume_order"
-	// EdgeMissionProduceOrder holds the string denoting the mission_produce_order edge name in mutations.
-	EdgeMissionProduceOrder = "mission_produce_order"
+	// EdgeMissionOrder holds the string denoting the mission_order edge name in mutations.
+	EdgeMissionOrder = "mission_order"
 	// EdgeInvite holds the string denoting the invite edge name in mutations.
 	EdgeInvite = "invite"
 	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
@@ -89,20 +87,13 @@ const (
 	TransferOrderInverseTable = "transfer_orders"
 	// TransferOrderColumn is the table column denoting the transfer_order relation/edge.
 	TransferOrderColumn = "order_id"
-	// MissionConsumeOrderTable is the table that holds the mission_consume_order relation/edge.
-	MissionConsumeOrderTable = "bills"
-	// MissionConsumeOrderInverseTable is the table name for the MissionConsumeOrder entity.
-	// It exists in this package in order to avoid circular dependency with the "missionconsumeorder" package.
-	MissionConsumeOrderInverseTable = "mission_consume_orders"
-	// MissionConsumeOrderColumn is the table column denoting the mission_consume_order relation/edge.
-	MissionConsumeOrderColumn = "order_id"
-	// MissionProduceOrderTable is the table that holds the mission_produce_order relation/edge.
-	MissionProduceOrderTable = "bills"
-	// MissionProduceOrderInverseTable is the table name for the MissionProduceOrder entity.
-	// It exists in this package in order to avoid circular dependency with the "missionproduceorder" package.
-	MissionProduceOrderInverseTable = "mission_produce_orders"
-	// MissionProduceOrderColumn is the table column denoting the mission_produce_order relation/edge.
-	MissionProduceOrderColumn = "order_id"
+	// MissionOrderTable is the table that holds the mission_order relation/edge.
+	MissionOrderTable = "bills"
+	// MissionOrderInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	MissionOrderInverseTable = "mission_orders"
+	// MissionOrderColumn is the table column denoting the mission_order relation/edge.
+	MissionOrderColumn = "order_id"
 	// InviteTable is the table that holds the invite relation/edge.
 	InviteTable = "bills"
 	// InviteInverseTable is the table name for the Invite entity.
@@ -142,21 +133,10 @@ var Columns = []string{
 	FieldInviteID,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "bills"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"mission_order_bills",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -345,17 +325,10 @@ func ByTransferOrderField(field string, opts ...sql.OrderTermOption) OrderOption
 	}
 }
 
-// ByMissionConsumeOrderField orders the results by mission_consume_order field.
-func ByMissionConsumeOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByMissionOrderField orders the results by mission_order field.
+func ByMissionOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionConsumeOrderStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByMissionProduceOrderField orders the results by mission_produce_order field.
-func ByMissionProduceOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionProduceOrderStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newMissionOrderStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -393,18 +366,11 @@ func newTransferOrderStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, TransferOrderTable, TransferOrderColumn),
 	)
 }
-func newMissionConsumeOrderStep() *sqlgraph.Step {
+func newMissionOrderStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionConsumeOrderInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionConsumeOrderTable, MissionConsumeOrderColumn),
-	)
-}
-func newMissionProduceOrderStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionProduceOrderInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionProduceOrderTable, MissionProduceOrderColumn),
+		sqlgraph.To(MissionOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, MissionOrderTable, MissionOrderColumn),
 	)
 }
 func newInviteStep() *sqlgraph.Step {

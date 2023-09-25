@@ -2122,7 +2122,6 @@ func (uq *UserQuery) loadIncomeBills(ctx context.Context, query *BillQuery, node
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(bill.FieldTargetUserID)
 	}
@@ -2153,7 +2152,6 @@ func (uq *UserQuery) loadOutcomeBills(ctx context.Context, query *BillQuery, nod
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(bill.FieldSourceUserID)
 	}

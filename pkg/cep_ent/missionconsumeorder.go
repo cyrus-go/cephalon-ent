@@ -69,8 +69,6 @@ type MissionConsumeOrderEdges struct {
 	User *User `json:"user,omitempty"`
 	// CostBills holds the value of the cost_bills edge.
 	CostBills []*CostBill `json:"cost_bills,omitempty"`
-	// Bills holds the value of the bills edge.
-	Bills []*Bill `json:"bills,omitempty"`
 	// MissionProduceOrders holds the value of the mission_produce_orders edge.
 	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
 	// MissionBatch holds the value of the mission_batch edge.
@@ -79,7 +77,7 @@ type MissionConsumeOrderEdges struct {
 	Mission *Mission `json:"mission,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -104,19 +102,10 @@ func (e MissionConsumeOrderEdges) CostBillsOrErr() ([]*CostBill, error) {
 	return nil, &NotLoadedError{edge: "cost_bills"}
 }
 
-// BillsOrErr returns the Bills value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionConsumeOrderEdges) BillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[2] {
-		return e.Bills, nil
-	}
-	return nil, &NotLoadedError{edge: "bills"}
-}
-
 // MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionConsumeOrderEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.MissionProduceOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_produce_orders"}
@@ -125,7 +114,7 @@ func (e MissionConsumeOrderEdges) MissionProduceOrdersOrErr() ([]*MissionProduce
 // MissionBatchOrErr returns the MissionBatch value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionConsumeOrderEdges) MissionBatchOrErr() (*MissionBatch, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		if e.MissionBatch == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionbatch.Label}
@@ -138,7 +127,7 @@ func (e MissionConsumeOrderEdges) MissionBatchOrErr() (*MissionBatch, error) {
 // MissionOrErr returns the Mission value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionConsumeOrderEdges) MissionOrErr() (*Mission, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		if e.Mission == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: mission.Label}
@@ -311,11 +300,6 @@ func (mco *MissionConsumeOrder) QueryUser() *UserQuery {
 // QueryCostBills queries the "cost_bills" edge of the MissionConsumeOrder entity.
 func (mco *MissionConsumeOrder) QueryCostBills() *CostBillQuery {
 	return NewMissionConsumeOrderClient(mco.config).QueryCostBills(mco)
-}
-
-// QueryBills queries the "bills" edge of the MissionConsumeOrder entity.
-func (mco *MissionConsumeOrder) QueryBills() *BillQuery {
-	return NewMissionConsumeOrderClient(mco.config).QueryBills(mco)
 }
 
 // QueryMissionProduceOrders queries the "mission_produce_orders" edge of the MissionConsumeOrder entity.

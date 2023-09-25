@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -340,21 +339,6 @@ func (mpou *MissionProduceOrderUpdate) AddEarnBills(e ...*EarnBill) *MissionProd
 	return mpou.AddEarnBillIDs(ids...)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (mpou *MissionProduceOrderUpdate) AddBillIDs(ids ...int64) *MissionProduceOrderUpdate {
-	mpou.mutation.AddBillIDs(ids...)
-	return mpou
-}
-
-// AddBills adds the "bills" edges to the Bill entity.
-func (mpou *MissionProduceOrderUpdate) AddBills(b ...*Bill) *MissionProduceOrderUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return mpou.AddBillIDs(ids...)
-}
-
 // SetDevice sets the "device" edge to the Device entity.
 func (mpou *MissionProduceOrderUpdate) SetDevice(d *Device) *MissionProduceOrderUpdate {
 	return mpou.SetDeviceID(d.ID)
@@ -400,27 +384,6 @@ func (mpou *MissionProduceOrderUpdate) RemoveEarnBills(e ...*EarnBill) *MissionP
 		ids[i] = e[i].ID
 	}
 	return mpou.RemoveEarnBillIDs(ids...)
-}
-
-// ClearBills clears all "bills" edges to the Bill entity.
-func (mpou *MissionProduceOrderUpdate) ClearBills() *MissionProduceOrderUpdate {
-	mpou.mutation.ClearBills()
-	return mpou
-}
-
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (mpou *MissionProduceOrderUpdate) RemoveBillIDs(ids ...int64) *MissionProduceOrderUpdate {
-	mpou.mutation.RemoveBillIDs(ids...)
-	return mpou
-}
-
-// RemoveBills removes "bills" edges to Bill entities.
-func (mpou *MissionProduceOrderUpdate) RemoveBills(b ...*Bill) *MissionProduceOrderUpdate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return mpou.RemoveBillIDs(ids...)
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -640,51 +603,6 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpou.mutation.BillsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpou.mutation.RemovedBillsIDs(); len(nodes) > 0 && !mpou.mutation.BillsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpou.mutation.BillsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1104,21 +1022,6 @@ func (mpouo *MissionProduceOrderUpdateOne) AddEarnBills(e ...*EarnBill) *Mission
 	return mpouo.AddEarnBillIDs(ids...)
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (mpouo *MissionProduceOrderUpdateOne) AddBillIDs(ids ...int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.AddBillIDs(ids...)
-	return mpouo
-}
-
-// AddBills adds the "bills" edges to the Bill entity.
-func (mpouo *MissionProduceOrderUpdateOne) AddBills(b ...*Bill) *MissionProduceOrderUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return mpouo.AddBillIDs(ids...)
-}
-
 // SetDevice sets the "device" edge to the Device entity.
 func (mpouo *MissionProduceOrderUpdateOne) SetDevice(d *Device) *MissionProduceOrderUpdateOne {
 	return mpouo.SetDeviceID(d.ID)
@@ -1164,27 +1067,6 @@ func (mpouo *MissionProduceOrderUpdateOne) RemoveEarnBills(e ...*EarnBill) *Miss
 		ids[i] = e[i].ID
 	}
 	return mpouo.RemoveEarnBillIDs(ids...)
-}
-
-// ClearBills clears all "bills" edges to the Bill entity.
-func (mpouo *MissionProduceOrderUpdateOne) ClearBills() *MissionProduceOrderUpdateOne {
-	mpouo.mutation.ClearBills()
-	return mpouo
-}
-
-// RemoveBillIDs removes the "bills" edge to Bill entities by IDs.
-func (mpouo *MissionProduceOrderUpdateOne) RemoveBillIDs(ids ...int64) *MissionProduceOrderUpdateOne {
-	mpouo.mutation.RemoveBillIDs(ids...)
-	return mpouo
-}
-
-// RemoveBills removes "bills" edges to Bill entities.
-func (mpouo *MissionProduceOrderUpdateOne) RemoveBills(b ...*Bill) *MissionProduceOrderUpdateOne {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return mpouo.RemoveBillIDs(ids...)
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -1434,51 +1316,6 @@ func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if mpouo.mutation.BillsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpouo.mutation.RemovedBillsIDs(); len(nodes) > 0 && !mpouo.mutation.BillsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mpouo.mutation.BillsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

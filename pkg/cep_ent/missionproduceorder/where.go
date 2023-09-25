@@ -807,29 +807,6 @@ func HasEarnBillsWith(preds ...predicate.EarnBill) predicate.MissionProduceOrder
 	})
 }
 
-// HasBills applies the HasEdge predicate on the "bills" edge.
-func HasBills() predicate.MissionProduceOrder {
-	return predicate.MissionProduceOrder(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasBillsWith applies the HasEdge predicate on the "bills" edge with a given conditions (other predicates).
-func HasBillsWith(preds ...predicate.Bill) predicate.MissionProduceOrder {
-	return predicate.MissionProduceOrder(func(s *sql.Selector) {
-		step := newBillsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasDevice applies the HasEdge predicate on the "device" edge.
 func HasDevice() predicate.MissionProduceOrder {
 	return predicate.MissionProduceOrder(func(s *sql.Selector) {

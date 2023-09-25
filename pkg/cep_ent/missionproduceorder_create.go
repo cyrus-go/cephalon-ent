@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -313,21 +312,6 @@ func (mpoc *MissionProduceOrderCreate) AddEarnBills(e ...*EarnBill) *MissionProd
 		ids[i] = e[i].ID
 	}
 	return mpoc.AddEarnBillIDs(ids...)
-}
-
-// AddBillIDs adds the "bills" edge to the Bill entity by IDs.
-func (mpoc *MissionProduceOrderCreate) AddBillIDs(ids ...int64) *MissionProduceOrderCreate {
-	mpoc.mutation.AddBillIDs(ids...)
-	return mpoc
-}
-
-// AddBills adds the "bills" edges to the Bill entity.
-func (mpoc *MissionProduceOrderCreate) AddBills(b ...*Bill) *MissionProduceOrderCreate {
-	ids := make([]int64, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return mpoc.AddBillIDs(ids...)
 }
 
 // SetDevice sets the "device" edge to the Device entity.
@@ -641,22 +625,6 @@ func (mpoc *MissionProduceOrderCreate) createSpec() (*MissionProduceOrder, *sqlg
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(earnbill.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mpoc.mutation.BillsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionproduceorder.BillsTable,
-			Columns: []string{missionproduceorder.BillsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -13,8 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -324,42 +323,23 @@ func (bc *BillCreate) SetTransferOrder(t *TransferOrder) *BillCreate {
 	return bc.SetTransferOrderID(t.ID)
 }
 
-// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
-func (bc *BillCreate) SetMissionConsumeOrderID(id int64) *BillCreate {
-	bc.mutation.SetMissionConsumeOrderID(id)
+// SetMissionOrderID sets the "mission_order" edge to the MissionOrder entity by ID.
+func (bc *BillCreate) SetMissionOrderID(id int64) *BillCreate {
+	bc.mutation.SetMissionOrderID(id)
 	return bc
 }
 
-// SetNillableMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID if the given value is not nil.
-func (bc *BillCreate) SetNillableMissionConsumeOrderID(id *int64) *BillCreate {
+// SetNillableMissionOrderID sets the "mission_order" edge to the MissionOrder entity by ID if the given value is not nil.
+func (bc *BillCreate) SetNillableMissionOrderID(id *int64) *BillCreate {
 	if id != nil {
-		bc = bc.SetMissionConsumeOrderID(*id)
+		bc = bc.SetMissionOrderID(*id)
 	}
 	return bc
 }
 
-// SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
-func (bc *BillCreate) SetMissionConsumeOrder(m *MissionConsumeOrder) *BillCreate {
-	return bc.SetMissionConsumeOrderID(m.ID)
-}
-
-// SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID.
-func (bc *BillCreate) SetMissionProduceOrderID(id int64) *BillCreate {
-	bc.mutation.SetMissionProduceOrderID(id)
-	return bc
-}
-
-// SetNillableMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID if the given value is not nil.
-func (bc *BillCreate) SetNillableMissionProduceOrderID(id *int64) *BillCreate {
-	if id != nil {
-		bc = bc.SetMissionProduceOrderID(*id)
-	}
-	return bc
-}
-
-// SetMissionProduceOrder sets the "mission_produce_order" edge to the MissionProduceOrder entity.
-func (bc *BillCreate) SetMissionProduceOrder(m *MissionProduceOrder) *BillCreate {
-	return bc.SetMissionProduceOrderID(m.ID)
+// SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
+func (bc *BillCreate) SetMissionOrder(m *MissionOrder) *BillCreate {
+	return bc.SetMissionOrderID(m.ID)
 }
 
 // SetInvite sets the "invite" edge to the Invite entity.
@@ -696,32 +676,15 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 		_node.OrderID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := bc.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
+	if nodes := bc.mutation.MissionOrderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.MissionConsumeOrderTable,
-			Columns: []string{bill.MissionConsumeOrderColumn},
+			Table:   bill.MissionOrderTable,
+			Columns: []string{bill.MissionOrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.OrderID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := bc.mutation.MissionProduceOrderIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   bill.MissionProduceOrderTable,
-			Columns: []string{bill.MissionProduceOrderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

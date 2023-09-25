@@ -56,8 +56,6 @@ const (
 	EdgeUser = "user"
 	// EdgeEarnBills holds the string denoting the earn_bills edge name in mutations.
 	EdgeEarnBills = "earn_bills"
-	// EdgeBills holds the string denoting the bills edge name in mutations.
-	EdgeBills = "bills"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
@@ -80,13 +78,6 @@ const (
 	EarnBillsInverseTable = "earn_bills"
 	// EarnBillsColumn is the table column denoting the earn_bills relation/edge.
 	EarnBillsColumn = "reason_id"
-	// BillsTable is the table that holds the bills relation/edge.
-	BillsTable = "bills"
-	// BillsInverseTable is the table name for the Bill entity.
-	// It exists in this package in order to avoid circular dependency with the "bill" package.
-	BillsInverseTable = "bills"
-	// BillsColumn is the table column denoting the bills relation/edge.
-	BillsColumn = "order_id"
 	// DeviceTable is the table that holds the device relation/edge.
 	DeviceTable = "mission_produce_orders"
 	// DeviceInverseTable is the table name for the Device entity.
@@ -334,20 +325,6 @@ func ByEarnBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByBillsCount orders the results by bills count.
-func ByBillsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newBillsStep(), opts...)
-	}
-}
-
-// ByBills orders the results by bills terms.
-func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByDeviceField orders the results by device field.
 func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -380,13 +357,6 @@ func newEarnBillsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EarnBillsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EarnBillsTable, EarnBillsColumn),
-	)
-}
-func newBillsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BillsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
 	)
 }
 func newDeviceStep() *sqlgraph.Step {

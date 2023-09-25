@@ -71,8 +71,6 @@ type MissionProduceOrderEdges struct {
 	User *User `json:"user,omitempty"`
 	// EarnBills holds the value of the earn_bills edge.
 	EarnBills []*EarnBill `json:"earn_bills,omitempty"`
-	// Bills holds the value of the bills edge.
-	Bills []*Bill `json:"bills,omitempty"`
 	// Device holds the value of the device edge.
 	Device *Device `json:"device,omitempty"`
 	// MissionConsumeOrder holds the value of the mission_consume_order edge.
@@ -81,7 +79,7 @@ type MissionProduceOrderEdges struct {
 	MissionProduction *MissionProduction `json:"mission_production,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -106,19 +104,10 @@ func (e MissionProduceOrderEdges) EarnBillsOrErr() ([]*EarnBill, error) {
 	return nil, &NotLoadedError{edge: "earn_bills"}
 }
 
-// BillsOrErr returns the Bills value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionProduceOrderEdges) BillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[2] {
-		return e.Bills, nil
-	}
-	return nil, &NotLoadedError{edge: "bills"}
-}
-
 // DeviceOrErr returns the Device value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionProduceOrderEdges) DeviceOrErr() (*Device, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		if e.Device == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: device.Label}
@@ -131,7 +120,7 @@ func (e MissionProduceOrderEdges) DeviceOrErr() (*Device, error) {
 // MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionProduceOrderEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		if e.MissionConsumeOrder == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionconsumeorder.Label}
@@ -144,7 +133,7 @@ func (e MissionProduceOrderEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrd
 // MissionProductionOrErr returns the MissionProduction value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionProduceOrderEdges) MissionProductionOrErr() (*MissionProduction, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		if e.MissionProduction == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionproduction.Label}
@@ -327,11 +316,6 @@ func (mpo *MissionProduceOrder) QueryUser() *UserQuery {
 // QueryEarnBills queries the "earn_bills" edge of the MissionProduceOrder entity.
 func (mpo *MissionProduceOrder) QueryEarnBills() *EarnBillQuery {
 	return NewMissionProduceOrderClient(mpo.config).QueryEarnBills(mpo)
-}
-
-// QueryBills queries the "bills" edge of the MissionProduceOrder entity.
-func (mpo *MissionProduceOrder) QueryBills() *BillQuery {
-	return NewMissionProduceOrderClient(mpo.config).QueryBills(mpo)
 }
 
 // QueryDevice queries the "device" edge of the MissionProduceOrder entity.

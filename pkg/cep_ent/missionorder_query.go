@@ -713,7 +713,9 @@ func (moq *MissionOrderQuery) loadBills(ctx context.Context, query *BillQuery, n
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(bill.FieldOrderID)
+	}
 	query.Where(predicate.Bill(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(missionorder.BillsColumn), fks...))
 	}))
@@ -722,13 +724,10 @@ func (moq *MissionOrderQuery) loadBills(ctx context.Context, query *BillQuery, n
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.mission_order_bills
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "mission_order_bills" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.OrderID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "mission_order_bills" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "order_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

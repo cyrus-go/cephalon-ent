@@ -13,8 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
@@ -349,42 +348,23 @@ func (bu *BillUpdate) SetTransferOrder(t *TransferOrder) *BillUpdate {
 	return bu.SetTransferOrderID(t.ID)
 }
 
-// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
-func (bu *BillUpdate) SetMissionConsumeOrderID(id int64) *BillUpdate {
-	bu.mutation.SetMissionConsumeOrderID(id)
+// SetMissionOrderID sets the "mission_order" edge to the MissionOrder entity by ID.
+func (bu *BillUpdate) SetMissionOrderID(id int64) *BillUpdate {
+	bu.mutation.SetMissionOrderID(id)
 	return bu
 }
 
-// SetNillableMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID if the given value is not nil.
-func (bu *BillUpdate) SetNillableMissionConsumeOrderID(id *int64) *BillUpdate {
+// SetNillableMissionOrderID sets the "mission_order" edge to the MissionOrder entity by ID if the given value is not nil.
+func (bu *BillUpdate) SetNillableMissionOrderID(id *int64) *BillUpdate {
 	if id != nil {
-		bu = bu.SetMissionConsumeOrderID(*id)
+		bu = bu.SetMissionOrderID(*id)
 	}
 	return bu
 }
 
-// SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
-func (bu *BillUpdate) SetMissionConsumeOrder(m *MissionConsumeOrder) *BillUpdate {
-	return bu.SetMissionConsumeOrderID(m.ID)
-}
-
-// SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID.
-func (bu *BillUpdate) SetMissionProduceOrderID(id int64) *BillUpdate {
-	bu.mutation.SetMissionProduceOrderID(id)
-	return bu
-}
-
-// SetNillableMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID if the given value is not nil.
-func (bu *BillUpdate) SetNillableMissionProduceOrderID(id *int64) *BillUpdate {
-	if id != nil {
-		bu = bu.SetMissionProduceOrderID(*id)
-	}
-	return bu
-}
-
-// SetMissionProduceOrder sets the "mission_produce_order" edge to the MissionProduceOrder entity.
-func (bu *BillUpdate) SetMissionProduceOrder(m *MissionProduceOrder) *BillUpdate {
-	return bu.SetMissionProduceOrderID(m.ID)
+// SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
+func (bu *BillUpdate) SetMissionOrder(m *MissionOrder) *BillUpdate {
+	return bu.SetMissionOrderID(m.ID)
 }
 
 // SetInvite sets the "invite" edge to the Invite entity.
@@ -420,15 +400,9 @@ func (bu *BillUpdate) ClearTransferOrder() *BillUpdate {
 	return bu
 }
 
-// ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
-func (bu *BillUpdate) ClearMissionConsumeOrder() *BillUpdate {
-	bu.mutation.ClearMissionConsumeOrder()
-	return bu
-}
-
-// ClearMissionProduceOrder clears the "mission_produce_order" edge to the MissionProduceOrder entity.
-func (bu *BillUpdate) ClearMissionProduceOrder() *BillUpdate {
-	bu.mutation.ClearMissionProduceOrder()
+// ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
+func (bu *BillUpdate) ClearMissionOrder() *BillUpdate {
+	bu.mutation.ClearMissionOrder()
 	return bu
 }
 
@@ -663,57 +637,28 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if bu.mutation.MissionConsumeOrderCleared() {
+	if bu.mutation.MissionOrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.MissionConsumeOrderTable,
-			Columns: []string{bill.MissionConsumeOrderColumn},
+			Table:   bill.MissionOrderTable,
+			Columns: []string{bill.MissionOrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := bu.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
+	if nodes := bu.mutation.MissionOrderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.MissionConsumeOrderTable,
-			Columns: []string{bill.MissionConsumeOrderColumn},
+			Table:   bill.MissionOrderTable,
+			Columns: []string{bill.MissionOrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if bu.mutation.MissionProduceOrderCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   bill.MissionProduceOrderTable,
-			Columns: []string{bill.MissionProduceOrderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := bu.mutation.MissionProduceOrderIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   bill.MissionProduceOrderTable,
-			Columns: []string{bill.MissionProduceOrderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1113,42 +1058,23 @@ func (buo *BillUpdateOne) SetTransferOrder(t *TransferOrder) *BillUpdateOne {
 	return buo.SetTransferOrderID(t.ID)
 }
 
-// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
-func (buo *BillUpdateOne) SetMissionConsumeOrderID(id int64) *BillUpdateOne {
-	buo.mutation.SetMissionConsumeOrderID(id)
+// SetMissionOrderID sets the "mission_order" edge to the MissionOrder entity by ID.
+func (buo *BillUpdateOne) SetMissionOrderID(id int64) *BillUpdateOne {
+	buo.mutation.SetMissionOrderID(id)
 	return buo
 }
 
-// SetNillableMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableMissionConsumeOrderID(id *int64) *BillUpdateOne {
+// SetNillableMissionOrderID sets the "mission_order" edge to the MissionOrder entity by ID if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableMissionOrderID(id *int64) *BillUpdateOne {
 	if id != nil {
-		buo = buo.SetMissionConsumeOrderID(*id)
+		buo = buo.SetMissionOrderID(*id)
 	}
 	return buo
 }
 
-// SetMissionConsumeOrder sets the "mission_consume_order" edge to the MissionConsumeOrder entity.
-func (buo *BillUpdateOne) SetMissionConsumeOrder(m *MissionConsumeOrder) *BillUpdateOne {
-	return buo.SetMissionConsumeOrderID(m.ID)
-}
-
-// SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID.
-func (buo *BillUpdateOne) SetMissionProduceOrderID(id int64) *BillUpdateOne {
-	buo.mutation.SetMissionProduceOrderID(id)
-	return buo
-}
-
-// SetNillableMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableMissionProduceOrderID(id *int64) *BillUpdateOne {
-	if id != nil {
-		buo = buo.SetMissionProduceOrderID(*id)
-	}
-	return buo
-}
-
-// SetMissionProduceOrder sets the "mission_produce_order" edge to the MissionProduceOrder entity.
-func (buo *BillUpdateOne) SetMissionProduceOrder(m *MissionProduceOrder) *BillUpdateOne {
-	return buo.SetMissionProduceOrderID(m.ID)
+// SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
+func (buo *BillUpdateOne) SetMissionOrder(m *MissionOrder) *BillUpdateOne {
+	return buo.SetMissionOrderID(m.ID)
 }
 
 // SetInvite sets the "invite" edge to the Invite entity.
@@ -1184,15 +1110,9 @@ func (buo *BillUpdateOne) ClearTransferOrder() *BillUpdateOne {
 	return buo
 }
 
-// ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
-func (buo *BillUpdateOne) ClearMissionConsumeOrder() *BillUpdateOne {
-	buo.mutation.ClearMissionConsumeOrder()
-	return buo
-}
-
-// ClearMissionProduceOrder clears the "mission_produce_order" edge to the MissionProduceOrder entity.
-func (buo *BillUpdateOne) ClearMissionProduceOrder() *BillUpdateOne {
-	buo.mutation.ClearMissionProduceOrder()
+// ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
+func (buo *BillUpdateOne) ClearMissionOrder() *BillUpdateOne {
+	buo.mutation.ClearMissionOrder()
 	return buo
 }
 
@@ -1457,57 +1377,28 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if buo.mutation.MissionConsumeOrderCleared() {
+	if buo.mutation.MissionOrderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.MissionConsumeOrderTable,
-			Columns: []string{bill.MissionConsumeOrderColumn},
+			Table:   bill.MissionOrderTable,
+			Columns: []string{bill.MissionOrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := buo.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
+	if nodes := buo.mutation.MissionOrderIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.MissionConsumeOrderTable,
-			Columns: []string{bill.MissionConsumeOrderColumn},
+			Table:   bill.MissionOrderTable,
+			Columns: []string{bill.MissionOrderColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionconsumeorder.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if buo.mutation.MissionProduceOrderCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   bill.MissionProduceOrderTable,
-			Columns: []string{bill.MissionProduceOrderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := buo.mutation.MissionProduceOrderIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   bill.MissionProduceOrderTable,
-			Columns: []string{bill.MissionProduceOrderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionproduceorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

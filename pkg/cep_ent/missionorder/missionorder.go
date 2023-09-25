@@ -99,7 +99,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "bill" package.
 	BillsInverseTable = "bills"
 	// BillsColumn is the table column denoting the bills relation/edge.
-	BillsColumn = "mission_order_bills"
+	BillsColumn = "order_id"
 	// MissionBatchTable is the table that holds the mission_batch relation/edge.
 	MissionBatchTable = "mission_orders"
 	// MissionBatchInverseTable is the table name for the MissionBatch entity.

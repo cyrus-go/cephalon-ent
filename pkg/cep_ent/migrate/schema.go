@@ -27,7 +27,6 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Comment: "流水号，唯一", Default: ""},
 		{Name: "invite_id", Type: field.TypeInt64, Comment: "外键关联某个邀请码", Default: 0},
 		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息", Default: 0},
-		{Name: "mission_order_bills", Type: field.TypeInt64, Nullable: true},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "流水目标钱包 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "流水来源钱包 id", Default: 0},
@@ -46,26 +45,14 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "bills_mission_consume_orders_bills",
-				Columns:    []*schema.Column{BillsColumns[15]},
-				RefColumns: []*schema.Column{MissionConsumeOrdersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
 				Symbol:     "bills_mission_orders_bills",
-				Columns:    []*schema.Column{BillsColumns[16]},
+				Columns:    []*schema.Column{BillsColumns[15]},
 				RefColumns: []*schema.Column{MissionOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "bills_mission_produce_orders_bills",
-				Columns:    []*schema.Column{BillsColumns[15]},
-				RefColumns: []*schema.Column{MissionProduceOrdersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
 				Symbol:     "bills_symbols_bills",
-				Columns:    []*schema.Column{BillsColumns[17]},
+				Columns:    []*schema.Column{BillsColumns[16]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -77,13 +64,13 @@ var (
 			},
 			{
 				Symbol:     "bills_users_income_bills",
-				Columns:    []*schema.Column{BillsColumns[18]},
+				Columns:    []*schema.Column{BillsColumns[17]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "bills_users_outcome_bills",
-				Columns:    []*schema.Column{BillsColumns[19]},
+				Columns:    []*schema.Column{BillsColumns[18]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1453,13 +1440,11 @@ var (
 
 func init() {
 	BillsTable.ForeignKeys[0].RefTable = InvitesTable
-	BillsTable.ForeignKeys[1].RefTable = MissionConsumeOrdersTable
-	BillsTable.ForeignKeys[2].RefTable = MissionOrdersTable
-	BillsTable.ForeignKeys[3].RefTable = MissionProduceOrdersTable
-	BillsTable.ForeignKeys[4].RefTable = SymbolsTable
-	BillsTable.ForeignKeys[5].RefTable = TransferOrdersTable
-	BillsTable.ForeignKeys[6].RefTable = UsersTable
-	BillsTable.ForeignKeys[7].RefTable = UsersTable
+	BillsTable.ForeignKeys[1].RefTable = MissionOrdersTable
+	BillsTable.ForeignKeys[2].RefTable = SymbolsTable
+	BillsTable.ForeignKeys[3].RefTable = TransferOrdersTable
+	BillsTable.ForeignKeys[4].RefTable = UsersTable
+	BillsTable.ForeignKeys[5].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
 	CampaignsTable.Annotation = &entsql.Annotation{}
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable

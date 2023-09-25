@@ -38,7 +38,6 @@ func (MissionProduceOrder) Edges() []ent.Edge {
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("mission_produce_orders").Field("user_id").Unique().Required(),
 		edge.To("earn_bills", EarnBill.Type),
-		edge.To("bills", Bill.Type),
 		edge.From("device", Device.Type).Ref("mission_produce_orders").Field("device_id").Unique().Required(),
 		edge.From("mission_consume_order", MissionConsumeOrder.Type).Ref("mission_produce_orders").Field("mission_consume_order_id").Unique().Required(),
 		edge.From("mission_production", MissionProduction.Type).Ref("mission_produce_order").Field("mission_production_id").Unique(),

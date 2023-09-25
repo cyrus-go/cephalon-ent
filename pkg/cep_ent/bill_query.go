@@ -12,8 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
@@ -23,18 +22,16 @@ import (
 // BillQuery is the builder for querying Bill entities.
 type BillQuery struct {
 	config
-	ctx                     *QueryContext
-	order                   []bill.OrderOption
-	inters                  []Interceptor
-	predicates              []predicate.Bill
-	withSourceUser          *UserQuery
-	withTargetUser          *UserQuery
-	withTransferOrder       *TransferOrderQuery
-	withMissionConsumeOrder *MissionConsumeOrderQuery
-	withMissionProduceOrder *MissionProduceOrderQuery
-	withInvite              *InviteQuery
-	withSymbol              *SymbolQuery
-	withFKs                 bool
+	ctx               *QueryContext
+	order             []bill.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.Bill
+	withSourceUser    *UserQuery
+	withTargetUser    *UserQuery
+	withTransferOrder *TransferOrderQuery
+	withMissionOrder  *MissionOrderQuery
+	withInvite        *InviteQuery
+	withSymbol        *SymbolQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -137,9 +134,9 @@ func (bq *BillQuery) QueryTransferOrder() *TransferOrderQuery {
 	return query
 }
 
-// QueryMissionConsumeOrder chains the current query on the "mission_consume_order" edge.
-func (bq *BillQuery) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
-	query := (&MissionConsumeOrderClient{config: bq.config}).Query()
+// QueryMissionOrder chains the current query on the "mission_order" edge.
+func (bq *BillQuery) QueryMissionOrder() *MissionOrderQuery {
+	query := (&MissionOrderClient{config: bq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -150,30 +147,8 @@ func (bq *BillQuery) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(bill.Table, bill.FieldID, selector),
-			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionConsumeOrderTable, bill.MissionConsumeOrderColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryMissionProduceOrder chains the current query on the "mission_produce_order" edge.
-func (bq *BillQuery) QueryMissionProduceOrder() *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: bq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := bq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := bq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, selector),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionProduceOrderTable, bill.MissionProduceOrderColumn),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionOrderTable, bill.MissionOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -412,18 +387,17 @@ func (bq *BillQuery) Clone() *BillQuery {
 		return nil
 	}
 	return &BillQuery{
-		config:                  bq.config,
-		ctx:                     bq.ctx.Clone(),
-		order:                   append([]bill.OrderOption{}, bq.order...),
-		inters:                  append([]Interceptor{}, bq.inters...),
-		predicates:              append([]predicate.Bill{}, bq.predicates...),
-		withSourceUser:          bq.withSourceUser.Clone(),
-		withTargetUser:          bq.withTargetUser.Clone(),
-		withTransferOrder:       bq.withTransferOrder.Clone(),
-		withMissionConsumeOrder: bq.withMissionConsumeOrder.Clone(),
-		withMissionProduceOrder: bq.withMissionProduceOrder.Clone(),
-		withInvite:              bq.withInvite.Clone(),
-		withSymbol:              bq.withSymbol.Clone(),
+		config:            bq.config,
+		ctx:               bq.ctx.Clone(),
+		order:             append([]bill.OrderOption{}, bq.order...),
+		inters:            append([]Interceptor{}, bq.inters...),
+		predicates:        append([]predicate.Bill{}, bq.predicates...),
+		withSourceUser:    bq.withSourceUser.Clone(),
+		withTargetUser:    bq.withTargetUser.Clone(),
+		withTransferOrder: bq.withTransferOrder.Clone(),
+		withMissionOrder:  bq.withMissionOrder.Clone(),
+		withInvite:        bq.withInvite.Clone(),
+		withSymbol:        bq.withSymbol.Clone(),
 		// clone intermediate query.
 		sql:  bq.sql.Clone(),
 		path: bq.path,
@@ -463,25 +437,14 @@ func (bq *BillQuery) WithTransferOrder(opts ...func(*TransferOrderQuery)) *BillQ
 	return bq
 }
 
-// WithMissionConsumeOrder tells the query-builder to eager-load the nodes that are connected to
-// the "mission_consume_order" edge. The optional arguments are used to configure the query builder of the edge.
-func (bq *BillQuery) WithMissionConsumeOrder(opts ...func(*MissionConsumeOrderQuery)) *BillQuery {
-	query := (&MissionConsumeOrderClient{config: bq.config}).Query()
+// WithMissionOrder tells the query-builder to eager-load the nodes that are connected to
+// the "mission_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BillQuery) WithMissionOrder(opts ...func(*MissionOrderQuery)) *BillQuery {
+	query := (&MissionOrderClient{config: bq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	bq.withMissionConsumeOrder = query
-	return bq
-}
-
-// WithMissionProduceOrder tells the query-builder to eager-load the nodes that are connected to
-// the "mission_produce_order" edge. The optional arguments are used to configure the query builder of the edge.
-func (bq *BillQuery) WithMissionProduceOrder(opts ...func(*MissionProduceOrderQuery)) *BillQuery {
-	query := (&MissionProduceOrderClient{config: bq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	bq.withMissionProduceOrder = query
+	bq.withMissionOrder = query
 	return bq
 }
 
@@ -584,21 +547,16 @@ func (bq *BillQuery) prepareQuery(ctx context.Context) error {
 func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, error) {
 	var (
 		nodes       = []*Bill{}
-		withFKs     = bq.withFKs
 		_spec       = bq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [6]bool{
 			bq.withSourceUser != nil,
 			bq.withTargetUser != nil,
 			bq.withTransferOrder != nil,
-			bq.withMissionConsumeOrder != nil,
-			bq.withMissionProduceOrder != nil,
+			bq.withMissionOrder != nil,
 			bq.withInvite != nil,
 			bq.withSymbol != nil,
 		}
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, bill.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Bill).scanValues(nil, columns)
 	}
@@ -635,15 +593,9 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 			return nil, err
 		}
 	}
-	if query := bq.withMissionConsumeOrder; query != nil {
-		if err := bq.loadMissionConsumeOrder(ctx, query, nodes, nil,
-			func(n *Bill, e *MissionConsumeOrder) { n.Edges.MissionConsumeOrder = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := bq.withMissionProduceOrder; query != nil {
-		if err := bq.loadMissionProduceOrder(ctx, query, nodes, nil,
-			func(n *Bill, e *MissionProduceOrder) { n.Edges.MissionProduceOrder = e }); err != nil {
+	if query := bq.withMissionOrder; query != nil {
+		if err := bq.loadMissionOrder(ctx, query, nodes, nil,
+			func(n *Bill, e *MissionOrder) { n.Edges.MissionOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -749,7 +701,7 @@ func (bq *BillQuery) loadTransferOrder(ctx context.Context, query *TransferOrder
 	}
 	return nil
 }
-func (bq *BillQuery) loadMissionConsumeOrder(ctx context.Context, query *MissionConsumeOrderQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *MissionConsumeOrder)) error {
+func (bq *BillQuery) loadMissionOrder(ctx context.Context, query *MissionOrderQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *MissionOrder)) error {
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*Bill)
 	for i := range nodes {
@@ -762,36 +714,7 @@ func (bq *BillQuery) loadMissionConsumeOrder(ctx context.Context, query *Mission
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(missionconsumeorder.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "order_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (bq *BillQuery) loadMissionProduceOrder(ctx context.Context, query *MissionProduceOrderQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *MissionProduceOrder)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*Bill)
-	for i := range nodes {
-		fk := nodes[i].OrderID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(missionproduceorder.IDIn(ids...))
+	query.Where(missionorder.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -900,10 +823,7 @@ func (bq *BillQuery) querySpec() *sqlgraph.QuerySpec {
 		if bq.withTransferOrder != nil {
 			_spec.Node.AddColumnOnce(bill.FieldOrderID)
 		}
-		if bq.withMissionConsumeOrder != nil {
-			_spec.Node.AddColumnOnce(bill.FieldOrderID)
-		}
-		if bq.withMissionProduceOrder != nil {
+		if bq.withMissionOrder != nil {
 			_spec.Node.AddColumnOnce(bill.FieldOrderID)
 		}
 		if bq.withInvite != nil {

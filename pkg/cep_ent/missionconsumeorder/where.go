@@ -827,29 +827,6 @@ func HasCostBillsWith(preds ...predicate.CostBill) predicate.MissionConsumeOrder
 	})
 }
 
-// HasBills applies the HasEdge predicate on the "bills" edge.
-func HasBills() predicate.MissionConsumeOrder {
-	return predicate.MissionConsumeOrder(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasBillsWith applies the HasEdge predicate on the "bills" edge with a given conditions (other predicates).
-func HasBillsWith(preds ...predicate.Bill) predicate.MissionConsumeOrder {
-	return predicate.MissionConsumeOrder(func(s *sql.Selector) {
-		step := newBillsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasMissionProduceOrders applies the HasEdge predicate on the "mission_produce_orders" edge.
 func HasMissionProduceOrders() predicate.MissionConsumeOrder {
 	return predicate.MissionConsumeOrder(func(s *sql.Selector) {

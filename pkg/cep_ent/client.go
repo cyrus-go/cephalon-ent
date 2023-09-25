@@ -674,31 +674,15 @@ func (c *BillClient) QueryTransferOrder(b *Bill) *TransferOrderQuery {
 	return query
 }
 
-// QueryMissionConsumeOrder queries the mission_consume_order edge of a Bill.
-func (c *BillClient) QueryMissionConsumeOrder(b *Bill) *MissionConsumeOrderQuery {
-	query := (&MissionConsumeOrderClient{config: c.config}).Query()
+// QueryMissionOrder queries the mission_order edge of a Bill.
+func (c *BillClient) QueryMissionOrder(b *Bill) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := b.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(missionconsumeorder.Table, missionconsumeorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionConsumeOrderTable, bill.MissionConsumeOrderColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionProduceOrder queries the mission_produce_order edge of a Bill.
-func (c *BillClient) QueryMissionProduceOrder(b *Bill) *MissionProduceOrderQuery {
-	query := (&MissionProduceOrderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionProduceOrderTable, bill.MissionProduceOrderColumn),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.MissionOrderTable, bill.MissionOrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -4081,22 +4065,6 @@ func (c *MissionConsumeOrderClient) QueryCostBills(mco *MissionConsumeOrder) *Co
 	return query
 }
 
-// QueryBills queries the bills edge of a MissionConsumeOrder.
-func (c *MissionConsumeOrderClient) QueryBills(mco *MissionConsumeOrder) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mco.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionconsumeorder.Table, missionconsumeorder.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionconsumeorder.BillsTable, missionconsumeorder.BillsColumn),
-		)
-		fromV = sqlgraph.Neighbors(mco.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryMissionProduceOrders queries the mission_produce_orders edge of a MissionConsumeOrder.
 func (c *MissionConsumeOrderClient) QueryMissionProduceOrders(mco *MissionConsumeOrder) *MissionProduceOrderQuery {
 	query := (&MissionProduceOrderClient{config: c.config}).Query()
@@ -4862,22 +4830,6 @@ func (c *MissionProduceOrderClient) QueryEarnBills(mpo *MissionProduceOrder) *Ea
 			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
 			sqlgraph.To(earnbill.Table, earnbill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, missionproduceorder.EarnBillsTable, missionproduceorder.EarnBillsColumn),
-		)
-		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryBills queries the bills edge of a MissionProduceOrder.
-func (c *MissionProduceOrderClient) QueryBills(mpo *MissionProduceOrder) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mpo.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionproduceorder.Table, missionproduceorder.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionproduceorder.BillsTable, missionproduceorder.BillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(mpo.driver.Dialect(), step)
 		return fromV, nil

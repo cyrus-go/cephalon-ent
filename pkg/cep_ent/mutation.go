@@ -107,47 +107,45 @@ const (
 // BillMutation represents an operation that mutates the Bill nodes in the graph.
 type BillMutation struct {
 	config
-	op                           Op
-	typ                          string
-	id                           *int64
-	created_by                   *int64
-	addcreated_by                *int64
-	updated_by                   *int64
-	addupdated_by                *int64
-	created_at                   *time.Time
-	updated_at                   *time.Time
-	deleted_at                   *time.Time
-	_type                        *enums.BillType
-	way                          *enums.BillWay
-	amount                       *int64
-	addamount                    *int64
-	target_before_amount         *int64
-	addtarget_before_amount      *int64
-	target_after_amount          *int64
-	addtarget_after_amount       *int64
-	source_before_amount         *int64
-	addsource_before_amount      *int64
-	source_after_amount          *int64
-	addsource_after_amount       *int64
-	serial_number                *string
-	clearedFields                map[string]struct{}
-	source_user                  *int64
-	clearedsource_user           bool
-	target_user                  *int64
-	clearedtarget_user           bool
-	transfer_order               *int64
-	clearedtransfer_order        bool
-	mission_consume_order        *int64
-	clearedmission_consume_order bool
-	mission_produce_order        *int64
-	clearedmission_produce_order bool
-	invite                       *int64
-	clearedinvite                bool
-	symbol                       *int64
-	clearedsymbol                bool
-	done                         bool
-	oldValue                     func(context.Context) (*Bill, error)
-	predicates                   []predicate.Bill
+	op                      Op
+	typ                     string
+	id                      *int64
+	created_by              *int64
+	addcreated_by           *int64
+	updated_by              *int64
+	addupdated_by           *int64
+	created_at              *time.Time
+	updated_at              *time.Time
+	deleted_at              *time.Time
+	_type                   *enums.BillType
+	way                     *enums.BillWay
+	amount                  *int64
+	addamount               *int64
+	target_before_amount    *int64
+	addtarget_before_amount *int64
+	target_after_amount     *int64
+	addtarget_after_amount  *int64
+	source_before_amount    *int64
+	addsource_before_amount *int64
+	source_after_amount     *int64
+	addsource_after_amount  *int64
+	serial_number           *string
+	clearedFields           map[string]struct{}
+	source_user             *int64
+	clearedsource_user      bool
+	target_user             *int64
+	clearedtarget_user      bool
+	transfer_order          *int64
+	clearedtransfer_order   bool
+	mission_order           *int64
+	clearedmission_order    bool
+	invite                  *int64
+	clearedinvite           bool
+	symbol                  *int64
+	clearedsymbol           bool
+	done                    bool
+	oldValue                func(context.Context) (*Bill, error)
+	predicates              []predicate.Bill
 }
 
 var _ ent.Mutation = (*BillMutation)(nil)
@@ -1149,84 +1147,44 @@ func (m *BillMutation) ResetTransferOrder() {
 	m.clearedtransfer_order = false
 }
 
-// SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by id.
-func (m *BillMutation) SetMissionConsumeOrderID(id int64) {
-	m.mission_consume_order = &id
+// SetMissionOrderID sets the "mission_order" edge to the MissionOrder entity by id.
+func (m *BillMutation) SetMissionOrderID(id int64) {
+	m.mission_order = &id
 }
 
-// ClearMissionConsumeOrder clears the "mission_consume_order" edge to the MissionConsumeOrder entity.
-func (m *BillMutation) ClearMissionConsumeOrder() {
-	m.clearedmission_consume_order = true
+// ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
+func (m *BillMutation) ClearMissionOrder() {
+	m.clearedmission_order = true
 	m.clearedFields[bill.FieldOrderID] = struct{}{}
 }
 
-// MissionConsumeOrderCleared reports if the "mission_consume_order" edge to the MissionConsumeOrder entity was cleared.
-func (m *BillMutation) MissionConsumeOrderCleared() bool {
-	return m.OrderIDCleared() || m.clearedmission_consume_order
+// MissionOrderCleared reports if the "mission_order" edge to the MissionOrder entity was cleared.
+func (m *BillMutation) MissionOrderCleared() bool {
+	return m.OrderIDCleared() || m.clearedmission_order
 }
 
-// MissionConsumeOrderID returns the "mission_consume_order" edge ID in the mutation.
-func (m *BillMutation) MissionConsumeOrderID() (id int64, exists bool) {
-	if m.mission_consume_order != nil {
-		return *m.mission_consume_order, true
+// MissionOrderID returns the "mission_order" edge ID in the mutation.
+func (m *BillMutation) MissionOrderID() (id int64, exists bool) {
+	if m.mission_order != nil {
+		return *m.mission_order, true
 	}
 	return
 }
 
-// MissionConsumeOrderIDs returns the "mission_consume_order" edge IDs in the mutation.
+// MissionOrderIDs returns the "mission_order" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// MissionConsumeOrderID instead. It exists only for internal usage by the builders.
-func (m *BillMutation) MissionConsumeOrderIDs() (ids []int64) {
-	if id := m.mission_consume_order; id != nil {
+// MissionOrderID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) MissionOrderIDs() (ids []int64) {
+	if id := m.mission_order; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetMissionConsumeOrder resets all changes to the "mission_consume_order" edge.
-func (m *BillMutation) ResetMissionConsumeOrder() {
-	m.mission_consume_order = nil
-	m.clearedmission_consume_order = false
-}
-
-// SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by id.
-func (m *BillMutation) SetMissionProduceOrderID(id int64) {
-	m.mission_produce_order = &id
-}
-
-// ClearMissionProduceOrder clears the "mission_produce_order" edge to the MissionProduceOrder entity.
-func (m *BillMutation) ClearMissionProduceOrder() {
-	m.clearedmission_produce_order = true
-	m.clearedFields[bill.FieldOrderID] = struct{}{}
-}
-
-// MissionProduceOrderCleared reports if the "mission_produce_order" edge to the MissionProduceOrder entity was cleared.
-func (m *BillMutation) MissionProduceOrderCleared() bool {
-	return m.OrderIDCleared() || m.clearedmission_produce_order
-}
-
-// MissionProduceOrderID returns the "mission_produce_order" edge ID in the mutation.
-func (m *BillMutation) MissionProduceOrderID() (id int64, exists bool) {
-	if m.mission_produce_order != nil {
-		return *m.mission_produce_order, true
-	}
-	return
-}
-
-// MissionProduceOrderIDs returns the "mission_produce_order" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// MissionProduceOrderID instead. It exists only for internal usage by the builders.
-func (m *BillMutation) MissionProduceOrderIDs() (ids []int64) {
-	if id := m.mission_produce_order; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetMissionProduceOrder resets all changes to the "mission_produce_order" edge.
-func (m *BillMutation) ResetMissionProduceOrder() {
-	m.mission_produce_order = nil
-	m.clearedmission_produce_order = false
+// ResetMissionOrder resets all changes to the "mission_order" edge.
+func (m *BillMutation) ResetMissionOrder() {
+	m.mission_order = nil
+	m.clearedmission_order = false
 }
 
 // ClearInvite clears the "invite" edge to the Invite entity.
@@ -1801,7 +1759,7 @@ func (m *BillMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BillMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.source_user != nil {
 		edges = append(edges, bill.EdgeSourceUser)
 	}
@@ -1811,11 +1769,8 @@ func (m *BillMutation) AddedEdges() []string {
 	if m.transfer_order != nil {
 		edges = append(edges, bill.EdgeTransferOrder)
 	}
-	if m.mission_consume_order != nil {
-		edges = append(edges, bill.EdgeMissionConsumeOrder)
-	}
-	if m.mission_produce_order != nil {
-		edges = append(edges, bill.EdgeMissionProduceOrder)
+	if m.mission_order != nil {
+		edges = append(edges, bill.EdgeMissionOrder)
 	}
 	if m.invite != nil {
 		edges = append(edges, bill.EdgeInvite)
@@ -1842,12 +1797,8 @@ func (m *BillMutation) AddedIDs(name string) []ent.Value {
 		if id := m.transfer_order; id != nil {
 			return []ent.Value{*id}
 		}
-	case bill.EdgeMissionConsumeOrder:
-		if id := m.mission_consume_order; id != nil {
-			return []ent.Value{*id}
-		}
-	case bill.EdgeMissionProduceOrder:
-		if id := m.mission_produce_order; id != nil {
+	case bill.EdgeMissionOrder:
+		if id := m.mission_order; id != nil {
 			return []ent.Value{*id}
 		}
 	case bill.EdgeInvite:
@@ -1864,7 +1815,7 @@ func (m *BillMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BillMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	return edges
 }
 
@@ -1876,7 +1827,7 @@ func (m *BillMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BillMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.clearedsource_user {
 		edges = append(edges, bill.EdgeSourceUser)
 	}
@@ -1886,11 +1837,8 @@ func (m *BillMutation) ClearedEdges() []string {
 	if m.clearedtransfer_order {
 		edges = append(edges, bill.EdgeTransferOrder)
 	}
-	if m.clearedmission_consume_order {
-		edges = append(edges, bill.EdgeMissionConsumeOrder)
-	}
-	if m.clearedmission_produce_order {
-		edges = append(edges, bill.EdgeMissionProduceOrder)
+	if m.clearedmission_order {
+		edges = append(edges, bill.EdgeMissionOrder)
 	}
 	if m.clearedinvite {
 		edges = append(edges, bill.EdgeInvite)
@@ -1911,10 +1859,8 @@ func (m *BillMutation) EdgeCleared(name string) bool {
 		return m.clearedtarget_user
 	case bill.EdgeTransferOrder:
 		return m.clearedtransfer_order
-	case bill.EdgeMissionConsumeOrder:
-		return m.clearedmission_consume_order
-	case bill.EdgeMissionProduceOrder:
-		return m.clearedmission_produce_order
+	case bill.EdgeMissionOrder:
+		return m.clearedmission_order
 	case bill.EdgeInvite:
 		return m.clearedinvite
 	case bill.EdgeSymbol:
@@ -1936,11 +1882,8 @@ func (m *BillMutation) ClearEdge(name string) error {
 	case bill.EdgeTransferOrder:
 		m.ClearTransferOrder()
 		return nil
-	case bill.EdgeMissionConsumeOrder:
-		m.ClearMissionConsumeOrder()
-		return nil
-	case bill.EdgeMissionProduceOrder:
-		m.ClearMissionProduceOrder()
+	case bill.EdgeMissionOrder:
+		m.ClearMissionOrder()
 		return nil
 	case bill.EdgeInvite:
 		m.ClearInvite()
@@ -1965,11 +1908,8 @@ func (m *BillMutation) ResetEdge(name string) error {
 	case bill.EdgeTransferOrder:
 		m.ResetTransferOrder()
 		return nil
-	case bill.EdgeMissionConsumeOrder:
-		m.ResetMissionConsumeOrder()
-		return nil
-	case bill.EdgeMissionProduceOrder:
-		m.ResetMissionProduceOrder()
+	case bill.EdgeMissionOrder:
+		m.ResetMissionOrder()
 		return nil
 	case bill.EdgeInvite:
 		m.ResetInvite()
@@ -23910,9 +23850,6 @@ type MissionConsumeOrderMutation struct {
 	cost_bills                    map[int64]struct{}
 	removedcost_bills             map[int64]struct{}
 	clearedcost_bills             bool
-	bills                         map[int64]struct{}
-	removedbills                  map[int64]struct{}
-	clearedbills                  bool
 	mission_produce_orders        map[int64]struct{}
 	removedmission_produce_orders map[int64]struct{}
 	clearedmission_produce_orders bool
@@ -24838,60 +24775,6 @@ func (m *MissionConsumeOrderMutation) ResetCostBills() {
 	m.removedcost_bills = nil
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by ids.
-func (m *MissionConsumeOrderMutation) AddBillIDs(ids ...int64) {
-	if m.bills == nil {
-		m.bills = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.bills[ids[i]] = struct{}{}
-	}
-}
-
-// ClearBills clears the "bills" edge to the Bill entity.
-func (m *MissionConsumeOrderMutation) ClearBills() {
-	m.clearedbills = true
-}
-
-// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
-func (m *MissionConsumeOrderMutation) BillsCleared() bool {
-	return m.clearedbills
-}
-
-// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
-func (m *MissionConsumeOrderMutation) RemoveBillIDs(ids ...int64) {
-	if m.removedbills == nil {
-		m.removedbills = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.bills, ids[i])
-		m.removedbills[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
-func (m *MissionConsumeOrderMutation) RemovedBillsIDs() (ids []int64) {
-	for id := range m.removedbills {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// BillsIDs returns the "bills" edge IDs in the mutation.
-func (m *MissionConsumeOrderMutation) BillsIDs() (ids []int64) {
-	for id := range m.bills {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetBills resets all changes to the "bills" edge.
-func (m *MissionConsumeOrderMutation) ResetBills() {
-	m.bills = nil
-	m.clearedbills = false
-	m.removedbills = nil
-}
-
 // AddMissionProduceOrderIDs adds the "mission_produce_orders" edge to the MissionProduceOrder entity by ids.
 func (m *MissionConsumeOrderMutation) AddMissionProduceOrderIDs(ids ...int64) {
 	if m.mission_produce_orders == nil {
@@ -25473,15 +25356,12 @@ func (m *MissionConsumeOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionConsumeOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 5)
 	if m.user != nil {
 		edges = append(edges, missionconsumeorder.EdgeUser)
 	}
 	if m.cost_bills != nil {
 		edges = append(edges, missionconsumeorder.EdgeCostBills)
-	}
-	if m.bills != nil {
-		edges = append(edges, missionconsumeorder.EdgeBills)
 	}
 	if m.mission_produce_orders != nil {
 		edges = append(edges, missionconsumeorder.EdgeMissionProduceOrders)
@@ -25509,12 +25389,6 @@ func (m *MissionConsumeOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case missionconsumeorder.EdgeBills:
-		ids := make([]ent.Value, 0, len(m.bills))
-		for id := range m.bills {
-			ids = append(ids, id)
-		}
-		return ids
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		ids := make([]ent.Value, 0, len(m.mission_produce_orders))
 		for id := range m.mission_produce_orders {
@@ -25535,12 +25409,9 @@ func (m *MissionConsumeOrderMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionConsumeOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 5)
 	if m.removedcost_bills != nil {
 		edges = append(edges, missionconsumeorder.EdgeCostBills)
-	}
-	if m.removedbills != nil {
-		edges = append(edges, missionconsumeorder.EdgeBills)
 	}
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, missionconsumeorder.EdgeMissionProduceOrders)
@@ -25558,12 +25429,6 @@ func (m *MissionConsumeOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case missionconsumeorder.EdgeBills:
-		ids := make([]ent.Value, 0, len(m.removedbills))
-		for id := range m.removedbills {
-			ids = append(ids, id)
-		}
-		return ids
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		ids := make([]ent.Value, 0, len(m.removedmission_produce_orders))
 		for id := range m.removedmission_produce_orders {
@@ -25576,15 +25441,12 @@ func (m *MissionConsumeOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionConsumeOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 5)
 	if m.cleareduser {
 		edges = append(edges, missionconsumeorder.EdgeUser)
 	}
 	if m.clearedcost_bills {
 		edges = append(edges, missionconsumeorder.EdgeCostBills)
-	}
-	if m.clearedbills {
-		edges = append(edges, missionconsumeorder.EdgeBills)
 	}
 	if m.clearedmission_produce_orders {
 		edges = append(edges, missionconsumeorder.EdgeMissionProduceOrders)
@@ -25606,8 +25468,6 @@ func (m *MissionConsumeOrderMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case missionconsumeorder.EdgeCostBills:
 		return m.clearedcost_bills
-	case missionconsumeorder.EdgeBills:
-		return m.clearedbills
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		return m.clearedmission_produce_orders
 	case missionconsumeorder.EdgeMissionBatch:
@@ -25644,9 +25504,6 @@ func (m *MissionConsumeOrderMutation) ResetEdge(name string) error {
 		return nil
 	case missionconsumeorder.EdgeCostBills:
 		m.ResetCostBills()
-		return nil
-	case missionconsumeorder.EdgeBills:
-		m.ResetBills()
 		return nil
 	case missionconsumeorder.EdgeMissionProduceOrders:
 		m.ResetMissionProduceOrders()
@@ -29719,9 +29576,6 @@ type MissionProduceOrderMutation struct {
 	earn_bills                   map[int64]struct{}
 	removedearn_bills            map[int64]struct{}
 	clearedearn_bills            bool
-	bills                        map[int64]struct{}
-	removedbills                 map[int64]struct{}
-	clearedbills                 bool
 	device                       *int64
 	cleareddevice                bool
 	mission_consume_order        *int64
@@ -30719,60 +30573,6 @@ func (m *MissionProduceOrderMutation) ResetEarnBills() {
 	m.removedearn_bills = nil
 }
 
-// AddBillIDs adds the "bills" edge to the Bill entity by ids.
-func (m *MissionProduceOrderMutation) AddBillIDs(ids ...int64) {
-	if m.bills == nil {
-		m.bills = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.bills[ids[i]] = struct{}{}
-	}
-}
-
-// ClearBills clears the "bills" edge to the Bill entity.
-func (m *MissionProduceOrderMutation) ClearBills() {
-	m.clearedbills = true
-}
-
-// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
-func (m *MissionProduceOrderMutation) BillsCleared() bool {
-	return m.clearedbills
-}
-
-// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
-func (m *MissionProduceOrderMutation) RemoveBillIDs(ids ...int64) {
-	if m.removedbills == nil {
-		m.removedbills = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.bills, ids[i])
-		m.removedbills[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
-func (m *MissionProduceOrderMutation) RemovedBillsIDs() (ids []int64) {
-	for id := range m.removedbills {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// BillsIDs returns the "bills" edge IDs in the mutation.
-func (m *MissionProduceOrderMutation) BillsIDs() (ids []int64) {
-	for id := range m.bills {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetBills resets all changes to the "bills" edge.
-func (m *MissionProduceOrderMutation) ResetBills() {
-	m.bills = nil
-	m.clearedbills = false
-	m.removedbills = nil
-}
-
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *MissionProduceOrderMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -31372,15 +31172,12 @@ func (m *MissionProduceOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionProduceOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 5)
 	if m.user != nil {
 		edges = append(edges, missionproduceorder.EdgeUser)
 	}
 	if m.earn_bills != nil {
 		edges = append(edges, missionproduceorder.EdgeEarnBills)
-	}
-	if m.bills != nil {
-		edges = append(edges, missionproduceorder.EdgeBills)
 	}
 	if m.device != nil {
 		edges = append(edges, missionproduceorder.EdgeDevice)
@@ -31408,12 +31205,6 @@ func (m *MissionProduceOrderMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case missionproduceorder.EdgeBills:
-		ids := make([]ent.Value, 0, len(m.bills))
-		for id := range m.bills {
-			ids = append(ids, id)
-		}
-		return ids
 	case missionproduceorder.EdgeDevice:
 		if id := m.device; id != nil {
 			return []ent.Value{*id}
@@ -31432,12 +31223,9 @@ func (m *MissionProduceOrderMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionProduceOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 5)
 	if m.removedearn_bills != nil {
 		edges = append(edges, missionproduceorder.EdgeEarnBills)
-	}
-	if m.removedbills != nil {
-		edges = append(edges, missionproduceorder.EdgeBills)
 	}
 	return edges
 }
@@ -31452,27 +31240,18 @@ func (m *MissionProduceOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case missionproduceorder.EdgeBills:
-		ids := make([]ent.Value, 0, len(m.removedbills))
-		for id := range m.removedbills {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionProduceOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 5)
 	if m.cleareduser {
 		edges = append(edges, missionproduceorder.EdgeUser)
 	}
 	if m.clearedearn_bills {
 		edges = append(edges, missionproduceorder.EdgeEarnBills)
-	}
-	if m.clearedbills {
-		edges = append(edges, missionproduceorder.EdgeBills)
 	}
 	if m.cleareddevice {
 		edges = append(edges, missionproduceorder.EdgeDevice)
@@ -31494,8 +31273,6 @@ func (m *MissionProduceOrderMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case missionproduceorder.EdgeEarnBills:
 		return m.clearedearn_bills
-	case missionproduceorder.EdgeBills:
-		return m.clearedbills
 	case missionproduceorder.EdgeDevice:
 		return m.cleareddevice
 	case missionproduceorder.EdgeMissionConsumeOrder:
@@ -31535,9 +31312,6 @@ func (m *MissionProduceOrderMutation) ResetEdge(name string) error {
 		return nil
 	case missionproduceorder.EdgeEarnBills:
 		m.ResetEarnBills()
-		return nil
-	case missionproduceorder.EdgeBills:
-		m.ResetBills()
 		return nil
 	case missionproduceorder.EdgeDevice:
 		m.ResetDevice()

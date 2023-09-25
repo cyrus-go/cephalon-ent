@@ -840,44 +840,21 @@ func HasTransferOrderWith(preds ...predicate.TransferOrder) predicate.Bill {
 	})
 }
 
-// HasMissionConsumeOrder applies the HasEdge predicate on the "mission_consume_order" edge.
-func HasMissionConsumeOrder() predicate.Bill {
+// HasMissionOrder applies the HasEdge predicate on the "mission_order" edge.
+func HasMissionOrder() predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, MissionConsumeOrderTable, MissionConsumeOrderColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionOrderTable, MissionOrderColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasMissionConsumeOrderWith applies the HasEdge predicate on the "mission_consume_order" edge with a given conditions (other predicates).
-func HasMissionConsumeOrderWith(preds ...predicate.MissionConsumeOrder) predicate.Bill {
+// HasMissionOrderWith applies the HasEdge predicate on the "mission_order" edge with a given conditions (other predicates).
+func HasMissionOrderWith(preds ...predicate.MissionOrder) predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
-		step := newMissionConsumeOrderStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasMissionProduceOrder applies the HasEdge predicate on the "mission_produce_order" edge.
-func HasMissionProduceOrder() predicate.Bill {
-	return predicate.Bill(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, MissionProduceOrderTable, MissionProduceOrderColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionProduceOrderWith applies the HasEdge predicate on the "mission_produce_order" edge with a given conditions (other predicates).
-func HasMissionProduceOrderWith(preds ...predicate.MissionProduceOrder) predicate.Bill {
-	return predicate.Bill(func(s *sql.Selector) {
-		step := newMissionProduceOrderStep()
+		step := newMissionOrderStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
