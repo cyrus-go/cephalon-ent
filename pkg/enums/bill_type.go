@@ -9,6 +9,8 @@ const (
 	BillTypeRecharge       BillType = "recharge"
 	BillTypeTransfer       BillType = "transfer"
 	BillTypeActive         BillType = "active"
+	BillTypeMission        BillType = "mission"
+	BillTypeGas            BillType = "gas"
 )
 
 func (BillType) Values() []string {
@@ -19,6 +21,8 @@ func (BillType) Values() []string {
 		string(BillTypeMissionProduce),
 		string(BillTypeTransfer),
 		string(BillTypeActive),
+		string(BillTypeMission),
+		string(BillTypeGas),
 	}
 }
 
