@@ -99,7 +99,7 @@ const DefaultType enums.MissionType = "unknown"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.MissionType) error {
 	switch _type {
-	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time":
 		return nil
 	default:
 		return fmt.Errorf("missionkind: invalid enum value for type field: %q", _type)
@@ -111,7 +111,7 @@ const DefaultCategory enums.MissionCategory = "unknown"
 // CategoryValidator is a validator for the "category" field enum values. It is called by the builders before save.
 func CategoryValidator(c enums.MissionCategory) error {
 	switch c {
-	case "unknown", "SD", "JP", "WT", "JP_DK":
+	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH":
 		return nil
 	default:
 		return fmt.Errorf("missionkind: invalid enum value for category field: %q", c)

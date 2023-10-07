@@ -13,6 +13,7 @@ const (
 	MissionTypeSdApi              MissionType = "sd_api"
 	MissionTypeKeyPair            MissionType = "key_pair"
 	MissionTypeJpDkTime           MissionType = "jp_dk_time"
+	MissionTypeSshTime            MissionType = "ssh_time"
 )
 
 func (obj MissionType) Values() []string {
@@ -27,6 +28,7 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdApi),
 		string(MissionTypeKeyPair),
 		string(MissionTypeJpDkTime),
+		string(MissionTypeSshTime),
 	}
 }
 

@@ -220,7 +220,7 @@ const DefaultMissionType enums.MissionType = "unknown"
 // MissionTypeValidator is a validator for the "mission_type" field enum values. It is called by the builders before save.
 func MissionTypeValidator(mt enums.MissionType) error {
 	switch mt {
-	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time":
 		return nil
 	default:
 		return fmt.Errorf("missionorder: invalid enum value for mission_type field: %q", mt)
