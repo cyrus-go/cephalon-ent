@@ -111,9 +111,11 @@ type UserEdges struct {
 	ConsumeMissionOrders []*MissionOrder `json:"consume_mission_orders,omitempty"`
 	// ProduceMissionOrders holds the value of the produce_mission_orders edge.
 	ProduceMissionOrders []*MissionOrder `json:"produce_mission_orders,omitempty"`
+	// LoginRecords holds the value of the login_records edge.
+	LoginRecords []*LoginRecord `json:"login_records,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [27]bool
+	loadedTypes [28]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -369,6 +371,15 @@ func (e UserEdges) ProduceMissionOrdersOrErr() ([]*MissionOrder, error) {
 		return e.ProduceMissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "produce_mission_orders"}
+}
+
+// LoginRecordsOrErr returns the LoginRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) LoginRecordsOrErr() ([]*LoginRecord, error) {
+	if e.loadedTypes[27] {
+		return e.LoginRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "login_records"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -641,6 +652,11 @@ func (u *User) QueryConsumeMissionOrders() *MissionOrderQuery {
 // QueryProduceMissionOrders queries the "produce_mission_orders" edge of the User entity.
 func (u *User) QueryProduceMissionOrders() *MissionOrderQuery {
 	return NewUserClient(u.config).QueryProduceMissionOrders(u)
+}
+
+// QueryLoginRecords queries the "login_records" edge of the User entity.
+func (u *User) QueryLoginRecords() *LoginRecordQuery {
+	return NewUserClient(u.config).QueryLoginRecords(u)
 }
 
 // Update returns a builder for updating this User.

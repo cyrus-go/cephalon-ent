@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -71,6 +72,7 @@ type UserQuery struct {
 	withOutcomeTransferOrders *TransferOrderQuery
 	withConsumeMissionOrders  *MissionOrderQuery
 	withProduceMissionOrders  *MissionOrderQuery
+	withLoginRecords          *LoginRecordQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -701,6 +703,28 @@ func (uq *UserQuery) QueryProduceMissionOrders() *MissionOrderQuery {
 	return query
 }
 
+// QueryLoginRecords chains the current query on the "login_records" edge.
+func (uq *UserQuery) QueryLoginRecords() *LoginRecordQuery {
+	query := (&LoginRecordClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(loginrecord.Table, loginrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LoginRecordsTable, user.LoginRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -920,6 +944,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withOutcomeTransferOrders: uq.withOutcomeTransferOrders.Clone(),
 		withConsumeMissionOrders:  uq.withConsumeMissionOrders.Clone(),
 		withProduceMissionOrders:  uq.withProduceMissionOrders.Clone(),
+		withLoginRecords:          uq.withLoginRecords.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1223,6 +1248,17 @@ func (uq *UserQuery) WithProduceMissionOrders(opts ...func(*MissionOrderQuery)) 
 	return uq
 }
 
+// WithLoginRecords tells the query-builder to eager-load the nodes that are connected to
+// the "login_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithLoginRecords(opts ...func(*LoginRecordQuery)) *UserQuery {
+	query := (&LoginRecordClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withLoginRecords = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1301,7 +1337,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [27]bool{
+		loadedTypes = [28]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1329,6 +1365,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withOutcomeTransferOrders != nil,
 			uq.withConsumeMissionOrders != nil,
 			uq.withProduceMissionOrders != nil,
+			uq.withLoginRecords != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1542,6 +1579,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadProduceMissionOrders(ctx, query, nodes,
 			func(n *User) { n.Edges.ProduceMissionOrders = []*MissionOrder{} },
 			func(n *User, e *MissionOrder) { n.Edges.ProduceMissionOrders = append(n.Edges.ProduceMissionOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withLoginRecords; query != nil {
+		if err := uq.loadLoginRecords(ctx, query, nodes,
+			func(n *User) { n.Edges.LoginRecords = []*LoginRecord{} },
+			func(n *User, e *LoginRecord) { n.Edges.LoginRecords = append(n.Edges.LoginRecords, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2347,6 +2391,36 @@ func (uq *UserQuery) loadProduceMissionOrders(ctx context.Context, query *Missio
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "produce_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadLoginRecords(ctx context.Context, query *LoginRecordQuery, nodes []*User, init func(*User), assign func(*User, *LoginRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(loginrecord.FieldUserID)
+	}
+	query.Where(predicate.LoginRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.LoginRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

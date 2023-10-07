@@ -57,6 +57,9 @@ type InputLog func(*sql.Selector)
 // Invite is the predicate function for invite builders.
 type Invite func(*sql.Selector)
 
+// LoginRecord is the predicate function for loginrecord builders.
+type LoginRecord func(*sql.Selector)
+
 // Mission is the predicate function for mission builders.
 type Mission func(*sql.Selector)
 

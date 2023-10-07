@@ -294,6 +294,34 @@ func (moc *MissionOrderCreate) SetNillableFinishedAt(t *time.Time) *MissionOrder
 	return moc
 }
 
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (moc *MissionOrderCreate) SetPlanStartedAt(t time.Time) *MissionOrderCreate {
+	moc.mutation.SetPlanStartedAt(t)
+	return moc
+}
+
+// SetNillablePlanStartedAt sets the "plan_started_at" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillablePlanStartedAt(t *time.Time) *MissionOrderCreate {
+	if t != nil {
+		moc.SetPlanStartedAt(*t)
+	}
+	return moc
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (moc *MissionOrderCreate) SetPlanFinishedAt(t time.Time) *MissionOrderCreate {
+	moc.mutation.SetPlanFinishedAt(t)
+	return moc
+}
+
+// SetNillablePlanFinishedAt sets the "plan_finished_at" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillablePlanFinishedAt(t *time.Time) *MissionOrderCreate {
+	if t != nil {
+		moc.SetPlanFinishedAt(*t)
+	}
+	return moc
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (moc *MissionOrderCreate) SetMissionBatchID(i int64) *MissionOrderCreate {
 	moc.mutation.SetMissionBatchID(i)
@@ -486,6 +514,14 @@ func (moc *MissionOrderCreate) defaults() {
 	if _, ok := moc.mutation.FinishedAt(); !ok {
 		v := missionorder.DefaultFinishedAt
 		moc.mutation.SetFinishedAt(v)
+	}
+	if _, ok := moc.mutation.PlanStartedAt(); !ok {
+		v := missionorder.DefaultPlanStartedAt
+		moc.mutation.SetPlanStartedAt(v)
+	}
+	if _, ok := moc.mutation.PlanFinishedAt(); !ok {
+		v := missionorder.DefaultPlanFinishedAt
+		moc.mutation.SetPlanFinishedAt(v)
 	}
 	if _, ok := moc.mutation.MissionBatchID(); !ok {
 		v := missionorder.DefaultMissionBatchID
@@ -693,6 +729,14 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 	if value, ok := moc.mutation.FinishedAt(); ok {
 		_spec.SetField(missionorder.FieldFinishedAt, field.TypeTime, value)
 		_node.FinishedAt = value
+	}
+	if value, ok := moc.mutation.PlanStartedAt(); ok {
+		_spec.SetField(missionorder.FieldPlanStartedAt, field.TypeTime, value)
+		_node.PlanStartedAt = &value
+	}
+	if value, ok := moc.mutation.PlanFinishedAt(); ok {
+		_spec.SetField(missionorder.FieldPlanFinishedAt, field.TypeTime, value)
+		_node.PlanFinishedAt = &value
 	}
 	if value, ok := moc.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
@@ -1097,6 +1141,42 @@ func (u *MissionOrderUpsert) UpdateFinishedAt() *MissionOrderUpsert {
 	return u
 }
 
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (u *MissionOrderUpsert) SetPlanStartedAt(v time.Time) *MissionOrderUpsert {
+	u.Set(missionorder.FieldPlanStartedAt, v)
+	return u
+}
+
+// UpdatePlanStartedAt sets the "plan_started_at" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdatePlanStartedAt() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldPlanStartedAt)
+	return u
+}
+
+// ClearPlanStartedAt clears the value of the "plan_started_at" field.
+func (u *MissionOrderUpsert) ClearPlanStartedAt() *MissionOrderUpsert {
+	u.SetNull(missionorder.FieldPlanStartedAt)
+	return u
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (u *MissionOrderUpsert) SetPlanFinishedAt(v time.Time) *MissionOrderUpsert {
+	u.Set(missionorder.FieldPlanFinishedAt, v)
+	return u
+}
+
+// UpdatePlanFinishedAt sets the "plan_finished_at" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdatePlanFinishedAt() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldPlanFinishedAt)
+	return u
+}
+
+// ClearPlanFinishedAt clears the value of the "plan_finished_at" field.
+func (u *MissionOrderUpsert) ClearPlanFinishedAt() *MissionOrderUpsert {
+	u.SetNull(missionorder.FieldPlanFinishedAt)
+	return u
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (u *MissionOrderUpsert) SetMissionBatchID(v int64) *MissionOrderUpsert {
 	u.Set(missionorder.FieldMissionBatchID, v)
@@ -1456,6 +1536,48 @@ func (u *MissionOrderUpsertOne) SetFinishedAt(v time.Time) *MissionOrderUpsertOn
 func (u *MissionOrderUpsertOne) UpdateFinishedAt() *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateFinishedAt()
+	})
+}
+
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (u *MissionOrderUpsertOne) SetPlanStartedAt(v time.Time) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetPlanStartedAt(v)
+	})
+}
+
+// UpdatePlanStartedAt sets the "plan_started_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdatePlanStartedAt() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdatePlanStartedAt()
+	})
+}
+
+// ClearPlanStartedAt clears the value of the "plan_started_at" field.
+func (u *MissionOrderUpsertOne) ClearPlanStartedAt() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.ClearPlanStartedAt()
+	})
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (u *MissionOrderUpsertOne) SetPlanFinishedAt(v time.Time) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetPlanFinishedAt(v)
+	})
+}
+
+// UpdatePlanFinishedAt sets the "plan_finished_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdatePlanFinishedAt() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdatePlanFinishedAt()
+	})
+}
+
+// ClearPlanFinishedAt clears the value of the "plan_finished_at" field.
+func (u *MissionOrderUpsertOne) ClearPlanFinishedAt() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.ClearPlanFinishedAt()
 	})
 }
 
@@ -1988,6 +2110,48 @@ func (u *MissionOrderUpsertBulk) SetFinishedAt(v time.Time) *MissionOrderUpsertB
 func (u *MissionOrderUpsertBulk) UpdateFinishedAt() *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateFinishedAt()
+	})
+}
+
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (u *MissionOrderUpsertBulk) SetPlanStartedAt(v time.Time) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetPlanStartedAt(v)
+	})
+}
+
+// UpdatePlanStartedAt sets the "plan_started_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdatePlanStartedAt() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdatePlanStartedAt()
+	})
+}
+
+// ClearPlanStartedAt clears the value of the "plan_started_at" field.
+func (u *MissionOrderUpsertBulk) ClearPlanStartedAt() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.ClearPlanStartedAt()
+	})
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (u *MissionOrderUpsertBulk) SetPlanFinishedAt(v time.Time) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetPlanFinishedAt(v)
+	})
+}
+
+// UpdatePlanFinishedAt sets the "plan_finished_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdatePlanFinishedAt() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdatePlanFinishedAt()
+	})
+}
+
+// ClearPlanFinishedAt clears the value of the "plan_finished_at" field.
+func (u *MissionOrderUpsertBulk) ClearPlanFinishedAt() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.ClearPlanFinishedAt()
 	})
 }
 

@@ -32,6 +32,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -95,6 +96,8 @@ type Client struct {
 	InputLog *InputLogClient
 	// Invite is the client for interacting with the Invite builders.
 	Invite *InviteClient
+	// LoginRecord is the client for interacting with the LoginRecord builders.
+	LoginRecord *LoginRecordClient
 	// Mission is the client for interacting with the Mission builders.
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
@@ -169,6 +172,7 @@ func (c *Client) init() {
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
 	c.Invite = NewInviteClient(c.config)
+	c.LoginRecord = NewLoginRecordClient(c.config)
 	c.Mission = NewMissionClient(c.config)
 	c.MissionBatch = NewMissionBatchClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
@@ -293,6 +297,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		HmacKeyPair:          NewHmacKeyPairClient(cfg),
 		InputLog:             NewInputLogClient(cfg),
 		Invite:               NewInviteClient(cfg),
+		LoginRecord:          NewLoginRecordClient(cfg),
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
@@ -351,6 +356,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		HmacKeyPair:          NewHmacKeyPairClient(cfg),
 		InputLog:             NewInputLogClient(cfg),
 		Invite:               NewInviteClient(cfg),
+		LoginRecord:          NewLoginRecordClient(cfg),
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
@@ -404,12 +410,12 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Bill, c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill,
 		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission,
-		c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind,
-		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.Symbol, c.TransferOrder, c.User,
-		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite,
+		c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.Symbol,
+		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
 	} {
 		n.Use(hooks...)
 	}
@@ -421,12 +427,12 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Bill, c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill,
 		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.Mission,
-		c.MissionBatch, c.MissionConsumeOrder, c.MissionKeyPair, c.MissionKind,
-		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.Symbol, c.TransferOrder, c.User,
-		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite,
+		c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.Symbol,
+		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -469,6 +475,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.InputLog.mutate(ctx, m)
 	case *InviteMutation:
 		return c.Invite.mutate(ctx, m)
+	case *LoginRecordMutation:
+		return c.LoginRecord.mutate(ctx, m)
 	case *MissionMutation:
 		return c.Mission.mutate(ctx, m)
 	case *MissionBatchMutation:
@@ -3448,6 +3456,155 @@ func (c *InviteClient) mutate(ctx context.Context, m *InviteMutation) (Value, er
 		return (&InviteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Invite mutation op: %q", m.Op())
+	}
+}
+
+// LoginRecordClient is a client for the LoginRecord schema.
+type LoginRecordClient struct {
+	config
+}
+
+// NewLoginRecordClient returns a client for the LoginRecord from the given config.
+func NewLoginRecordClient(c config) *LoginRecordClient {
+	return &LoginRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `loginrecord.Hooks(f(g(h())))`.
+func (c *LoginRecordClient) Use(hooks ...Hook) {
+	c.hooks.LoginRecord = append(c.hooks.LoginRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `loginrecord.Intercept(f(g(h())))`.
+func (c *LoginRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LoginRecord = append(c.inters.LoginRecord, interceptors...)
+}
+
+// Create returns a builder for creating a LoginRecord entity.
+func (c *LoginRecordClient) Create() *LoginRecordCreate {
+	mutation := newLoginRecordMutation(c.config, OpCreate)
+	return &LoginRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LoginRecord entities.
+func (c *LoginRecordClient) CreateBulk(builders ...*LoginRecordCreate) *LoginRecordCreateBulk {
+	return &LoginRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LoginRecordClient) MapCreateBulk(slice any, setFunc func(*LoginRecordCreate, int)) *LoginRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LoginRecordCreateBulk{err: fmt.Errorf("calling to LoginRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LoginRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LoginRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LoginRecord.
+func (c *LoginRecordClient) Update() *LoginRecordUpdate {
+	mutation := newLoginRecordMutation(c.config, OpUpdate)
+	return &LoginRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LoginRecordClient) UpdateOne(lr *LoginRecord) *LoginRecordUpdateOne {
+	mutation := newLoginRecordMutation(c.config, OpUpdateOne, withLoginRecord(lr))
+	return &LoginRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LoginRecordClient) UpdateOneID(id int64) *LoginRecordUpdateOne {
+	mutation := newLoginRecordMutation(c.config, OpUpdateOne, withLoginRecordID(id))
+	return &LoginRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LoginRecord.
+func (c *LoginRecordClient) Delete() *LoginRecordDelete {
+	mutation := newLoginRecordMutation(c.config, OpDelete)
+	return &LoginRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LoginRecordClient) DeleteOne(lr *LoginRecord) *LoginRecordDeleteOne {
+	return c.DeleteOneID(lr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LoginRecordClient) DeleteOneID(id int64) *LoginRecordDeleteOne {
+	builder := c.Delete().Where(loginrecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LoginRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for LoginRecord.
+func (c *LoginRecordClient) Query() *LoginRecordQuery {
+	return &LoginRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLoginRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LoginRecord entity by its id.
+func (c *LoginRecordClient) Get(ctx context.Context, id int64) (*LoginRecord, error) {
+	return c.Query().Where(loginrecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LoginRecordClient) GetX(ctx context.Context, id int64) *LoginRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a LoginRecord.
+func (c *LoginRecordClient) QueryUser(lr *LoginRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(loginrecord.Table, loginrecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, loginrecord.UserTable, loginrecord.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(lr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LoginRecordClient) Hooks() []Hook {
+	return c.hooks.LoginRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *LoginRecordClient) Interceptors() []Interceptor {
+	return c.inters.LoginRecord
+}
+
+func (c *LoginRecordClient) mutate(ctx context.Context, m *LoginRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LoginRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LoginRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LoginRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LoginRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown LoginRecord mutation op: %q", m.Op())
 	}
 }
 
@@ -7116,6 +7273,22 @@ func (c *UserClient) QueryProduceMissionOrders(u *User) *MissionOrderQuery {
 	return query
 }
 
+// QueryLoginRecords queries the login_records edge of a User.
+func (c *UserClient) QueryLoginRecords(u *User) *LoginRecordQuery {
+	query := (&LoginRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(loginrecord.Table, loginrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LoginRecordsTable, user.LoginRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -7806,8 +7979,8 @@ type (
 	hooks struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
 		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
-		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, Mission, MissionBatch,
-		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
+		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
+		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol,
 		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet []ent.Hook
@@ -7815,8 +7988,8 @@ type (
 	inters struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
 		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
-		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, Mission, MissionBatch,
-		MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
+		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
+		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol,
 		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet []ent.Interceptor

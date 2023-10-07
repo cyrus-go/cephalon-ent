@@ -99,6 +99,8 @@ const (
 	EdgeConsumeMissionOrders = "consume_mission_orders"
 	// EdgeProduceMissionOrders holds the string denoting the produce_mission_orders edge name in mutations.
 	EdgeProduceMissionOrders = "produce_mission_orders"
+	// EdgeLoginRecords holds the string denoting the login_records edge name in mutations.
+	EdgeLoginRecords = "login_records"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -284,6 +286,13 @@ const (
 	ProduceMissionOrdersInverseTable = "mission_orders"
 	// ProduceMissionOrdersColumn is the table column denoting the produce_mission_orders relation/edge.
 	ProduceMissionOrdersColumn = "produce_user_id"
+	// LoginRecordsTable is the table that holds the login_records relation/edge.
+	LoginRecordsTable = "login_records"
+	// LoginRecordsInverseTable is the table name for the LoginRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "loginrecord" package.
+	LoginRecordsInverseTable = "login_records"
+	// LoginRecordsColumn is the table column denoting the login_records relation/edge.
+	LoginRecordsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -816,6 +825,20 @@ func ByProduceMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newProduceMissionOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLoginRecordsCount orders the results by login_records count.
+func ByLoginRecordsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLoginRecordsStep(), opts...)
+	}
+}
+
+// ByLoginRecords orders the results by login_records terms.
+func ByLoginRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLoginRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1003,5 +1026,12 @@ func newProduceMissionOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProduceMissionOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ProduceMissionOrdersTable, ProduceMissionOrdersColumn),
+	)
+}
+func newLoginRecordsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LoginRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LoginRecordsTable, LoginRecordsColumn),
 	)
 }

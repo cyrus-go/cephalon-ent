@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -946,6 +947,53 @@ func init() {
 	inviteDescID := inviteMixinFields0[0].Descriptor()
 	// invite.DefaultID holds the default value on creation for the id field.
 	invite.DefaultID = inviteDescID.Default.(func() int64)
+	loginrecordMixin := schema.LoginRecord{}.Mixin()
+	loginrecordMixinFields0 := loginrecordMixin[0].Fields()
+	_ = loginrecordMixinFields0
+	loginrecordFields := schema.LoginRecord{}.Fields()
+	_ = loginrecordFields
+	// loginrecordDescCreatedBy is the schema descriptor for created_by field.
+	loginrecordDescCreatedBy := loginrecordMixinFields0[1].Descriptor()
+	// loginrecord.DefaultCreatedBy holds the default value on creation for the created_by field.
+	loginrecord.DefaultCreatedBy = loginrecordDescCreatedBy.Default.(int64)
+	// loginrecordDescUpdatedBy is the schema descriptor for updated_by field.
+	loginrecordDescUpdatedBy := loginrecordMixinFields0[2].Descriptor()
+	// loginrecord.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	loginrecord.DefaultUpdatedBy = loginrecordDescUpdatedBy.Default.(int64)
+	// loginrecordDescCreatedAt is the schema descriptor for created_at field.
+	loginrecordDescCreatedAt := loginrecordMixinFields0[3].Descriptor()
+	// loginrecord.DefaultCreatedAt holds the default value on creation for the created_at field.
+	loginrecord.DefaultCreatedAt = loginrecordDescCreatedAt.Default.(func() time.Time)
+	// loginrecordDescUpdatedAt is the schema descriptor for updated_at field.
+	loginrecordDescUpdatedAt := loginrecordMixinFields0[4].Descriptor()
+	// loginrecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	loginrecord.DefaultUpdatedAt = loginrecordDescUpdatedAt.Default.(func() time.Time)
+	// loginrecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	loginrecord.UpdateDefaultUpdatedAt = loginrecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// loginrecordDescDeletedAt is the schema descriptor for deleted_at field.
+	loginrecordDescDeletedAt := loginrecordMixinFields0[5].Descriptor()
+	// loginrecord.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	loginrecord.DefaultDeletedAt = loginrecordDescDeletedAt.Default.(time.Time)
+	// loginrecordDescUa is the schema descriptor for ua field.
+	loginrecordDescUa := loginrecordFields[0].Descriptor()
+	// loginrecord.DefaultUa holds the default value on creation for the ua field.
+	loginrecord.DefaultUa = loginrecordDescUa.Default.(string)
+	// loginrecordDescIP is the schema descriptor for ip field.
+	loginrecordDescIP := loginrecordFields[1].Descriptor()
+	// loginrecord.DefaultIP holds the default value on creation for the ip field.
+	loginrecord.DefaultIP = loginrecordDescIP.Default.(string)
+	// loginrecordDescWay is the schema descriptor for way field.
+	loginrecordDescWay := loginrecordFields[2].Descriptor()
+	// loginrecord.DefaultWay holds the default value on creation for the way field.
+	loginrecord.DefaultWay = loginrecordDescWay.Default.(string)
+	// loginrecordDescUserID is the schema descriptor for user_id field.
+	loginrecordDescUserID := loginrecordFields[3].Descriptor()
+	// loginrecord.DefaultUserID holds the default value on creation for the user_id field.
+	loginrecord.DefaultUserID = loginrecordDescUserID.Default.(int64)
+	// loginrecordDescID is the schema descriptor for id field.
+	loginrecordDescID := loginrecordMixinFields0[0].Descriptor()
+	// loginrecord.DefaultID holds the default value on creation for the id field.
+	loginrecord.DefaultID = loginrecordDescID.Default.(func() int64)
 	missionMixin := schema.Mission{}.Mixin()
 	missionMixinFields0 := missionMixin[0].Fields()
 	_ = missionMixinFields0
@@ -1288,12 +1336,20 @@ func init() {
 	missionorderDescFinishedAt := missionorderFields[13].Descriptor()
 	// missionorder.DefaultFinishedAt holds the default value on creation for the finished_at field.
 	missionorder.DefaultFinishedAt = missionorderDescFinishedAt.Default.(time.Time)
+	// missionorderDescPlanStartedAt is the schema descriptor for plan_started_at field.
+	missionorderDescPlanStartedAt := missionorderFields[14].Descriptor()
+	// missionorder.DefaultPlanStartedAt holds the default value on creation for the plan_started_at field.
+	missionorder.DefaultPlanStartedAt = missionorderDescPlanStartedAt.Default.(time.Time)
+	// missionorderDescPlanFinishedAt is the schema descriptor for plan_finished_at field.
+	missionorderDescPlanFinishedAt := missionorderFields[15].Descriptor()
+	// missionorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
+	missionorder.DefaultPlanFinishedAt = missionorderDescPlanFinishedAt.Default.(time.Time)
 	// missionorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	missionorderDescMissionBatchID := missionorderFields[14].Descriptor()
+	missionorderDescMissionBatchID := missionorderFields[16].Descriptor()
 	// missionorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	missionorder.DefaultMissionBatchID = missionorderDescMissionBatchID.Default.(int64)
 	// missionorderDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
-	missionorderDescMissionBatchNumber := missionorderFields[15].Descriptor()
+	missionorderDescMissionBatchNumber := missionorderFields[17].Descriptor()
 	// missionorder.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	missionorder.DefaultMissionBatchNumber = missionorderDescMissionBatchNumber.Default.(string)
 	// missionorderDescID is the schema descriptor for id field.

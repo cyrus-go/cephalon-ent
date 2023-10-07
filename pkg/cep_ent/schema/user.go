@@ -57,6 +57,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("outcome_transfer_orders", TransferOrder.Type),
 		edge.To("consume_mission_orders", MissionOrder.Type),
 		edge.To("produce_mission_orders", MissionOrder.Type),
+		edge.To("login_records", LoginRecord.Type),
 	}
 }
 

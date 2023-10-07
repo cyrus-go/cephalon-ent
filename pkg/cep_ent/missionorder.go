@@ -60,6 +60,10 @@ type MissionOrder struct {
 	StartedAt time.Time `json:"started_at"`
 	// 任务结束执行时刻
 	FinishedAt time.Time `json:"finished_at"`
+	// 任务计划开始时间（包时）
+	PlanStartedAt *time.Time `json:"plan_started_at"`
+	// 任务计划结束时间（包时）
+	PlanFinishedAt *time.Time `json:"plan_finished_at"`
 	// 任务批次外键
 	MissionBatchID int64 `json:"mission_batch_id"`
 	// 任务批次号，用于方便检索
@@ -172,7 +176,7 @@ func (*MissionOrder) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case missionorder.FieldStatus, missionorder.FieldMissionType, missionorder.FieldMissionBillingType, missionorder.FieldCallWay, missionorder.FieldSerialNumber, missionorder.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
-		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt:
+		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -309,6 +313,20 @@ func (mo *MissionOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mo.FinishedAt = value.Time
 			}
+		case missionorder.FieldPlanStartedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field plan_started_at", values[i])
+			} else if value.Valid {
+				mo.PlanStartedAt = new(time.Time)
+				*mo.PlanStartedAt = value.Time
+			}
+		case missionorder.FieldPlanFinishedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field plan_finished_at", values[i])
+			} else if value.Valid {
+				mo.PlanFinishedAt = new(time.Time)
+				*mo.PlanFinishedAt = value.Time
+			}
 		case missionorder.FieldMissionBatchID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field mission_batch_id", values[i])
@@ -443,6 +461,16 @@ func (mo *MissionOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("finished_at=")
 	builder.WriteString(mo.FinishedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := mo.PlanStartedAt; v != nil {
+		builder.WriteString("plan_started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := mo.PlanFinishedAt; v != nil {
+		builder.WriteString("plan_finished_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_id=")
 	builder.WriteString(fmt.Sprintf("%v", mo.MissionBatchID))

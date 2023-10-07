@@ -29,6 +29,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -128,6 +129,7 @@ func checkColumn(table, column string) error {
 			hmackeypair.Table:          hmackeypair.ValidColumn,
 			inputlog.Table:             inputlog.ValidColumn,
 			invite.Table:               invite.ValidColumn,
+			loginrecord.Table:          loginrecord.ValidColumn,
 			mission.Table:              mission.ValidColumn,
 			missionbatch.Table:         missionbatch.ValidColumn,
 			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,

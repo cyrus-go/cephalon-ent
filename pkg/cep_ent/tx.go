@@ -46,6 +46,8 @@ type Tx struct {
 	InputLog *InputLogClient
 	// Invite is the client for interacting with the Invite builders.
 	Invite *InviteClient
+	// LoginRecord is the client for interacting with the LoginRecord builders.
+	LoginRecord *LoginRecordClient
 	// Mission is the client for interacting with the Mission builders.
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
@@ -238,6 +240,7 @@ func (tx *Tx) init() {
 	tx.HmacKeyPair = NewHmacKeyPairClient(tx.config)
 	tx.InputLog = NewInputLogClient(tx.config)
 	tx.Invite = NewInviteClient(tx.config)
+	tx.LoginRecord = NewLoginRecordClient(tx.config)
 	tx.Mission = NewMissionClient(tx.config)
 	tx.MissionBatch = NewMissionBatchClient(tx.config)
 	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)

@@ -54,6 +54,10 @@ const (
 	FieldStartedAt = "started_at"
 	// FieldFinishedAt holds the string denoting the finished_at field in the database.
 	FieldFinishedAt = "finished_at"
+	// FieldPlanStartedAt holds the string denoting the plan_started_at field in the database.
+	FieldPlanStartedAt = "plan_started_at"
+	// FieldPlanFinishedAt holds the string denoting the plan_finished_at field in the database.
+	FieldPlanFinishedAt = "plan_finished_at"
 	// FieldMissionBatchID holds the string denoting the mission_batch_id field in the database.
 	FieldMissionBatchID = "mission_batch_id"
 	// FieldMissionBatchNumber holds the string denoting the mission_batch_number field in the database.
@@ -138,6 +142,8 @@ var Columns = []string{
 	FieldSerialNumber,
 	FieldStartedAt,
 	FieldFinishedAt,
+	FieldPlanStartedAt,
+	FieldPlanFinishedAt,
 	FieldMissionBatchID,
 	FieldMissionBatchNumber,
 }
@@ -185,6 +191,10 @@ var (
 	DefaultStartedAt time.Time
 	// DefaultFinishedAt holds the default value on creation for the "finished_at" field.
 	DefaultFinishedAt time.Time
+	// DefaultPlanStartedAt holds the default value on creation for the "plan_started_at" field.
+	DefaultPlanStartedAt time.Time
+	// DefaultPlanFinishedAt holds the default value on creation for the "plan_finished_at" field.
+	DefaultPlanFinishedAt time.Time
 	// DefaultMissionBatchID holds the default value on creation for the "mission_batch_id" field.
 	DefaultMissionBatchID int64
 	// DefaultMissionBatchNumber holds the default value on creation for the "mission_batch_number" field.
@@ -222,7 +232,7 @@ const DefaultMissionBillingType enums.MissionBillingType = "unknown"
 // MissionBillingTypeValidator is a validator for the "mission_billing_type" field enum values. It is called by the builders before save.
 func MissionBillingTypeValidator(mbt enums.MissionBillingType) error {
 	switch mbt {
-	case "unknown", "time", "count", "hold", "volume":
+	case "unknown", "time", "count", "hold", "volume", "time_plan":
 		return nil
 	default:
 		return fmt.Errorf("missionorder: invalid enum value for mission_billing_type field: %q", mbt)
@@ -342,6 +352,16 @@ func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByFinishedAt orders the results by the finished_at field.
 func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
+}
+
+// ByPlanStartedAt orders the results by the plan_started_at field.
+func ByPlanStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlanStartedAt, opts...).ToFunc()
+}
+
+// ByPlanFinishedAt orders the results by the plan_finished_at field.
+func ByPlanFinishedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlanFinishedAt, opts...).ToFunc()
 }
 
 // ByMissionBatchID orders the results by the mission_batch_id field.

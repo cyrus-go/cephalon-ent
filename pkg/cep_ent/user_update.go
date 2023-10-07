@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -655,6 +656,21 @@ func (uu *UserUpdate) AddProduceMissionOrders(m ...*MissionOrder) *UserUpdate {
 	return uu.AddProduceMissionOrderIDs(ids...)
 }
 
+// AddLoginRecordIDs adds the "login_records" edge to the LoginRecord entity by IDs.
+func (uu *UserUpdate) AddLoginRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddLoginRecordIDs(ids...)
+	return uu
+}
+
+// AddLoginRecords adds the "login_records" edges to the LoginRecord entity.
+func (uu *UserUpdate) AddLoginRecords(l ...*LoginRecord) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.AddLoginRecordIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1180,6 +1196,27 @@ func (uu *UserUpdate) RemoveProduceMissionOrders(m ...*MissionOrder) *UserUpdate
 		ids[i] = m[i].ID
 	}
 	return uu.RemoveProduceMissionOrderIDs(ids...)
+}
+
+// ClearLoginRecords clears all "login_records" edges to the LoginRecord entity.
+func (uu *UserUpdate) ClearLoginRecords() *UserUpdate {
+	uu.mutation.ClearLoginRecords()
+	return uu
+}
+
+// RemoveLoginRecordIDs removes the "login_records" edge to LoginRecord entities by IDs.
+func (uu *UserUpdate) RemoveLoginRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveLoginRecordIDs(ids...)
+	return uu
+}
+
+// RemoveLoginRecords removes "login_records" edges to LoginRecord entities.
+func (uu *UserUpdate) RemoveLoginRecords(l ...*LoginRecord) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.RemoveLoginRecordIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2455,6 +2492,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.LoginRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedLoginRecordsIDs(); len(nodes) > 0 && !uu.mutation.LoginRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.LoginRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -3080,6 +3162,21 @@ func (uuo *UserUpdateOne) AddProduceMissionOrders(m ...*MissionOrder) *UserUpdat
 	return uuo.AddProduceMissionOrderIDs(ids...)
 }
 
+// AddLoginRecordIDs adds the "login_records" edge to the LoginRecord entity by IDs.
+func (uuo *UserUpdateOne) AddLoginRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddLoginRecordIDs(ids...)
+	return uuo
+}
+
+// AddLoginRecords adds the "login_records" edges to the LoginRecord entity.
+func (uuo *UserUpdateOne) AddLoginRecords(l ...*LoginRecord) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.AddLoginRecordIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -3605,6 +3702,27 @@ func (uuo *UserUpdateOne) RemoveProduceMissionOrders(m ...*MissionOrder) *UserUp
 		ids[i] = m[i].ID
 	}
 	return uuo.RemoveProduceMissionOrderIDs(ids...)
+}
+
+// ClearLoginRecords clears all "login_records" edges to the LoginRecord entity.
+func (uuo *UserUpdateOne) ClearLoginRecords() *UserUpdateOne {
+	uuo.mutation.ClearLoginRecords()
+	return uuo
+}
+
+// RemoveLoginRecordIDs removes the "login_records" edge to LoginRecord entities by IDs.
+func (uuo *UserUpdateOne) RemoveLoginRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveLoginRecordIDs(ids...)
+	return uuo
+}
+
+// RemoveLoginRecords removes "login_records" edges to LoginRecord entities.
+func (uuo *UserUpdateOne) RemoveLoginRecords(l ...*LoginRecord) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.RemoveLoginRecordIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -4903,6 +5021,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.LoginRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedLoginRecordsIDs(); len(nodes) > 0 && !uuo.mutation.LoginRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.LoginRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

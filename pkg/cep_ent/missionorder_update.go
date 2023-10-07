@@ -313,6 +313,46 @@ func (mou *MissionOrderUpdate) SetNillableFinishedAt(t *time.Time) *MissionOrder
 	return mou
 }
 
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (mou *MissionOrderUpdate) SetPlanStartedAt(t time.Time) *MissionOrderUpdate {
+	mou.mutation.SetPlanStartedAt(t)
+	return mou
+}
+
+// SetNillablePlanStartedAt sets the "plan_started_at" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillablePlanStartedAt(t *time.Time) *MissionOrderUpdate {
+	if t != nil {
+		mou.SetPlanStartedAt(*t)
+	}
+	return mou
+}
+
+// ClearPlanStartedAt clears the value of the "plan_started_at" field.
+func (mou *MissionOrderUpdate) ClearPlanStartedAt() *MissionOrderUpdate {
+	mou.mutation.ClearPlanStartedAt()
+	return mou
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (mou *MissionOrderUpdate) SetPlanFinishedAt(t time.Time) *MissionOrderUpdate {
+	mou.mutation.SetPlanFinishedAt(t)
+	return mou
+}
+
+// SetNillablePlanFinishedAt sets the "plan_finished_at" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillablePlanFinishedAt(t *time.Time) *MissionOrderUpdate {
+	if t != nil {
+		mou.SetPlanFinishedAt(*t)
+	}
+	return mou
+}
+
+// ClearPlanFinishedAt clears the value of the "plan_finished_at" field.
+func (mou *MissionOrderUpdate) ClearPlanFinishedAt() *MissionOrderUpdate {
+	mou.mutation.ClearPlanFinishedAt()
+	return mou
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mou *MissionOrderUpdate) SetMissionBatchID(i int64) *MissionOrderUpdate {
 	mou.mutation.SetMissionBatchID(i)
@@ -581,6 +621,18 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mou.mutation.FinishedAt(); ok {
 		_spec.SetField(missionorder.FieldFinishedAt, field.TypeTime, value)
+	}
+	if value, ok := mou.mutation.PlanStartedAt(); ok {
+		_spec.SetField(missionorder.FieldPlanStartedAt, field.TypeTime, value)
+	}
+	if mou.mutation.PlanStartedAtCleared() {
+		_spec.ClearField(missionorder.FieldPlanStartedAt, field.TypeTime)
+	}
+	if value, ok := mou.mutation.PlanFinishedAt(); ok {
+		_spec.SetField(missionorder.FieldPlanFinishedAt, field.TypeTime, value)
+	}
+	if mou.mutation.PlanFinishedAtCleared() {
+		_spec.ClearField(missionorder.FieldPlanFinishedAt, field.TypeTime)
 	}
 	if value, ok := mou.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
@@ -1074,6 +1126,46 @@ func (mouo *MissionOrderUpdateOne) SetNillableFinishedAt(t *time.Time) *MissionO
 	return mouo
 }
 
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (mouo *MissionOrderUpdateOne) SetPlanStartedAt(t time.Time) *MissionOrderUpdateOne {
+	mouo.mutation.SetPlanStartedAt(t)
+	return mouo
+}
+
+// SetNillablePlanStartedAt sets the "plan_started_at" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillablePlanStartedAt(t *time.Time) *MissionOrderUpdateOne {
+	if t != nil {
+		mouo.SetPlanStartedAt(*t)
+	}
+	return mouo
+}
+
+// ClearPlanStartedAt clears the value of the "plan_started_at" field.
+func (mouo *MissionOrderUpdateOne) ClearPlanStartedAt() *MissionOrderUpdateOne {
+	mouo.mutation.ClearPlanStartedAt()
+	return mouo
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (mouo *MissionOrderUpdateOne) SetPlanFinishedAt(t time.Time) *MissionOrderUpdateOne {
+	mouo.mutation.SetPlanFinishedAt(t)
+	return mouo
+}
+
+// SetNillablePlanFinishedAt sets the "plan_finished_at" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillablePlanFinishedAt(t *time.Time) *MissionOrderUpdateOne {
+	if t != nil {
+		mouo.SetPlanFinishedAt(*t)
+	}
+	return mouo
+}
+
+// ClearPlanFinishedAt clears the value of the "plan_finished_at" field.
+func (mouo *MissionOrderUpdateOne) ClearPlanFinishedAt() *MissionOrderUpdateOne {
+	mouo.mutation.ClearPlanFinishedAt()
+	return mouo
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mouo *MissionOrderUpdateOne) SetMissionBatchID(i int64) *MissionOrderUpdateOne {
 	mouo.mutation.SetMissionBatchID(i)
@@ -1372,6 +1464,18 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 	}
 	if value, ok := mouo.mutation.FinishedAt(); ok {
 		_spec.SetField(missionorder.FieldFinishedAt, field.TypeTime, value)
+	}
+	if value, ok := mouo.mutation.PlanStartedAt(); ok {
+		_spec.SetField(missionorder.FieldPlanStartedAt, field.TypeTime, value)
+	}
+	if mouo.mutation.PlanStartedAtCleared() {
+		_spec.ClearField(missionorder.FieldPlanStartedAt, field.TypeTime)
+	}
+	if value, ok := mouo.mutation.PlanFinishedAt(); ok {
+		_spec.SetField(missionorder.FieldPlanFinishedAt, field.TypeTime, value)
+	}
+	if mouo.mutation.PlanFinishedAtCleared() {
+		_spec.ClearField(missionorder.FieldPlanFinishedAt, field.TypeTime)
 	}
 	if value, ok := mouo.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)

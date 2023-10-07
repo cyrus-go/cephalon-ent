@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -669,6 +670,21 @@ func (uc *UserCreate) AddProduceMissionOrders(m ...*MissionOrder) *UserCreate {
 		ids[i] = m[i].ID
 	}
 	return uc.AddProduceMissionOrderIDs(ids...)
+}
+
+// AddLoginRecordIDs adds the "login_records" edge to the LoginRecord entity by IDs.
+func (uc *UserCreate) AddLoginRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddLoginRecordIDs(ids...)
+	return uc
+}
+
+// AddLoginRecords adds the "login_records" edges to the LoginRecord entity.
+func (uc *UserCreate) AddLoginRecords(l ...*LoginRecord) *UserCreate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uc.AddLoginRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1342,6 +1358,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.LoginRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LoginRecordsTable,
+			Columns: []string{user.LoginRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

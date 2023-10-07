@@ -131,6 +131,16 @@ func FinishedAt(v time.Time) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldFinishedAt, v))
 }
 
+// PlanStartedAt applies equality check predicate on the "plan_started_at" field. It's identical to PlanStartedAtEQ.
+func PlanStartedAt(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldPlanStartedAt, v))
+}
+
+// PlanFinishedAt applies equality check predicate on the "plan_finished_at" field. It's identical to PlanFinishedAtEQ.
+func PlanFinishedAt(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldPlanFinishedAt, v))
+}
+
 // MissionBatchID applies equality check predicate on the "mission_batch_id" field. It's identical to MissionBatchIDEQ.
 func MissionBatchID(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldMissionBatchID, v))
@@ -804,6 +814,106 @@ func FinishedAtLT(v time.Time) predicate.MissionOrder {
 // FinishedAtLTE applies the LTE predicate on the "finished_at" field.
 func FinishedAtLTE(v time.Time) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldLTE(FieldFinishedAt, v))
+}
+
+// PlanStartedAtEQ applies the EQ predicate on the "plan_started_at" field.
+func PlanStartedAtEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldPlanStartedAt, v))
+}
+
+// PlanStartedAtNEQ applies the NEQ predicate on the "plan_started_at" field.
+func PlanStartedAtNEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldPlanStartedAt, v))
+}
+
+// PlanStartedAtIn applies the In predicate on the "plan_started_at" field.
+func PlanStartedAtIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldPlanStartedAt, vs...))
+}
+
+// PlanStartedAtNotIn applies the NotIn predicate on the "plan_started_at" field.
+func PlanStartedAtNotIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldPlanStartedAt, vs...))
+}
+
+// PlanStartedAtGT applies the GT predicate on the "plan_started_at" field.
+func PlanStartedAtGT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldPlanStartedAt, v))
+}
+
+// PlanStartedAtGTE applies the GTE predicate on the "plan_started_at" field.
+func PlanStartedAtGTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldPlanStartedAt, v))
+}
+
+// PlanStartedAtLT applies the LT predicate on the "plan_started_at" field.
+func PlanStartedAtLT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldPlanStartedAt, v))
+}
+
+// PlanStartedAtLTE applies the LTE predicate on the "plan_started_at" field.
+func PlanStartedAtLTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldPlanStartedAt, v))
+}
+
+// PlanStartedAtIsNil applies the IsNil predicate on the "plan_started_at" field.
+func PlanStartedAtIsNil() predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIsNull(FieldPlanStartedAt))
+}
+
+// PlanStartedAtNotNil applies the NotNil predicate on the "plan_started_at" field.
+func PlanStartedAtNotNil() predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotNull(FieldPlanStartedAt))
+}
+
+// PlanFinishedAtEQ applies the EQ predicate on the "plan_finished_at" field.
+func PlanFinishedAtEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldPlanFinishedAt, v))
+}
+
+// PlanFinishedAtNEQ applies the NEQ predicate on the "plan_finished_at" field.
+func PlanFinishedAtNEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldPlanFinishedAt, v))
+}
+
+// PlanFinishedAtIn applies the In predicate on the "plan_finished_at" field.
+func PlanFinishedAtIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldPlanFinishedAt, vs...))
+}
+
+// PlanFinishedAtNotIn applies the NotIn predicate on the "plan_finished_at" field.
+func PlanFinishedAtNotIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldPlanFinishedAt, vs...))
+}
+
+// PlanFinishedAtGT applies the GT predicate on the "plan_finished_at" field.
+func PlanFinishedAtGT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldPlanFinishedAt, v))
+}
+
+// PlanFinishedAtGTE applies the GTE predicate on the "plan_finished_at" field.
+func PlanFinishedAtGTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldPlanFinishedAt, v))
+}
+
+// PlanFinishedAtLT applies the LT predicate on the "plan_finished_at" field.
+func PlanFinishedAtLT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldPlanFinishedAt, v))
+}
+
+// PlanFinishedAtLTE applies the LTE predicate on the "plan_finished_at" field.
+func PlanFinishedAtLTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldPlanFinishedAt, v))
+}
+
+// PlanFinishedAtIsNil applies the IsNil predicate on the "plan_finished_at" field.
+func PlanFinishedAtIsNil() predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIsNull(FieldPlanFinishedAt))
+}
+
+// PlanFinishedAtNotNil applies the NotNil predicate on the "plan_finished_at" field.
+func PlanFinishedAtNotNil() predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotNull(FieldPlanFinishedAt))
 }
 
 // MissionBatchIDEQ applies the EQ predicate on the "mission_batch_id" field.
