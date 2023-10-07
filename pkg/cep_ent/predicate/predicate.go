@@ -105,6 +105,9 @@ type RechargeCampaignRule func(*sql.Selector)
 // RechargeOrder is the predicate function for rechargeorder builders.
 type RechargeOrder func(*sql.Selector)
 
+// RenewalAgreement is the predicate function for renewalagreement builders.
+type RenewalAgreement func(*sql.Selector)
+
 // Symbol is the predicate function for symbol builders.
 type Symbol func(*sql.Selector)
 

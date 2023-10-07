@@ -48,6 +48,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -128,6 +129,8 @@ type Client struct {
 	RechargeCampaignRule *RechargeCampaignRuleClient
 	// RechargeOrder is the client for interacting with the RechargeOrder builders.
 	RechargeOrder *RechargeOrderClient
+	// RenewalAgreement is the client for interacting with the RenewalAgreement builders.
+	RenewalAgreement *RenewalAgreementClient
 	// Symbol is the client for interacting with the Symbol builders.
 	Symbol *SymbolClient
 	// TransferOrder is the client for interacting with the TransferOrder builders.
@@ -188,6 +191,7 @@ func (c *Client) init() {
 	c.ProfitSetting = NewProfitSettingClient(c.config)
 	c.RechargeCampaignRule = NewRechargeCampaignRuleClient(c.config)
 	c.RechargeOrder = NewRechargeOrderClient(c.config)
+	c.RenewalAgreement = NewRenewalAgreementClient(c.config)
 	c.Symbol = NewSymbolClient(c.config)
 	c.TransferOrder = NewTransferOrderClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -313,6 +317,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ProfitSetting:        NewProfitSettingClient(cfg),
 		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
 		RechargeOrder:        NewRechargeOrderClient(cfg),
+		RenewalAgreement:     NewRenewalAgreementClient(cfg),
 		Symbol:               NewSymbolClient(cfg),
 		TransferOrder:        NewTransferOrderClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -372,6 +377,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ProfitSetting:        NewProfitSettingClient(cfg),
 		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
 		RechargeOrder:        NewRechargeOrderClient(cfg),
+		RenewalAgreement:     NewRenewalAgreementClient(cfg),
 		Symbol:               NewSymbolClient(cfg),
 		TransferOrder:        NewTransferOrderClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -414,8 +420,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
-		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.Symbol,
-		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
+		c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
+		c.Wallet,
 	} {
 		n.Use(hooks...)
 	}
@@ -431,8 +438,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
-		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.Symbol,
-		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
+		c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
+		c.Wallet,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -507,6 +515,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RechargeCampaignRule.mutate(ctx, m)
 	case *RechargeOrderMutation:
 		return c.RechargeOrder.mutate(ctx, m)
+	case *RenewalAgreementMutation:
+		return c.RenewalAgreement.mutate(ctx, m)
 	case *SymbolMutation:
 		return c.Symbol.mutate(ctx, m)
 	case *TransferOrderMutation:
@@ -3860,6 +3870,22 @@ func (c *MissionClient) QueryMissionOrders(m *Mission) *MissionOrderQuery {
 	return query
 }
 
+// QueryRenewalAgreements queries the renewal_agreements edge of a Mission.
+func (c *MissionClient) QueryRenewalAgreements(m *Mission) *RenewalAgreementQuery {
+	query := (&RenewalAgreementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(renewalagreement.Table, renewalagreement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.RenewalAgreementsTable, mission.RenewalAgreementsColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MissionClient) Hooks() []Hook {
 	return c.hooks.Mission
@@ -6323,6 +6349,171 @@ func (c *RechargeOrderClient) mutate(ctx context.Context, m *RechargeOrderMutati
 	}
 }
 
+// RenewalAgreementClient is a client for the RenewalAgreement schema.
+type RenewalAgreementClient struct {
+	config
+}
+
+// NewRenewalAgreementClient returns a client for the RenewalAgreement from the given config.
+func NewRenewalAgreementClient(c config) *RenewalAgreementClient {
+	return &RenewalAgreementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `renewalagreement.Hooks(f(g(h())))`.
+func (c *RenewalAgreementClient) Use(hooks ...Hook) {
+	c.hooks.RenewalAgreement = append(c.hooks.RenewalAgreement, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `renewalagreement.Intercept(f(g(h())))`.
+func (c *RenewalAgreementClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RenewalAgreement = append(c.inters.RenewalAgreement, interceptors...)
+}
+
+// Create returns a builder for creating a RenewalAgreement entity.
+func (c *RenewalAgreementClient) Create() *RenewalAgreementCreate {
+	mutation := newRenewalAgreementMutation(c.config, OpCreate)
+	return &RenewalAgreementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RenewalAgreement entities.
+func (c *RenewalAgreementClient) CreateBulk(builders ...*RenewalAgreementCreate) *RenewalAgreementCreateBulk {
+	return &RenewalAgreementCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RenewalAgreementClient) MapCreateBulk(slice any, setFunc func(*RenewalAgreementCreate, int)) *RenewalAgreementCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RenewalAgreementCreateBulk{err: fmt.Errorf("calling to RenewalAgreementClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RenewalAgreementCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RenewalAgreementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RenewalAgreement.
+func (c *RenewalAgreementClient) Update() *RenewalAgreementUpdate {
+	mutation := newRenewalAgreementMutation(c.config, OpUpdate)
+	return &RenewalAgreementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RenewalAgreementClient) UpdateOne(ra *RenewalAgreement) *RenewalAgreementUpdateOne {
+	mutation := newRenewalAgreementMutation(c.config, OpUpdateOne, withRenewalAgreement(ra))
+	return &RenewalAgreementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RenewalAgreementClient) UpdateOneID(id int64) *RenewalAgreementUpdateOne {
+	mutation := newRenewalAgreementMutation(c.config, OpUpdateOne, withRenewalAgreementID(id))
+	return &RenewalAgreementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RenewalAgreement.
+func (c *RenewalAgreementClient) Delete() *RenewalAgreementDelete {
+	mutation := newRenewalAgreementMutation(c.config, OpDelete)
+	return &RenewalAgreementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RenewalAgreementClient) DeleteOne(ra *RenewalAgreement) *RenewalAgreementDeleteOne {
+	return c.DeleteOneID(ra.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RenewalAgreementClient) DeleteOneID(id int64) *RenewalAgreementDeleteOne {
+	builder := c.Delete().Where(renewalagreement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RenewalAgreementDeleteOne{builder}
+}
+
+// Query returns a query builder for RenewalAgreement.
+func (c *RenewalAgreementClient) Query() *RenewalAgreementQuery {
+	return &RenewalAgreementQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRenewalAgreement},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RenewalAgreement entity by its id.
+func (c *RenewalAgreementClient) Get(ctx context.Context, id int64) (*RenewalAgreement, error) {
+	return c.Query().Where(renewalagreement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RenewalAgreementClient) GetX(ctx context.Context, id int64) *RenewalAgreement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a RenewalAgreement.
+func (c *RenewalAgreementClient) QueryUser(ra *RenewalAgreement) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ra.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(renewalagreement.Table, renewalagreement.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, renewalagreement.UserTable, renewalagreement.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMission queries the mission edge of a RenewalAgreement.
+func (c *RenewalAgreementClient) QueryMission(ra *RenewalAgreement) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ra.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(renewalagreement.Table, renewalagreement.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, renewalagreement.MissionTable, renewalagreement.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RenewalAgreementClient) Hooks() []Hook {
+	return c.hooks.RenewalAgreement
+}
+
+// Interceptors returns the client interceptors.
+func (c *RenewalAgreementClient) Interceptors() []Interceptor {
+	return c.inters.RenewalAgreement
+}
+
+func (c *RenewalAgreementClient) mutate(ctx context.Context, m *RenewalAgreementMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RenewalAgreementCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RenewalAgreementUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RenewalAgreementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RenewalAgreementDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown RenewalAgreement mutation op: %q", m.Op())
+	}
+}
+
 // SymbolClient is a client for the Symbol schema.
 type SymbolClient struct {
 	config
@@ -7289,6 +7480,22 @@ func (c *UserClient) QueryLoginRecords(u *User) *LoginRecordQuery {
 	return query
 }
 
+// QueryRenewalAgreements queries the renewal_agreements edge of a User.
+func (c *UserClient) QueryRenewalAgreements(u *User) *RenewalAgreementQuery {
+	query := (&RenewalAgreementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(renewalagreement.Table, renewalagreement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RenewalAgreementsTable, user.RenewalAgreementsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -7982,8 +8189,9 @@ type (
 		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
 		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol,
-		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet []ent.Hook
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
+		Wallet []ent.Hook
 	}
 	inters struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
@@ -7991,7 +8199,8 @@ type (
 		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
 		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder, Symbol,
-		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet []ent.Interceptor
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
+		Wallet []ent.Interceptor
 	}
 )

@@ -113,9 +113,11 @@ type UserEdges struct {
 	ProduceMissionOrders []*MissionOrder `json:"produce_mission_orders,omitempty"`
 	// LoginRecords holds the value of the login_records edge.
 	LoginRecords []*LoginRecord `json:"login_records,omitempty"`
+	// RenewalAgreements holds the value of the renewal_agreements edge.
+	RenewalAgreements []*RenewalAgreement `json:"renewal_agreements,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [28]bool
+	loadedTypes [29]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -380,6 +382,15 @@ func (e UserEdges) LoginRecordsOrErr() ([]*LoginRecord, error) {
 		return e.LoginRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "login_records"}
+}
+
+// RenewalAgreementsOrErr returns the RenewalAgreements value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
+	if e.loadedTypes[28] {
+		return e.RenewalAgreements, nil
+	}
+	return nil, &NotLoadedError{edge: "renewal_agreements"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -657,6 +668,11 @@ func (u *User) QueryProduceMissionOrders() *MissionOrderQuery {
 // QueryLoginRecords queries the "login_records" edge of the User entity.
 func (u *User) QueryLoginRecords() *LoginRecordQuery {
 	return NewUserClient(u.config).QueryLoginRecords(u)
+}
+
+// QueryRenewalAgreements queries the "renewal_agreements" edge of the User entity.
+func (u *User) QueryRenewalAgreements() *RenewalAgreementQuery {
+	return NewUserClient(u.config).QueryRenewalAgreements(u)
 }
 
 // Update returns a builder for updating this User.

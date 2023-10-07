@@ -405,6 +405,18 @@ func (f RechargeOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.RechargeOrderMutation", m)
 }
 
+// The RenewalAgreementFunc type is an adapter to allow the use of ordinary
+// function as RenewalAgreement mutator.
+type RenewalAgreementFunc func(context.Context, *cep_ent.RenewalAgreementMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RenewalAgreementFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.RenewalAgreementMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.RenewalAgreementMutation", m)
+}
+
 // The SymbolFunc type is an adapter to allow the use of ordinary
 // function as Symbol mutator.
 type SymbolFunc func(context.Context, *cep_ent.SymbolMutation) (cep_ent.Value, error)

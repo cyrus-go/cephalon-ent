@@ -1578,6 +1578,29 @@ func HasMissionOrdersWith(preds ...predicate.MissionOrder) predicate.Mission {
 	})
 }
 
+// HasRenewalAgreements applies the HasEdge predicate on the "renewal_agreements" edge.
+func HasRenewalAgreements() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRenewalAgreementsWith applies the HasEdge predicate on the "renewal_agreements" edge with a given conditions (other predicates).
+func HasRenewalAgreementsWith(preds ...predicate.RenewalAgreement) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newRenewalAgreementsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Mission) predicate.Mission {
 	return predicate.Mission(sql.AndPredicates(predicates...))

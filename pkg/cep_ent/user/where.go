@@ -1419,6 +1419,29 @@ func HasLoginRecordsWith(preds ...predicate.LoginRecord) predicate.User {
 	})
 }
 
+// HasRenewalAgreements applies the HasEdge predicate on the "renewal_agreements" edge.
+func HasRenewalAgreements() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRenewalAgreementsWith applies the HasEdge predicate on the "renewal_agreements" edge with a given conditions (other predicates).
+func HasRenewalAgreementsWith(preds ...predicate.RenewalAgreement) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newRenewalAgreementsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

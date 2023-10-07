@@ -29,6 +29,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -685,6 +686,21 @@ func (uc *UserCreate) AddLoginRecords(l ...*LoginRecord) *UserCreate {
 		ids[i] = l[i].ID
 	}
 	return uc.AddLoginRecordIDs(ids...)
+}
+
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (uc *UserCreate) AddRenewalAgreementIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddRenewalAgreementIDs(ids...)
+	return uc
+}
+
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (uc *UserCreate) AddRenewalAgreements(r ...*RenewalAgreement) *UserCreate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRenewalAgreementIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1374,6 +1390,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

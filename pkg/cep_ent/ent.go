@@ -45,6 +45,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -145,6 +146,7 @@ func checkColumn(table, column string) error {
 			profitsetting.Table:        profitsetting.ValidColumn,
 			rechargecampaignrule.Table: rechargecampaignrule.ValidColumn,
 			rechargeorder.Table:        rechargeorder.ValidColumn,
+			renewalagreement.Table:     renewalagreement.ValidColumn,
 			symbol.Table:               symbol.ValidColumn,
 			transferorder.Table:        transferorder.ValidColumn,
 			user.Table:                 user.ValidColumn,

@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -546,6 +547,21 @@ func (mu *MissionUpdate) AddMissionOrders(m ...*MissionOrder) *MissionUpdate {
 	return mu.AddMissionOrderIDs(ids...)
 }
 
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (mu *MissionUpdate) AddRenewalAgreementIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.AddRenewalAgreementIDs(ids...)
+	return mu
+}
+
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (mu *MissionUpdate) AddRenewalAgreements(r ...*RenewalAgreement) *MissionUpdate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return mu.AddRenewalAgreementIDs(ids...)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (mu *MissionUpdate) Mutation() *MissionMutation {
 	return mu.mutation
@@ -663,6 +679,27 @@ func (mu *MissionUpdate) RemoveMissionOrders(m ...*MissionOrder) *MissionUpdate 
 		ids[i] = m[i].ID
 	}
 	return mu.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearRenewalAgreements clears all "renewal_agreements" edges to the RenewalAgreement entity.
+func (mu *MissionUpdate) ClearRenewalAgreements() *MissionUpdate {
+	mu.mutation.ClearRenewalAgreements()
+	return mu
+}
+
+// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to RenewalAgreement entities by IDs.
+func (mu *MissionUpdate) RemoveRenewalAgreementIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.RemoveRenewalAgreementIDs(ids...)
+	return mu
+}
+
+// RemoveRenewalAgreements removes "renewal_agreements" edges to RenewalAgreement entities.
+func (mu *MissionUpdate) RemoveRenewalAgreements(r ...*RenewalAgreement) *MissionUpdate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return mu.RemoveRenewalAgreementIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1170,6 +1207,51 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedRenewalAgreementsIDs(); len(nodes) > 0 && !mu.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1704,6 +1786,21 @@ func (muo *MissionUpdateOne) AddMissionOrders(m ...*MissionOrder) *MissionUpdate
 	return muo.AddMissionOrderIDs(ids...)
 }
 
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (muo *MissionUpdateOne) AddRenewalAgreementIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.AddRenewalAgreementIDs(ids...)
+	return muo
+}
+
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (muo *MissionUpdateOne) AddRenewalAgreements(r ...*RenewalAgreement) *MissionUpdateOne {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return muo.AddRenewalAgreementIDs(ids...)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (muo *MissionUpdateOne) Mutation() *MissionMutation {
 	return muo.mutation
@@ -1821,6 +1918,27 @@ func (muo *MissionUpdateOne) RemoveMissionOrders(m ...*MissionOrder) *MissionUpd
 		ids[i] = m[i].ID
 	}
 	return muo.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearRenewalAgreements clears all "renewal_agreements" edges to the RenewalAgreement entity.
+func (muo *MissionUpdateOne) ClearRenewalAgreements() *MissionUpdateOne {
+	muo.mutation.ClearRenewalAgreements()
+	return muo
+}
+
+// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to RenewalAgreement entities by IDs.
+func (muo *MissionUpdateOne) RemoveRenewalAgreementIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.RemoveRenewalAgreementIDs(ids...)
+	return muo
+}
+
+// RemoveRenewalAgreements removes "renewal_agreements" edges to RenewalAgreement entities.
+func (muo *MissionUpdateOne) RemoveRenewalAgreements(r ...*RenewalAgreement) *MissionUpdateOne {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return muo.RemoveRenewalAgreementIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionUpdate builder.
@@ -2358,6 +2476,51 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedRenewalAgreementsIDs(); len(nodes) > 0 && !muo.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

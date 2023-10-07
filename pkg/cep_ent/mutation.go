@@ -45,6 +45,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -97,6 +98,7 @@ const (
 	TypeProfitSetting        = "ProfitSetting"
 	TypeRechargeCampaignRule = "RechargeCampaignRule"
 	TypeRechargeOrder        = "RechargeOrder"
+	TypeRenewalAgreement     = "RenewalAgreement"
 	TypeSymbol               = "Symbol"
 	TypeTransferOrder        = "TransferOrder"
 	TypeUser                 = "User"
@@ -21168,6 +21170,9 @@ type MissionMutation struct {
 	mission_orders                map[int64]struct{}
 	removedmission_orders         map[int64]struct{}
 	clearedmission_orders         bool
+	renewal_agreements            map[int64]struct{}
+	removedrenewal_agreements     map[int64]struct{}
+	clearedrenewal_agreements     bool
 	done                          bool
 	oldValue                      func(context.Context) (*Mission, error)
 	predicates                    []predicate.Mission
@@ -22770,6 +22775,60 @@ func (m *MissionMutation) ResetMissionOrders() {
 	m.removedmission_orders = nil
 }
 
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by ids.
+func (m *MissionMutation) AddRenewalAgreementIDs(ids ...int64) {
+	if m.renewal_agreements == nil {
+		m.renewal_agreements = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.renewal_agreements[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRenewalAgreements clears the "renewal_agreements" edge to the RenewalAgreement entity.
+func (m *MissionMutation) ClearRenewalAgreements() {
+	m.clearedrenewal_agreements = true
+}
+
+// RenewalAgreementsCleared reports if the "renewal_agreements" edge to the RenewalAgreement entity was cleared.
+func (m *MissionMutation) RenewalAgreementsCleared() bool {
+	return m.clearedrenewal_agreements
+}
+
+// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (m *MissionMutation) RemoveRenewalAgreementIDs(ids ...int64) {
+	if m.removedrenewal_agreements == nil {
+		m.removedrenewal_agreements = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.renewal_agreements, ids[i])
+		m.removedrenewal_agreements[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRenewalAgreements returns the removed IDs of the "renewal_agreements" edge to the RenewalAgreement entity.
+func (m *MissionMutation) RemovedRenewalAgreementsIDs() (ids []int64) {
+	for id := range m.removedrenewal_agreements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RenewalAgreementsIDs returns the "renewal_agreements" edge IDs in the mutation.
+func (m *MissionMutation) RenewalAgreementsIDs() (ids []int64) {
+	for id := range m.renewal_agreements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRenewalAgreements resets all changes to the "renewal_agreements" edge.
+func (m *MissionMutation) ResetRenewalAgreements() {
+	m.renewal_agreements = nil
+	m.clearedrenewal_agreements = false
+	m.removedrenewal_agreements = nil
+}
+
 // Where appends a list predicates to the MissionMutation builder.
 func (m *MissionMutation) Where(ps ...predicate.Mission) {
 	m.predicates = append(m.predicates, ps...)
@@ -23428,7 +23487,7 @@ func (m *MissionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.mission_kind != nil {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
@@ -23455,6 +23514,9 @@ func (m *MissionMutation) AddedEdges() []string {
 	}
 	if m.mission_orders != nil {
 		edges = append(edges, mission.EdgeMissionOrders)
+	}
+	if m.renewal_agreements != nil {
+		edges = append(edges, mission.EdgeRenewalAgreements)
 	}
 	return edges
 }
@@ -23507,13 +23569,19 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeRenewalAgreements:
+		ids := make([]ent.Value, 0, len(m.renewal_agreements))
+		for id := range m.renewal_agreements {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.removedmission_key_pairs != nil {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
@@ -23525,6 +23593,9 @@ func (m *MissionMutation) RemovedEdges() []string {
 	}
 	if m.removedmission_orders != nil {
 		edges = append(edges, mission.EdgeMissionOrders)
+	}
+	if m.removedrenewal_agreements != nil {
+		edges = append(edges, mission.EdgeRenewalAgreements)
 	}
 	return edges
 }
@@ -23557,13 +23628,19 @@ func (m *MissionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeRenewalAgreements:
+		ids := make([]ent.Value, 0, len(m.removedrenewal_agreements))
+		for id := range m.removedrenewal_agreements {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedmission_kind {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
@@ -23591,6 +23668,9 @@ func (m *MissionMutation) ClearedEdges() []string {
 	if m.clearedmission_orders {
 		edges = append(edges, mission.EdgeMissionOrders)
 	}
+	if m.clearedrenewal_agreements {
+		edges = append(edges, mission.EdgeRenewalAgreements)
+	}
 	return edges
 }
 
@@ -23616,6 +23696,8 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_productions
 	case mission.EdgeMissionOrders:
 		return m.clearedmission_orders
+	case mission.EdgeRenewalAgreements:
+		return m.clearedrenewal_agreements
 	}
 	return false
 }
@@ -23673,6 +23755,9 @@ func (m *MissionMutation) ResetEdge(name string) error {
 		return nil
 	case mission.EdgeMissionOrders:
 		m.ResetMissionOrders()
+		return nil
+	case mission.EdgeRenewalAgreements:
+		m.ResetRenewalAgreements()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission edge %s", name)
@@ -41737,6 +41822,1275 @@ func (m *RechargeOrderMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RechargeOrder edge %s", name)
 }
 
+// RenewalAgreementMutation represents an operation that mutates the RenewalAgreement nodes in the graph.
+type RenewalAgreementMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	created_by        *int64
+	addcreated_by     *int64
+	updated_by        *int64
+	addupdated_by     *int64
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	next_pay_time     *time.Time
+	_type             *renewalagreement.Type
+	sub_status        *renewalagreement.SubStatus
+	pay_status        *renewalagreement.PayStatus
+	first_pay         *int64
+	addfirst_pay      *int64
+	after_pay         *int64
+	addafter_pay      *int64
+	sub_finished_time *time.Time
+	clearedFields     map[string]struct{}
+	user              *int64
+	cleareduser       bool
+	mission           *int64
+	clearedmission    bool
+	done              bool
+	oldValue          func(context.Context) (*RenewalAgreement, error)
+	predicates        []predicate.RenewalAgreement
+}
+
+var _ ent.Mutation = (*RenewalAgreementMutation)(nil)
+
+// renewalagreementOption allows management of the mutation configuration using functional options.
+type renewalagreementOption func(*RenewalAgreementMutation)
+
+// newRenewalAgreementMutation creates new mutation for the RenewalAgreement entity.
+func newRenewalAgreementMutation(c config, op Op, opts ...renewalagreementOption) *RenewalAgreementMutation {
+	m := &RenewalAgreementMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRenewalAgreement,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRenewalAgreementID sets the ID field of the mutation.
+func withRenewalAgreementID(id int64) renewalagreementOption {
+	return func(m *RenewalAgreementMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RenewalAgreement
+		)
+		m.oldValue = func(ctx context.Context) (*RenewalAgreement, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RenewalAgreement.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRenewalAgreement sets the old RenewalAgreement of the mutation.
+func withRenewalAgreement(node *RenewalAgreement) renewalagreementOption {
+	return func(m *RenewalAgreementMutation) {
+		m.oldValue = func(context.Context) (*RenewalAgreement, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RenewalAgreementMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RenewalAgreementMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of RenewalAgreement entities.
+func (m *RenewalAgreementMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RenewalAgreementMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RenewalAgreementMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RenewalAgreement.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *RenewalAgreementMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *RenewalAgreementMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *RenewalAgreementMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *RenewalAgreementMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *RenewalAgreementMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *RenewalAgreementMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *RenewalAgreementMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *RenewalAgreementMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *RenewalAgreementMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *RenewalAgreementMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *RenewalAgreementMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RenewalAgreementMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RenewalAgreementMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RenewalAgreementMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RenewalAgreementMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RenewalAgreementMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *RenewalAgreementMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *RenewalAgreementMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *RenewalAgreementMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetNextPayTime sets the "next_pay_time" field.
+func (m *RenewalAgreementMutation) SetNextPayTime(t time.Time) {
+	m.next_pay_time = &t
+}
+
+// NextPayTime returns the value of the "next_pay_time" field in the mutation.
+func (m *RenewalAgreementMutation) NextPayTime() (r time.Time, exists bool) {
+	v := m.next_pay_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNextPayTime returns the old "next_pay_time" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldNextPayTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNextPayTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNextPayTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNextPayTime: %w", err)
+	}
+	return oldValue.NextPayTime, nil
+}
+
+// ResetNextPayTime resets all changes to the "next_pay_time" field.
+func (m *RenewalAgreementMutation) ResetNextPayTime() {
+	m.next_pay_time = nil
+}
+
+// SetType sets the "type" field.
+func (m *RenewalAgreementMutation) SetType(r renewalagreement.Type) {
+	m._type = &r
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *RenewalAgreementMutation) GetType() (r renewalagreement.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldType(ctx context.Context) (v renewalagreement.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *RenewalAgreementMutation) ResetType() {
+	m._type = nil
+}
+
+// SetSubStatus sets the "sub_status" field.
+func (m *RenewalAgreementMutation) SetSubStatus(rs renewalagreement.SubStatus) {
+	m.sub_status = &rs
+}
+
+// SubStatus returns the value of the "sub_status" field in the mutation.
+func (m *RenewalAgreementMutation) SubStatus() (r renewalagreement.SubStatus, exists bool) {
+	v := m.sub_status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubStatus returns the old "sub_status" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldSubStatus(ctx context.Context) (v renewalagreement.SubStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubStatus: %w", err)
+	}
+	return oldValue.SubStatus, nil
+}
+
+// ResetSubStatus resets all changes to the "sub_status" field.
+func (m *RenewalAgreementMutation) ResetSubStatus() {
+	m.sub_status = nil
+}
+
+// SetPayStatus sets the "pay_status" field.
+func (m *RenewalAgreementMutation) SetPayStatus(rs renewalagreement.PayStatus) {
+	m.pay_status = &rs
+}
+
+// PayStatus returns the value of the "pay_status" field in the mutation.
+func (m *RenewalAgreementMutation) PayStatus() (r renewalagreement.PayStatus, exists bool) {
+	v := m.pay_status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPayStatus returns the old "pay_status" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldPayStatus(ctx context.Context) (v renewalagreement.PayStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPayStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPayStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPayStatus: %w", err)
+	}
+	return oldValue.PayStatus, nil
+}
+
+// ResetPayStatus resets all changes to the "pay_status" field.
+func (m *RenewalAgreementMutation) ResetPayStatus() {
+	m.pay_status = nil
+}
+
+// SetFirstPay sets the "first_pay" field.
+func (m *RenewalAgreementMutation) SetFirstPay(i int64) {
+	m.first_pay = &i
+	m.addfirst_pay = nil
+}
+
+// FirstPay returns the value of the "first_pay" field in the mutation.
+func (m *RenewalAgreementMutation) FirstPay() (r int64, exists bool) {
+	v := m.first_pay
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstPay returns the old "first_pay" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldFirstPay(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstPay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstPay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstPay: %w", err)
+	}
+	return oldValue.FirstPay, nil
+}
+
+// AddFirstPay adds i to the "first_pay" field.
+func (m *RenewalAgreementMutation) AddFirstPay(i int64) {
+	if m.addfirst_pay != nil {
+		*m.addfirst_pay += i
+	} else {
+		m.addfirst_pay = &i
+	}
+}
+
+// AddedFirstPay returns the value that was added to the "first_pay" field in this mutation.
+func (m *RenewalAgreementMutation) AddedFirstPay() (r int64, exists bool) {
+	v := m.addfirst_pay
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFirstPay resets all changes to the "first_pay" field.
+func (m *RenewalAgreementMutation) ResetFirstPay() {
+	m.first_pay = nil
+	m.addfirst_pay = nil
+}
+
+// SetAfterPay sets the "after_pay" field.
+func (m *RenewalAgreementMutation) SetAfterPay(i int64) {
+	m.after_pay = &i
+	m.addafter_pay = nil
+}
+
+// AfterPay returns the value of the "after_pay" field in the mutation.
+func (m *RenewalAgreementMutation) AfterPay() (r int64, exists bool) {
+	v := m.after_pay
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAfterPay returns the old "after_pay" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldAfterPay(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAfterPay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAfterPay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAfterPay: %w", err)
+	}
+	return oldValue.AfterPay, nil
+}
+
+// AddAfterPay adds i to the "after_pay" field.
+func (m *RenewalAgreementMutation) AddAfterPay(i int64) {
+	if m.addafter_pay != nil {
+		*m.addafter_pay += i
+	} else {
+		m.addafter_pay = &i
+	}
+}
+
+// AddedAfterPay returns the value that was added to the "after_pay" field in this mutation.
+func (m *RenewalAgreementMutation) AddedAfterPay() (r int64, exists bool) {
+	v := m.addafter_pay
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAfterPay resets all changes to the "after_pay" field.
+func (m *RenewalAgreementMutation) ResetAfterPay() {
+	m.after_pay = nil
+	m.addafter_pay = nil
+}
+
+// SetSubFinishedTime sets the "sub_finished_time" field.
+func (m *RenewalAgreementMutation) SetSubFinishedTime(t time.Time) {
+	m.sub_finished_time = &t
+}
+
+// SubFinishedTime returns the value of the "sub_finished_time" field in the mutation.
+func (m *RenewalAgreementMutation) SubFinishedTime() (r time.Time, exists bool) {
+	v := m.sub_finished_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubFinishedTime returns the old "sub_finished_time" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldSubFinishedTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubFinishedTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubFinishedTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubFinishedTime: %w", err)
+	}
+	return oldValue.SubFinishedTime, nil
+}
+
+// ResetSubFinishedTime resets all changes to the "sub_finished_time" field.
+func (m *RenewalAgreementMutation) ResetSubFinishedTime() {
+	m.sub_finished_time = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *RenewalAgreementMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *RenewalAgreementMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *RenewalAgreementMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetMissionID sets the "mission_id" field.
+func (m *RenewalAgreementMutation) SetMissionID(i int64) {
+	m.mission = &i
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *RenewalAgreementMutation) MissionID() (r int64, exists bool) {
+	v := m.mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *RenewalAgreementMutation) ResetMissionID() {
+	m.mission = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *RenewalAgreementMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[renewalagreement.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *RenewalAgreementMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *RenewalAgreementMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *RenewalAgreementMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (m *RenewalAgreementMutation) ClearMission() {
+	m.clearedmission = true
+	m.clearedFields[renewalagreement.FieldMissionID] = struct{}{}
+}
+
+// MissionCleared reports if the "mission" edge to the Mission entity was cleared.
+func (m *RenewalAgreementMutation) MissionCleared() bool {
+	return m.clearedmission
+}
+
+// MissionIDs returns the "mission" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionID instead. It exists only for internal usage by the builders.
+func (m *RenewalAgreementMutation) MissionIDs() (ids []int64) {
+	if id := m.mission; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMission resets all changes to the "mission" edge.
+func (m *RenewalAgreementMutation) ResetMission() {
+	m.mission = nil
+	m.clearedmission = false
+}
+
+// Where appends a list predicates to the RenewalAgreementMutation builder.
+func (m *RenewalAgreementMutation) Where(ps ...predicate.RenewalAgreement) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RenewalAgreementMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RenewalAgreementMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RenewalAgreement, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RenewalAgreementMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RenewalAgreementMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RenewalAgreement).
+func (m *RenewalAgreementMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RenewalAgreementMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_by != nil {
+		fields = append(fields, renewalagreement.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, renewalagreement.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, renewalagreement.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, renewalagreement.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, renewalagreement.FieldDeletedAt)
+	}
+	if m.next_pay_time != nil {
+		fields = append(fields, renewalagreement.FieldNextPayTime)
+	}
+	if m._type != nil {
+		fields = append(fields, renewalagreement.FieldType)
+	}
+	if m.sub_status != nil {
+		fields = append(fields, renewalagreement.FieldSubStatus)
+	}
+	if m.pay_status != nil {
+		fields = append(fields, renewalagreement.FieldPayStatus)
+	}
+	if m.first_pay != nil {
+		fields = append(fields, renewalagreement.FieldFirstPay)
+	}
+	if m.after_pay != nil {
+		fields = append(fields, renewalagreement.FieldAfterPay)
+	}
+	if m.sub_finished_time != nil {
+		fields = append(fields, renewalagreement.FieldSubFinishedTime)
+	}
+	if m.user != nil {
+		fields = append(fields, renewalagreement.FieldUserID)
+	}
+	if m.mission != nil {
+		fields = append(fields, renewalagreement.FieldMissionID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RenewalAgreementMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case renewalagreement.FieldCreatedBy:
+		return m.CreatedBy()
+	case renewalagreement.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case renewalagreement.FieldCreatedAt:
+		return m.CreatedAt()
+	case renewalagreement.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case renewalagreement.FieldDeletedAt:
+		return m.DeletedAt()
+	case renewalagreement.FieldNextPayTime:
+		return m.NextPayTime()
+	case renewalagreement.FieldType:
+		return m.GetType()
+	case renewalagreement.FieldSubStatus:
+		return m.SubStatus()
+	case renewalagreement.FieldPayStatus:
+		return m.PayStatus()
+	case renewalagreement.FieldFirstPay:
+		return m.FirstPay()
+	case renewalagreement.FieldAfterPay:
+		return m.AfterPay()
+	case renewalagreement.FieldSubFinishedTime:
+		return m.SubFinishedTime()
+	case renewalagreement.FieldUserID:
+		return m.UserID()
+	case renewalagreement.FieldMissionID:
+		return m.MissionID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RenewalAgreementMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case renewalagreement.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case renewalagreement.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case renewalagreement.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case renewalagreement.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case renewalagreement.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case renewalagreement.FieldNextPayTime:
+		return m.OldNextPayTime(ctx)
+	case renewalagreement.FieldType:
+		return m.OldType(ctx)
+	case renewalagreement.FieldSubStatus:
+		return m.OldSubStatus(ctx)
+	case renewalagreement.FieldPayStatus:
+		return m.OldPayStatus(ctx)
+	case renewalagreement.FieldFirstPay:
+		return m.OldFirstPay(ctx)
+	case renewalagreement.FieldAfterPay:
+		return m.OldAfterPay(ctx)
+	case renewalagreement.FieldSubFinishedTime:
+		return m.OldSubFinishedTime(ctx)
+	case renewalagreement.FieldUserID:
+		return m.OldUserID(ctx)
+	case renewalagreement.FieldMissionID:
+		return m.OldMissionID(ctx)
+	}
+	return nil, fmt.Errorf("unknown RenewalAgreement field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RenewalAgreementMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case renewalagreement.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case renewalagreement.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case renewalagreement.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case renewalagreement.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case renewalagreement.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case renewalagreement.FieldNextPayTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNextPayTime(v)
+		return nil
+	case renewalagreement.FieldType:
+		v, ok := value.(renewalagreement.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case renewalagreement.FieldSubStatus:
+		v, ok := value.(renewalagreement.SubStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubStatus(v)
+		return nil
+	case renewalagreement.FieldPayStatus:
+		v, ok := value.(renewalagreement.PayStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPayStatus(v)
+		return nil
+	case renewalagreement.FieldFirstPay:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstPay(v)
+		return nil
+	case renewalagreement.FieldAfterPay:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAfterPay(v)
+		return nil
+	case renewalagreement.FieldSubFinishedTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubFinishedTime(v)
+		return nil
+	case renewalagreement.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case renewalagreement.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RenewalAgreement field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RenewalAgreementMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, renewalagreement.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, renewalagreement.FieldUpdatedBy)
+	}
+	if m.addfirst_pay != nil {
+		fields = append(fields, renewalagreement.FieldFirstPay)
+	}
+	if m.addafter_pay != nil {
+		fields = append(fields, renewalagreement.FieldAfterPay)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RenewalAgreementMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case renewalagreement.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case renewalagreement.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case renewalagreement.FieldFirstPay:
+		return m.AddedFirstPay()
+	case renewalagreement.FieldAfterPay:
+		return m.AddedAfterPay()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RenewalAgreementMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case renewalagreement.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case renewalagreement.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case renewalagreement.FieldFirstPay:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstPay(v)
+		return nil
+	case renewalagreement.FieldAfterPay:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAfterPay(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RenewalAgreement numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RenewalAgreementMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RenewalAgreementMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RenewalAgreementMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown RenewalAgreement nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RenewalAgreementMutation) ResetField(name string) error {
+	switch name {
+	case renewalagreement.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case renewalagreement.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case renewalagreement.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case renewalagreement.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case renewalagreement.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case renewalagreement.FieldNextPayTime:
+		m.ResetNextPayTime()
+		return nil
+	case renewalagreement.FieldType:
+		m.ResetType()
+		return nil
+	case renewalagreement.FieldSubStatus:
+		m.ResetSubStatus()
+		return nil
+	case renewalagreement.FieldPayStatus:
+		m.ResetPayStatus()
+		return nil
+	case renewalagreement.FieldFirstPay:
+		m.ResetFirstPay()
+		return nil
+	case renewalagreement.FieldAfterPay:
+		m.ResetAfterPay()
+		return nil
+	case renewalagreement.FieldSubFinishedTime:
+		m.ResetSubFinishedTime()
+		return nil
+	case renewalagreement.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case renewalagreement.FieldMissionID:
+		m.ResetMissionID()
+		return nil
+	}
+	return fmt.Errorf("unknown RenewalAgreement field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RenewalAgreementMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, renewalagreement.EdgeUser)
+	}
+	if m.mission != nil {
+		edges = append(edges, renewalagreement.EdgeMission)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RenewalAgreementMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case renewalagreement.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case renewalagreement.EdgeMission:
+		if id := m.mission; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RenewalAgreementMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RenewalAgreementMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RenewalAgreementMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, renewalagreement.EdgeUser)
+	}
+	if m.clearedmission {
+		edges = append(edges, renewalagreement.EdgeMission)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RenewalAgreementMutation) EdgeCleared(name string) bool {
+	switch name {
+	case renewalagreement.EdgeUser:
+		return m.cleareduser
+	case renewalagreement.EdgeMission:
+		return m.clearedmission
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RenewalAgreementMutation) ClearEdge(name string) error {
+	switch name {
+	case renewalagreement.EdgeUser:
+		m.ClearUser()
+		return nil
+	case renewalagreement.EdgeMission:
+		m.ClearMission()
+		return nil
+	}
+	return fmt.Errorf("unknown RenewalAgreement unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RenewalAgreementMutation) ResetEdge(name string) error {
+	switch name {
+	case renewalagreement.EdgeUser:
+		m.ResetUser()
+		return nil
+	case renewalagreement.EdgeMission:
+		m.ResetMission()
+		return nil
+	}
+	return fmt.Errorf("unknown RenewalAgreement edge %s", name)
+}
+
 // SymbolMutation represents an operation that mutates the Symbol nodes in the graph.
 type SymbolMutation struct {
 	config
@@ -44356,6 +45710,9 @@ type UserMutation struct {
 	login_records                  map[int64]struct{}
 	removedlogin_records           map[int64]struct{}
 	clearedlogin_records           bool
+	renewal_agreements             map[int64]struct{}
+	removedrenewal_agreements      map[int64]struct{}
+	clearedrenewal_agreements      bool
 	done                           bool
 	oldValue                       func(context.Context) (*User, error)
 	predicates                     []predicate.User
@@ -46500,6 +47857,60 @@ func (m *UserMutation) ResetLoginRecords() {
 	m.removedlogin_records = nil
 }
 
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by ids.
+func (m *UserMutation) AddRenewalAgreementIDs(ids ...int64) {
+	if m.renewal_agreements == nil {
+		m.renewal_agreements = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.renewal_agreements[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRenewalAgreements clears the "renewal_agreements" edge to the RenewalAgreement entity.
+func (m *UserMutation) ClearRenewalAgreements() {
+	m.clearedrenewal_agreements = true
+}
+
+// RenewalAgreementsCleared reports if the "renewal_agreements" edge to the RenewalAgreement entity was cleared.
+func (m *UserMutation) RenewalAgreementsCleared() bool {
+	return m.clearedrenewal_agreements
+}
+
+// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (m *UserMutation) RemoveRenewalAgreementIDs(ids ...int64) {
+	if m.removedrenewal_agreements == nil {
+		m.removedrenewal_agreements = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.renewal_agreements, ids[i])
+		m.removedrenewal_agreements[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRenewalAgreements returns the removed IDs of the "renewal_agreements" edge to the RenewalAgreement entity.
+func (m *UserMutation) RemovedRenewalAgreementsIDs() (ids []int64) {
+	for id := range m.removedrenewal_agreements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RenewalAgreementsIDs returns the "renewal_agreements" edge IDs in the mutation.
+func (m *UserMutation) RenewalAgreementsIDs() (ids []int64) {
+	for id := range m.renewal_agreements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRenewalAgreements resets all changes to the "renewal_agreements" edge.
+func (m *UserMutation) ResetRenewalAgreements() {
+	m.renewal_agreements = nil
+	m.clearedrenewal_agreements = false
+	m.removedrenewal_agreements = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -46898,7 +48309,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 28)
+	edges := make([]string, 0, 29)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -46982,6 +48393,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.login_records != nil {
 		edges = append(edges, user.EdgeLoginRecords)
+	}
+	if m.renewal_agreements != nil {
+		edges = append(edges, user.EdgeRenewalAgreements)
 	}
 	return edges
 }
@@ -47152,13 +48566,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeRenewalAgreements:
+		ids := make([]ent.Value, 0, len(m.renewal_agreements))
+		for id := range m.renewal_agreements {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 28)
+	edges := make([]string, 0, 29)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -47233,6 +48653,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedlogin_records != nil {
 		edges = append(edges, user.EdgeLoginRecords)
+	}
+	if m.removedrenewal_agreements != nil {
+		edges = append(edges, user.EdgeRenewalAgreements)
 	}
 	return edges
 }
@@ -47391,13 +48814,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeRenewalAgreements:
+		ids := make([]ent.Value, 0, len(m.removedrenewal_agreements))
+		for id := range m.removedrenewal_agreements {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 28)
+	edges := make([]string, 0, 29)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -47482,6 +48911,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedlogin_records {
 		edges = append(edges, user.EdgeLoginRecords)
 	}
+	if m.clearedrenewal_agreements {
+		edges = append(edges, user.EdgeRenewalAgreements)
+	}
 	return edges
 }
 
@@ -47545,6 +48977,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedproduce_mission_orders
 	case user.EdgeLoginRecords:
 		return m.clearedlogin_records
+	case user.EdgeRenewalAgreements:
+		return m.clearedrenewal_agreements
 	}
 	return false
 }
@@ -47653,6 +49087,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeLoginRecords:
 		m.ResetLoginRecords()
+		return nil
+	case user.EdgeRenewalAgreements:
+		m.ResetRenewalAgreements()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

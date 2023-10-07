@@ -38,6 +38,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/schema"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
@@ -1819,6 +1820,61 @@ func init() {
 	rechargeorderDescID := rechargeorderMixinFields0[0].Descriptor()
 	// rechargeorder.DefaultID holds the default value on creation for the id field.
 	rechargeorder.DefaultID = rechargeorderDescID.Default.(func() int64)
+	renewalagreementMixin := schema.RenewalAgreement{}.Mixin()
+	renewalagreementMixinFields0 := renewalagreementMixin[0].Fields()
+	_ = renewalagreementMixinFields0
+	renewalagreementFields := schema.RenewalAgreement{}.Fields()
+	_ = renewalagreementFields
+	// renewalagreementDescCreatedBy is the schema descriptor for created_by field.
+	renewalagreementDescCreatedBy := renewalagreementMixinFields0[1].Descriptor()
+	// renewalagreement.DefaultCreatedBy holds the default value on creation for the created_by field.
+	renewalagreement.DefaultCreatedBy = renewalagreementDescCreatedBy.Default.(int64)
+	// renewalagreementDescUpdatedBy is the schema descriptor for updated_by field.
+	renewalagreementDescUpdatedBy := renewalagreementMixinFields0[2].Descriptor()
+	// renewalagreement.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	renewalagreement.DefaultUpdatedBy = renewalagreementDescUpdatedBy.Default.(int64)
+	// renewalagreementDescCreatedAt is the schema descriptor for created_at field.
+	renewalagreementDescCreatedAt := renewalagreementMixinFields0[3].Descriptor()
+	// renewalagreement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	renewalagreement.DefaultCreatedAt = renewalagreementDescCreatedAt.Default.(func() time.Time)
+	// renewalagreementDescUpdatedAt is the schema descriptor for updated_at field.
+	renewalagreementDescUpdatedAt := renewalagreementMixinFields0[4].Descriptor()
+	// renewalagreement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	renewalagreement.DefaultUpdatedAt = renewalagreementDescUpdatedAt.Default.(func() time.Time)
+	// renewalagreement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	renewalagreement.UpdateDefaultUpdatedAt = renewalagreementDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// renewalagreementDescDeletedAt is the schema descriptor for deleted_at field.
+	renewalagreementDescDeletedAt := renewalagreementMixinFields0[5].Descriptor()
+	// renewalagreement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	renewalagreement.DefaultDeletedAt = renewalagreementDescDeletedAt.Default.(time.Time)
+	// renewalagreementDescNextPayTime is the schema descriptor for next_pay_time field.
+	renewalagreementDescNextPayTime := renewalagreementFields[0].Descriptor()
+	// renewalagreement.DefaultNextPayTime holds the default value on creation for the next_pay_time field.
+	renewalagreement.DefaultNextPayTime = renewalagreementDescNextPayTime.Default.(time.Time)
+	// renewalagreementDescFirstPay is the schema descriptor for first_pay field.
+	renewalagreementDescFirstPay := renewalagreementFields[4].Descriptor()
+	// renewalagreement.DefaultFirstPay holds the default value on creation for the first_pay field.
+	renewalagreement.DefaultFirstPay = renewalagreementDescFirstPay.Default.(int64)
+	// renewalagreementDescAfterPay is the schema descriptor for after_pay field.
+	renewalagreementDescAfterPay := renewalagreementFields[5].Descriptor()
+	// renewalagreement.DefaultAfterPay holds the default value on creation for the after_pay field.
+	renewalagreement.DefaultAfterPay = renewalagreementDescAfterPay.Default.(int64)
+	// renewalagreementDescSubFinishedTime is the schema descriptor for sub_finished_time field.
+	renewalagreementDescSubFinishedTime := renewalagreementFields[6].Descriptor()
+	// renewalagreement.DefaultSubFinishedTime holds the default value on creation for the sub_finished_time field.
+	renewalagreement.DefaultSubFinishedTime = renewalagreementDescSubFinishedTime.Default.(time.Time)
+	// renewalagreementDescUserID is the schema descriptor for user_id field.
+	renewalagreementDescUserID := renewalagreementFields[7].Descriptor()
+	// renewalagreement.DefaultUserID holds the default value on creation for the user_id field.
+	renewalagreement.DefaultUserID = renewalagreementDescUserID.Default.(int64)
+	// renewalagreementDescMissionID is the schema descriptor for mission_id field.
+	renewalagreementDescMissionID := renewalagreementFields[8].Descriptor()
+	// renewalagreement.DefaultMissionID holds the default value on creation for the mission_id field.
+	renewalagreement.DefaultMissionID = renewalagreementDescMissionID.Default.(int64)
+	// renewalagreementDescID is the schema descriptor for id field.
+	renewalagreementDescID := renewalagreementMixinFields0[0].Descriptor()
+	// renewalagreement.DefaultID holds the default value on creation for the id field.
+	renewalagreement.DefaultID = renewalagreementDescID.Default.(func() int64)
 	symbolMixin := schema.Symbol{}.Mixin()
 	symbolMixinFields0 := symbolMixin[0].Fields()
 	_ = symbolMixinFields0

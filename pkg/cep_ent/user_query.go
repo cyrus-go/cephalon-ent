@@ -30,6 +30,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -73,6 +74,7 @@ type UserQuery struct {
 	withConsumeMissionOrders  *MissionOrderQuery
 	withProduceMissionOrders  *MissionOrderQuery
 	withLoginRecords          *LoginRecordQuery
+	withRenewalAgreements     *RenewalAgreementQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -725,6 +727,28 @@ func (uq *UserQuery) QueryLoginRecords() *LoginRecordQuery {
 	return query
 }
 
+// QueryRenewalAgreements chains the current query on the "renewal_agreements" edge.
+func (uq *UserQuery) QueryRenewalAgreements() *RenewalAgreementQuery {
+	query := (&RenewalAgreementClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(renewalagreement.Table, renewalagreement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RenewalAgreementsTable, user.RenewalAgreementsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -945,6 +969,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withConsumeMissionOrders:  uq.withConsumeMissionOrders.Clone(),
 		withProduceMissionOrders:  uq.withProduceMissionOrders.Clone(),
 		withLoginRecords:          uq.withLoginRecords.Clone(),
+		withRenewalAgreements:     uq.withRenewalAgreements.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1259,6 +1284,17 @@ func (uq *UserQuery) WithLoginRecords(opts ...func(*LoginRecordQuery)) *UserQuer
 	return uq
 }
 
+// WithRenewalAgreements tells the query-builder to eager-load the nodes that are connected to
+// the "renewal_agreements" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithRenewalAgreements(opts ...func(*RenewalAgreementQuery)) *UserQuery {
+	query := (&RenewalAgreementClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withRenewalAgreements = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1337,7 +1373,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [28]bool{
+		loadedTypes = [29]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1366,6 +1402,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withConsumeMissionOrders != nil,
 			uq.withProduceMissionOrders != nil,
 			uq.withLoginRecords != nil,
+			uq.withRenewalAgreements != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1586,6 +1623,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadLoginRecords(ctx, query, nodes,
 			func(n *User) { n.Edges.LoginRecords = []*LoginRecord{} },
 			func(n *User, e *LoginRecord) { n.Edges.LoginRecords = append(n.Edges.LoginRecords, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withRenewalAgreements; query != nil {
+		if err := uq.loadRenewalAgreements(ctx, query, nodes,
+			func(n *User) { n.Edges.RenewalAgreements = []*RenewalAgreement{} },
+			func(n *User, e *RenewalAgreement) { n.Edges.RenewalAgreements = append(n.Edges.RenewalAgreements, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2411,6 +2455,36 @@ func (uq *UserQuery) loadLoginRecords(ctx context.Context, query *LoginRecordQue
 	}
 	query.Where(predicate.LoginRecord(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.LoginRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadRenewalAgreements(ctx context.Context, query *RenewalAgreementQuery, nodes []*User, init func(*User), assign func(*User, *RenewalAgreement)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(renewalagreement.FieldUserID)
+	}
+	query.Where(predicate.RenewalAgreement(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.RenewalAgreementsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

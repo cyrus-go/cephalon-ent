@@ -1181,6 +1181,45 @@ var (
 			},
 		},
 	}
+	// RenewalAgreementsColumns holds the columns for the "renewal_agreements" table.
+	RenewalAgreementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64},
+		{Name: "created_by", Type: field.TypeInt64, Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "next_pay_time", Type: field.TypeTime, Comment: "下次扣款时间"},
+		{Name: "type", Type: field.TypeEnum, Comment: "自动续费类型（按小时、按天等）", Enums: []string{"unknow", "hour", "day", "month"}, Default: "unknow"},
+		{Name: "sub_status", Type: field.TypeEnum, Comment: "订阅自动续费状态（订阅中、已结束等）", Enums: []string{"unknow", "subscribing", "finished"}, Default: "unknow"},
+		{Name: "pay_status", Type: field.TypeEnum, Comment: "支付状态（待支付、已支付、支付失败等）", Enums: []string{"unknow", "waiting", "succeed", "failed"}, Default: "unknow"},
+		{Name: "first_pay", Type: field.TypeInt64, Comment: "首次扣款价格", Default: 0},
+		{Name: "after_pay", Type: field.TypeInt64, Comment: "后续扣款价格", Default: 0},
+		{Name: "sub_finished_time", Type: field.TypeTime, Comment: "订阅自动续费结束时间"},
+		{Name: "mission_id", Type: field.TypeInt64, Comment: "外键任务 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
+	}
+	// RenewalAgreementsTable holds the schema information for the "renewal_agreements" table.
+	RenewalAgreementsTable = &schema.Table{
+		Name:       "renewal_agreements",
+		Comment:    "自动续费协议",
+		Columns:    RenewalAgreementsColumns,
+		PrimaryKey: []*schema.Column{RenewalAgreementsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "renewal_agreements_missions_renewal_agreements",
+				Columns:    []*schema.Column{RenewalAgreementsColumns[13]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "renewal_agreements_users_renewal_agreements",
+				Columns:    []*schema.Column{RenewalAgreementsColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// SymbolsColumns holds the columns for the "symbols" table.
 	SymbolsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64},
@@ -1459,6 +1498,7 @@ var (
 		ProfitSettingsTable,
 		RechargeCampaignRulesTable,
 		RechargeOrdersTable,
+		RenewalAgreementsTable,
 		SymbolsTable,
 		TransferOrdersTable,
 		UsersTable,
@@ -1559,6 +1599,9 @@ func init() {
 	RechargeOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	RechargeOrdersTable.ForeignKeys[2].RefTable = VxSocialsTable
 	RechargeOrdersTable.Annotation = &entsql.Annotation{}
+	RenewalAgreementsTable.ForeignKeys[0].RefTable = MissionsTable
+	RenewalAgreementsTable.ForeignKeys[1].RefTable = UsersTable
+	RenewalAgreementsTable.Annotation = &entsql.Annotation{}
 	SymbolsTable.Annotation = &entsql.Annotation{}
 	TransferOrdersTable.ForeignKeys[0].RefTable = SymbolsTable
 	TransferOrdersTable.ForeignKeys[1].RefTable = UsersTable

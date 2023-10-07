@@ -21,6 +21,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
@@ -40,6 +41,7 @@ type MissionQuery struct {
 	withMissionBatch         *MissionBatchQuery
 	withMissionProductions   *MissionProductionQuery
 	withMissionOrders        *MissionOrderQuery
+	withRenewalAgreements    *RenewalAgreementQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -274,6 +276,28 @@ func (mq *MissionQuery) QueryMissionOrders() *MissionOrderQuery {
 	return query
 }
 
+// QueryRenewalAgreements chains the current query on the "renewal_agreements" edge.
+func (mq *MissionQuery) QueryRenewalAgreements() *RenewalAgreementQuery {
+	query := (&RenewalAgreementClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(renewalagreement.Table, renewalagreement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.RenewalAgreementsTable, mission.RenewalAgreementsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Mission entity from the query.
 // Returns a *NotFoundError when no Mission was found.
 func (mq *MissionQuery) First(ctx context.Context) (*Mission, error) {
@@ -475,6 +499,7 @@ func (mq *MissionQuery) Clone() *MissionQuery {
 		withMissionBatch:         mq.withMissionBatch.Clone(),
 		withMissionProductions:   mq.withMissionProductions.Clone(),
 		withMissionOrders:        mq.withMissionOrders.Clone(),
+		withRenewalAgreements:    mq.withRenewalAgreements.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -580,6 +605,17 @@ func (mq *MissionQuery) WithMissionOrders(opts ...func(*MissionOrderQuery)) *Mis
 	return mq
 }
 
+// WithRenewalAgreements tells the query-builder to eager-load the nodes that are connected to
+// the "renewal_agreements" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithRenewalAgreements(opts ...func(*RenewalAgreementQuery)) *MissionQuery {
+	query := (&RenewalAgreementClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withRenewalAgreements = query
+	return mq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -658,7 +694,7 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 	var (
 		nodes       = []*Mission{}
 		_spec       = mq.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			mq.withMissionKind != nil,
 			mq.withUser != nil,
 			mq.withMissionKeyPairs != nil,
@@ -668,6 +704,7 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 			mq.withMissionBatch != nil,
 			mq.withMissionProductions != nil,
 			mq.withMissionOrders != nil,
+			mq.withRenewalAgreements != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -747,6 +784,15 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 		if err := mq.loadMissionOrders(ctx, query, nodes,
 			func(n *Mission) { n.Edges.MissionOrders = []*MissionOrder{} },
 			func(n *Mission, e *MissionOrder) { n.Edges.MissionOrders = append(n.Edges.MissionOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withRenewalAgreements; query != nil {
+		if err := mq.loadRenewalAgreements(ctx, query, nodes,
+			func(n *Mission) { n.Edges.RenewalAgreements = []*RenewalAgreement{} },
+			func(n *Mission, e *RenewalAgreement) {
+				n.Edges.RenewalAgreements = append(n.Edges.RenewalAgreements, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -1002,6 +1048,36 @@ func (mq *MissionQuery) loadMissionOrders(ctx context.Context, query *MissionOrd
 	}
 	query.Where(predicate.MissionOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(mission.MissionOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mq *MissionQuery) loadRenewalAgreements(ctx context.Context, query *RenewalAgreementQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *RenewalAgreement)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(renewalagreement.FieldMissionID)
+	}
+	query.Where(predicate.RenewalAgreement(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.RenewalAgreementsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

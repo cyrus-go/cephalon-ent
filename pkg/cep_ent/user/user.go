@@ -101,6 +101,8 @@ const (
 	EdgeProduceMissionOrders = "produce_mission_orders"
 	// EdgeLoginRecords holds the string denoting the login_records edge name in mutations.
 	EdgeLoginRecords = "login_records"
+	// EdgeRenewalAgreements holds the string denoting the renewal_agreements edge name in mutations.
+	EdgeRenewalAgreements = "renewal_agreements"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -293,6 +295,13 @@ const (
 	LoginRecordsInverseTable = "login_records"
 	// LoginRecordsColumn is the table column denoting the login_records relation/edge.
 	LoginRecordsColumn = "user_id"
+	// RenewalAgreementsTable is the table that holds the renewal_agreements relation/edge.
+	RenewalAgreementsTable = "renewal_agreements"
+	// RenewalAgreementsInverseTable is the table name for the RenewalAgreement entity.
+	// It exists in this package in order to avoid circular dependency with the "renewalagreement" package.
+	RenewalAgreementsInverseTable = "renewal_agreements"
+	// RenewalAgreementsColumn is the table column denoting the renewal_agreements relation/edge.
+	RenewalAgreementsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -839,6 +848,20 @@ func ByLoginRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newLoginRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRenewalAgreementsCount orders the results by renewal_agreements count.
+func ByRenewalAgreementsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRenewalAgreementsStep(), opts...)
+	}
+}
+
+// ByRenewalAgreements orders the results by renewal_agreements terms.
+func ByRenewalAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRenewalAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1033,5 +1056,12 @@ func newLoginRecordsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LoginRecordsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LoginRecordsTable, LoginRecordsColumn),
+	)
+}
+func newRenewalAgreementsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RenewalAgreementsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
 	)
 }

@@ -20,6 +20,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -527,6 +528,21 @@ func (mc *MissionCreate) AddMissionOrders(m ...*MissionOrder) *MissionCreate {
 		ids[i] = m[i].ID
 	}
 	return mc.AddMissionOrderIDs(ids...)
+}
+
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (mc *MissionCreate) AddRenewalAgreementIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddRenewalAgreementIDs(ids...)
+	return mc
+}
+
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (mc *MissionCreate) AddRenewalAgreements(r ...*RenewalAgreement) *MissionCreate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return mc.AddRenewalAgreementIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -1066,6 +1082,22 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

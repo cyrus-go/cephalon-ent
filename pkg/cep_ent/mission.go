@@ -106,9 +106,11 @@ type MissionEdges struct {
 	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
 	// MissionOrders holds the value of the mission_orders edge.
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
+	// RenewalAgreements holds the value of the renewal_agreements edge.
+	RenewalAgreements []*RenewalAgreement `json:"renewal_agreements,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 }
 
 // MissionKindOrErr returns the MissionKind value or an error if the edge
@@ -210,6 +212,15 @@ func (e MissionEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
 		return e.MissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_orders"}
+}
+
+// RenewalAgreementsOrErr returns the RenewalAgreements value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
+	if e.loadedTypes[9] {
+		return e.RenewalAgreements, nil
+	}
+	return nil, &NotLoadedError{edge: "renewal_agreements"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -473,6 +484,11 @@ func (m *Mission) QueryMissionProductions() *MissionProductionQuery {
 // QueryMissionOrders queries the "mission_orders" edge of the Mission entity.
 func (m *Mission) QueryMissionOrders() *MissionOrderQuery {
 	return NewMissionClient(m.config).QueryMissionOrders(m)
+}
+
+// QueryRenewalAgreements queries the "renewal_agreements" edge of the Mission entity.
+func (m *Mission) QueryRenewalAgreements() *RenewalAgreementQuery {
+	return NewMissionClient(m.config).QueryRenewalAgreements(m)
 }
 
 // Update returns a builder for updating this Mission.

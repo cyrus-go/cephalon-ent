@@ -30,6 +30,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -671,6 +672,21 @@ func (uu *UserUpdate) AddLoginRecords(l ...*LoginRecord) *UserUpdate {
 	return uu.AddLoginRecordIDs(ids...)
 }
 
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (uu *UserUpdate) AddRenewalAgreementIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddRenewalAgreementIDs(ids...)
+	return uu
+}
+
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (uu *UserUpdate) AddRenewalAgreements(r ...*RenewalAgreement) *UserUpdate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddRenewalAgreementIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1217,6 +1233,27 @@ func (uu *UserUpdate) RemoveLoginRecords(l ...*LoginRecord) *UserUpdate {
 		ids[i] = l[i].ID
 	}
 	return uu.RemoveLoginRecordIDs(ids...)
+}
+
+// ClearRenewalAgreements clears all "renewal_agreements" edges to the RenewalAgreement entity.
+func (uu *UserUpdate) ClearRenewalAgreements() *UserUpdate {
+	uu.mutation.ClearRenewalAgreements()
+	return uu
+}
+
+// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to RenewalAgreement entities by IDs.
+func (uu *UserUpdate) RemoveRenewalAgreementIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveRenewalAgreementIDs(ids...)
+	return uu
+}
+
+// RemoveRenewalAgreements removes "renewal_agreements" edges to RenewalAgreement entities.
+func (uu *UserUpdate) RemoveRenewalAgreements(r ...*RenewalAgreement) *UserUpdate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveRenewalAgreementIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2537,6 +2574,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedRenewalAgreementsIDs(); len(nodes) > 0 && !uu.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -3177,6 +3259,21 @@ func (uuo *UserUpdateOne) AddLoginRecords(l ...*LoginRecord) *UserUpdateOne {
 	return uuo.AddLoginRecordIDs(ids...)
 }
 
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (uuo *UserUpdateOne) AddRenewalAgreementIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddRenewalAgreementIDs(ids...)
+	return uuo
+}
+
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (uuo *UserUpdateOne) AddRenewalAgreements(r ...*RenewalAgreement) *UserUpdateOne {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddRenewalAgreementIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -3723,6 +3820,27 @@ func (uuo *UserUpdateOne) RemoveLoginRecords(l ...*LoginRecord) *UserUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return uuo.RemoveLoginRecordIDs(ids...)
+}
+
+// ClearRenewalAgreements clears all "renewal_agreements" edges to the RenewalAgreement entity.
+func (uuo *UserUpdateOne) ClearRenewalAgreements() *UserUpdateOne {
+	uuo.mutation.ClearRenewalAgreements()
+	return uuo
+}
+
+// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to RenewalAgreement entities by IDs.
+func (uuo *UserUpdateOne) RemoveRenewalAgreementIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveRenewalAgreementIDs(ids...)
+	return uuo
+}
+
+// RemoveRenewalAgreements removes "renewal_agreements" edges to RenewalAgreement entities.
+func (uuo *UserUpdateOne) RemoveRenewalAgreements(r ...*RenewalAgreement) *UserUpdateOne {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveRenewalAgreementIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -5066,6 +5184,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(loginrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedRenewalAgreementsIDs(); len(nodes) > 0 && !uuo.mutation.RenewalAgreementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RenewalAgreementsTable,
+			Columns: []string{user.RenewalAgreementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
