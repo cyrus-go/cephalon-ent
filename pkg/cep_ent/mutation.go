@@ -41839,6 +41839,8 @@ type RenewalAgreementMutation struct {
 	_type             *renewalagreement.Type
 	sub_status        *renewalagreement.SubStatus
 	pay_status        *renewalagreement.PayStatus
+	symbol_id         *int64
+	addsymbol_id      *int64
 	first_pay         *int64
 	addfirst_pay      *int64
 	after_pay         *int64
@@ -42322,6 +42324,62 @@ func (m *RenewalAgreementMutation) ResetPayStatus() {
 	m.pay_status = nil
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (m *RenewalAgreementMutation) SetSymbolID(i int64) {
+	m.symbol_id = &i
+	m.addsymbol_id = nil
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *RenewalAgreementMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (m *RenewalAgreementMutation) AddSymbolID(i int64) {
+	if m.addsymbol_id != nil {
+		*m.addsymbol_id += i
+	} else {
+		m.addsymbol_id = &i
+	}
+}
+
+// AddedSymbolID returns the value that was added to the "symbol_id" field in this mutation.
+func (m *RenewalAgreementMutation) AddedSymbolID() (r int64, exists bool) {
+	v := m.addsymbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *RenewalAgreementMutation) ResetSymbolID() {
+	m.symbol_id = nil
+	m.addsymbol_id = nil
+}
+
 // SetFirstPay sets the "first_pay" field.
 func (m *RenewalAgreementMutation) SetFirstPay(i int64) {
 	m.first_pay = &i
@@ -42630,7 +42688,7 @@ func (m *RenewalAgreementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RenewalAgreementMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, renewalagreement.FieldCreatedBy)
 	}
@@ -42657,6 +42715,9 @@ func (m *RenewalAgreementMutation) Fields() []string {
 	}
 	if m.pay_status != nil {
 		fields = append(fields, renewalagreement.FieldPayStatus)
+	}
+	if m.symbol_id != nil {
+		fields = append(fields, renewalagreement.FieldSymbolID)
 	}
 	if m.first_pay != nil {
 		fields = append(fields, renewalagreement.FieldFirstPay)
@@ -42699,6 +42760,8 @@ func (m *RenewalAgreementMutation) Field(name string) (ent.Value, bool) {
 		return m.SubStatus()
 	case renewalagreement.FieldPayStatus:
 		return m.PayStatus()
+	case renewalagreement.FieldSymbolID:
+		return m.SymbolID()
 	case renewalagreement.FieldFirstPay:
 		return m.FirstPay()
 	case renewalagreement.FieldAfterPay:
@@ -42736,6 +42799,8 @@ func (m *RenewalAgreementMutation) OldField(ctx context.Context, name string) (e
 		return m.OldSubStatus(ctx)
 	case renewalagreement.FieldPayStatus:
 		return m.OldPayStatus(ctx)
+	case renewalagreement.FieldSymbolID:
+		return m.OldSymbolID(ctx)
 	case renewalagreement.FieldFirstPay:
 		return m.OldFirstPay(ctx)
 	case renewalagreement.FieldAfterPay:
@@ -42818,6 +42883,13 @@ func (m *RenewalAgreementMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetPayStatus(v)
 		return nil
+	case renewalagreement.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
 	case renewalagreement.FieldFirstPay:
 		v, ok := value.(int64)
 		if !ok {
@@ -42867,6 +42939,9 @@ func (m *RenewalAgreementMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, renewalagreement.FieldUpdatedBy)
 	}
+	if m.addsymbol_id != nil {
+		fields = append(fields, renewalagreement.FieldSymbolID)
+	}
 	if m.addfirst_pay != nil {
 		fields = append(fields, renewalagreement.FieldFirstPay)
 	}
@@ -42885,6 +42960,8 @@ func (m *RenewalAgreementMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case renewalagreement.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case renewalagreement.FieldSymbolID:
+		return m.AddedSymbolID()
 	case renewalagreement.FieldFirstPay:
 		return m.AddedFirstPay()
 	case renewalagreement.FieldAfterPay:
@@ -42911,6 +42988,13 @@ func (m *RenewalAgreementMutation) AddField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
+		return nil
+	case renewalagreement.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSymbolID(v)
 		return nil
 	case renewalagreement.FieldFirstPay:
 		v, ok := value.(int64)
@@ -42979,6 +43063,9 @@ func (m *RenewalAgreementMutation) ResetField(name string) error {
 		return nil
 	case renewalagreement.FieldPayStatus:
 		m.ResetPayStatus()
+		return nil
+	case renewalagreement.FieldSymbolID:
+		m.ResetSymbolID()
 		return nil
 	case renewalagreement.FieldFirstPay:
 		m.ResetFirstPay()

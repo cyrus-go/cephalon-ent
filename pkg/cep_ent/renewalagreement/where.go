@@ -85,6 +85,11 @@ func NextPayTime(v time.Time) predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(sql.FieldEQ(FieldNextPayTime, v))
 }
 
+// SymbolID applies equality check predicate on the "symbol_id" field. It's identical to SymbolIDEQ.
+func SymbolID(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldSymbolID, v))
+}
+
 // FirstPay applies equality check predicate on the "first_pay" field. It's identical to FirstPayEQ.
 func FirstPay(v int64) predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(sql.FieldEQ(FieldFirstPay, v))
@@ -408,6 +413,46 @@ func PayStatusIn(vs ...PayStatus) predicate.RenewalAgreement {
 // PayStatusNotIn applies the NotIn predicate on the "pay_status" field.
 func PayStatusNotIn(vs ...PayStatus) predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(sql.FieldNotIn(FieldPayStatus, vs...))
+}
+
+// SymbolIDEQ applies the EQ predicate on the "symbol_id" field.
+func SymbolIDEQ(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldSymbolID, v))
+}
+
+// SymbolIDNEQ applies the NEQ predicate on the "symbol_id" field.
+func SymbolIDNEQ(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldNEQ(FieldSymbolID, v))
+}
+
+// SymbolIDIn applies the In predicate on the "symbol_id" field.
+func SymbolIDIn(vs ...int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
+func SymbolIDNotIn(vs ...int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// SymbolIDGT applies the GT predicate on the "symbol_id" field.
+func SymbolIDGT(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldGT(FieldSymbolID, v))
+}
+
+// SymbolIDGTE applies the GTE predicate on the "symbol_id" field.
+func SymbolIDGTE(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldGTE(FieldSymbolID, v))
+}
+
+// SymbolIDLT applies the LT predicate on the "symbol_id" field.
+func SymbolIDLT(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldLT(FieldSymbolID, v))
+}
+
+// SymbolIDLTE applies the LTE predicate on the "symbol_id" field.
+func SymbolIDLTE(v int64) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldLTE(FieldSymbolID, v))
 }
 
 // FirstPayEQ applies the EQ predicate on the "first_pay" field.

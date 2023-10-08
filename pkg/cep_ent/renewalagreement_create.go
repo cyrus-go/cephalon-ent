@@ -150,6 +150,20 @@ func (rac *RenewalAgreementCreate) SetNillablePayStatus(rs *renewalagreement.Pay
 	return rac
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (rac *RenewalAgreementCreate) SetSymbolID(i int64) *RenewalAgreementCreate {
+	rac.mutation.SetSymbolID(i)
+	return rac
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (rac *RenewalAgreementCreate) SetNillableSymbolID(i *int64) *RenewalAgreementCreate {
+	if i != nil {
+		rac.SetSymbolID(*i)
+	}
+	return rac
+}
+
 // SetFirstPay sets the "first_pay" field.
 func (rac *RenewalAgreementCreate) SetFirstPay(i int64) *RenewalAgreementCreate {
 	rac.mutation.SetFirstPay(i)
@@ -315,6 +329,10 @@ func (rac *RenewalAgreementCreate) defaults() {
 		v := renewalagreement.DefaultPayStatus
 		rac.mutation.SetPayStatus(v)
 	}
+	if _, ok := rac.mutation.SymbolID(); !ok {
+		v := renewalagreement.DefaultSymbolID
+		rac.mutation.SetSymbolID(v)
+	}
 	if _, ok := rac.mutation.FirstPay(); !ok {
 		v := renewalagreement.DefaultFirstPay
 		rac.mutation.SetFirstPay(v)
@@ -384,6 +402,9 @@ func (rac *RenewalAgreementCreate) check() error {
 		if err := renewalagreement.PayStatusValidator(v); err != nil {
 			return &ValidationError{Name: "pay_status", err: fmt.Errorf(`cep_ent: validator failed for field "RenewalAgreement.pay_status": %w`, err)}
 		}
+	}
+	if _, ok := rac.mutation.SymbolID(); !ok {
+		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "RenewalAgreement.symbol_id"`)}
 	}
 	if _, ok := rac.mutation.FirstPay(); !ok {
 		return &ValidationError{Name: "first_pay", err: errors.New(`cep_ent: missing required field "RenewalAgreement.first_pay"`)}
@@ -474,6 +495,10 @@ func (rac *RenewalAgreementCreate) createSpec() (*RenewalAgreement, *sqlgraph.Cr
 	if value, ok := rac.mutation.PayStatus(); ok {
 		_spec.SetField(renewalagreement.FieldPayStatus, field.TypeEnum, value)
 		_node.PayStatus = value
+	}
+	if value, ok := rac.mutation.SymbolID(); ok {
+		_spec.SetField(renewalagreement.FieldSymbolID, field.TypeInt64, value)
+		_node.SymbolID = value
 	}
 	if value, ok := rac.mutation.FirstPay(); ok {
 		_spec.SetField(renewalagreement.FieldFirstPay, field.TypeInt64, value)
@@ -678,6 +703,24 @@ func (u *RenewalAgreementUpsert) SetPayStatus(v renewalagreement.PayStatus) *Ren
 // UpdatePayStatus sets the "pay_status" field to the value that was provided on create.
 func (u *RenewalAgreementUpsert) UpdatePayStatus() *RenewalAgreementUpsert {
 	u.SetExcluded(renewalagreement.FieldPayStatus)
+	return u
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *RenewalAgreementUpsert) SetSymbolID(v int64) *RenewalAgreementUpsert {
+	u.Set(renewalagreement.FieldSymbolID, v)
+	return u
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *RenewalAgreementUpsert) UpdateSymbolID() *RenewalAgreementUpsert {
+	u.SetExcluded(renewalagreement.FieldSymbolID)
+	return u
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *RenewalAgreementUpsert) AddSymbolID(v int64) *RenewalAgreementUpsert {
+	u.Add(renewalagreement.FieldSymbolID, v)
 	return u
 }
 
@@ -927,6 +970,27 @@ func (u *RenewalAgreementUpsertOne) SetPayStatus(v renewalagreement.PayStatus) *
 func (u *RenewalAgreementUpsertOne) UpdatePayStatus() *RenewalAgreementUpsertOne {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.UpdatePayStatus()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *RenewalAgreementUpsertOne) SetSymbolID(v int64) *RenewalAgreementUpsertOne {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *RenewalAgreementUpsertOne) AddSymbolID(v int64) *RenewalAgreementUpsertOne {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.AddSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *RenewalAgreementUpsertOne) UpdateSymbolID() *RenewalAgreementUpsertOne {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.UpdateSymbolID()
 	})
 }
 
@@ -1354,6 +1418,27 @@ func (u *RenewalAgreementUpsertBulk) SetPayStatus(v renewalagreement.PayStatus) 
 func (u *RenewalAgreementUpsertBulk) UpdatePayStatus() *RenewalAgreementUpsertBulk {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.UpdatePayStatus()
+	})
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (u *RenewalAgreementUpsertBulk) SetSymbolID(v int64) *RenewalAgreementUpsertBulk {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.SetSymbolID(v)
+	})
+}
+
+// AddSymbolID adds v to the "symbol_id" field.
+func (u *RenewalAgreementUpsertBulk) AddSymbolID(v int64) *RenewalAgreementUpsertBulk {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.AddSymbolID(v)
+	})
+}
+
+// UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
+func (u *RenewalAgreementUpsertBulk) UpdateSymbolID() *RenewalAgreementUpsertBulk {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.UpdateSymbolID()
 	})
 }
 

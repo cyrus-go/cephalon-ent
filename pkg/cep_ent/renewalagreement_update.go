@@ -148,6 +148,27 @@ func (rau *RenewalAgreementUpdate) SetNillablePayStatus(rs *renewalagreement.Pay
 	return rau
 }
 
+// SetSymbolID sets the "symbol_id" field.
+func (rau *RenewalAgreementUpdate) SetSymbolID(i int64) *RenewalAgreementUpdate {
+	rau.mutation.ResetSymbolID()
+	rau.mutation.SetSymbolID(i)
+	return rau
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (rau *RenewalAgreementUpdate) SetNillableSymbolID(i *int64) *RenewalAgreementUpdate {
+	if i != nil {
+		rau.SetSymbolID(*i)
+	}
+	return rau
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (rau *RenewalAgreementUpdate) AddSymbolID(i int64) *RenewalAgreementUpdate {
+	rau.mutation.AddSymbolID(i)
+	return rau
+}
+
 // SetFirstPay sets the "first_pay" field.
 func (rau *RenewalAgreementUpdate) SetFirstPay(i int64) *RenewalAgreementUpdate {
 	rau.mutation.ResetFirstPay()
@@ -363,6 +384,12 @@ func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err erro
 	if value, ok := rau.mutation.PayStatus(); ok {
 		_spec.SetField(renewalagreement.FieldPayStatus, field.TypeEnum, value)
 	}
+	if value, ok := rau.mutation.SymbolID(); ok {
+		_spec.SetField(renewalagreement.FieldSymbolID, field.TypeInt64, value)
+	}
+	if value, ok := rau.mutation.AddedSymbolID(); ok {
+		_spec.AddField(renewalagreement.FieldSymbolID, field.TypeInt64, value)
+	}
 	if value, ok := rau.mutation.FirstPay(); ok {
 		_spec.SetField(renewalagreement.FieldFirstPay, field.TypeInt64, value)
 	}
@@ -571,6 +598,27 @@ func (rauo *RenewalAgreementUpdateOne) SetNillablePayStatus(rs *renewalagreement
 	if rs != nil {
 		rauo.SetPayStatus(*rs)
 	}
+	return rauo
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (rauo *RenewalAgreementUpdateOne) SetSymbolID(i int64) *RenewalAgreementUpdateOne {
+	rauo.mutation.ResetSymbolID()
+	rauo.mutation.SetSymbolID(i)
+	return rauo
+}
+
+// SetNillableSymbolID sets the "symbol_id" field if the given value is not nil.
+func (rauo *RenewalAgreementUpdateOne) SetNillableSymbolID(i *int64) *RenewalAgreementUpdateOne {
+	if i != nil {
+		rauo.SetSymbolID(*i)
+	}
+	return rauo
+}
+
+// AddSymbolID adds i to the "symbol_id" field.
+func (rauo *RenewalAgreementUpdateOne) AddSymbolID(i int64) *RenewalAgreementUpdateOne {
+	rauo.mutation.AddSymbolID(i)
 	return rauo
 }
 
@@ -818,6 +866,12 @@ func (rauo *RenewalAgreementUpdateOne) sqlSave(ctx context.Context) (_node *Rene
 	}
 	if value, ok := rauo.mutation.PayStatus(); ok {
 		_spec.SetField(renewalagreement.FieldPayStatus, field.TypeEnum, value)
+	}
+	if value, ok := rauo.mutation.SymbolID(); ok {
+		_spec.SetField(renewalagreement.FieldSymbolID, field.TypeInt64, value)
+	}
+	if value, ok := rauo.mutation.AddedSymbolID(); ok {
+		_spec.AddField(renewalagreement.FieldSymbolID, field.TypeInt64, value)
 	}
 	if value, ok := rauo.mutation.FirstPay(); ok {
 		_spec.SetField(renewalagreement.FieldFirstPay, field.TypeInt64, value)

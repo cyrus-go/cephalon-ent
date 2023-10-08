@@ -33,6 +33,8 @@ const (
 	FieldSubStatus = "sub_status"
 	// FieldPayStatus holds the string denoting the pay_status field in the database.
 	FieldPayStatus = "pay_status"
+	// FieldSymbolID holds the string denoting the symbol_id field in the database.
+	FieldSymbolID = "symbol_id"
 	// FieldFirstPay holds the string denoting the first_pay field in the database.
 	FieldFirstPay = "first_pay"
 	// FieldAfterPay holds the string denoting the after_pay field in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldType,
 	FieldSubStatus,
 	FieldPayStatus,
+	FieldSymbolID,
 	FieldFirstPay,
 	FieldAfterPay,
 	FieldSubFinishedTime,
@@ -109,6 +112,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultNextPayTime holds the default value on creation for the "next_pay_time" field.
 	DefaultNextPayTime time.Time
+	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
+	DefaultSymbolID int64
 	// DefaultFirstPay holds the default value on creation for the "first_pay" field.
 	DefaultFirstPay int64
 	// DefaultAfterPay holds the default value on creation for the "after_pay" field.
@@ -257,6 +262,11 @@ func BySubStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByPayStatus orders the results by the pay_status field.
 func ByPayStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPayStatus, opts...).ToFunc()
+}
+
+// BySymbolID orders the results by the symbol_id field.
+func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
 }
 
 // ByFirstPay orders the results by the first_pay field.

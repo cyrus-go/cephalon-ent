@@ -1193,6 +1193,7 @@ var (
 		{Name: "type", Type: field.TypeEnum, Comment: "自动续费类型（按小时、按天等）", Enums: []string{"unknow", "hour", "day", "month"}, Default: "unknow"},
 		{Name: "sub_status", Type: field.TypeEnum, Comment: "订阅自动续费状态（订阅中、已结束等）", Enums: []string{"unknow", "subscribing", "finished"}, Default: "unknow"},
 		{Name: "pay_status", Type: field.TypeEnum, Comment: "支付状态（待支付、已支付、支付失败等）", Enums: []string{"unknow", "waiting", "succeed", "failed"}, Default: "unknow"},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "first_pay", Type: field.TypeInt64, Comment: "首次扣款价格", Default: 0},
 		{Name: "after_pay", Type: field.TypeInt64, Comment: "后续扣款价格", Default: 0},
 		{Name: "sub_finished_time", Type: field.TypeTime, Comment: "订阅自动续费结束时间"},
@@ -1208,13 +1209,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "renewal_agreements_missions_renewal_agreements",
-				Columns:    []*schema.Column{RenewalAgreementsColumns[13]},
+				Columns:    []*schema.Column{RenewalAgreementsColumns[14]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "renewal_agreements_users_renewal_agreements",
-				Columns:    []*schema.Column{RenewalAgreementsColumns[14]},
+				Columns:    []*schema.Column{RenewalAgreementsColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

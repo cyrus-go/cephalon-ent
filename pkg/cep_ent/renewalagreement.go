@@ -37,6 +37,8 @@ type RenewalAgreement struct {
 	SubStatus renewalagreement.SubStatus `json:"sub_status"`
 	// 支付状态（待支付、已支付、支付失败等）
 	PayStatus renewalagreement.PayStatus `json:"pay_status"`
+	// 币种 id
+	SymbolID int64 `json:"symbol_id"`
 	// 首次扣款价格
 	FirstPay int64 `json:"first_pay"`
 	// 后续扣款价格
@@ -95,7 +97,7 @@ func (*RenewalAgreement) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case renewalagreement.FieldID, renewalagreement.FieldCreatedBy, renewalagreement.FieldUpdatedBy, renewalagreement.FieldFirstPay, renewalagreement.FieldAfterPay, renewalagreement.FieldUserID, renewalagreement.FieldMissionID:
+		case renewalagreement.FieldID, renewalagreement.FieldCreatedBy, renewalagreement.FieldUpdatedBy, renewalagreement.FieldSymbolID, renewalagreement.FieldFirstPay, renewalagreement.FieldAfterPay, renewalagreement.FieldUserID, renewalagreement.FieldMissionID:
 			values[i] = new(sql.NullInt64)
 		case renewalagreement.FieldType, renewalagreement.FieldSubStatus, renewalagreement.FieldPayStatus:
 			values[i] = new(sql.NullString)
@@ -175,6 +177,12 @@ func (ra *RenewalAgreement) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field pay_status", values[i])
 			} else if value.Valid {
 				ra.PayStatus = renewalagreement.PayStatus(value.String)
+			}
+		case renewalagreement.FieldSymbolID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
+			} else if value.Valid {
+				ra.SymbolID = value.Int64
 			}
 		case renewalagreement.FieldFirstPay:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -278,6 +286,9 @@ func (ra *RenewalAgreement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("pay_status=")
 	builder.WriteString(fmt.Sprintf("%v", ra.PayStatus))
+	builder.WriteString(", ")
+	builder.WriteString("symbol_id=")
+	builder.WriteString(fmt.Sprintf("%v", ra.SymbolID))
 	builder.WriteString(", ")
 	builder.WriteString("first_pay=")
 	builder.WriteString(fmt.Sprintf("%v", ra.FirstPay))
