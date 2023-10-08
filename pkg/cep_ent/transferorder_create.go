@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // TransferOrderCreate is the builder for creating a TransferOrder entity.
@@ -167,15 +168,15 @@ func (toc *TransferOrderCreate) SetNillableAmount(i *int64) *TransferOrderCreate
 }
 
 // SetType sets the "type" field.
-func (toc *TransferOrderCreate) SetType(t transferorder.Type) *TransferOrderCreate {
-	toc.mutation.SetType(t)
+func (toc *TransferOrderCreate) SetType(eot enums.TransferOrderType) *TransferOrderCreate {
+	toc.mutation.SetType(eot)
 	return toc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (toc *TransferOrderCreate) SetNillableType(t *transferorder.Type) *TransferOrderCreate {
-	if t != nil {
-		toc.SetType(*t)
+func (toc *TransferOrderCreate) SetNillableType(eot *enums.TransferOrderType) *TransferOrderCreate {
+	if eot != nil {
+		toc.SetType(*eot)
 	}
 	return toc
 }
@@ -803,7 +804,7 @@ func (u *TransferOrderUpsert) AddAmount(v int64) *TransferOrderUpsert {
 }
 
 // SetType sets the "type" field.
-func (u *TransferOrderUpsert) SetType(v transferorder.Type) *TransferOrderUpsert {
+func (u *TransferOrderUpsert) SetType(v enums.TransferOrderType) *TransferOrderUpsert {
 	u.Set(transferorder.FieldType, v)
 	return u
 }
@@ -1067,7 +1068,7 @@ func (u *TransferOrderUpsertOne) UpdateAmount() *TransferOrderUpsertOne {
 }
 
 // SetType sets the "type" field.
-func (u *TransferOrderUpsertOne) SetType(v transferorder.Type) *TransferOrderUpsertOne {
+func (u *TransferOrderUpsertOne) SetType(v enums.TransferOrderType) *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.SetType(v)
 	})
@@ -1508,7 +1509,7 @@ func (u *TransferOrderUpsertBulk) UpdateAmount() *TransferOrderUpsertBulk {
 }
 
 // SetType sets the "type" field.
-func (u *TransferOrderUpsertBulk) SetType(v transferorder.Type) *TransferOrderUpsertBulk {
+func (u *TransferOrderUpsertBulk) SetType(v enums.TransferOrderType) *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.SetType(v)
 	})

@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 转账订单，谁给谁转了多少什么货币
@@ -41,7 +42,7 @@ type TransferOrder struct {
 	// 充值多少货币量
 	Amount int64 `json:"amount"`
 	// 充值订单的类型
-	Type transferorder.Type `json:"type"`
+	Type enums.TransferOrderType `json:"type"`
 	// 充值订单的序列号
 	SerialNumber string `json:"serial_number"`
 	// 关联充值来源的身份源 id
@@ -230,7 +231,7 @@ func (to *TransferOrder) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				to.Type = transferorder.Type(value.String)
+				to.Type = enums.TransferOrderType(value.String)
 			}
 		case transferorder.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {

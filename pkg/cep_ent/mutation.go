@@ -44120,7 +44120,7 @@ type TransferOrderMutation struct {
 	status             *transferorder.Status
 	amount             *int64
 	addamount          *int64
-	_type              *transferorder.Type
+	_type              *enums.TransferOrderType
 	serial_number      *string
 	third_api_resp     *string
 	out_transaction_id *string
@@ -44666,12 +44666,12 @@ func (m *TransferOrderMutation) ResetAmount() {
 }
 
 // SetType sets the "type" field.
-func (m *TransferOrderMutation) SetType(t transferorder.Type) {
-	m._type = &t
+func (m *TransferOrderMutation) SetType(eot enums.TransferOrderType) {
+	m._type = &eot
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *TransferOrderMutation) GetType() (r transferorder.Type, exists bool) {
+func (m *TransferOrderMutation) GetType() (r enums.TransferOrderType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -44682,7 +44682,7 @@ func (m *TransferOrderMutation) GetType() (r transferorder.Type, exists bool) {
 // OldType returns the old "type" field's value of the TransferOrder entity.
 // If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransferOrderMutation) OldType(ctx context.Context) (v transferorder.Type, err error) {
+func (m *TransferOrderMutation) OldType(ctx context.Context) (v enums.TransferOrderType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -45270,7 +45270,7 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 		m.SetAmount(v)
 		return nil
 	case transferorder.FieldType:
-		v, ok := value.(transferorder.Type)
+		v, ok := value.(enums.TransferOrderType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

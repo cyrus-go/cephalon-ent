@@ -17,6 +17,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // TransferOrderUpdate is the builder for updating TransferOrder entities.
@@ -172,15 +173,15 @@ func (tou *TransferOrderUpdate) AddAmount(i int64) *TransferOrderUpdate {
 }
 
 // SetType sets the "type" field.
-func (tou *TransferOrderUpdate) SetType(t transferorder.Type) *TransferOrderUpdate {
-	tou.mutation.SetType(t)
+func (tou *TransferOrderUpdate) SetType(eot enums.TransferOrderType) *TransferOrderUpdate {
+	tou.mutation.SetType(eot)
 	return tou
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tou *TransferOrderUpdate) SetNillableType(t *transferorder.Type) *TransferOrderUpdate {
-	if t != nil {
-		tou.SetType(*t)
+func (tou *TransferOrderUpdate) SetNillableType(eot *enums.TransferOrderType) *TransferOrderUpdate {
+	if eot != nil {
+		tou.SetType(*eot)
 	}
 	return tou
 }
@@ -778,15 +779,15 @@ func (touo *TransferOrderUpdateOne) AddAmount(i int64) *TransferOrderUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (touo *TransferOrderUpdateOne) SetType(t transferorder.Type) *TransferOrderUpdateOne {
-	touo.mutation.SetType(t)
+func (touo *TransferOrderUpdateOne) SetType(eot enums.TransferOrderType) *TransferOrderUpdateOne {
+	touo.mutation.SetType(eot)
 	return touo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (touo *TransferOrderUpdateOne) SetNillableType(t *transferorder.Type) *TransferOrderUpdateOne {
-	if t != nil {
-		touo.SetType(*t)
+func (touo *TransferOrderUpdateOne) SetNillableType(eot *enums.TransferOrderType) *TransferOrderUpdateOne {
+	if eot != nil {
+		touo.SetType(*eot)
 	}
 	return touo
 }

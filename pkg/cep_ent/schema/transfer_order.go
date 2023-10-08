@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // TransferOrder holds the schema definition for the TransferOrder entity.
@@ -20,7 +21,7 @@ func (TransferOrder) Fields() []ent.Field {
 		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("转账订单的状态，比如微信发起支付后可能没完成支付"),
 		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("充值多少货币量"),
-		field.Enum("type").Values("manual", "vx", "alipay", "unknown").Default("unknown").StructTag(`json:"type"`).Comment("充值订单的类型"),
+		field.Enum("type").GoType(enums.TransferOrderTypeRecharge).Default(string(enums.TransferOrderTypeUnknown)).StructTag(`json:"type"`).Comment("充值订单的类型"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("充值订单的序列号"),
 		field.Int64("social_id").Default(0).Optional().StructTag(`json:"social_id"`).Comment("关联充值来源的身份源 id"),
 		field.String("third_api_resp").Default("").StructTag(`json:"third_api_resp"`).Comment("第三方平台的返回，给到前端才能发起支付"),

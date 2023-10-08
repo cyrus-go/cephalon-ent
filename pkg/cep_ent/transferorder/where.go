@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -441,23 +442,33 @@ func AmountLTE(v int64) predicate.TransferOrder {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldEQ(FieldType, v))
+func TypeEQ(v enums.TransferOrderType) predicate.TransferOrder {
+	vc := v
+	return predicate.TransferOrder(sql.FieldEQ(FieldType, vc))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldNEQ(FieldType, v))
+func TypeNEQ(v enums.TransferOrderType) predicate.TransferOrder {
+	vc := v
+	return predicate.TransferOrder(sql.FieldNEQ(FieldType, vc))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldIn(FieldType, vs...))
+func TypeIn(vs ...enums.TransferOrderType) predicate.TransferOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TransferOrder(sql.FieldIn(FieldType, v...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.TransferOrder {
-	return predicate.TransferOrder(sql.FieldNotIn(FieldType, vs...))
+func TypeNotIn(vs ...enums.TransferOrderType) predicate.TransferOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TransferOrder(sql.FieldNotIn(FieldType, v...))
 }
 
 // SerialNumberEQ applies the EQ predicate on the "serial_number" field.

@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -185,28 +186,12 @@ func StatusValidator(s Status) error {
 	}
 }
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeUnknown is the default value of the Type enum.
-const DefaultType = TypeUnknown
-
-// Type values.
-const (
-	TypeManual  Type = "manual"
-	TypeVx      Type = "vx"
-	TypeAlipay  Type = "alipay"
-	TypeUnknown Type = "unknown"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
+const DefaultType enums.TransferOrderType = "unknown"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
+func TypeValidator(_type enums.TransferOrderType) error {
 	switch _type {
-	case TypeManual, TypeVx, TypeAlipay, TypeUnknown:
+	case "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual":
 		return nil
 	default:
 		return fmt.Errorf("transferorder: invalid enum value for type field: %q", _type)
