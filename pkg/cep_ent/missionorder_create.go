@@ -294,6 +294,20 @@ func (moc *MissionOrderCreate) SetNillableFinishedAt(t *time.Time) *MissionOrder
 	return moc
 }
 
+// SetBuyDuration sets the "buy_duration" field.
+func (moc *MissionOrderCreate) SetBuyDuration(i int64) *MissionOrderCreate {
+	moc.mutation.SetBuyDuration(i)
+	return moc
+}
+
+// SetNillableBuyDuration sets the "buy_duration" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableBuyDuration(i *int64) *MissionOrderCreate {
+	if i != nil {
+		moc.SetBuyDuration(*i)
+	}
+	return moc
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (moc *MissionOrderCreate) SetPlanStartedAt(t time.Time) *MissionOrderCreate {
 	moc.mutation.SetPlanStartedAt(t)
@@ -515,6 +529,10 @@ func (moc *MissionOrderCreate) defaults() {
 		v := missionorder.DefaultFinishedAt
 		moc.mutation.SetFinishedAt(v)
 	}
+	if _, ok := moc.mutation.BuyDuration(); !ok {
+		v := missionorder.DefaultBuyDuration
+		moc.mutation.SetBuyDuration(v)
+	}
 	if _, ok := moc.mutation.PlanStartedAt(); !ok {
 		v := missionorder.DefaultPlanStartedAt
 		moc.mutation.SetPlanStartedAt(v)
@@ -615,6 +633,9 @@ func (moc *MissionOrderCreate) check() error {
 	}
 	if _, ok := moc.mutation.FinishedAt(); !ok {
 		return &ValidationError{Name: "finished_at", err: errors.New(`cep_ent: missing required field "MissionOrder.finished_at"`)}
+	}
+	if _, ok := moc.mutation.BuyDuration(); !ok {
+		return &ValidationError{Name: "buy_duration", err: errors.New(`cep_ent: missing required field "MissionOrder.buy_duration"`)}
 	}
 	if _, ok := moc.mutation.MissionBatchID(); !ok {
 		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "MissionOrder.mission_batch_id"`)}
@@ -729,6 +750,10 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 	if value, ok := moc.mutation.FinishedAt(); ok {
 		_spec.SetField(missionorder.FieldFinishedAt, field.TypeTime, value)
 		_node.FinishedAt = value
+	}
+	if value, ok := moc.mutation.BuyDuration(); ok {
+		_spec.SetField(missionorder.FieldBuyDuration, field.TypeInt64, value)
+		_node.BuyDuration = value
 	}
 	if value, ok := moc.mutation.PlanStartedAt(); ok {
 		_spec.SetField(missionorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -1141,6 +1166,24 @@ func (u *MissionOrderUpsert) UpdateFinishedAt() *MissionOrderUpsert {
 	return u
 }
 
+// SetBuyDuration sets the "buy_duration" field.
+func (u *MissionOrderUpsert) SetBuyDuration(v int64) *MissionOrderUpsert {
+	u.Set(missionorder.FieldBuyDuration, v)
+	return u
+}
+
+// UpdateBuyDuration sets the "buy_duration" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateBuyDuration() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldBuyDuration)
+	return u
+}
+
+// AddBuyDuration adds v to the "buy_duration" field.
+func (u *MissionOrderUpsert) AddBuyDuration(v int64) *MissionOrderUpsert {
+	u.Add(missionorder.FieldBuyDuration, v)
+	return u
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (u *MissionOrderUpsert) SetPlanStartedAt(v time.Time) *MissionOrderUpsert {
 	u.Set(missionorder.FieldPlanStartedAt, v)
@@ -1536,6 +1579,27 @@ func (u *MissionOrderUpsertOne) SetFinishedAt(v time.Time) *MissionOrderUpsertOn
 func (u *MissionOrderUpsertOne) UpdateFinishedAt() *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateFinishedAt()
+	})
+}
+
+// SetBuyDuration sets the "buy_duration" field.
+func (u *MissionOrderUpsertOne) SetBuyDuration(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetBuyDuration(v)
+	})
+}
+
+// AddBuyDuration adds v to the "buy_duration" field.
+func (u *MissionOrderUpsertOne) AddBuyDuration(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddBuyDuration(v)
+	})
+}
+
+// UpdateBuyDuration sets the "buy_duration" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateBuyDuration() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateBuyDuration()
 	})
 }
 
@@ -2110,6 +2174,27 @@ func (u *MissionOrderUpsertBulk) SetFinishedAt(v time.Time) *MissionOrderUpsertB
 func (u *MissionOrderUpsertBulk) UpdateFinishedAt() *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateFinishedAt()
+	})
+}
+
+// SetBuyDuration sets the "buy_duration" field.
+func (u *MissionOrderUpsertBulk) SetBuyDuration(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetBuyDuration(v)
+	})
+}
+
+// AddBuyDuration adds v to the "buy_duration" field.
+func (u *MissionOrderUpsertBulk) AddBuyDuration(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddBuyDuration(v)
+	})
+}
+
+// UpdateBuyDuration sets the "buy_duration" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateBuyDuration() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateBuyDuration()
 	})
 }
 

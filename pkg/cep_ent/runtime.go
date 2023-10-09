@@ -1337,20 +1337,24 @@ func init() {
 	missionorderDescFinishedAt := missionorderFields[13].Descriptor()
 	// missionorder.DefaultFinishedAt holds the default value on creation for the finished_at field.
 	missionorder.DefaultFinishedAt = missionorderDescFinishedAt.Default.(time.Time)
+	// missionorderDescBuyDuration is the schema descriptor for buy_duration field.
+	missionorderDescBuyDuration := missionorderFields[14].Descriptor()
+	// missionorder.DefaultBuyDuration holds the default value on creation for the buy_duration field.
+	missionorder.DefaultBuyDuration = missionorderDescBuyDuration.Default.(int64)
 	// missionorderDescPlanStartedAt is the schema descriptor for plan_started_at field.
-	missionorderDescPlanStartedAt := missionorderFields[14].Descriptor()
+	missionorderDescPlanStartedAt := missionorderFields[15].Descriptor()
 	// missionorder.DefaultPlanStartedAt holds the default value on creation for the plan_started_at field.
 	missionorder.DefaultPlanStartedAt = missionorderDescPlanStartedAt.Default.(time.Time)
 	// missionorderDescPlanFinishedAt is the schema descriptor for plan_finished_at field.
-	missionorderDescPlanFinishedAt := missionorderFields[15].Descriptor()
+	missionorderDescPlanFinishedAt := missionorderFields[16].Descriptor()
 	// missionorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
 	missionorder.DefaultPlanFinishedAt = missionorderDescPlanFinishedAt.Default.(time.Time)
 	// missionorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	missionorderDescMissionBatchID := missionorderFields[16].Descriptor()
+	missionorderDescMissionBatchID := missionorderFields[17].Descriptor()
 	// missionorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	missionorder.DefaultMissionBatchID = missionorderDescMissionBatchID.Default.(int64)
 	// missionorderDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
-	missionorderDescMissionBatchNumber := missionorderFields[17].Descriptor()
+	missionorderDescMissionBatchNumber := missionorderFields[18].Descriptor()
 	// missionorder.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	missionorder.DefaultMissionBatchNumber = missionorderDescMissionBatchNumber.Default.(string)
 	// missionorderDescID is the schema descriptor for id field.

@@ -28640,6 +28640,8 @@ type MissionOrderMutation struct {
 	serial_number        *string
 	started_at           *time.Time
 	finished_at          *time.Time
+	buy_duration         *int64
+	addbuy_duration      *int64
 	plan_started_at      *time.Time
 	plan_finished_at     *time.Time
 	mission_batch_number *string
@@ -29550,6 +29552,62 @@ func (m *MissionOrderMutation) ResetFinishedAt() {
 	m.finished_at = nil
 }
 
+// SetBuyDuration sets the "buy_duration" field.
+func (m *MissionOrderMutation) SetBuyDuration(i int64) {
+	m.buy_duration = &i
+	m.addbuy_duration = nil
+}
+
+// BuyDuration returns the value of the "buy_duration" field in the mutation.
+func (m *MissionOrderMutation) BuyDuration() (r int64, exists bool) {
+	v := m.buy_duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBuyDuration returns the old "buy_duration" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldBuyDuration(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBuyDuration is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBuyDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBuyDuration: %w", err)
+	}
+	return oldValue.BuyDuration, nil
+}
+
+// AddBuyDuration adds i to the "buy_duration" field.
+func (m *MissionOrderMutation) AddBuyDuration(i int64) {
+	if m.addbuy_duration != nil {
+		*m.addbuy_duration += i
+	} else {
+		m.addbuy_duration = &i
+	}
+}
+
+// AddedBuyDuration returns the value that was added to the "buy_duration" field in this mutation.
+func (m *MissionOrderMutation) AddedBuyDuration() (r int64, exists bool) {
+	v := m.addbuy_duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBuyDuration resets all changes to the "buy_duration" field.
+func (m *MissionOrderMutation) ResetBuyDuration() {
+	m.buy_duration = nil
+	m.addbuy_duration = nil
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (m *MissionOrderMutation) SetPlanStartedAt(t time.Time) {
 	m.plan_started_at = &t
@@ -29943,7 +30001,7 @@ func (m *MissionOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionOrderMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_by != nil {
 		fields = append(fields, missionorder.FieldCreatedBy)
 	}
@@ -30000,6 +30058,9 @@ func (m *MissionOrderMutation) Fields() []string {
 	}
 	if m.finished_at != nil {
 		fields = append(fields, missionorder.FieldFinishedAt)
+	}
+	if m.buy_duration != nil {
+		fields = append(fields, missionorder.FieldBuyDuration)
 	}
 	if m.plan_started_at != nil {
 		fields = append(fields, missionorder.FieldPlanStartedAt)
@@ -30059,6 +30120,8 @@ func (m *MissionOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.StartedAt()
 	case missionorder.FieldFinishedAt:
 		return m.FinishedAt()
+	case missionorder.FieldBuyDuration:
+		return m.BuyDuration()
 	case missionorder.FieldPlanStartedAt:
 		return m.PlanStartedAt()
 	case missionorder.FieldPlanFinishedAt:
@@ -30114,6 +30177,8 @@ func (m *MissionOrderMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldStartedAt(ctx)
 	case missionorder.FieldFinishedAt:
 		return m.OldFinishedAt(ctx)
+	case missionorder.FieldBuyDuration:
+		return m.OldBuyDuration(ctx)
 	case missionorder.FieldPlanStartedAt:
 		return m.OldPlanStartedAt(ctx)
 	case missionorder.FieldPlanFinishedAt:
@@ -30264,6 +30329,13 @@ func (m *MissionOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetFinishedAt(v)
 		return nil
+	case missionorder.FieldBuyDuration:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBuyDuration(v)
+		return nil
 	case missionorder.FieldPlanStartedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -30315,6 +30387,9 @@ func (m *MissionOrderMutation) AddedFields() []string {
 	if m.addgas_amount != nil {
 		fields = append(fields, missionorder.FieldGasAmount)
 	}
+	if m.addbuy_duration != nil {
+		fields = append(fields, missionorder.FieldBuyDuration)
+	}
 	return fields
 }
 
@@ -30333,6 +30408,8 @@ func (m *MissionOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedProduceAmount()
 	case missionorder.FieldGasAmount:
 		return m.AddedGasAmount()
+	case missionorder.FieldBuyDuration:
+		return m.AddedBuyDuration()
 	}
 	return nil, false
 }
@@ -30376,6 +30453,13 @@ func (m *MissionOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddGasAmount(v)
+		return nil
+	case missionorder.FieldBuyDuration:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBuyDuration(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder numeric field %s", name)
@@ -30475,6 +30559,9 @@ func (m *MissionOrderMutation) ResetField(name string) error {
 		return nil
 	case missionorder.FieldFinishedAt:
 		m.ResetFinishedAt()
+		return nil
+	case missionorder.FieldBuyDuration:
+		m.ResetBuyDuration()
 		return nil
 	case missionorder.FieldPlanStartedAt:
 		m.ResetPlanStartedAt()

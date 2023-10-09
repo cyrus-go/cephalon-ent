@@ -54,6 +54,8 @@ const (
 	FieldStartedAt = "started_at"
 	// FieldFinishedAt holds the string denoting the finished_at field in the database.
 	FieldFinishedAt = "finished_at"
+	// FieldBuyDuration holds the string denoting the buy_duration field in the database.
+	FieldBuyDuration = "buy_duration"
 	// FieldPlanStartedAt holds the string denoting the plan_started_at field in the database.
 	FieldPlanStartedAt = "plan_started_at"
 	// FieldPlanFinishedAt holds the string denoting the plan_finished_at field in the database.
@@ -142,6 +144,7 @@ var Columns = []string{
 	FieldSerialNumber,
 	FieldStartedAt,
 	FieldFinishedAt,
+	FieldBuyDuration,
 	FieldPlanStartedAt,
 	FieldPlanFinishedAt,
 	FieldMissionBatchID,
@@ -191,6 +194,8 @@ var (
 	DefaultStartedAt time.Time
 	// DefaultFinishedAt holds the default value on creation for the "finished_at" field.
 	DefaultFinishedAt time.Time
+	// DefaultBuyDuration holds the default value on creation for the "buy_duration" field.
+	DefaultBuyDuration int64
 	// DefaultPlanStartedAt holds the default value on creation for the "plan_started_at" field.
 	DefaultPlanStartedAt time.Time
 	// DefaultPlanFinishedAt holds the default value on creation for the "plan_finished_at" field.
@@ -352,6 +357,11 @@ func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByFinishedAt orders the results by the finished_at field.
 func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
+}
+
+// ByBuyDuration orders the results by the buy_duration field.
+func ByBuyDuration(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBuyDuration, opts...).ToFunc()
 }
 
 // ByPlanStartedAt orders the results by the plan_started_at field.

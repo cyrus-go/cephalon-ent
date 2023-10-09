@@ -313,6 +313,27 @@ func (mou *MissionOrderUpdate) SetNillableFinishedAt(t *time.Time) *MissionOrder
 	return mou
 }
 
+// SetBuyDuration sets the "buy_duration" field.
+func (mou *MissionOrderUpdate) SetBuyDuration(i int64) *MissionOrderUpdate {
+	mou.mutation.ResetBuyDuration()
+	mou.mutation.SetBuyDuration(i)
+	return mou
+}
+
+// SetNillableBuyDuration sets the "buy_duration" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableBuyDuration(i *int64) *MissionOrderUpdate {
+	if i != nil {
+		mou.SetBuyDuration(*i)
+	}
+	return mou
+}
+
+// AddBuyDuration adds i to the "buy_duration" field.
+func (mou *MissionOrderUpdate) AddBuyDuration(i int64) *MissionOrderUpdate {
+	mou.mutation.AddBuyDuration(i)
+	return mou
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (mou *MissionOrderUpdate) SetPlanStartedAt(t time.Time) *MissionOrderUpdate {
 	mou.mutation.SetPlanStartedAt(t)
@@ -621,6 +642,12 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mou.mutation.FinishedAt(); ok {
 		_spec.SetField(missionorder.FieldFinishedAt, field.TypeTime, value)
+	}
+	if value, ok := mou.mutation.BuyDuration(); ok {
+		_spec.SetField(missionorder.FieldBuyDuration, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.AddedBuyDuration(); ok {
+		_spec.AddField(missionorder.FieldBuyDuration, field.TypeInt64, value)
 	}
 	if value, ok := mou.mutation.PlanStartedAt(); ok {
 		_spec.SetField(missionorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -1126,6 +1153,27 @@ func (mouo *MissionOrderUpdateOne) SetNillableFinishedAt(t *time.Time) *MissionO
 	return mouo
 }
 
+// SetBuyDuration sets the "buy_duration" field.
+func (mouo *MissionOrderUpdateOne) SetBuyDuration(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.ResetBuyDuration()
+	mouo.mutation.SetBuyDuration(i)
+	return mouo
+}
+
+// SetNillableBuyDuration sets the "buy_duration" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableBuyDuration(i *int64) *MissionOrderUpdateOne {
+	if i != nil {
+		mouo.SetBuyDuration(*i)
+	}
+	return mouo
+}
+
+// AddBuyDuration adds i to the "buy_duration" field.
+func (mouo *MissionOrderUpdateOne) AddBuyDuration(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.AddBuyDuration(i)
+	return mouo
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (mouo *MissionOrderUpdateOne) SetPlanStartedAt(t time.Time) *MissionOrderUpdateOne {
 	mouo.mutation.SetPlanStartedAt(t)
@@ -1464,6 +1512,12 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 	}
 	if value, ok := mouo.mutation.FinishedAt(); ok {
 		_spec.SetField(missionorder.FieldFinishedAt, field.TypeTime, value)
+	}
+	if value, ok := mouo.mutation.BuyDuration(); ok {
+		_spec.SetField(missionorder.FieldBuyDuration, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.AddedBuyDuration(); ok {
+		_spec.AddField(missionorder.FieldBuyDuration, field.TypeInt64, value)
 	}
 	if value, ok := mouo.mutation.PlanStartedAt(); ok {
 		_spec.SetField(missionorder.FieldPlanStartedAt, field.TypeTime, value)

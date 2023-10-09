@@ -60,6 +60,8 @@ type MissionOrder struct {
 	StartedAt time.Time `json:"started_at"`
 	// 任务结束执行时刻
 	FinishedAt time.Time `json:"finished_at"`
+	// 包时任务订单购买的时长（单位：小时）
+	BuyDuration int64 `json:"buy_duration"`
 	// 任务计划开始时间（包时）
 	PlanStartedAt *time.Time `json:"plan_started_at"`
 	// 任务计划结束时间（包时）
@@ -172,7 +174,7 @@ func (*MissionOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case missionorder.FieldID, missionorder.FieldCreatedBy, missionorder.FieldUpdatedBy, missionorder.FieldMissionID, missionorder.FieldSymbolID, missionorder.FieldConsumeUserID, missionorder.FieldConsumeAmount, missionorder.FieldProduceUserID, missionorder.FieldProduceAmount, missionorder.FieldGasAmount, missionorder.FieldMissionBatchID:
+		case missionorder.FieldID, missionorder.FieldCreatedBy, missionorder.FieldUpdatedBy, missionorder.FieldMissionID, missionorder.FieldSymbolID, missionorder.FieldConsumeUserID, missionorder.FieldConsumeAmount, missionorder.FieldProduceUserID, missionorder.FieldProduceAmount, missionorder.FieldGasAmount, missionorder.FieldBuyDuration, missionorder.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
 		case missionorder.FieldStatus, missionorder.FieldMissionType, missionorder.FieldMissionBillingType, missionorder.FieldCallWay, missionorder.FieldSerialNumber, missionorder.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
@@ -312,6 +314,12 @@ func (mo *MissionOrder) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
 			} else if value.Valid {
 				mo.FinishedAt = value.Time
+			}
+		case missionorder.FieldBuyDuration:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field buy_duration", values[i])
+			} else if value.Valid {
+				mo.BuyDuration = value.Int64
 			}
 		case missionorder.FieldPlanStartedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -461,6 +469,9 @@ func (mo *MissionOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("finished_at=")
 	builder.WriteString(mo.FinishedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("buy_duration=")
+	builder.WriteString(fmt.Sprintf("%v", mo.BuyDuration))
 	builder.WriteString(", ")
 	if v := mo.PlanStartedAt; v != nil {
 		builder.WriteString("plan_started_at=")

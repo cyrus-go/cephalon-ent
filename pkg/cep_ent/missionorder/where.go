@@ -131,6 +131,11 @@ func FinishedAt(v time.Time) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldFinishedAt, v))
 }
 
+// BuyDuration applies equality check predicate on the "buy_duration" field. It's identical to BuyDurationEQ.
+func BuyDuration(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldBuyDuration, v))
+}
+
 // PlanStartedAt applies equality check predicate on the "plan_started_at" field. It's identical to PlanStartedAtEQ.
 func PlanStartedAt(v time.Time) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldPlanStartedAt, v))
@@ -814,6 +819,46 @@ func FinishedAtLT(v time.Time) predicate.MissionOrder {
 // FinishedAtLTE applies the LTE predicate on the "finished_at" field.
 func FinishedAtLTE(v time.Time) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldLTE(FieldFinishedAt, v))
+}
+
+// BuyDurationEQ applies the EQ predicate on the "buy_duration" field.
+func BuyDurationEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldBuyDuration, v))
+}
+
+// BuyDurationNEQ applies the NEQ predicate on the "buy_duration" field.
+func BuyDurationNEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldBuyDuration, v))
+}
+
+// BuyDurationIn applies the In predicate on the "buy_duration" field.
+func BuyDurationIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldBuyDuration, vs...))
+}
+
+// BuyDurationNotIn applies the NotIn predicate on the "buy_duration" field.
+func BuyDurationNotIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldBuyDuration, vs...))
+}
+
+// BuyDurationGT applies the GT predicate on the "buy_duration" field.
+func BuyDurationGT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldBuyDuration, v))
+}
+
+// BuyDurationGTE applies the GTE predicate on the "buy_duration" field.
+func BuyDurationGTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldBuyDuration, v))
+}
+
+// BuyDurationLT applies the LT predicate on the "buy_duration" field.
+func BuyDurationLT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldBuyDuration, v))
+}
+
+// BuyDurationLTE applies the LTE predicate on the "buy_duration" field.
+func BuyDurationLTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldBuyDuration, v))
 }
 
 // PlanStartedAtEQ applies the EQ predicate on the "plan_started_at" field.
