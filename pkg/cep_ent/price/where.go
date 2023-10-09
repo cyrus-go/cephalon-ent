@@ -425,6 +425,36 @@ func MissionBillingTypeNotIn(vs ...enums.MissionBillingType) predicate.Price {
 	return predicate.Price(sql.FieldNotIn(FieldMissionBillingType, v...))
 }
 
+// RenewalTypeEQ applies the EQ predicate on the "renewal_type" field.
+func RenewalTypeEQ(v enums.RenewalType) predicate.Price {
+	vc := v
+	return predicate.Price(sql.FieldEQ(FieldRenewalType, vc))
+}
+
+// RenewalTypeNEQ applies the NEQ predicate on the "renewal_type" field.
+func RenewalTypeNEQ(v enums.RenewalType) predicate.Price {
+	vc := v
+	return predicate.Price(sql.FieldNEQ(FieldRenewalType, vc))
+}
+
+// RenewalTypeIn applies the In predicate on the "renewal_type" field.
+func RenewalTypeIn(vs ...enums.RenewalType) predicate.Price {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Price(sql.FieldIn(FieldRenewalType, v...))
+}
+
+// RenewalTypeNotIn applies the NotIn predicate on the "renewal_type" field.
+func RenewalTypeNotIn(vs ...enums.RenewalType) predicate.Price {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Price(sql.FieldNotIn(FieldRenewalType, v...))
+}
+
 // CepEQ applies the EQ predicate on the "cep" field.
 func CepEQ(v int64) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldCep, v))

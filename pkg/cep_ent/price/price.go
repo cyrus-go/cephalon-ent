@@ -33,6 +33,8 @@ const (
 	FieldMissionCategory = "mission_category"
 	// FieldMissionBillingType holds the string denoting the mission_billing_type field in the database.
 	FieldMissionBillingType = "mission_billing_type"
+	// FieldRenewalType holds the string denoting the renewal_type field in the database.
+	FieldRenewalType = "renewal_type"
 	// FieldCep holds the string denoting the cep field in the database.
 	FieldCep = "cep"
 	// FieldStartedAt holds the string denoting the started_at field in the database.
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldMissionType,
 	FieldMissionCategory,
 	FieldMissionBillingType,
+	FieldRenewalType,
 	FieldCep,
 	FieldStartedAt,
 	FieldFinishedAt,
@@ -147,6 +150,18 @@ func MissionBillingTypeValidator(mbt enums.MissionBillingType) error {
 	}
 }
 
+const DefaultRenewalType enums.RenewalType = "unknow"
+
+// RenewalTypeValidator is a validator for the "renewal_type" field enum values. It is called by the builders before save.
+func RenewalTypeValidator(rt enums.RenewalType) error {
+	switch rt {
+	case "unknow", "hour", "day", "month":
+		return nil
+	default:
+		return fmt.Errorf("price: invalid enum value for renewal_type field: %q", rt)
+	}
+}
+
 // OrderOption defines the ordering options for the Price queries.
 type OrderOption func(*sql.Selector)
 
@@ -198,6 +213,11 @@ func ByMissionCategory(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionBillingType orders the results by the mission_billing_type field.
 func ByMissionBillingType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionBillingType, opts...).ToFunc()
+}
+
+// ByRenewalType orders the results by the renewal_type field.
+func ByRenewalType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRenewalType, opts...).ToFunc()
 }
 
 // ByCep orders the results by the cep field.

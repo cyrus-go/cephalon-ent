@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/common"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // RenewalAgreement holds the schema definition for the RenewalAgreement entity.
@@ -17,9 +18,9 @@ type RenewalAgreement struct {
 func (RenewalAgreement) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("next_pay_time").Default(common.ZeroTime).StructTag(`json:"next_pay_time"`).Comment("下次扣款时间"),
-		field.Enum("type").Values("unknow", "hour", "day", "month").Default("unknow").StructTag(`json:"type"`).Comment("自动续费类型（按小时、按天等）"),
-		field.Enum("sub_status").Values("unknow", "subscribing", "finished").Default("unknow").StructTag(`json:"sub_status"`).Comment("订阅自动续费状态（订阅中、已结束等）"),
-		field.Enum("pay_status").Values("unknow", "waiting", "succeed", "failed").Default("unknow").StructTag(`json:"pay_status"`).Comment("支付状态（待支付、已支付、支付失败等）"),
+		field.Enum("type").GoType(enums.RenewalTypeHour).Default(string(enums.RenewalTypeUnknow)).StructTag(`json:"type"`).Comment("自动续费类型（按小时、按天等）"),
+		field.Enum("sub_status").GoType(enums.RenewalSubStatusSubscribing).Default(string(enums.RenewalSubStatusUnknow)).StructTag(`json:"sub_status"`).Comment("订阅自动续费状态（订阅中、已结束等）"),
+		field.Enum("pay_status").GoType(enums.RenewalPayStatusSucceed).Default(string(enums.RenewalPayStatusUnknow)).StructTag(`json:"pay_status"`).Comment("支付状态（待支付、已支付、支付失败等）"),
 		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("币种 id"),
 		field.Int64("first_pay").Default(0).StructTag(`json:"first_pay"`).Comment("首次扣款价格"),
 		field.Int64("after_pay").Default(0).StructTag(`json:"after_pay"`).Comment("后续扣款价格"),

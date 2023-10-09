@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // RenewalAgreementUpdate is the builder for updating RenewalAgreement entities.
@@ -107,43 +108,43 @@ func (rau *RenewalAgreementUpdate) SetNillableNextPayTime(t *time.Time) *Renewal
 }
 
 // SetType sets the "type" field.
-func (rau *RenewalAgreementUpdate) SetType(r renewalagreement.Type) *RenewalAgreementUpdate {
-	rau.mutation.SetType(r)
+func (rau *RenewalAgreementUpdate) SetType(et enums.RenewalType) *RenewalAgreementUpdate {
+	rau.mutation.SetType(et)
 	return rau
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rau *RenewalAgreementUpdate) SetNillableType(r *renewalagreement.Type) *RenewalAgreementUpdate {
-	if r != nil {
-		rau.SetType(*r)
+func (rau *RenewalAgreementUpdate) SetNillableType(et *enums.RenewalType) *RenewalAgreementUpdate {
+	if et != nil {
+		rau.SetType(*et)
 	}
 	return rau
 }
 
 // SetSubStatus sets the "sub_status" field.
-func (rau *RenewalAgreementUpdate) SetSubStatus(rs renewalagreement.SubStatus) *RenewalAgreementUpdate {
-	rau.mutation.SetSubStatus(rs)
+func (rau *RenewalAgreementUpdate) SetSubStatus(ess enums.RenewalSubStatus) *RenewalAgreementUpdate {
+	rau.mutation.SetSubStatus(ess)
 	return rau
 }
 
 // SetNillableSubStatus sets the "sub_status" field if the given value is not nil.
-func (rau *RenewalAgreementUpdate) SetNillableSubStatus(rs *renewalagreement.SubStatus) *RenewalAgreementUpdate {
-	if rs != nil {
-		rau.SetSubStatus(*rs)
+func (rau *RenewalAgreementUpdate) SetNillableSubStatus(ess *enums.RenewalSubStatus) *RenewalAgreementUpdate {
+	if ess != nil {
+		rau.SetSubStatus(*ess)
 	}
 	return rau
 }
 
 // SetPayStatus sets the "pay_status" field.
-func (rau *RenewalAgreementUpdate) SetPayStatus(rs renewalagreement.PayStatus) *RenewalAgreementUpdate {
-	rau.mutation.SetPayStatus(rs)
+func (rau *RenewalAgreementUpdate) SetPayStatus(eps enums.RenewalPayStatus) *RenewalAgreementUpdate {
+	rau.mutation.SetPayStatus(eps)
 	return rau
 }
 
 // SetNillablePayStatus sets the "pay_status" field if the given value is not nil.
-func (rau *RenewalAgreementUpdate) SetNillablePayStatus(rs *renewalagreement.PayStatus) *RenewalAgreementUpdate {
-	if rs != nil {
-		rau.SetPayStatus(*rs)
+func (rau *RenewalAgreementUpdate) SetNillablePayStatus(eps *enums.RenewalPayStatus) *RenewalAgreementUpdate {
+	if eps != nil {
+		rau.SetPayStatus(*eps)
 	}
 	return rau
 }
@@ -560,43 +561,43 @@ func (rauo *RenewalAgreementUpdateOne) SetNillableNextPayTime(t *time.Time) *Ren
 }
 
 // SetType sets the "type" field.
-func (rauo *RenewalAgreementUpdateOne) SetType(r renewalagreement.Type) *RenewalAgreementUpdateOne {
-	rauo.mutation.SetType(r)
+func (rauo *RenewalAgreementUpdateOne) SetType(et enums.RenewalType) *RenewalAgreementUpdateOne {
+	rauo.mutation.SetType(et)
 	return rauo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rauo *RenewalAgreementUpdateOne) SetNillableType(r *renewalagreement.Type) *RenewalAgreementUpdateOne {
-	if r != nil {
-		rauo.SetType(*r)
+func (rauo *RenewalAgreementUpdateOne) SetNillableType(et *enums.RenewalType) *RenewalAgreementUpdateOne {
+	if et != nil {
+		rauo.SetType(*et)
 	}
 	return rauo
 }
 
 // SetSubStatus sets the "sub_status" field.
-func (rauo *RenewalAgreementUpdateOne) SetSubStatus(rs renewalagreement.SubStatus) *RenewalAgreementUpdateOne {
-	rauo.mutation.SetSubStatus(rs)
+func (rauo *RenewalAgreementUpdateOne) SetSubStatus(ess enums.RenewalSubStatus) *RenewalAgreementUpdateOne {
+	rauo.mutation.SetSubStatus(ess)
 	return rauo
 }
 
 // SetNillableSubStatus sets the "sub_status" field if the given value is not nil.
-func (rauo *RenewalAgreementUpdateOne) SetNillableSubStatus(rs *renewalagreement.SubStatus) *RenewalAgreementUpdateOne {
-	if rs != nil {
-		rauo.SetSubStatus(*rs)
+func (rauo *RenewalAgreementUpdateOne) SetNillableSubStatus(ess *enums.RenewalSubStatus) *RenewalAgreementUpdateOne {
+	if ess != nil {
+		rauo.SetSubStatus(*ess)
 	}
 	return rauo
 }
 
 // SetPayStatus sets the "pay_status" field.
-func (rauo *RenewalAgreementUpdateOne) SetPayStatus(rs renewalagreement.PayStatus) *RenewalAgreementUpdateOne {
-	rauo.mutation.SetPayStatus(rs)
+func (rauo *RenewalAgreementUpdateOne) SetPayStatus(eps enums.RenewalPayStatus) *RenewalAgreementUpdateOne {
+	rauo.mutation.SetPayStatus(eps)
 	return rauo
 }
 
 // SetNillablePayStatus sets the "pay_status" field if the given value is not nil.
-func (rauo *RenewalAgreementUpdateOne) SetNillablePayStatus(rs *renewalagreement.PayStatus) *RenewalAgreementUpdateOne {
-	if rs != nil {
-		rauo.SetPayStatus(*rs)
+func (rauo *RenewalAgreementUpdateOne) SetNillablePayStatus(eps *enums.RenewalPayStatus) *RenewalAgreementUpdateOne {
+	if eps != nil {
+		rauo.SetPayStatus(*eps)
 	}
 	return rauo
 }

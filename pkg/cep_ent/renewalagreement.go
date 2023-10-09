@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 自动续费协议
@@ -32,11 +33,11 @@ type RenewalAgreement struct {
 	// 下次扣款时间
 	NextPayTime time.Time `json:"next_pay_time"`
 	// 自动续费类型（按小时、按天等）
-	Type renewalagreement.Type `json:"type"`
+	Type enums.RenewalType `json:"type"`
 	// 订阅自动续费状态（订阅中、已结束等）
-	SubStatus renewalagreement.SubStatus `json:"sub_status"`
+	SubStatus enums.RenewalSubStatus `json:"sub_status"`
 	// 支付状态（待支付、已支付、支付失败等）
-	PayStatus renewalagreement.PayStatus `json:"pay_status"`
+	PayStatus enums.RenewalPayStatus `json:"pay_status"`
 	// 币种 id
 	SymbolID int64 `json:"symbol_id"`
 	// 首次扣款价格
@@ -164,19 +165,19 @@ func (ra *RenewalAgreement) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				ra.Type = renewalagreement.Type(value.String)
+				ra.Type = enums.RenewalType(value.String)
 			}
 		case renewalagreement.FieldSubStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sub_status", values[i])
 			} else if value.Valid {
-				ra.SubStatus = renewalagreement.SubStatus(value.String)
+				ra.SubStatus = enums.RenewalSubStatus(value.String)
 			}
 		case renewalagreement.FieldPayStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field pay_status", values[i])
 			} else if value.Valid {
-				ra.PayStatus = renewalagreement.PayStatus(value.String)
+				ra.PayStatus = enums.RenewalPayStatus(value.String)
 			}
 		case renewalagreement.FieldSymbolID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

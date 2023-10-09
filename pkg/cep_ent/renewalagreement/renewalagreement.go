@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -128,83 +129,36 @@ var (
 	DefaultID func() int64
 )
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeUnknow is the default value of the Type enum.
-const DefaultType = TypeUnknow
-
-// Type values.
-const (
-	TypeUnknow Type = "unknow"
-	TypeHour   Type = "hour"
-	TypeDay    Type = "day"
-	TypeMonth  Type = "month"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
+const DefaultType enums.RenewalType = "unknow"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
+func TypeValidator(_type enums.RenewalType) error {
 	switch _type {
-	case TypeUnknow, TypeHour, TypeDay, TypeMonth:
+	case "unknow", "hour", "day", "month":
 		return nil
 	default:
 		return fmt.Errorf("renewalagreement: invalid enum value for type field: %q", _type)
 	}
 }
 
-// SubStatus defines the type for the "sub_status" enum field.
-type SubStatus string
-
-// SubStatusUnknow is the default value of the SubStatus enum.
-const DefaultSubStatus = SubStatusUnknow
-
-// SubStatus values.
-const (
-	SubStatusUnknow      SubStatus = "unknow"
-	SubStatusSubscribing SubStatus = "subscribing"
-	SubStatusFinished    SubStatus = "finished"
-)
-
-func (ss SubStatus) String() string {
-	return string(ss)
-}
+const DefaultSubStatus enums.RenewalSubStatus = "unknow"
 
 // SubStatusValidator is a validator for the "sub_status" field enum values. It is called by the builders before save.
-func SubStatusValidator(ss SubStatus) error {
+func SubStatusValidator(ss enums.RenewalSubStatus) error {
 	switch ss {
-	case SubStatusUnknow, SubStatusSubscribing, SubStatusFinished:
+	case "unknow", "subscribing", "finished":
 		return nil
 	default:
 		return fmt.Errorf("renewalagreement: invalid enum value for sub_status field: %q", ss)
 	}
 }
 
-// PayStatus defines the type for the "pay_status" enum field.
-type PayStatus string
-
-// PayStatusUnknow is the default value of the PayStatus enum.
-const DefaultPayStatus = PayStatusUnknow
-
-// PayStatus values.
-const (
-	PayStatusUnknow  PayStatus = "unknow"
-	PayStatusWaiting PayStatus = "waiting"
-	PayStatusSucceed PayStatus = "succeed"
-	PayStatusFailed  PayStatus = "failed"
-)
-
-func (ps PayStatus) String() string {
-	return string(ps)
-}
+const DefaultPayStatus enums.RenewalPayStatus = "unknow"
 
 // PayStatusValidator is a validator for the "pay_status" field enum values. It is called by the builders before save.
-func PayStatusValidator(ps PayStatus) error {
+func PayStatusValidator(ps enums.RenewalPayStatus) error {
 	switch ps {
-	case PayStatusUnknow, PayStatusWaiting, PayStatusSucceed, PayStatusFailed:
+	case "unknow", "waiting", "succeed", "failed":
 		return nil
 	default:
 		return fmt.Errorf("renewalagreement: invalid enum value for pay_status field: %q", ps)

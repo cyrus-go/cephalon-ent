@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -356,63 +357,93 @@ func NextPayTimeLTE(v time.Time) predicate.RenewalAgreement {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldEQ(FieldType, v))
+func TypeEQ(v enums.RenewalType) predicate.RenewalAgreement {
+	vc := v
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldType, vc))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldNEQ(FieldType, v))
+func TypeNEQ(v enums.RenewalType) predicate.RenewalAgreement {
+	vc := v
+	return predicate.RenewalAgreement(sql.FieldNEQ(FieldType, vc))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldIn(FieldType, vs...))
+func TypeIn(vs ...enums.RenewalType) predicate.RenewalAgreement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.RenewalAgreement(sql.FieldIn(FieldType, v...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldNotIn(FieldType, vs...))
+func TypeNotIn(vs ...enums.RenewalType) predicate.RenewalAgreement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.RenewalAgreement(sql.FieldNotIn(FieldType, v...))
 }
 
 // SubStatusEQ applies the EQ predicate on the "sub_status" field.
-func SubStatusEQ(v SubStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldEQ(FieldSubStatus, v))
+func SubStatusEQ(v enums.RenewalSubStatus) predicate.RenewalAgreement {
+	vc := v
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldSubStatus, vc))
 }
 
 // SubStatusNEQ applies the NEQ predicate on the "sub_status" field.
-func SubStatusNEQ(v SubStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldNEQ(FieldSubStatus, v))
+func SubStatusNEQ(v enums.RenewalSubStatus) predicate.RenewalAgreement {
+	vc := v
+	return predicate.RenewalAgreement(sql.FieldNEQ(FieldSubStatus, vc))
 }
 
 // SubStatusIn applies the In predicate on the "sub_status" field.
-func SubStatusIn(vs ...SubStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldIn(FieldSubStatus, vs...))
+func SubStatusIn(vs ...enums.RenewalSubStatus) predicate.RenewalAgreement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.RenewalAgreement(sql.FieldIn(FieldSubStatus, v...))
 }
 
 // SubStatusNotIn applies the NotIn predicate on the "sub_status" field.
-func SubStatusNotIn(vs ...SubStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldNotIn(FieldSubStatus, vs...))
+func SubStatusNotIn(vs ...enums.RenewalSubStatus) predicate.RenewalAgreement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.RenewalAgreement(sql.FieldNotIn(FieldSubStatus, v...))
 }
 
 // PayStatusEQ applies the EQ predicate on the "pay_status" field.
-func PayStatusEQ(v PayStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldEQ(FieldPayStatus, v))
+func PayStatusEQ(v enums.RenewalPayStatus) predicate.RenewalAgreement {
+	vc := v
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldPayStatus, vc))
 }
 
 // PayStatusNEQ applies the NEQ predicate on the "pay_status" field.
-func PayStatusNEQ(v PayStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldNEQ(FieldPayStatus, v))
+func PayStatusNEQ(v enums.RenewalPayStatus) predicate.RenewalAgreement {
+	vc := v
+	return predicate.RenewalAgreement(sql.FieldNEQ(FieldPayStatus, vc))
 }
 
 // PayStatusIn applies the In predicate on the "pay_status" field.
-func PayStatusIn(vs ...PayStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldIn(FieldPayStatus, vs...))
+func PayStatusIn(vs ...enums.RenewalPayStatus) predicate.RenewalAgreement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.RenewalAgreement(sql.FieldIn(FieldPayStatus, v...))
 }
 
 // PayStatusNotIn applies the NotIn predicate on the "pay_status" field.
-func PayStatusNotIn(vs ...PayStatus) predicate.RenewalAgreement {
-	return predicate.RenewalAgreement(sql.FieldNotIn(FieldPayStatus, vs...))
+func PayStatusNotIn(vs ...enums.RenewalPayStatus) predicate.RenewalAgreement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.RenewalAgreement(sql.FieldNotIn(FieldPayStatus, v...))
 }
 
 // SymbolIDEQ applies the EQ predicate on the "symbol_id" field.

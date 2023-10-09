@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // RenewalAgreementCreate is the builder for creating a RenewalAgreement entity.
@@ -109,43 +110,43 @@ func (rac *RenewalAgreementCreate) SetNillableNextPayTime(t *time.Time) *Renewal
 }
 
 // SetType sets the "type" field.
-func (rac *RenewalAgreementCreate) SetType(r renewalagreement.Type) *RenewalAgreementCreate {
-	rac.mutation.SetType(r)
+func (rac *RenewalAgreementCreate) SetType(et enums.RenewalType) *RenewalAgreementCreate {
+	rac.mutation.SetType(et)
 	return rac
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (rac *RenewalAgreementCreate) SetNillableType(r *renewalagreement.Type) *RenewalAgreementCreate {
-	if r != nil {
-		rac.SetType(*r)
+func (rac *RenewalAgreementCreate) SetNillableType(et *enums.RenewalType) *RenewalAgreementCreate {
+	if et != nil {
+		rac.SetType(*et)
 	}
 	return rac
 }
 
 // SetSubStatus sets the "sub_status" field.
-func (rac *RenewalAgreementCreate) SetSubStatus(rs renewalagreement.SubStatus) *RenewalAgreementCreate {
-	rac.mutation.SetSubStatus(rs)
+func (rac *RenewalAgreementCreate) SetSubStatus(ess enums.RenewalSubStatus) *RenewalAgreementCreate {
+	rac.mutation.SetSubStatus(ess)
 	return rac
 }
 
 // SetNillableSubStatus sets the "sub_status" field if the given value is not nil.
-func (rac *RenewalAgreementCreate) SetNillableSubStatus(rs *renewalagreement.SubStatus) *RenewalAgreementCreate {
-	if rs != nil {
-		rac.SetSubStatus(*rs)
+func (rac *RenewalAgreementCreate) SetNillableSubStatus(ess *enums.RenewalSubStatus) *RenewalAgreementCreate {
+	if ess != nil {
+		rac.SetSubStatus(*ess)
 	}
 	return rac
 }
 
 // SetPayStatus sets the "pay_status" field.
-func (rac *RenewalAgreementCreate) SetPayStatus(rs renewalagreement.PayStatus) *RenewalAgreementCreate {
-	rac.mutation.SetPayStatus(rs)
+func (rac *RenewalAgreementCreate) SetPayStatus(eps enums.RenewalPayStatus) *RenewalAgreementCreate {
+	rac.mutation.SetPayStatus(eps)
 	return rac
 }
 
 // SetNillablePayStatus sets the "pay_status" field if the given value is not nil.
-func (rac *RenewalAgreementCreate) SetNillablePayStatus(rs *renewalagreement.PayStatus) *RenewalAgreementCreate {
-	if rs != nil {
-		rac.SetPayStatus(*rs)
+func (rac *RenewalAgreementCreate) SetNillablePayStatus(eps *enums.RenewalPayStatus) *RenewalAgreementCreate {
+	if eps != nil {
+		rac.SetPayStatus(*eps)
 	}
 	return rac
 }
@@ -671,7 +672,7 @@ func (u *RenewalAgreementUpsert) UpdateNextPayTime() *RenewalAgreementUpsert {
 }
 
 // SetType sets the "type" field.
-func (u *RenewalAgreementUpsert) SetType(v renewalagreement.Type) *RenewalAgreementUpsert {
+func (u *RenewalAgreementUpsert) SetType(v enums.RenewalType) *RenewalAgreementUpsert {
 	u.Set(renewalagreement.FieldType, v)
 	return u
 }
@@ -683,7 +684,7 @@ func (u *RenewalAgreementUpsert) UpdateType() *RenewalAgreementUpsert {
 }
 
 // SetSubStatus sets the "sub_status" field.
-func (u *RenewalAgreementUpsert) SetSubStatus(v renewalagreement.SubStatus) *RenewalAgreementUpsert {
+func (u *RenewalAgreementUpsert) SetSubStatus(v enums.RenewalSubStatus) *RenewalAgreementUpsert {
 	u.Set(renewalagreement.FieldSubStatus, v)
 	return u
 }
@@ -695,7 +696,7 @@ func (u *RenewalAgreementUpsert) UpdateSubStatus() *RenewalAgreementUpsert {
 }
 
 // SetPayStatus sets the "pay_status" field.
-func (u *RenewalAgreementUpsert) SetPayStatus(v renewalagreement.PayStatus) *RenewalAgreementUpsert {
+func (u *RenewalAgreementUpsert) SetPayStatus(v enums.RenewalPayStatus) *RenewalAgreementUpsert {
 	u.Set(renewalagreement.FieldPayStatus, v)
 	return u
 }
@@ -932,7 +933,7 @@ func (u *RenewalAgreementUpsertOne) UpdateNextPayTime() *RenewalAgreementUpsertO
 }
 
 // SetType sets the "type" field.
-func (u *RenewalAgreementUpsertOne) SetType(v renewalagreement.Type) *RenewalAgreementUpsertOne {
+func (u *RenewalAgreementUpsertOne) SetType(v enums.RenewalType) *RenewalAgreementUpsertOne {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.SetType(v)
 	})
@@ -946,7 +947,7 @@ func (u *RenewalAgreementUpsertOne) UpdateType() *RenewalAgreementUpsertOne {
 }
 
 // SetSubStatus sets the "sub_status" field.
-func (u *RenewalAgreementUpsertOne) SetSubStatus(v renewalagreement.SubStatus) *RenewalAgreementUpsertOne {
+func (u *RenewalAgreementUpsertOne) SetSubStatus(v enums.RenewalSubStatus) *RenewalAgreementUpsertOne {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.SetSubStatus(v)
 	})
@@ -960,7 +961,7 @@ func (u *RenewalAgreementUpsertOne) UpdateSubStatus() *RenewalAgreementUpsertOne
 }
 
 // SetPayStatus sets the "pay_status" field.
-func (u *RenewalAgreementUpsertOne) SetPayStatus(v renewalagreement.PayStatus) *RenewalAgreementUpsertOne {
+func (u *RenewalAgreementUpsertOne) SetPayStatus(v enums.RenewalPayStatus) *RenewalAgreementUpsertOne {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.SetPayStatus(v)
 	})
@@ -1380,7 +1381,7 @@ func (u *RenewalAgreementUpsertBulk) UpdateNextPayTime() *RenewalAgreementUpsert
 }
 
 // SetType sets the "type" field.
-func (u *RenewalAgreementUpsertBulk) SetType(v renewalagreement.Type) *RenewalAgreementUpsertBulk {
+func (u *RenewalAgreementUpsertBulk) SetType(v enums.RenewalType) *RenewalAgreementUpsertBulk {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.SetType(v)
 	})
@@ -1394,7 +1395,7 @@ func (u *RenewalAgreementUpsertBulk) UpdateType() *RenewalAgreementUpsertBulk {
 }
 
 // SetSubStatus sets the "sub_status" field.
-func (u *RenewalAgreementUpsertBulk) SetSubStatus(v renewalagreement.SubStatus) *RenewalAgreementUpsertBulk {
+func (u *RenewalAgreementUpsertBulk) SetSubStatus(v enums.RenewalSubStatus) *RenewalAgreementUpsertBulk {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.SetSubStatus(v)
 	})
@@ -1408,7 +1409,7 @@ func (u *RenewalAgreementUpsertBulk) UpdateSubStatus() *RenewalAgreementUpsertBu
 }
 
 // SetPayStatus sets the "pay_status" field.
-func (u *RenewalAgreementUpsertBulk) SetPayStatus(v renewalagreement.PayStatus) *RenewalAgreementUpsertBulk {
+func (u *RenewalAgreementUpsertBulk) SetPayStatus(v enums.RenewalPayStatus) *RenewalAgreementUpsertBulk {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.SetPayStatus(v)
 	})

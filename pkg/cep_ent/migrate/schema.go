@@ -1049,6 +1049,7 @@ var (
 		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time"}, Default: "txt2img"},
 		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan"}, Default: "count"},
+		{Name: "renewal_type", Type: field.TypeEnum, Comment: "包时类型，只有包时任务才有", Enums: []string{"unknow", "hour", "day", "month"}, Default: "unknow"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
