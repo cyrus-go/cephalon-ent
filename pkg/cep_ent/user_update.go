@@ -254,6 +254,20 @@ func (uu *UserUpdate) SetNillableParentID(i *int64) *UserUpdate {
 	return uu
 }
 
+// SetPopVersion sets the "pop_version" field.
+func (uu *UserUpdate) SetPopVersion(s string) *UserUpdate {
+	uu.mutation.SetPopVersion(s)
+	return uu
+}
+
+// SetNillablePopVersion sets the "pop_version" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePopVersion(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetPopVersion(*s)
+	}
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -1361,6 +1375,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.UserType(); ok {
 		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
+	}
+	if value, ok := uu.mutation.PopVersion(); ok {
+		_spec.SetField(user.FieldPopVersion, field.TypeString, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2841,6 +2858,20 @@ func (uuo *UserUpdateOne) SetNillableParentID(i *int64) *UserUpdateOne {
 	return uuo
 }
 
+// SetPopVersion sets the "pop_version" field.
+func (uuo *UserUpdateOne) SetPopVersion(s string) *UserUpdateOne {
+	uuo.mutation.SetPopVersion(s)
+	return uuo
+}
+
+// SetNillablePopVersion sets the "pop_version" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePopVersion(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetPopVersion(*s)
+	}
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -3978,6 +4009,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UserType(); ok {
 		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
+	}
+	if value, ok := uuo.mutation.PopVersion(); ok {
+		_spec.SetField(user.FieldPopVersion, field.TypeString, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

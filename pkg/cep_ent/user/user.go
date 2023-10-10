@@ -45,6 +45,8 @@ const (
 	FieldUserType = "user_type"
 	// FieldParentID holds the string denoting the parent_id field in the database.
 	FieldParentID = "parent_id"
+	// FieldPopVersion holds the string denoting the pop_version field in the database.
+	FieldPopVersion = "pop_version"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -322,6 +324,7 @@ var Columns = []string{
 	FieldIsRecharge,
 	FieldUserType,
 	FieldParentID,
+	FieldPopVersion,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -365,6 +368,8 @@ var (
 	DefaultIsRecharge bool
 	// DefaultParentID holds the default value on creation for the "parent_id" field.
 	DefaultParentID int64
+	// DefaultPopVersion holds the default value on creation for the "pop_version" field.
+	DefaultPopVersion string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -476,6 +481,11 @@ func ByUserType(opts ...sql.OrderTermOption) OrderOption {
 // ByParentID orders the results by the parent_id field.
 func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
+}
+
+// ByPopVersion orders the results by the pop_version field.
+func ByPopVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPopVersion, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

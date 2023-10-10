@@ -25,6 +25,7 @@ func (User) Fields() []ent.Field {
 		field.Bool("is_recharge").Default(false).StructTag(`json:"is_recharge"`).Comment("是否充值过"),
 		field.Enum("user_type").Values("personal", "enterprise").Default("personal").StructTag(`json:"user_type"`).Comment("用户类型"),
 		field.Int64("parent_id").Default(0).StructTag(`json:"parent_id"`).Comment("邀请人用户 id"),
+		field.String("pop_version").Default("").StructTag(`json:"pop_version"`).Comment("用户最新弹窗版本"),
 	}
 }
 

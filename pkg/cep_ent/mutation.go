@@ -46069,6 +46069,7 @@ type UserMutation struct {
 	is_frozen                      *bool
 	is_recharge                    *bool
 	user_type                      *user.UserType
+	pop_version                    *string
 	clearedFields                  map[string]struct{}
 	vx_accounts                    map[int64]struct{}
 	removedvx_accounts             map[int64]struct{}
@@ -46841,6 +46842,42 @@ func (m *UserMutation) OldParentID(ctx context.Context) (v int64, err error) {
 // ResetParentID resets all changes to the "parent_id" field.
 func (m *UserMutation) ResetParentID() {
 	m.parent = nil
+}
+
+// SetPopVersion sets the "pop_version" field.
+func (m *UserMutation) SetPopVersion(s string) {
+	m.pop_version = &s
+}
+
+// PopVersion returns the value of the "pop_version" field in the mutation.
+func (m *UserMutation) PopVersion() (r string, exists bool) {
+	v := m.pop_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPopVersion returns the old "pop_version" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldPopVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPopVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPopVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPopVersion: %w", err)
+	}
+	return oldValue.PopVersion, nil
+}
+
+// ResetPopVersion resets all changes to the "pop_version" field.
+func (m *UserMutation) ResetPopVersion() {
+	m.pop_version = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -48386,7 +48423,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -48432,6 +48469,9 @@ func (m *UserMutation) Fields() []string {
 	if m.parent != nil {
 		fields = append(fields, user.FieldParentID)
 	}
+	if m.pop_version != nil {
+		fields = append(fields, user.FieldPopVersion)
+	}
 	return fields
 }
 
@@ -48470,6 +48510,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.UserType()
 	case user.FieldParentID:
 		return m.ParentID()
+	case user.FieldPopVersion:
+		return m.PopVersion()
 	}
 	return nil, false
 }
@@ -48509,6 +48551,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUserType(ctx)
 	case user.FieldParentID:
 		return m.OldParentID(ctx)
+	case user.FieldPopVersion:
+		return m.OldPopVersion(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -48622,6 +48666,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetParentID(v)
+		return nil
+	case user.FieldPopVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPopVersion(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -48743,6 +48794,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldParentID:
 		m.ResetParentID()
+		return nil
+	case user.FieldPopVersion:
+		m.ResetPopVersion()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

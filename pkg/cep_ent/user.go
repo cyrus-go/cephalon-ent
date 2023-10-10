@@ -49,6 +49,8 @@ type User struct {
 	UserType user.UserType `json:"user_type"`
 	// 邀请人用户 id
 	ParentID int64 `json:"parent_id"`
+	// 用户最新弹窗版本
+	PopVersion string `json:"pop_version"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -402,7 +404,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType:
+		case user.FieldName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -516,6 +518,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
 				u.ParentID = value.Int64
+			}
+		case user.FieldPopVersion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field pop_version", values[i])
+			} else if value.Valid {
+				u.PopVersion = value.String
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -740,6 +748,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("parent_id=")
 	builder.WriteString(fmt.Sprintf("%v", u.ParentID))
+	builder.WriteString(", ")
+	builder.WriteString("pop_version=")
+	builder.WriteString(u.PopVersion)
 	builder.WriteByte(')')
 	return builder.String()
 }

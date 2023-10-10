@@ -125,6 +125,11 @@ func ParentID(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldParentID, v))
 }
 
+// PopVersion applies equality check predicate on the "pop_version" field. It's identical to PopVersionEQ.
+func PopVersion(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPopVersion, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
@@ -773,6 +778,71 @@ func ParentIDIn(vs ...int64) predicate.User {
 // ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
 func ParentIDNotIn(vs ...int64) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldParentID, vs...))
+}
+
+// PopVersionEQ applies the EQ predicate on the "pop_version" field.
+func PopVersionEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPopVersion, v))
+}
+
+// PopVersionNEQ applies the NEQ predicate on the "pop_version" field.
+func PopVersionNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldPopVersion, v))
+}
+
+// PopVersionIn applies the In predicate on the "pop_version" field.
+func PopVersionIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldPopVersion, vs...))
+}
+
+// PopVersionNotIn applies the NotIn predicate on the "pop_version" field.
+func PopVersionNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldPopVersion, vs...))
+}
+
+// PopVersionGT applies the GT predicate on the "pop_version" field.
+func PopVersionGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldPopVersion, v))
+}
+
+// PopVersionGTE applies the GTE predicate on the "pop_version" field.
+func PopVersionGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldPopVersion, v))
+}
+
+// PopVersionLT applies the LT predicate on the "pop_version" field.
+func PopVersionLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldPopVersion, v))
+}
+
+// PopVersionLTE applies the LTE predicate on the "pop_version" field.
+func PopVersionLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldPopVersion, v))
+}
+
+// PopVersionContains applies the Contains predicate on the "pop_version" field.
+func PopVersionContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldPopVersion, v))
+}
+
+// PopVersionHasPrefix applies the HasPrefix predicate on the "pop_version" field.
+func PopVersionHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldPopVersion, v))
+}
+
+// PopVersionHasSuffix applies the HasSuffix predicate on the "pop_version" field.
+func PopVersionHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldPopVersion, v))
+}
+
+// PopVersionEqualFold applies the EqualFold predicate on the "pop_version" field.
+func PopVersionEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldPopVersion, v))
+}
+
+// PopVersionContainsFold applies the ContainsFold predicate on the "pop_version" field.
+func PopVersionContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldPopVersion, v))
 }
 
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.

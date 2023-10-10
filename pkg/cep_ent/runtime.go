@@ -2052,6 +2052,10 @@ func init() {
 	userDescParentID := userFields[9].Descriptor()
 	// user.DefaultParentID holds the default value on creation for the parent_id field.
 	user.DefaultParentID = userDescParentID.Default.(int64)
+	// userDescPopVersion is the schema descriptor for pop_version field.
+	userDescPopVersion := userFields[10].Descriptor()
+	// user.DefaultPopVersion holds the default value on creation for the pop_version field.
+	user.DefaultPopVersion = userDescPopVersion.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

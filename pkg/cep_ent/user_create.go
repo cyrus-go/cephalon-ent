@@ -256,6 +256,20 @@ func (uc *UserCreate) SetNillableParentID(i *int64) *UserCreate {
 	return uc
 }
 
+// SetPopVersion sets the "pop_version" field.
+func (uc *UserCreate) SetPopVersion(s string) *UserCreate {
+	uc.mutation.SetPopVersion(s)
+	return uc
+}
+
+// SetNillablePopVersion sets the "pop_version" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePopVersion(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPopVersion(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -798,6 +812,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultParentID
 		uc.mutation.SetParentID(v)
 	}
+	if _, ok := uc.mutation.PopVersion(); !ok {
+		v := user.DefaultPopVersion
+		uc.mutation.SetPopVersion(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -855,6 +873,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent_id", err: errors.New(`cep_ent: missing required field "User.parent_id"`)}
+	}
+	if _, ok := uc.mutation.PopVersion(); !ok {
+		return &ValidationError{Name: "pop_version", err: errors.New(`cep_ent: missing required field "User.pop_version"`)}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -947,6 +968,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.UserType(); ok {
 		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
 		_node.UserType = value
+	}
+	if value, ok := uc.mutation.PopVersion(); ok {
+		_spec.SetField(user.FieldPopVersion, field.TypeString, value)
+		_node.PopVersion = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1645,6 +1670,18 @@ func (u *UserUpsert) UpdateParentID() *UserUpsert {
 	return u
 }
 
+// SetPopVersion sets the "pop_version" field.
+func (u *UserUpsert) SetPopVersion(v string) *UserUpsert {
+	u.Set(user.FieldPopVersion, v)
+	return u
+}
+
+// UpdatePopVersion sets the "pop_version" field to the value that was provided on create.
+func (u *UserUpsert) UpdatePopVersion() *UserUpsert {
+	u.SetExcluded(user.FieldPopVersion)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1903,6 +1940,20 @@ func (u *UserUpsertOne) SetParentID(v int64) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateParentID() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateParentID()
+	})
+}
+
+// SetPopVersion sets the "pop_version" field.
+func (u *UserUpsertOne) SetPopVersion(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetPopVersion(v)
+	})
+}
+
+// UpdatePopVersion sets the "pop_version" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdatePopVersion() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdatePopVersion()
 	})
 }
 
@@ -2330,6 +2381,20 @@ func (u *UserUpsertBulk) SetParentID(v int64) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateParentID() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateParentID()
+	})
+}
+
+// SetPopVersion sets the "pop_version" field.
+func (u *UserUpsertBulk) SetPopVersion(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetPopVersion(v)
+	})
+}
+
+// UpdatePopVersion sets the "pop_version" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdatePopVersion() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdatePopVersion()
 	})
 }
 

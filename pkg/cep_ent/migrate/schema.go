@@ -1324,6 +1324,7 @@ var (
 		{Name: "is_frozen", Type: field.TypeBool, Comment: "是否冻结", Default: false},
 		{Name: "is_recharge", Type: field.TypeBool, Comment: "是否充值过", Default: false},
 		{Name: "user_type", Type: field.TypeEnum, Comment: "用户类型", Enums: []string{"personal", "enterprise"}, Default: "personal"},
+		{Name: "pop_version", Type: field.TypeString, Comment: "用户最新弹窗版本", Default: ""},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -1335,7 +1336,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[15]},
+				Columns:    []*schema.Column{UsersColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
