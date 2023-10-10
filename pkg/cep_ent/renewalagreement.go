@@ -44,6 +44,8 @@ type RenewalAgreement struct {
 	FirstPay int64 `json:"first_pay"`
 	// 后续扣款价格
 	AfterPay int64 `json:"after_pay"`
+	// 最后一次预警时间
+	LastWarningTime time.Time `json:"last_warning_time"`
 	// 订阅自动续费结束时间
 	SubFinishedTime time.Time `json:"sub_finished_time"`
 	// 外键用户 id
@@ -102,7 +104,7 @@ func (*RenewalAgreement) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case renewalagreement.FieldType, renewalagreement.FieldSubStatus, renewalagreement.FieldPayStatus:
 			values[i] = new(sql.NullString)
-		case renewalagreement.FieldCreatedAt, renewalagreement.FieldUpdatedAt, renewalagreement.FieldDeletedAt, renewalagreement.FieldNextPayTime, renewalagreement.FieldSubFinishedTime:
+		case renewalagreement.FieldCreatedAt, renewalagreement.FieldUpdatedAt, renewalagreement.FieldDeletedAt, renewalagreement.FieldNextPayTime, renewalagreement.FieldLastWarningTime, renewalagreement.FieldSubFinishedTime:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -196,6 +198,12 @@ func (ra *RenewalAgreement) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field after_pay", values[i])
 			} else if value.Valid {
 				ra.AfterPay = value.Int64
+			}
+		case renewalagreement.FieldLastWarningTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_warning_time", values[i])
+			} else if value.Valid {
+				ra.LastWarningTime = value.Time
 			}
 		case renewalagreement.FieldSubFinishedTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -296,6 +304,9 @@ func (ra *RenewalAgreement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("after_pay=")
 	builder.WriteString(fmt.Sprintf("%v", ra.AfterPay))
+	builder.WriteString(", ")
+	builder.WriteString("last_warning_time=")
+	builder.WriteString(ra.LastWarningTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("sub_finished_time=")
 	builder.WriteString(ra.SubFinishedTime.Format(time.ANSIC))

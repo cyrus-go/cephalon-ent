@@ -212,6 +212,20 @@ func (rau *RenewalAgreementUpdate) AddAfterPay(i int64) *RenewalAgreementUpdate 
 	return rau
 }
 
+// SetLastWarningTime sets the "last_warning_time" field.
+func (rau *RenewalAgreementUpdate) SetLastWarningTime(t time.Time) *RenewalAgreementUpdate {
+	rau.mutation.SetLastWarningTime(t)
+	return rau
+}
+
+// SetNillableLastWarningTime sets the "last_warning_time" field if the given value is not nil.
+func (rau *RenewalAgreementUpdate) SetNillableLastWarningTime(t *time.Time) *RenewalAgreementUpdate {
+	if t != nil {
+		rau.SetLastWarningTime(*t)
+	}
+	return rau
+}
+
 // SetSubFinishedTime sets the "sub_finished_time" field.
 func (rau *RenewalAgreementUpdate) SetSubFinishedTime(t time.Time) *RenewalAgreementUpdate {
 	rau.mutation.SetSubFinishedTime(t)
@@ -402,6 +416,9 @@ func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if value, ok := rau.mutation.AddedAfterPay(); ok {
 		_spec.AddField(renewalagreement.FieldAfterPay, field.TypeInt64, value)
+	}
+	if value, ok := rau.mutation.LastWarningTime(); ok {
+		_spec.SetField(renewalagreement.FieldLastWarningTime, field.TypeTime, value)
 	}
 	if value, ok := rau.mutation.SubFinishedTime(); ok {
 		_spec.SetField(renewalagreement.FieldSubFinishedTime, field.TypeTime, value)
@@ -665,6 +682,20 @@ func (rauo *RenewalAgreementUpdateOne) AddAfterPay(i int64) *RenewalAgreementUpd
 	return rauo
 }
 
+// SetLastWarningTime sets the "last_warning_time" field.
+func (rauo *RenewalAgreementUpdateOne) SetLastWarningTime(t time.Time) *RenewalAgreementUpdateOne {
+	rauo.mutation.SetLastWarningTime(t)
+	return rauo
+}
+
+// SetNillableLastWarningTime sets the "last_warning_time" field if the given value is not nil.
+func (rauo *RenewalAgreementUpdateOne) SetNillableLastWarningTime(t *time.Time) *RenewalAgreementUpdateOne {
+	if t != nil {
+		rauo.SetLastWarningTime(*t)
+	}
+	return rauo
+}
+
 // SetSubFinishedTime sets the "sub_finished_time" field.
 func (rauo *RenewalAgreementUpdateOne) SetSubFinishedTime(t time.Time) *RenewalAgreementUpdateOne {
 	rauo.mutation.SetSubFinishedTime(t)
@@ -885,6 +916,9 @@ func (rauo *RenewalAgreementUpdateOne) sqlSave(ctx context.Context) (_node *Rene
 	}
 	if value, ok := rauo.mutation.AddedAfterPay(); ok {
 		_spec.AddField(renewalagreement.FieldAfterPay, field.TypeInt64, value)
+	}
+	if value, ok := rauo.mutation.LastWarningTime(); ok {
+		_spec.SetField(renewalagreement.FieldLastWarningTime, field.TypeTime, value)
 	}
 	if value, ok := rauo.mutation.SubFinishedTime(); ok {
 		_spec.SetField(renewalagreement.FieldSubFinishedTime, field.TypeTime, value)

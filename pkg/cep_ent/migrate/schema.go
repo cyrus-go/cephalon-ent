@@ -1205,6 +1205,7 @@ var (
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "first_pay", Type: field.TypeInt64, Comment: "首次扣款价格", Default: 0},
 		{Name: "after_pay", Type: field.TypeInt64, Comment: "后续扣款价格", Default: 0},
+		{Name: "last_warning_time", Type: field.TypeTime, Comment: "最后一次预警时间"},
 		{Name: "sub_finished_time", Type: field.TypeTime, Comment: "订阅自动续费结束时间"},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "外键任务 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
@@ -1218,13 +1219,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "renewal_agreements_missions_renewal_agreements",
-				Columns:    []*schema.Column{RenewalAgreementsColumns[14]},
+				Columns:    []*schema.Column{RenewalAgreementsColumns[15]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "renewal_agreements_users_renewal_agreements",
-				Columns:    []*schema.Column{RenewalAgreementsColumns[15]},
+				Columns:    []*schema.Column{RenewalAgreementsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

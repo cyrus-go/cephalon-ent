@@ -42169,6 +42169,7 @@ type RenewalAgreementMutation struct {
 	addfirst_pay      *int64
 	after_pay         *int64
 	addafter_pay      *int64
+	last_warning_time *time.Time
 	sub_finished_time *time.Time
 	clearedFields     map[string]struct{}
 	user              *int64
@@ -42816,6 +42817,42 @@ func (m *RenewalAgreementMutation) ResetAfterPay() {
 	m.addafter_pay = nil
 }
 
+// SetLastWarningTime sets the "last_warning_time" field.
+func (m *RenewalAgreementMutation) SetLastWarningTime(t time.Time) {
+	m.last_warning_time = &t
+}
+
+// LastWarningTime returns the value of the "last_warning_time" field in the mutation.
+func (m *RenewalAgreementMutation) LastWarningTime() (r time.Time, exists bool) {
+	v := m.last_warning_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastWarningTime returns the old "last_warning_time" field's value of the RenewalAgreement entity.
+// If the RenewalAgreement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RenewalAgreementMutation) OldLastWarningTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastWarningTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastWarningTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastWarningTime: %w", err)
+	}
+	return oldValue.LastWarningTime, nil
+}
+
+// ResetLastWarningTime resets all changes to the "last_warning_time" field.
+func (m *RenewalAgreementMutation) ResetLastWarningTime() {
+	m.last_warning_time = nil
+}
+
 // SetSubFinishedTime sets the "sub_finished_time" field.
 func (m *RenewalAgreementMutation) SetSubFinishedTime(t time.Time) {
 	m.sub_finished_time = &t
@@ -43012,7 +43049,7 @@ func (m *RenewalAgreementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RenewalAgreementMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, renewalagreement.FieldCreatedBy)
 	}
@@ -43048,6 +43085,9 @@ func (m *RenewalAgreementMutation) Fields() []string {
 	}
 	if m.after_pay != nil {
 		fields = append(fields, renewalagreement.FieldAfterPay)
+	}
+	if m.last_warning_time != nil {
+		fields = append(fields, renewalagreement.FieldLastWarningTime)
 	}
 	if m.sub_finished_time != nil {
 		fields = append(fields, renewalagreement.FieldSubFinishedTime)
@@ -43090,6 +43130,8 @@ func (m *RenewalAgreementMutation) Field(name string) (ent.Value, bool) {
 		return m.FirstPay()
 	case renewalagreement.FieldAfterPay:
 		return m.AfterPay()
+	case renewalagreement.FieldLastWarningTime:
+		return m.LastWarningTime()
 	case renewalagreement.FieldSubFinishedTime:
 		return m.SubFinishedTime()
 	case renewalagreement.FieldUserID:
@@ -43129,6 +43171,8 @@ func (m *RenewalAgreementMutation) OldField(ctx context.Context, name string) (e
 		return m.OldFirstPay(ctx)
 	case renewalagreement.FieldAfterPay:
 		return m.OldAfterPay(ctx)
+	case renewalagreement.FieldLastWarningTime:
+		return m.OldLastWarningTime(ctx)
 	case renewalagreement.FieldSubFinishedTime:
 		return m.OldSubFinishedTime(ctx)
 	case renewalagreement.FieldUserID:
@@ -43227,6 +43271,13 @@ func (m *RenewalAgreementMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAfterPay(v)
+		return nil
+	case renewalagreement.FieldLastWarningTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastWarningTime(v)
 		return nil
 	case renewalagreement.FieldSubFinishedTime:
 		v, ok := value.(time.Time)
@@ -43396,6 +43447,9 @@ func (m *RenewalAgreementMutation) ResetField(name string) error {
 		return nil
 	case renewalagreement.FieldAfterPay:
 		m.ResetAfterPay()
+		return nil
+	case renewalagreement.FieldLastWarningTime:
+		m.ResetLastWarningTime()
 		return nil
 	case renewalagreement.FieldSubFinishedTime:
 		m.ResetSubFinishedTime()

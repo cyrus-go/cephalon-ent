@@ -1871,16 +1871,20 @@ func init() {
 	renewalagreementDescAfterPay := renewalagreementFields[6].Descriptor()
 	// renewalagreement.DefaultAfterPay holds the default value on creation for the after_pay field.
 	renewalagreement.DefaultAfterPay = renewalagreementDescAfterPay.Default.(int64)
+	// renewalagreementDescLastWarningTime is the schema descriptor for last_warning_time field.
+	renewalagreementDescLastWarningTime := renewalagreementFields[7].Descriptor()
+	// renewalagreement.DefaultLastWarningTime holds the default value on creation for the last_warning_time field.
+	renewalagreement.DefaultLastWarningTime = renewalagreementDescLastWarningTime.Default.(time.Time)
 	// renewalagreementDescSubFinishedTime is the schema descriptor for sub_finished_time field.
-	renewalagreementDescSubFinishedTime := renewalagreementFields[7].Descriptor()
+	renewalagreementDescSubFinishedTime := renewalagreementFields[8].Descriptor()
 	// renewalagreement.DefaultSubFinishedTime holds the default value on creation for the sub_finished_time field.
 	renewalagreement.DefaultSubFinishedTime = renewalagreementDescSubFinishedTime.Default.(time.Time)
 	// renewalagreementDescUserID is the schema descriptor for user_id field.
-	renewalagreementDescUserID := renewalagreementFields[8].Descriptor()
+	renewalagreementDescUserID := renewalagreementFields[9].Descriptor()
 	// renewalagreement.DefaultUserID holds the default value on creation for the user_id field.
 	renewalagreement.DefaultUserID = renewalagreementDescUserID.Default.(int64)
 	// renewalagreementDescMissionID is the schema descriptor for mission_id field.
-	renewalagreementDescMissionID := renewalagreementFields[9].Descriptor()
+	renewalagreementDescMissionID := renewalagreementFields[10].Descriptor()
 	// renewalagreement.DefaultMissionID holds the default value on creation for the mission_id field.
 	renewalagreement.DefaultMissionID = renewalagreementDescMissionID.Default.(int64)
 	// renewalagreementDescID is the schema descriptor for id field.

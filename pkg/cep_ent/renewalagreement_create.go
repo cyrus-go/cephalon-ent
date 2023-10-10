@@ -193,6 +193,20 @@ func (rac *RenewalAgreementCreate) SetNillableAfterPay(i *int64) *RenewalAgreeme
 	return rac
 }
 
+// SetLastWarningTime sets the "last_warning_time" field.
+func (rac *RenewalAgreementCreate) SetLastWarningTime(t time.Time) *RenewalAgreementCreate {
+	rac.mutation.SetLastWarningTime(t)
+	return rac
+}
+
+// SetNillableLastWarningTime sets the "last_warning_time" field if the given value is not nil.
+func (rac *RenewalAgreementCreate) SetNillableLastWarningTime(t *time.Time) *RenewalAgreementCreate {
+	if t != nil {
+		rac.SetLastWarningTime(*t)
+	}
+	return rac
+}
+
 // SetSubFinishedTime sets the "sub_finished_time" field.
 func (rac *RenewalAgreementCreate) SetSubFinishedTime(t time.Time) *RenewalAgreementCreate {
 	rac.mutation.SetSubFinishedTime(t)
@@ -342,6 +356,10 @@ func (rac *RenewalAgreementCreate) defaults() {
 		v := renewalagreement.DefaultAfterPay
 		rac.mutation.SetAfterPay(v)
 	}
+	if _, ok := rac.mutation.LastWarningTime(); !ok {
+		v := renewalagreement.DefaultLastWarningTime
+		rac.mutation.SetLastWarningTime(v)
+	}
 	if _, ok := rac.mutation.SubFinishedTime(); !ok {
 		v := renewalagreement.DefaultSubFinishedTime
 		rac.mutation.SetSubFinishedTime(v)
@@ -412,6 +430,9 @@ func (rac *RenewalAgreementCreate) check() error {
 	}
 	if _, ok := rac.mutation.AfterPay(); !ok {
 		return &ValidationError{Name: "after_pay", err: errors.New(`cep_ent: missing required field "RenewalAgreement.after_pay"`)}
+	}
+	if _, ok := rac.mutation.LastWarningTime(); !ok {
+		return &ValidationError{Name: "last_warning_time", err: errors.New(`cep_ent: missing required field "RenewalAgreement.last_warning_time"`)}
 	}
 	if _, ok := rac.mutation.SubFinishedTime(); !ok {
 		return &ValidationError{Name: "sub_finished_time", err: errors.New(`cep_ent: missing required field "RenewalAgreement.sub_finished_time"`)}
@@ -508,6 +529,10 @@ func (rac *RenewalAgreementCreate) createSpec() (*RenewalAgreement, *sqlgraph.Cr
 	if value, ok := rac.mutation.AfterPay(); ok {
 		_spec.SetField(renewalagreement.FieldAfterPay, field.TypeInt64, value)
 		_node.AfterPay = value
+	}
+	if value, ok := rac.mutation.LastWarningTime(); ok {
+		_spec.SetField(renewalagreement.FieldLastWarningTime, field.TypeTime, value)
+		_node.LastWarningTime = value
 	}
 	if value, ok := rac.mutation.SubFinishedTime(); ok {
 		_spec.SetField(renewalagreement.FieldSubFinishedTime, field.TypeTime, value)
@@ -758,6 +783,18 @@ func (u *RenewalAgreementUpsert) UpdateAfterPay() *RenewalAgreementUpsert {
 // AddAfterPay adds v to the "after_pay" field.
 func (u *RenewalAgreementUpsert) AddAfterPay(v int64) *RenewalAgreementUpsert {
 	u.Add(renewalagreement.FieldAfterPay, v)
+	return u
+}
+
+// SetLastWarningTime sets the "last_warning_time" field.
+func (u *RenewalAgreementUpsert) SetLastWarningTime(v time.Time) *RenewalAgreementUpsert {
+	u.Set(renewalagreement.FieldLastWarningTime, v)
+	return u
+}
+
+// UpdateLastWarningTime sets the "last_warning_time" field to the value that was provided on create.
+func (u *RenewalAgreementUpsert) UpdateLastWarningTime() *RenewalAgreementUpsert {
+	u.SetExcluded(renewalagreement.FieldLastWarningTime)
 	return u
 }
 
@@ -1034,6 +1071,20 @@ func (u *RenewalAgreementUpsertOne) AddAfterPay(v int64) *RenewalAgreementUpsert
 func (u *RenewalAgreementUpsertOne) UpdateAfterPay() *RenewalAgreementUpsertOne {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.UpdateAfterPay()
+	})
+}
+
+// SetLastWarningTime sets the "last_warning_time" field.
+func (u *RenewalAgreementUpsertOne) SetLastWarningTime(v time.Time) *RenewalAgreementUpsertOne {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.SetLastWarningTime(v)
+	})
+}
+
+// UpdateLastWarningTime sets the "last_warning_time" field to the value that was provided on create.
+func (u *RenewalAgreementUpsertOne) UpdateLastWarningTime() *RenewalAgreementUpsertOne {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.UpdateLastWarningTime()
 	})
 }
 
@@ -1482,6 +1533,20 @@ func (u *RenewalAgreementUpsertBulk) AddAfterPay(v int64) *RenewalAgreementUpser
 func (u *RenewalAgreementUpsertBulk) UpdateAfterPay() *RenewalAgreementUpsertBulk {
 	return u.Update(func(s *RenewalAgreementUpsert) {
 		s.UpdateAfterPay()
+	})
+}
+
+// SetLastWarningTime sets the "last_warning_time" field.
+func (u *RenewalAgreementUpsertBulk) SetLastWarningTime(v time.Time) *RenewalAgreementUpsertBulk {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.SetLastWarningTime(v)
+	})
+}
+
+// UpdateLastWarningTime sets the "last_warning_time" field to the value that was provided on create.
+func (u *RenewalAgreementUpsertBulk) UpdateLastWarningTime() *RenewalAgreementUpsertBulk {
+	return u.Update(func(s *RenewalAgreementUpsert) {
+		s.UpdateLastWarningTime()
 	})
 }
 

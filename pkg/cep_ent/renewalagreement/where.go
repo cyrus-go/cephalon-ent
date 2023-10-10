@@ -101,6 +101,11 @@ func AfterPay(v int64) predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(sql.FieldEQ(FieldAfterPay, v))
 }
 
+// LastWarningTime applies equality check predicate on the "last_warning_time" field. It's identical to LastWarningTimeEQ.
+func LastWarningTime(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldLastWarningTime, v))
+}
+
 // SubFinishedTime applies equality check predicate on the "sub_finished_time" field. It's identical to SubFinishedTimeEQ.
 func SubFinishedTime(v time.Time) predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(sql.FieldEQ(FieldSubFinishedTime, v))
@@ -564,6 +569,46 @@ func AfterPayLT(v int64) predicate.RenewalAgreement {
 // AfterPayLTE applies the LTE predicate on the "after_pay" field.
 func AfterPayLTE(v int64) predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(sql.FieldLTE(FieldAfterPay, v))
+}
+
+// LastWarningTimeEQ applies the EQ predicate on the "last_warning_time" field.
+func LastWarningTimeEQ(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldEQ(FieldLastWarningTime, v))
+}
+
+// LastWarningTimeNEQ applies the NEQ predicate on the "last_warning_time" field.
+func LastWarningTimeNEQ(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldNEQ(FieldLastWarningTime, v))
+}
+
+// LastWarningTimeIn applies the In predicate on the "last_warning_time" field.
+func LastWarningTimeIn(vs ...time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldIn(FieldLastWarningTime, vs...))
+}
+
+// LastWarningTimeNotIn applies the NotIn predicate on the "last_warning_time" field.
+func LastWarningTimeNotIn(vs ...time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldNotIn(FieldLastWarningTime, vs...))
+}
+
+// LastWarningTimeGT applies the GT predicate on the "last_warning_time" field.
+func LastWarningTimeGT(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldGT(FieldLastWarningTime, v))
+}
+
+// LastWarningTimeGTE applies the GTE predicate on the "last_warning_time" field.
+func LastWarningTimeGTE(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldGTE(FieldLastWarningTime, v))
+}
+
+// LastWarningTimeLT applies the LT predicate on the "last_warning_time" field.
+func LastWarningTimeLT(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldLT(FieldLastWarningTime, v))
+}
+
+// LastWarningTimeLTE applies the LTE predicate on the "last_warning_time" field.
+func LastWarningTimeLTE(v time.Time) predicate.RenewalAgreement {
+	return predicate.RenewalAgreement(sql.FieldLTE(FieldLastWarningTime, v))
 }
 
 // SubFinishedTimeEQ applies the EQ predicate on the "sub_finished_time" field.

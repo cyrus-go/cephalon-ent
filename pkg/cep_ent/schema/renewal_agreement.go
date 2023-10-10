@@ -24,6 +24,7 @@ func (RenewalAgreement) Fields() []ent.Field {
 		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("币种 id"),
 		field.Int64("first_pay").Default(0).StructTag(`json:"first_pay"`).Comment("首次扣款价格"),
 		field.Int64("after_pay").Default(0).StructTag(`json:"after_pay"`).Comment("后续扣款价格"),
+		field.Time("last_warning_time").Default(common.ZeroTime).StructTag(`json:"last_warning_time"`).Comment("最后一次预警时间"),
 		field.Time("sub_finished_time").Default(common.ZeroTime).StructTag(`json:"sub_finished_time"`).Comment("订阅自动续费结束时间"),
 
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键用户 id"),

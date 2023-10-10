@@ -40,6 +40,8 @@ const (
 	FieldFirstPay = "first_pay"
 	// FieldAfterPay holds the string denoting the after_pay field in the database.
 	FieldAfterPay = "after_pay"
+	// FieldLastWarningTime holds the string denoting the last_warning_time field in the database.
+	FieldLastWarningTime = "last_warning_time"
 	// FieldSubFinishedTime holds the string denoting the sub_finished_time field in the database.
 	FieldSubFinishedTime = "sub_finished_time"
 	// FieldUserID holds the string denoting the user_id field in the database.
@@ -83,6 +85,7 @@ var Columns = []string{
 	FieldSymbolID,
 	FieldFirstPay,
 	FieldAfterPay,
+	FieldLastWarningTime,
 	FieldSubFinishedTime,
 	FieldUserID,
 	FieldMissionID,
@@ -119,6 +122,8 @@ var (
 	DefaultFirstPay int64
 	// DefaultAfterPay holds the default value on creation for the "after_pay" field.
 	DefaultAfterPay int64
+	// DefaultLastWarningTime holds the default value on creation for the "last_warning_time" field.
+	DefaultLastWarningTime time.Time
 	// DefaultSubFinishedTime holds the default value on creation for the "sub_finished_time" field.
 	DefaultSubFinishedTime time.Time
 	// DefaultUserID holds the default value on creation for the "user_id" field.
@@ -231,6 +236,11 @@ func ByFirstPay(opts ...sql.OrderTermOption) OrderOption {
 // ByAfterPay orders the results by the after_pay field.
 func ByAfterPay(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAfterPay, opts...).ToFunc()
+}
+
+// ByLastWarningTime orders the results by the last_warning_time field.
+func ByLastWarningTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastWarningTime, opts...).ToFunc()
 }
 
 // BySubFinishedTime orders the results by the sub_finished_time field.
