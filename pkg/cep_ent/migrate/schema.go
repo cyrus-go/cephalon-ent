@@ -837,6 +837,7 @@ var (
 		{Name: "plan_started_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划开始时间（包时）"},
 		{Name: "plan_finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划结束时间（包时）"},
 		{Name: "mission_batch_number", Type: field.TypeString, Comment: "任务批次号，用于方便检索", Default: ""},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "关联的设备 id", Default: 0},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
@@ -851,32 +852,38 @@ var (
 		PrimaryKey: []*schema.Column{MissionOrdersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "mission_orders_missions_mission_orders",
+				Symbol:     "mission_orders_devices_mission_orders",
 				Columns:    []*schema.Column{MissionOrdersColumns[20]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "mission_orders_missions_mission_orders",
+				Columns:    []*schema.Column{MissionOrdersColumns[21]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_orders_mission_batches_mission_orders",
-				Columns:    []*schema.Column{MissionOrdersColumns[21]},
+				Columns:    []*schema.Column{MissionOrdersColumns[22]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_orders_symbols_mission_orders",
-				Columns:    []*schema.Column{MissionOrdersColumns[22]},
+				Columns:    []*schema.Column{MissionOrdersColumns[23]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_orders_users_consume_mission_orders",
-				Columns:    []*schema.Column{MissionOrdersColumns[23]},
+				Columns:    []*schema.Column{MissionOrdersColumns[24]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_orders_users_produce_mission_orders",
-				Columns:    []*schema.Column{MissionOrdersColumns[24]},
+				Columns:    []*schema.Column{MissionOrdersColumns[25]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1575,11 +1582,12 @@ func init() {
 	MissionKeyPairsTable.ForeignKeys[1].RefTable = MissionsTable
 	MissionKeyPairsTable.Annotation = &entsql.Annotation{}
 	MissionKindsTable.Annotation = &entsql.Annotation{}
-	MissionOrdersTable.ForeignKeys[0].RefTable = MissionsTable
-	MissionOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
-	MissionOrdersTable.ForeignKeys[2].RefTable = SymbolsTable
-	MissionOrdersTable.ForeignKeys[3].RefTable = UsersTable
+	MissionOrdersTable.ForeignKeys[0].RefTable = DevicesTable
+	MissionOrdersTable.ForeignKeys[1].RefTable = MissionsTable
+	MissionOrdersTable.ForeignKeys[2].RefTable = MissionBatchesTable
+	MissionOrdersTable.ForeignKeys[3].RefTable = SymbolsTable
 	MissionOrdersTable.ForeignKeys[4].RefTable = UsersTable
+	MissionOrdersTable.ForeignKeys[5].RefTable = UsersTable
 	MissionOrdersTable.Annotation = &entsql.Annotation{}
 	MissionProduceOrdersTable.ForeignKeys[0].RefTable = DevicesTable
 	MissionProduceOrdersTable.ForeignKeys[1].RefTable = MissionsTable

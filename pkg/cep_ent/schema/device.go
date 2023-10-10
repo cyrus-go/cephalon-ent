@@ -33,6 +33,7 @@ func (Device) Edges() []ent.Edge {
 		edge.To("user_devices", UserDevice.Type),
 		edge.To("device_gpu_missions", DeviceGpuMission.Type),
 		edge.To("frpc_infos", FrpcInfo.Type),
+		edge.To("mission_orders", MissionOrder.Type),
 	}
 }
 

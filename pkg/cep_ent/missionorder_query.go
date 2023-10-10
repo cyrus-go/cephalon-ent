@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -33,6 +34,7 @@ type MissionOrderQuery struct {
 	withBills        *BillQuery
 	withMissionBatch *MissionBatchQuery
 	withMission      *MissionQuery
+	withDevice       *DeviceQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -194,6 +196,28 @@ func (moq *MissionOrderQuery) QueryMission() *MissionQuery {
 			sqlgraph.From(missionorder.Table, missionorder.FieldID, selector),
 			sqlgraph.To(mission.Table, mission.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.MissionTable, missionorder.MissionColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(moq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDevice chains the current query on the "device" edge.
+func (moq *MissionOrderQuery) QueryDevice() *DeviceQuery {
+	query := (&DeviceClient{config: moq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := moq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := moq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, selector),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.DeviceTable, missionorder.DeviceColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(moq.driver.Dialect(), step)
 		return fromU, nil
@@ -399,6 +423,7 @@ func (moq *MissionOrderQuery) Clone() *MissionOrderQuery {
 		withBills:        moq.withBills.Clone(),
 		withMissionBatch: moq.withMissionBatch.Clone(),
 		withMission:      moq.withMission.Clone(),
+		withDevice:       moq.withDevice.Clone(),
 		// clone intermediate query.
 		sql:  moq.sql.Clone(),
 		path: moq.path,
@@ -468,6 +493,17 @@ func (moq *MissionOrderQuery) WithMission(opts ...func(*MissionQuery)) *MissionO
 		opt(query)
 	}
 	moq.withMission = query
+	return moq
+}
+
+// WithDevice tells the query-builder to eager-load the nodes that are connected to
+// the "device" edge. The optional arguments are used to configure the query builder of the edge.
+func (moq *MissionOrderQuery) WithDevice(opts ...func(*DeviceQuery)) *MissionOrderQuery {
+	query := (&DeviceClient{config: moq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	moq.withDevice = query
 	return moq
 }
 
@@ -549,13 +585,14 @@ func (moq *MissionOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*MissionOrder{}
 		_spec       = moq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			moq.withConsumeUser != nil,
 			moq.withProduceUser != nil,
 			moq.withSymbol != nil,
 			moq.withBills != nil,
 			moq.withMissionBatch != nil,
 			moq.withMission != nil,
+			moq.withDevice != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -610,6 +647,12 @@ func (moq *MissionOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if query := moq.withMission; query != nil {
 		if err := moq.loadMission(ctx, query, nodes, nil,
 			func(n *MissionOrder, e *Mission) { n.Edges.Mission = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := moq.withDevice; query != nil {
+		if err := moq.loadDevice(ctx, query, nodes, nil,
+			func(n *MissionOrder, e *Device) { n.Edges.Device = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -791,6 +834,35 @@ func (moq *MissionOrderQuery) loadMission(ctx context.Context, query *MissionQue
 	}
 	return nil
 }
+func (moq *MissionOrderQuery) loadDevice(ctx context.Context, query *DeviceQuery, nodes []*MissionOrder, init func(*MissionOrder), assign func(*MissionOrder, *Device)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*MissionOrder)
+	for i := range nodes {
+		fk := nodes[i].DeviceID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(device.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "device_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (moq *MissionOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := moq.querySpec()
@@ -831,6 +903,9 @@ func (moq *MissionOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if moq.withMission != nil {
 			_spec.Node.AddColumnOnce(missionorder.FieldMissionID)
+		}
+		if moq.withDevice != nil {
+			_spec.Node.AddColumnOnce(missionorder.FieldDeviceID)
 		}
 	}
 	if ps := moq.predicates; len(ps) > 0 {

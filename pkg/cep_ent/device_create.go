@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -273,6 +274,21 @@ func (dc *DeviceCreate) AddFrpcInfos(f ...*FrpcInfo) *DeviceCreate {
 		ids[i] = f[i].ID
 	}
 	return dc.AddFrpcInfoIDs(ids...)
+}
+
+// AddMissionOrderIDs adds the "mission_orders" edge to the MissionOrder entity by IDs.
+func (dc *DeviceCreate) AddMissionOrderIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddMissionOrderIDs(ids...)
+	return dc
+}
+
+// AddMissionOrders adds the "mission_orders" edges to the MissionOrder entity.
+func (dc *DeviceCreate) AddMissionOrders(m ...*MissionOrder) *DeviceCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return dc.AddMissionOrderIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -571,6 +587,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(frpcinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.MissionOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionOrdersTable,
+			Columns: []string{device.MissionOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

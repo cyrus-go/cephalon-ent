@@ -156,6 +156,11 @@ func MissionBatchNumber(v string) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldMissionBatchNumber, v))
 }
 
+// DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
+func DeviceID(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldDeviceID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -1046,6 +1051,26 @@ func MissionBatchNumberContainsFold(v string) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldContainsFold(FieldMissionBatchNumber, v))
 }
 
+// DeviceIDEQ applies the EQ predicate on the "device_id" field.
+func DeviceIDEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldDeviceID, v))
+}
+
+// DeviceIDNEQ applies the NEQ predicate on the "device_id" field.
+func DeviceIDNEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldDeviceID, v))
+}
+
+// DeviceIDIn applies the In predicate on the "device_id" field.
+func DeviceIDIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldDeviceID, vs...))
+}
+
+// DeviceIDNotIn applies the NotIn predicate on the "device_id" field.
+func DeviceIDNotIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldDeviceID, vs...))
+}
+
 // HasConsumeUser applies the HasEdge predicate on the "consume_user" edge.
 func HasConsumeUser() predicate.MissionOrder {
 	return predicate.MissionOrder(func(s *sql.Selector) {
@@ -1176,6 +1201,29 @@ func HasMission() predicate.MissionOrder {
 func HasMissionWith(preds ...predicate.Mission) predicate.MissionOrder {
 	return predicate.MissionOrder(func(s *sql.Selector) {
 		step := newMissionStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasDevice applies the HasEdge predicate on the "device" edge.
+func HasDevice() predicate.MissionOrder {
+	return predicate.MissionOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, DeviceTable, DeviceColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDeviceWith applies the HasEdge predicate on the "device" edge with a given conditions (other predicates).
+func HasDeviceWith(preds ...predicate.Device) predicate.MissionOrder {
+	return predicate.MissionOrder(func(s *sql.Selector) {
+		step := newDeviceStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

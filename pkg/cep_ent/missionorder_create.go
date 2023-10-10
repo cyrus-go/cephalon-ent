@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -364,6 +365,20 @@ func (moc *MissionOrderCreate) SetNillableMissionBatchNumber(s *string) *Mission
 	return moc
 }
 
+// SetDeviceID sets the "device_id" field.
+func (moc *MissionOrderCreate) SetDeviceID(i int64) *MissionOrderCreate {
+	moc.mutation.SetDeviceID(i)
+	return moc
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableDeviceID(i *int64) *MissionOrderCreate {
+	if i != nil {
+		moc.SetDeviceID(*i)
+	}
+	return moc
+}
+
 // SetID sets the "id" field.
 func (moc *MissionOrderCreate) SetID(i int64) *MissionOrderCreate {
 	moc.mutation.SetID(i)
@@ -416,6 +431,11 @@ func (moc *MissionOrderCreate) SetMissionBatch(m *MissionBatch) *MissionOrderCre
 // SetMission sets the "mission" edge to the Mission entity.
 func (moc *MissionOrderCreate) SetMission(m *Mission) *MissionOrderCreate {
 	return moc.SetMissionID(m.ID)
+}
+
+// SetDevice sets the "device" edge to the Device entity.
+func (moc *MissionOrderCreate) SetDevice(d *Device) *MissionOrderCreate {
+	return moc.SetDeviceID(d.ID)
 }
 
 // Mutation returns the MissionOrderMutation object of the builder.
@@ -549,6 +569,10 @@ func (moc *MissionOrderCreate) defaults() {
 		v := missionorder.DefaultMissionBatchNumber
 		moc.mutation.SetMissionBatchNumber(v)
 	}
+	if _, ok := moc.mutation.DeviceID(); !ok {
+		v := missionorder.DefaultDeviceID
+		moc.mutation.SetDeviceID(v)
+	}
 	if _, ok := moc.mutation.ID(); !ok {
 		v := missionorder.DefaultID()
 		moc.mutation.SetID(v)
@@ -643,6 +667,9 @@ func (moc *MissionOrderCreate) check() error {
 	if _, ok := moc.mutation.MissionBatchNumber(); !ok {
 		return &ValidationError{Name: "mission_batch_number", err: errors.New(`cep_ent: missing required field "MissionOrder.mission_batch_number"`)}
 	}
+	if _, ok := moc.mutation.DeviceID(); !ok {
+		return &ValidationError{Name: "device_id", err: errors.New(`cep_ent: missing required field "MissionOrder.device_id"`)}
+	}
 	if _, ok := moc.mutation.ConsumeUserID(); !ok {
 		return &ValidationError{Name: "consume_user", err: errors.New(`cep_ent: missing required edge "MissionOrder.consume_user"`)}
 	}
@@ -657,6 +684,9 @@ func (moc *MissionOrderCreate) check() error {
 	}
 	if _, ok := moc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission", err: errors.New(`cep_ent: missing required edge "MissionOrder.mission"`)}
+	}
+	if _, ok := moc.mutation.DeviceID(); !ok {
+		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "MissionOrder.device"`)}
 	}
 	return nil
 }
@@ -866,6 +896,23 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MissionID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := moc.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionorder.DeviceTable,
+			Columns: []string{missionorder.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.DeviceID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -1241,6 +1288,18 @@ func (u *MissionOrderUpsert) SetMissionBatchNumber(v string) *MissionOrderUpsert
 // UpdateMissionBatchNumber sets the "mission_batch_number" field to the value that was provided on create.
 func (u *MissionOrderUpsert) UpdateMissionBatchNumber() *MissionOrderUpsert {
 	u.SetExcluded(missionorder.FieldMissionBatchNumber)
+	return u
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionOrderUpsert) SetDeviceID(v int64) *MissionOrderUpsert {
+	u.Set(missionorder.FieldDeviceID, v)
+	return u
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateDeviceID() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldDeviceID)
 	return u
 }
 
@@ -1670,6 +1729,20 @@ func (u *MissionOrderUpsertOne) SetMissionBatchNumber(v string) *MissionOrderUps
 func (u *MissionOrderUpsertOne) UpdateMissionBatchNumber() *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateMissionBatchNumber()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionOrderUpsertOne) SetDeviceID(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateDeviceID() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateDeviceID()
 	})
 }
 
@@ -2265,6 +2338,20 @@ func (u *MissionOrderUpsertBulk) SetMissionBatchNumber(v string) *MissionOrderUp
 func (u *MissionOrderUpsertBulk) UpdateMissionBatchNumber() *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateMissionBatchNumber()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionOrderUpsertBulk) SetDeviceID(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateDeviceID() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateDeviceID()
 	})
 }
 

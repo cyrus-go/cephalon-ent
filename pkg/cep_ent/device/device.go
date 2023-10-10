@@ -50,6 +50,8 @@ const (
 	EdgeDeviceGpuMissions = "device_gpu_missions"
 	// EdgeFrpcInfos holds the string denoting the frpc_infos edge name in mutations.
 	EdgeFrpcInfos = "frpc_infos"
+	// EdgeMissionOrders holds the string denoting the mission_orders edge name in mutations.
+	EdgeMissionOrders = "mission_orders"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -87,6 +89,13 @@ const (
 	FrpcInfosInverseTable = "frpc_infos"
 	// FrpcInfosColumn is the table column denoting the frpc_infos relation/edge.
 	FrpcInfosColumn = "device_id"
+	// MissionOrdersTable is the table that holds the mission_orders relation/edge.
+	MissionOrdersTable = "mission_orders"
+	// MissionOrdersInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	MissionOrdersInverseTable = "mission_orders"
+	// MissionOrdersColumn is the table column denoting the mission_orders relation/edge.
+	MissionOrdersColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -337,6 +346,20 @@ func ByFrpcInfos(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newFrpcInfosStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionOrdersCount orders the results by mission_orders count.
+func ByMissionOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionOrdersStep(), opts...)
+	}
+}
+
+// ByMissionOrders orders the results by mission_orders terms.
+func ByMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -370,5 +393,12 @@ func newFrpcInfosStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FrpcInfosInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, FrpcInfosTable, FrpcInfosColumn),
+	)
+}
+func newMissionOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionOrdersTable, MissionOrdersColumn),
 	)
 }

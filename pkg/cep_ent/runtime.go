@@ -1357,6 +1357,10 @@ func init() {
 	missionorderDescMissionBatchNumber := missionorderFields[18].Descriptor()
 	// missionorder.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	missionorder.DefaultMissionBatchNumber = missionorderDescMissionBatchNumber.Default.(string)
+	// missionorderDescDeviceID is the schema descriptor for device_id field.
+	missionorderDescDeviceID := missionorderFields[19].Descriptor()
+	// missionorder.DefaultDeviceID holds the default value on creation for the device_id field.
+	missionorder.DefaultDeviceID = missionorderDescDeviceID.Default.(int64)
 	// missionorderDescID is the schema descriptor for id field.
 	missionorderDescID := missionorderMixinFields0[0].Descriptor()
 	// missionorder.DefaultID holds the default value on creation for the id field.

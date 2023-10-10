@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -402,6 +403,20 @@ func (mou *MissionOrderUpdate) SetNillableMissionBatchNumber(s *string) *Mission
 	return mou
 }
 
+// SetDeviceID sets the "device_id" field.
+func (mou *MissionOrderUpdate) SetDeviceID(i int64) *MissionOrderUpdate {
+	mou.mutation.SetDeviceID(i)
+	return mou
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableDeviceID(i *int64) *MissionOrderUpdate {
+	if i != nil {
+		mou.SetDeviceID(*i)
+	}
+	return mou
+}
+
 // SetConsumeUser sets the "consume_user" edge to the User entity.
 func (mou *MissionOrderUpdate) SetConsumeUser(u *User) *MissionOrderUpdate {
 	return mou.SetConsumeUserID(u.ID)
@@ -440,6 +455,11 @@ func (mou *MissionOrderUpdate) SetMissionBatch(m *MissionBatch) *MissionOrderUpd
 // SetMission sets the "mission" edge to the Mission entity.
 func (mou *MissionOrderUpdate) SetMission(m *Mission) *MissionOrderUpdate {
 	return mou.SetMissionID(m.ID)
+}
+
+// SetDevice sets the "device" edge to the Device entity.
+func (mou *MissionOrderUpdate) SetDevice(d *Device) *MissionOrderUpdate {
+	return mou.SetDeviceID(d.ID)
 }
 
 // Mutation returns the MissionOrderMutation object of the builder.
@@ -495,6 +515,12 @@ func (mou *MissionOrderUpdate) ClearMissionBatch() *MissionOrderUpdate {
 // ClearMission clears the "mission" edge to the Mission entity.
 func (mou *MissionOrderUpdate) ClearMission() *MissionOrderUpdate {
 	mou.mutation.ClearMission()
+	return mou
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (mou *MissionOrderUpdate) ClearDevice() *MissionOrderUpdate {
+	mou.mutation.ClearDevice()
 	return mou
 }
 
@@ -570,6 +596,9 @@ func (mou *MissionOrderUpdate) check() error {
 	}
 	if _, ok := mou.mutation.MissionID(); mou.mutation.MissionCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionOrder.mission"`)
+	}
+	if _, ok := mou.mutation.DeviceID(); mou.mutation.DeviceCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionOrder.device"`)
 	}
 	return nil
 }
@@ -847,6 +876,35 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mou.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionorder.DeviceTable,
+			Columns: []string{missionorder.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mou.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionorder.DeviceTable,
+			Columns: []string{missionorder.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1242,6 +1300,20 @@ func (mouo *MissionOrderUpdateOne) SetNillableMissionBatchNumber(s *string) *Mis
 	return mouo
 }
 
+// SetDeviceID sets the "device_id" field.
+func (mouo *MissionOrderUpdateOne) SetDeviceID(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.SetDeviceID(i)
+	return mouo
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableDeviceID(i *int64) *MissionOrderUpdateOne {
+	if i != nil {
+		mouo.SetDeviceID(*i)
+	}
+	return mouo
+}
+
 // SetConsumeUser sets the "consume_user" edge to the User entity.
 func (mouo *MissionOrderUpdateOne) SetConsumeUser(u *User) *MissionOrderUpdateOne {
 	return mouo.SetConsumeUserID(u.ID)
@@ -1280,6 +1352,11 @@ func (mouo *MissionOrderUpdateOne) SetMissionBatch(m *MissionBatch) *MissionOrde
 // SetMission sets the "mission" edge to the Mission entity.
 func (mouo *MissionOrderUpdateOne) SetMission(m *Mission) *MissionOrderUpdateOne {
 	return mouo.SetMissionID(m.ID)
+}
+
+// SetDevice sets the "device" edge to the Device entity.
+func (mouo *MissionOrderUpdateOne) SetDevice(d *Device) *MissionOrderUpdateOne {
+	return mouo.SetDeviceID(d.ID)
 }
 
 // Mutation returns the MissionOrderMutation object of the builder.
@@ -1335,6 +1412,12 @@ func (mouo *MissionOrderUpdateOne) ClearMissionBatch() *MissionOrderUpdateOne {
 // ClearMission clears the "mission" edge to the Mission entity.
 func (mouo *MissionOrderUpdateOne) ClearMission() *MissionOrderUpdateOne {
 	mouo.mutation.ClearMission()
+	return mouo
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (mouo *MissionOrderUpdateOne) ClearDevice() *MissionOrderUpdateOne {
+	mouo.mutation.ClearDevice()
 	return mouo
 }
 
@@ -1423,6 +1506,9 @@ func (mouo *MissionOrderUpdateOne) check() error {
 	}
 	if _, ok := mouo.mutation.MissionID(); mouo.mutation.MissionCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionOrder.mission"`)
+	}
+	if _, ok := mouo.mutation.DeviceID(); mouo.mutation.DeviceCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionOrder.device"`)
 	}
 	return nil
 }
@@ -1717,6 +1803,35 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mouo.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionorder.DeviceTable,
+			Columns: []string{missionorder.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mouo.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionorder.DeviceTable,
+			Columns: []string{missionorder.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

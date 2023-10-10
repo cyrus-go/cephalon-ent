@@ -1858,6 +1858,22 @@ func (c *DeviceClient) QueryFrpcInfos(d *Device) *FrpcInfoQuery {
 	return query
 }
 
+// QueryMissionOrders queries the mission_orders edge of a Device.
+func (c *DeviceClient) QueryMissionOrders(d *Device) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionOrdersTable, device.MissionOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DeviceClient) Hooks() []Hook {
 	return c.hooks.Device
@@ -4848,6 +4864,22 @@ func (c *MissionOrderClient) QueryMission(mo *MissionOrder) *MissionQuery {
 			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
 			sqlgraph.To(mission.Table, mission.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.MissionTable, missionorder.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDevice queries the device edge of a MissionOrder.
+func (c *MissionOrderClient) QueryDevice(mo *MissionOrder) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.DeviceTable, missionorder.DeviceColumn),
 		)
 		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
 		return fromV, nil

@@ -36,6 +36,7 @@ func (MissionOrder) Fields() []ent.Field {
 		field.Time("plan_finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_finished_at"`).Comment("任务计划结束时间（包时）"),
 		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id"`).Comment("任务批次外键"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号，用于方便检索"),
+		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("关联的设备 id"),
 	}
 }
 
@@ -49,6 +50,7 @@ func (MissionOrder) Edges() []ent.Edge {
 		edge.To("bills", Bill.Type),
 		edge.From("mission_batch", MissionBatch.Type).Ref("mission_orders").Field("mission_batch_id").Unique().Required(),
 		edge.From("mission", Mission.Type).Ref("mission_orders").Field("mission_id").Unique().Required(),
+		edge.From("device", Device.Type).Ref("mission_orders").Field("device_id").Unique().Required(),
 	}
 }
 

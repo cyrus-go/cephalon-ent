@@ -64,6 +64,8 @@ const (
 	FieldMissionBatchID = "mission_batch_id"
 	// FieldMissionBatchNumber holds the string denoting the mission_batch_number field in the database.
 	FieldMissionBatchNumber = "mission_batch_number"
+	// FieldDeviceID holds the string denoting the device_id field in the database.
+	FieldDeviceID = "device_id"
 	// EdgeConsumeUser holds the string denoting the consume_user edge name in mutations.
 	EdgeConsumeUser = "consume_user"
 	// EdgeProduceUser holds the string denoting the produce_user edge name in mutations.
@@ -76,6 +78,8 @@ const (
 	EdgeMissionBatch = "mission_batch"
 	// EdgeMission holds the string denoting the mission edge name in mutations.
 	EdgeMission = "mission"
+	// EdgeDevice holds the string denoting the device edge name in mutations.
+	EdgeDevice = "device"
 	// Table holds the table name of the missionorder in the database.
 	Table = "mission_orders"
 	// ConsumeUserTable is the table that holds the consume_user relation/edge.
@@ -120,6 +124,13 @@ const (
 	MissionInverseTable = "missions"
 	// MissionColumn is the table column denoting the mission relation/edge.
 	MissionColumn = "mission_id"
+	// DeviceTable is the table that holds the device relation/edge.
+	DeviceTable = "mission_orders"
+	// DeviceInverseTable is the table name for the Device entity.
+	// It exists in this package in order to avoid circular dependency with the "device" package.
+	DeviceInverseTable = "devices"
+	// DeviceColumn is the table column denoting the device relation/edge.
+	DeviceColumn = "device_id"
 )
 
 // Columns holds all SQL columns for missionorder fields.
@@ -149,6 +160,7 @@ var Columns = []string{
 	FieldPlanFinishedAt,
 	FieldMissionBatchID,
 	FieldMissionBatchNumber,
+	FieldDeviceID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -204,6 +216,8 @@ var (
 	DefaultMissionBatchID int64
 	// DefaultMissionBatchNumber holds the default value on creation for the "mission_batch_number" field.
 	DefaultMissionBatchNumber string
+	// DefaultDeviceID holds the default value on creation for the "device_id" field.
+	DefaultDeviceID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -384,6 +398,11 @@ func ByMissionBatchNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionBatchNumber, opts...).ToFunc()
 }
 
+// ByDeviceID orders the results by the device_id field.
+func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
+}
+
 // ByConsumeUserField orders the results by consume_user field.
 func ByConsumeUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -432,6 +451,13 @@ func ByMissionField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newMissionStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByDeviceField orders the results by device field.
+func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newConsumeUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -472,5 +498,12 @@ func newMissionStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionTable, MissionColumn),
+	)
+}
+func newDeviceStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, DeviceTable, DeviceColumn),
 	)
 }
