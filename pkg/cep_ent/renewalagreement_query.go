@@ -97,7 +97,7 @@ func (raq *RenewalAgreementQuery) QueryMission() *MissionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(renewalagreement.Table, renewalagreement.FieldID, selector),
 			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, renewalagreement.MissionTable, renewalagreement.MissionColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, renewalagreement.MissionTable, renewalagreement.MissionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(raq.driver.Dialect(), step)
 		return fromU, nil

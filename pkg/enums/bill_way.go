@@ -7,6 +7,7 @@ const (
 	BillWayRechargeWechat      BillWay = "recharge_wechat"
 	BillWayRechargeAlipay      BillWay = "recharge_alipay"
 	BillWayMissionTime         BillWay = "mission_time"
+	BillWayMissionTimePlan     BillWay = "mission_time_plan"
 	BillWayMissionCount        BillWay = "mission_count"
 	BillWayMissionHold         BillWay = "mission_hold"
 	BillWayMissionVolume       BillWay = "mission_volume"
@@ -23,6 +24,7 @@ func (BillWay) Values() []string {
 		string(BillWayRechargeWechat),
 		string(BillWayRechargeAlipay),
 		string(BillWayMissionTime),
+		string(BillWayMissionTimePlan),
 		string(BillWayMissionCount),
 		string(BillWayMissionHold),
 		string(BillWayMissionVolume),

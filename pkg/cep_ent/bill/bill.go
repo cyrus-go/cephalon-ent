@@ -199,7 +199,7 @@ const DefaultWay enums.BillWay = "unknown"
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
 func WayValidator(w enums.BillWay) error {
 	switch w {
-	case "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge":
+	case "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge":
 		return nil
 	default:
 		return fmt.Errorf("bill: invalid enum value for way field: %q", w)

@@ -18,7 +18,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas"}, Default: "unknown"},
-		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge"}, Default: "unknown"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
 		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
 		{Name: "target_after_amount", Type: field.TypeInt64, Comment: "目标钱包期末金额", Default: 0},
@@ -1057,7 +1057,7 @@ var (
 		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan"}, Default: "txt2img"},
 		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan"}, Default: "count"},
-		{Name: "renewal_type", Type: field.TypeEnum, Comment: "包时类型，只有包时任务才有", Enums: []string{"unknow", "hour", "day", "month"}, Default: "unknow"},
+		{Name: "renewal_type", Type: field.TypeEnum, Comment: "包时类型，只有包时任务才有", Enums: []string{"unknow", "hour", "day", "week", "month"}, Default: "unknow"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
@@ -1199,7 +1199,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime},
 		{Name: "next_pay_time", Type: field.TypeTime, Comment: "下次扣款时间"},
-		{Name: "type", Type: field.TypeEnum, Comment: "自动续费类型（按小时、按天等）", Enums: []string{"unknow", "hour", "day", "month"}, Default: "unknow"},
+		{Name: "type", Type: field.TypeEnum, Comment: "自动续费类型（按小时、按天等）", Enums: []string{"unknow", "hour", "day", "week", "month"}, Default: "unknow"},
 		{Name: "sub_status", Type: field.TypeEnum, Comment: "订阅自动续费状态（订阅中、已结束等）", Enums: []string{"unknow", "subscribing", "finished"}, Default: "unknow"},
 		{Name: "pay_status", Type: field.TypeEnum, Comment: "支付状态（待支付、已支付、支付失败等）", Enums: []string{"unknow", "waiting", "succeed", "failed"}, Default: "unknow"},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
@@ -1207,7 +1207,7 @@ var (
 		{Name: "after_pay", Type: field.TypeInt64, Comment: "后续扣款价格", Default: 0},
 		{Name: "last_warning_time", Type: field.TypeTime, Comment: "最后一次预警时间"},
 		{Name: "sub_finished_time", Type: field.TypeTime, Comment: "订阅自动续费结束时间"},
-		{Name: "mission_id", Type: field.TypeInt64, Comment: "外键任务 id", Default: 0},
+		{Name: "mission_id", Type: field.TypeInt64, Unique: true, Comment: "外键任务 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// RenewalAgreementsTable holds the schema information for the "renewal_agreements" table.
@@ -1218,7 +1218,7 @@ var (
 		PrimaryKey: []*schema.Column{RenewalAgreementsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "renewal_agreements_missions_renewal_agreements",
+				Symbol:     "renewal_agreements_missions_renewal_agreement",
 				Columns:    []*schema.Column{RenewalAgreementsColumns[15]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,

@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -106,8 +107,8 @@ type MissionEdges struct {
 	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
 	// MissionOrders holds the value of the mission_orders edge.
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
-	// RenewalAgreements holds the value of the renewal_agreements edge.
-	RenewalAgreements []*RenewalAgreement `json:"renewal_agreements,omitempty"`
+	// RenewalAgreement holds the value of the renewal_agreement edge.
+	RenewalAgreement *RenewalAgreement `json:"renewal_agreement,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [10]bool
@@ -214,13 +215,17 @@ func (e MissionEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
 	return nil, &NotLoadedError{edge: "mission_orders"}
 }
 
-// RenewalAgreementsOrErr returns the RenewalAgreements value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
+// RenewalAgreementOrErr returns the RenewalAgreement value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) RenewalAgreementOrErr() (*RenewalAgreement, error) {
 	if e.loadedTypes[9] {
-		return e.RenewalAgreements, nil
+		if e.RenewalAgreement == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: renewalagreement.Label}
+		}
+		return e.RenewalAgreement, nil
 	}
-	return nil, &NotLoadedError{edge: "renewal_agreements"}
+	return nil, &NotLoadedError{edge: "renewal_agreement"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -486,9 +491,9 @@ func (m *Mission) QueryMissionOrders() *MissionOrderQuery {
 	return NewMissionClient(m.config).QueryMissionOrders(m)
 }
 
-// QueryRenewalAgreements queries the "renewal_agreements" edge of the Mission entity.
-func (m *Mission) QueryRenewalAgreements() *RenewalAgreementQuery {
-	return NewMissionClient(m.config).QueryRenewalAgreements(m)
+// QueryRenewalAgreement queries the "renewal_agreement" edge of the Mission entity.
+func (m *Mission) QueryRenewalAgreement() *RenewalAgreementQuery {
+	return NewMissionClient(m.config).QueryRenewalAgreement(m)
 }
 
 // Update returns a builder for updating this Mission.

@@ -3886,15 +3886,15 @@ func (c *MissionClient) QueryMissionOrders(m *Mission) *MissionOrderQuery {
 	return query
 }
 
-// QueryRenewalAgreements queries the renewal_agreements edge of a Mission.
-func (c *MissionClient) QueryRenewalAgreements(m *Mission) *RenewalAgreementQuery {
+// QueryRenewalAgreement queries the renewal_agreement edge of a Mission.
+func (c *MissionClient) QueryRenewalAgreement(m *Mission) *RenewalAgreementQuery {
 	query := (&RenewalAgreementClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(mission.Table, mission.FieldID, id),
 			sqlgraph.To(renewalagreement.Table, renewalagreement.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, mission.RenewalAgreementsTable, mission.RenewalAgreementsColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, mission.RenewalAgreementTable, mission.RenewalAgreementColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -6513,7 +6513,7 @@ func (c *RenewalAgreementClient) QueryMission(ra *RenewalAgreement) *MissionQuer
 		step := sqlgraph.NewStep(
 			sqlgraph.From(renewalagreement.Table, renewalagreement.FieldID, id),
 			sqlgraph.To(mission.Table, mission.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, renewalagreement.MissionTable, renewalagreement.MissionColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, renewalagreement.MissionTable, renewalagreement.MissionColumn),
 		)
 		fromV = sqlgraph.Neighbors(ra.driver.Dialect(), step)
 		return fromV, nil

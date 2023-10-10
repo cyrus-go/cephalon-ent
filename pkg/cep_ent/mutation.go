@@ -21253,9 +21253,8 @@ type MissionMutation struct {
 	mission_orders                map[int64]struct{}
 	removedmission_orders         map[int64]struct{}
 	clearedmission_orders         bool
-	renewal_agreements            map[int64]struct{}
-	removedrenewal_agreements     map[int64]struct{}
-	clearedrenewal_agreements     bool
+	renewal_agreement             *int64
+	clearedrenewal_agreement      bool
 	done                          bool
 	oldValue                      func(context.Context) (*Mission, error)
 	predicates                    []predicate.Mission
@@ -22858,58 +22857,43 @@ func (m *MissionMutation) ResetMissionOrders() {
 	m.removedmission_orders = nil
 }
 
-// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by ids.
-func (m *MissionMutation) AddRenewalAgreementIDs(ids ...int64) {
-	if m.renewal_agreements == nil {
-		m.renewal_agreements = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.renewal_agreements[ids[i]] = struct{}{}
-	}
+// SetRenewalAgreementID sets the "renewal_agreement" edge to the RenewalAgreement entity by id.
+func (m *MissionMutation) SetRenewalAgreementID(id int64) {
+	m.renewal_agreement = &id
 }
 
-// ClearRenewalAgreements clears the "renewal_agreements" edge to the RenewalAgreement entity.
-func (m *MissionMutation) ClearRenewalAgreements() {
-	m.clearedrenewal_agreements = true
+// ClearRenewalAgreement clears the "renewal_agreement" edge to the RenewalAgreement entity.
+func (m *MissionMutation) ClearRenewalAgreement() {
+	m.clearedrenewal_agreement = true
 }
 
-// RenewalAgreementsCleared reports if the "renewal_agreements" edge to the RenewalAgreement entity was cleared.
-func (m *MissionMutation) RenewalAgreementsCleared() bool {
-	return m.clearedrenewal_agreements
+// RenewalAgreementCleared reports if the "renewal_agreement" edge to the RenewalAgreement entity was cleared.
+func (m *MissionMutation) RenewalAgreementCleared() bool {
+	return m.clearedrenewal_agreement
 }
 
-// RemoveRenewalAgreementIDs removes the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
-func (m *MissionMutation) RemoveRenewalAgreementIDs(ids ...int64) {
-	if m.removedrenewal_agreements == nil {
-		m.removedrenewal_agreements = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.renewal_agreements, ids[i])
-		m.removedrenewal_agreements[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedRenewalAgreements returns the removed IDs of the "renewal_agreements" edge to the RenewalAgreement entity.
-func (m *MissionMutation) RemovedRenewalAgreementsIDs() (ids []int64) {
-	for id := range m.removedrenewal_agreements {
-		ids = append(ids, id)
+// RenewalAgreementID returns the "renewal_agreement" edge ID in the mutation.
+func (m *MissionMutation) RenewalAgreementID() (id int64, exists bool) {
+	if m.renewal_agreement != nil {
+		return *m.renewal_agreement, true
 	}
 	return
 }
 
-// RenewalAgreementsIDs returns the "renewal_agreements" edge IDs in the mutation.
-func (m *MissionMutation) RenewalAgreementsIDs() (ids []int64) {
-	for id := range m.renewal_agreements {
-		ids = append(ids, id)
+// RenewalAgreementIDs returns the "renewal_agreement" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RenewalAgreementID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) RenewalAgreementIDs() (ids []int64) {
+	if id := m.renewal_agreement; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetRenewalAgreements resets all changes to the "renewal_agreements" edge.
-func (m *MissionMutation) ResetRenewalAgreements() {
-	m.renewal_agreements = nil
-	m.clearedrenewal_agreements = false
-	m.removedrenewal_agreements = nil
+// ResetRenewalAgreement resets all changes to the "renewal_agreement" edge.
+func (m *MissionMutation) ResetRenewalAgreement() {
+	m.renewal_agreement = nil
+	m.clearedrenewal_agreement = false
 }
 
 // Where appends a list predicates to the MissionMutation builder.
@@ -23598,8 +23582,8 @@ func (m *MissionMutation) AddedEdges() []string {
 	if m.mission_orders != nil {
 		edges = append(edges, mission.EdgeMissionOrders)
 	}
-	if m.renewal_agreements != nil {
-		edges = append(edges, mission.EdgeRenewalAgreements)
+	if m.renewal_agreement != nil {
+		edges = append(edges, mission.EdgeRenewalAgreement)
 	}
 	return edges
 }
@@ -23652,12 +23636,10 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case mission.EdgeRenewalAgreements:
-		ids := make([]ent.Value, 0, len(m.renewal_agreements))
-		for id := range m.renewal_agreements {
-			ids = append(ids, id)
+	case mission.EdgeRenewalAgreement:
+		if id := m.renewal_agreement; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -23676,9 +23658,6 @@ func (m *MissionMutation) RemovedEdges() []string {
 	}
 	if m.removedmission_orders != nil {
 		edges = append(edges, mission.EdgeMissionOrders)
-	}
-	if m.removedrenewal_agreements != nil {
-		edges = append(edges, mission.EdgeRenewalAgreements)
 	}
 	return edges
 }
@@ -23708,12 +23687,6 @@ func (m *MissionMutation) RemovedIDs(name string) []ent.Value {
 	case mission.EdgeMissionOrders:
 		ids := make([]ent.Value, 0, len(m.removedmission_orders))
 		for id := range m.removedmission_orders {
-			ids = append(ids, id)
-		}
-		return ids
-	case mission.EdgeRenewalAgreements:
-		ids := make([]ent.Value, 0, len(m.removedrenewal_agreements))
-		for id := range m.removedrenewal_agreements {
 			ids = append(ids, id)
 		}
 		return ids
@@ -23751,8 +23724,8 @@ func (m *MissionMutation) ClearedEdges() []string {
 	if m.clearedmission_orders {
 		edges = append(edges, mission.EdgeMissionOrders)
 	}
-	if m.clearedrenewal_agreements {
-		edges = append(edges, mission.EdgeRenewalAgreements)
+	if m.clearedrenewal_agreement {
+		edges = append(edges, mission.EdgeRenewalAgreement)
 	}
 	return edges
 }
@@ -23779,8 +23752,8 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_productions
 	case mission.EdgeMissionOrders:
 		return m.clearedmission_orders
-	case mission.EdgeRenewalAgreements:
-		return m.clearedrenewal_agreements
+	case mission.EdgeRenewalAgreement:
+		return m.clearedrenewal_agreement
 	}
 	return false
 }
@@ -23803,6 +23776,9 @@ func (m *MissionMutation) ClearEdge(name string) error {
 		return nil
 	case mission.EdgeMissionBatch:
 		m.ClearMissionBatch()
+		return nil
+	case mission.EdgeRenewalAgreement:
+		m.ClearRenewalAgreement()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission unique edge %s", name)
@@ -23839,8 +23815,8 @@ func (m *MissionMutation) ResetEdge(name string) error {
 	case mission.EdgeMissionOrders:
 		m.ResetMissionOrders()
 		return nil
-	case mission.EdgeRenewalAgreements:
-		m.ResetRenewalAgreements()
+	case mission.EdgeRenewalAgreement:
+		m.ResetRenewalAgreement()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission edge %s", name)

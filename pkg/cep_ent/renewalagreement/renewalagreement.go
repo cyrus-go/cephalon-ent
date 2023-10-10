@@ -139,7 +139,7 @@ const DefaultType enums.RenewalType = "unknow"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.RenewalType) error {
 	switch _type {
-	case "unknow", "hour", "day", "month":
+	case "unknow", "hour", "day", "week", "month":
 		return nil
 	default:
 		return fmt.Errorf("renewalagreement: invalid enum value for type field: %q", _type)
@@ -282,6 +282,6 @@ func newMissionStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionTable, MissionColumn),
+		sqlgraph.Edge(sqlgraph.O2O, true, MissionTable, MissionColumn),
 	)
 }

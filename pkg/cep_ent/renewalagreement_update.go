@@ -454,7 +454,7 @@ func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if rau.mutation.MissionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   renewalagreement.MissionTable,
 			Columns: []string{renewalagreement.MissionColumn},
@@ -467,7 +467,7 @@ func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if nodes := rau.mutation.MissionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   renewalagreement.MissionTable,
 			Columns: []string{renewalagreement.MissionColumn},
@@ -954,7 +954,7 @@ func (rauo *RenewalAgreementUpdateOne) sqlSave(ctx context.Context) (_node *Rene
 	}
 	if rauo.mutation.MissionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   renewalagreement.MissionTable,
 			Columns: []string{renewalagreement.MissionColumn},
@@ -967,7 +967,7 @@ func (rauo *RenewalAgreementUpdateOne) sqlSave(ctx context.Context) (_node *Rene
 	}
 	if nodes := rauo.mutation.MissionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   renewalagreement.MissionTable,
 			Columns: []string{renewalagreement.MissionColumn},

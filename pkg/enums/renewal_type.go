@@ -6,6 +6,7 @@ const (
 	RenewalTypeUnknow RenewalType = "unknow"
 	RenewalTypeHour   RenewalType = "hour"
 	RenewalTypeDay    RenewalType = "day"
+	RenewalTypeWeek   RenewalType = "week"
 	RenewalTypeMonth  RenewalType = "month"
 )
 
@@ -14,6 +15,7 @@ func (obj RenewalType) Values() []string {
 		string(RenewalTypeUnknow),
 		string(RenewalTypeHour),
 		string(RenewalTypeDay),
+		string(RenewalTypeWeek),
 		string(RenewalTypeMonth),
 	}
 }

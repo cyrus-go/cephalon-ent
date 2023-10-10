@@ -155,7 +155,7 @@ const DefaultRenewalType enums.RenewalType = "unknow"
 // RenewalTypeValidator is a validator for the "renewal_type" field enum values. It is called by the builders before save.
 func RenewalTypeValidator(rt enums.RenewalType) error {
 	switch rt {
-	case "unknow", "hour", "day", "month":
+	case "unknow", "hour", "day", "week", "month":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for renewal_type field: %q", rt)

@@ -54,7 +54,7 @@ func (Mission) Edges() []ent.Edge {
 		edge.From("mission_batch", MissionBatch.Type).Ref("missions").Field("mission_batch_id").Unique().Required(),
 		edge.To("mission_productions", MissionProduction.Type),
 		edge.To("mission_orders", MissionOrder.Type),
-		edge.To("renewal_agreements", RenewalAgreement.Type),
+		edge.To("renewal_agreement", RenewalAgreement.Type).Unique(),
 	}
 }
 
