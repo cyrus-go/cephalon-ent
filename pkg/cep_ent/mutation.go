@@ -36639,7 +36639,6 @@ type PriceMutation struct {
 	mission_type         *enums.MissionType
 	mission_category     *enums.MissionCategory
 	mission_billing_type *enums.MissionBillingType
-	renewal_type         *enums.RenewalType
 	cep                  *int64
 	addcep               *int64
 	started_at           *time.Time
@@ -37120,42 +37119,6 @@ func (m *PriceMutation) ResetMissionBillingType() {
 	m.mission_billing_type = nil
 }
 
-// SetRenewalType sets the "renewal_type" field.
-func (m *PriceMutation) SetRenewalType(et enums.RenewalType) {
-	m.renewal_type = &et
-}
-
-// RenewalType returns the value of the "renewal_type" field in the mutation.
-func (m *PriceMutation) RenewalType() (r enums.RenewalType, exists bool) {
-	v := m.renewal_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRenewalType returns the old "renewal_type" field's value of the Price entity.
-// If the Price object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PriceMutation) OldRenewalType(ctx context.Context) (v enums.RenewalType, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRenewalType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRenewalType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRenewalType: %w", err)
-	}
-	return oldValue.RenewalType, nil
-}
-
-// ResetRenewalType resets all changes to the "renewal_type" field.
-func (m *PriceMutation) ResetRenewalType() {
-	m.renewal_type = nil
-}
-
 // SetCep sets the "cep" field.
 func (m *PriceMutation) SetCep(i int64) {
 	m.cep = &i
@@ -37416,7 +37379,7 @@ func (m *PriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PriceMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, price.FieldCreatedBy)
 	}
@@ -37443,9 +37406,6 @@ func (m *PriceMutation) Fields() []string {
 	}
 	if m.mission_billing_type != nil {
 		fields = append(fields, price.FieldMissionBillingType)
-	}
-	if m.renewal_type != nil {
-		fields = append(fields, price.FieldRenewalType)
 	}
 	if m.cep != nil {
 		fields = append(fields, price.FieldCep)
@@ -37488,8 +37448,6 @@ func (m *PriceMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionCategory()
 	case price.FieldMissionBillingType:
 		return m.MissionBillingType()
-	case price.FieldRenewalType:
-		return m.RenewalType()
 	case price.FieldCep:
 		return m.Cep()
 	case price.FieldStartedAt:
@@ -37527,8 +37485,6 @@ func (m *PriceMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldMissionCategory(ctx)
 	case price.FieldMissionBillingType:
 		return m.OldMissionBillingType(ctx)
-	case price.FieldRenewalType:
-		return m.OldRenewalType(ctx)
 	case price.FieldCep:
 		return m.OldCep(ctx)
 	case price.FieldStartedAt:
@@ -37610,13 +37566,6 @@ func (m *PriceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionBillingType(v)
-		return nil
-	case price.FieldRenewalType:
-		v, ok := value.(enums.RenewalType)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRenewalType(v)
 		return nil
 	case price.FieldCep:
 		v, ok := value.(int64)
@@ -37782,9 +37731,6 @@ func (m *PriceMutation) ResetField(name string) error {
 		return nil
 	case price.FieldMissionBillingType:
 		m.ResetMissionBillingType()
-		return nil
-	case price.FieldRenewalType:
-		m.ResetRenewalType()
 		return nil
 	case price.FieldCep:
 		m.ResetCep()

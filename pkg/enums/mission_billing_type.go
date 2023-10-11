@@ -12,8 +12,14 @@ const (
 	MissionBillingTypeHold MissionBillingType = "hold"
 	// MissionBillingTypeVolume 按量，单次任务，内部计时 * 时间单价，用多少算力计多少钱
 	MissionBillingTypeVolume MissionBillingType = "volume"
-	// MissionBillingTypeTimePlan 包时，先给钱，然后按计划的时间服务
-	MissionBillingTypeTimePlan MissionBillingType = "time_plan"
+	// MissionBillingTypeTimePlanHour 包时 - 按小时，先给钱，然后按计划的时间服务
+	MissionBillingTypeTimePlanHour MissionBillingType = "time_plan_hour"
+	// MissionBillingTypeTimePlanDay 包时 - 按天
+	MissionBillingTypeTimePlanDay MissionBillingType = "time_plan_day"
+	// MissionBillingTypeTimePlanWeek 包时 - 按周
+	MissionBillingTypeTimePlanWeek MissionBillingType = "time_plan_week"
+	// MissionBillingTypeTimePlanMonth 包时 - 按月
+	MissionBillingTypeTimePlanMonth MissionBillingType = "time_plan_month"
 )
 
 func (obj MissionBillingType) Values() []string {
@@ -23,7 +29,10 @@ func (obj MissionBillingType) Values() []string {
 		string(MissionBillingTypeCount),
 		string(MissionBillingTypeHold),
 		string(MissionBillingTypeVolume),
-		string(MissionBillingTypeTimePlan),
+		string(MissionBillingTypeTimePlanHour),
+		string(MissionBillingTypeTimePlanDay),
+		string(MissionBillingTypeTimePlanWeek),
+		string(MissionBillingTypeTimePlanMonth),
 	}
 }
 

@@ -1625,15 +1625,15 @@ func init() {
 	// price.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	price.DefaultDeletedAt = priceDescDeletedAt.Default.(time.Time)
 	// priceDescCep is the schema descriptor for cep field.
-	priceDescCep := priceFields[5].Descriptor()
+	priceDescCep := priceFields[4].Descriptor()
 	// price.DefaultCep holds the default value on creation for the cep field.
 	price.DefaultCep = priceDescCep.Default.(int64)
 	// priceDescIsDeprecated is the schema descriptor for is_deprecated field.
-	priceDescIsDeprecated := priceFields[8].Descriptor()
+	priceDescIsDeprecated := priceFields[7].Descriptor()
 	// price.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
 	price.DefaultIsDeprecated = priceDescIsDeprecated.Default.(bool)
 	// priceDescIsSensitive is the schema descriptor for is_sensitive field.
-	priceDescIsSensitive := priceFields[9].Descriptor()
+	priceDescIsSensitive := priceFields[8].Descriptor()
 	// price.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
 	price.DefaultIsSensitive = priceDescIsSensitive.Default.(bool)
 	// priceDescID is the schema descriptor for id field.

@@ -123,7 +123,7 @@ const DefaultBillingType enums.MissionBillingType = "unknown"
 // BillingTypeValidator is a validator for the "billing_type" field enum values. It is called by the builders before save.
 func BillingTypeValidator(bt enums.MissionBillingType) error {
 	switch bt {
-	case "unknown", "time", "count", "hold", "volume", "time_plan":
+	case "unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month":
 		return nil
 	default:
 		return fmt.Errorf("missionkind: invalid enum value for billing_type field: %q", bt)

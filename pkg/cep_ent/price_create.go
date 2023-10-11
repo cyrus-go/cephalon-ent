@@ -149,20 +149,6 @@ func (pc *PriceCreate) SetNillableMissionBillingType(ebt *enums.MissionBillingTy
 	return pc
 }
 
-// SetRenewalType sets the "renewal_type" field.
-func (pc *PriceCreate) SetRenewalType(et enums.RenewalType) *PriceCreate {
-	pc.mutation.SetRenewalType(et)
-	return pc
-}
-
-// SetNillableRenewalType sets the "renewal_type" field if the given value is not nil.
-func (pc *PriceCreate) SetNillableRenewalType(et *enums.RenewalType) *PriceCreate {
-	if et != nil {
-		pc.SetRenewalType(*et)
-	}
-	return pc
-}
-
 // SetCep sets the "cep" field.
 func (pc *PriceCreate) SetCep(i int64) *PriceCreate {
 	pc.mutation.SetCep(i)
@@ -318,10 +304,6 @@ func (pc *PriceCreate) defaults() {
 		v := price.DefaultMissionBillingType
 		pc.mutation.SetMissionBillingType(v)
 	}
-	if _, ok := pc.mutation.RenewalType(); !ok {
-		v := price.DefaultRenewalType
-		pc.mutation.SetRenewalType(v)
-	}
 	if _, ok := pc.mutation.Cep(); !ok {
 		v := price.DefaultCep
 		pc.mutation.SetCep(v)
@@ -387,14 +369,6 @@ func (pc *PriceCreate) check() error {
 	if v, ok := pc.mutation.MissionBillingType(); ok {
 		if err := price.MissionBillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "mission_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.mission_billing_type": %w`, err)}
-		}
-	}
-	if _, ok := pc.mutation.RenewalType(); !ok {
-		return &ValidationError{Name: "renewal_type", err: errors.New(`cep_ent: missing required field "Price.renewal_type"`)}
-	}
-	if v, ok := pc.mutation.RenewalType(); ok {
-		if err := price.RenewalTypeValidator(v); err != nil {
-			return &ValidationError{Name: "renewal_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.renewal_type": %w`, err)}
 		}
 	}
 	if _, ok := pc.mutation.Cep(); !ok {
@@ -474,10 +448,6 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.MissionBillingType(); ok {
 		_spec.SetField(price.FieldMissionBillingType, field.TypeEnum, value)
 		_node.MissionBillingType = value
-	}
-	if value, ok := pc.mutation.RenewalType(); ok {
-		_spec.SetField(price.FieldRenewalType, field.TypeEnum, value)
-		_node.RenewalType = value
 	}
 	if value, ok := pc.mutation.Cep(); ok {
 		_spec.SetField(price.FieldCep, field.TypeInt64, value)
@@ -656,18 +626,6 @@ func (u *PriceUpsert) SetMissionBillingType(v enums.MissionBillingType) *PriceUp
 // UpdateMissionBillingType sets the "mission_billing_type" field to the value that was provided on create.
 func (u *PriceUpsert) UpdateMissionBillingType() *PriceUpsert {
 	u.SetExcluded(price.FieldMissionBillingType)
-	return u
-}
-
-// SetRenewalType sets the "renewal_type" field.
-func (u *PriceUpsert) SetRenewalType(v enums.RenewalType) *PriceUpsert {
-	u.Set(price.FieldRenewalType, v)
-	return u
-}
-
-// UpdateRenewalType sets the "renewal_type" field to the value that was provided on create.
-func (u *PriceUpsert) UpdateRenewalType() *PriceUpsert {
-	u.SetExcluded(price.FieldRenewalType)
 	return u
 }
 
@@ -923,20 +881,6 @@ func (u *PriceUpsertOne) SetMissionBillingType(v enums.MissionBillingType) *Pric
 func (u *PriceUpsertOne) UpdateMissionBillingType() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateMissionBillingType()
-	})
-}
-
-// SetRenewalType sets the "renewal_type" field.
-func (u *PriceUpsertOne) SetRenewalType(v enums.RenewalType) *PriceUpsertOne {
-	return u.Update(func(s *PriceUpsert) {
-		s.SetRenewalType(v)
-	})
-}
-
-// UpdateRenewalType sets the "renewal_type" field to the value that was provided on create.
-func (u *PriceUpsertOne) UpdateRenewalType() *PriceUpsertOne {
-	return u.Update(func(s *PriceUpsert) {
-		s.UpdateRenewalType()
 	})
 }
 
@@ -1371,20 +1315,6 @@ func (u *PriceUpsertBulk) SetMissionBillingType(v enums.MissionBillingType) *Pri
 func (u *PriceUpsertBulk) UpdateMissionBillingType() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateMissionBillingType()
-	})
-}
-
-// SetRenewalType sets the "renewal_type" field.
-func (u *PriceUpsertBulk) SetRenewalType(v enums.RenewalType) *PriceUpsertBulk {
-	return u.Update(func(s *PriceUpsert) {
-		s.SetRenewalType(v)
-	})
-}
-
-// UpdateRenewalType sets the "renewal_type" field to the value that was provided on create.
-func (u *PriceUpsertBulk) UpdateRenewalType() *PriceUpsertBulk {
-	return u.Update(func(s *PriceUpsert) {
-		s.UpdateRenewalType()
 	})
 }
 

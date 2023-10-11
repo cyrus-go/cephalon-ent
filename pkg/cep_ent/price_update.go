@@ -147,20 +147,6 @@ func (pu *PriceUpdate) SetNillableMissionBillingType(ebt *enums.MissionBillingTy
 	return pu
 }
 
-// SetRenewalType sets the "renewal_type" field.
-func (pu *PriceUpdate) SetRenewalType(et enums.RenewalType) *PriceUpdate {
-	pu.mutation.SetRenewalType(et)
-	return pu
-}
-
-// SetNillableRenewalType sets the "renewal_type" field if the given value is not nil.
-func (pu *PriceUpdate) SetNillableRenewalType(et *enums.RenewalType) *PriceUpdate {
-	if et != nil {
-		pu.SetRenewalType(*et)
-	}
-	return pu
-}
-
 // SetCep sets the "cep" field.
 func (pu *PriceUpdate) SetCep(i int64) *PriceUpdate {
 	pu.mutation.ResetCep()
@@ -313,11 +299,6 @@ func (pu *PriceUpdate) check() error {
 			return &ValidationError{Name: "mission_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.mission_billing_type": %w`, err)}
 		}
 	}
-	if v, ok := pu.mutation.RenewalType(); ok {
-		if err := price.RenewalTypeValidator(v); err != nil {
-			return &ValidationError{Name: "renewal_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.renewal_type": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -362,9 +343,6 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.MissionBillingType(); ok {
 		_spec.SetField(price.FieldMissionBillingType, field.TypeEnum, value)
-	}
-	if value, ok := pu.mutation.RenewalType(); ok {
-		_spec.SetField(price.FieldRenewalType, field.TypeEnum, value)
 	}
 	if value, ok := pu.mutation.Cep(); ok {
 		_spec.SetField(price.FieldCep, field.TypeInt64, value)
@@ -524,20 +502,6 @@ func (puo *PriceUpdateOne) SetMissionBillingType(ebt enums.MissionBillingType) *
 func (puo *PriceUpdateOne) SetNillableMissionBillingType(ebt *enums.MissionBillingType) *PriceUpdateOne {
 	if ebt != nil {
 		puo.SetMissionBillingType(*ebt)
-	}
-	return puo
-}
-
-// SetRenewalType sets the "renewal_type" field.
-func (puo *PriceUpdateOne) SetRenewalType(et enums.RenewalType) *PriceUpdateOne {
-	puo.mutation.SetRenewalType(et)
-	return puo
-}
-
-// SetNillableRenewalType sets the "renewal_type" field if the given value is not nil.
-func (puo *PriceUpdateOne) SetNillableRenewalType(et *enums.RenewalType) *PriceUpdateOne {
-	if et != nil {
-		puo.SetRenewalType(*et)
 	}
 	return puo
 }
@@ -707,11 +671,6 @@ func (puo *PriceUpdateOne) check() error {
 			return &ValidationError{Name: "mission_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.mission_billing_type": %w`, err)}
 		}
 	}
-	if v, ok := puo.mutation.RenewalType(); ok {
-		if err := price.RenewalTypeValidator(v); err != nil {
-			return &ValidationError{Name: "renewal_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.renewal_type": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -773,9 +732,6 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if value, ok := puo.mutation.MissionBillingType(); ok {
 		_spec.SetField(price.FieldMissionBillingType, field.TypeEnum, value)
-	}
-	if value, ok := puo.mutation.RenewalType(); ok {
-		_spec.SetField(price.FieldRenewalType, field.TypeEnum, value)
 	}
 	if value, ok := puo.mutation.Cep(); ok {
 		_spec.SetField(price.FieldCep, field.TypeInt64, value)

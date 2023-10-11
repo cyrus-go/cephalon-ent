@@ -36,8 +36,6 @@ type Price struct {
 	MissionCategory enums.MissionCategory `json:"mission_category"`
 	// 任务计费类型
 	MissionBillingType enums.MissionBillingType `json:"mission_billing_type"`
-	// 包时类型，只有包时任务才有
-	RenewalType enums.RenewalType `json:"renewal_type,omitempty" renewal_type`
 	// 任务单价
 	Cep int64 `json:"cep"`
 	// 价格有效时间开始，为空表示永久有效
@@ -60,7 +58,7 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldCep:
 			values[i] = new(sql.NullInt64)
-		case price.FieldGpuVersion, price.FieldMissionType, price.FieldMissionCategory, price.FieldMissionBillingType, price.FieldRenewalType:
+		case price.FieldGpuVersion, price.FieldMissionType, price.FieldMissionCategory, price.FieldMissionBillingType:
 			values[i] = new(sql.NullString)
 		case price.FieldCreatedAt, price.FieldUpdatedAt, price.FieldDeletedAt, price.FieldStartedAt, price.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -138,12 +136,6 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mission_billing_type", values[i])
 			} else if value.Valid {
 				pr.MissionBillingType = enums.MissionBillingType(value.String)
-			}
-		case price.FieldRenewalType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field renewal_type", values[i])
-			} else if value.Valid {
-				pr.RenewalType = enums.RenewalType(value.String)
 			}
 		case price.FieldCep:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -239,9 +231,6 @@ func (pr *Price) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_billing_type=")
 	builder.WriteString(fmt.Sprintf("%v", pr.MissionBillingType))
-	builder.WriteString(", ")
-	builder.WriteString("renewal_type=")
-	builder.WriteString(fmt.Sprintf("%v", pr.RenewalType))
 	builder.WriteString(", ")
 	builder.WriteString("cep=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Cep))
