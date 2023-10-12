@@ -1349,16 +1349,20 @@ func init() {
 	missionorderDescPlanFinishedAt := missionorderFields[16].Descriptor()
 	// missionorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
 	missionorder.DefaultPlanFinishedAt = missionorderDescPlanFinishedAt.Default.(time.Time)
+	// missionorderDescExpiredWarningTime is the schema descriptor for expired_warning_time field.
+	missionorderDescExpiredWarningTime := missionorderFields[17].Descriptor()
+	// missionorder.DefaultExpiredWarningTime holds the default value on creation for the expired_warning_time field.
+	missionorder.DefaultExpiredWarningTime = missionorderDescExpiredWarningTime.Default.(time.Time)
 	// missionorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	missionorderDescMissionBatchID := missionorderFields[17].Descriptor()
+	missionorderDescMissionBatchID := missionorderFields[18].Descriptor()
 	// missionorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	missionorder.DefaultMissionBatchID = missionorderDescMissionBatchID.Default.(int64)
 	// missionorderDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
-	missionorderDescMissionBatchNumber := missionorderFields[18].Descriptor()
+	missionorderDescMissionBatchNumber := missionorderFields[19].Descriptor()
 	// missionorder.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	missionorder.DefaultMissionBatchNumber = missionorderDescMissionBatchNumber.Default.(string)
 	// missionorderDescDeviceID is the schema descriptor for device_id field.
-	missionorderDescDeviceID := missionorderFields[19].Descriptor()
+	missionorderDescDeviceID := missionorderFields[20].Descriptor()
 	// missionorder.DefaultDeviceID holds the default value on creation for the device_id field.
 	missionorder.DefaultDeviceID = missionorderDescDeviceID.Default.(int64)
 	// missionorderDescID is the schema descriptor for id field.

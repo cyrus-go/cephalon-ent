@@ -67,6 +67,8 @@ type MissionOrder struct {
 	PlanStartedAt *time.Time `json:"plan_started_at"`
 	// 任务计划结束时间（包时）
 	PlanFinishedAt *time.Time `json:"plan_finished_at"`
+	// 包时任务到期提醒时间（发了通知提醒就更新该时间）
+	ExpiredWarningTime *time.Time `json:"expired_warning_time"`
 	// 任务批次外键
 	MissionBatchID int64 `json:"mission_batch_id"`
 	// 任务批次号，用于方便检索
@@ -196,7 +198,7 @@ func (*MissionOrder) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case missionorder.FieldStatus, missionorder.FieldMissionType, missionorder.FieldMissionBillingType, missionorder.FieldCallWay, missionorder.FieldSerialNumber, missionorder.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
-		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt:
+		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt, missionorder.FieldExpiredWarningTime:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -352,6 +354,13 @@ func (mo *MissionOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mo.PlanFinishedAt = new(time.Time)
 				*mo.PlanFinishedAt = value.Time
+			}
+		case missionorder.FieldExpiredWarningTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expired_warning_time", values[i])
+			} else if value.Valid {
+				mo.ExpiredWarningTime = new(time.Time)
+				*mo.ExpiredWarningTime = value.Time
 			}
 		case missionorder.FieldMissionBatchID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -509,6 +518,11 @@ func (mo *MissionOrder) String() string {
 	builder.WriteString(", ")
 	if v := mo.PlanFinishedAt; v != nil {
 		builder.WriteString("plan_finished_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := mo.ExpiredWarningTime; v != nil {
+		builder.WriteString("expired_warning_time=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")

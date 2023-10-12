@@ -337,6 +337,20 @@ func (moc *MissionOrderCreate) SetNillablePlanFinishedAt(t *time.Time) *MissionO
 	return moc
 }
 
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (moc *MissionOrderCreate) SetExpiredWarningTime(t time.Time) *MissionOrderCreate {
+	moc.mutation.SetExpiredWarningTime(t)
+	return moc
+}
+
+// SetNillableExpiredWarningTime sets the "expired_warning_time" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableExpiredWarningTime(t *time.Time) *MissionOrderCreate {
+	if t != nil {
+		moc.SetExpiredWarningTime(*t)
+	}
+	return moc
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (moc *MissionOrderCreate) SetMissionBatchID(i int64) *MissionOrderCreate {
 	moc.mutation.SetMissionBatchID(i)
@@ -560,6 +574,10 @@ func (moc *MissionOrderCreate) defaults() {
 	if _, ok := moc.mutation.PlanFinishedAt(); !ok {
 		v := missionorder.DefaultPlanFinishedAt
 		moc.mutation.SetPlanFinishedAt(v)
+	}
+	if _, ok := moc.mutation.ExpiredWarningTime(); !ok {
+		v := missionorder.DefaultExpiredWarningTime
+		moc.mutation.SetExpiredWarningTime(v)
 	}
 	if _, ok := moc.mutation.MissionBatchID(); !ok {
 		v := missionorder.DefaultMissionBatchID
@@ -792,6 +810,10 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 	if value, ok := moc.mutation.PlanFinishedAt(); ok {
 		_spec.SetField(missionorder.FieldPlanFinishedAt, field.TypeTime, value)
 		_node.PlanFinishedAt = &value
+	}
+	if value, ok := moc.mutation.ExpiredWarningTime(); ok {
+		_spec.SetField(missionorder.FieldExpiredWarningTime, field.TypeTime, value)
+		_node.ExpiredWarningTime = &value
 	}
 	if value, ok := moc.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
@@ -1267,6 +1289,24 @@ func (u *MissionOrderUpsert) ClearPlanFinishedAt() *MissionOrderUpsert {
 	return u
 }
 
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (u *MissionOrderUpsert) SetExpiredWarningTime(v time.Time) *MissionOrderUpsert {
+	u.Set(missionorder.FieldExpiredWarningTime, v)
+	return u
+}
+
+// UpdateExpiredWarningTime sets the "expired_warning_time" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateExpiredWarningTime() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldExpiredWarningTime)
+	return u
+}
+
+// ClearExpiredWarningTime clears the value of the "expired_warning_time" field.
+func (u *MissionOrderUpsert) ClearExpiredWarningTime() *MissionOrderUpsert {
+	u.SetNull(missionorder.FieldExpiredWarningTime)
+	return u
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (u *MissionOrderUpsert) SetMissionBatchID(v int64) *MissionOrderUpsert {
 	u.Set(missionorder.FieldMissionBatchID, v)
@@ -1701,6 +1741,27 @@ func (u *MissionOrderUpsertOne) UpdatePlanFinishedAt() *MissionOrderUpsertOne {
 func (u *MissionOrderUpsertOne) ClearPlanFinishedAt() *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.ClearPlanFinishedAt()
+	})
+}
+
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (u *MissionOrderUpsertOne) SetExpiredWarningTime(v time.Time) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetExpiredWarningTime(v)
+	})
+}
+
+// UpdateExpiredWarningTime sets the "expired_warning_time" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateExpiredWarningTime() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateExpiredWarningTime()
+	})
+}
+
+// ClearExpiredWarningTime clears the value of the "expired_warning_time" field.
+func (u *MissionOrderUpsertOne) ClearExpiredWarningTime() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.ClearExpiredWarningTime()
 	})
 }
 
@@ -2310,6 +2371,27 @@ func (u *MissionOrderUpsertBulk) UpdatePlanFinishedAt() *MissionOrderUpsertBulk 
 func (u *MissionOrderUpsertBulk) ClearPlanFinishedAt() *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.ClearPlanFinishedAt()
+	})
+}
+
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (u *MissionOrderUpsertBulk) SetExpiredWarningTime(v time.Time) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetExpiredWarningTime(v)
+	})
+}
+
+// UpdateExpiredWarningTime sets the "expired_warning_time" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateExpiredWarningTime() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateExpiredWarningTime()
+	})
+}
+
+// ClearExpiredWarningTime clears the value of the "expired_warning_time" field.
+func (u *MissionOrderUpsertBulk) ClearExpiredWarningTime() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.ClearExpiredWarningTime()
 	})
 }
 

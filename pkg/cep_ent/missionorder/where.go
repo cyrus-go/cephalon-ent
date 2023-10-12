@@ -146,6 +146,11 @@ func PlanFinishedAt(v time.Time) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldPlanFinishedAt, v))
 }
 
+// ExpiredWarningTime applies equality check predicate on the "expired_warning_time" field. It's identical to ExpiredWarningTimeEQ.
+func ExpiredWarningTime(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldExpiredWarningTime, v))
+}
+
 // MissionBatchID applies equality check predicate on the "mission_batch_id" field. It's identical to MissionBatchIDEQ.
 func MissionBatchID(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldMissionBatchID, v))
@@ -964,6 +969,56 @@ func PlanFinishedAtIsNil() predicate.MissionOrder {
 // PlanFinishedAtNotNil applies the NotNil predicate on the "plan_finished_at" field.
 func PlanFinishedAtNotNil() predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldNotNull(FieldPlanFinishedAt))
+}
+
+// ExpiredWarningTimeEQ applies the EQ predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldExpiredWarningTime, v))
+}
+
+// ExpiredWarningTimeNEQ applies the NEQ predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeNEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldExpiredWarningTime, v))
+}
+
+// ExpiredWarningTimeIn applies the In predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldExpiredWarningTime, vs...))
+}
+
+// ExpiredWarningTimeNotIn applies the NotIn predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeNotIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldExpiredWarningTime, vs...))
+}
+
+// ExpiredWarningTimeGT applies the GT predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeGT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldExpiredWarningTime, v))
+}
+
+// ExpiredWarningTimeGTE applies the GTE predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeGTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldExpiredWarningTime, v))
+}
+
+// ExpiredWarningTimeLT applies the LT predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeLT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldExpiredWarningTime, v))
+}
+
+// ExpiredWarningTimeLTE applies the LTE predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeLTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldExpiredWarningTime, v))
+}
+
+// ExpiredWarningTimeIsNil applies the IsNil predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeIsNil() predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIsNull(FieldExpiredWarningTime))
+}
+
+// ExpiredWarningTimeNotNil applies the NotNil predicate on the "expired_warning_time" field.
+func ExpiredWarningTimeNotNil() predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotNull(FieldExpiredWarningTime))
 }
 
 // MissionBatchIDEQ applies the EQ predicate on the "mission_batch_id" field.

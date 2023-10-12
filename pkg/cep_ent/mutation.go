@@ -28703,6 +28703,7 @@ type MissionOrderMutation struct {
 	addbuy_duration      *int64
 	plan_started_at      *time.Time
 	plan_finished_at     *time.Time
+	expired_warning_time *time.Time
 	mission_batch_number *string
 	clearedFields        map[string]struct{}
 	consume_user         *int64
@@ -29767,6 +29768,55 @@ func (m *MissionOrderMutation) ResetPlanFinishedAt() {
 	delete(m.clearedFields, missionorder.FieldPlanFinishedAt)
 }
 
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (m *MissionOrderMutation) SetExpiredWarningTime(t time.Time) {
+	m.expired_warning_time = &t
+}
+
+// ExpiredWarningTime returns the value of the "expired_warning_time" field in the mutation.
+func (m *MissionOrderMutation) ExpiredWarningTime() (r time.Time, exists bool) {
+	v := m.expired_warning_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiredWarningTime returns the old "expired_warning_time" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldExpiredWarningTime(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiredWarningTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiredWarningTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiredWarningTime: %w", err)
+	}
+	return oldValue.ExpiredWarningTime, nil
+}
+
+// ClearExpiredWarningTime clears the value of the "expired_warning_time" field.
+func (m *MissionOrderMutation) ClearExpiredWarningTime() {
+	m.expired_warning_time = nil
+	m.clearedFields[missionorder.FieldExpiredWarningTime] = struct{}{}
+}
+
+// ExpiredWarningTimeCleared returns if the "expired_warning_time" field was cleared in this mutation.
+func (m *MissionOrderMutation) ExpiredWarningTimeCleared() bool {
+	_, ok := m.clearedFields[missionorder.FieldExpiredWarningTime]
+	return ok
+}
+
+// ResetExpiredWarningTime resets all changes to the "expired_warning_time" field.
+func (m *MissionOrderMutation) ResetExpiredWarningTime() {
+	m.expired_warning_time = nil
+	delete(m.clearedFields, missionorder.FieldExpiredWarningTime)
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (m *MissionOrderMutation) SetMissionBatchID(i int64) {
 	m.mission_batch = &i
@@ -30125,7 +30175,7 @@ func (m *MissionOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionOrderMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 26)
 	if m.created_by != nil {
 		fields = append(fields, missionorder.FieldCreatedBy)
 	}
@@ -30192,6 +30242,9 @@ func (m *MissionOrderMutation) Fields() []string {
 	if m.plan_finished_at != nil {
 		fields = append(fields, missionorder.FieldPlanFinishedAt)
 	}
+	if m.expired_warning_time != nil {
+		fields = append(fields, missionorder.FieldExpiredWarningTime)
+	}
 	if m.mission_batch != nil {
 		fields = append(fields, missionorder.FieldMissionBatchID)
 	}
@@ -30253,6 +30306,8 @@ func (m *MissionOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.PlanStartedAt()
 	case missionorder.FieldPlanFinishedAt:
 		return m.PlanFinishedAt()
+	case missionorder.FieldExpiredWarningTime:
+		return m.ExpiredWarningTime()
 	case missionorder.FieldMissionBatchID:
 		return m.MissionBatchID()
 	case missionorder.FieldMissionBatchNumber:
@@ -30312,6 +30367,8 @@ func (m *MissionOrderMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldPlanStartedAt(ctx)
 	case missionorder.FieldPlanFinishedAt:
 		return m.OldPlanFinishedAt(ctx)
+	case missionorder.FieldExpiredWarningTime:
+		return m.OldExpiredWarningTime(ctx)
 	case missionorder.FieldMissionBatchID:
 		return m.OldMissionBatchID(ctx)
 	case missionorder.FieldMissionBatchNumber:
@@ -30481,6 +30538,13 @@ func (m *MissionOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPlanFinishedAt(v)
 		return nil
+	case missionorder.FieldExpiredWarningTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiredWarningTime(v)
+		return nil
 	case missionorder.FieldMissionBatchID:
 		v, ok := value.(int64)
 		if !ok {
@@ -30613,6 +30677,9 @@ func (m *MissionOrderMutation) ClearedFields() []string {
 	if m.FieldCleared(missionorder.FieldPlanFinishedAt) {
 		fields = append(fields, missionorder.FieldPlanFinishedAt)
 	}
+	if m.FieldCleared(missionorder.FieldExpiredWarningTime) {
+		fields = append(fields, missionorder.FieldExpiredWarningTime)
+	}
 	return fields
 }
 
@@ -30632,6 +30699,9 @@ func (m *MissionOrderMutation) ClearField(name string) error {
 		return nil
 	case missionorder.FieldPlanFinishedAt:
 		m.ClearPlanFinishedAt()
+		return nil
+	case missionorder.FieldExpiredWarningTime:
+		m.ClearExpiredWarningTime()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder nullable field %s", name)
@@ -30706,6 +30776,9 @@ func (m *MissionOrderMutation) ResetField(name string) error {
 		return nil
 	case missionorder.FieldPlanFinishedAt:
 		m.ResetPlanFinishedAt()
+		return nil
+	case missionorder.FieldExpiredWarningTime:
+		m.ResetExpiredWarningTime()
 		return nil
 	case missionorder.FieldMissionBatchID:
 		m.ResetMissionBatchID()

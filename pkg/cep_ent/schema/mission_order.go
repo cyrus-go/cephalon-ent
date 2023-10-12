@@ -34,6 +34,7 @@ func (MissionOrder) Fields() []ent.Field {
 		field.Int64("buy_duration").Default(0).StructTag(`json:"buy_duration"`).Comment("包时任务订单购买的时长（单位：小时）"),
 		field.Time("plan_started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_started_at"`).Comment("任务计划开始时间（包时）"),
 		field.Time("plan_finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_finished_at"`).Comment("任务计划结束时间（包时）"),
+		field.Time("expired_warning_time").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_warning_time"`).Comment("包时任务到期提醒时间（发了通知提醒就更新该时间）"),
 		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id"`).Comment("任务批次外键"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号，用于方便检索"),
 		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("关联的设备 id"),

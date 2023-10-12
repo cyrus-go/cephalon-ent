@@ -375,6 +375,26 @@ func (mou *MissionOrderUpdate) ClearPlanFinishedAt() *MissionOrderUpdate {
 	return mou
 }
 
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (mou *MissionOrderUpdate) SetExpiredWarningTime(t time.Time) *MissionOrderUpdate {
+	mou.mutation.SetExpiredWarningTime(t)
+	return mou
+}
+
+// SetNillableExpiredWarningTime sets the "expired_warning_time" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableExpiredWarningTime(t *time.Time) *MissionOrderUpdate {
+	if t != nil {
+		mou.SetExpiredWarningTime(*t)
+	}
+	return mou
+}
+
+// ClearExpiredWarningTime clears the value of the "expired_warning_time" field.
+func (mou *MissionOrderUpdate) ClearExpiredWarningTime() *MissionOrderUpdate {
+	mou.mutation.ClearExpiredWarningTime()
+	return mou
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mou *MissionOrderUpdate) SetMissionBatchID(i int64) *MissionOrderUpdate {
 	mou.mutation.SetMissionBatchID(i)
@@ -689,6 +709,12 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mou.mutation.PlanFinishedAtCleared() {
 		_spec.ClearField(missionorder.FieldPlanFinishedAt, field.TypeTime)
+	}
+	if value, ok := mou.mutation.ExpiredWarningTime(); ok {
+		_spec.SetField(missionorder.FieldExpiredWarningTime, field.TypeTime, value)
+	}
+	if mou.mutation.ExpiredWarningTimeCleared() {
+		_spec.ClearField(missionorder.FieldExpiredWarningTime, field.TypeTime)
 	}
 	if value, ok := mou.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
@@ -1272,6 +1298,26 @@ func (mouo *MissionOrderUpdateOne) ClearPlanFinishedAt() *MissionOrderUpdateOne 
 	return mouo
 }
 
+// SetExpiredWarningTime sets the "expired_warning_time" field.
+func (mouo *MissionOrderUpdateOne) SetExpiredWarningTime(t time.Time) *MissionOrderUpdateOne {
+	mouo.mutation.SetExpiredWarningTime(t)
+	return mouo
+}
+
+// SetNillableExpiredWarningTime sets the "expired_warning_time" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableExpiredWarningTime(t *time.Time) *MissionOrderUpdateOne {
+	if t != nil {
+		mouo.SetExpiredWarningTime(*t)
+	}
+	return mouo
+}
+
+// ClearExpiredWarningTime clears the value of the "expired_warning_time" field.
+func (mouo *MissionOrderUpdateOne) ClearExpiredWarningTime() *MissionOrderUpdateOne {
+	mouo.mutation.ClearExpiredWarningTime()
+	return mouo
+}
+
 // SetMissionBatchID sets the "mission_batch_id" field.
 func (mouo *MissionOrderUpdateOne) SetMissionBatchID(i int64) *MissionOrderUpdateOne {
 	mouo.mutation.SetMissionBatchID(i)
@@ -1616,6 +1662,12 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 	}
 	if mouo.mutation.PlanFinishedAtCleared() {
 		_spec.ClearField(missionorder.FieldPlanFinishedAt, field.TypeTime)
+	}
+	if value, ok := mouo.mutation.ExpiredWarningTime(); ok {
+		_spec.SetField(missionorder.FieldExpiredWarningTime, field.TypeTime, value)
+	}
+	if mouo.mutation.ExpiredWarningTimeCleared() {
+		_spec.ClearField(missionorder.FieldExpiredWarningTime, field.TypeTime)
 	}
 	if value, ok := mouo.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)

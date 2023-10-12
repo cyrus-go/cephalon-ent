@@ -60,6 +60,8 @@ const (
 	FieldPlanStartedAt = "plan_started_at"
 	// FieldPlanFinishedAt holds the string denoting the plan_finished_at field in the database.
 	FieldPlanFinishedAt = "plan_finished_at"
+	// FieldExpiredWarningTime holds the string denoting the expired_warning_time field in the database.
+	FieldExpiredWarningTime = "expired_warning_time"
 	// FieldMissionBatchID holds the string denoting the mission_batch_id field in the database.
 	FieldMissionBatchID = "mission_batch_id"
 	// FieldMissionBatchNumber holds the string denoting the mission_batch_number field in the database.
@@ -158,6 +160,7 @@ var Columns = []string{
 	FieldBuyDuration,
 	FieldPlanStartedAt,
 	FieldPlanFinishedAt,
+	FieldExpiredWarningTime,
 	FieldMissionBatchID,
 	FieldMissionBatchNumber,
 	FieldDeviceID,
@@ -212,6 +215,8 @@ var (
 	DefaultPlanStartedAt time.Time
 	// DefaultPlanFinishedAt holds the default value on creation for the "plan_finished_at" field.
 	DefaultPlanFinishedAt time.Time
+	// DefaultExpiredWarningTime holds the default value on creation for the "expired_warning_time" field.
+	DefaultExpiredWarningTime time.Time
 	// DefaultMissionBatchID holds the default value on creation for the "mission_batch_id" field.
 	DefaultMissionBatchID int64
 	// DefaultMissionBatchNumber holds the default value on creation for the "mission_batch_number" field.
@@ -239,7 +244,7 @@ const DefaultMissionType enums.MissionType = "unknown"
 // MissionTypeValidator is a validator for the "mission_type" field enum values. It is called by the builders before save.
 func MissionTypeValidator(mt enums.MissionType) error {
 	switch mt {
-	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan_hour", "sd_time_plan_day", "sd_time_plan_week", "sd_time_plan_month":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan":
 		return nil
 	default:
 		return fmt.Errorf("missionorder: invalid enum value for mission_type field: %q", mt)
@@ -386,6 +391,11 @@ func ByPlanStartedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByPlanFinishedAt orders the results by the plan_finished_at field.
 func ByPlanFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPlanFinishedAt, opts...).ToFunc()
+}
+
+// ByExpiredWarningTime orders the results by the expired_warning_time field.
+func ByExpiredWarningTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiredWarningTime, opts...).ToFunc()
 }
 
 // ByMissionBatchID orders the results by the mission_batch_id field.
