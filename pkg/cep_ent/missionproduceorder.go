@@ -21,16 +21,17 @@ import (
 type MissionProduceOrder struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键关联用户 id
 	UserID int64 `json:"user_id"`

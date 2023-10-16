@@ -19,16 +19,17 @@ import (
 type RenewalAgreement struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 下次扣款时间
 	NextPayTime time.Time `json:"next_pay_time"`
@@ -39,7 +40,7 @@ type RenewalAgreement struct {
 	// 支付状态（待支付、已支付、支付失败等）
 	PayStatus enums.RenewalPayStatus `json:"pay_status"`
 	// 币种 id
-	SymbolID int64 `json:"symbol_id"`
+	SymbolID int64 `json:"symbol_id,string"`
 	// 首次扣款价格
 	FirstPay int64 `json:"first_pay"`
 	// 后续扣款价格
@@ -49,9 +50,9 @@ type RenewalAgreement struct {
 	// 订阅自动续费结束时间
 	SubFinishedTime time.Time `json:"sub_finished_time"`
 	// 外键用户 id
-	UserID int64 `json:"user_id"`
+	UserID int64 `json:"user_id,string"`
 	// 外键任务 id
-	MissionID int64 `json:"mission_id"`
+	MissionID int64 `json:"mission_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RenewalAgreementQuery when eager-loading is set.
 	Edges        RenewalAgreementEdges `json:"edges"`

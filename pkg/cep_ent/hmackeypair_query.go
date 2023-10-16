@@ -334,7 +334,7 @@ func (hkpq *HmacKeyPairQuery) WithCreatedMissions(opts ...func(*MissionQuery)) *
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (hkpq *HmacKeyPairQuery) GroupBy(field string, fields ...string) *HmacKeyPa
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.HmacKeyPair.Query().

@@ -17,12 +17,12 @@ type MissionProduction struct {
 // Fields of the MissionProduction.
 func (MissionProduction) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("mission_id").StructTag(`json:"mission_id"`).Comment("任务 ID"),
-		field.Int64("user_id").StructTag(`json:"user_id"`).Comment("用户 ID"),
+		field.Int64("mission_id").StructTag(`json:"mission_id,string"`).Comment("任务 ID"),
+		field.Int64("user_id").StructTag(`json:"user_id,string"`).Comment("用户 ID"),
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("任务开始时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("任务完成时刻"),
 		field.Enum("state").Default(string(enums.MissionStateUnknown)).GoType(enums.MissionStateWaiting).StructTag(`json:"state"`).Comment("任务执行状态情况"),
-		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("领到任务的设备 ID"),
+		field.Int64("device_id").Default(0).StructTag(`json:"device_id,string"`).Comment("领到任务的设备 ID"),
 		field.Enum("gpu_version").Default(string(enums.GpuVersionUnknown)).GoType(enums.GpuVersion3080).StructTag(`json:"gpu_version"`).Comment("任务使用什么显卡在执行"),
 		field.String("urls").Default("").StructTag(`json:"urls"`).Comment("任务结果链接列表，json 序列化后存储"),
 		field.Int32("resp_status_code").Default(0).StructTag(`json:"resp_status_code"`).Comment("内部功能返回码"),

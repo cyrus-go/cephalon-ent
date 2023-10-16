@@ -20,21 +20,22 @@ import (
 type MissionProduction struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 任务 ID
-	MissionID int64 `json:"mission_id"`
+	MissionID int64 `json:"mission_id,string"`
 	// 用户 ID
-	UserID int64 `json:"user_id"`
+	UserID int64 `json:"user_id,string"`
 	// 任务开始时刻
 	StartedAt time.Time `json:"started_at"`
 	// 任务完成时刻
@@ -42,7 +43,7 @@ type MissionProduction struct {
 	// 任务执行状态情况
 	State enums.MissionState `json:"state"`
 	// 领到任务的设备 ID
-	DeviceID int64 `json:"device_id"`
+	DeviceID int64 `json:"device_id,string"`
 	// 任务使用什么显卡在执行
 	GpuVersion enums.GpuVersion `json:"gpu_version"`
 	// 任务结果链接列表，json 序列化后存储

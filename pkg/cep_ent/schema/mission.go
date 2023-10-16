@@ -17,7 +17,7 @@ type Mission struct {
 func (Mission) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").GoType(enums.MissionTypeSdTxt2Img).Default(string(enums.MissionTypeUnknown)).StructTag(`json:"type"`).Comment("任务类型"),
-		field.Int64("mission_kind_id").Default(0).StructTag(`json:"mission_kind_id"`).Comment("外键，任务种类 id"),
+		field.Int64("mission_kind_id").Default(0).StructTag(`json:"mission_kind_id,string"`).Comment("外键，任务种类 id"),
 		field.String("body").StructTag(`json:"body"`).Default("").Comment("任务的请求参数体"),
 		field.String("call_back_url").Default("").StructTag(`json:"call_back_url"`).Comment("回调地址，空字符串表示不回调"),
 		field.String("call_back_info").Optional().Nillable().StructTag(`json:"call_back_info"`).Comment("回调时带上的参数，接收任何类型数据后 json 压缩"),
@@ -27,8 +27,8 @@ func (Mission) Fields() []ent.Field {
 		field.Strings("result_urls").Optional().Sensitive().Comment("任务结果资源位置列表序列化"),
 		field.String("urls").Default("").StructTag(`json:"urls"`).Comment("任务结果链接列表，json 序列化后存储"),
 		field.Int64("key_pair_id").Default(0).StructTag(`json:"key_pair_id"`).Comment("任务创建者的密钥对 ID"),
-		field.Int64("user_id").Default(0).StructTag(`json:"user_id"`).Comment("外键任务的创建者 id"),
-		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id"`).Comment("外键关联任务批次"),
+		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("外键任务的创建者 id"),
+		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id,string"`).Comment("外键关联任务批次"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号"),
 		field.Enum("gpu_version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersionUnknown)).StructTag(`json:"gpu_version"`).Comment("最低可接显卡"),
 		field.Int64("unit_cep").Default(0).StructTag(`json:"unit_cep"`).Comment("任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟"),

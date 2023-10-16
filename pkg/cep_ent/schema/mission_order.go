@@ -17,12 +17,12 @@ type MissionOrder struct {
 // Fields of the MissionOrder.
 func (MissionOrder) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("mission_id").Default(0).StructTag(`json:"mission_id"`).Comment("任务 id，外键关联任务"),
+		field.Int64("mission_id").Default(0).StructTag(`json:"mission_id,string"`).Comment("任务 id，外键关联任务"),
 		field.Enum("status").GoType(enums.MissionOrderStatusWaiting).Default(string(enums.MissionOrderStatusUnknown)).StructTag(`json:"status"`).Comment("任务订单的状态，注意不强关联任务的状态"),
-		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("币种 id"),
-		field.Int64("consume_user_id").StructTag(`json:"consume_user_id"`).Default(0).Comment("外键关联发起任务的用户 id"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("币种 id"),
+		field.Int64("consume_user_id").StructTag(`json:"consume_user_id,string"`).Default(0).Comment("外键关联发起任务的用户 id"),
 		field.Int64("consume_amount").Default(0).StructTag(`json:"consume_amount"`).Comment("订单的货币消耗量"),
-		field.Int64("produce_user_id").StructTag(`json:"produce_user_id"`).Default(0).Comment("外键关联完成任务的用户 id"),
+		field.Int64("produce_user_id").StructTag(`json:"produce_user_id,string"`).Default(0).Comment("外键关联完成任务的用户 id"),
 		field.Int64("produce_amount").Default(0).StructTag(`json:"produce_amount"`).Comment("订单的货币分润量"),
 		field.Int64("gas_amount").Default(0).StructTag(`json:"gas_amount"`).Comment("订单的平台收量，不记录用户 id，因为都是记载到 genesis 用户"),
 		field.Enum("mission_type").GoType(enums.MissionTypeSdTxt2Img).Default(string(enums.MissionTypeUnknown)).StructTag(`json:"mission_type"`).Comment("任务类型，等于任务表的类型字段"),
@@ -35,9 +35,9 @@ func (MissionOrder) Fields() []ent.Field {
 		field.Time("plan_started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_started_at"`).Comment("任务计划开始时间（包时）"),
 		field.Time("plan_finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_finished_at"`).Comment("任务计划结束时间（包时）"),
 		field.Time("expired_warning_time").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_warning_time"`).Comment("包时任务到期提醒时间（发了通知提醒就更新该时间）"),
-		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id"`).Comment("任务批次外键"),
+		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id,string"`).Comment("任务批次外键"),
 		field.String("mission_batch_number").Default("").StructTag(`json:"mission_batch_number"`).Comment("任务批次号，用于方便检索"),
-		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("关联的设备 id"),
+		field.Int64("device_id").Default(0).StructTag(`json:"device_id,string"`).Comment("关联的设备 id"),
 	}
 }
 

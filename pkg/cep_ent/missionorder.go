@@ -22,29 +22,30 @@ import (
 type MissionOrder struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 任务 id，外键关联任务
-	MissionID int64 `json:"mission_id"`
+	MissionID int64 `json:"mission_id,string"`
 	// 任务订单的状态，注意不强关联任务的状态
 	Status enums.MissionOrderStatus `json:"status"`
 	// 币种 id
-	SymbolID int64 `json:"symbol_id"`
+	SymbolID int64 `json:"symbol_id,string"`
 	// 外键关联发起任务的用户 id
-	ConsumeUserID int64 `json:"consume_user_id"`
+	ConsumeUserID int64 `json:"consume_user_id,string"`
 	// 订单的货币消耗量
 	ConsumeAmount int64 `json:"consume_amount"`
 	// 外键关联完成任务的用户 id
-	ProduceUserID int64 `json:"produce_user_id"`
+	ProduceUserID int64 `json:"produce_user_id,string"`
 	// 订单的货币分润量
 	ProduceAmount int64 `json:"produce_amount"`
 	// 订单的平台收量，不记录用户 id，因为都是记载到 genesis 用户
@@ -70,11 +71,11 @@ type MissionOrder struct {
 	// 包时任务到期提醒时间（发了通知提醒就更新该时间）
 	ExpiredWarningTime *time.Time `json:"expired_warning_time"`
 	// 任务批次外键
-	MissionBatchID int64 `json:"mission_batch_id"`
+	MissionBatchID int64 `json:"mission_batch_id,string"`
 	// 任务批次号，用于方便检索
 	MissionBatchNumber string `json:"mission_batch_number"`
 	// 关联的设备 id
-	DeviceID int64 `json:"device_id"`
+	DeviceID int64 `json:"device_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionOrderQuery when eager-loading is set.
 	Edges        MissionOrderEdges `json:"edges"`

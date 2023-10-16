@@ -19,7 +19,7 @@ func (LoginRecord) Fields() []ent.Field {
 		field.String("ip").Default("").StructTag(`json:"ip"`).Comment("用户登录时的 ip 地址"),
 		field.String("way").Default("").StructTag(`json:"way"`).Comment("用户登录时的登录方式，比如手机号验证码等"),
 
-		field.Int64("user_id").Default(0).StructTag(`json:"user_id"`).Comment("用户 id，外键关联用户"),
+		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("用户 id，外键关联用户"),
 	}
 }
 

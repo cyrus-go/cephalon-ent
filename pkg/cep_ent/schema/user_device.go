@@ -13,8 +13,8 @@ type UserDevice struct {
 
 func (UserDevice) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键用户 id"),
-		field.Int64("device_id").StructTag(`json:"device_id"`).Default(0).Comment("外键设备 id"),
+		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("外键用户 id"),
+		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("外键设备 id"),
 	}
 }
 

@@ -14,7 +14,7 @@ type MissionBatch struct {
 func (MissionBatch) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("number").Default("").StructTag(`json:"number"`).Comment("批次号码"),
-		field.Int64("user_id").Default(0).StructTag(`json:"user_id"`).Comment("创建者"),
+		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("创建者"),
 	}
 }
 

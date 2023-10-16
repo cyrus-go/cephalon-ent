@@ -13,9 +13,9 @@ type DeviceGpuMission struct {
 
 func (DeviceGpuMission) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("device_id").Default(0).StructTag(`json:"device_id"`).Comment("外键设备 id"),
-		field.Int64("gpu_id").Default(0).StructTag(`json:"gpu_id"`).Comment("外键 gpu id"),
-		field.Int64("mission_kind_id").Default(0).StructTag(`json:"mission_kind_id"`).Comment("外键任务种类 id"),
+		field.Int64("device_id").Default(0).StructTag(`json:"device_id,string"`).Comment("外键设备 id"),
+		field.Int64("gpu_id").Default(0).StructTag(`json:"gpu_id,string"`).Comment("外键 gpu id"),
+		field.Int64("mission_kind_id").Default(0).StructTag(`json:"mission_kind_id,string"`).Comment("外键任务种类 id"),
 	}
 }
 

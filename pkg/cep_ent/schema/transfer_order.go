@@ -16,14 +16,14 @@ type TransferOrder struct {
 // Fields of the TransferOrder.
 func (TransferOrder) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("source_user_id").StructTag(`json:"source_user_id"`).Default(0).Comment("转账来源的用户 id"),
-		field.Int64("target_user_id").StructTag(`json:"target_user_id"`).Default(0).Comment("转账目标的用户 id"),
+		field.Int64("source_user_id").StructTag(`json:"source_user_id,string"`).Default(0).Comment("转账来源的用户 id"),
+		field.Int64("target_user_id").StructTag(`json:"target_user_id,string"`).Default(0).Comment("转账目标的用户 id"),
 		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("转账订单的状态，比如微信发起支付后可能没完成支付"),
-		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("币种 id"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("充值多少货币量"),
 		field.Enum("type").GoType(enums.TransferOrderTypeRecharge).Default(string(enums.TransferOrderTypeUnknown)).StructTag(`json:"type"`).Comment("充值订单的类型"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("充值订单的序列号"),
-		field.Int64("social_id").Default(0).Optional().StructTag(`json:"social_id"`).Comment("关联充值来源的身份源 id"),
+		field.Int64("social_id").Default(0).Optional().StructTag(`json:"social_id,string"`).Comment("关联充值来源的身份源 id"),
 		field.String("third_api_resp").Default("").StructTag(`json:"third_api_resp"`).Comment("第三方平台的返回，给到前端才能发起支付"),
 		field.String("out_transaction_id").Default("").StructTag(`json:"out_transaction_id"`).Comment("平台方订单号"),
 	}

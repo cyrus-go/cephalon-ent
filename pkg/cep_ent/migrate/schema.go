@@ -11,12 +11,12 @@ import (
 var (
 	// BillsColumns holds the columns for the "bills" table.
 	BillsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas"}, Default: "unknown"},
 		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge"}, Default: "unknown"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
@@ -78,12 +78,12 @@ var (
 	}
 	// CampaignsColumns holds the columns for the "campaigns" table.
 	CampaignsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "name", Type: field.TypeString, Comment: "活动名称", Default: ""},
 		{Name: "type", Type: field.TypeString, Comment: "活动类型", Default: ""},
 		{Name: "started_at", Type: field.TypeTime, Comment: "活动开始时间"},
@@ -100,12 +100,12 @@ var (
 	}
 	// CampaignOrdersColumns holds the columns for the "campaign_orders" table.
 	CampaignOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "campaign_id", Type: field.TypeInt64, Comment: "活动 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 id", Default: 0},
 	}
@@ -132,12 +132,12 @@ var (
 	}
 	// CollectsColumns holds the columns for the "collects" table.
 	CollectsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "url", Type: field.TypeString, Comment: "路径", Default: ""},
 		{Name: "jpg_name", Type: field.TypeInt64, Comment: "照片名字", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
@@ -159,12 +159,12 @@ var (
 	}
 	// CostAccountsColumns holds the columns for the "cost_accounts" table.
 	CostAccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "total_cep", Type: field.TypeInt64, Comment: "总余额", Default: 0},
 		{Name: "sum_total_cep", Type: field.TypeInt64, Comment: "累计总余额", Default: 0},
 		{Name: "frozen_total_cep", Type: field.TypeInt64, Comment: "暂时冻结的总余额", Default: 0},
@@ -193,12 +193,12 @@ var (
 	}
 	// CostBillsColumns holds the columns for the "cost_bills" table.
 	CostBillsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "额度账户流水的类型，充值或者任务消耗", Enums: []string{"unknow", "mission", "recharge", "active"}, Default: "unknow"},
 		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等", Enums: []string{"unknow", "recharge_wechat", "recharge_alipay", "recharge_manual", "mission_timing", "mission_counting", "active_register", "active_share", "active_recharge", "first_invite_recharge"}, Default: "unknow"},
 		{Name: "is_add", Type: field.TypeBool, Comment: "是否增加余额，布尔值默认为否", Default: false},
@@ -259,12 +259,12 @@ var (
 	}
 	// DevicesColumns holds the columns for the "devices" table.
 	DevicesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "设备唯一序列号", Default: ""},
 		{Name: "state", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"On", "Down", "Init"}, Default: "Init"},
 		{Name: "sum_cep", Type: field.TypeInt64, Comment: "该设备总获得利润", Default: 0},
@@ -290,12 +290,12 @@ var (
 	}
 	// DeviceGpuMissionsColumns holds the columns for the "device_gpu_missions" table.
 	DeviceGpuMissionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "gpu_id", Type: field.TypeInt64, Comment: "外键 gpu id", Default: 0},
 		{Name: "mission_kind_id", Type: field.TypeInt64, Comment: "外键任务种类 id", Default: 0},
@@ -329,12 +329,12 @@ var (
 	}
 	// EarnBillsColumns holds the columns for the "earn_bills" table.
 	EarnBillsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "分润账户变动类型", Enums: []string{"mission", "withdraw"}, Default: "mission"},
 		{Name: "is_minus", Type: field.TypeBool, Comment: "是否减少分润钱包余额，默认为否", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "账单序列号", Default: ""},
@@ -382,12 +382,12 @@ var (
 	}
 	// EnumConditionsColumns holds the columns for the "enum_conditions" table.
 	EnumConditionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "front_type", Type: field.TypeString, Comment: "给到前端的类型", Default: ""},
 		{Name: "mission_type", Type: field.TypeString, Comment: "任务类型", Default: ""},
 		{Name: "mission_call_way", Type: field.TypeString, Comment: "任务调用方式", Default: ""},
@@ -401,12 +401,12 @@ var (
 	}
 	// EnumMissionStatusColumns holds the columns for the "enum_mission_status" table.
 	EnumMissionStatusColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "front_status", Type: field.TypeString, Comment: "给到前端的任务状态", Default: ""},
 		{Name: "mission_type", Type: field.TypeString, Comment: "任务类型", Default: ""},
 		{Name: "mission_status", Type: field.TypeString, Comment: "任务状态", Default: ""},
@@ -420,12 +420,12 @@ var (
 	}
 	// FrpcInfosColumns holds the columns for the "frpc_infos" table.
 	FrpcInfosColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "tag", Type: field.TypeString, Comment: "ini 文件客户端 tag", Default: ""},
 		{Name: "type", Type: field.TypeString, Comment: "frpc 通讯类型", Default: ""},
 		{Name: "local_ip", Type: field.TypeString, Comment: "frpc 本地地址", Default: ""},
@@ -458,12 +458,12 @@ var (
 	}
 	// FrpsInfosColumns holds the columns for the "frps_infos" table.
 	FrpsInfosColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "tag", Type: field.TypeString, Comment: "ini 文件服务端 tag", Default: ""},
 		{Name: "server_addr", Type: field.TypeString, Comment: "frps 服务地址", Default: ""},
 		{Name: "server_port", Type: field.TypeInt, Comment: "frps 服务端口", Default: 0},
@@ -480,12 +480,12 @@ var (
 	}
 	// GpusColumns holds the columns for the "gpus" table.
 	GpusColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
 		{Name: "power", Type: field.TypeInt, Comment: "显卡能力值", Default: 0},
 	}
@@ -498,12 +498,12 @@ var (
 	}
 	// HmacKeyPairsColumns holds the columns for the "hmac_key_pairs" table.
 	HmacKeyPairsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "key", Type: field.TypeString, Comment: "密钥对的 key 值，用于检索密钥"},
 		{Name: "secret", Type: field.TypeString, Comment: "加密密钥"},
 		{Name: "caller", Type: field.TypeString, Comment: "请求方", Default: ""},
@@ -524,12 +524,12 @@ var (
 	}
 	// InputLogsColumns holds the columns for the "input_logs" table.
 	InputLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "trace_id", Type: field.TypeInt64, Comment: "请求追踪 id"},
 		{Name: "headers", Type: field.TypeString, Comment: "请求头"},
 		{Name: "body", Type: field.TypeString, Nullable: true, Comment: "请求体", Default: ""},
@@ -549,12 +549,12 @@ var (
 	}
 	// InvitesColumns holds the columns for the "invites" table.
 	InvitesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "invite_code", Type: field.TypeString, Comment: "邀请码", Default: ""},
 		{Name: "share_cep", Type: field.TypeInt64, Comment: "通过此邀请码分享能获得的收益", Default: 0},
 		{Name: "reg_cep", Type: field.TypeInt64, Comment: "通过此邀请码注册能获得的收益", Default: 0},
@@ -593,12 +593,12 @@ var (
 	}
 	// LoginRecordsColumns holds the columns for the "login_records" table.
 	LoginRecordsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "ua", Type: field.TypeString, Comment: "用户登录时的 user-agent", Default: ""},
 		{Name: "ip", Type: field.TypeString, Comment: "用户登录时的 ip 地址", Default: ""},
 		{Name: "way", Type: field.TypeString, Comment: "用户登录时的登录方式，比如手机号验证码等", Default: ""},
@@ -621,12 +621,12 @@ var (
 	}
 	// MissionsColumns holds the columns for the "missions" table.
 	MissionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan"}, Default: "unknown"},
 		{Name: "body", Type: field.TypeString, Comment: "任务的请求参数体", Default: ""},
 		{Name: "call_back_url", Type: field.TypeString, Comment: "回调地址，空字符串表示不回调", Default: ""},
@@ -686,12 +686,12 @@ var (
 	}
 	// MissionBatchesColumns holds the columns for the "mission_batches" table.
 	MissionBatchesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "number", Type: field.TypeString, Comment: "批次号码", Default: ""},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "创建者", Default: 0},
 	}
@@ -712,12 +712,12 @@ var (
 	}
 	// MissionConsumeOrdersColumns holds the columns for the "mission_consume_orders" table.
 	MissionConsumeOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "unknown"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务消耗的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务消耗的赠送 cep 量", Default: 0},
@@ -761,12 +761,12 @@ var (
 	}
 	// MissionKeyPairsColumns holds the columns for the "mission_key_pairs" table.
 	MissionKeyPairsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务完成时刻"},
 		{Name: "result", Type: field.TypeEnum, Comment: "任务结果", Enums: []string{"pending", "succeed", "failed"}, Default: "pending"},
@@ -798,12 +798,12 @@ var (
 	}
 	// MissionKindsColumns holds the columns for the "mission_kinds" table.
 	MissionKindsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan"}, Default: "unknown"},
 		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH"}, Default: "unknown"},
 		{Name: "billing_type", Type: field.TypeEnum, Comment: "计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
@@ -817,12 +817,12 @@ var (
 	}
 	// MissionOrdersColumns holds the columns for the "mission_orders" table.
 	MissionOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "unknown"},
 		{Name: "consume_amount", Type: field.TypeInt64, Comment: "订单的货币消耗量", Default: 0},
 		{Name: "produce_amount", Type: field.TypeInt64, Comment: "订单的货币分润量", Default: 0},
@@ -892,12 +892,12 @@ var (
 	}
 	// MissionProduceOrdersColumns holds the columns for the "mission_produce_orders" table.
 	MissionProduceOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，关联任务中枢的任务", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "waiting"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务收益的本金 cep 量", Default: 0},
@@ -954,12 +954,12 @@ var (
 	}
 	// MissionProductionsColumns holds the columns for the "mission_productions" table.
 	MissionProductionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务完成时刻"},
 		{Name: "state", Type: field.TypeEnum, Comment: "任务执行状态情况", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "unknown"},
@@ -994,12 +994,12 @@ var (
 	}
 	// OutputLogsColumns holds the columns for the "output_logs" table.
 	OutputLogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "trace_id", Type: field.TypeInt64, Comment: "请求追踪 id"},
 		{Name: "headers", Type: field.TypeString, Comment: "请求头"},
 		{Name: "body", Type: field.TypeString, Nullable: true, Comment: "请求体", Default: ""},
@@ -1018,12 +1018,12 @@ var (
 	}
 	// PlatformAccountsColumns holds the columns for the "platform_accounts" table.
 	PlatformAccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"profit", "market"}, Default: "profit"},
 		{Name: "sum_total_cep", Type: field.TypeInt64, Comment: "累计总余额", Default: 0},
 		{Name: "total_cep", Type: field.TypeInt64, Comment: "剩余总余额", Default: 0},
@@ -1048,12 +1048,12 @@ var (
 	}
 	// PricesColumns holds the columns for the "prices" table.
 	PricesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
 		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan"}, Default: "txt2img"},
 		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH"}, Default: "SD"},
@@ -1073,12 +1073,12 @@ var (
 	}
 	// ProfitAccountsColumns holds the columns for the "profit_accounts" table.
 	ProfitAccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "sum_cep", Type: field.TypeInt64, Comment: "累计分润余额", Default: 0},
 		{Name: "remain_cep", Type: field.TypeInt64, Comment: "剩余分润余额，未提现的", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Unique: true, Comment: "外键用户 id", Default: 0},
@@ -1100,12 +1100,12 @@ var (
 	}
 	// ProfitSettingsColumns holds the columns for the "profit_settings" table.
 	ProfitSettingsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "ratio", Type: field.TypeInt64, Comment: "分润比例", Default: 75},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -1126,12 +1126,12 @@ var (
 	}
 	// RechargeCampaignRulesColumns holds the columns for the "recharge_campaign_rules" table.
 	RechargeCampaignRulesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "little_value", Type: field.TypeInt64, Comment: "充值范围下限", Default: 0},
 		{Name: "large_value", Type: field.TypeInt64, Comment: "充值范围上限", Default: 0},
 		{Name: "gift_percent", Type: field.TypeInt64, Comment: "赠送的比例", Default: 0},
@@ -1145,12 +1145,12 @@ var (
 	}
 	// RechargeOrdersColumns holds the columns for the "recharge_orders" table.
 	RechargeOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "status", Type: field.TypeEnum, Comment: "充值订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "充值多少本金", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "赠金", Default: 0},
@@ -1192,12 +1192,12 @@ var (
 	}
 	// RenewalAgreementsColumns holds the columns for the "renewal_agreements" table.
 	RenewalAgreementsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "next_pay_time", Type: field.TypeTime, Comment: "下次扣款时间"},
 		{Name: "type", Type: field.TypeEnum, Comment: "自动续费类型（按小时、按天等）", Enums: []string{"unknow", "hour", "day", "week", "month"}, Default: "unknow"},
 		{Name: "sub_status", Type: field.TypeEnum, Comment: "订阅自动续费状态（订阅中、已结束等）", Enums: []string{"unknow", "subscribing", "finished"}, Default: "unknow"},
@@ -1233,12 +1233,12 @@ var (
 	}
 	// SymbolsColumns holds the columns for the "symbols" table.
 	SymbolsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "name", Type: field.TypeString, Comment: "币种名称，唯一", Default: ""},
 	}
 	// SymbolsTable holds the schema information for the "symbols" table.
@@ -1257,12 +1257,12 @@ var (
 	}
 	// TransferOrdersColumns holds the columns for the "transfer_orders" table.
 	TransferOrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "充值多少货币量", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"unknown", "recharge", "recharge_vx", "recharge_alipay", "manual"}, Default: "unknown"},
@@ -1309,12 +1309,12 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "name", Type: field.TypeString, Comment: "用户名", Default: "请设置昵称"},
 		{Name: "jpg_url", Type: field.TypeString, Comment: "头像", Default: ""},
 		{Name: "key", Type: field.TypeString, Comment: "用户在任务中枢密钥对的键", Default: ""},
@@ -1344,12 +1344,12 @@ var (
 	}
 	// UserDevicesColumns holds the columns for the "user_devices" table.
 	UserDevicesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -1376,12 +1376,12 @@ var (
 	}
 	// VxAccountsColumns holds the columns for the "vx_accounts" table.
 	VxAccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "open_id", Type: field.TypeString, Comment: "微信账户的 open_id", Default: ""},
 		{Name: "union_id", Type: field.TypeString, Comment: "微信账户的 union_id", Default: ""},
 		{Name: "scope", Type: field.TypeString, Comment: "账户的权限级别，一般为 base", Default: "base"},
@@ -1405,12 +1405,12 @@ var (
 	}
 	// VxSocialsColumns holds the columns for the "vx_socials" table.
 	VxSocialsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "app_id", Type: field.TypeString, Comment: "微信应用 id", Default: ""},
 		{Name: "open_id", Type: field.TypeString, Comment: "微信身份源的 open_id", Default: ""},
 		{Name: "union_id", Type: field.TypeString, Comment: "微信身份源的 union_id", Default: ""},
@@ -1437,12 +1437,12 @@ var (
 	}
 	// WalletsColumns holds the columns for the "wallets" table.
 	WalletsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64},
-		{Name: "created_by", Type: field.TypeInt64, Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "货币余额", Default: 0},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},

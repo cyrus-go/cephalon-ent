@@ -14,7 +14,7 @@ type Device struct {
 
 func (Device) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("user_id").StructTag(`json:"user_id,omitempty"`).Default(0).Comment("外键用户 id"),
+		field.Int64("user_id").StructTag(`json:"user_id,omitempty,string"`).Default(0).Comment("外键用户 id"),
 		field.String("serial_number").StructTag(`json:"serial_number"`).Default("").Comment("设备唯一序列号"),
 		field.Enum("state").Values("On", "Down", "Init").Default("Init").Comment("设备状态"),
 		field.Int64("sum_cep").StructTag(`json:"sum_cep"`).Default(0).Comment("该设备总获得利润"),

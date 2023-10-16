@@ -297,7 +297,7 @@ func (lrq *LoginRecordQuery) WithUser(opts ...func(*UserQuery)) *LoginRecordQuer
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -320,7 +320,7 @@ func (lrq *LoginRecordQuery) GroupBy(field string, fields ...string) *LoginRecor
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.LoginRecord.Query().

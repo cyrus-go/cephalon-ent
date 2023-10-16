@@ -22,35 +22,36 @@ import (
 type Bill struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 流水的类型，对应的 order_id 关联哪张表依赖于该字段
 	Type enums.BillType `json:"type"`
 	// 比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息
-	OrderID int64 `json:"order_id"`
+	OrderID int64 `json:"order_id,string"`
 	// 额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示
 	Way enums.BillWay `json:"way"`
 	// 外键币种 id
-	SymbolID int64 `json:"symbol_id"`
+	SymbolID int64 `json:"symbol_id,string"`
 	// 消耗多少货币金额
 	Amount int64 `json:"amount"`
 	// 流水目标钱包 id
-	TargetUserID int64 `json:"target_user_id"`
+	TargetUserID int64 `json:"target_user_id,string"`
 	// 目标钱包期初金额
 	TargetBeforeAmount int64 `json:"target_before_amount"`
 	// 目标钱包期末金额
 	TargetAfterAmount int64 `json:"target_after_amount"`
 	// 流水来源钱包 id
-	SourceUserID int64 `json:"source_user_id"`
+	SourceUserID int64 `json:"source_user_id,string"`
 	// 来源钱包期初金额
 	SourceBeforeAmount int64 `json:"source_before_amount"`
 	// 来源钱包期初金额
@@ -58,7 +59,7 @@ type Bill struct {
 	// 流水号，唯一
 	SerialNumber string `json:"serial_number"`
 	// 外键关联某个邀请码
-	InviteID int64 `json:"invite_id"`
+	InviteID int64 `json:"invite_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BillQuery when eager-loading is set.
 	Edges        BillEdges `json:"edges"`

@@ -14,7 +14,7 @@ type Collect struct {
 func (Collect) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("url").Default("").StructTag(`json:"url"`).Comment("路径"),
-		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键用户 id"),
+		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("外键用户 id"),
 		field.Int64("jpg_name").StructTag(`json:"jpg_name"`).Default(0).Comment("照片名字"),
 	}
 }

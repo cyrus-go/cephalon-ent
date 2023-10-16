@@ -22,7 +22,7 @@ func (VXSocial) Fields() []ent.Field {
 		field.String("session_key").Default("").Sensitive().Comment("小程序专用的会话密钥，不可以返回给前端"),
 		field.String("access_token").Default("").StructTag(`json:"access_token"`).Comment("微信能力访问凭证"),
 		field.String("refresh_token").Default("").StructTag(`json:"refresh_token"`).Comment("刷新微信凭证的刷新凭证"),
-		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键用户 id"),
+		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("外键用户 id"),
 	}
 }
 

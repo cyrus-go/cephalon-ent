@@ -20,25 +20,26 @@ import (
 type TransferOrder struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 转账来源的用户 id
-	SourceUserID int64 `json:"source_user_id"`
+	SourceUserID int64 `json:"source_user_id,string"`
 	// 转账目标的用户 id
-	TargetUserID int64 `json:"target_user_id"`
+	TargetUserID int64 `json:"target_user_id,string"`
 	// 转账订单的状态，比如微信发起支付后可能没完成支付
 	Status transferorder.Status `json:"status"`
 	// 币种 id
-	SymbolID int64 `json:"symbol_id"`
+	SymbolID int64 `json:"symbol_id,string"`
 	// 充值多少货币量
 	Amount int64 `json:"amount"`
 	// 充值订单的类型
@@ -46,7 +47,7 @@ type TransferOrder struct {
 	// 充值订单的序列号
 	SerialNumber string `json:"serial_number"`
 	// 关联充值来源的身份源 id
-	SocialID int64 `json:"social_id"`
+	SocialID int64 `json:"social_id,string"`
 	// 第三方平台的返回，给到前端才能发起支付
 	ThirdAPIResp string `json:"third_api_resp"`
 	// 平台方订单号

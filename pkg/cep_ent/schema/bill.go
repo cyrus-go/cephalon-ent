@@ -16,18 +16,18 @@ type Bill struct {
 func (Bill) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").GoType(enums.BillTypeRecharge).Default(string(enums.BillTypeUnknown)).StructTag(`json:"type"`).Comment("流水的类型，对应的 order_id 关联哪张表依赖于该字段"),
-		field.Int64("order_id").Default(0).Optional().StructTag(`json:"order_id"`).Comment("比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息"),
+		field.Int64("order_id").Default(0).Optional().StructTag(`json:"order_id,string"`).Comment("比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息"),
 		field.Enum("way").GoType(enums.BillWayRechargeWechat).Default(string(enums.BillWayUnknown)).StructTag(`json:"way"`).Comment("额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示"),
-		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("外键币种 id"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("外键币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("消耗多少货币金额"),
-		field.Int64("target_user_id").Default(0).StructTag(`json:"target_user_id"`).Comment("流水目标钱包 id"),
+		field.Int64("target_user_id").Default(0).StructTag(`json:"target_user_id,string"`).Comment("流水目标钱包 id"),
 		field.Int64("target_before_amount").Default(0).StructTag(`json:"target_before_amount"`).Comment("目标钱包期初金额"),
 		field.Int64("target_after_amount").Default(0).StructTag(`json:"target_after_amount"`).Comment("目标钱包期末金额"),
-		field.Int64("source_user_id").Default(0).StructTag(`json:"source_user_id"`).Comment("流水来源钱包 id"),
+		field.Int64("source_user_id").Default(0).StructTag(`json:"source_user_id,string"`).Comment("流水来源钱包 id"),
 		field.Int64("source_before_amount").Default(0).StructTag(`json:"source_before_amount"`).Comment("来源钱包期初金额"),
 		field.Int64("source_after_amount").Default(0).StructTag(`json:"source_after_amount"`).Comment("来源钱包期初金额"),
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("流水号，唯一"),
-		field.Int64("invite_id").Default(0).StructTag(`json:"invite_id"`).Comment("外键关联某个邀请码"),
+		field.Int64("invite_id").Default(0).StructTag(`json:"invite_id,string"`).Comment("外键关联某个邀请码"),
 	}
 }
 

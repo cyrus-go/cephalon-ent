@@ -406,7 +406,7 @@ func (roq *RechargeOrderQuery) WithCampaignOrder(opts ...func(*CampaignOrderQuer
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -429,7 +429,7 @@ func (roq *RechargeOrderQuery) GroupBy(field string, fields ...string) *Recharge
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.RechargeOrder.Query().

@@ -333,7 +333,7 @@ func (wq *WalletQuery) WithSymbol(opts ...func(*SymbolQuery)) *WalletQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -356,7 +356,7 @@ func (wq *WalletQuery) GroupBy(field string, fields ...string) *WalletGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.Wallet.Query().

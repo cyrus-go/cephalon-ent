@@ -16,8 +16,8 @@ type Wallet struct {
 // Fields of the Wallet.
 func (Wallet) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("user_id").Default(0).StructTag(`json:"user_id"`).Comment("外键用户 id"),
-		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id"`).Comment("外键币种 id"),
+		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("外键用户 id"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("外键币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("货币余额"),
 	}
 }

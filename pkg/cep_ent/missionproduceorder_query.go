@@ -443,7 +443,7 @@ func (mpoq *MissionProduceOrderQuery) WithMissionProduction(opts ...func(*Missio
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -466,7 +466,7 @@ func (mpoq *MissionProduceOrderQuery) GroupBy(field string, fields ...string) *M
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.MissionProduceOrder.Query().

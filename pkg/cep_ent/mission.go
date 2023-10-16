@@ -24,21 +24,22 @@ import (
 type Mission struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int64 `json:"created_by"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int64 `json:"updated_by"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 19 位雪花 ID
+	ID int64 `json:"id,string"`
+	// 创建者 ID
+	CreatedBy int64 `json:"created_by,string"`
+	// 更新者 ID
+	UpdatedBy int64 `json:"updated_by,string"`
+	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 更新时刻，带时区
 	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 任务类型
 	Type enums.MissionType `json:"type"`
 	// 外键，任务种类 id
-	MissionKindID int64 `json:"mission_kind_id"`
+	MissionKindID int64 `json:"mission_kind_id,string"`
 	// 任务的请求参数体
 	Body string `json:"body"`
 	// 回调地址，空字符串表示不回调
@@ -58,9 +59,9 @@ type Mission struct {
 	// 任务创建者的密钥对 ID
 	KeyPairID int64 `json:"key_pair_id"`
 	// 外键任务的创建者 id
-	UserID int64 `json:"user_id"`
+	UserID int64 `json:"user_id,string"`
 	// 外键关联任务批次
-	MissionBatchID int64 `json:"mission_batch_id"`
+	MissionBatchID int64 `json:"mission_batch_id,string"`
 	// 任务批次号
 	MissionBatchNumber string `json:"mission_batch_number"`
 	// 最低可接显卡
