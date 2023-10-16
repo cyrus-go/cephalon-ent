@@ -513,7 +513,7 @@ func (moq *MissionOrderQuery) WithDevice(opts ...func(*DeviceQuery)) *MissionOrd
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -536,7 +536,7 @@ func (moq *MissionOrderQuery) GroupBy(field string, fields ...string) *MissionOr
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.MissionOrder.Query().

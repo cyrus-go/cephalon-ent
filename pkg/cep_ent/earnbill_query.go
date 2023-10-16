@@ -405,7 +405,7 @@ func (ebq *EarnBillQuery) WithMissionProduceOrders(opts ...func(*MissionProduceO
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -428,7 +428,7 @@ func (ebq *EarnBillQuery) GroupBy(field string, fields ...string) *EarnBillGroup
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.EarnBill.Query().

@@ -334,7 +334,7 @@ func (mkq *MissionKindQuery) WithMissions(opts ...func(*MissionQuery)) *MissionK
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (mkq *MissionKindQuery) GroupBy(field string, fields ...string) *MissionKin
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.MissionKind.Query().

@@ -441,7 +441,7 @@ func (toq *TransferOrderQuery) WithSymbol(opts ...func(*SymbolQuery)) *TransferO
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -464,7 +464,7 @@ func (toq *TransferOrderQuery) GroupBy(field string, fields ...string) *Transfer
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.TransferOrder.Query().

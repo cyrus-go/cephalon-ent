@@ -333,7 +333,7 @@ func (udq *UserDeviceQuery) WithDevice(opts ...func(*DeviceQuery)) *UserDeviceQu
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -356,7 +356,7 @@ func (udq *UserDeviceQuery) GroupBy(field string, fields ...string) *UserDeviceG
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.UserDevice.Query().

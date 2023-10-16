@@ -477,7 +477,7 @@ func (cbq *CostBillQuery) WithCampaignOrder(opts ...func(*CampaignOrderQuery)) *
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -500,7 +500,7 @@ func (cbq *CostBillQuery) GroupBy(field string, fields ...string) *CostBillGroup
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.CostBill.Query().

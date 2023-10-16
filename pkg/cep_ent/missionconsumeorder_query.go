@@ -442,7 +442,7 @@ func (mcoq *MissionConsumeOrderQuery) WithMission(opts ...func(*MissionQuery)) *
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -465,7 +465,7 @@ func (mcoq *MissionConsumeOrderQuery) GroupBy(field string, fields ...string) *M
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.MissionConsumeOrder.Query().

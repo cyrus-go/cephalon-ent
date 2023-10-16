@@ -334,7 +334,7 @@ func (paq *PlatformAccountQuery) WithCostBills(opts ...func(*CostBillQuery)) *Pl
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (paq *PlatformAccountQuery) GroupBy(field string, fields ...string) *Platfo
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.PlatformAccount.Query().

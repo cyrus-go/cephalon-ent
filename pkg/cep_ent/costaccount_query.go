@@ -334,7 +334,7 @@ func (caq *CostAccountQuery) WithCostBills(opts ...func(*CostBillQuery)) *CostAc
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (caq *CostAccountQuery) GroupBy(field string, fields ...string) *CostAccoun
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.CostAccount.Query().

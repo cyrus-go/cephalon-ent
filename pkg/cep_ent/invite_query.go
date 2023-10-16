@@ -370,7 +370,7 @@ func (iq *InviteQuery) WithBills(opts ...func(*BillQuery)) *InviteQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -393,7 +393,7 @@ func (iq *InviteQuery) GroupBy(field string, fields ...string) *InviteGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.Invite.Query().

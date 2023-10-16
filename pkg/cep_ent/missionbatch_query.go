@@ -406,7 +406,7 @@ func (mbq *MissionBatchQuery) WithMissionOrders(opts ...func(*MissionOrderQuery)
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -429,7 +429,7 @@ func (mbq *MissionBatchQuery) GroupBy(field string, fields ...string) *MissionBa
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.MissionBatch.Query().

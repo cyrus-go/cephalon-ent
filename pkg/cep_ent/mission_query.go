@@ -622,7 +622,7 @@ func (mq *MissionQuery) WithRenewalAgreement(opts ...func(*RenewalAgreementQuery
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -645,7 +645,7 @@ func (mq *MissionQuery) GroupBy(field string, fields ...string) *MissionGroupBy 
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.Mission.Query().

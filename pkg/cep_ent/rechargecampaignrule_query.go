@@ -261,7 +261,7 @@ func (rcrq *RechargeCampaignRuleQuery) Clone() *RechargeCampaignRuleQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -284,7 +284,7 @@ func (rcrq *RechargeCampaignRuleQuery) GroupBy(field string, fields ...string) *
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.RechargeCampaignRule.Query().

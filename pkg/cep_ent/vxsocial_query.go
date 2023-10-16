@@ -370,7 +370,7 @@ func (vsq *VXSocialQuery) WithTransferOrders(opts ...func(*TransferOrderQuery)) 
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -393,7 +393,7 @@ func (vsq *VXSocialQuery) GroupBy(field string, fields ...string) *VXSocialGroup
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.VXSocial.Query().

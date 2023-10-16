@@ -298,7 +298,7 @@ func (fiq *FrpsInfoQuery) WithFrpcInfos(opts ...func(*FrpcInfoQuery)) *FrpsInfoQ
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (fiq *FrpsInfoQuery) GroupBy(field string, fields ...string) *FrpsInfoGroup
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.FrpsInfo.Query().

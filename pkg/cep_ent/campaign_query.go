@@ -334,7 +334,7 @@ func (cq *CampaignQuery) WithCampaignOrders(opts ...func(*CampaignOrderQuery)) *
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (cq *CampaignQuery) GroupBy(field string, fields ...string) *CampaignGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.Campaign.Query().

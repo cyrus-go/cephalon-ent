@@ -369,7 +369,7 @@ func (dgmq *DeviceGpuMissionQuery) WithGpu(opts ...func(*GpuQuery)) *DeviceGpuMi
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -392,7 +392,7 @@ func (dgmq *DeviceGpuMissionQuery) GroupBy(field string, fields ...string) *Devi
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by,string"`
+//		CreatedBy int64 `json:"created_by"`
 //	}
 //
 //	client.DeviceGpuMission.Query().
