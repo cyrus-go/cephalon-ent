@@ -173,6 +173,12 @@ func (mc *MissionCreate) SetNillableCallBackInfo(s *string) *MissionCreate {
 	return mc
 }
 
+// SetCallBackData sets the "call_back_data" field.
+func (mc *MissionCreate) SetCallBackData(b []byte) *MissionCreate {
+	mc.mutation.SetCallBackData(b)
+	return mc
+}
+
 // SetStatus sets the "status" field.
 func (mc *MissionCreate) SetStatus(es enums.MissionStatus) *MissionCreate {
 	mc.mutation.SetStatus(es)
@@ -413,6 +419,34 @@ func (mc *MissionCreate) SetSecondHmacKey(s string) *MissionCreate {
 func (mc *MissionCreate) SetNillableSecondHmacKey(s *string) *MissionCreate {
 	if s != nil {
 		mc.SetSecondHmacKey(*s)
+	}
+	return mc
+}
+
+// SetUsername sets the "username" field.
+func (mc *MissionCreate) SetUsername(s string) *MissionCreate {
+	mc.mutation.SetUsername(s)
+	return mc
+}
+
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableUsername(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetUsername(*s)
+	}
+	return mc
+}
+
+// SetPassword sets the "password" field.
+func (mc *MissionCreate) SetPassword(s string) *MissionCreate {
+	mc.mutation.SetPassword(s)
+	return mc
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (mc *MissionCreate) SetNillablePassword(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetPassword(*s)
 	}
 	return mc
 }
@@ -688,6 +722,14 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultSecondHmacKey
 		mc.mutation.SetSecondHmacKey(v)
 	}
+	if _, ok := mc.mutation.Username(); !ok {
+		v := mission.DefaultUsername
+		mc.mutation.SetUsername(v)
+	}
+	if _, ok := mc.mutation.Password(); !ok {
+		v := mission.DefaultPassword
+		mc.mutation.SetPassword(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -804,6 +846,12 @@ func (mc *MissionCreate) check() error {
 	if _, ok := mc.mutation.SecondHmacKey(); !ok {
 		return &ValidationError{Name: "second_hmac_key", err: errors.New(`cep_ent: missing required field "Mission.second_hmac_key"`)}
 	}
+	if _, ok := mc.mutation.Username(); !ok {
+		return &ValidationError{Name: "username", err: errors.New(`cep_ent: missing required field "Mission.username"`)}
+	}
+	if _, ok := mc.mutation.Password(); !ok {
+		return &ValidationError{Name: "password", err: errors.New(`cep_ent: missing required field "Mission.password"`)}
+	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
 	}
@@ -885,6 +933,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_spec.SetField(mission.FieldCallBackInfo, field.TypeString, value)
 		_node.CallBackInfo = &value
 	}
+	if value, ok := mc.mutation.CallBackData(); ok {
+		_spec.SetField(mission.FieldCallBackData, field.TypeBytes, value)
+		_node.CallBackData = value
+	}
 	if value, ok := mc.mutation.Status(); ok {
 		_spec.SetField(mission.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
@@ -944,6 +996,14 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.SecondHmacKey(); ok {
 		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
 		_node.SecondHmacKey = value
+	}
+	if value, ok := mc.mutation.Username(); ok {
+		_spec.SetField(mission.FieldUsername, field.TypeString, value)
+		_node.Username = value
+	}
+	if value, ok := mc.mutation.Password(); ok {
+		_spec.SetField(mission.FieldPassword, field.TypeString, value)
+		_node.Password = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1287,6 +1347,24 @@ func (u *MissionUpsert) ClearCallBackInfo() *MissionUpsert {
 	return u
 }
 
+// SetCallBackData sets the "call_back_data" field.
+func (u *MissionUpsert) SetCallBackData(v []byte) *MissionUpsert {
+	u.Set(mission.FieldCallBackData, v)
+	return u
+}
+
+// UpdateCallBackData sets the "call_back_data" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateCallBackData() *MissionUpsert {
+	u.SetExcluded(mission.FieldCallBackData)
+	return u
+}
+
+// ClearCallBackData clears the value of the "call_back_data" field.
+func (u *MissionUpsert) ClearCallBackData() *MissionUpsert {
+	u.SetNull(mission.FieldCallBackData)
+	return u
+}
+
 // SetStatus sets the "status" field.
 func (u *MissionUpsert) SetStatus(v enums.MissionStatus) *MissionUpsert {
 	u.Set(mission.FieldStatus, v)
@@ -1521,6 +1599,30 @@ func (u *MissionUpsert) UpdateSecondHmacKey() *MissionUpsert {
 	return u
 }
 
+// SetUsername sets the "username" field.
+func (u *MissionUpsert) SetUsername(v string) *MissionUpsert {
+	u.Set(mission.FieldUsername, v)
+	return u
+}
+
+// UpdateUsername sets the "username" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateUsername() *MissionUpsert {
+	u.SetExcluded(mission.FieldUsername)
+	return u
+}
+
+// SetPassword sets the "password" field.
+func (u *MissionUpsert) SetPassword(v string) *MissionUpsert {
+	u.Set(mission.FieldPassword, v)
+	return u
+}
+
+// UpdatePassword sets the "password" field to the value that was provided on create.
+func (u *MissionUpsert) UpdatePassword() *MissionUpsert {
+	u.SetExcluded(mission.FieldPassword)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1716,6 +1818,27 @@ func (u *MissionUpsertOne) UpdateCallBackInfo() *MissionUpsertOne {
 func (u *MissionUpsertOne) ClearCallBackInfo() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearCallBackInfo()
+	})
+}
+
+// SetCallBackData sets the "call_back_data" field.
+func (u *MissionUpsertOne) SetCallBackData(v []byte) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCallBackData(v)
+	})
+}
+
+// UpdateCallBackData sets the "call_back_data" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateCallBackData() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCallBackData()
+	})
+}
+
+// ClearCallBackData clears the value of the "call_back_data" field.
+func (u *MissionUpsertOne) ClearCallBackData() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearCallBackData()
 	})
 }
 
@@ -1989,6 +2112,34 @@ func (u *MissionUpsertOne) SetSecondHmacKey(v string) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateSecondHmacKey() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateSecondHmacKey()
+	})
+}
+
+// SetUsername sets the "username" field.
+func (u *MissionUpsertOne) SetUsername(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUsername(v)
+	})
+}
+
+// UpdateUsername sets the "username" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateUsername() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUsername()
+	})
+}
+
+// SetPassword sets the "password" field.
+func (u *MissionUpsertOne) SetPassword(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetPassword(v)
+	})
+}
+
+// UpdatePassword sets the "password" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdatePassword() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdatePassword()
 	})
 }
 
@@ -2356,6 +2507,27 @@ func (u *MissionUpsertBulk) ClearCallBackInfo() *MissionUpsertBulk {
 	})
 }
 
+// SetCallBackData sets the "call_back_data" field.
+func (u *MissionUpsertBulk) SetCallBackData(v []byte) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCallBackData(v)
+	})
+}
+
+// UpdateCallBackData sets the "call_back_data" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateCallBackData() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCallBackData()
+	})
+}
+
+// ClearCallBackData clears the value of the "call_back_data" field.
+func (u *MissionUpsertBulk) ClearCallBackData() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearCallBackData()
+	})
+}
+
 // SetStatus sets the "status" field.
 func (u *MissionUpsertBulk) SetStatus(v enums.MissionStatus) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
@@ -2626,6 +2798,34 @@ func (u *MissionUpsertBulk) SetSecondHmacKey(v string) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateSecondHmacKey() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateSecondHmacKey()
+	})
+}
+
+// SetUsername sets the "username" field.
+func (u *MissionUpsertBulk) SetUsername(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUsername(v)
+	})
+}
+
+// UpdateUsername sets the "username" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateUsername() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUsername()
+	})
+}
+
+// SetPassword sets the "password" field.
+func (u *MissionUpsertBulk) SetPassword(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetPassword(v)
+	})
+}
+
+// UpdatePassword sets the "password" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdatePassword() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdatePassword()
 	})
 }
 

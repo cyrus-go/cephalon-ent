@@ -1035,53 +1035,61 @@ func init() {
 	// mission.DefaultCallBackURL holds the default value on creation for the call_back_url field.
 	mission.DefaultCallBackURL = missionDescCallBackURL.Default.(string)
 	// missionDescUrls is the schema descriptor for urls field.
-	missionDescUrls := missionFields[9].Descriptor()
+	missionDescUrls := missionFields[10].Descriptor()
 	// mission.DefaultUrls holds the default value on creation for the urls field.
 	mission.DefaultUrls = missionDescUrls.Default.(string)
 	// missionDescKeyPairID is the schema descriptor for key_pair_id field.
-	missionDescKeyPairID := missionFields[10].Descriptor()
+	missionDescKeyPairID := missionFields[11].Descriptor()
 	// mission.DefaultKeyPairID holds the default value on creation for the key_pair_id field.
 	mission.DefaultKeyPairID = missionDescKeyPairID.Default.(int64)
 	// missionDescUserID is the schema descriptor for user_id field.
-	missionDescUserID := missionFields[11].Descriptor()
+	missionDescUserID := missionFields[12].Descriptor()
 	// mission.DefaultUserID holds the default value on creation for the user_id field.
 	mission.DefaultUserID = missionDescUserID.Default.(int64)
 	// missionDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	missionDescMissionBatchID := missionFields[12].Descriptor()
+	missionDescMissionBatchID := missionFields[13].Descriptor()
 	// mission.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	mission.DefaultMissionBatchID = missionDescMissionBatchID.Default.(int64)
 	// missionDescMissionBatchNumber is the schema descriptor for mission_batch_number field.
-	missionDescMissionBatchNumber := missionFields[13].Descriptor()
+	missionDescMissionBatchNumber := missionFields[14].Descriptor()
 	// mission.DefaultMissionBatchNumber holds the default value on creation for the mission_batch_number field.
 	mission.DefaultMissionBatchNumber = missionDescMissionBatchNumber.Default.(string)
 	// missionDescUnitCep is the schema descriptor for unit_cep field.
-	missionDescUnitCep := missionFields[15].Descriptor()
+	missionDescUnitCep := missionFields[16].Descriptor()
 	// mission.DefaultUnitCep holds the default value on creation for the unit_cep field.
 	mission.DefaultUnitCep = missionDescUnitCep.Default.(int64)
 	// missionDescRespStatusCode is the schema descriptor for resp_status_code field.
-	missionDescRespStatusCode := missionFields[16].Descriptor()
+	missionDescRespStatusCode := missionFields[17].Descriptor()
 	// mission.DefaultRespStatusCode holds the default value on creation for the resp_status_code field.
 	mission.DefaultRespStatusCode = missionDescRespStatusCode.Default.(int32)
 	// missionDescRespBody is the schema descriptor for resp_body field.
-	missionDescRespBody := missionFields[17].Descriptor()
+	missionDescRespBody := missionFields[18].Descriptor()
 	// mission.DefaultRespBody holds the default value on creation for the resp_body field.
 	mission.DefaultRespBody = missionDescRespBody.Default.(string)
 	// missionDescInnerURI is the schema descriptor for inner_uri field.
-	missionDescInnerURI := missionFields[18].Descriptor()
+	missionDescInnerURI := missionFields[19].Descriptor()
 	// mission.DefaultInnerURI holds the default value on creation for the inner_uri field.
 	mission.DefaultInnerURI = missionDescInnerURI.Default.(string)
 	// missionDescTempHmacKey is the schema descriptor for temp_hmac_key field.
-	missionDescTempHmacKey := missionFields[20].Descriptor()
+	missionDescTempHmacKey := missionFields[21].Descriptor()
 	// mission.DefaultTempHmacKey holds the default value on creation for the temp_hmac_key field.
 	mission.DefaultTempHmacKey = missionDescTempHmacKey.Default.(string)
 	// missionDescTempHmacSecret is the schema descriptor for temp_hmac_secret field.
-	missionDescTempHmacSecret := missionFields[21].Descriptor()
+	missionDescTempHmacSecret := missionFields[22].Descriptor()
 	// mission.DefaultTempHmacSecret holds the default value on creation for the temp_hmac_secret field.
 	mission.DefaultTempHmacSecret = missionDescTempHmacSecret.Default.(string)
 	// missionDescSecondHmacKey is the schema descriptor for second_hmac_key field.
-	missionDescSecondHmacKey := missionFields[22].Descriptor()
+	missionDescSecondHmacKey := missionFields[23].Descriptor()
 	// mission.DefaultSecondHmacKey holds the default value on creation for the second_hmac_key field.
 	mission.DefaultSecondHmacKey = missionDescSecondHmacKey.Default.(string)
+	// missionDescUsername is the schema descriptor for username field.
+	missionDescUsername := missionFields[24].Descriptor()
+	// mission.DefaultUsername holds the default value on creation for the username field.
+	mission.DefaultUsername = missionDescUsername.Default.(string)
+	// missionDescPassword is the schema descriptor for password field.
+	missionDescPassword := missionFields[25].Descriptor()
+	// mission.DefaultPassword holds the default value on creation for the password field.
+	mission.DefaultPassword = missionDescPassword.Default.(string)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

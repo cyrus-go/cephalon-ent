@@ -46,6 +46,8 @@ type Mission struct {
 	CallBackURL string `json:"call_back_url"`
 	// 回调时带上的参数，接收任何类型数据后 json 压缩
 	CallBackInfo *string `json:"call_back_info"`
+	// 回调时带上的参数，需 json 反序列化后才可使用，所以没有直接 json 序列化字段 (sensitive)
+	CallBackData []byte `json:"-"`
 	// 任务状态
 	Status enums.MissionStatus `json:"status"`
 	// 任务结果，pending 表示还没有结果
@@ -82,6 +84,10 @@ type Mission struct {
 	TempHmacSecret string `json:"temp_hmac_secret"`
 	// 创建任务时使用了的 二级 hmac_key
 	SecondHmacKey string `json:"second_hmac_key"`
+	// 某些任务会使用到的验证用户名
+	Username string `json:"username"`
+	// 某些任务会使用到的验证密码
+	Password string `json:"password"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -234,11 +240,11 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mission.FieldResultUrls:
+		case mission.FieldCallBackData, mission.FieldResultUrls:
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -323,6 +329,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.CallBackInfo = new(string)
 				*m.CallBackInfo = value.String
+			}
+		case mission.FieldCallBackData:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field call_back_data", values[i])
+			} else if value != nil {
+				m.CallBackData = *value
 			}
 		case mission.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -433,6 +445,18 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field second_hmac_key", values[i])
 			} else if value.Valid {
 				m.SecondHmacKey = value.String
+			}
+		case mission.FieldUsername:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field username", values[i])
+			} else if value.Valid {
+				m.Username = value.String
+			}
+		case mission.FieldPassword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field password", values[i])
+			} else if value.Valid {
+				m.Password = value.String
 			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
@@ -552,6 +576,8 @@ func (m *Mission) String() string {
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
+	builder.WriteString("call_back_data=<sensitive>")
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", m.Status))
 	builder.WriteString(", ")
@@ -604,6 +630,12 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("second_hmac_key=")
 	builder.WriteString(m.SecondHmacKey)
+	builder.WriteString(", ")
+	builder.WriteString("username=")
+	builder.WriteString(m.Username)
+	builder.WriteString(", ")
+	builder.WriteString("password=")
+	builder.WriteString(m.Password)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -178,6 +178,18 @@ func (mu *MissionUpdate) ClearCallBackInfo() *MissionUpdate {
 	return mu
 }
 
+// SetCallBackData sets the "call_back_data" field.
+func (mu *MissionUpdate) SetCallBackData(b []byte) *MissionUpdate {
+	mu.mutation.SetCallBackData(b)
+	return mu
+}
+
+// ClearCallBackData clears the value of the "call_back_data" field.
+func (mu *MissionUpdate) ClearCallBackData() *MissionUpdate {
+	mu.mutation.ClearCallBackData()
+	return mu
+}
+
 // SetStatus sets the "status" field.
 func (mu *MissionUpdate) SetStatus(es enums.MissionStatus) *MissionUpdate {
 	mu.mutation.SetStatus(es)
@@ -444,6 +456,34 @@ func (mu *MissionUpdate) SetSecondHmacKey(s string) *MissionUpdate {
 func (mu *MissionUpdate) SetNillableSecondHmacKey(s *string) *MissionUpdate {
 	if s != nil {
 		mu.SetSecondHmacKey(*s)
+	}
+	return mu
+}
+
+// SetUsername sets the "username" field.
+func (mu *MissionUpdate) SetUsername(s string) *MissionUpdate {
+	mu.mutation.SetUsername(s)
+	return mu
+}
+
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableUsername(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetUsername(*s)
+	}
+	return mu
+}
+
+// SetPassword sets the "password" field.
+func (mu *MissionUpdate) SetPassword(s string) *MissionUpdate {
+	mu.mutation.SetPassword(s)
+	return mu
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillablePassword(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetPassword(*s)
 	}
 	return mu
 }
@@ -819,6 +859,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if mu.mutation.CallBackInfoCleared() {
 		_spec.ClearField(mission.FieldCallBackInfo, field.TypeString)
 	}
+	if value, ok := mu.mutation.CallBackData(); ok {
+		_spec.SetField(mission.FieldCallBackData, field.TypeBytes, value)
+	}
+	if mu.mutation.CallBackDataCleared() {
+		_spec.ClearField(mission.FieldCallBackData, field.TypeBytes)
+	}
 	if value, ok := mu.mutation.Status(); ok {
 		_spec.SetField(mission.FieldStatus, field.TypeEnum, value)
 	}
@@ -877,6 +923,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.SecondHmacKey(); ok {
 		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.Username(); ok {
+		_spec.SetField(mission.FieldUsername, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.Password(); ok {
+		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1390,6 +1442,18 @@ func (muo *MissionUpdateOne) ClearCallBackInfo() *MissionUpdateOne {
 	return muo
 }
 
+// SetCallBackData sets the "call_back_data" field.
+func (muo *MissionUpdateOne) SetCallBackData(b []byte) *MissionUpdateOne {
+	muo.mutation.SetCallBackData(b)
+	return muo
+}
+
+// ClearCallBackData clears the value of the "call_back_data" field.
+func (muo *MissionUpdateOne) ClearCallBackData() *MissionUpdateOne {
+	muo.mutation.ClearCallBackData()
+	return muo
+}
+
 // SetStatus sets the "status" field.
 func (muo *MissionUpdateOne) SetStatus(es enums.MissionStatus) *MissionUpdateOne {
 	muo.mutation.SetStatus(es)
@@ -1656,6 +1720,34 @@ func (muo *MissionUpdateOne) SetSecondHmacKey(s string) *MissionUpdateOne {
 func (muo *MissionUpdateOne) SetNillableSecondHmacKey(s *string) *MissionUpdateOne {
 	if s != nil {
 		muo.SetSecondHmacKey(*s)
+	}
+	return muo
+}
+
+// SetUsername sets the "username" field.
+func (muo *MissionUpdateOne) SetUsername(s string) *MissionUpdateOne {
+	muo.mutation.SetUsername(s)
+	return muo
+}
+
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableUsername(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetUsername(*s)
+	}
+	return muo
+}
+
+// SetPassword sets the "password" field.
+func (muo *MissionUpdateOne) SetPassword(s string) *MissionUpdateOne {
+	muo.mutation.SetPassword(s)
+	return muo
+}
+
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillablePassword(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetPassword(*s)
 	}
 	return muo
 }
@@ -2061,6 +2153,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	if muo.mutation.CallBackInfoCleared() {
 		_spec.ClearField(mission.FieldCallBackInfo, field.TypeString)
 	}
+	if value, ok := muo.mutation.CallBackData(); ok {
+		_spec.SetField(mission.FieldCallBackData, field.TypeBytes, value)
+	}
+	if muo.mutation.CallBackDataCleared() {
+		_spec.ClearField(mission.FieldCallBackData, field.TypeBytes)
+	}
 	if value, ok := muo.mutation.Status(); ok {
 		_spec.SetField(mission.FieldStatus, field.TypeEnum, value)
 	}
@@ -2119,6 +2217,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.SecondHmacKey(); ok {
 		_spec.SetField(mission.FieldSecondHmacKey, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.Username(); ok {
+		_spec.SetField(mission.FieldUsername, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.Password(); ok {
+		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

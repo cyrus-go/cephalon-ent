@@ -101,6 +101,11 @@ func CallBackInfo(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCallBackInfo, v))
 }
 
+// CallBackData applies equality check predicate on the "call_back_data" field. It's identical to CallBackDataEQ.
+func CallBackData(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldCallBackData, v))
+}
+
 // Urls applies equality check predicate on the "urls" field. It's identical to UrlsEQ.
 func Urls(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldUrls, v))
@@ -159,6 +164,16 @@ func TempHmacSecret(v string) predicate.Mission {
 // SecondHmacKey applies equality check predicate on the "second_hmac_key" field. It's identical to SecondHmacKeyEQ.
 func SecondHmacKey(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldSecondHmacKey, v))
+}
+
+// Username applies equality check predicate on the "username" field. It's identical to UsernameEQ.
+func Username(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUsername, v))
+}
+
+// Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
+func Password(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldPassword, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -614,6 +629,56 @@ func CallBackInfoEqualFold(v string) predicate.Mission {
 // CallBackInfoContainsFold applies the ContainsFold predicate on the "call_back_info" field.
 func CallBackInfoContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldCallBackInfo, v))
+}
+
+// CallBackDataEQ applies the EQ predicate on the "call_back_data" field.
+func CallBackDataEQ(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldCallBackData, v))
+}
+
+// CallBackDataNEQ applies the NEQ predicate on the "call_back_data" field.
+func CallBackDataNEQ(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldCallBackData, v))
+}
+
+// CallBackDataIn applies the In predicate on the "call_back_data" field.
+func CallBackDataIn(vs ...[]byte) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldCallBackData, vs...))
+}
+
+// CallBackDataNotIn applies the NotIn predicate on the "call_back_data" field.
+func CallBackDataNotIn(vs ...[]byte) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldCallBackData, vs...))
+}
+
+// CallBackDataGT applies the GT predicate on the "call_back_data" field.
+func CallBackDataGT(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldCallBackData, v))
+}
+
+// CallBackDataGTE applies the GTE predicate on the "call_back_data" field.
+func CallBackDataGTE(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldCallBackData, v))
+}
+
+// CallBackDataLT applies the LT predicate on the "call_back_data" field.
+func CallBackDataLT(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldCallBackData, v))
+}
+
+// CallBackDataLTE applies the LTE predicate on the "call_back_data" field.
+func CallBackDataLTE(v []byte) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldCallBackData, v))
+}
+
+// CallBackDataIsNil applies the IsNil predicate on the "call_back_data" field.
+func CallBackDataIsNil() predicate.Mission {
+	return predicate.Mission(sql.FieldIsNull(FieldCallBackData))
+}
+
+// CallBackDataNotNil applies the NotNil predicate on the "call_back_data" field.
+func CallBackDataNotNil() predicate.Mission {
+	return predicate.Mission(sql.FieldNotNull(FieldCallBackData))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -1369,6 +1434,136 @@ func SecondHmacKeyEqualFold(v string) predicate.Mission {
 // SecondHmacKeyContainsFold applies the ContainsFold predicate on the "second_hmac_key" field.
 func SecondHmacKeyContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldSecondHmacKey, v))
+}
+
+// UsernameEQ applies the EQ predicate on the "username" field.
+func UsernameEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUsername, v))
+}
+
+// UsernameNEQ applies the NEQ predicate on the "username" field.
+func UsernameNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldUsername, v))
+}
+
+// UsernameIn applies the In predicate on the "username" field.
+func UsernameIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldUsername, vs...))
+}
+
+// UsernameNotIn applies the NotIn predicate on the "username" field.
+func UsernameNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldUsername, vs...))
+}
+
+// UsernameGT applies the GT predicate on the "username" field.
+func UsernameGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldUsername, v))
+}
+
+// UsernameGTE applies the GTE predicate on the "username" field.
+func UsernameGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldUsername, v))
+}
+
+// UsernameLT applies the LT predicate on the "username" field.
+func UsernameLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldUsername, v))
+}
+
+// UsernameLTE applies the LTE predicate on the "username" field.
+func UsernameLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldUsername, v))
+}
+
+// UsernameContains applies the Contains predicate on the "username" field.
+func UsernameContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldUsername, v))
+}
+
+// UsernameHasPrefix applies the HasPrefix predicate on the "username" field.
+func UsernameHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldUsername, v))
+}
+
+// UsernameHasSuffix applies the HasSuffix predicate on the "username" field.
+func UsernameHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldUsername, v))
+}
+
+// UsernameEqualFold applies the EqualFold predicate on the "username" field.
+func UsernameEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldUsername, v))
+}
+
+// UsernameContainsFold applies the ContainsFold predicate on the "username" field.
+func UsernameContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldUsername, v))
+}
+
+// PasswordEQ applies the EQ predicate on the "password" field.
+func PasswordEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldPassword, v))
+}
+
+// PasswordNEQ applies the NEQ predicate on the "password" field.
+func PasswordNEQ(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldPassword, v))
+}
+
+// PasswordIn applies the In predicate on the "password" field.
+func PasswordIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldPassword, vs...))
+}
+
+// PasswordNotIn applies the NotIn predicate on the "password" field.
+func PasswordNotIn(vs ...string) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldPassword, vs...))
+}
+
+// PasswordGT applies the GT predicate on the "password" field.
+func PasswordGT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldPassword, v))
+}
+
+// PasswordGTE applies the GTE predicate on the "password" field.
+func PasswordGTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldPassword, v))
+}
+
+// PasswordLT applies the LT predicate on the "password" field.
+func PasswordLT(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldPassword, v))
+}
+
+// PasswordLTE applies the LTE predicate on the "password" field.
+func PasswordLTE(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldPassword, v))
+}
+
+// PasswordContains applies the Contains predicate on the "password" field.
+func PasswordContains(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContains(FieldPassword, v))
+}
+
+// PasswordHasPrefix applies the HasPrefix predicate on the "password" field.
+func PasswordHasPrefix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasPrefix(FieldPassword, v))
+}
+
+// PasswordHasSuffix applies the HasSuffix predicate on the "password" field.
+func PasswordHasSuffix(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldHasSuffix(FieldPassword, v))
+}
+
+// PasswordEqualFold applies the EqualFold predicate on the "password" field.
+func PasswordEqualFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldEqualFold(FieldPassword, v))
+}
+
+// PasswordContainsFold applies the ContainsFold predicate on the "password" field.
+func PasswordContainsFold(v string) predicate.Mission {
+	return predicate.Mission(sql.FieldContainsFold(FieldPassword, v))
 }
 
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.

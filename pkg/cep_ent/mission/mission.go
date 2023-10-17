@@ -36,6 +36,8 @@ const (
 	FieldCallBackURL = "call_back_url"
 	// FieldCallBackInfo holds the string denoting the call_back_info field in the database.
 	FieldCallBackInfo = "call_back_info"
+	// FieldCallBackData holds the string denoting the call_back_data field in the database.
+	FieldCallBackData = "call_back_data"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldResult holds the string denoting the result field in the database.
@@ -72,6 +74,10 @@ const (
 	FieldTempHmacSecret = "temp_hmac_secret"
 	// FieldSecondHmacKey holds the string denoting the second_hmac_key field in the database.
 	FieldSecondHmacKey = "second_hmac_key"
+	// FieldUsername holds the string denoting the username field in the database.
+	FieldUsername = "username"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -179,6 +185,7 @@ var Columns = []string{
 	FieldBody,
 	FieldCallBackURL,
 	FieldCallBackInfo,
+	FieldCallBackData,
 	FieldStatus,
 	FieldResult,
 	FieldState,
@@ -197,6 +204,8 @@ var Columns = []string{
 	FieldTempHmacKey,
 	FieldTempHmacSecret,
 	FieldSecondHmacKey,
+	FieldUsername,
+	FieldPassword,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -252,6 +261,10 @@ var (
 	DefaultTempHmacSecret string
 	// DefaultSecondHmacKey holds the default value on creation for the "second_hmac_key" field.
 	DefaultSecondHmacKey string
+	// DefaultUsername holds the default value on creation for the "username" field.
+	DefaultUsername string
+	// DefaultPassword holds the default value on creation for the "password" field.
+	DefaultPassword string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -469,6 +482,16 @@ func ByTempHmacSecret(opts ...sql.OrderTermOption) OrderOption {
 // BySecondHmacKey orders the results by the second_hmac_key field.
 func BySecondHmacKey(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSecondHmacKey, opts...).ToFunc()
+}
+
+// ByUsername orders the results by the username field.
+func ByUsername(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUsername, opts...).ToFunc()
+}
+
+// ByPassword orders the results by the password field.
+func ByPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPassword, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

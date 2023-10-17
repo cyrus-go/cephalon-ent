@@ -21212,6 +21212,7 @@ type MissionMutation struct {
 	body                          *string
 	call_back_url                 *string
 	call_back_info                *string
+	call_back_data                *[]byte
 	status                        *enums.MissionStatus
 	result                        *enums.MissionResult
 	state                         *enums.MissionState
@@ -21230,6 +21231,8 @@ type MissionMutation struct {
 	temp_hmac_key                 *string
 	temp_hmac_secret              *string
 	second_hmac_key               *string
+	username                      *string
+	password                      *string
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -21775,6 +21778,55 @@ func (m *MissionMutation) CallBackInfoCleared() bool {
 func (m *MissionMutation) ResetCallBackInfo() {
 	m.call_back_info = nil
 	delete(m.clearedFields, mission.FieldCallBackInfo)
+}
+
+// SetCallBackData sets the "call_back_data" field.
+func (m *MissionMutation) SetCallBackData(b []byte) {
+	m.call_back_data = &b
+}
+
+// CallBackData returns the value of the "call_back_data" field in the mutation.
+func (m *MissionMutation) CallBackData() (r []byte, exists bool) {
+	v := m.call_back_data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCallBackData returns the old "call_back_data" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldCallBackData(ctx context.Context) (v []byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCallBackData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCallBackData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCallBackData: %w", err)
+	}
+	return oldValue.CallBackData, nil
+}
+
+// ClearCallBackData clears the value of the "call_back_data" field.
+func (m *MissionMutation) ClearCallBackData() {
+	m.call_back_data = nil
+	m.clearedFields[mission.FieldCallBackData] = struct{}{}
+}
+
+// CallBackDataCleared returns if the "call_back_data" field was cleared in this mutation.
+func (m *MissionMutation) CallBackDataCleared() bool {
+	_, ok := m.clearedFields[mission.FieldCallBackData]
+	return ok
+}
+
+// ResetCallBackData resets all changes to the "call_back_data" field.
+func (m *MissionMutation) ResetCallBackData() {
+	m.call_back_data = nil
+	delete(m.clearedFields, mission.FieldCallBackData)
 }
 
 // SetStatus sets the "status" field.
@@ -22494,6 +22546,78 @@ func (m *MissionMutation) ResetSecondHmacKey() {
 	m.second_hmac_key = nil
 }
 
+// SetUsername sets the "username" field.
+func (m *MissionMutation) SetUsername(s string) {
+	m.username = &s
+}
+
+// Username returns the value of the "username" field in the mutation.
+func (m *MissionMutation) Username() (r string, exists bool) {
+	v := m.username
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsername returns the old "username" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldUsername(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUsername is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUsername requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsername: %w", err)
+	}
+	return oldValue.Username, nil
+}
+
+// ResetUsername resets all changes to the "username" field.
+func (m *MissionMutation) ResetUsername() {
+	m.username = nil
+}
+
+// SetPassword sets the "password" field.
+func (m *MissionMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the value of the "password" field in the mutation.
+func (m *MissionMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old "password" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ResetPassword resets all changes to the "password" field.
+func (m *MissionMutation) ResetPassword() {
+	m.password = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -22930,7 +23054,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 28)
+	fields := make([]string, 0, 31)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -22960,6 +23084,9 @@ func (m *MissionMutation) Fields() []string {
 	}
 	if m.call_back_info != nil {
 		fields = append(fields, mission.FieldCallBackInfo)
+	}
+	if m.call_back_data != nil {
+		fields = append(fields, mission.FieldCallBackData)
 	}
 	if m.status != nil {
 		fields = append(fields, mission.FieldStatus)
@@ -23015,6 +23142,12 @@ func (m *MissionMutation) Fields() []string {
 	if m.second_hmac_key != nil {
 		fields = append(fields, mission.FieldSecondHmacKey)
 	}
+	if m.username != nil {
+		fields = append(fields, mission.FieldUsername)
+	}
+	if m.password != nil {
+		fields = append(fields, mission.FieldPassword)
+	}
 	return fields
 }
 
@@ -23043,6 +23176,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.CallBackURL()
 	case mission.FieldCallBackInfo:
 		return m.CallBackInfo()
+	case mission.FieldCallBackData:
+		return m.CallBackData()
 	case mission.FieldStatus:
 		return m.Status()
 	case mission.FieldResult:
@@ -23079,6 +23214,10 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.TempHmacSecret()
 	case mission.FieldSecondHmacKey:
 		return m.SecondHmacKey()
+	case mission.FieldUsername:
+		return m.Username()
+	case mission.FieldPassword:
+		return m.Password()
 	}
 	return nil, false
 }
@@ -23108,6 +23247,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCallBackURL(ctx)
 	case mission.FieldCallBackInfo:
 		return m.OldCallBackInfo(ctx)
+	case mission.FieldCallBackData:
+		return m.OldCallBackData(ctx)
 	case mission.FieldStatus:
 		return m.OldStatus(ctx)
 	case mission.FieldResult:
@@ -23144,6 +23285,10 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldTempHmacSecret(ctx)
 	case mission.FieldSecondHmacKey:
 		return m.OldSecondHmacKey(ctx)
+	case mission.FieldUsername:
+		return m.OldUsername(ctx)
+	case mission.FieldPassword:
+		return m.OldPassword(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -23222,6 +23367,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCallBackInfo(v)
+		return nil
+	case mission.FieldCallBackData:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCallBackData(v)
 		return nil
 	case mission.FieldStatus:
 		v, ok := value.(enums.MissionStatus)
@@ -23349,6 +23501,20 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSecondHmacKey(v)
 		return nil
+	case mission.FieldUsername:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsername(v)
+		return nil
+	case mission.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -23433,6 +23599,9 @@ func (m *MissionMutation) ClearedFields() []string {
 	if m.FieldCleared(mission.FieldCallBackInfo) {
 		fields = append(fields, mission.FieldCallBackInfo)
 	}
+	if m.FieldCleared(mission.FieldCallBackData) {
+		fields = append(fields, mission.FieldCallBackData)
+	}
 	if m.FieldCleared(mission.FieldResultUrls) {
 		fields = append(fields, mission.FieldResultUrls)
 	}
@@ -23452,6 +23621,9 @@ func (m *MissionMutation) ClearField(name string) error {
 	switch name {
 	case mission.FieldCallBackInfo:
 		m.ClearCallBackInfo()
+		return nil
+	case mission.FieldCallBackData:
+		m.ClearCallBackData()
 		return nil
 	case mission.FieldResultUrls:
 		m.ClearResultUrls()
@@ -23493,6 +23665,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldCallBackInfo:
 		m.ResetCallBackInfo()
+		return nil
+	case mission.FieldCallBackData:
+		m.ResetCallBackData()
 		return nil
 	case mission.FieldStatus:
 		m.ResetStatus()
@@ -23547,6 +23722,12 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldSecondHmacKey:
 		m.ResetSecondHmacKey()
+		return nil
+	case mission.FieldUsername:
+		m.ResetUsername()
+		return nil
+	case mission.FieldPassword:
+		m.ResetPassword()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
