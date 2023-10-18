@@ -3,10 +3,12 @@
 package devicegpumission
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -30,6 +32,10 @@ const (
 	FieldGpuID = "gpu_id"
 	// FieldMissionKindID holds the string denoting the mission_kind_id field in the database.
 	FieldMissionKindID = "mission_kind_id"
+	// FieldDeviceSlot holds the string denoting the device_slot field in the database.
+	FieldDeviceSlot = "device_slot"
+	// FieldGpuStatus holds the string denoting the gpu_status field in the database.
+	FieldGpuStatus = "gpu_status"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
@@ -72,6 +78,8 @@ var Columns = []string{
 	FieldDeviceID,
 	FieldGpuID,
 	FieldMissionKindID,
+	FieldDeviceSlot,
+	FieldGpuStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,9 +111,23 @@ var (
 	DefaultGpuID int64
 	// DefaultMissionKindID holds the default value on creation for the "mission_kind_id" field.
 	DefaultMissionKindID int64
+	// DefaultDeviceSlot holds the default value on creation for the "device_slot" field.
+	DefaultDeviceSlot int8
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultGpuStatus enums.DeviceStatus = "offline"
+
+// GpuStatusValidator is a validator for the "gpu_status" field enum values. It is called by the builders before save.
+func GpuStatusValidator(gs enums.DeviceStatus) error {
+	switch gs {
+	case "online", "offline", "busy", "free":
+		return nil
+	default:
+		return fmt.Errorf("devicegpumission: invalid enum value for gpu_status field: %q", gs)
+	}
+}
 
 // OrderOption defines the ordering options for the DeviceGpuMission queries.
 type OrderOption func(*sql.Selector)
@@ -153,6 +175,16 @@ func ByGpuID(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionKindID orders the results by the mission_kind_id field.
 func ByMissionKindID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionKindID, opts...).ToFunc()
+}
+
+// ByDeviceSlot orders the results by the device_slot field.
+func ByDeviceSlot(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeviceSlot, opts...).ToFunc()
+}
+
+// ByGpuStatus orders the results by the gpu_status field.
+func ByGpuStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuStatus, opts...).ToFunc()
 }
 
 // ByDeviceField orders the results by device field.

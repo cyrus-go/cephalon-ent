@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 登记设备的显卡信息，以及设备的任务执行能力配置状态
@@ -37,6 +38,10 @@ type DeviceGpuMission struct {
 	GpuID int64 `json:"gpu_id,string"`
 	// 外键任务种类 id
 	MissionKindID int64 `json:"mission_kind_id,string"`
+	// 显卡占用设备的插槽
+	DeviceSlot int8 `json:"device_slot"`
+	// gpu 当前状态
+	GpuStatus enums.DeviceStatus `json:"gpu_status"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceGpuMissionQuery when eager-loading is set.
 	Edges        DeviceGpuMissionEdges `json:"edges"`
@@ -100,8 +105,10 @@ func (*DeviceGpuMission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case devicegpumission.FieldID, devicegpumission.FieldCreatedBy, devicegpumission.FieldUpdatedBy, devicegpumission.FieldDeviceID, devicegpumission.FieldGpuID, devicegpumission.FieldMissionKindID:
+		case devicegpumission.FieldID, devicegpumission.FieldCreatedBy, devicegpumission.FieldUpdatedBy, devicegpumission.FieldDeviceID, devicegpumission.FieldGpuID, devicegpumission.FieldMissionKindID, devicegpumission.FieldDeviceSlot:
 			values[i] = new(sql.NullInt64)
+		case devicegpumission.FieldGpuStatus:
+			values[i] = new(sql.NullString)
 		case devicegpumission.FieldCreatedAt, devicegpumission.FieldUpdatedAt, devicegpumission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
@@ -172,6 +179,18 @@ func (dgm *DeviceGpuMission) assignValues(columns []string, values []any) error 
 				return fmt.Errorf("unexpected type %T for field mission_kind_id", values[i])
 			} else if value.Valid {
 				dgm.MissionKindID = value.Int64
+			}
+		case devicegpumission.FieldDeviceSlot:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field device_slot", values[i])
+			} else if value.Valid {
+				dgm.DeviceSlot = int8(value.Int64)
+			}
+		case devicegpumission.FieldGpuStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gpu_status", values[i])
+			} else if value.Valid {
+				dgm.GpuStatus = enums.DeviceStatus(value.String)
 			}
 		default:
 			dgm.selectValues.Set(columns[i], values[i])
@@ -247,6 +266,12 @@ func (dgm *DeviceGpuMission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_kind_id=")
 	builder.WriteString(fmt.Sprintf("%v", dgm.MissionKindID))
+	builder.WriteString(", ")
+	builder.WriteString("device_slot=")
+	builder.WriteString(fmt.Sprintf("%v", dgm.DeviceSlot))
+	builder.WriteString(", ")
+	builder.WriteString("gpu_status=")
+	builder.WriteString(fmt.Sprintf("%v", dgm.GpuStatus))
 	builder.WriteByte(')')
 	return builder.String()
 }

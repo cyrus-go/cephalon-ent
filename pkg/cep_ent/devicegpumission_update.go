@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // DeviceGpuMissionUpdate is the builder for updating DeviceGpuMission entities.
@@ -135,6 +136,41 @@ func (dgmu *DeviceGpuMissionUpdate) SetNillableMissionKindID(i *int64) *DeviceGp
 	return dgmu
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (dgmu *DeviceGpuMissionUpdate) SetDeviceSlot(i int8) *DeviceGpuMissionUpdate {
+	dgmu.mutation.ResetDeviceSlot()
+	dgmu.mutation.SetDeviceSlot(i)
+	return dgmu
+}
+
+// SetNillableDeviceSlot sets the "device_slot" field if the given value is not nil.
+func (dgmu *DeviceGpuMissionUpdate) SetNillableDeviceSlot(i *int8) *DeviceGpuMissionUpdate {
+	if i != nil {
+		dgmu.SetDeviceSlot(*i)
+	}
+	return dgmu
+}
+
+// AddDeviceSlot adds i to the "device_slot" field.
+func (dgmu *DeviceGpuMissionUpdate) AddDeviceSlot(i int8) *DeviceGpuMissionUpdate {
+	dgmu.mutation.AddDeviceSlot(i)
+	return dgmu
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (dgmu *DeviceGpuMissionUpdate) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionUpdate {
+	dgmu.mutation.SetGpuStatus(es)
+	return dgmu
+}
+
+// SetNillableGpuStatus sets the "gpu_status" field if the given value is not nil.
+func (dgmu *DeviceGpuMissionUpdate) SetNillableGpuStatus(es *enums.DeviceStatus) *DeviceGpuMissionUpdate {
+	if es != nil {
+		dgmu.SetGpuStatus(*es)
+	}
+	return dgmu
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (dgmu *DeviceGpuMissionUpdate) SetDevice(d *Device) *DeviceGpuMissionUpdate {
 	return dgmu.SetDeviceID(d.ID)
@@ -211,6 +247,11 @@ func (dgmu *DeviceGpuMissionUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (dgmu *DeviceGpuMissionUpdate) check() error {
+	if v, ok := dgmu.mutation.GpuStatus(); ok {
+		if err := devicegpumission.GpuStatusValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_status", err: fmt.Errorf(`cep_ent: validator failed for field "DeviceGpuMission.gpu_status": %w`, err)}
+		}
+	}
 	if _, ok := dgmu.mutation.DeviceID(); dgmu.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.device"`)
 	}
@@ -252,6 +293,15 @@ func (dgmu *DeviceGpuMissionUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := dgmu.mutation.DeletedAt(); ok {
 		_spec.SetField(devicegpumission.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := dgmu.mutation.DeviceSlot(); ok {
+		_spec.SetField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
+	}
+	if value, ok := dgmu.mutation.AddedDeviceSlot(); ok {
+		_spec.AddField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
+	}
+	if value, ok := dgmu.mutation.GpuStatus(); ok {
+		_spec.SetField(devicegpumission.FieldGpuStatus, field.TypeEnum, value)
 	}
 	if dgmu.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -464,6 +514,41 @@ func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableMissionKindID(i *int64) *Devi
 	return dgmuo
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetDeviceSlot(i int8) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.ResetDeviceSlot()
+	dgmuo.mutation.SetDeviceSlot(i)
+	return dgmuo
+}
+
+// SetNillableDeviceSlot sets the "device_slot" field if the given value is not nil.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableDeviceSlot(i *int8) *DeviceGpuMissionUpdateOne {
+	if i != nil {
+		dgmuo.SetDeviceSlot(*i)
+	}
+	return dgmuo
+}
+
+// AddDeviceSlot adds i to the "device_slot" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) AddDeviceSlot(i int8) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.AddDeviceSlot(i)
+	return dgmuo
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.SetGpuStatus(es)
+	return dgmuo
+}
+
+// SetNillableGpuStatus sets the "gpu_status" field if the given value is not nil.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableGpuStatus(es *enums.DeviceStatus) *DeviceGpuMissionUpdateOne {
+	if es != nil {
+		dgmuo.SetGpuStatus(*es)
+	}
+	return dgmuo
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (dgmuo *DeviceGpuMissionUpdateOne) SetDevice(d *Device) *DeviceGpuMissionUpdateOne {
 	return dgmuo.SetDeviceID(d.ID)
@@ -553,6 +638,11 @@ func (dgmuo *DeviceGpuMissionUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (dgmuo *DeviceGpuMissionUpdateOne) check() error {
+	if v, ok := dgmuo.mutation.GpuStatus(); ok {
+		if err := devicegpumission.GpuStatusValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_status", err: fmt.Errorf(`cep_ent: validator failed for field "DeviceGpuMission.gpu_status": %w`, err)}
+		}
+	}
 	if _, ok := dgmuo.mutation.DeviceID(); dgmuo.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.device"`)
 	}
@@ -611,6 +701,15 @@ func (dgmuo *DeviceGpuMissionUpdateOne) sqlSave(ctx context.Context) (_node *Dev
 	}
 	if value, ok := dgmuo.mutation.DeletedAt(); ok {
 		_spec.SetField(devicegpumission.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := dgmuo.mutation.DeviceSlot(); ok {
+		_spec.SetField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
+	}
+	if value, ok := dgmuo.mutation.AddedDeviceSlot(); ok {
+		_spec.AddField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
+	}
+	if value, ok := dgmuo.mutation.GpuStatus(); ok {
+		_spec.SetField(devicegpumission.FieldGpuStatus, field.TypeEnum, value)
 	}
 	if dgmuo.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{

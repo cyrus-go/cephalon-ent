@@ -296,6 +296,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "device_slot", Type: field.TypeInt8, Comment: "显卡占用设备的插槽", Default: 0},
+		{Name: "gpu_status", Type: field.TypeEnum, Comment: "gpu 当前状态", Enums: []string{"online", "offline", "busy", "free"}, Default: "offline"},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "gpu_id", Type: field.TypeInt64, Comment: "外键 gpu id", Default: 0},
 		{Name: "mission_kind_id", Type: field.TypeInt64, Comment: "外键任务种类 id", Default: 0},
@@ -309,19 +311,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "device_gpu_missions_devices_device_gpu_missions",
-				Columns:    []*schema.Column{DeviceGpuMissionsColumns[6]},
+				Columns:    []*schema.Column{DeviceGpuMissionsColumns[8]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "device_gpu_missions_gpus_device_gpu_missions",
-				Columns:    []*schema.Column{DeviceGpuMissionsColumns[7]},
+				Columns:    []*schema.Column{DeviceGpuMissionsColumns[9]},
 				RefColumns: []*schema.Column{GpusColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "device_gpu_missions_mission_kinds_device_gpu_missions",
-				Columns:    []*schema.Column{DeviceGpuMissionsColumns[8]},
+				Columns:    []*schema.Column{DeviceGpuMissionsColumns[10]},
 				RefColumns: []*schema.Column{MissionKindsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

@@ -489,6 +489,10 @@ func init() {
 	devicegpumissionDescMissionKindID := devicegpumissionFields[2].Descriptor()
 	// devicegpumission.DefaultMissionKindID holds the default value on creation for the mission_kind_id field.
 	devicegpumission.DefaultMissionKindID = devicegpumissionDescMissionKindID.Default.(int64)
+	// devicegpumissionDescDeviceSlot is the schema descriptor for device_slot field.
+	devicegpumissionDescDeviceSlot := devicegpumissionFields[3].Descriptor()
+	// devicegpumission.DefaultDeviceSlot holds the default value on creation for the device_slot field.
+	devicegpumission.DefaultDeviceSlot = devicegpumissionDescDeviceSlot.Default.(int8)
 	// devicegpumissionDescID is the schema descriptor for id field.
 	devicegpumissionDescID := devicegpumissionMixinFields0[0].Descriptor()
 	// devicegpumission.DefaultID holds the default value on creation for the id field.

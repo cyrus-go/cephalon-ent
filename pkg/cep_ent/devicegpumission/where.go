@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -93,6 +94,11 @@ func GpuID(v int64) predicate.DeviceGpuMission {
 // MissionKindID applies equality check predicate on the "mission_kind_id" field. It's identical to MissionKindIDEQ.
 func MissionKindID(v int64) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldEQ(FieldMissionKindID, v))
+}
+
+// DeviceSlot applies equality check predicate on the "device_slot" field. It's identical to DeviceSlotEQ.
+func DeviceSlot(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldEQ(FieldDeviceSlot, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -353,6 +359,76 @@ func MissionKindIDIn(vs ...int64) predicate.DeviceGpuMission {
 // MissionKindIDNotIn applies the NotIn predicate on the "mission_kind_id" field.
 func MissionKindIDNotIn(vs ...int64) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldMissionKindID, vs...))
+}
+
+// DeviceSlotEQ applies the EQ predicate on the "device_slot" field.
+func DeviceSlotEQ(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldEQ(FieldDeviceSlot, v))
+}
+
+// DeviceSlotNEQ applies the NEQ predicate on the "device_slot" field.
+func DeviceSlotNEQ(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldNEQ(FieldDeviceSlot, v))
+}
+
+// DeviceSlotIn applies the In predicate on the "device_slot" field.
+func DeviceSlotIn(vs ...int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldIn(FieldDeviceSlot, vs...))
+}
+
+// DeviceSlotNotIn applies the NotIn predicate on the "device_slot" field.
+func DeviceSlotNotIn(vs ...int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldDeviceSlot, vs...))
+}
+
+// DeviceSlotGT applies the GT predicate on the "device_slot" field.
+func DeviceSlotGT(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldGT(FieldDeviceSlot, v))
+}
+
+// DeviceSlotGTE applies the GTE predicate on the "device_slot" field.
+func DeviceSlotGTE(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldGTE(FieldDeviceSlot, v))
+}
+
+// DeviceSlotLT applies the LT predicate on the "device_slot" field.
+func DeviceSlotLT(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldLT(FieldDeviceSlot, v))
+}
+
+// DeviceSlotLTE applies the LTE predicate on the "device_slot" field.
+func DeviceSlotLTE(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldLTE(FieldDeviceSlot, v))
+}
+
+// GpuStatusEQ applies the EQ predicate on the "gpu_status" field.
+func GpuStatusEQ(v enums.DeviceStatus) predicate.DeviceGpuMission {
+	vc := v
+	return predicate.DeviceGpuMission(sql.FieldEQ(FieldGpuStatus, vc))
+}
+
+// GpuStatusNEQ applies the NEQ predicate on the "gpu_status" field.
+func GpuStatusNEQ(v enums.DeviceStatus) predicate.DeviceGpuMission {
+	vc := v
+	return predicate.DeviceGpuMission(sql.FieldNEQ(FieldGpuStatus, vc))
+}
+
+// GpuStatusIn applies the In predicate on the "gpu_status" field.
+func GpuStatusIn(vs ...enums.DeviceStatus) predicate.DeviceGpuMission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.DeviceGpuMission(sql.FieldIn(FieldGpuStatus, v...))
+}
+
+// GpuStatusNotIn applies the NotIn predicate on the "gpu_status" field.
+func GpuStatusNotIn(vs ...enums.DeviceStatus) predicate.DeviceGpuMission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldGpuStatus, v...))
 }
 
 // HasDevice applies the HasEdge predicate on the "device" edge.

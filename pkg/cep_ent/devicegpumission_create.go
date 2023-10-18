@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // DeviceGpuMissionCreate is the builder for creating a DeviceGpuMission entity.
@@ -137,6 +138,34 @@ func (dgmc *DeviceGpuMissionCreate) SetNillableMissionKindID(i *int64) *DeviceGp
 	return dgmc
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (dgmc *DeviceGpuMissionCreate) SetDeviceSlot(i int8) *DeviceGpuMissionCreate {
+	dgmc.mutation.SetDeviceSlot(i)
+	return dgmc
+}
+
+// SetNillableDeviceSlot sets the "device_slot" field if the given value is not nil.
+func (dgmc *DeviceGpuMissionCreate) SetNillableDeviceSlot(i *int8) *DeviceGpuMissionCreate {
+	if i != nil {
+		dgmc.SetDeviceSlot(*i)
+	}
+	return dgmc
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (dgmc *DeviceGpuMissionCreate) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionCreate {
+	dgmc.mutation.SetGpuStatus(es)
+	return dgmc
+}
+
+// SetNillableGpuStatus sets the "gpu_status" field if the given value is not nil.
+func (dgmc *DeviceGpuMissionCreate) SetNillableGpuStatus(es *enums.DeviceStatus) *DeviceGpuMissionCreate {
+	if es != nil {
+		dgmc.SetGpuStatus(*es)
+	}
+	return dgmc
+}
+
 // SetID sets the "id" field.
 func (dgmc *DeviceGpuMissionCreate) SetID(i int64) *DeviceGpuMissionCreate {
 	dgmc.mutation.SetID(i)
@@ -233,6 +262,14 @@ func (dgmc *DeviceGpuMissionCreate) defaults() {
 		v := devicegpumission.DefaultMissionKindID
 		dgmc.mutation.SetMissionKindID(v)
 	}
+	if _, ok := dgmc.mutation.DeviceSlot(); !ok {
+		v := devicegpumission.DefaultDeviceSlot
+		dgmc.mutation.SetDeviceSlot(v)
+	}
+	if _, ok := dgmc.mutation.GpuStatus(); !ok {
+		v := devicegpumission.DefaultGpuStatus
+		dgmc.mutation.SetGpuStatus(v)
+	}
 	if _, ok := dgmc.mutation.ID(); !ok {
 		v := devicegpumission.DefaultID()
 		dgmc.mutation.SetID(v)
@@ -264,6 +301,17 @@ func (dgmc *DeviceGpuMissionCreate) check() error {
 	}
 	if _, ok := dgmc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind_id", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.mission_kind_id"`)}
+	}
+	if _, ok := dgmc.mutation.DeviceSlot(); !ok {
+		return &ValidationError{Name: "device_slot", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.device_slot"`)}
+	}
+	if _, ok := dgmc.mutation.GpuStatus(); !ok {
+		return &ValidationError{Name: "gpu_status", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.gpu_status"`)}
+	}
+	if v, ok := dgmc.mutation.GpuStatus(); ok {
+		if err := devicegpumission.GpuStatusValidator(v); err != nil {
+			return &ValidationError{Name: "gpu_status", err: fmt.Errorf(`cep_ent: validator failed for field "DeviceGpuMission.gpu_status": %w`, err)}
+		}
 	}
 	if _, ok := dgmc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "DeviceGpuMission.device"`)}
@@ -326,6 +374,14 @@ func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.C
 	if value, ok := dgmc.mutation.DeletedAt(); ok {
 		_spec.SetField(devicegpumission.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := dgmc.mutation.DeviceSlot(); ok {
+		_spec.SetField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
+		_node.DeviceSlot = value
+	}
+	if value, ok := dgmc.mutation.GpuStatus(); ok {
+		_spec.SetField(devicegpumission.FieldGpuStatus, field.TypeEnum, value)
+		_node.GpuStatus = value
 	}
 	if nodes := dgmc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -526,6 +582,36 @@ func (u *DeviceGpuMissionUpsert) UpdateMissionKindID() *DeviceGpuMissionUpsert {
 	return u
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (u *DeviceGpuMissionUpsert) SetDeviceSlot(v int8) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldDeviceSlot, v)
+	return u
+}
+
+// UpdateDeviceSlot sets the "device_slot" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateDeviceSlot() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldDeviceSlot)
+	return u
+}
+
+// AddDeviceSlot adds v to the "device_slot" field.
+func (u *DeviceGpuMissionUpsert) AddDeviceSlot(v int8) *DeviceGpuMissionUpsert {
+	u.Add(devicegpumission.FieldDeviceSlot, v)
+	return u
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (u *DeviceGpuMissionUpsert) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldGpuStatus, v)
+	return u
+}
+
+// UpdateGpuStatus sets the "gpu_status" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateGpuStatus() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldGpuStatus)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -686,6 +772,41 @@ func (u *DeviceGpuMissionUpsertOne) SetMissionKindID(v int64) *DeviceGpuMissionU
 func (u *DeviceGpuMissionUpsertOne) UpdateMissionKindID() *DeviceGpuMissionUpsertOne {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
 		s.UpdateMissionKindID()
+	})
+}
+
+// SetDeviceSlot sets the "device_slot" field.
+func (u *DeviceGpuMissionUpsertOne) SetDeviceSlot(v int8) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetDeviceSlot(v)
+	})
+}
+
+// AddDeviceSlot adds v to the "device_slot" field.
+func (u *DeviceGpuMissionUpsertOne) AddDeviceSlot(v int8) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddDeviceSlot(v)
+	})
+}
+
+// UpdateDeviceSlot sets the "device_slot" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateDeviceSlot() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateDeviceSlot()
+	})
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (u *DeviceGpuMissionUpsertOne) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetGpuStatus(v)
+	})
+}
+
+// UpdateGpuStatus sets the "gpu_status" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateGpuStatus() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateGpuStatus()
 	})
 }
 
@@ -1015,6 +1136,41 @@ func (u *DeviceGpuMissionUpsertBulk) SetMissionKindID(v int64) *DeviceGpuMission
 func (u *DeviceGpuMissionUpsertBulk) UpdateMissionKindID() *DeviceGpuMissionUpsertBulk {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
 		s.UpdateMissionKindID()
+	})
+}
+
+// SetDeviceSlot sets the "device_slot" field.
+func (u *DeviceGpuMissionUpsertBulk) SetDeviceSlot(v int8) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetDeviceSlot(v)
+	})
+}
+
+// AddDeviceSlot adds v to the "device_slot" field.
+func (u *DeviceGpuMissionUpsertBulk) AddDeviceSlot(v int8) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddDeviceSlot(v)
+	})
+}
+
+// UpdateDeviceSlot sets the "device_slot" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateDeviceSlot() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateDeviceSlot()
+	})
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (u *DeviceGpuMissionUpsertBulk) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetGpuStatus(v)
+	})
+}
+
+// UpdateGpuStatus sets the "gpu_status" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateGpuStatus() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateGpuStatus()
 	})
 }
 

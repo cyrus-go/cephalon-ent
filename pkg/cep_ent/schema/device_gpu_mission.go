@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 type DeviceGpuMission struct {
@@ -16,6 +17,8 @@ func (DeviceGpuMission) Fields() []ent.Field {
 		field.Int64("device_id").Default(0).StructTag(`json:"device_id,string"`).Comment("外键设备 id"),
 		field.Int64("gpu_id").Default(0).StructTag(`json:"gpu_id,string"`).Comment("外键 gpu id"),
 		field.Int64("mission_kind_id").Default(0).StructTag(`json:"mission_kind_id,string"`).Comment("外键任务种类 id"),
+		field.Int8("device_slot").Default(0).StructTag(`json:"device_slot"`).Comment("显卡占用设备的插槽"),
+		field.Enum("gpu_status").Default(string(enums.GpuStatusOffline)).GoType(enums.GpuStatusFree).StructTag(`json:"gpu_status"`).Comment("gpu 当前状态"),
 	}
 }
 

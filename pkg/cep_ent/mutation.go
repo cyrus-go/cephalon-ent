@@ -9692,6 +9692,9 @@ type DeviceGpuMissionMutation struct {
 	created_at          *time.Time
 	updated_at          *time.Time
 	deleted_at          *time.Time
+	device_slot         *int8
+	adddevice_slot      *int8
+	gpu_status          *enums.DeviceStatus
 	clearedFields       map[string]struct{}
 	device              *int64
 	cleareddevice       bool
@@ -10136,6 +10139,98 @@ func (m *DeviceGpuMissionMutation) ResetMissionKindID() {
 	m.mission_kind = nil
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (m *DeviceGpuMissionMutation) SetDeviceSlot(i int8) {
+	m.device_slot = &i
+	m.adddevice_slot = nil
+}
+
+// DeviceSlot returns the value of the "device_slot" field in the mutation.
+func (m *DeviceGpuMissionMutation) DeviceSlot() (r int8, exists bool) {
+	v := m.device_slot
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceSlot returns the old "device_slot" field's value of the DeviceGpuMission entity.
+// If the DeviceGpuMission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceGpuMissionMutation) OldDeviceSlot(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceSlot is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceSlot requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceSlot: %w", err)
+	}
+	return oldValue.DeviceSlot, nil
+}
+
+// AddDeviceSlot adds i to the "device_slot" field.
+func (m *DeviceGpuMissionMutation) AddDeviceSlot(i int8) {
+	if m.adddevice_slot != nil {
+		*m.adddevice_slot += i
+	} else {
+		m.adddevice_slot = &i
+	}
+}
+
+// AddedDeviceSlot returns the value that was added to the "device_slot" field in this mutation.
+func (m *DeviceGpuMissionMutation) AddedDeviceSlot() (r int8, exists bool) {
+	v := m.adddevice_slot
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeviceSlot resets all changes to the "device_slot" field.
+func (m *DeviceGpuMissionMutation) ResetDeviceSlot() {
+	m.device_slot = nil
+	m.adddevice_slot = nil
+}
+
+// SetGpuStatus sets the "gpu_status" field.
+func (m *DeviceGpuMissionMutation) SetGpuStatus(es enums.DeviceStatus) {
+	m.gpu_status = &es
+}
+
+// GpuStatus returns the value of the "gpu_status" field in the mutation.
+func (m *DeviceGpuMissionMutation) GpuStatus() (r enums.DeviceStatus, exists bool) {
+	v := m.gpu_status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuStatus returns the old "gpu_status" field's value of the DeviceGpuMission entity.
+// If the DeviceGpuMission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceGpuMissionMutation) OldGpuStatus(ctx context.Context) (v enums.DeviceStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuStatus: %w", err)
+	}
+	return oldValue.GpuStatus, nil
+}
+
+// ResetGpuStatus resets all changes to the "gpu_status" field.
+func (m *DeviceGpuMissionMutation) ResetGpuStatus() {
+	m.gpu_status = nil
+}
+
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *DeviceGpuMissionMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -10251,7 +10346,7 @@ func (m *DeviceGpuMissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceGpuMissionMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, devicegpumission.FieldCreatedBy)
 	}
@@ -10275,6 +10370,12 @@ func (m *DeviceGpuMissionMutation) Fields() []string {
 	}
 	if m.mission_kind != nil {
 		fields = append(fields, devicegpumission.FieldMissionKindID)
+	}
+	if m.device_slot != nil {
+		fields = append(fields, devicegpumission.FieldDeviceSlot)
+	}
+	if m.gpu_status != nil {
+		fields = append(fields, devicegpumission.FieldGpuStatus)
 	}
 	return fields
 }
@@ -10300,6 +10401,10 @@ func (m *DeviceGpuMissionMutation) Field(name string) (ent.Value, bool) {
 		return m.GpuID()
 	case devicegpumission.FieldMissionKindID:
 		return m.MissionKindID()
+	case devicegpumission.FieldDeviceSlot:
+		return m.DeviceSlot()
+	case devicegpumission.FieldGpuStatus:
+		return m.GpuStatus()
 	}
 	return nil, false
 }
@@ -10325,6 +10430,10 @@ func (m *DeviceGpuMissionMutation) OldField(ctx context.Context, name string) (e
 		return m.OldGpuID(ctx)
 	case devicegpumission.FieldMissionKindID:
 		return m.OldMissionKindID(ctx)
+	case devicegpumission.FieldDeviceSlot:
+		return m.OldDeviceSlot(ctx)
+	case devicegpumission.FieldGpuStatus:
+		return m.OldGpuStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown DeviceGpuMission field %s", name)
 }
@@ -10390,6 +10499,20 @@ func (m *DeviceGpuMissionMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetMissionKindID(v)
 		return nil
+	case devicegpumission.FieldDeviceSlot:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceSlot(v)
+		return nil
+	case devicegpumission.FieldGpuStatus:
+		v, ok := value.(enums.DeviceStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuStatus(v)
+		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission field %s", name)
 }
@@ -10404,6 +10527,9 @@ func (m *DeviceGpuMissionMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, devicegpumission.FieldUpdatedBy)
 	}
+	if m.adddevice_slot != nil {
+		fields = append(fields, devicegpumission.FieldDeviceSlot)
+	}
 	return fields
 }
 
@@ -10416,6 +10542,8 @@ func (m *DeviceGpuMissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case devicegpumission.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case devicegpumission.FieldDeviceSlot:
+		return m.AddedDeviceSlot()
 	}
 	return nil, false
 }
@@ -10438,6 +10566,13 @@ func (m *DeviceGpuMissionMutation) AddField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
+		return nil
+	case devicegpumission.FieldDeviceSlot:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeviceSlot(v)
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission numeric field %s", name)
@@ -10489,6 +10624,12 @@ func (m *DeviceGpuMissionMutation) ResetField(name string) error {
 		return nil
 	case devicegpumission.FieldMissionKindID:
 		m.ResetMissionKindID()
+		return nil
+	case devicegpumission.FieldDeviceSlot:
+		m.ResetDeviceSlot()
+		return nil
+	case devicegpumission.FieldGpuStatus:
+		m.ResetGpuStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission field %s", name)
