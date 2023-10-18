@@ -451,17 +451,15 @@ func (mc *MissionCreate) SetNillablePassword(s *string) *MissionCreate {
 	return mc
 }
 
-// SetDeviceID sets the "device_id" field.
-func (mc *MissionCreate) SetDeviceID(s string) *MissionCreate {
-	mc.mutation.SetDeviceID(s)
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (mc *MissionCreate) SetWhiteDeviceIds(b []byte) *MissionCreate {
+	mc.mutation.SetWhiteDeviceIds(b)
 	return mc
 }
 
-// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
-func (mc *MissionCreate) SetNillableDeviceID(s *string) *MissionCreate {
-	if s != nil {
-		mc.SetDeviceID(*s)
-	}
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (mc *MissionCreate) SetBlackDeviceIds(b []byte) *MissionCreate {
+	mc.mutation.SetBlackDeviceIds(b)
 	return mc
 }
 
@@ -744,9 +742,13 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultPassword
 		mc.mutation.SetPassword(v)
 	}
-	if _, ok := mc.mutation.DeviceID(); !ok {
-		v := mission.DefaultDeviceID
-		mc.mutation.SetDeviceID(v)
+	if _, ok := mc.mutation.WhiteDeviceIds(); !ok {
+		v := mission.DefaultWhiteDeviceIds
+		mc.mutation.SetWhiteDeviceIds(v)
+	}
+	if _, ok := mc.mutation.BlackDeviceIds(); !ok {
+		v := mission.DefaultBlackDeviceIds
+		mc.mutation.SetBlackDeviceIds(v)
 	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
@@ -869,9 +871,6 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`cep_ent: missing required field "Mission.password"`)}
-	}
-	if _, ok := mc.mutation.DeviceID(); !ok {
-		return &ValidationError{Name: "device_id", err: errors.New(`cep_ent: missing required field "Mission.device_id"`)}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1026,9 +1025,13 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 		_node.Password = value
 	}
-	if value, ok := mc.mutation.DeviceID(); ok {
-		_spec.SetField(mission.FieldDeviceID, field.TypeString, value)
-		_node.DeviceID = value
+	if value, ok := mc.mutation.WhiteDeviceIds(); ok {
+		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeBytes, value)
+		_node.WhiteDeviceIds = value
+	}
+	if value, ok := mc.mutation.BlackDeviceIds(); ok {
+		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeBytes, value)
+		_node.BlackDeviceIds = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1648,15 +1651,39 @@ func (u *MissionUpsert) UpdatePassword() *MissionUpsert {
 	return u
 }
 
-// SetDeviceID sets the "device_id" field.
-func (u *MissionUpsert) SetDeviceID(v string) *MissionUpsert {
-	u.Set(mission.FieldDeviceID, v)
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (u *MissionUpsert) SetWhiteDeviceIds(v []byte) *MissionUpsert {
+	u.Set(mission.FieldWhiteDeviceIds, v)
 	return u
 }
 
-// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
-func (u *MissionUpsert) UpdateDeviceID() *MissionUpsert {
-	u.SetExcluded(mission.FieldDeviceID)
+// UpdateWhiteDeviceIds sets the "white_device_ids" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateWhiteDeviceIds() *MissionUpsert {
+	u.SetExcluded(mission.FieldWhiteDeviceIds)
+	return u
+}
+
+// ClearWhiteDeviceIds clears the value of the "white_device_ids" field.
+func (u *MissionUpsert) ClearWhiteDeviceIds() *MissionUpsert {
+	u.SetNull(mission.FieldWhiteDeviceIds)
+	return u
+}
+
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (u *MissionUpsert) SetBlackDeviceIds(v []byte) *MissionUpsert {
+	u.Set(mission.FieldBlackDeviceIds, v)
+	return u
+}
+
+// UpdateBlackDeviceIds sets the "black_device_ids" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateBlackDeviceIds() *MissionUpsert {
+	u.SetExcluded(mission.FieldBlackDeviceIds)
+	return u
+}
+
+// ClearBlackDeviceIds clears the value of the "black_device_ids" field.
+func (u *MissionUpsert) ClearBlackDeviceIds() *MissionUpsert {
+	u.SetNull(mission.FieldBlackDeviceIds)
 	return u
 }
 
@@ -2180,17 +2207,45 @@ func (u *MissionUpsertOne) UpdatePassword() *MissionUpsertOne {
 	})
 }
 
-// SetDeviceID sets the "device_id" field.
-func (u *MissionUpsertOne) SetDeviceID(v string) *MissionUpsertOne {
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (u *MissionUpsertOne) SetWhiteDeviceIds(v []byte) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
-		s.SetDeviceID(v)
+		s.SetWhiteDeviceIds(v)
 	})
 }
 
-// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
-func (u *MissionUpsertOne) UpdateDeviceID() *MissionUpsertOne {
+// UpdateWhiteDeviceIds sets the "white_device_ids" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateWhiteDeviceIds() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
-		s.UpdateDeviceID()
+		s.UpdateWhiteDeviceIds()
+	})
+}
+
+// ClearWhiteDeviceIds clears the value of the "white_device_ids" field.
+func (u *MissionUpsertOne) ClearWhiteDeviceIds() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearWhiteDeviceIds()
+	})
+}
+
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (u *MissionUpsertOne) SetBlackDeviceIds(v []byte) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetBlackDeviceIds(v)
+	})
+}
+
+// UpdateBlackDeviceIds sets the "black_device_ids" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateBlackDeviceIds() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateBlackDeviceIds()
+	})
+}
+
+// ClearBlackDeviceIds clears the value of the "black_device_ids" field.
+func (u *MissionUpsertOne) ClearBlackDeviceIds() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearBlackDeviceIds()
 	})
 }
 
@@ -2880,17 +2935,45 @@ func (u *MissionUpsertBulk) UpdatePassword() *MissionUpsertBulk {
 	})
 }
 
-// SetDeviceID sets the "device_id" field.
-func (u *MissionUpsertBulk) SetDeviceID(v string) *MissionUpsertBulk {
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (u *MissionUpsertBulk) SetWhiteDeviceIds(v []byte) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
-		s.SetDeviceID(v)
+		s.SetWhiteDeviceIds(v)
 	})
 }
 
-// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
-func (u *MissionUpsertBulk) UpdateDeviceID() *MissionUpsertBulk {
+// UpdateWhiteDeviceIds sets the "white_device_ids" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateWhiteDeviceIds() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
-		s.UpdateDeviceID()
+		s.UpdateWhiteDeviceIds()
+	})
+}
+
+// ClearWhiteDeviceIds clears the value of the "white_device_ids" field.
+func (u *MissionUpsertBulk) ClearWhiteDeviceIds() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearWhiteDeviceIds()
+	})
+}
+
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (u *MissionUpsertBulk) SetBlackDeviceIds(v []byte) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetBlackDeviceIds(v)
+	})
+}
+
+// UpdateBlackDeviceIds sets the "black_device_ids" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateBlackDeviceIds() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateBlackDeviceIds()
+	})
+}
+
+// ClearBlackDeviceIds clears the value of the "black_device_ids" field.
+func (u *MissionUpsertBulk) ClearBlackDeviceIds() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearBlackDeviceIds()
 	})
 }
 

@@ -21233,7 +21233,8 @@ type MissionMutation struct {
 	second_hmac_key               *string
 	username                      *string
 	password                      *string
-	device_id                     *string
+	white_device_ids              *[]byte
+	black_device_ids              *[]byte
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -22619,40 +22620,102 @@ func (m *MissionMutation) ResetPassword() {
 	m.password = nil
 }
 
-// SetDeviceID sets the "device_id" field.
-func (m *MissionMutation) SetDeviceID(s string) {
-	m.device_id = &s
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (m *MissionMutation) SetWhiteDeviceIds(b []byte) {
+	m.white_device_ids = &b
 }
 
-// DeviceID returns the value of the "device_id" field in the mutation.
-func (m *MissionMutation) DeviceID() (r string, exists bool) {
-	v := m.device_id
+// WhiteDeviceIds returns the value of the "white_device_ids" field in the mutation.
+func (m *MissionMutation) WhiteDeviceIds() (r []byte, exists bool) {
+	v := m.white_device_ids
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDeviceID returns the old "device_id" field's value of the Mission entity.
+// OldWhiteDeviceIds returns the old "white_device_ids" field's value of the Mission entity.
 // If the Mission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionMutation) OldDeviceID(ctx context.Context) (v string, err error) {
+func (m *MissionMutation) OldWhiteDeviceIds(ctx context.Context) (v []byte, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+		return v, errors.New("OldWhiteDeviceIds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+		return v, errors.New("OldWhiteDeviceIds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+		return v, fmt.Errorf("querying old value for OldWhiteDeviceIds: %w", err)
 	}
-	return oldValue.DeviceID, nil
+	return oldValue.WhiteDeviceIds, nil
 }
 
-// ResetDeviceID resets all changes to the "device_id" field.
-func (m *MissionMutation) ResetDeviceID() {
-	m.device_id = nil
+// ClearWhiteDeviceIds clears the value of the "white_device_ids" field.
+func (m *MissionMutation) ClearWhiteDeviceIds() {
+	m.white_device_ids = nil
+	m.clearedFields[mission.FieldWhiteDeviceIds] = struct{}{}
+}
+
+// WhiteDeviceIdsCleared returns if the "white_device_ids" field was cleared in this mutation.
+func (m *MissionMutation) WhiteDeviceIdsCleared() bool {
+	_, ok := m.clearedFields[mission.FieldWhiteDeviceIds]
+	return ok
+}
+
+// ResetWhiteDeviceIds resets all changes to the "white_device_ids" field.
+func (m *MissionMutation) ResetWhiteDeviceIds() {
+	m.white_device_ids = nil
+	delete(m.clearedFields, mission.FieldWhiteDeviceIds)
+}
+
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (m *MissionMutation) SetBlackDeviceIds(b []byte) {
+	m.black_device_ids = &b
+}
+
+// BlackDeviceIds returns the value of the "black_device_ids" field in the mutation.
+func (m *MissionMutation) BlackDeviceIds() (r []byte, exists bool) {
+	v := m.black_device_ids
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlackDeviceIds returns the old "black_device_ids" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldBlackDeviceIds(ctx context.Context) (v []byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBlackDeviceIds is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBlackDeviceIds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlackDeviceIds: %w", err)
+	}
+	return oldValue.BlackDeviceIds, nil
+}
+
+// ClearBlackDeviceIds clears the value of the "black_device_ids" field.
+func (m *MissionMutation) ClearBlackDeviceIds() {
+	m.black_device_ids = nil
+	m.clearedFields[mission.FieldBlackDeviceIds] = struct{}{}
+}
+
+// BlackDeviceIdsCleared returns if the "black_device_ids" field was cleared in this mutation.
+func (m *MissionMutation) BlackDeviceIdsCleared() bool {
+	_, ok := m.clearedFields[mission.FieldBlackDeviceIds]
+	return ok
+}
+
+// ResetBlackDeviceIds resets all changes to the "black_device_ids" field.
+func (m *MissionMutation) ResetBlackDeviceIds() {
+	m.black_device_ids = nil
+	delete(m.clearedFields, mission.FieldBlackDeviceIds)
 }
 
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
@@ -23091,7 +23154,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 32)
+	fields := make([]string, 0, 33)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -23185,8 +23248,11 @@ func (m *MissionMutation) Fields() []string {
 	if m.password != nil {
 		fields = append(fields, mission.FieldPassword)
 	}
-	if m.device_id != nil {
-		fields = append(fields, mission.FieldDeviceID)
+	if m.white_device_ids != nil {
+		fields = append(fields, mission.FieldWhiteDeviceIds)
+	}
+	if m.black_device_ids != nil {
+		fields = append(fields, mission.FieldBlackDeviceIds)
 	}
 	return fields
 }
@@ -23258,8 +23324,10 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.Username()
 	case mission.FieldPassword:
 		return m.Password()
-	case mission.FieldDeviceID:
-		return m.DeviceID()
+	case mission.FieldWhiteDeviceIds:
+		return m.WhiteDeviceIds()
+	case mission.FieldBlackDeviceIds:
+		return m.BlackDeviceIds()
 	}
 	return nil, false
 }
@@ -23331,8 +23399,10 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldUsername(ctx)
 	case mission.FieldPassword:
 		return m.OldPassword(ctx)
-	case mission.FieldDeviceID:
-		return m.OldDeviceID(ctx)
+	case mission.FieldWhiteDeviceIds:
+		return m.OldWhiteDeviceIds(ctx)
+	case mission.FieldBlackDeviceIds:
+		return m.OldBlackDeviceIds(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -23559,12 +23629,19 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPassword(v)
 		return nil
-	case mission.FieldDeviceID:
-		v, ok := value.(string)
+	case mission.FieldWhiteDeviceIds:
+		v, ok := value.([]byte)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDeviceID(v)
+		m.SetWhiteDeviceIds(v)
+		return nil
+	case mission.FieldBlackDeviceIds:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlackDeviceIds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -23656,6 +23733,12 @@ func (m *MissionMutation) ClearedFields() []string {
 	if m.FieldCleared(mission.FieldResultUrls) {
 		fields = append(fields, mission.FieldResultUrls)
 	}
+	if m.FieldCleared(mission.FieldWhiteDeviceIds) {
+		fields = append(fields, mission.FieldWhiteDeviceIds)
+	}
+	if m.FieldCleared(mission.FieldBlackDeviceIds) {
+		fields = append(fields, mission.FieldBlackDeviceIds)
+	}
 	return fields
 }
 
@@ -23678,6 +23761,12 @@ func (m *MissionMutation) ClearField(name string) error {
 		return nil
 	case mission.FieldResultUrls:
 		m.ClearResultUrls()
+		return nil
+	case mission.FieldWhiteDeviceIds:
+		m.ClearWhiteDeviceIds()
+		return nil
+	case mission.FieldBlackDeviceIds:
+		m.ClearBlackDeviceIds()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission nullable field %s", name)
@@ -23780,8 +23869,11 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldPassword:
 		m.ResetPassword()
 		return nil
-	case mission.FieldDeviceID:
-		m.ResetDeviceID()
+	case mission.FieldWhiteDeviceIds:
+		m.ResetWhiteDeviceIds()
+		return nil
+	case mission.FieldBlackDeviceIds:
+		m.ResetBlackDeviceIds()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

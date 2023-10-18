@@ -1090,10 +1090,14 @@ func init() {
 	missionDescPassword := missionFields[25].Descriptor()
 	// mission.DefaultPassword holds the default value on creation for the password field.
 	mission.DefaultPassword = missionDescPassword.Default.(string)
-	// missionDescDeviceID is the schema descriptor for device_id field.
-	missionDescDeviceID := missionFields[26].Descriptor()
-	// mission.DefaultDeviceID holds the default value on creation for the device_id field.
-	mission.DefaultDeviceID = missionDescDeviceID.Default.(string)
+	// missionDescWhiteDeviceIds is the schema descriptor for white_device_ids field.
+	missionDescWhiteDeviceIds := missionFields[26].Descriptor()
+	// mission.DefaultWhiteDeviceIds holds the default value on creation for the white_device_ids field.
+	mission.DefaultWhiteDeviceIds = missionDescWhiteDeviceIds.Default.([]byte)
+	// missionDescBlackDeviceIds is the schema descriptor for black_device_ids field.
+	missionDescBlackDeviceIds := missionFields[27].Descriptor()
+	// mission.DefaultBlackDeviceIds holds the default value on creation for the black_device_ids field.
+	mission.DefaultBlackDeviceIds = missionDescBlackDeviceIds.Default.([]byte)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

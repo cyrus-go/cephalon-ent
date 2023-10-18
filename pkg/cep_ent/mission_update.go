@@ -488,17 +488,27 @@ func (mu *MissionUpdate) SetNillablePassword(s *string) *MissionUpdate {
 	return mu
 }
 
-// SetDeviceID sets the "device_id" field.
-func (mu *MissionUpdate) SetDeviceID(s string) *MissionUpdate {
-	mu.mutation.SetDeviceID(s)
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (mu *MissionUpdate) SetWhiteDeviceIds(b []byte) *MissionUpdate {
+	mu.mutation.SetWhiteDeviceIds(b)
 	return mu
 }
 
-// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
-func (mu *MissionUpdate) SetNillableDeviceID(s *string) *MissionUpdate {
-	if s != nil {
-		mu.SetDeviceID(*s)
-	}
+// ClearWhiteDeviceIds clears the value of the "white_device_ids" field.
+func (mu *MissionUpdate) ClearWhiteDeviceIds() *MissionUpdate {
+	mu.mutation.ClearWhiteDeviceIds()
+	return mu
+}
+
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (mu *MissionUpdate) SetBlackDeviceIds(b []byte) *MissionUpdate {
+	mu.mutation.SetBlackDeviceIds(b)
+	return mu
+}
+
+// ClearBlackDeviceIds clears the value of the "black_device_ids" field.
+func (mu *MissionUpdate) ClearBlackDeviceIds() *MissionUpdate {
+	mu.mutation.ClearBlackDeviceIds()
 	return mu
 }
 
@@ -944,8 +954,17 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.Password(); ok {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 	}
-	if value, ok := mu.mutation.DeviceID(); ok {
-		_spec.SetField(mission.FieldDeviceID, field.TypeString, value)
+	if value, ok := mu.mutation.WhiteDeviceIds(); ok {
+		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeBytes, value)
+	}
+	if mu.mutation.WhiteDeviceIdsCleared() {
+		_spec.ClearField(mission.FieldWhiteDeviceIds, field.TypeBytes)
+	}
+	if value, ok := mu.mutation.BlackDeviceIds(); ok {
+		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeBytes, value)
+	}
+	if mu.mutation.BlackDeviceIdsCleared() {
+		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeBytes)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1769,17 +1788,27 @@ func (muo *MissionUpdateOne) SetNillablePassword(s *string) *MissionUpdateOne {
 	return muo
 }
 
-// SetDeviceID sets the "device_id" field.
-func (muo *MissionUpdateOne) SetDeviceID(s string) *MissionUpdateOne {
-	muo.mutation.SetDeviceID(s)
+// SetWhiteDeviceIds sets the "white_device_ids" field.
+func (muo *MissionUpdateOne) SetWhiteDeviceIds(b []byte) *MissionUpdateOne {
+	muo.mutation.SetWhiteDeviceIds(b)
 	return muo
 }
 
-// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
-func (muo *MissionUpdateOne) SetNillableDeviceID(s *string) *MissionUpdateOne {
-	if s != nil {
-		muo.SetDeviceID(*s)
-	}
+// ClearWhiteDeviceIds clears the value of the "white_device_ids" field.
+func (muo *MissionUpdateOne) ClearWhiteDeviceIds() *MissionUpdateOne {
+	muo.mutation.ClearWhiteDeviceIds()
+	return muo
+}
+
+// SetBlackDeviceIds sets the "black_device_ids" field.
+func (muo *MissionUpdateOne) SetBlackDeviceIds(b []byte) *MissionUpdateOne {
+	muo.mutation.SetBlackDeviceIds(b)
+	return muo
+}
+
+// ClearBlackDeviceIds clears the value of the "black_device_ids" field.
+func (muo *MissionUpdateOne) ClearBlackDeviceIds() *MissionUpdateOne {
+	muo.mutation.ClearBlackDeviceIds()
 	return muo
 }
 
@@ -2255,8 +2284,17 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	if value, ok := muo.mutation.Password(); ok {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 	}
-	if value, ok := muo.mutation.DeviceID(); ok {
-		_spec.SetField(mission.FieldDeviceID, field.TypeString, value)
+	if value, ok := muo.mutation.WhiteDeviceIds(); ok {
+		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeBytes, value)
+	}
+	if muo.mutation.WhiteDeviceIdsCleared() {
+		_spec.ClearField(mission.FieldWhiteDeviceIds, field.TypeBytes)
+	}
+	if value, ok := muo.mutation.BlackDeviceIds(); ok {
+		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeBytes, value)
+	}
+	if muo.mutation.BlackDeviceIdsCleared() {
+		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeBytes)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

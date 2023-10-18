@@ -42,7 +42,8 @@ func (Mission) Fields() []ent.Field {
 		field.String("second_hmac_key").Default("").StructTag(`json:"second_hmac_key"`).Comment("创建任务时使用了的 二级 hmac_key"),
 		field.String("username").Default("admin").StructTag(`json:"username"`).Comment("某些任务会使用到的验证用户名"),
 		field.String("password").Default("cephalon").StructTag(`json:"password"`).Comment("某些任务会使用到的验证密码"),
-		field.String("device_id").Default("").StructTag(`json:"device_id"`).Comment("代表该任务是指定设备才能接的任务"),
+		field.Bytes("white_device_ids").Default(nil).Optional().Sensitive().Comment("任务的设备白名单"),
+		field.Bytes("black_device_ids").Default(nil).Optional().Sensitive().Comment("任务的设备黑名单"),
 	}
 }
 

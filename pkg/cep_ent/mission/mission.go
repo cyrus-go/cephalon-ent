@@ -78,8 +78,10 @@ const (
 	FieldUsername = "username"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
-	// FieldDeviceID holds the string denoting the device_id field in the database.
-	FieldDeviceID = "device_id"
+	// FieldWhiteDeviceIds holds the string denoting the white_device_ids field in the database.
+	FieldWhiteDeviceIds = "white_device_ids"
+	// FieldBlackDeviceIds holds the string denoting the black_device_ids field in the database.
+	FieldBlackDeviceIds = "black_device_ids"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -208,7 +210,8 @@ var Columns = []string{
 	FieldSecondHmacKey,
 	FieldUsername,
 	FieldPassword,
-	FieldDeviceID,
+	FieldWhiteDeviceIds,
+	FieldBlackDeviceIds,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -268,8 +271,10 @@ var (
 	DefaultUsername string
 	// DefaultPassword holds the default value on creation for the "password" field.
 	DefaultPassword string
-	// DefaultDeviceID holds the default value on creation for the "device_id" field.
-	DefaultDeviceID string
+	// DefaultWhiteDeviceIds holds the default value on creation for the "white_device_ids" field.
+	DefaultWhiteDeviceIds []byte
+	// DefaultBlackDeviceIds holds the default value on creation for the "black_device_ids" field.
+	DefaultBlackDeviceIds []byte
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -497,11 +502,6 @@ func ByUsername(opts ...sql.OrderTermOption) OrderOption {
 // ByPassword orders the results by the password field.
 func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
-}
-
-// ByDeviceID orders the results by the device_id field.
-func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

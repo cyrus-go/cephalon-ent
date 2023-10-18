@@ -88,8 +88,10 @@ type Mission struct {
 	Username string `json:"username"`
 	// 某些任务会使用到的验证密码
 	Password string `json:"password"`
-	// 代表该任务是指定设备才能接的任务
-	DeviceID string `json:"device_id"`
+	// 任务的设备白名单
+	WhiteDeviceIds []byte `json:"-"`
+	// 任务的设备黑名单
+	BlackDeviceIds []byte `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -242,11 +244,11 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mission.FieldCallBackData, mission.FieldResultUrls:
+		case mission.FieldCallBackData, mission.FieldResultUrls, mission.FieldWhiteDeviceIds, mission.FieldBlackDeviceIds:
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldDeviceID:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -460,11 +462,17 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Password = value.String
 			}
-		case mission.FieldDeviceID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field device_id", values[i])
-			} else if value.Valid {
-				m.DeviceID = value.String
+		case mission.FieldWhiteDeviceIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field white_device_ids", values[i])
+			} else if value != nil {
+				m.WhiteDeviceIds = *value
+			}
+		case mission.FieldBlackDeviceIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field black_device_ids", values[i])
+			} else if value != nil {
+				m.BlackDeviceIds = *value
 			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
@@ -645,8 +653,9 @@ func (m *Mission) String() string {
 	builder.WriteString("password=")
 	builder.WriteString(m.Password)
 	builder.WriteString(", ")
-	builder.WriteString("device_id=")
-	builder.WriteString(m.DeviceID)
+	builder.WriteString("white_device_ids=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("black_device_ids=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }
