@@ -489,8 +489,8 @@ func (mu *MissionUpdate) SetNillablePassword(s *string) *MissionUpdate {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (mu *MissionUpdate) SetWhiteDeviceIds(b []byte) *MissionUpdate {
-	mu.mutation.SetWhiteDeviceIds(b)
+func (mu *MissionUpdate) SetWhiteDeviceIds(s []string) *MissionUpdate {
+	mu.mutation.SetWhiteDeviceIds(s)
 	return mu
 }
 
@@ -501,8 +501,8 @@ func (mu *MissionUpdate) ClearWhiteDeviceIds() *MissionUpdate {
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (mu *MissionUpdate) SetBlackDeviceIds(b []byte) *MissionUpdate {
-	mu.mutation.SetBlackDeviceIds(b)
+func (mu *MissionUpdate) SetBlackDeviceIds(s []string) *MissionUpdate {
+	mu.mutation.SetBlackDeviceIds(s)
 	return mu
 }
 
@@ -955,16 +955,24 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 	}
 	if value, ok := mu.mutation.WhiteDeviceIds(); ok {
-		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeBytes, value)
+		vv, err := mission.ValueScanner.WhiteDeviceIds.Value(value)
+		if err != nil {
+			return 0, err
+		}
+		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeString, vv)
 	}
 	if mu.mutation.WhiteDeviceIdsCleared() {
-		_spec.ClearField(mission.FieldWhiteDeviceIds, field.TypeBytes)
+		_spec.ClearField(mission.FieldWhiteDeviceIds, field.TypeString)
 	}
 	if value, ok := mu.mutation.BlackDeviceIds(); ok {
-		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeBytes, value)
+		vv, err := mission.ValueScanner.BlackDeviceIds.Value(value)
+		if err != nil {
+			return 0, err
+		}
+		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeString, vv)
 	}
 	if mu.mutation.BlackDeviceIdsCleared() {
-		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeBytes)
+		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeString)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1789,8 +1797,8 @@ func (muo *MissionUpdateOne) SetNillablePassword(s *string) *MissionUpdateOne {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (muo *MissionUpdateOne) SetWhiteDeviceIds(b []byte) *MissionUpdateOne {
-	muo.mutation.SetWhiteDeviceIds(b)
+func (muo *MissionUpdateOne) SetWhiteDeviceIds(s []string) *MissionUpdateOne {
+	muo.mutation.SetWhiteDeviceIds(s)
 	return muo
 }
 
@@ -1801,8 +1809,8 @@ func (muo *MissionUpdateOne) ClearWhiteDeviceIds() *MissionUpdateOne {
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (muo *MissionUpdateOne) SetBlackDeviceIds(b []byte) *MissionUpdateOne {
-	muo.mutation.SetBlackDeviceIds(b)
+func (muo *MissionUpdateOne) SetBlackDeviceIds(s []string) *MissionUpdateOne {
+	muo.mutation.SetBlackDeviceIds(s)
 	return muo
 }
 
@@ -2285,16 +2293,24 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 	}
 	if value, ok := muo.mutation.WhiteDeviceIds(); ok {
-		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeBytes, value)
+		vv, err := mission.ValueScanner.WhiteDeviceIds.Value(value)
+		if err != nil {
+			return nil, err
+		}
+		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeString, vv)
 	}
 	if muo.mutation.WhiteDeviceIdsCleared() {
-		_spec.ClearField(mission.FieldWhiteDeviceIds, field.TypeBytes)
+		_spec.ClearField(mission.FieldWhiteDeviceIds, field.TypeString)
 	}
 	if value, ok := muo.mutation.BlackDeviceIds(); ok {
-		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeBytes, value)
+		vv, err := mission.ValueScanner.BlackDeviceIds.Value(value)
+		if err != nil {
+			return nil, err
+		}
+		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeString, vv)
 	}
 	if muo.mutation.BlackDeviceIdsCleared() {
-		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeBytes)
+		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeString)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

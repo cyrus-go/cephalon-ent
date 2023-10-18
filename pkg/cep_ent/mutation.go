@@ -21374,8 +21374,8 @@ type MissionMutation struct {
 	second_hmac_key               *string
 	username                      *string
 	password                      *string
-	white_device_ids              *[]byte
-	black_device_ids              *[]byte
+	white_device_ids              *[]string
+	black_device_ids              *[]string
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -22762,12 +22762,12 @@ func (m *MissionMutation) ResetPassword() {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (m *MissionMutation) SetWhiteDeviceIds(b []byte) {
-	m.white_device_ids = &b
+func (m *MissionMutation) SetWhiteDeviceIds(s []string) {
+	m.white_device_ids = &s
 }
 
 // WhiteDeviceIds returns the value of the "white_device_ids" field in the mutation.
-func (m *MissionMutation) WhiteDeviceIds() (r []byte, exists bool) {
+func (m *MissionMutation) WhiteDeviceIds() (r []string, exists bool) {
 	v := m.white_device_ids
 	if v == nil {
 		return
@@ -22778,7 +22778,7 @@ func (m *MissionMutation) WhiteDeviceIds() (r []byte, exists bool) {
 // OldWhiteDeviceIds returns the old "white_device_ids" field's value of the Mission entity.
 // If the Mission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionMutation) OldWhiteDeviceIds(ctx context.Context) (v []byte, err error) {
+func (m *MissionMutation) OldWhiteDeviceIds(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldWhiteDeviceIds is only allowed on UpdateOne operations")
 	}
@@ -22811,12 +22811,12 @@ func (m *MissionMutation) ResetWhiteDeviceIds() {
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (m *MissionMutation) SetBlackDeviceIds(b []byte) {
-	m.black_device_ids = &b
+func (m *MissionMutation) SetBlackDeviceIds(s []string) {
+	m.black_device_ids = &s
 }
 
 // BlackDeviceIds returns the value of the "black_device_ids" field in the mutation.
-func (m *MissionMutation) BlackDeviceIds() (r []byte, exists bool) {
+func (m *MissionMutation) BlackDeviceIds() (r []string, exists bool) {
 	v := m.black_device_ids
 	if v == nil {
 		return
@@ -22827,7 +22827,7 @@ func (m *MissionMutation) BlackDeviceIds() (r []byte, exists bool) {
 // OldBlackDeviceIds returns the old "black_device_ids" field's value of the Mission entity.
 // If the Mission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionMutation) OldBlackDeviceIds(ctx context.Context) (v []byte, err error) {
+func (m *MissionMutation) OldBlackDeviceIds(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBlackDeviceIds is only allowed on UpdateOne operations")
 	}
@@ -23771,14 +23771,14 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		m.SetPassword(v)
 		return nil
 	case mission.FieldWhiteDeviceIds:
-		v, ok := value.([]byte)
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWhiteDeviceIds(v)
 		return nil
 	case mission.FieldBlackDeviceIds:
-		v, ok := value.([]byte)
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

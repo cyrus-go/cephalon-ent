@@ -176,16 +176,6 @@ func Password(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldPassword, v))
 }
 
-// WhiteDeviceIds applies equality check predicate on the "white_device_ids" field. It's identical to WhiteDeviceIdsEQ.
-func WhiteDeviceIds(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldWhiteDeviceIds, v))
-}
-
-// BlackDeviceIds applies equality check predicate on the "black_device_ids" field. It's identical to BlackDeviceIdsEQ.
-func BlackDeviceIds(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldBlackDeviceIds, v))
-}
-
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -1576,46 +1566,6 @@ func PasswordContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldPassword, v))
 }
 
-// WhiteDeviceIdsEQ applies the EQ predicate on the "white_device_ids" field.
-func WhiteDeviceIdsEQ(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldWhiteDeviceIds, v))
-}
-
-// WhiteDeviceIdsNEQ applies the NEQ predicate on the "white_device_ids" field.
-func WhiteDeviceIdsNEQ(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldWhiteDeviceIds, v))
-}
-
-// WhiteDeviceIdsIn applies the In predicate on the "white_device_ids" field.
-func WhiteDeviceIdsIn(vs ...[]byte) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldWhiteDeviceIds, vs...))
-}
-
-// WhiteDeviceIdsNotIn applies the NotIn predicate on the "white_device_ids" field.
-func WhiteDeviceIdsNotIn(vs ...[]byte) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldWhiteDeviceIds, vs...))
-}
-
-// WhiteDeviceIdsGT applies the GT predicate on the "white_device_ids" field.
-func WhiteDeviceIdsGT(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldGT(FieldWhiteDeviceIds, v))
-}
-
-// WhiteDeviceIdsGTE applies the GTE predicate on the "white_device_ids" field.
-func WhiteDeviceIdsGTE(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldGTE(FieldWhiteDeviceIds, v))
-}
-
-// WhiteDeviceIdsLT applies the LT predicate on the "white_device_ids" field.
-func WhiteDeviceIdsLT(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldLT(FieldWhiteDeviceIds, v))
-}
-
-// WhiteDeviceIdsLTE applies the LTE predicate on the "white_device_ids" field.
-func WhiteDeviceIdsLTE(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldLTE(FieldWhiteDeviceIds, v))
-}
-
 // WhiteDeviceIdsIsNil applies the IsNil predicate on the "white_device_ids" field.
 func WhiteDeviceIdsIsNil() predicate.Mission {
 	return predicate.Mission(sql.FieldIsNull(FieldWhiteDeviceIds))
@@ -1624,46 +1574,6 @@ func WhiteDeviceIdsIsNil() predicate.Mission {
 // WhiteDeviceIdsNotNil applies the NotNil predicate on the "white_device_ids" field.
 func WhiteDeviceIdsNotNil() predicate.Mission {
 	return predicate.Mission(sql.FieldNotNull(FieldWhiteDeviceIds))
-}
-
-// BlackDeviceIdsEQ applies the EQ predicate on the "black_device_ids" field.
-func BlackDeviceIdsEQ(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldEQ(FieldBlackDeviceIds, v))
-}
-
-// BlackDeviceIdsNEQ applies the NEQ predicate on the "black_device_ids" field.
-func BlackDeviceIdsNEQ(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldNEQ(FieldBlackDeviceIds, v))
-}
-
-// BlackDeviceIdsIn applies the In predicate on the "black_device_ids" field.
-func BlackDeviceIdsIn(vs ...[]byte) predicate.Mission {
-	return predicate.Mission(sql.FieldIn(FieldBlackDeviceIds, vs...))
-}
-
-// BlackDeviceIdsNotIn applies the NotIn predicate on the "black_device_ids" field.
-func BlackDeviceIdsNotIn(vs ...[]byte) predicate.Mission {
-	return predicate.Mission(sql.FieldNotIn(FieldBlackDeviceIds, vs...))
-}
-
-// BlackDeviceIdsGT applies the GT predicate on the "black_device_ids" field.
-func BlackDeviceIdsGT(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldGT(FieldBlackDeviceIds, v))
-}
-
-// BlackDeviceIdsGTE applies the GTE predicate on the "black_device_ids" field.
-func BlackDeviceIdsGTE(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldGTE(FieldBlackDeviceIds, v))
-}
-
-// BlackDeviceIdsLT applies the LT predicate on the "black_device_ids" field.
-func BlackDeviceIdsLT(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldLT(FieldBlackDeviceIds, v))
-}
-
-// BlackDeviceIdsLTE applies the LTE predicate on the "black_device_ids" field.
-func BlackDeviceIdsLTE(v []byte) predicate.Mission {
-	return predicate.Mission(sql.FieldLTE(FieldBlackDeviceIds, v))
 }
 
 // BlackDeviceIdsIsNil applies the IsNil predicate on the "black_device_ids" field.

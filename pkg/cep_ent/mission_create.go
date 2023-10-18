@@ -452,14 +452,14 @@ func (mc *MissionCreate) SetNillablePassword(s *string) *MissionCreate {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (mc *MissionCreate) SetWhiteDeviceIds(b []byte) *MissionCreate {
-	mc.mutation.SetWhiteDeviceIds(b)
+func (mc *MissionCreate) SetWhiteDeviceIds(s []string) *MissionCreate {
+	mc.mutation.SetWhiteDeviceIds(s)
 	return mc
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (mc *MissionCreate) SetBlackDeviceIds(b []byte) *MissionCreate {
-	mc.mutation.SetBlackDeviceIds(b)
+func (mc *MissionCreate) SetBlackDeviceIds(s []string) *MissionCreate {
+	mc.mutation.SetBlackDeviceIds(s)
 	return mc
 }
 
@@ -742,14 +742,6 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultPassword
 		mc.mutation.SetPassword(v)
 	}
-	if _, ok := mc.mutation.WhiteDeviceIds(); !ok {
-		v := mission.DefaultWhiteDeviceIds
-		mc.mutation.SetWhiteDeviceIds(v)
-	}
-	if _, ok := mc.mutation.BlackDeviceIds(); !ok {
-		v := mission.DefaultBlackDeviceIds
-		mc.mutation.SetBlackDeviceIds(v)
-	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -891,7 +883,10 @@ func (mc *MissionCreate) sqlSave(ctx context.Context) (*Mission, error) {
 	if err := mc.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := mc.createSpec()
+	_node, _spec, err := mc.createSpec()
+	if err != nil {
+		return nil, err
+	}
 	if err := sqlgraph.CreateNode(ctx, mc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
@@ -907,7 +902,7 @@ func (mc *MissionCreate) sqlSave(ctx context.Context) (*Mission, error) {
 	return _node, nil
 }
 
-func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
+func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	var (
 		_node = &Mission{config: mc.config}
 		_spec = sqlgraph.NewCreateSpec(mission.Table, sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64))
@@ -1026,11 +1021,19 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		_node.Password = value
 	}
 	if value, ok := mc.mutation.WhiteDeviceIds(); ok {
-		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeBytes, value)
+		vv, err := mission.ValueScanner.WhiteDeviceIds.Value(value)
+		if err != nil {
+			return nil, nil, err
+		}
+		_spec.SetField(mission.FieldWhiteDeviceIds, field.TypeString, vv)
 		_node.WhiteDeviceIds = value
 	}
 	if value, ok := mc.mutation.BlackDeviceIds(); ok {
-		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeBytes, value)
+		vv, err := mission.ValueScanner.BlackDeviceIds.Value(value)
+		if err != nil {
+			return nil, nil, err
+		}
+		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeString, vv)
 		_node.BlackDeviceIds = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
@@ -1197,7 +1200,7 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return _node, _spec
+	return _node, _spec, nil
 }
 
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
@@ -1652,7 +1655,7 @@ func (u *MissionUpsert) UpdatePassword() *MissionUpsert {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (u *MissionUpsert) SetWhiteDeviceIds(v []byte) *MissionUpsert {
+func (u *MissionUpsert) SetWhiteDeviceIds(v []string) *MissionUpsert {
 	u.Set(mission.FieldWhiteDeviceIds, v)
 	return u
 }
@@ -1670,7 +1673,7 @@ func (u *MissionUpsert) ClearWhiteDeviceIds() *MissionUpsert {
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (u *MissionUpsert) SetBlackDeviceIds(v []byte) *MissionUpsert {
+func (u *MissionUpsert) SetBlackDeviceIds(v []string) *MissionUpsert {
 	u.Set(mission.FieldBlackDeviceIds, v)
 	return u
 }
@@ -2208,7 +2211,7 @@ func (u *MissionUpsertOne) UpdatePassword() *MissionUpsertOne {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (u *MissionUpsertOne) SetWhiteDeviceIds(v []byte) *MissionUpsertOne {
+func (u *MissionUpsertOne) SetWhiteDeviceIds(v []string) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.SetWhiteDeviceIds(v)
 	})
@@ -2229,7 +2232,7 @@ func (u *MissionUpsertOne) ClearWhiteDeviceIds() *MissionUpsertOne {
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (u *MissionUpsertOne) SetBlackDeviceIds(v []byte) *MissionUpsertOne {
+func (u *MissionUpsertOne) SetBlackDeviceIds(v []string) *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.SetBlackDeviceIds(v)
 	})
@@ -2312,7 +2315,10 @@ func (mcb *MissionCreateBulk) Save(ctx context.Context) ([]*Mission, error) {
 				}
 				builder.mutation = mutation
 				var err error
-				nodes[i], specs[i] = builder.createSpec()
+				nodes[i], specs[i], err = builder.createSpec()
+				if err != nil {
+					return nil, err
+				}
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, mcb.builders[i+1].mutation)
 				} else {
@@ -2936,7 +2942,7 @@ func (u *MissionUpsertBulk) UpdatePassword() *MissionUpsertBulk {
 }
 
 // SetWhiteDeviceIds sets the "white_device_ids" field.
-func (u *MissionUpsertBulk) SetWhiteDeviceIds(v []byte) *MissionUpsertBulk {
+func (u *MissionUpsertBulk) SetWhiteDeviceIds(v []string) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.SetWhiteDeviceIds(v)
 	})
@@ -2957,7 +2963,7 @@ func (u *MissionUpsertBulk) ClearWhiteDeviceIds() *MissionUpsertBulk {
 }
 
 // SetBlackDeviceIds sets the "black_device_ids" field.
-func (u *MissionUpsertBulk) SetBlackDeviceIds(v []byte) *MissionUpsertBulk {
+func (u *MissionUpsertBulk) SetBlackDeviceIds(v []string) *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.SetBlackDeviceIds(v)
 	})

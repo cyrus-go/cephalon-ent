@@ -5,6 +5,7 @@ package cep_ent
 import (
 	"time"
 
+	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
@@ -1096,12 +1097,10 @@ func init() {
 	mission.DefaultPassword = missionDescPassword.Default.(string)
 	// missionDescWhiteDeviceIds is the schema descriptor for white_device_ids field.
 	missionDescWhiteDeviceIds := missionFields[26].Descriptor()
-	// mission.DefaultWhiteDeviceIds holds the default value on creation for the white_device_ids field.
-	mission.DefaultWhiteDeviceIds = missionDescWhiteDeviceIds.Default.([]byte)
+	mission.ValueScanner.WhiteDeviceIds = missionDescWhiteDeviceIds.ValueScanner.(field.TypeValueScanner[[]string])
 	// missionDescBlackDeviceIds is the schema descriptor for black_device_ids field.
 	missionDescBlackDeviceIds := missionFields[27].Descriptor()
-	// mission.DefaultBlackDeviceIds holds the default value on creation for the black_device_ids field.
-	mission.DefaultBlackDeviceIds = missionDescBlackDeviceIds.Default.([]byte)
+	mission.ValueScanner.BlackDeviceIds = missionDescBlackDeviceIds.ValueScanner.(field.TypeValueScanner[[]string])
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

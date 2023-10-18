@@ -89,9 +89,9 @@ type Mission struct {
 	// 某些任务会使用到的验证密码
 	Password string `json:"password"`
 	// 任务的设备白名单
-	WhiteDeviceIds []byte `json:"-"`
+	WhiteDeviceIds []string `json:"white_device_ids"`
 	// 任务的设备黑名单
-	BlackDeviceIds []byte `json:"-"`
+	BlackDeviceIds []string `json:"black_device_ids"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -244,7 +244,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mission.FieldCallBackData, mission.FieldResultUrls, mission.FieldWhiteDeviceIds, mission.FieldBlackDeviceIds:
+		case mission.FieldCallBackData, mission.FieldResultUrls:
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
@@ -252,6 +252,10 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case mission.FieldWhiteDeviceIds:
+			values[i] = mission.ValueScanner.WhiteDeviceIds.ScanValue()
+		case mission.FieldBlackDeviceIds:
+			values[i] = mission.ValueScanner.BlackDeviceIds.ScanValue()
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -463,16 +467,16 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				m.Password = value.String
 			}
 		case mission.FieldWhiteDeviceIds:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field white_device_ids", values[i])
-			} else if value != nil {
-				m.WhiteDeviceIds = *value
+			if value, err := mission.ValueScanner.WhiteDeviceIds.FromValue(values[i]); err != nil {
+				return err
+			} else {
+				m.WhiteDeviceIds = value
 			}
 		case mission.FieldBlackDeviceIds:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field black_device_ids", values[i])
-			} else if value != nil {
-				m.BlackDeviceIds = *value
+			if value, err := mission.ValueScanner.BlackDeviceIds.FromValue(values[i]); err != nil {
+				return err
+			} else {
+				m.BlackDeviceIds = value
 			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
@@ -653,9 +657,11 @@ func (m *Mission) String() string {
 	builder.WriteString("password=")
 	builder.WriteString(m.Password)
 	builder.WriteString(", ")
-	builder.WriteString("white_device_ids=<sensitive>")
+	builder.WriteString("white_device_ids=")
+	builder.WriteString(fmt.Sprintf("%v", m.WhiteDeviceIds))
 	builder.WriteString(", ")
-	builder.WriteString("black_device_ids=<sensitive>")
+	builder.WriteString("black_device_ids=")
+	builder.WriteString(fmt.Sprintf("%v", m.BlackDeviceIds))
 	builder.WriteByte(')')
 	return builder.String()
 }

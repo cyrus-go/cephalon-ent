@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -271,12 +272,13 @@ var (
 	DefaultUsername string
 	// DefaultPassword holds the default value on creation for the "password" field.
 	DefaultPassword string
-	// DefaultWhiteDeviceIds holds the default value on creation for the "white_device_ids" field.
-	DefaultWhiteDeviceIds []byte
-	// DefaultBlackDeviceIds holds the default value on creation for the "black_device_ids" field.
-	DefaultBlackDeviceIds []byte
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
+	// ValueScanner of all Mission fields.
+	ValueScanner struct {
+		WhiteDeviceIds field.TypeValueScanner[[]string]
+		BlackDeviceIds field.TypeValueScanner[[]string]
+	}
 )
 
 const DefaultType enums.MissionType = "unknown"
@@ -502,6 +504,16 @@ func ByUsername(opts ...sql.OrderTermOption) OrderOption {
 // ByPassword orders the results by the password field.
 func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByWhiteDeviceIds orders the results by the white_device_ids field.
+func ByWhiteDeviceIds(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWhiteDeviceIds, opts...).ToFunc()
+}
+
+// ByBlackDeviceIds orders the results by the black_device_ids field.
+func ByBlackDeviceIds(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBlackDeviceIds, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

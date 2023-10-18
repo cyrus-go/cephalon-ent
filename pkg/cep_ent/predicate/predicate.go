@@ -63,6 +63,17 @@ type LoginRecord func(*sql.Selector)
 // Mission is the predicate function for mission builders.
 type Mission func(*sql.Selector)
 
+// MissionOrErr calls the predicate only if the error is not nit.
+func MissionOrErr(p Mission, err error) Mission {
+	return func(s *sql.Selector) {
+		if err != nil {
+			s.AddError(err)
+			return
+		}
+		p(s)
+	}
+}
+
 // MissionBatch is the predicate function for missionbatch builders.
 type MissionBatch func(*sql.Selector)
 

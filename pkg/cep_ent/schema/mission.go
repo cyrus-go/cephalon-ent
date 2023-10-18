@@ -2,9 +2,11 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -42,8 +44,8 @@ func (Mission) Fields() []ent.Field {
 		field.String("second_hmac_key").Default("").StructTag(`json:"second_hmac_key"`).Comment("创建任务时使用了的 二级 hmac_key"),
 		field.String("username").Default("admin").StructTag(`json:"username"`).Comment("某些任务会使用到的验证用户名"),
 		field.String("password").Default("cephalon").StructTag(`json:"password"`).Comment("某些任务会使用到的验证密码"),
-		field.Bytes("white_device_ids").Default(nil).Optional().Sensitive().Comment("任务的设备白名单"),
-		field.Bytes("black_device_ids").Default(nil).Optional().Sensitive().Comment("任务的设备黑名单"),
+		field.String("white_device_ids").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"white_device_ids"`).Comment("任务的设备白名单"),
+		field.String("black_device_ids").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"black_device_ids"`).Comment("任务的设备黑名单"),
 	}
 }
 
