@@ -451,6 +451,20 @@ func (mc *MissionCreate) SetNillablePassword(s *string) *MissionCreate {
 	return mc
 }
 
+// SetDeviceID sets the "device_id" field.
+func (mc *MissionCreate) SetDeviceID(s string) *MissionCreate {
+	mc.mutation.SetDeviceID(s)
+	return mc
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableDeviceID(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetDeviceID(*s)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -730,6 +744,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultPassword
 		mc.mutation.SetPassword(v)
 	}
+	if _, ok := mc.mutation.DeviceID(); !ok {
+		v := mission.DefaultDeviceID
+		mc.mutation.SetDeviceID(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -851,6 +869,9 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`cep_ent: missing required field "Mission.password"`)}
+	}
+	if _, ok := mc.mutation.DeviceID(); !ok {
+		return &ValidationError{Name: "device_id", err: errors.New(`cep_ent: missing required field "Mission.device_id"`)}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1004,6 +1025,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.Password(); ok {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
 		_node.Password = value
+	}
+	if value, ok := mc.mutation.DeviceID(); ok {
+		_spec.SetField(mission.FieldDeviceID, field.TypeString, value)
+		_node.DeviceID = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1623,6 +1648,18 @@ func (u *MissionUpsert) UpdatePassword() *MissionUpsert {
 	return u
 }
 
+// SetDeviceID sets the "device_id" field.
+func (u *MissionUpsert) SetDeviceID(v string) *MissionUpsert {
+	u.Set(mission.FieldDeviceID, v)
+	return u
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateDeviceID() *MissionUpsert {
+	u.SetExcluded(mission.FieldDeviceID)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2140,6 +2177,20 @@ func (u *MissionUpsertOne) SetPassword(v string) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdatePassword() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdatePassword()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionUpsertOne) SetDeviceID(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateDeviceID() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateDeviceID()
 	})
 }
 
@@ -2826,6 +2877,20 @@ func (u *MissionUpsertBulk) SetPassword(v string) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdatePassword() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdatePassword()
+	})
+}
+
+// SetDeviceID sets the "device_id" field.
+func (u *MissionUpsertBulk) SetDeviceID(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetDeviceID(v)
+	})
+}
+
+// UpdateDeviceID sets the "device_id" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateDeviceID() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateDeviceID()
 	})
 }
 

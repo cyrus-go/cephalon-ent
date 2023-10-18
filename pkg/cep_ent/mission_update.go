@@ -488,6 +488,20 @@ func (mu *MissionUpdate) SetNillablePassword(s *string) *MissionUpdate {
 	return mu
 }
 
+// SetDeviceID sets the "device_id" field.
+func (mu *MissionUpdate) SetDeviceID(s string) *MissionUpdate {
+	mu.mutation.SetDeviceID(s)
+	return mu
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableDeviceID(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetDeviceID(*s)
+	}
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -929,6 +943,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.Password(); ok {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.DeviceID(); ok {
+		_spec.SetField(mission.FieldDeviceID, field.TypeString, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1752,6 +1769,20 @@ func (muo *MissionUpdateOne) SetNillablePassword(s *string) *MissionUpdateOne {
 	return muo
 }
 
+// SetDeviceID sets the "device_id" field.
+func (muo *MissionUpdateOne) SetDeviceID(s string) *MissionUpdateOne {
+	muo.mutation.SetDeviceID(s)
+	return muo
+}
+
+// SetNillableDeviceID sets the "device_id" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableDeviceID(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetDeviceID(*s)
+	}
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -2223,6 +2254,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.Password(); ok {
 		_spec.SetField(mission.FieldPassword, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.DeviceID(); ok {
+		_spec.SetField(mission.FieldDeviceID, field.TypeString, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
