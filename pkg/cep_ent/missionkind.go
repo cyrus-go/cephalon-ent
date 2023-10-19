@@ -43,28 +43,17 @@ type MissionKind struct {
 
 // MissionKindEdges holds the relations/edges for other nodes in the graph.
 type MissionKindEdges struct {
-	// DeviceGpuMissions holds the value of the device_gpu_missions edge.
-	DeviceGpuMissions []*DeviceGpuMission `json:"device_gpu_missions,omitempty"`
 	// Missions holds the value of the missions edge.
 	Missions []*Mission `json:"missions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
-}
-
-// DeviceGpuMissionsOrErr returns the DeviceGpuMissions value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionKindEdges) DeviceGpuMissionsOrErr() ([]*DeviceGpuMission, error) {
-	if e.loadedTypes[0] {
-		return e.DeviceGpuMissions, nil
-	}
-	return nil, &NotLoadedError{edge: "device_gpu_missions"}
+	loadedTypes [1]bool
 }
 
 // MissionsOrErr returns the Missions value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionKindEdges) MissionsOrErr() ([]*Mission, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[0] {
 		return e.Missions, nil
 	}
 	return nil, &NotLoadedError{edge: "missions"}
@@ -161,11 +150,6 @@ func (mk *MissionKind) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (mk *MissionKind) Value(name string) (ent.Value, error) {
 	return mk.selectValues.Get(name)
-}
-
-// QueryDeviceGpuMissions queries the "device_gpu_missions" edge of the MissionKind entity.
-func (mk *MissionKind) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
-	return NewMissionKindClient(mk.config).QueryDeviceGpuMissions(mk)
 }
 
 // QueryMissions queries the "missions" edge of the MissionKind entity.

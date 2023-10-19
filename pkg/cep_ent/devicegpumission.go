@@ -12,7 +12,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -36,12 +35,16 @@ type DeviceGpuMission struct {
 	DeviceID int64 `json:"device_id,string"`
 	// 外键 gpu id
 	GpuID int64 `json:"gpu_id,string"`
-	// 外键任务种类 id
-	MissionKindID int64 `json:"mission_kind_id,string"`
+	// 可以接的任务类型
+	AbleMissionKind []string `json:"able_mission_kind"`
 	// 显卡占用设备的插槽
 	DeviceSlot int8 `json:"device_slot"`
+	// 最大同时在线任务
+	MaxOnlineMission int8 `json:"max_online_mission"`
 	// gpu 当前状态
 	GpuStatus enums.DeviceStatus `json:"gpu_status"`
+	// 正在做的任务 id
+	MissionID []int64 `json:"mission_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceGpuMissionQuery when eager-loading is set.
 	Edges        DeviceGpuMissionEdges `json:"edges"`
@@ -52,13 +55,11 @@ type DeviceGpuMission struct {
 type DeviceGpuMissionEdges struct {
 	// Device holds the value of the device edge.
 	Device *Device `json:"device,omitempty"`
-	// MissionKind holds the value of the mission_kind edge.
-	MissionKind *MissionKind `json:"mission_kind,omitempty"`
 	// Gpu holds the value of the gpu edge.
 	Gpu *Gpu `json:"gpu,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [2]bool
 }
 
 // DeviceOrErr returns the Device value or an error if the edge
@@ -74,23 +75,10 @@ func (e DeviceGpuMissionEdges) DeviceOrErr() (*Device, error) {
 	return nil, &NotLoadedError{edge: "device"}
 }
 
-// MissionKindOrErr returns the MissionKind value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e DeviceGpuMissionEdges) MissionKindOrErr() (*MissionKind, error) {
-	if e.loadedTypes[1] {
-		if e.MissionKind == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: missionkind.Label}
-		}
-		return e.MissionKind, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_kind"}
-}
-
 // GpuOrErr returns the Gpu value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e DeviceGpuMissionEdges) GpuOrErr() (*Gpu, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		if e.Gpu == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: gpu.Label}
@@ -105,12 +93,16 @@ func (*DeviceGpuMission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case devicegpumission.FieldID, devicegpumission.FieldCreatedBy, devicegpumission.FieldUpdatedBy, devicegpumission.FieldDeviceID, devicegpumission.FieldGpuID, devicegpumission.FieldMissionKindID, devicegpumission.FieldDeviceSlot:
+		case devicegpumission.FieldID, devicegpumission.FieldCreatedBy, devicegpumission.FieldUpdatedBy, devicegpumission.FieldDeviceID, devicegpumission.FieldGpuID, devicegpumission.FieldDeviceSlot, devicegpumission.FieldMaxOnlineMission:
 			values[i] = new(sql.NullInt64)
 		case devicegpumission.FieldGpuStatus:
 			values[i] = new(sql.NullString)
 		case devicegpumission.FieldCreatedAt, devicegpumission.FieldUpdatedAt, devicegpumission.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case devicegpumission.FieldAbleMissionKind:
+			values[i] = devicegpumission.ValueScanner.AbleMissionKind.ScanValue()
+		case devicegpumission.FieldMissionID:
+			values[i] = devicegpumission.ValueScanner.MissionID.ScanValue()
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -174,11 +166,11 @@ func (dgm *DeviceGpuMission) assignValues(columns []string, values []any) error 
 			} else if value.Valid {
 				dgm.GpuID = value.Int64
 			}
-		case devicegpumission.FieldMissionKindID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field mission_kind_id", values[i])
-			} else if value.Valid {
-				dgm.MissionKindID = value.Int64
+		case devicegpumission.FieldAbleMissionKind:
+			if value, err := devicegpumission.ValueScanner.AbleMissionKind.FromValue(values[i]); err != nil {
+				return err
+			} else {
+				dgm.AbleMissionKind = value
 			}
 		case devicegpumission.FieldDeviceSlot:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -186,11 +178,23 @@ func (dgm *DeviceGpuMission) assignValues(columns []string, values []any) error 
 			} else if value.Valid {
 				dgm.DeviceSlot = int8(value.Int64)
 			}
+		case devicegpumission.FieldMaxOnlineMission:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_online_mission", values[i])
+			} else if value.Valid {
+				dgm.MaxOnlineMission = int8(value.Int64)
+			}
 		case devicegpumission.FieldGpuStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field gpu_status", values[i])
 			} else if value.Valid {
 				dgm.GpuStatus = enums.DeviceStatus(value.String)
+			}
+		case devicegpumission.FieldMissionID:
+			if value, err := devicegpumission.ValueScanner.MissionID.FromValue(values[i]); err != nil {
+				return err
+			} else {
+				dgm.MissionID = value
 			}
 		default:
 			dgm.selectValues.Set(columns[i], values[i])
@@ -208,11 +212,6 @@ func (dgm *DeviceGpuMission) Value(name string) (ent.Value, error) {
 // QueryDevice queries the "device" edge of the DeviceGpuMission entity.
 func (dgm *DeviceGpuMission) QueryDevice() *DeviceQuery {
 	return NewDeviceGpuMissionClient(dgm.config).QueryDevice(dgm)
-}
-
-// QueryMissionKind queries the "mission_kind" edge of the DeviceGpuMission entity.
-func (dgm *DeviceGpuMission) QueryMissionKind() *MissionKindQuery {
-	return NewDeviceGpuMissionClient(dgm.config).QueryMissionKind(dgm)
 }
 
 // QueryGpu queries the "gpu" edge of the DeviceGpuMission entity.
@@ -264,14 +263,20 @@ func (dgm *DeviceGpuMission) String() string {
 	builder.WriteString("gpu_id=")
 	builder.WriteString(fmt.Sprintf("%v", dgm.GpuID))
 	builder.WriteString(", ")
-	builder.WriteString("mission_kind_id=")
-	builder.WriteString(fmt.Sprintf("%v", dgm.MissionKindID))
+	builder.WriteString("able_mission_kind=")
+	builder.WriteString(fmt.Sprintf("%v", dgm.AbleMissionKind))
 	builder.WriteString(", ")
 	builder.WriteString("device_slot=")
 	builder.WriteString(fmt.Sprintf("%v", dgm.DeviceSlot))
 	builder.WriteString(", ")
+	builder.WriteString("max_online_mission=")
+	builder.WriteString(fmt.Sprintf("%v", dgm.MaxOnlineMission))
+	builder.WriteString(", ")
 	builder.WriteString("gpu_status=")
 	builder.WriteString(fmt.Sprintf("%v", dgm.GpuStatus))
+	builder.WriteString(", ")
+	builder.WriteString("mission_id=")
+	builder.WriteString(fmt.Sprintf("%v", dgm.MissionID))
 	builder.WriteByte(')')
 	return builder.String()
 }

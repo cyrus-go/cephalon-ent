@@ -2023,22 +2023,6 @@ func (c *DeviceGpuMissionClient) QueryDevice(dgm *DeviceGpuMission) *DeviceQuery
 	return query
 }
 
-// QueryMissionKind queries the mission_kind edge of a DeviceGpuMission.
-func (c *DeviceGpuMissionClient) QueryMissionKind(dgm *DeviceGpuMission) *MissionKindQuery {
-	query := (&MissionKindClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := dgm.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(devicegpumission.Table, devicegpumission.FieldID, id),
-			sqlgraph.To(missionkind.Table, missionkind.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, devicegpumission.MissionKindTable, devicegpumission.MissionKindColumn),
-		)
-		fromV = sqlgraph.Neighbors(dgm.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryGpu queries the gpu edge of a DeviceGpuMission.
 func (c *DeviceGpuMissionClient) QueryGpu(dgm *DeviceGpuMission) *GpuQuery {
 	query := (&GpuClient{config: c.config}).Query()
@@ -4624,22 +4608,6 @@ func (c *MissionKindClient) GetX(ctx context.Context, id int64) *MissionKind {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryDeviceGpuMissions queries the device_gpu_missions edge of a MissionKind.
-func (c *MissionKindClient) QueryDeviceGpuMissions(mk *MissionKind) *DeviceGpuMissionQuery {
-	query := (&DeviceGpuMissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := mk.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(missionkind.Table, missionkind.FieldID, id),
-			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, missionkind.DeviceGpuMissionsTable, missionkind.DeviceGpuMissionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(mk.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // QueryMissions queries the missions edge of a MissionKind.

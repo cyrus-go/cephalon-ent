@@ -14,7 +14,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -122,17 +121,15 @@ func (dgmu *DeviceGpuMissionUpdate) SetNillableGpuID(i *int64) *DeviceGpuMission
 	return dgmu
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (dgmu *DeviceGpuMissionUpdate) SetMissionKindID(i int64) *DeviceGpuMissionUpdate {
-	dgmu.mutation.SetMissionKindID(i)
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (dgmu *DeviceGpuMissionUpdate) SetAbleMissionKind(s []string) *DeviceGpuMissionUpdate {
+	dgmu.mutation.SetAbleMissionKind(s)
 	return dgmu
 }
 
-// SetNillableMissionKindID sets the "mission_kind_id" field if the given value is not nil.
-func (dgmu *DeviceGpuMissionUpdate) SetNillableMissionKindID(i *int64) *DeviceGpuMissionUpdate {
-	if i != nil {
-		dgmu.SetMissionKindID(*i)
-	}
+// ClearAbleMissionKind clears the value of the "able_mission_kind" field.
+func (dgmu *DeviceGpuMissionUpdate) ClearAbleMissionKind() *DeviceGpuMissionUpdate {
+	dgmu.mutation.ClearAbleMissionKind()
 	return dgmu
 }
 
@@ -157,6 +154,27 @@ func (dgmu *DeviceGpuMissionUpdate) AddDeviceSlot(i int8) *DeviceGpuMissionUpdat
 	return dgmu
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (dgmu *DeviceGpuMissionUpdate) SetMaxOnlineMission(i int8) *DeviceGpuMissionUpdate {
+	dgmu.mutation.ResetMaxOnlineMission()
+	dgmu.mutation.SetMaxOnlineMission(i)
+	return dgmu
+}
+
+// SetNillableMaxOnlineMission sets the "max_online_mission" field if the given value is not nil.
+func (dgmu *DeviceGpuMissionUpdate) SetNillableMaxOnlineMission(i *int8) *DeviceGpuMissionUpdate {
+	if i != nil {
+		dgmu.SetMaxOnlineMission(*i)
+	}
+	return dgmu
+}
+
+// AddMaxOnlineMission adds i to the "max_online_mission" field.
+func (dgmu *DeviceGpuMissionUpdate) AddMaxOnlineMission(i int8) *DeviceGpuMissionUpdate {
+	dgmu.mutation.AddMaxOnlineMission(i)
+	return dgmu
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (dgmu *DeviceGpuMissionUpdate) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionUpdate {
 	dgmu.mutation.SetGpuStatus(es)
@@ -171,14 +189,21 @@ func (dgmu *DeviceGpuMissionUpdate) SetNillableGpuStatus(es *enums.DeviceStatus)
 	return dgmu
 }
 
+// SetMissionID sets the "mission_id" field.
+func (dgmu *DeviceGpuMissionUpdate) SetMissionID(i []int64) *DeviceGpuMissionUpdate {
+	dgmu.mutation.SetMissionID(i)
+	return dgmu
+}
+
+// ClearMissionID clears the value of the "mission_id" field.
+func (dgmu *DeviceGpuMissionUpdate) ClearMissionID() *DeviceGpuMissionUpdate {
+	dgmu.mutation.ClearMissionID()
+	return dgmu
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (dgmu *DeviceGpuMissionUpdate) SetDevice(d *Device) *DeviceGpuMissionUpdate {
 	return dgmu.SetDeviceID(d.ID)
-}
-
-// SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
-func (dgmu *DeviceGpuMissionUpdate) SetMissionKind(m *MissionKind) *DeviceGpuMissionUpdate {
-	return dgmu.SetMissionKindID(m.ID)
 }
 
 // SetGpu sets the "gpu" edge to the Gpu entity.
@@ -194,12 +219,6 @@ func (dgmu *DeviceGpuMissionUpdate) Mutation() *DeviceGpuMissionMutation {
 // ClearDevice clears the "device" edge to the Device entity.
 func (dgmu *DeviceGpuMissionUpdate) ClearDevice() *DeviceGpuMissionUpdate {
 	dgmu.mutation.ClearDevice()
-	return dgmu
-}
-
-// ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
-func (dgmu *DeviceGpuMissionUpdate) ClearMissionKind() *DeviceGpuMissionUpdate {
-	dgmu.mutation.ClearMissionKind()
 	return dgmu
 }
 
@@ -255,9 +274,6 @@ func (dgmu *DeviceGpuMissionUpdate) check() error {
 	if _, ok := dgmu.mutation.DeviceID(); dgmu.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.device"`)
 	}
-	if _, ok := dgmu.mutation.MissionKindID(); dgmu.mutation.MissionKindCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.mission_kind"`)
-	}
 	if _, ok := dgmu.mutation.GpuID(); dgmu.mutation.GpuCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.gpu"`)
 	}
@@ -294,14 +310,40 @@ func (dgmu *DeviceGpuMissionUpdate) sqlSave(ctx context.Context) (n int, err err
 	if value, ok := dgmu.mutation.DeletedAt(); ok {
 		_spec.SetField(devicegpumission.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := dgmu.mutation.AbleMissionKind(); ok {
+		vv, err := devicegpumission.ValueScanner.AbleMissionKind.Value(value)
+		if err != nil {
+			return 0, err
+		}
+		_spec.SetField(devicegpumission.FieldAbleMissionKind, field.TypeString, vv)
+	}
+	if dgmu.mutation.AbleMissionKindCleared() {
+		_spec.ClearField(devicegpumission.FieldAbleMissionKind, field.TypeString)
+	}
 	if value, ok := dgmu.mutation.DeviceSlot(); ok {
 		_spec.SetField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
 	}
 	if value, ok := dgmu.mutation.AddedDeviceSlot(); ok {
 		_spec.AddField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
 	}
+	if value, ok := dgmu.mutation.MaxOnlineMission(); ok {
+		_spec.SetField(devicegpumission.FieldMaxOnlineMission, field.TypeInt8, value)
+	}
+	if value, ok := dgmu.mutation.AddedMaxOnlineMission(); ok {
+		_spec.AddField(devicegpumission.FieldMaxOnlineMission, field.TypeInt8, value)
+	}
 	if value, ok := dgmu.mutation.GpuStatus(); ok {
 		_spec.SetField(devicegpumission.FieldGpuStatus, field.TypeEnum, value)
+	}
+	if value, ok := dgmu.mutation.MissionID(); ok {
+		vv, err := devicegpumission.ValueScanner.MissionID.Value(value)
+		if err != nil {
+			return 0, err
+		}
+		_spec.SetField(devicegpumission.FieldMissionID, field.TypeString, vv)
+	}
+	if dgmu.mutation.MissionIDCleared() {
+		_spec.ClearField(devicegpumission.FieldMissionID, field.TypeString)
 	}
 	if dgmu.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -325,35 +367,6 @@ func (dgmu *DeviceGpuMissionUpdate) sqlSave(ctx context.Context) (n int, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if dgmu.mutation.MissionKindCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   devicegpumission.MissionKindTable,
-			Columns: []string{devicegpumission.MissionKindColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := dgmu.mutation.MissionKindIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   devicegpumission.MissionKindTable,
-			Columns: []string{devicegpumission.MissionKindColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -500,17 +513,15 @@ func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableGpuID(i *int64) *DeviceGpuMis
 	return dgmuo
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (dgmuo *DeviceGpuMissionUpdateOne) SetMissionKindID(i int64) *DeviceGpuMissionUpdateOne {
-	dgmuo.mutation.SetMissionKindID(i)
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetAbleMissionKind(s []string) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.SetAbleMissionKind(s)
 	return dgmuo
 }
 
-// SetNillableMissionKindID sets the "mission_kind_id" field if the given value is not nil.
-func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableMissionKindID(i *int64) *DeviceGpuMissionUpdateOne {
-	if i != nil {
-		dgmuo.SetMissionKindID(*i)
-	}
+// ClearAbleMissionKind clears the value of the "able_mission_kind" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) ClearAbleMissionKind() *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.ClearAbleMissionKind()
 	return dgmuo
 }
 
@@ -535,6 +546,27 @@ func (dgmuo *DeviceGpuMissionUpdateOne) AddDeviceSlot(i int8) *DeviceGpuMissionU
 	return dgmuo
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetMaxOnlineMission(i int8) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.ResetMaxOnlineMission()
+	dgmuo.mutation.SetMaxOnlineMission(i)
+	return dgmuo
+}
+
+// SetNillableMaxOnlineMission sets the "max_online_mission" field if the given value is not nil.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableMaxOnlineMission(i *int8) *DeviceGpuMissionUpdateOne {
+	if i != nil {
+		dgmuo.SetMaxOnlineMission(*i)
+	}
+	return dgmuo
+}
+
+// AddMaxOnlineMission adds i to the "max_online_mission" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) AddMaxOnlineMission(i int8) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.AddMaxOnlineMission(i)
+	return dgmuo
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (dgmuo *DeviceGpuMissionUpdateOne) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionUpdateOne {
 	dgmuo.mutation.SetGpuStatus(es)
@@ -549,14 +581,21 @@ func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableGpuStatus(es *enums.DeviceSta
 	return dgmuo
 }
 
+// SetMissionID sets the "mission_id" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) SetMissionID(i []int64) *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.SetMissionID(i)
+	return dgmuo
+}
+
+// ClearMissionID clears the value of the "mission_id" field.
+func (dgmuo *DeviceGpuMissionUpdateOne) ClearMissionID() *DeviceGpuMissionUpdateOne {
+	dgmuo.mutation.ClearMissionID()
+	return dgmuo
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (dgmuo *DeviceGpuMissionUpdateOne) SetDevice(d *Device) *DeviceGpuMissionUpdateOne {
 	return dgmuo.SetDeviceID(d.ID)
-}
-
-// SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
-func (dgmuo *DeviceGpuMissionUpdateOne) SetMissionKind(m *MissionKind) *DeviceGpuMissionUpdateOne {
-	return dgmuo.SetMissionKindID(m.ID)
 }
 
 // SetGpu sets the "gpu" edge to the Gpu entity.
@@ -572,12 +611,6 @@ func (dgmuo *DeviceGpuMissionUpdateOne) Mutation() *DeviceGpuMissionMutation {
 // ClearDevice clears the "device" edge to the Device entity.
 func (dgmuo *DeviceGpuMissionUpdateOne) ClearDevice() *DeviceGpuMissionUpdateOne {
 	dgmuo.mutation.ClearDevice()
-	return dgmuo
-}
-
-// ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
-func (dgmuo *DeviceGpuMissionUpdateOne) ClearMissionKind() *DeviceGpuMissionUpdateOne {
-	dgmuo.mutation.ClearMissionKind()
 	return dgmuo
 }
 
@@ -646,9 +679,6 @@ func (dgmuo *DeviceGpuMissionUpdateOne) check() error {
 	if _, ok := dgmuo.mutation.DeviceID(); dgmuo.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.device"`)
 	}
-	if _, ok := dgmuo.mutation.MissionKindID(); dgmuo.mutation.MissionKindCleared() && !ok {
-		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.mission_kind"`)
-	}
 	if _, ok := dgmuo.mutation.GpuID(); dgmuo.mutation.GpuCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "DeviceGpuMission.gpu"`)
 	}
@@ -702,14 +732,40 @@ func (dgmuo *DeviceGpuMissionUpdateOne) sqlSave(ctx context.Context) (_node *Dev
 	if value, ok := dgmuo.mutation.DeletedAt(); ok {
 		_spec.SetField(devicegpumission.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := dgmuo.mutation.AbleMissionKind(); ok {
+		vv, err := devicegpumission.ValueScanner.AbleMissionKind.Value(value)
+		if err != nil {
+			return nil, err
+		}
+		_spec.SetField(devicegpumission.FieldAbleMissionKind, field.TypeString, vv)
+	}
+	if dgmuo.mutation.AbleMissionKindCleared() {
+		_spec.ClearField(devicegpumission.FieldAbleMissionKind, field.TypeString)
+	}
 	if value, ok := dgmuo.mutation.DeviceSlot(); ok {
 		_spec.SetField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
 	}
 	if value, ok := dgmuo.mutation.AddedDeviceSlot(); ok {
 		_spec.AddField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
 	}
+	if value, ok := dgmuo.mutation.MaxOnlineMission(); ok {
+		_spec.SetField(devicegpumission.FieldMaxOnlineMission, field.TypeInt8, value)
+	}
+	if value, ok := dgmuo.mutation.AddedMaxOnlineMission(); ok {
+		_spec.AddField(devicegpumission.FieldMaxOnlineMission, field.TypeInt8, value)
+	}
 	if value, ok := dgmuo.mutation.GpuStatus(); ok {
 		_spec.SetField(devicegpumission.FieldGpuStatus, field.TypeEnum, value)
+	}
+	if value, ok := dgmuo.mutation.MissionID(); ok {
+		vv, err := devicegpumission.ValueScanner.MissionID.Value(value)
+		if err != nil {
+			return nil, err
+		}
+		_spec.SetField(devicegpumission.FieldMissionID, field.TypeString, vv)
+	}
+	if dgmuo.mutation.MissionIDCleared() {
+		_spec.ClearField(devicegpumission.FieldMissionID, field.TypeString)
 	}
 	if dgmuo.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -733,35 +789,6 @@ func (dgmuo *DeviceGpuMissionUpdateOne) sqlSave(ctx context.Context) (_node *Dev
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if dgmuo.mutation.MissionKindCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   devicegpumission.MissionKindTable,
-			Columns: []string{devicegpumission.MissionKindColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := dgmuo.mutation.MissionKindIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   devicegpumission.MissionKindTable,
-			Columns: []string{devicegpumission.MissionKindColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

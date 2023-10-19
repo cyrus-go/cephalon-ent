@@ -30,6 +30,17 @@ type Device func(*sql.Selector)
 // DeviceGpuMission is the predicate function for devicegpumission builders.
 type DeviceGpuMission func(*sql.Selector)
 
+// DeviceGpuMissionOrErr calls the predicate only if the error is not nit.
+func DeviceGpuMissionOrErr(p DeviceGpuMission, err error) DeviceGpuMission {
+	return func(s *sql.Selector) {
+		if err != nil {
+			s.AddError(err)
+			return
+		}
+		p(s)
+	}
+}
+
 // EarnBill is the predicate function for earnbill builders.
 type EarnBill func(*sql.Selector)
 

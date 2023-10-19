@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -149,21 +148,6 @@ func (mkc *MissionKindCreate) SetNillableID(i *int64) *MissionKindCreate {
 		mkc.SetID(*i)
 	}
 	return mkc
-}
-
-// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
-func (mkc *MissionKindCreate) AddDeviceGpuMissionIDs(ids ...int64) *MissionKindCreate {
-	mkc.mutation.AddDeviceGpuMissionIDs(ids...)
-	return mkc
-}
-
-// AddDeviceGpuMissions adds the "device_gpu_missions" edges to the DeviceGpuMission entity.
-func (mkc *MissionKindCreate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *MissionKindCreate {
-	ids := make([]int64, len(d))
-	for i := range d {
-		ids[i] = d[i].ID
-	}
-	return mkc.AddDeviceGpuMissionIDs(ids...)
 }
 
 // AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
@@ -359,22 +343,6 @@ func (mkc *MissionKindCreate) createSpec() (*MissionKind, *sqlgraph.CreateSpec) 
 	if value, ok := mkc.mutation.BillingType(); ok {
 		_spec.SetField(missionkind.FieldBillingType, field.TypeEnum, value)
 		_node.BillingType = value
-	}
-	if nodes := mkc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mkc.mutation.MissionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

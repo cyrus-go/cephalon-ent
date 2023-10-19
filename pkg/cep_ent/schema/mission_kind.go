@@ -24,7 +24,7 @@ func (MissionKind) Fields() []ent.Field {
 func (MissionKind) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
-		edge.To("device_gpu_missions", DeviceGpuMission.Type),
+		//	edge.To("device_gpu_missions", DeviceGpuMission.Type),
 		edge.To("missions", Mission.Type),
 	}
 }

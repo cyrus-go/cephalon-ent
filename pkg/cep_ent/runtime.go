@@ -486,14 +486,20 @@ func init() {
 	devicegpumissionDescGpuID := devicegpumissionFields[1].Descriptor()
 	// devicegpumission.DefaultGpuID holds the default value on creation for the gpu_id field.
 	devicegpumission.DefaultGpuID = devicegpumissionDescGpuID.Default.(int64)
-	// devicegpumissionDescMissionKindID is the schema descriptor for mission_kind_id field.
-	devicegpumissionDescMissionKindID := devicegpumissionFields[2].Descriptor()
-	// devicegpumission.DefaultMissionKindID holds the default value on creation for the mission_kind_id field.
-	devicegpumission.DefaultMissionKindID = devicegpumissionDescMissionKindID.Default.(int64)
+	// devicegpumissionDescAbleMissionKind is the schema descriptor for able_mission_kind field.
+	devicegpumissionDescAbleMissionKind := devicegpumissionFields[2].Descriptor()
+	devicegpumission.ValueScanner.AbleMissionKind = devicegpumissionDescAbleMissionKind.ValueScanner.(field.TypeValueScanner[[]string])
 	// devicegpumissionDescDeviceSlot is the schema descriptor for device_slot field.
 	devicegpumissionDescDeviceSlot := devicegpumissionFields[3].Descriptor()
 	// devicegpumission.DefaultDeviceSlot holds the default value on creation for the device_slot field.
 	devicegpumission.DefaultDeviceSlot = devicegpumissionDescDeviceSlot.Default.(int8)
+	// devicegpumissionDescMaxOnlineMission is the schema descriptor for max_online_mission field.
+	devicegpumissionDescMaxOnlineMission := devicegpumissionFields[4].Descriptor()
+	// devicegpumission.DefaultMaxOnlineMission holds the default value on creation for the max_online_mission field.
+	devicegpumission.DefaultMaxOnlineMission = devicegpumissionDescMaxOnlineMission.Default.(int8)
+	// devicegpumissionDescMissionID is the schema descriptor for mission_id field.
+	devicegpumissionDescMissionID := devicegpumissionFields[6].Descriptor()
+	devicegpumission.ValueScanner.MissionID = devicegpumissionDescMissionID.ValueScanner.(field.TypeValueScanner[[]int64])
 	// devicegpumissionDescID is the schema descriptor for id field.
 	devicegpumissionDescID := devicegpumissionMixinFields0[0].Descriptor()
 	// devicegpumission.DefaultID holds the default value on creation for the id field.

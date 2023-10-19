@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -30,16 +31,18 @@ const (
 	FieldDeviceID = "device_id"
 	// FieldGpuID holds the string denoting the gpu_id field in the database.
 	FieldGpuID = "gpu_id"
-	// FieldMissionKindID holds the string denoting the mission_kind_id field in the database.
-	FieldMissionKindID = "mission_kind_id"
+	// FieldAbleMissionKind holds the string denoting the able_mission_kind field in the database.
+	FieldAbleMissionKind = "able_mission_kind"
 	// FieldDeviceSlot holds the string denoting the device_slot field in the database.
 	FieldDeviceSlot = "device_slot"
+	// FieldMaxOnlineMission holds the string denoting the max_online_mission field in the database.
+	FieldMaxOnlineMission = "max_online_mission"
 	// FieldGpuStatus holds the string denoting the gpu_status field in the database.
 	FieldGpuStatus = "gpu_status"
+	// FieldMissionID holds the string denoting the mission_id field in the database.
+	FieldMissionID = "mission_id"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
-	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
-	EdgeMissionKind = "mission_kind"
 	// EdgeGpu holds the string denoting the gpu edge name in mutations.
 	EdgeGpu = "gpu"
 	// Table holds the table name of the devicegpumission in the database.
@@ -51,13 +54,6 @@ const (
 	DeviceInverseTable = "devices"
 	// DeviceColumn is the table column denoting the device relation/edge.
 	DeviceColumn = "device_id"
-	// MissionKindTable is the table that holds the mission_kind relation/edge.
-	MissionKindTable = "device_gpu_missions"
-	// MissionKindInverseTable is the table name for the MissionKind entity.
-	// It exists in this package in order to avoid circular dependency with the "missionkind" package.
-	MissionKindInverseTable = "mission_kinds"
-	// MissionKindColumn is the table column denoting the mission_kind relation/edge.
-	MissionKindColumn = "mission_kind_id"
 	// GpuTable is the table that holds the gpu relation/edge.
 	GpuTable = "device_gpu_missions"
 	// GpuInverseTable is the table name for the Gpu entity.
@@ -77,9 +73,11 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeviceID,
 	FieldGpuID,
-	FieldMissionKindID,
+	FieldAbleMissionKind,
 	FieldDeviceSlot,
+	FieldMaxOnlineMission,
 	FieldGpuStatus,
+	FieldMissionID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -109,12 +107,17 @@ var (
 	DefaultDeviceID int64
 	// DefaultGpuID holds the default value on creation for the "gpu_id" field.
 	DefaultGpuID int64
-	// DefaultMissionKindID holds the default value on creation for the "mission_kind_id" field.
-	DefaultMissionKindID int64
 	// DefaultDeviceSlot holds the default value on creation for the "device_slot" field.
 	DefaultDeviceSlot int8
+	// DefaultMaxOnlineMission holds the default value on creation for the "max_online_mission" field.
+	DefaultMaxOnlineMission int8
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
+	// ValueScanner of all DeviceGpuMission fields.
+	ValueScanner struct {
+		AbleMissionKind field.TypeValueScanner[[]string]
+		MissionID       field.TypeValueScanner[[]int64]
+	}
 )
 
 const DefaultGpuStatus enums.DeviceStatus = "offline"
@@ -172,9 +175,9 @@ func ByGpuID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGpuID, opts...).ToFunc()
 }
 
-// ByMissionKindID orders the results by the mission_kind_id field.
-func ByMissionKindID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMissionKindID, opts...).ToFunc()
+// ByAbleMissionKind orders the results by the able_mission_kind field.
+func ByAbleMissionKind(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAbleMissionKind, opts...).ToFunc()
 }
 
 // ByDeviceSlot orders the results by the device_slot field.
@@ -182,22 +185,25 @@ func ByDeviceSlot(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeviceSlot, opts...).ToFunc()
 }
 
+// ByMaxOnlineMission orders the results by the max_online_mission field.
+func ByMaxOnlineMission(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMaxOnlineMission, opts...).ToFunc()
+}
+
 // ByGpuStatus orders the results by the gpu_status field.
 func ByGpuStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGpuStatus, opts...).ToFunc()
+}
+
+// ByMissionID orders the results by the mission_id field.
+func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMissionID, opts...).ToFunc()
 }
 
 // ByDeviceField orders the results by device field.
 func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newDeviceStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByMissionKindField orders the results by mission_kind field.
-func ByMissionKindField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionKindStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -212,13 +218,6 @@ func newDeviceStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, DeviceTable, DeviceColumn),
-	)
-}
-func newMissionKindStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionKindInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionKindTable, MissionKindColumn),
 	)
 }
 func newGpuStep() *sqlgraph.Step {

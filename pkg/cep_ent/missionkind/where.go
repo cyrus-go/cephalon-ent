@@ -371,29 +371,6 @@ func BillingTypeNotIn(vs ...enums.MissionBillingType) predicate.MissionKind {
 	return predicate.MissionKind(sql.FieldNotIn(FieldBillingType, v...))
 }
 
-// HasDeviceGpuMissions applies the HasEdge predicate on the "device_gpu_missions" edge.
-func HasDeviceGpuMissions() predicate.MissionKind {
-	return predicate.MissionKind(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DeviceGpuMissionsTable, DeviceGpuMissionsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasDeviceGpuMissionsWith applies the HasEdge predicate on the "device_gpu_missions" edge with a given conditions (other predicates).
-func HasDeviceGpuMissionsWith(preds ...predicate.DeviceGpuMission) predicate.MissionKind {
-	return predicate.MissionKind(func(s *sql.Selector) {
-		step := newDeviceGpuMissionsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasMissions applies the HasEdge predicate on the "missions" edge.
 func HasMissions() predicate.MissionKind {
 	return predicate.MissionKind(func(s *sql.Selector) {

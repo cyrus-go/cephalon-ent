@@ -13,20 +13,18 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
 // DeviceGpuMissionQuery is the builder for querying DeviceGpuMission entities.
 type DeviceGpuMissionQuery struct {
 	config
-	ctx             *QueryContext
-	order           []devicegpumission.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.DeviceGpuMission
-	withDevice      *DeviceQuery
-	withMissionKind *MissionKindQuery
-	withGpu         *GpuQuery
+	ctx        *QueryContext
+	order      []devicegpumission.OrderOption
+	inters     []Interceptor
+	predicates []predicate.DeviceGpuMission
+	withDevice *DeviceQuery
+	withGpu    *GpuQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,28 +76,6 @@ func (dgmq *DeviceGpuMissionQuery) QueryDevice() *DeviceQuery {
 			sqlgraph.From(devicegpumission.Table, devicegpumission.FieldID, selector),
 			sqlgraph.To(device.Table, device.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, devicegpumission.DeviceTable, devicegpumission.DeviceColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(dgmq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryMissionKind chains the current query on the "mission_kind" edge.
-func (dgmq *DeviceGpuMissionQuery) QueryMissionKind() *MissionKindQuery {
-	query := (&MissionKindClient{config: dgmq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := dgmq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := dgmq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(devicegpumission.Table, devicegpumission.FieldID, selector),
-			sqlgraph.To(missionkind.Table, missionkind.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, devicegpumission.MissionKindTable, devicegpumission.MissionKindColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(dgmq.driver.Dialect(), step)
 		return fromU, nil
@@ -316,14 +292,13 @@ func (dgmq *DeviceGpuMissionQuery) Clone() *DeviceGpuMissionQuery {
 		return nil
 	}
 	return &DeviceGpuMissionQuery{
-		config:          dgmq.config,
-		ctx:             dgmq.ctx.Clone(),
-		order:           append([]devicegpumission.OrderOption{}, dgmq.order...),
-		inters:          append([]Interceptor{}, dgmq.inters...),
-		predicates:      append([]predicate.DeviceGpuMission{}, dgmq.predicates...),
-		withDevice:      dgmq.withDevice.Clone(),
-		withMissionKind: dgmq.withMissionKind.Clone(),
-		withGpu:         dgmq.withGpu.Clone(),
+		config:     dgmq.config,
+		ctx:        dgmq.ctx.Clone(),
+		order:      append([]devicegpumission.OrderOption{}, dgmq.order...),
+		inters:     append([]Interceptor{}, dgmq.inters...),
+		predicates: append([]predicate.DeviceGpuMission{}, dgmq.predicates...),
+		withDevice: dgmq.withDevice.Clone(),
+		withGpu:    dgmq.withGpu.Clone(),
 		// clone intermediate query.
 		sql:  dgmq.sql.Clone(),
 		path: dgmq.path,
@@ -338,17 +313,6 @@ func (dgmq *DeviceGpuMissionQuery) WithDevice(opts ...func(*DeviceQuery)) *Devic
 		opt(query)
 	}
 	dgmq.withDevice = query
-	return dgmq
-}
-
-// WithMissionKind tells the query-builder to eager-load the nodes that are connected to
-// the "mission_kind" edge. The optional arguments are used to configure the query builder of the edge.
-func (dgmq *DeviceGpuMissionQuery) WithMissionKind(opts ...func(*MissionKindQuery)) *DeviceGpuMissionQuery {
-	query := (&MissionKindClient{config: dgmq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	dgmq.withMissionKind = query
 	return dgmq
 }
 
@@ -441,9 +405,8 @@ func (dgmq *DeviceGpuMissionQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	var (
 		nodes       = []*DeviceGpuMission{}
 		_spec       = dgmq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [2]bool{
 			dgmq.withDevice != nil,
-			dgmq.withMissionKind != nil,
 			dgmq.withGpu != nil,
 		}
 	)
@@ -468,12 +431,6 @@ func (dgmq *DeviceGpuMissionQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	if query := dgmq.withDevice; query != nil {
 		if err := dgmq.loadDevice(ctx, query, nodes, nil,
 			func(n *DeviceGpuMission, e *Device) { n.Edges.Device = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := dgmq.withMissionKind; query != nil {
-		if err := dgmq.loadMissionKind(ctx, query, nodes, nil,
-			func(n *DeviceGpuMission, e *MissionKind) { n.Edges.MissionKind = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -508,35 +465,6 @@ func (dgmq *DeviceGpuMissionQuery) loadDevice(ctx context.Context, query *Device
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "device_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (dgmq *DeviceGpuMissionQuery) loadMissionKind(ctx context.Context, query *MissionKindQuery, nodes []*DeviceGpuMission, init func(*DeviceGpuMission), assign func(*DeviceGpuMission, *MissionKind)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*DeviceGpuMission)
-	for i := range nodes {
-		fk := nodes[i].MissionKindID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(missionkind.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "mission_kind_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -601,9 +529,6 @@ func (dgmq *DeviceGpuMissionQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if dgmq.withDevice != nil {
 			_spec.Node.AddColumnOnce(devicegpumission.FieldDeviceID)
-		}
-		if dgmq.withMissionKind != nil {
-			_spec.Node.AddColumnOnce(devicegpumission.FieldMissionKindID)
 		}
 		if dgmq.withGpu != nil {
 			_spec.Node.AddColumnOnce(devicegpumission.FieldGpuID)

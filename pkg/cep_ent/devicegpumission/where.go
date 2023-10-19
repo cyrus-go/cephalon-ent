@@ -91,14 +91,14 @@ func GpuID(v int64) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldEQ(FieldGpuID, v))
 }
 
-// MissionKindID applies equality check predicate on the "mission_kind_id" field. It's identical to MissionKindIDEQ.
-func MissionKindID(v int64) predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(sql.FieldEQ(FieldMissionKindID, v))
-}
-
 // DeviceSlot applies equality check predicate on the "device_slot" field. It's identical to DeviceSlotEQ.
 func DeviceSlot(v int8) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldEQ(FieldDeviceSlot, v))
+}
+
+// MaxOnlineMission applies equality check predicate on the "max_online_mission" field. It's identical to MaxOnlineMissionEQ.
+func MaxOnlineMission(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldEQ(FieldMaxOnlineMission, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -341,24 +341,14 @@ func GpuIDNotIn(vs ...int64) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldGpuID, vs...))
 }
 
-// MissionKindIDEQ applies the EQ predicate on the "mission_kind_id" field.
-func MissionKindIDEQ(v int64) predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(sql.FieldEQ(FieldMissionKindID, v))
+// AbleMissionKindIsNil applies the IsNil predicate on the "able_mission_kind" field.
+func AbleMissionKindIsNil() predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldIsNull(FieldAbleMissionKind))
 }
 
-// MissionKindIDNEQ applies the NEQ predicate on the "mission_kind_id" field.
-func MissionKindIDNEQ(v int64) predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(sql.FieldNEQ(FieldMissionKindID, v))
-}
-
-// MissionKindIDIn applies the In predicate on the "mission_kind_id" field.
-func MissionKindIDIn(vs ...int64) predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(sql.FieldIn(FieldMissionKindID, vs...))
-}
-
-// MissionKindIDNotIn applies the NotIn predicate on the "mission_kind_id" field.
-func MissionKindIDNotIn(vs ...int64) predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldMissionKindID, vs...))
+// AbleMissionKindNotNil applies the NotNil predicate on the "able_mission_kind" field.
+func AbleMissionKindNotNil() predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldNotNull(FieldAbleMissionKind))
 }
 
 // DeviceSlotEQ applies the EQ predicate on the "device_slot" field.
@@ -401,6 +391,46 @@ func DeviceSlotLTE(v int8) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldLTE(FieldDeviceSlot, v))
 }
 
+// MaxOnlineMissionEQ applies the EQ predicate on the "max_online_mission" field.
+func MaxOnlineMissionEQ(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldEQ(FieldMaxOnlineMission, v))
+}
+
+// MaxOnlineMissionNEQ applies the NEQ predicate on the "max_online_mission" field.
+func MaxOnlineMissionNEQ(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldNEQ(FieldMaxOnlineMission, v))
+}
+
+// MaxOnlineMissionIn applies the In predicate on the "max_online_mission" field.
+func MaxOnlineMissionIn(vs ...int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldIn(FieldMaxOnlineMission, vs...))
+}
+
+// MaxOnlineMissionNotIn applies the NotIn predicate on the "max_online_mission" field.
+func MaxOnlineMissionNotIn(vs ...int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldMaxOnlineMission, vs...))
+}
+
+// MaxOnlineMissionGT applies the GT predicate on the "max_online_mission" field.
+func MaxOnlineMissionGT(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldGT(FieldMaxOnlineMission, v))
+}
+
+// MaxOnlineMissionGTE applies the GTE predicate on the "max_online_mission" field.
+func MaxOnlineMissionGTE(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldGTE(FieldMaxOnlineMission, v))
+}
+
+// MaxOnlineMissionLT applies the LT predicate on the "max_online_mission" field.
+func MaxOnlineMissionLT(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldLT(FieldMaxOnlineMission, v))
+}
+
+// MaxOnlineMissionLTE applies the LTE predicate on the "max_online_mission" field.
+func MaxOnlineMissionLTE(v int8) predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldLTE(FieldMaxOnlineMission, v))
+}
+
 // GpuStatusEQ applies the EQ predicate on the "gpu_status" field.
 func GpuStatusEQ(v enums.DeviceStatus) predicate.DeviceGpuMission {
 	vc := v
@@ -431,6 +461,16 @@ func GpuStatusNotIn(vs ...enums.DeviceStatus) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(sql.FieldNotIn(FieldGpuStatus, v...))
 }
 
+// MissionIDIsNil applies the IsNil predicate on the "mission_id" field.
+func MissionIDIsNil() predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldIsNull(FieldMissionID))
+}
+
+// MissionIDNotNil applies the NotNil predicate on the "mission_id" field.
+func MissionIDNotNil() predicate.DeviceGpuMission {
+	return predicate.DeviceGpuMission(sql.FieldNotNull(FieldMissionID))
+}
+
 // HasDevice applies the HasEdge predicate on the "device" edge.
 func HasDevice() predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(func(s *sql.Selector) {
@@ -446,29 +486,6 @@ func HasDevice() predicate.DeviceGpuMission {
 func HasDeviceWith(preds ...predicate.Device) predicate.DeviceGpuMission {
 	return predicate.DeviceGpuMission(func(s *sql.Selector) {
 		step := newDeviceStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.
-func HasMissionKind() predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, MissionKindTable, MissionKindColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionKindWith applies the HasEdge predicate on the "mission_kind" edge with a given conditions (other predicates).
-func HasMissionKindWith(preds ...predicate.MissionKind) predicate.DeviceGpuMission {
-	return predicate.DeviceGpuMission(func(s *sql.Selector) {
-		step := newMissionKindStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

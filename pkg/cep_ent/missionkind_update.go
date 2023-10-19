@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -135,21 +134,6 @@ func (mku *MissionKindUpdate) SetNillableBillingType(ebt *enums.MissionBillingTy
 	return mku
 }
 
-// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
-func (mku *MissionKindUpdate) AddDeviceGpuMissionIDs(ids ...int64) *MissionKindUpdate {
-	mku.mutation.AddDeviceGpuMissionIDs(ids...)
-	return mku
-}
-
-// AddDeviceGpuMissions adds the "device_gpu_missions" edges to the DeviceGpuMission entity.
-func (mku *MissionKindUpdate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *MissionKindUpdate {
-	ids := make([]int64, len(d))
-	for i := range d {
-		ids[i] = d[i].ID
-	}
-	return mku.AddDeviceGpuMissionIDs(ids...)
-}
-
 // AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
 func (mku *MissionKindUpdate) AddMissionIDs(ids ...int64) *MissionKindUpdate {
 	mku.mutation.AddMissionIDs(ids...)
@@ -168,27 +152,6 @@ func (mku *MissionKindUpdate) AddMissions(m ...*Mission) *MissionKindUpdate {
 // Mutation returns the MissionKindMutation object of the builder.
 func (mku *MissionKindUpdate) Mutation() *MissionKindMutation {
 	return mku.mutation
-}
-
-// ClearDeviceGpuMissions clears all "device_gpu_missions" edges to the DeviceGpuMission entity.
-func (mku *MissionKindUpdate) ClearDeviceGpuMissions() *MissionKindUpdate {
-	mku.mutation.ClearDeviceGpuMissions()
-	return mku
-}
-
-// RemoveDeviceGpuMissionIDs removes the "device_gpu_missions" edge to DeviceGpuMission entities by IDs.
-func (mku *MissionKindUpdate) RemoveDeviceGpuMissionIDs(ids ...int64) *MissionKindUpdate {
-	mku.mutation.RemoveDeviceGpuMissionIDs(ids...)
-	return mku
-}
-
-// RemoveDeviceGpuMissions removes "device_gpu_missions" edges to DeviceGpuMission entities.
-func (mku *MissionKindUpdate) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *MissionKindUpdate {
-	ids := make([]int64, len(d))
-	for i := range d {
-		ids[i] = d[i].ID
-	}
-	return mku.RemoveDeviceGpuMissionIDs(ids...)
 }
 
 // ClearMissions clears all "missions" edges to the Mission entity.
@@ -306,51 +269,6 @@ func (mku *MissionKindUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mku.mutation.BillingType(); ok {
 		_spec.SetField(missionkind.FieldBillingType, field.TypeEnum, value)
-	}
-	if mku.mutation.DeviceGpuMissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mku.mutation.RemovedDeviceGpuMissionsIDs(); len(nodes) > 0 && !mku.mutation.DeviceGpuMissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mku.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if mku.mutation.MissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -521,21 +439,6 @@ func (mkuo *MissionKindUpdateOne) SetNillableBillingType(ebt *enums.MissionBilli
 	return mkuo
 }
 
-// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
-func (mkuo *MissionKindUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *MissionKindUpdateOne {
-	mkuo.mutation.AddDeviceGpuMissionIDs(ids...)
-	return mkuo
-}
-
-// AddDeviceGpuMissions adds the "device_gpu_missions" edges to the DeviceGpuMission entity.
-func (mkuo *MissionKindUpdateOne) AddDeviceGpuMissions(d ...*DeviceGpuMission) *MissionKindUpdateOne {
-	ids := make([]int64, len(d))
-	for i := range d {
-		ids[i] = d[i].ID
-	}
-	return mkuo.AddDeviceGpuMissionIDs(ids...)
-}
-
 // AddMissionIDs adds the "missions" edge to the Mission entity by IDs.
 func (mkuo *MissionKindUpdateOne) AddMissionIDs(ids ...int64) *MissionKindUpdateOne {
 	mkuo.mutation.AddMissionIDs(ids...)
@@ -554,27 +457,6 @@ func (mkuo *MissionKindUpdateOne) AddMissions(m ...*Mission) *MissionKindUpdateO
 // Mutation returns the MissionKindMutation object of the builder.
 func (mkuo *MissionKindUpdateOne) Mutation() *MissionKindMutation {
 	return mkuo.mutation
-}
-
-// ClearDeviceGpuMissions clears all "device_gpu_missions" edges to the DeviceGpuMission entity.
-func (mkuo *MissionKindUpdateOne) ClearDeviceGpuMissions() *MissionKindUpdateOne {
-	mkuo.mutation.ClearDeviceGpuMissions()
-	return mkuo
-}
-
-// RemoveDeviceGpuMissionIDs removes the "device_gpu_missions" edge to DeviceGpuMission entities by IDs.
-func (mkuo *MissionKindUpdateOne) RemoveDeviceGpuMissionIDs(ids ...int64) *MissionKindUpdateOne {
-	mkuo.mutation.RemoveDeviceGpuMissionIDs(ids...)
-	return mkuo
-}
-
-// RemoveDeviceGpuMissions removes "device_gpu_missions" edges to DeviceGpuMission entities.
-func (mkuo *MissionKindUpdateOne) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *MissionKindUpdateOne {
-	ids := make([]int64, len(d))
-	for i := range d {
-		ids[i] = d[i].ID
-	}
-	return mkuo.RemoveDeviceGpuMissionIDs(ids...)
 }
 
 // ClearMissions clears all "missions" edges to the Mission entity.
@@ -722,51 +604,6 @@ func (mkuo *MissionKindUpdateOne) sqlSave(ctx context.Context) (_node *MissionKi
 	}
 	if value, ok := mkuo.mutation.BillingType(); ok {
 		_spec.SetField(missionkind.FieldBillingType, field.TypeEnum, value)
-	}
-	if mkuo.mutation.DeviceGpuMissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mkuo.mutation.RemovedDeviceGpuMissionsIDs(); len(nodes) > 0 && !mkuo.mutation.DeviceGpuMissionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := mkuo.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   missionkind.DeviceGpuMissionsTable,
-			Columns: []string{missionkind.DeviceGpuMissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if mkuo.mutation.MissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

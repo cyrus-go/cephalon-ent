@@ -9682,29 +9682,31 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 // DeviceGpuMissionMutation represents an operation that mutates the DeviceGpuMission nodes in the graph.
 type DeviceGpuMissionMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int64
-	created_by          *int64
-	addcreated_by       *int64
-	updated_by          *int64
-	addupdated_by       *int64
-	created_at          *time.Time
-	updated_at          *time.Time
-	deleted_at          *time.Time
-	device_slot         *int8
-	adddevice_slot      *int8
-	gpu_status          *enums.DeviceStatus
-	clearedFields       map[string]struct{}
-	device              *int64
-	cleareddevice       bool
-	mission_kind        *int64
-	clearedmission_kind bool
-	gpu                 *int64
-	clearedgpu          bool
-	done                bool
-	oldValue            func(context.Context) (*DeviceGpuMission, error)
-	predicates          []predicate.DeviceGpuMission
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	able_mission_kind     *[]string
+	device_slot           *int8
+	adddevice_slot        *int8
+	max_online_mission    *int8
+	addmax_online_mission *int8
+	gpu_status            *enums.DeviceStatus
+	mission_id            *[]int64
+	clearedFields         map[string]struct{}
+	device                *int64
+	cleareddevice         bool
+	gpu                   *int64
+	clearedgpu            bool
+	done                  bool
+	oldValue              func(context.Context) (*DeviceGpuMission, error)
+	predicates            []predicate.DeviceGpuMission
 }
 
 var _ ent.Mutation = (*DeviceGpuMissionMutation)(nil)
@@ -10103,40 +10105,53 @@ func (m *DeviceGpuMissionMutation) ResetGpuID() {
 	m.gpu = nil
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (m *DeviceGpuMissionMutation) SetMissionKindID(i int64) {
-	m.mission_kind = &i
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (m *DeviceGpuMissionMutation) SetAbleMissionKind(s []string) {
+	m.able_mission_kind = &s
 }
 
-// MissionKindID returns the value of the "mission_kind_id" field in the mutation.
-func (m *DeviceGpuMissionMutation) MissionKindID() (r int64, exists bool) {
-	v := m.mission_kind
+// AbleMissionKind returns the value of the "able_mission_kind" field in the mutation.
+func (m *DeviceGpuMissionMutation) AbleMissionKind() (r []string, exists bool) {
+	v := m.able_mission_kind
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMissionKindID returns the old "mission_kind_id" field's value of the DeviceGpuMission entity.
+// OldAbleMissionKind returns the old "able_mission_kind" field's value of the DeviceGpuMission entity.
 // If the DeviceGpuMission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceGpuMissionMutation) OldMissionKindID(ctx context.Context) (v int64, err error) {
+func (m *DeviceGpuMissionMutation) OldAbleMissionKind(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMissionKindID is only allowed on UpdateOne operations")
+		return v, errors.New("OldAbleMissionKind is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMissionKindID requires an ID field in the mutation")
+		return v, errors.New("OldAbleMissionKind requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMissionKindID: %w", err)
+		return v, fmt.Errorf("querying old value for OldAbleMissionKind: %w", err)
 	}
-	return oldValue.MissionKindID, nil
+	return oldValue.AbleMissionKind, nil
 }
 
-// ResetMissionKindID resets all changes to the "mission_kind_id" field.
-func (m *DeviceGpuMissionMutation) ResetMissionKindID() {
-	m.mission_kind = nil
+// ClearAbleMissionKind clears the value of the "able_mission_kind" field.
+func (m *DeviceGpuMissionMutation) ClearAbleMissionKind() {
+	m.able_mission_kind = nil
+	m.clearedFields[devicegpumission.FieldAbleMissionKind] = struct{}{}
+}
+
+// AbleMissionKindCleared returns if the "able_mission_kind" field was cleared in this mutation.
+func (m *DeviceGpuMissionMutation) AbleMissionKindCleared() bool {
+	_, ok := m.clearedFields[devicegpumission.FieldAbleMissionKind]
+	return ok
+}
+
+// ResetAbleMissionKind resets all changes to the "able_mission_kind" field.
+func (m *DeviceGpuMissionMutation) ResetAbleMissionKind() {
+	m.able_mission_kind = nil
+	delete(m.clearedFields, devicegpumission.FieldAbleMissionKind)
 }
 
 // SetDeviceSlot sets the "device_slot" field.
@@ -10195,6 +10210,62 @@ func (m *DeviceGpuMissionMutation) ResetDeviceSlot() {
 	m.adddevice_slot = nil
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (m *DeviceGpuMissionMutation) SetMaxOnlineMission(i int8) {
+	m.max_online_mission = &i
+	m.addmax_online_mission = nil
+}
+
+// MaxOnlineMission returns the value of the "max_online_mission" field in the mutation.
+func (m *DeviceGpuMissionMutation) MaxOnlineMission() (r int8, exists bool) {
+	v := m.max_online_mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxOnlineMission returns the old "max_online_mission" field's value of the DeviceGpuMission entity.
+// If the DeviceGpuMission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceGpuMissionMutation) OldMaxOnlineMission(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxOnlineMission is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxOnlineMission requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxOnlineMission: %w", err)
+	}
+	return oldValue.MaxOnlineMission, nil
+}
+
+// AddMaxOnlineMission adds i to the "max_online_mission" field.
+func (m *DeviceGpuMissionMutation) AddMaxOnlineMission(i int8) {
+	if m.addmax_online_mission != nil {
+		*m.addmax_online_mission += i
+	} else {
+		m.addmax_online_mission = &i
+	}
+}
+
+// AddedMaxOnlineMission returns the value that was added to the "max_online_mission" field in this mutation.
+func (m *DeviceGpuMissionMutation) AddedMaxOnlineMission() (r int8, exists bool) {
+	v := m.addmax_online_mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaxOnlineMission resets all changes to the "max_online_mission" field.
+func (m *DeviceGpuMissionMutation) ResetMaxOnlineMission() {
+	m.max_online_mission = nil
+	m.addmax_online_mission = nil
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (m *DeviceGpuMissionMutation) SetGpuStatus(es enums.DeviceStatus) {
 	m.gpu_status = &es
@@ -10231,6 +10302,55 @@ func (m *DeviceGpuMissionMutation) ResetGpuStatus() {
 	m.gpu_status = nil
 }
 
+// SetMissionID sets the "mission_id" field.
+func (m *DeviceGpuMissionMutation) SetMissionID(i []int64) {
+	m.mission_id = &i
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *DeviceGpuMissionMutation) MissionID() (r []int64, exists bool) {
+	v := m.mission_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the DeviceGpuMission entity.
+// If the DeviceGpuMission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceGpuMissionMutation) OldMissionID(ctx context.Context) (v []int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// ClearMissionID clears the value of the "mission_id" field.
+func (m *DeviceGpuMissionMutation) ClearMissionID() {
+	m.mission_id = nil
+	m.clearedFields[devicegpumission.FieldMissionID] = struct{}{}
+}
+
+// MissionIDCleared returns if the "mission_id" field was cleared in this mutation.
+func (m *DeviceGpuMissionMutation) MissionIDCleared() bool {
+	_, ok := m.clearedFields[devicegpumission.FieldMissionID]
+	return ok
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *DeviceGpuMissionMutation) ResetMissionID() {
+	m.mission_id = nil
+	delete(m.clearedFields, devicegpumission.FieldMissionID)
+}
+
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *DeviceGpuMissionMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -10256,33 +10376,6 @@ func (m *DeviceGpuMissionMutation) DeviceIDs() (ids []int64) {
 func (m *DeviceGpuMissionMutation) ResetDevice() {
 	m.device = nil
 	m.cleareddevice = false
-}
-
-// ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
-func (m *DeviceGpuMissionMutation) ClearMissionKind() {
-	m.clearedmission_kind = true
-	m.clearedFields[devicegpumission.FieldMissionKindID] = struct{}{}
-}
-
-// MissionKindCleared reports if the "mission_kind" edge to the MissionKind entity was cleared.
-func (m *DeviceGpuMissionMutation) MissionKindCleared() bool {
-	return m.clearedmission_kind
-}
-
-// MissionKindIDs returns the "mission_kind" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// MissionKindID instead. It exists only for internal usage by the builders.
-func (m *DeviceGpuMissionMutation) MissionKindIDs() (ids []int64) {
-	if id := m.mission_kind; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetMissionKind resets all changes to the "mission_kind" edge.
-func (m *DeviceGpuMissionMutation) ResetMissionKind() {
-	m.mission_kind = nil
-	m.clearedmission_kind = false
 }
 
 // ClearGpu clears the "gpu" edge to the Gpu entity.
@@ -10346,7 +10439,7 @@ func (m *DeviceGpuMissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceGpuMissionMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, devicegpumission.FieldCreatedBy)
 	}
@@ -10368,14 +10461,20 @@ func (m *DeviceGpuMissionMutation) Fields() []string {
 	if m.gpu != nil {
 		fields = append(fields, devicegpumission.FieldGpuID)
 	}
-	if m.mission_kind != nil {
-		fields = append(fields, devicegpumission.FieldMissionKindID)
+	if m.able_mission_kind != nil {
+		fields = append(fields, devicegpumission.FieldAbleMissionKind)
 	}
 	if m.device_slot != nil {
 		fields = append(fields, devicegpumission.FieldDeviceSlot)
 	}
+	if m.max_online_mission != nil {
+		fields = append(fields, devicegpumission.FieldMaxOnlineMission)
+	}
 	if m.gpu_status != nil {
 		fields = append(fields, devicegpumission.FieldGpuStatus)
+	}
+	if m.mission_id != nil {
+		fields = append(fields, devicegpumission.FieldMissionID)
 	}
 	return fields
 }
@@ -10399,12 +10498,16 @@ func (m *DeviceGpuMissionMutation) Field(name string) (ent.Value, bool) {
 		return m.DeviceID()
 	case devicegpumission.FieldGpuID:
 		return m.GpuID()
-	case devicegpumission.FieldMissionKindID:
-		return m.MissionKindID()
+	case devicegpumission.FieldAbleMissionKind:
+		return m.AbleMissionKind()
 	case devicegpumission.FieldDeviceSlot:
 		return m.DeviceSlot()
+	case devicegpumission.FieldMaxOnlineMission:
+		return m.MaxOnlineMission()
 	case devicegpumission.FieldGpuStatus:
 		return m.GpuStatus()
+	case devicegpumission.FieldMissionID:
+		return m.MissionID()
 	}
 	return nil, false
 }
@@ -10428,12 +10531,16 @@ func (m *DeviceGpuMissionMutation) OldField(ctx context.Context, name string) (e
 		return m.OldDeviceID(ctx)
 	case devicegpumission.FieldGpuID:
 		return m.OldGpuID(ctx)
-	case devicegpumission.FieldMissionKindID:
-		return m.OldMissionKindID(ctx)
+	case devicegpumission.FieldAbleMissionKind:
+		return m.OldAbleMissionKind(ctx)
 	case devicegpumission.FieldDeviceSlot:
 		return m.OldDeviceSlot(ctx)
+	case devicegpumission.FieldMaxOnlineMission:
+		return m.OldMaxOnlineMission(ctx)
 	case devicegpumission.FieldGpuStatus:
 		return m.OldGpuStatus(ctx)
+	case devicegpumission.FieldMissionID:
+		return m.OldMissionID(ctx)
 	}
 	return nil, fmt.Errorf("unknown DeviceGpuMission field %s", name)
 }
@@ -10492,12 +10599,12 @@ func (m *DeviceGpuMissionMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetGpuID(v)
 		return nil
-	case devicegpumission.FieldMissionKindID:
-		v, ok := value.(int64)
+	case devicegpumission.FieldAbleMissionKind:
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMissionKindID(v)
+		m.SetAbleMissionKind(v)
 		return nil
 	case devicegpumission.FieldDeviceSlot:
 		v, ok := value.(int8)
@@ -10506,12 +10613,26 @@ func (m *DeviceGpuMissionMutation) SetField(name string, value ent.Value) error 
 		}
 		m.SetDeviceSlot(v)
 		return nil
+	case devicegpumission.FieldMaxOnlineMission:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxOnlineMission(v)
+		return nil
 	case devicegpumission.FieldGpuStatus:
 		v, ok := value.(enums.DeviceStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGpuStatus(v)
+		return nil
+	case devicegpumission.FieldMissionID:
+		v, ok := value.([]int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission field %s", name)
@@ -10530,6 +10651,9 @@ func (m *DeviceGpuMissionMutation) AddedFields() []string {
 	if m.adddevice_slot != nil {
 		fields = append(fields, devicegpumission.FieldDeviceSlot)
 	}
+	if m.addmax_online_mission != nil {
+		fields = append(fields, devicegpumission.FieldMaxOnlineMission)
+	}
 	return fields
 }
 
@@ -10544,6 +10668,8 @@ func (m *DeviceGpuMissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case devicegpumission.FieldDeviceSlot:
 		return m.AddedDeviceSlot()
+	case devicegpumission.FieldMaxOnlineMission:
+		return m.AddedMaxOnlineMission()
 	}
 	return nil, false
 }
@@ -10574,6 +10700,13 @@ func (m *DeviceGpuMissionMutation) AddField(name string, value ent.Value) error 
 		}
 		m.AddDeviceSlot(v)
 		return nil
+	case devicegpumission.FieldMaxOnlineMission:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxOnlineMission(v)
+		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission numeric field %s", name)
 }
@@ -10581,7 +10714,14 @@ func (m *DeviceGpuMissionMutation) AddField(name string, value ent.Value) error 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *DeviceGpuMissionMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(devicegpumission.FieldAbleMissionKind) {
+		fields = append(fields, devicegpumission.FieldAbleMissionKind)
+	}
+	if m.FieldCleared(devicegpumission.FieldMissionID) {
+		fields = append(fields, devicegpumission.FieldMissionID)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -10594,6 +10734,14 @@ func (m *DeviceGpuMissionMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *DeviceGpuMissionMutation) ClearField(name string) error {
+	switch name {
+	case devicegpumission.FieldAbleMissionKind:
+		m.ClearAbleMissionKind()
+		return nil
+	case devicegpumission.FieldMissionID:
+		m.ClearMissionID()
+		return nil
+	}
 	return fmt.Errorf("unknown DeviceGpuMission nullable field %s", name)
 }
 
@@ -10622,14 +10770,20 @@ func (m *DeviceGpuMissionMutation) ResetField(name string) error {
 	case devicegpumission.FieldGpuID:
 		m.ResetGpuID()
 		return nil
-	case devicegpumission.FieldMissionKindID:
-		m.ResetMissionKindID()
+	case devicegpumission.FieldAbleMissionKind:
+		m.ResetAbleMissionKind()
 		return nil
 	case devicegpumission.FieldDeviceSlot:
 		m.ResetDeviceSlot()
 		return nil
+	case devicegpumission.FieldMaxOnlineMission:
+		m.ResetMaxOnlineMission()
+		return nil
 	case devicegpumission.FieldGpuStatus:
 		m.ResetGpuStatus()
+		return nil
+	case devicegpumission.FieldMissionID:
+		m.ResetMissionID()
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission field %s", name)
@@ -10637,12 +10791,9 @@ func (m *DeviceGpuMissionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceGpuMissionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	if m.device != nil {
 		edges = append(edges, devicegpumission.EdgeDevice)
-	}
-	if m.mission_kind != nil {
-		edges = append(edges, devicegpumission.EdgeMissionKind)
 	}
 	if m.gpu != nil {
 		edges = append(edges, devicegpumission.EdgeGpu)
@@ -10658,10 +10809,6 @@ func (m *DeviceGpuMissionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.device; id != nil {
 			return []ent.Value{*id}
 		}
-	case devicegpumission.EdgeMissionKind:
-		if id := m.mission_kind; id != nil {
-			return []ent.Value{*id}
-		}
 	case devicegpumission.EdgeGpu:
 		if id := m.gpu; id != nil {
 			return []ent.Value{*id}
@@ -10672,7 +10819,7 @@ func (m *DeviceGpuMissionMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceGpuMissionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -10684,12 +10831,9 @@ func (m *DeviceGpuMissionMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceGpuMissionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	if m.cleareddevice {
 		edges = append(edges, devicegpumission.EdgeDevice)
-	}
-	if m.clearedmission_kind {
-		edges = append(edges, devicegpumission.EdgeMissionKind)
 	}
 	if m.clearedgpu {
 		edges = append(edges, devicegpumission.EdgeGpu)
@@ -10703,8 +10847,6 @@ func (m *DeviceGpuMissionMutation) EdgeCleared(name string) bool {
 	switch name {
 	case devicegpumission.EdgeDevice:
 		return m.cleareddevice
-	case devicegpumission.EdgeMissionKind:
-		return m.clearedmission_kind
 	case devicegpumission.EdgeGpu:
 		return m.clearedgpu
 	}
@@ -10717,9 +10859,6 @@ func (m *DeviceGpuMissionMutation) ClearEdge(name string) error {
 	switch name {
 	case devicegpumission.EdgeDevice:
 		m.ClearDevice()
-		return nil
-	case devicegpumission.EdgeMissionKind:
-		m.ClearMissionKind()
 		return nil
 	case devicegpumission.EdgeGpu:
 		m.ClearGpu()
@@ -10734,9 +10873,6 @@ func (m *DeviceGpuMissionMutation) ResetEdge(name string) error {
 	switch name {
 	case devicegpumission.EdgeDevice:
 		m.ResetDevice()
-		return nil
-	case devicegpumission.EdgeMissionKind:
-		m.ResetMissionKind()
 		return nil
 	case devicegpumission.EdgeGpu:
 		m.ResetGpu()
@@ -28533,29 +28669,26 @@ func (m *MissionKeyPairMutation) ResetEdge(name string) error {
 // MissionKindMutation represents an operation that mutates the MissionKind nodes in the graph.
 type MissionKindMutation struct {
 	config
-	op                         Op
-	typ                        string
-	id                         *int64
-	created_by                 *int64
-	addcreated_by              *int64
-	updated_by                 *int64
-	addupdated_by              *int64
-	created_at                 *time.Time
-	updated_at                 *time.Time
-	deleted_at                 *time.Time
-	_type                      *enums.MissionType
-	category                   *enums.MissionCategory
-	billing_type               *enums.MissionBillingType
-	clearedFields              map[string]struct{}
-	device_gpu_missions        map[int64]struct{}
-	removeddevice_gpu_missions map[int64]struct{}
-	cleareddevice_gpu_missions bool
-	missions                   map[int64]struct{}
-	removedmissions            map[int64]struct{}
-	clearedmissions            bool
-	done                       bool
-	oldValue                   func(context.Context) (*MissionKind, error)
-	predicates                 []predicate.MissionKind
+	op              Op
+	typ             string
+	id              *int64
+	created_by      *int64
+	addcreated_by   *int64
+	updated_by      *int64
+	addupdated_by   *int64
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	_type           *enums.MissionType
+	category        *enums.MissionCategory
+	billing_type    *enums.MissionBillingType
+	clearedFields   map[string]struct{}
+	missions        map[int64]struct{}
+	removedmissions map[int64]struct{}
+	clearedmissions bool
+	done            bool
+	oldValue        func(context.Context) (*MissionKind, error)
+	predicates      []predicate.MissionKind
 }
 
 var _ ent.Mutation = (*MissionKindMutation)(nil)
@@ -28990,60 +29123,6 @@ func (m *MissionKindMutation) ResetBillingType() {
 	m.billing_type = nil
 }
 
-// AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
-func (m *MissionKindMutation) AddDeviceGpuMissionIDs(ids ...int64) {
-	if m.device_gpu_missions == nil {
-		m.device_gpu_missions = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.device_gpu_missions[ids[i]] = struct{}{}
-	}
-}
-
-// ClearDeviceGpuMissions clears the "device_gpu_missions" edge to the DeviceGpuMission entity.
-func (m *MissionKindMutation) ClearDeviceGpuMissions() {
-	m.cleareddevice_gpu_missions = true
-}
-
-// DeviceGpuMissionsCleared reports if the "device_gpu_missions" edge to the DeviceGpuMission entity was cleared.
-func (m *MissionKindMutation) DeviceGpuMissionsCleared() bool {
-	return m.cleareddevice_gpu_missions
-}
-
-// RemoveDeviceGpuMissionIDs removes the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
-func (m *MissionKindMutation) RemoveDeviceGpuMissionIDs(ids ...int64) {
-	if m.removeddevice_gpu_missions == nil {
-		m.removeddevice_gpu_missions = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.device_gpu_missions, ids[i])
-		m.removeddevice_gpu_missions[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedDeviceGpuMissions returns the removed IDs of the "device_gpu_missions" edge to the DeviceGpuMission entity.
-func (m *MissionKindMutation) RemovedDeviceGpuMissionsIDs() (ids []int64) {
-	for id := range m.removeddevice_gpu_missions {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// DeviceGpuMissionsIDs returns the "device_gpu_missions" edge IDs in the mutation.
-func (m *MissionKindMutation) DeviceGpuMissionsIDs() (ids []int64) {
-	for id := range m.device_gpu_missions {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetDeviceGpuMissions resets all changes to the "device_gpu_missions" edge.
-func (m *MissionKindMutation) ResetDeviceGpuMissions() {
-	m.device_gpu_missions = nil
-	m.cleareddevice_gpu_missions = false
-	m.removeddevice_gpu_missions = nil
-}
-
 // AddMissionIDs adds the "missions" edge to the Mission entity by ids.
 func (m *MissionKindMutation) AddMissionIDs(ids ...int64) {
 	if m.missions == nil {
@@ -29377,10 +29456,7 @@ func (m *MissionKindMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionKindMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.device_gpu_missions != nil {
-		edges = append(edges, missionkind.EdgeDeviceGpuMissions)
-	}
+	edges := make([]string, 0, 1)
 	if m.missions != nil {
 		edges = append(edges, missionkind.EdgeMissions)
 	}
@@ -29391,12 +29467,6 @@ func (m *MissionKindMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *MissionKindMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case missionkind.EdgeDeviceGpuMissions:
-		ids := make([]ent.Value, 0, len(m.device_gpu_missions))
-		for id := range m.device_gpu_missions {
-			ids = append(ids, id)
-		}
-		return ids
 	case missionkind.EdgeMissions:
 		ids := make([]ent.Value, 0, len(m.missions))
 		for id := range m.missions {
@@ -29409,10 +29479,7 @@ func (m *MissionKindMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionKindMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removeddevice_gpu_missions != nil {
-		edges = append(edges, missionkind.EdgeDeviceGpuMissions)
-	}
+	edges := make([]string, 0, 1)
 	if m.removedmissions != nil {
 		edges = append(edges, missionkind.EdgeMissions)
 	}
@@ -29423,12 +29490,6 @@ func (m *MissionKindMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *MissionKindMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case missionkind.EdgeDeviceGpuMissions:
-		ids := make([]ent.Value, 0, len(m.removeddevice_gpu_missions))
-		for id := range m.removeddevice_gpu_missions {
-			ids = append(ids, id)
-		}
-		return ids
 	case missionkind.EdgeMissions:
 		ids := make([]ent.Value, 0, len(m.removedmissions))
 		for id := range m.removedmissions {
@@ -29441,10 +29502,7 @@ func (m *MissionKindMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionKindMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.cleareddevice_gpu_missions {
-		edges = append(edges, missionkind.EdgeDeviceGpuMissions)
-	}
+	edges := make([]string, 0, 1)
 	if m.clearedmissions {
 		edges = append(edges, missionkind.EdgeMissions)
 	}
@@ -29455,8 +29513,6 @@ func (m *MissionKindMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *MissionKindMutation) EdgeCleared(name string) bool {
 	switch name {
-	case missionkind.EdgeDeviceGpuMissions:
-		return m.cleareddevice_gpu_missions
 	case missionkind.EdgeMissions:
 		return m.clearedmissions
 	}
@@ -29475,9 +29531,6 @@ func (m *MissionKindMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *MissionKindMutation) ResetEdge(name string) error {
 	switch name {
-	case missionkind.EdgeDeviceGpuMissions:
-		m.ResetDeviceGpuMissions()
-		return nil
 	case missionkind.EdgeMissions:
 		m.ResetMissions()
 		return nil

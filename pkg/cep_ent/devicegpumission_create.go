@@ -14,7 +14,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -124,17 +123,9 @@ func (dgmc *DeviceGpuMissionCreate) SetNillableGpuID(i *int64) *DeviceGpuMission
 	return dgmc
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (dgmc *DeviceGpuMissionCreate) SetMissionKindID(i int64) *DeviceGpuMissionCreate {
-	dgmc.mutation.SetMissionKindID(i)
-	return dgmc
-}
-
-// SetNillableMissionKindID sets the "mission_kind_id" field if the given value is not nil.
-func (dgmc *DeviceGpuMissionCreate) SetNillableMissionKindID(i *int64) *DeviceGpuMissionCreate {
-	if i != nil {
-		dgmc.SetMissionKindID(*i)
-	}
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (dgmc *DeviceGpuMissionCreate) SetAbleMissionKind(s []string) *DeviceGpuMissionCreate {
+	dgmc.mutation.SetAbleMissionKind(s)
 	return dgmc
 }
 
@@ -152,6 +143,20 @@ func (dgmc *DeviceGpuMissionCreate) SetNillableDeviceSlot(i *int8) *DeviceGpuMis
 	return dgmc
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (dgmc *DeviceGpuMissionCreate) SetMaxOnlineMission(i int8) *DeviceGpuMissionCreate {
+	dgmc.mutation.SetMaxOnlineMission(i)
+	return dgmc
+}
+
+// SetNillableMaxOnlineMission sets the "max_online_mission" field if the given value is not nil.
+func (dgmc *DeviceGpuMissionCreate) SetNillableMaxOnlineMission(i *int8) *DeviceGpuMissionCreate {
+	if i != nil {
+		dgmc.SetMaxOnlineMission(*i)
+	}
+	return dgmc
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (dgmc *DeviceGpuMissionCreate) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionCreate {
 	dgmc.mutation.SetGpuStatus(es)
@@ -163,6 +168,12 @@ func (dgmc *DeviceGpuMissionCreate) SetNillableGpuStatus(es *enums.DeviceStatus)
 	if es != nil {
 		dgmc.SetGpuStatus(*es)
 	}
+	return dgmc
+}
+
+// SetMissionID sets the "mission_id" field.
+func (dgmc *DeviceGpuMissionCreate) SetMissionID(i []int64) *DeviceGpuMissionCreate {
+	dgmc.mutation.SetMissionID(i)
 	return dgmc
 }
 
@@ -183,11 +194,6 @@ func (dgmc *DeviceGpuMissionCreate) SetNillableID(i *int64) *DeviceGpuMissionCre
 // SetDevice sets the "device" edge to the Device entity.
 func (dgmc *DeviceGpuMissionCreate) SetDevice(d *Device) *DeviceGpuMissionCreate {
 	return dgmc.SetDeviceID(d.ID)
-}
-
-// SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
-func (dgmc *DeviceGpuMissionCreate) SetMissionKind(m *MissionKind) *DeviceGpuMissionCreate {
-	return dgmc.SetMissionKindID(m.ID)
 }
 
 // SetGpu sets the "gpu" edge to the Gpu entity.
@@ -258,13 +264,13 @@ func (dgmc *DeviceGpuMissionCreate) defaults() {
 		v := devicegpumission.DefaultGpuID
 		dgmc.mutation.SetGpuID(v)
 	}
-	if _, ok := dgmc.mutation.MissionKindID(); !ok {
-		v := devicegpumission.DefaultMissionKindID
-		dgmc.mutation.SetMissionKindID(v)
-	}
 	if _, ok := dgmc.mutation.DeviceSlot(); !ok {
 		v := devicegpumission.DefaultDeviceSlot
 		dgmc.mutation.SetDeviceSlot(v)
+	}
+	if _, ok := dgmc.mutation.MaxOnlineMission(); !ok {
+		v := devicegpumission.DefaultMaxOnlineMission
+		dgmc.mutation.SetMaxOnlineMission(v)
 	}
 	if _, ok := dgmc.mutation.GpuStatus(); !ok {
 		v := devicegpumission.DefaultGpuStatus
@@ -299,11 +305,11 @@ func (dgmc *DeviceGpuMissionCreate) check() error {
 	if _, ok := dgmc.mutation.GpuID(); !ok {
 		return &ValidationError{Name: "gpu_id", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.gpu_id"`)}
 	}
-	if _, ok := dgmc.mutation.MissionKindID(); !ok {
-		return &ValidationError{Name: "mission_kind_id", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.mission_kind_id"`)}
-	}
 	if _, ok := dgmc.mutation.DeviceSlot(); !ok {
 		return &ValidationError{Name: "device_slot", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.device_slot"`)}
+	}
+	if _, ok := dgmc.mutation.MaxOnlineMission(); !ok {
+		return &ValidationError{Name: "max_online_mission", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.max_online_mission"`)}
 	}
 	if _, ok := dgmc.mutation.GpuStatus(); !ok {
 		return &ValidationError{Name: "gpu_status", err: errors.New(`cep_ent: missing required field "DeviceGpuMission.gpu_status"`)}
@@ -316,9 +322,6 @@ func (dgmc *DeviceGpuMissionCreate) check() error {
 	if _, ok := dgmc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "DeviceGpuMission.device"`)}
 	}
-	if _, ok := dgmc.mutation.MissionKindID(); !ok {
-		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "DeviceGpuMission.mission_kind"`)}
-	}
 	if _, ok := dgmc.mutation.GpuID(); !ok {
 		return &ValidationError{Name: "gpu", err: errors.New(`cep_ent: missing required edge "DeviceGpuMission.gpu"`)}
 	}
@@ -329,7 +332,10 @@ func (dgmc *DeviceGpuMissionCreate) sqlSave(ctx context.Context) (*DeviceGpuMiss
 	if err := dgmc.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := dgmc.createSpec()
+	_node, _spec, err := dgmc.createSpec()
+	if err != nil {
+		return nil, err
+	}
 	if err := sqlgraph.CreateNode(ctx, dgmc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
@@ -345,7 +351,7 @@ func (dgmc *DeviceGpuMissionCreate) sqlSave(ctx context.Context) (*DeviceGpuMiss
 	return _node, nil
 }
 
-func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.CreateSpec) {
+func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.CreateSpec, error) {
 	var (
 		_node = &DeviceGpuMission{config: dgmc.config}
 		_spec = sqlgraph.NewCreateSpec(devicegpumission.Table, sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64))
@@ -375,13 +381,33 @@ func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.C
 		_spec.SetField(devicegpumission.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
+	if value, ok := dgmc.mutation.AbleMissionKind(); ok {
+		vv, err := devicegpumission.ValueScanner.AbleMissionKind.Value(value)
+		if err != nil {
+			return nil, nil, err
+		}
+		_spec.SetField(devicegpumission.FieldAbleMissionKind, field.TypeString, vv)
+		_node.AbleMissionKind = value
+	}
 	if value, ok := dgmc.mutation.DeviceSlot(); ok {
 		_spec.SetField(devicegpumission.FieldDeviceSlot, field.TypeInt8, value)
 		_node.DeviceSlot = value
 	}
+	if value, ok := dgmc.mutation.MaxOnlineMission(); ok {
+		_spec.SetField(devicegpumission.FieldMaxOnlineMission, field.TypeInt8, value)
+		_node.MaxOnlineMission = value
+	}
 	if value, ok := dgmc.mutation.GpuStatus(); ok {
 		_spec.SetField(devicegpumission.FieldGpuStatus, field.TypeEnum, value)
 		_node.GpuStatus = value
+	}
+	if value, ok := dgmc.mutation.MissionID(); ok {
+		vv, err := devicegpumission.ValueScanner.MissionID.Value(value)
+		if err != nil {
+			return nil, nil, err
+		}
+		_spec.SetField(devicegpumission.FieldMissionID, field.TypeString, vv)
+		_node.MissionID = value
 	}
 	if nodes := dgmc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -398,23 +424,6 @@ func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.C
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.DeviceID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := dgmc.mutation.MissionKindIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   devicegpumission.MissionKindTable,
-			Columns: []string{devicegpumission.MissionKindColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionkind.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.MissionKindID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := dgmc.mutation.GpuIDs(); len(nodes) > 0 {
@@ -434,7 +443,7 @@ func (dgmc *DeviceGpuMissionCreate) createSpec() (*DeviceGpuMission, *sqlgraph.C
 		_node.GpuID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return _node, _spec
+	return _node, _spec, nil
 }
 
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
@@ -570,15 +579,21 @@ func (u *DeviceGpuMissionUpsert) UpdateGpuID() *DeviceGpuMissionUpsert {
 	return u
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (u *DeviceGpuMissionUpsert) SetMissionKindID(v int64) *DeviceGpuMissionUpsert {
-	u.Set(devicegpumission.FieldMissionKindID, v)
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (u *DeviceGpuMissionUpsert) SetAbleMissionKind(v []string) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldAbleMissionKind, v)
 	return u
 }
 
-// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
-func (u *DeviceGpuMissionUpsert) UpdateMissionKindID() *DeviceGpuMissionUpsert {
-	u.SetExcluded(devicegpumission.FieldMissionKindID)
+// UpdateAbleMissionKind sets the "able_mission_kind" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateAbleMissionKind() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldAbleMissionKind)
+	return u
+}
+
+// ClearAbleMissionKind clears the value of the "able_mission_kind" field.
+func (u *DeviceGpuMissionUpsert) ClearAbleMissionKind() *DeviceGpuMissionUpsert {
+	u.SetNull(devicegpumission.FieldAbleMissionKind)
 	return u
 }
 
@@ -600,6 +615,24 @@ func (u *DeviceGpuMissionUpsert) AddDeviceSlot(v int8) *DeviceGpuMissionUpsert {
 	return u
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (u *DeviceGpuMissionUpsert) SetMaxOnlineMission(v int8) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldMaxOnlineMission, v)
+	return u
+}
+
+// UpdateMaxOnlineMission sets the "max_online_mission" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateMaxOnlineMission() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldMaxOnlineMission)
+	return u
+}
+
+// AddMaxOnlineMission adds v to the "max_online_mission" field.
+func (u *DeviceGpuMissionUpsert) AddMaxOnlineMission(v int8) *DeviceGpuMissionUpsert {
+	u.Add(devicegpumission.FieldMaxOnlineMission, v)
+	return u
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (u *DeviceGpuMissionUpsert) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsert {
 	u.Set(devicegpumission.FieldGpuStatus, v)
@@ -609,6 +642,24 @@ func (u *DeviceGpuMissionUpsert) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMi
 // UpdateGpuStatus sets the "gpu_status" field to the value that was provided on create.
 func (u *DeviceGpuMissionUpsert) UpdateGpuStatus() *DeviceGpuMissionUpsert {
 	u.SetExcluded(devicegpumission.FieldGpuStatus)
+	return u
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *DeviceGpuMissionUpsert) SetMissionID(v []int64) *DeviceGpuMissionUpsert {
+	u.Set(devicegpumission.FieldMissionID, v)
+	return u
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsert) UpdateMissionID() *DeviceGpuMissionUpsert {
+	u.SetExcluded(devicegpumission.FieldMissionID)
+	return u
+}
+
+// ClearMissionID clears the value of the "mission_id" field.
+func (u *DeviceGpuMissionUpsert) ClearMissionID() *DeviceGpuMissionUpsert {
+	u.SetNull(devicegpumission.FieldMissionID)
 	return u
 }
 
@@ -761,17 +812,24 @@ func (u *DeviceGpuMissionUpsertOne) UpdateGpuID() *DeviceGpuMissionUpsertOne {
 	})
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (u *DeviceGpuMissionUpsertOne) SetMissionKindID(v int64) *DeviceGpuMissionUpsertOne {
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (u *DeviceGpuMissionUpsertOne) SetAbleMissionKind(v []string) *DeviceGpuMissionUpsertOne {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
-		s.SetMissionKindID(v)
+		s.SetAbleMissionKind(v)
 	})
 }
 
-// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
-func (u *DeviceGpuMissionUpsertOne) UpdateMissionKindID() *DeviceGpuMissionUpsertOne {
+// UpdateAbleMissionKind sets the "able_mission_kind" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateAbleMissionKind() *DeviceGpuMissionUpsertOne {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
-		s.UpdateMissionKindID()
+		s.UpdateAbleMissionKind()
+	})
+}
+
+// ClearAbleMissionKind clears the value of the "able_mission_kind" field.
+func (u *DeviceGpuMissionUpsertOne) ClearAbleMissionKind() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.ClearAbleMissionKind()
 	})
 }
 
@@ -796,6 +854,27 @@ func (u *DeviceGpuMissionUpsertOne) UpdateDeviceSlot() *DeviceGpuMissionUpsertOn
 	})
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (u *DeviceGpuMissionUpsertOne) SetMaxOnlineMission(v int8) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetMaxOnlineMission(v)
+	})
+}
+
+// AddMaxOnlineMission adds v to the "max_online_mission" field.
+func (u *DeviceGpuMissionUpsertOne) AddMaxOnlineMission(v int8) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddMaxOnlineMission(v)
+	})
+}
+
+// UpdateMaxOnlineMission sets the "max_online_mission" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateMaxOnlineMission() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateMaxOnlineMission()
+	})
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (u *DeviceGpuMissionUpsertOne) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsertOne {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
@@ -807,6 +886,27 @@ func (u *DeviceGpuMissionUpsertOne) SetGpuStatus(v enums.DeviceStatus) *DeviceGp
 func (u *DeviceGpuMissionUpsertOne) UpdateGpuStatus() *DeviceGpuMissionUpsertOne {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
 		s.UpdateGpuStatus()
+	})
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *DeviceGpuMissionUpsertOne) SetMissionID(v []int64) *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetMissionID(v)
+	})
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertOne) UpdateMissionID() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateMissionID()
+	})
+}
+
+// ClearMissionID clears the value of the "mission_id" field.
+func (u *DeviceGpuMissionUpsertOne) ClearMissionID() *DeviceGpuMissionUpsertOne {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.ClearMissionID()
 	})
 }
 
@@ -873,7 +973,10 @@ func (dgmcb *DeviceGpuMissionCreateBulk) Save(ctx context.Context) ([]*DeviceGpu
 				}
 				builder.mutation = mutation
 				var err error
-				nodes[i], specs[i] = builder.createSpec()
+				nodes[i], specs[i], err = builder.createSpec()
+				if err != nil {
+					return nil, err
+				}
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, dgmcb.builders[i+1].mutation)
 				} else {
@@ -1125,17 +1228,24 @@ func (u *DeviceGpuMissionUpsertBulk) UpdateGpuID() *DeviceGpuMissionUpsertBulk {
 	})
 }
 
-// SetMissionKindID sets the "mission_kind_id" field.
-func (u *DeviceGpuMissionUpsertBulk) SetMissionKindID(v int64) *DeviceGpuMissionUpsertBulk {
+// SetAbleMissionKind sets the "able_mission_kind" field.
+func (u *DeviceGpuMissionUpsertBulk) SetAbleMissionKind(v []string) *DeviceGpuMissionUpsertBulk {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
-		s.SetMissionKindID(v)
+		s.SetAbleMissionKind(v)
 	})
 }
 
-// UpdateMissionKindID sets the "mission_kind_id" field to the value that was provided on create.
-func (u *DeviceGpuMissionUpsertBulk) UpdateMissionKindID() *DeviceGpuMissionUpsertBulk {
+// UpdateAbleMissionKind sets the "able_mission_kind" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateAbleMissionKind() *DeviceGpuMissionUpsertBulk {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
-		s.UpdateMissionKindID()
+		s.UpdateAbleMissionKind()
+	})
+}
+
+// ClearAbleMissionKind clears the value of the "able_mission_kind" field.
+func (u *DeviceGpuMissionUpsertBulk) ClearAbleMissionKind() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.ClearAbleMissionKind()
 	})
 }
 
@@ -1160,6 +1270,27 @@ func (u *DeviceGpuMissionUpsertBulk) UpdateDeviceSlot() *DeviceGpuMissionUpsertB
 	})
 }
 
+// SetMaxOnlineMission sets the "max_online_mission" field.
+func (u *DeviceGpuMissionUpsertBulk) SetMaxOnlineMission(v int8) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetMaxOnlineMission(v)
+	})
+}
+
+// AddMaxOnlineMission adds v to the "max_online_mission" field.
+func (u *DeviceGpuMissionUpsertBulk) AddMaxOnlineMission(v int8) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.AddMaxOnlineMission(v)
+	})
+}
+
+// UpdateMaxOnlineMission sets the "max_online_mission" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateMaxOnlineMission() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateMaxOnlineMission()
+	})
+}
+
 // SetGpuStatus sets the "gpu_status" field.
 func (u *DeviceGpuMissionUpsertBulk) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsertBulk {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
@@ -1171,6 +1302,27 @@ func (u *DeviceGpuMissionUpsertBulk) SetGpuStatus(v enums.DeviceStatus) *DeviceG
 func (u *DeviceGpuMissionUpsertBulk) UpdateGpuStatus() *DeviceGpuMissionUpsertBulk {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
 		s.UpdateGpuStatus()
+	})
+}
+
+// SetMissionID sets the "mission_id" field.
+func (u *DeviceGpuMissionUpsertBulk) SetMissionID(v []int64) *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.SetMissionID(v)
+	})
+}
+
+// UpdateMissionID sets the "mission_id" field to the value that was provided on create.
+func (u *DeviceGpuMissionUpsertBulk) UpdateMissionID() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.UpdateMissionID()
+	})
+}
+
+// ClearMissionID clears the value of the "mission_id" field.
+func (u *DeviceGpuMissionUpsertBulk) ClearMissionID() *DeviceGpuMissionUpsertBulk {
+	return u.Update(func(s *DeviceGpuMissionUpsert) {
+		s.ClearMissionID()
 	})
 }
 

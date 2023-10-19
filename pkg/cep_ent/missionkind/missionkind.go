@@ -32,19 +32,10 @@ const (
 	FieldCategory = "category"
 	// FieldBillingType holds the string denoting the billing_type field in the database.
 	FieldBillingType = "billing_type"
-	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
-	EdgeDeviceGpuMissions = "device_gpu_missions"
 	// EdgeMissions holds the string denoting the missions edge name in mutations.
 	EdgeMissions = "missions"
 	// Table holds the table name of the missionkind in the database.
 	Table = "mission_kinds"
-	// DeviceGpuMissionsTable is the table that holds the device_gpu_missions relation/edge.
-	DeviceGpuMissionsTable = "device_gpu_missions"
-	// DeviceGpuMissionsInverseTable is the table name for the DeviceGpuMission entity.
-	// It exists in this package in order to avoid circular dependency with the "devicegpumission" package.
-	DeviceGpuMissionsInverseTable = "device_gpu_missions"
-	// DeviceGpuMissionsColumn is the table column denoting the device_gpu_missions relation/edge.
-	DeviceGpuMissionsColumn = "mission_kind_id"
 	// MissionsTable is the table that holds the missions relation/edge.
 	MissionsTable = "missions"
 	// MissionsInverseTable is the table name for the Mission entity.
@@ -178,20 +169,6 @@ func ByBillingType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBillingType, opts...).ToFunc()
 }
 
-// ByDeviceGpuMissionsCount orders the results by device_gpu_missions count.
-func ByDeviceGpuMissionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newDeviceGpuMissionsStep(), opts...)
-	}
-}
-
-// ByDeviceGpuMissions orders the results by device_gpu_missions terms.
-func ByDeviceGpuMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDeviceGpuMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByMissionsCount orders the results by missions count.
 func ByMissionsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -204,13 +181,6 @@ func ByMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
-}
-func newDeviceGpuMissionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(DeviceGpuMissionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, DeviceGpuMissionsTable, DeviceGpuMissionsColumn),
-	)
 }
 func newMissionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

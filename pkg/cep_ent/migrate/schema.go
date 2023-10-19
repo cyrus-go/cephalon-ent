@@ -296,11 +296,13 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "able_mission_kind", Type: field.TypeString, Nullable: true, Comment: "可以接的任务类型", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "device_slot", Type: field.TypeInt8, Comment: "显卡占用设备的插槽", Default: 0},
+		{Name: "max_online_mission", Type: field.TypeInt8, Comment: "最大同时在线任务", Default: 0},
 		{Name: "gpu_status", Type: field.TypeEnum, Comment: "gpu 当前状态", Enums: []string{"online", "offline", "busy", "free"}, Default: "offline"},
+		{Name: "mission_id", Type: field.TypeString, Nullable: true, Comment: "正在做的任务 id", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "gpu_id", Type: field.TypeInt64, Comment: "外键 gpu id", Default: 0},
-		{Name: "mission_kind_id", Type: field.TypeInt64, Comment: "外键任务种类 id", Default: 0},
 	}
 	// DeviceGpuMissionsTable holds the schema information for the "device_gpu_missions" table.
 	DeviceGpuMissionsTable = &schema.Table{
@@ -311,20 +313,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "device_gpu_missions_devices_device_gpu_missions",
-				Columns:    []*schema.Column{DeviceGpuMissionsColumns[8]},
+				Columns:    []*schema.Column{DeviceGpuMissionsColumns[11]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "device_gpu_missions_gpus_device_gpu_missions",
-				Columns:    []*schema.Column{DeviceGpuMissionsColumns[9]},
+				Columns:    []*schema.Column{DeviceGpuMissionsColumns[12]},
 				RefColumns: []*schema.Column{GpusColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "device_gpu_missions_mission_kinds_device_gpu_missions",
-				Columns:    []*schema.Column{DeviceGpuMissionsColumns[10]},
-				RefColumns: []*schema.Column{MissionKindsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -1567,7 +1563,6 @@ func init() {
 	DevicesTable.Annotation = &entsql.Annotation{}
 	DeviceGpuMissionsTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceGpuMissionsTable.ForeignKeys[1].RefTable = GpusTable
-	DeviceGpuMissionsTable.ForeignKeys[2].RefTable = MissionKindsTable
 	DeviceGpuMissionsTable.Annotation = &entsql.Annotation{}
 	EarnBillsTable.ForeignKeys[0].RefTable = MissionProduceOrdersTable
 	EarnBillsTable.ForeignKeys[1].RefTable = PlatformAccountsTable
