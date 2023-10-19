@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -89,6 +90,20 @@ func (pc *PriceCreate) SetDeletedAt(t time.Time) *PriceCreate {
 func (pc *PriceCreate) SetNillableDeletedAt(t *time.Time) *PriceCreate {
 	if t != nil {
 		pc.SetDeletedAt(*t)
+	}
+	return pc
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (pc *PriceCreate) SetGpuID(i int64) *PriceCreate {
+	pc.mutation.SetGpuID(i)
+	return pc
+}
+
+// SetNillableGpuID sets the "gpu_id" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableGpuID(i *int64) *PriceCreate {
+	if i != nil {
+		pc.SetGpuID(*i)
 	}
 	return pc
 }
@@ -233,6 +248,11 @@ func (pc *PriceCreate) SetNillableID(i *int64) *PriceCreate {
 	return pc
 }
 
+// SetGpu sets the "gpu" edge to the Gpu entity.
+func (pc *PriceCreate) SetGpu(g *Gpu) *PriceCreate {
+	return pc.SetGpuID(g.ID)
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (pc *PriceCreate) Mutation() *PriceMutation {
 	return pc.mutation
@@ -288,6 +308,10 @@ func (pc *PriceCreate) defaults() {
 		v := price.DefaultDeletedAt
 		pc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := pc.mutation.GpuID(); !ok {
+		v := price.DefaultGpuID
+		pc.mutation.SetGpuID(v)
+	}
 	if _, ok := pc.mutation.GpuVersion(); !ok {
 		v := price.DefaultGpuVersion
 		pc.mutation.SetGpuVersion(v)
@@ -339,6 +363,9 @@ func (pc *PriceCreate) check() error {
 	if _, ok := pc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`cep_ent: missing required field "Price.deleted_at"`)}
 	}
+	if _, ok := pc.mutation.GpuID(); !ok {
+		return &ValidationError{Name: "gpu_id", err: errors.New(`cep_ent: missing required field "Price.gpu_id"`)}
+	}
 	if _, ok := pc.mutation.GpuVersion(); !ok {
 		return &ValidationError{Name: "gpu_version", err: errors.New(`cep_ent: missing required field "Price.gpu_version"`)}
 	}
@@ -379,6 +406,9 @@ func (pc *PriceCreate) check() error {
 	}
 	if _, ok := pc.mutation.IsSensitive(); !ok {
 		return &ValidationError{Name: "is_sensitive", err: errors.New(`cep_ent: missing required field "Price.is_sensitive"`)}
+	}
+	if _, ok := pc.mutation.GpuID(); !ok {
+		return &ValidationError{Name: "gpu", err: errors.New(`cep_ent: missing required edge "Price.gpu"`)}
 	}
 	return nil
 }
@@ -468,6 +498,23 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.IsSensitive(); ok {
 		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
 		_node.IsSensitive = value
+	}
+	if nodes := pc.mutation.GpuIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   price.GpuTable,
+			Columns: []string{price.GpuColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(gpu.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.GpuID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -578,6 +625,18 @@ func (u *PriceUpsert) SetDeletedAt(v time.Time) *PriceUpsert {
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
 func (u *PriceUpsert) UpdateDeletedAt() *PriceUpsert {
 	u.SetExcluded(price.FieldDeletedAt)
+	return u
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (u *PriceUpsert) SetGpuID(v int64) *PriceUpsert {
+	u.Set(price.FieldGpuID, v)
+	return u
+}
+
+// UpdateGpuID sets the "gpu_id" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateGpuID() *PriceUpsert {
+	u.SetExcluded(price.FieldGpuID)
 	return u
 }
 
@@ -825,6 +884,20 @@ func (u *PriceUpsertOne) SetDeletedAt(v time.Time) *PriceUpsertOne {
 func (u *PriceUpsertOne) UpdateDeletedAt() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (u *PriceUpsertOne) SetGpuID(v int64) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetGpuID(v)
+	})
+}
+
+// UpdateGpuID sets the "gpu_id" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateGpuID() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateGpuID()
 	})
 }
 
@@ -1259,6 +1332,20 @@ func (u *PriceUpsertBulk) SetDeletedAt(v time.Time) *PriceUpsertBulk {
 func (u *PriceUpsertBulk) UpdateDeletedAt() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (u *PriceUpsertBulk) SetGpuID(v int64) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetGpuID(v)
+	})
+}
+
+// UpdateGpuID sets the "gpu_id" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateGpuID() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateGpuID()
 	})
 }
 

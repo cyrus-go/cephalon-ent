@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 )
@@ -21,6 +22,7 @@ type PriceQuery struct {
 	order      []price.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Price
+	withGpu    *GpuQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +57,28 @@ func (pq *PriceQuery) Unique(unique bool) *PriceQuery {
 func (pq *PriceQuery) Order(o ...price.OrderOption) *PriceQuery {
 	pq.order = append(pq.order, o...)
 	return pq
+}
+
+// QueryGpu chains the current query on the "gpu" edge.
+func (pq *PriceQuery) QueryGpu() *GpuQuery {
+	query := (&GpuClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(price.Table, price.FieldID, selector),
+			sqlgraph.To(gpu.Table, gpu.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, price.GpuTable, price.GpuColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Price entity from the query.
@@ -249,10 +273,22 @@ func (pq *PriceQuery) Clone() *PriceQuery {
 		order:      append([]price.OrderOption{}, pq.order...),
 		inters:     append([]Interceptor{}, pq.inters...),
 		predicates: append([]predicate.Price{}, pq.predicates...),
+		withGpu:    pq.withGpu.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
 	}
+}
+
+// WithGpu tells the query-builder to eager-load the nodes that are connected to
+// the "gpu" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *PriceQuery) WithGpu(opts ...func(*GpuQuery)) *PriceQuery {
+	query := (&GpuClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withGpu = query
+	return pq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -331,8 +367,11 @@ func (pq *PriceQuery) prepareQuery(ctx context.Context) error {
 
 func (pq *PriceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Price, error) {
 	var (
-		nodes = []*Price{}
-		_spec = pq.querySpec()
+		nodes       = []*Price{}
+		_spec       = pq.querySpec()
+		loadedTypes = [1]bool{
+			pq.withGpu != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Price).scanValues(nil, columns)
@@ -340,6 +379,7 @@ func (pq *PriceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Price,
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Price{config: pq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +391,43 @@ func (pq *PriceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Price,
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := pq.withGpu; query != nil {
+		if err := pq.loadGpu(ctx, query, nodes, nil,
+			func(n *Price, e *Gpu) { n.Edges.Gpu = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (pq *PriceQuery) loadGpu(ctx context.Context, query *GpuQuery, nodes []*Price, init func(*Price), assign func(*Price, *Gpu)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*Price)
+	for i := range nodes {
+		fk := nodes[i].GpuID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(gpu.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "gpu_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (pq *PriceQuery) sqlCount(ctx context.Context) (int, error) {
@@ -378,6 +454,9 @@ func (pq *PriceQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != price.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if pq.withGpu != nil {
+			_spec.Node.AddColumnOnce(price.FieldGpuID)
 		}
 	}
 	if ps := pq.predicates; len(ps) > 0 {

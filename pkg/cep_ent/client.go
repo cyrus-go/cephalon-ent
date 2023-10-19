@@ -2981,6 +2981,22 @@ func (c *GpuClient) QueryDeviceGpuMissions(gp *Gpu) *DeviceGpuMissionQuery {
 	return query
 }
 
+// QueryPrices queries the prices edge of a Gpu.
+func (c *GpuClient) QueryPrices(gp *Gpu) *PriceQuery {
+	query := (&PriceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := gp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(gpu.Table, gpu.FieldID, id),
+			sqlgraph.To(price.Table, price.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, gpu.PricesTable, gpu.PricesColumn),
+		)
+		fromV = sqlgraph.Neighbors(gp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *GpuClient) Hooks() []Hook {
 	return c.hooks.Gpu
@@ -5710,6 +5726,22 @@ func (c *PriceClient) GetX(ctx context.Context, id int64) *Price {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryGpu queries the gpu edge of a Price.
+func (c *PriceClient) QueryGpu(pr *Price) *GpuQuery {
+	query := (&GpuClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(price.Table, price.FieldID, id),
+			sqlgraph.To(gpu.Table, gpu.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, price.GpuTable, price.GpuColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

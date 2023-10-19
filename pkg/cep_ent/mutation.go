@@ -16184,10 +16184,19 @@ type GpuMutation struct {
 	version                    *enums.GpuVersion
 	power                      *int
 	addpower                   *int
+	video_memory               *int
+	addvideo_memory            *int
+	cpu                        *int
+	addcpu                     *int
+	memory                     *int
+	addmemory                  *int
 	clearedFields              map[string]struct{}
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
 	cleareddevice_gpu_missions bool
+	prices                     map[int64]struct{}
+	removedprices              map[int64]struct{}
+	clearedprices              bool
 	done                       bool
 	oldValue                   func(context.Context) (*Gpu, error)
 	predicates                 []predicate.Gpu
@@ -16609,6 +16618,174 @@ func (m *GpuMutation) ResetPower() {
 	m.addpower = nil
 }
 
+// SetVideoMemory sets the "video_memory" field.
+func (m *GpuMutation) SetVideoMemory(i int) {
+	m.video_memory = &i
+	m.addvideo_memory = nil
+}
+
+// VideoMemory returns the value of the "video_memory" field in the mutation.
+func (m *GpuMutation) VideoMemory() (r int, exists bool) {
+	v := m.video_memory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVideoMemory returns the old "video_memory" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldVideoMemory(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVideoMemory is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVideoMemory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVideoMemory: %w", err)
+	}
+	return oldValue.VideoMemory, nil
+}
+
+// AddVideoMemory adds i to the "video_memory" field.
+func (m *GpuMutation) AddVideoMemory(i int) {
+	if m.addvideo_memory != nil {
+		*m.addvideo_memory += i
+	} else {
+		m.addvideo_memory = &i
+	}
+}
+
+// AddedVideoMemory returns the value that was added to the "video_memory" field in this mutation.
+func (m *GpuMutation) AddedVideoMemory() (r int, exists bool) {
+	v := m.addvideo_memory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetVideoMemory resets all changes to the "video_memory" field.
+func (m *GpuMutation) ResetVideoMemory() {
+	m.video_memory = nil
+	m.addvideo_memory = nil
+}
+
+// SetCPU sets the "cpu" field.
+func (m *GpuMutation) SetCPU(i int) {
+	m.cpu = &i
+	m.addcpu = nil
+}
+
+// CPU returns the value of the "cpu" field in the mutation.
+func (m *GpuMutation) CPU() (r int, exists bool) {
+	v := m.cpu
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCPU returns the old "cpu" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldCPU(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCPU is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCPU requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCPU: %w", err)
+	}
+	return oldValue.CPU, nil
+}
+
+// AddCPU adds i to the "cpu" field.
+func (m *GpuMutation) AddCPU(i int) {
+	if m.addcpu != nil {
+		*m.addcpu += i
+	} else {
+		m.addcpu = &i
+	}
+}
+
+// AddedCPU returns the value that was added to the "cpu" field in this mutation.
+func (m *GpuMutation) AddedCPU() (r int, exists bool) {
+	v := m.addcpu
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCPU resets all changes to the "cpu" field.
+func (m *GpuMutation) ResetCPU() {
+	m.cpu = nil
+	m.addcpu = nil
+}
+
+// SetMemory sets the "memory" field.
+func (m *GpuMutation) SetMemory(i int) {
+	m.memory = &i
+	m.addmemory = nil
+}
+
+// Memory returns the value of the "memory" field in the mutation.
+func (m *GpuMutation) Memory() (r int, exists bool) {
+	v := m.memory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMemory returns the old "memory" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldMemory(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMemory is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMemory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMemory: %w", err)
+	}
+	return oldValue.Memory, nil
+}
+
+// AddMemory adds i to the "memory" field.
+func (m *GpuMutation) AddMemory(i int) {
+	if m.addmemory != nil {
+		*m.addmemory += i
+	} else {
+		m.addmemory = &i
+	}
+}
+
+// AddedMemory returns the value that was added to the "memory" field in this mutation.
+func (m *GpuMutation) AddedMemory() (r int, exists bool) {
+	v := m.addmemory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMemory resets all changes to the "memory" field.
+func (m *GpuMutation) ResetMemory() {
+	m.memory = nil
+	m.addmemory = nil
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
 func (m *GpuMutation) AddDeviceGpuMissionIDs(ids ...int64) {
 	if m.device_gpu_missions == nil {
@@ -16663,6 +16840,60 @@ func (m *GpuMutation) ResetDeviceGpuMissions() {
 	m.removeddevice_gpu_missions = nil
 }
 
+// AddPriceIDs adds the "prices" edge to the Price entity by ids.
+func (m *GpuMutation) AddPriceIDs(ids ...int64) {
+	if m.prices == nil {
+		m.prices = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.prices[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPrices clears the "prices" edge to the Price entity.
+func (m *GpuMutation) ClearPrices() {
+	m.clearedprices = true
+}
+
+// PricesCleared reports if the "prices" edge to the Price entity was cleared.
+func (m *GpuMutation) PricesCleared() bool {
+	return m.clearedprices
+}
+
+// RemovePriceIDs removes the "prices" edge to the Price entity by IDs.
+func (m *GpuMutation) RemovePriceIDs(ids ...int64) {
+	if m.removedprices == nil {
+		m.removedprices = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.prices, ids[i])
+		m.removedprices[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPrices returns the removed IDs of the "prices" edge to the Price entity.
+func (m *GpuMutation) RemovedPricesIDs() (ids []int64) {
+	for id := range m.removedprices {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PricesIDs returns the "prices" edge IDs in the mutation.
+func (m *GpuMutation) PricesIDs() (ids []int64) {
+	for id := range m.prices {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPrices resets all changes to the "prices" edge.
+func (m *GpuMutation) ResetPrices() {
+	m.prices = nil
+	m.clearedprices = false
+	m.removedprices = nil
+}
+
 // Where appends a list predicates to the GpuMutation builder.
 func (m *GpuMutation) Where(ps ...predicate.Gpu) {
 	m.predicates = append(m.predicates, ps...)
@@ -16697,7 +16928,7 @@ func (m *GpuMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GpuMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, gpu.FieldCreatedBy)
 	}
@@ -16718,6 +16949,15 @@ func (m *GpuMutation) Fields() []string {
 	}
 	if m.power != nil {
 		fields = append(fields, gpu.FieldPower)
+	}
+	if m.video_memory != nil {
+		fields = append(fields, gpu.FieldVideoMemory)
+	}
+	if m.cpu != nil {
+		fields = append(fields, gpu.FieldCPU)
+	}
+	if m.memory != nil {
+		fields = append(fields, gpu.FieldMemory)
 	}
 	return fields
 }
@@ -16741,6 +16981,12 @@ func (m *GpuMutation) Field(name string) (ent.Value, bool) {
 		return m.Version()
 	case gpu.FieldPower:
 		return m.Power()
+	case gpu.FieldVideoMemory:
+		return m.VideoMemory()
+	case gpu.FieldCPU:
+		return m.CPU()
+	case gpu.FieldMemory:
+		return m.Memory()
 	}
 	return nil, false
 }
@@ -16764,6 +17010,12 @@ func (m *GpuMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldVersion(ctx)
 	case gpu.FieldPower:
 		return m.OldPower(ctx)
+	case gpu.FieldVideoMemory:
+		return m.OldVideoMemory(ctx)
+	case gpu.FieldCPU:
+		return m.OldCPU(ctx)
+	case gpu.FieldMemory:
+		return m.OldMemory(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -16822,6 +17074,27 @@ func (m *GpuMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPower(v)
 		return nil
+	case gpu.FieldVideoMemory:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVideoMemory(v)
+		return nil
+	case gpu.FieldCPU:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCPU(v)
+		return nil
+	case gpu.FieldMemory:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMemory(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -16839,6 +17112,15 @@ func (m *GpuMutation) AddedFields() []string {
 	if m.addpower != nil {
 		fields = append(fields, gpu.FieldPower)
 	}
+	if m.addvideo_memory != nil {
+		fields = append(fields, gpu.FieldVideoMemory)
+	}
+	if m.addcpu != nil {
+		fields = append(fields, gpu.FieldCPU)
+	}
+	if m.addmemory != nil {
+		fields = append(fields, gpu.FieldMemory)
+	}
 	return fields
 }
 
@@ -16853,6 +17135,12 @@ func (m *GpuMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case gpu.FieldPower:
 		return m.AddedPower()
+	case gpu.FieldVideoMemory:
+		return m.AddedVideoMemory()
+	case gpu.FieldCPU:
+		return m.AddedCPU()
+	case gpu.FieldMemory:
+		return m.AddedMemory()
 	}
 	return nil, false
 }
@@ -16882,6 +17170,27 @@ func (m *GpuMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddPower(v)
+		return nil
+	case gpu.FieldVideoMemory:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVideoMemory(v)
+		return nil
+	case gpu.FieldCPU:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCPU(v)
+		return nil
+	case gpu.FieldMemory:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMemory(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu numeric field %s", name)
@@ -16931,15 +17240,27 @@ func (m *GpuMutation) ResetField(name string) error {
 	case gpu.FieldPower:
 		m.ResetPower()
 		return nil
+	case gpu.FieldVideoMemory:
+		m.ResetVideoMemory()
+		return nil
+	case gpu.FieldCPU:
+		m.ResetCPU()
+		return nil
+	case gpu.FieldMemory:
+		m.ResetMemory()
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GpuMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.device_gpu_missions != nil {
 		edges = append(edges, gpu.EdgeDeviceGpuMissions)
+	}
+	if m.prices != nil {
+		edges = append(edges, gpu.EdgePrices)
 	}
 	return edges
 }
@@ -16954,15 +17275,24 @@ func (m *GpuMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case gpu.EdgePrices:
+		ids := make([]ent.Value, 0, len(m.prices))
+		for id := range m.prices {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GpuMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removeddevice_gpu_missions != nil {
 		edges = append(edges, gpu.EdgeDeviceGpuMissions)
+	}
+	if m.removedprices != nil {
+		edges = append(edges, gpu.EdgePrices)
 	}
 	return edges
 }
@@ -16977,15 +17307,24 @@ func (m *GpuMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case gpu.EdgePrices:
+		ids := make([]ent.Value, 0, len(m.removedprices))
+		for id := range m.removedprices {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GpuMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareddevice_gpu_missions {
 		edges = append(edges, gpu.EdgeDeviceGpuMissions)
+	}
+	if m.clearedprices {
+		edges = append(edges, gpu.EdgePrices)
 	}
 	return edges
 }
@@ -16996,6 +17335,8 @@ func (m *GpuMutation) EdgeCleared(name string) bool {
 	switch name {
 	case gpu.EdgeDeviceGpuMissions:
 		return m.cleareddevice_gpu_missions
+	case gpu.EdgePrices:
+		return m.clearedprices
 	}
 	return false
 }
@@ -17014,6 +17355,9 @@ func (m *GpuMutation) ResetEdge(name string) error {
 	switch name {
 	case gpu.EdgeDeviceGpuMissions:
 		m.ResetDeviceGpuMissions()
+		return nil
+	case gpu.EdgePrices:
+		m.ResetPrices()
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu edge %s", name)
@@ -37187,6 +37531,8 @@ type PriceMutation struct {
 	is_deprecated        *bool
 	is_sensitive         *bool
 	clearedFields        map[string]struct{}
+	gpu                  *int64
+	clearedgpu           bool
 	done                 bool
 	oldValue             func(context.Context) (*Price, error)
 	predicates           []predicate.Price
@@ -37514,6 +37860,42 @@ func (m *PriceMutation) OldDeletedAt(ctx context.Context) (v time.Time, err erro
 // ResetDeletedAt resets all changes to the "deleted_at" field.
 func (m *PriceMutation) ResetDeletedAt() {
 	m.deleted_at = nil
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (m *PriceMutation) SetGpuID(i int64) {
+	m.gpu = &i
+}
+
+// GpuID returns the value of the "gpu_id" field in the mutation.
+func (m *PriceMutation) GpuID() (r int64, exists bool) {
+	v := m.gpu
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGpuID returns the old "gpu_id" field's value of the Price entity.
+// If the Price object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PriceMutation) OldGpuID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGpuID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGpuID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGpuID: %w", err)
+	}
+	return oldValue.GpuID, nil
+}
+
+// ResetGpuID resets all changes to the "gpu_id" field.
+func (m *PriceMutation) ResetGpuID() {
+	m.gpu = nil
 }
 
 // SetGpuVersion sets the "gpu_version" field.
@@ -37886,6 +38268,33 @@ func (m *PriceMutation) ResetIsSensitive() {
 	m.is_sensitive = nil
 }
 
+// ClearGpu clears the "gpu" edge to the Gpu entity.
+func (m *PriceMutation) ClearGpu() {
+	m.clearedgpu = true
+	m.clearedFields[price.FieldGpuID] = struct{}{}
+}
+
+// GpuCleared reports if the "gpu" edge to the Gpu entity was cleared.
+func (m *PriceMutation) GpuCleared() bool {
+	return m.clearedgpu
+}
+
+// GpuIDs returns the "gpu" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GpuID instead. It exists only for internal usage by the builders.
+func (m *PriceMutation) GpuIDs() (ids []int64) {
+	if id := m.gpu; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGpu resets all changes to the "gpu" edge.
+func (m *PriceMutation) ResetGpu() {
+	m.gpu = nil
+	m.clearedgpu = false
+}
+
 // Where appends a list predicates to the PriceMutation builder.
 func (m *PriceMutation) Where(ps ...predicate.Price) {
 	m.predicates = append(m.predicates, ps...)
@@ -37920,7 +38329,7 @@ func (m *PriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PriceMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, price.FieldCreatedBy)
 	}
@@ -37935,6 +38344,9 @@ func (m *PriceMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, price.FieldDeletedAt)
+	}
+	if m.gpu != nil {
+		fields = append(fields, price.FieldGpuID)
 	}
 	if m.gpu_version != nil {
 		fields = append(fields, price.FieldGpuVersion)
@@ -37981,6 +38393,8 @@ func (m *PriceMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case price.FieldDeletedAt:
 		return m.DeletedAt()
+	case price.FieldGpuID:
+		return m.GpuID()
 	case price.FieldGpuVersion:
 		return m.GpuVersion()
 	case price.FieldMissionType:
@@ -38018,6 +38432,8 @@ func (m *PriceMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldUpdatedAt(ctx)
 	case price.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case price.FieldGpuID:
+		return m.OldGpuID(ctx)
 	case price.FieldGpuVersion:
 		return m.OldGpuVersion(ctx)
 	case price.FieldMissionType:
@@ -38079,6 +38495,13 @@ func (m *PriceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case price.FieldGpuID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGpuID(v)
 		return nil
 	case price.FieldGpuVersion:
 		v, ok := value.(enums.GpuVersion)
@@ -38261,6 +38684,9 @@ func (m *PriceMutation) ResetField(name string) error {
 	case price.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
+	case price.FieldGpuID:
+		m.ResetGpuID()
+		return nil
 	case price.FieldGpuVersion:
 		m.ResetGpuVersion()
 		return nil
@@ -38294,19 +38720,28 @@ func (m *PriceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PriceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.gpu != nil {
+		edges = append(edges, price.EdgeGpu)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *PriceMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case price.EdgeGpu:
+		if id := m.gpu; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PriceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -38318,25 +38753,42 @@ func (m *PriceMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PriceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedgpu {
+		edges = append(edges, price.EdgeGpu)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *PriceMutation) EdgeCleared(name string) bool {
+	switch name {
+	case price.EdgeGpu:
+		return m.clearedgpu
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *PriceMutation) ClearEdge(name string) error {
+	switch name {
+	case price.EdgeGpu:
+		m.ClearGpu()
+		return nil
+	}
 	return fmt.Errorf("unknown Price unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *PriceMutation) ResetEdge(name string) error {
+	switch name {
+	case price.EdgeGpu:
+		m.ResetGpu()
+		return nil
+	}
 	return fmt.Errorf("unknown Price edge %s", name)
 }
 

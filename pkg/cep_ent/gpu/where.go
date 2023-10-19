@@ -86,6 +86,21 @@ func Power(v int) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldPower, v))
 }
 
+// VideoMemory applies equality check predicate on the "video_memory" field. It's identical to VideoMemoryEQ.
+func VideoMemory(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldVideoMemory, v))
+}
+
+// CPU applies equality check predicate on the "cpu" field. It's identical to CPUEQ.
+func CPU(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldCPU, v))
+}
+
+// Memory applies equality check predicate on the "memory" field. It's identical to MemoryEQ.
+func Memory(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldMemory, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldCreatedBy, v))
@@ -356,6 +371,126 @@ func PowerLTE(v int) predicate.Gpu {
 	return predicate.Gpu(sql.FieldLTE(FieldPower, v))
 }
 
+// VideoMemoryEQ applies the EQ predicate on the "video_memory" field.
+func VideoMemoryEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldVideoMemory, v))
+}
+
+// VideoMemoryNEQ applies the NEQ predicate on the "video_memory" field.
+func VideoMemoryNEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldVideoMemory, v))
+}
+
+// VideoMemoryIn applies the In predicate on the "video_memory" field.
+func VideoMemoryIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldVideoMemory, vs...))
+}
+
+// VideoMemoryNotIn applies the NotIn predicate on the "video_memory" field.
+func VideoMemoryNotIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldVideoMemory, vs...))
+}
+
+// VideoMemoryGT applies the GT predicate on the "video_memory" field.
+func VideoMemoryGT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldVideoMemory, v))
+}
+
+// VideoMemoryGTE applies the GTE predicate on the "video_memory" field.
+func VideoMemoryGTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldVideoMemory, v))
+}
+
+// VideoMemoryLT applies the LT predicate on the "video_memory" field.
+func VideoMemoryLT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldVideoMemory, v))
+}
+
+// VideoMemoryLTE applies the LTE predicate on the "video_memory" field.
+func VideoMemoryLTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldVideoMemory, v))
+}
+
+// CPUEQ applies the EQ predicate on the "cpu" field.
+func CPUEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldCPU, v))
+}
+
+// CPUNEQ applies the NEQ predicate on the "cpu" field.
+func CPUNEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldCPU, v))
+}
+
+// CPUIn applies the In predicate on the "cpu" field.
+func CPUIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldCPU, vs...))
+}
+
+// CPUNotIn applies the NotIn predicate on the "cpu" field.
+func CPUNotIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldCPU, vs...))
+}
+
+// CPUGT applies the GT predicate on the "cpu" field.
+func CPUGT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldCPU, v))
+}
+
+// CPUGTE applies the GTE predicate on the "cpu" field.
+func CPUGTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldCPU, v))
+}
+
+// CPULT applies the LT predicate on the "cpu" field.
+func CPULT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldCPU, v))
+}
+
+// CPULTE applies the LTE predicate on the "cpu" field.
+func CPULTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldCPU, v))
+}
+
+// MemoryEQ applies the EQ predicate on the "memory" field.
+func MemoryEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldMemory, v))
+}
+
+// MemoryNEQ applies the NEQ predicate on the "memory" field.
+func MemoryNEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldMemory, v))
+}
+
+// MemoryIn applies the In predicate on the "memory" field.
+func MemoryIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldMemory, vs...))
+}
+
+// MemoryNotIn applies the NotIn predicate on the "memory" field.
+func MemoryNotIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldMemory, vs...))
+}
+
+// MemoryGT applies the GT predicate on the "memory" field.
+func MemoryGT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldMemory, v))
+}
+
+// MemoryGTE applies the GTE predicate on the "memory" field.
+func MemoryGTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldMemory, v))
+}
+
+// MemoryLT applies the LT predicate on the "memory" field.
+func MemoryLT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldMemory, v))
+}
+
+// MemoryLTE applies the LTE predicate on the "memory" field.
+func MemoryLTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldMemory, v))
+}
+
 // HasDeviceGpuMissions applies the HasEdge predicate on the "device_gpu_missions" edge.
 func HasDeviceGpuMissions() predicate.Gpu {
 	return predicate.Gpu(func(s *sql.Selector) {
@@ -371,6 +506,29 @@ func HasDeviceGpuMissions() predicate.Gpu {
 func HasDeviceGpuMissionsWith(preds ...predicate.DeviceGpuMission) predicate.Gpu {
 	return predicate.Gpu(func(s *sql.Selector) {
 		step := newDeviceGpuMissionsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPrices applies the HasEdge predicate on the "prices" edge.
+func HasPrices() predicate.Gpu {
+	return predicate.Gpu(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PricesTable, PricesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPricesWith applies the HasEdge predicate on the "prices" edge with a given conditions (other predicates).
+func HasPricesWith(preds ...predicate.Price) predicate.Gpu {
+	return predicate.Gpu(func(s *sql.Selector) {
+		step := newPricesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -804,6 +804,18 @@ func init() {
 	gpuDescPower := gpuFields[1].Descriptor()
 	// gpu.DefaultPower holds the default value on creation for the power field.
 	gpu.DefaultPower = gpuDescPower.Default.(int)
+	// gpuDescVideoMemory is the schema descriptor for video_memory field.
+	gpuDescVideoMemory := gpuFields[2].Descriptor()
+	// gpu.DefaultVideoMemory holds the default value on creation for the video_memory field.
+	gpu.DefaultVideoMemory = gpuDescVideoMemory.Default.(int)
+	// gpuDescCPU is the schema descriptor for cpu field.
+	gpuDescCPU := gpuFields[3].Descriptor()
+	// gpu.DefaultCPU holds the default value on creation for the cpu field.
+	gpu.DefaultCPU = gpuDescCPU.Default.(int)
+	// gpuDescMemory is the schema descriptor for memory field.
+	gpuDescMemory := gpuFields[4].Descriptor()
+	// gpu.DefaultMemory holds the default value on creation for the memory field.
+	gpu.DefaultMemory = gpuDescMemory.Default.(int)
 	// gpuDescID is the schema descriptor for id field.
 	gpuDescID := gpuMixinFields0[0].Descriptor()
 	// gpu.DefaultID holds the default value on creation for the id field.
@@ -1647,16 +1659,20 @@ func init() {
 	priceDescDeletedAt := priceMixinFields0[5].Descriptor()
 	// price.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	price.DefaultDeletedAt = priceDescDeletedAt.Default.(time.Time)
+	// priceDescGpuID is the schema descriptor for gpu_id field.
+	priceDescGpuID := priceFields[0].Descriptor()
+	// price.DefaultGpuID holds the default value on creation for the gpu_id field.
+	price.DefaultGpuID = priceDescGpuID.Default.(int64)
 	// priceDescCep is the schema descriptor for cep field.
-	priceDescCep := priceFields[4].Descriptor()
+	priceDescCep := priceFields[5].Descriptor()
 	// price.DefaultCep holds the default value on creation for the cep field.
 	price.DefaultCep = priceDescCep.Default.(int64)
 	// priceDescIsDeprecated is the schema descriptor for is_deprecated field.
-	priceDescIsDeprecated := priceFields[7].Descriptor()
+	priceDescIsDeprecated := priceFields[8].Descriptor()
 	// price.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
 	price.DefaultIsDeprecated = priceDescIsDeprecated.Default.(bool)
 	// priceDescIsSensitive is the schema descriptor for is_sensitive field.
-	priceDescIsSensitive := priceFields[8].Descriptor()
+	priceDescIsSensitive := priceFields[9].Descriptor()
 	// price.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
 	price.DefaultIsSensitive = priceDescIsSensitive.Default.(bool)
 	// priceDescID is the schema descriptor for id field.

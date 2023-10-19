@@ -33,6 +33,12 @@ type Gpu struct {
 	Version enums.GpuVersion `json:"version"`
 	// 显卡能力值
 	Power int `json:"power"`
+	// 显存
+	VideoMemory int `json:"videoMemory"`
+	// CPU
+	CPU int `json:"cpu"`
+	// 内存
+	Memory int `json:"videoMemory"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GpuQuery when eager-loading is set.
 	Edges        GpuEdges `json:"edges"`
@@ -43,9 +49,11 @@ type Gpu struct {
 type GpuEdges struct {
 	// DeviceGpuMissions holds the value of the device_gpu_missions edge.
 	DeviceGpuMissions []*DeviceGpuMission `json:"device_gpu_missions,omitempty"`
+	// Prices holds the value of the prices edge.
+	Prices []*Price `json:"prices,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // DeviceGpuMissionsOrErr returns the DeviceGpuMissions value or an error if the edge
@@ -57,12 +65,21 @@ func (e GpuEdges) DeviceGpuMissionsOrErr() ([]*DeviceGpuMission, error) {
 	return nil, &NotLoadedError{edge: "device_gpu_missions"}
 }
 
+// PricesOrErr returns the Prices value or an error if the edge
+// was not loaded in eager-loading.
+func (e GpuEdges) PricesOrErr() ([]*Price, error) {
+	if e.loadedTypes[1] {
+		return e.Prices, nil
+	}
+	return nil, &NotLoadedError{edge: "prices"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Gpu) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower:
+		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower, gpu.FieldVideoMemory, gpu.FieldCPU, gpu.FieldMemory:
 			values[i] = new(sql.NullInt64)
 		case gpu.FieldVersion:
 			values[i] = new(sql.NullString)
@@ -131,6 +148,24 @@ func (gp *Gpu) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gp.Power = int(value.Int64)
 			}
+		case gpu.FieldVideoMemory:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field video_memory", values[i])
+			} else if value.Valid {
+				gp.VideoMemory = int(value.Int64)
+			}
+		case gpu.FieldCPU:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cpu", values[i])
+			} else if value.Valid {
+				gp.CPU = int(value.Int64)
+			}
+		case gpu.FieldMemory:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field memory", values[i])
+			} else if value.Valid {
+				gp.Memory = int(value.Int64)
+			}
 		default:
 			gp.selectValues.Set(columns[i], values[i])
 		}
@@ -147,6 +182,11 @@ func (gp *Gpu) Value(name string) (ent.Value, error) {
 // QueryDeviceGpuMissions queries the "device_gpu_missions" edge of the Gpu entity.
 func (gp *Gpu) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
 	return NewGpuClient(gp.config).QueryDeviceGpuMissions(gp)
+}
+
+// QueryPrices queries the "prices" edge of the Gpu entity.
+func (gp *Gpu) QueryPrices() *PriceQuery {
+	return NewGpuClient(gp.config).QueryPrices(gp)
 }
 
 // Update returns a builder for updating this Gpu.
@@ -192,6 +232,15 @@ func (gp *Gpu) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("power=")
 	builder.WriteString(fmt.Sprintf("%v", gp.Power))
+	builder.WriteString(", ")
+	builder.WriteString("video_memory=")
+	builder.WriteString(fmt.Sprintf("%v", gp.VideoMemory))
+	builder.WriteString(", ")
+	builder.WriteString("cpu=")
+	builder.WriteString(fmt.Sprintf("%v", gp.CPU))
+	builder.WriteString(", ")
+	builder.WriteString("memory=")
+	builder.WriteString(fmt.Sprintf("%v", gp.Memory))
 	builder.WriteByte(')')
 	return builder.String()
 }

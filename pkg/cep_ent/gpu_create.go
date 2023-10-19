@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -122,6 +123,48 @@ func (gc *GpuCreate) SetNillablePower(i *int) *GpuCreate {
 	return gc
 }
 
+// SetVideoMemory sets the "video_memory" field.
+func (gc *GpuCreate) SetVideoMemory(i int) *GpuCreate {
+	gc.mutation.SetVideoMemory(i)
+	return gc
+}
+
+// SetNillableVideoMemory sets the "video_memory" field if the given value is not nil.
+func (gc *GpuCreate) SetNillableVideoMemory(i *int) *GpuCreate {
+	if i != nil {
+		gc.SetVideoMemory(*i)
+	}
+	return gc
+}
+
+// SetCPU sets the "cpu" field.
+func (gc *GpuCreate) SetCPU(i int) *GpuCreate {
+	gc.mutation.SetCPU(i)
+	return gc
+}
+
+// SetNillableCPU sets the "cpu" field if the given value is not nil.
+func (gc *GpuCreate) SetNillableCPU(i *int) *GpuCreate {
+	if i != nil {
+		gc.SetCPU(*i)
+	}
+	return gc
+}
+
+// SetMemory sets the "memory" field.
+func (gc *GpuCreate) SetMemory(i int) *GpuCreate {
+	gc.mutation.SetMemory(i)
+	return gc
+}
+
+// SetNillableMemory sets the "memory" field if the given value is not nil.
+func (gc *GpuCreate) SetNillableMemory(i *int) *GpuCreate {
+	if i != nil {
+		gc.SetMemory(*i)
+	}
+	return gc
+}
+
 // SetID sets the "id" field.
 func (gc *GpuCreate) SetID(i int64) *GpuCreate {
 	gc.mutation.SetID(i)
@@ -149,6 +192,21 @@ func (gc *GpuCreate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *GpuCreate {
 		ids[i] = d[i].ID
 	}
 	return gc.AddDeviceGpuMissionIDs(ids...)
+}
+
+// AddPriceIDs adds the "prices" edge to the Price entity by IDs.
+func (gc *GpuCreate) AddPriceIDs(ids ...int64) *GpuCreate {
+	gc.mutation.AddPriceIDs(ids...)
+	return gc
+}
+
+// AddPrices adds the "prices" edges to the Price entity.
+func (gc *GpuCreate) AddPrices(p ...*Price) *GpuCreate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return gc.AddPriceIDs(ids...)
 }
 
 // Mutation returns the GpuMutation object of the builder.
@@ -214,6 +272,18 @@ func (gc *GpuCreate) defaults() {
 		v := gpu.DefaultPower
 		gc.mutation.SetPower(v)
 	}
+	if _, ok := gc.mutation.VideoMemory(); !ok {
+		v := gpu.DefaultVideoMemory
+		gc.mutation.SetVideoMemory(v)
+	}
+	if _, ok := gc.mutation.CPU(); !ok {
+		v := gpu.DefaultCPU
+		gc.mutation.SetCPU(v)
+	}
+	if _, ok := gc.mutation.Memory(); !ok {
+		v := gpu.DefaultMemory
+		gc.mutation.SetMemory(v)
+	}
 	if _, ok := gc.mutation.ID(); !ok {
 		v := gpu.DefaultID()
 		gc.mutation.SetID(v)
@@ -247,6 +317,15 @@ func (gc *GpuCreate) check() error {
 	}
 	if _, ok := gc.mutation.Power(); !ok {
 		return &ValidationError{Name: "power", err: errors.New(`cep_ent: missing required field "Gpu.power"`)}
+	}
+	if _, ok := gc.mutation.VideoMemory(); !ok {
+		return &ValidationError{Name: "video_memory", err: errors.New(`cep_ent: missing required field "Gpu.video_memory"`)}
+	}
+	if _, ok := gc.mutation.CPU(); !ok {
+		return &ValidationError{Name: "cpu", err: errors.New(`cep_ent: missing required field "Gpu.cpu"`)}
+	}
+	if _, ok := gc.mutation.Memory(); !ok {
+		return &ValidationError{Name: "memory", err: errors.New(`cep_ent: missing required field "Gpu.memory"`)}
 	}
 	return nil
 }
@@ -309,6 +388,18 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 		_spec.SetField(gpu.FieldPower, field.TypeInt, value)
 		_node.Power = value
 	}
+	if value, ok := gc.mutation.VideoMemory(); ok {
+		_spec.SetField(gpu.FieldVideoMemory, field.TypeInt, value)
+		_node.VideoMemory = value
+	}
+	if value, ok := gc.mutation.CPU(); ok {
+		_spec.SetField(gpu.FieldCPU, field.TypeInt, value)
+		_node.CPU = value
+	}
+	if value, ok := gc.mutation.Memory(); ok {
+		_spec.SetField(gpu.FieldMemory, field.TypeInt, value)
+		_node.Memory = value
+	}
 	if nodes := gc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -318,6 +409,22 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.PricesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -464,6 +571,60 @@ func (u *GpuUpsert) UpdatePower() *GpuUpsert {
 // AddPower adds v to the "power" field.
 func (u *GpuUpsert) AddPower(v int) *GpuUpsert {
 	u.Add(gpu.FieldPower, v)
+	return u
+}
+
+// SetVideoMemory sets the "video_memory" field.
+func (u *GpuUpsert) SetVideoMemory(v int) *GpuUpsert {
+	u.Set(gpu.FieldVideoMemory, v)
+	return u
+}
+
+// UpdateVideoMemory sets the "video_memory" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateVideoMemory() *GpuUpsert {
+	u.SetExcluded(gpu.FieldVideoMemory)
+	return u
+}
+
+// AddVideoMemory adds v to the "video_memory" field.
+func (u *GpuUpsert) AddVideoMemory(v int) *GpuUpsert {
+	u.Add(gpu.FieldVideoMemory, v)
+	return u
+}
+
+// SetCPU sets the "cpu" field.
+func (u *GpuUpsert) SetCPU(v int) *GpuUpsert {
+	u.Set(gpu.FieldCPU, v)
+	return u
+}
+
+// UpdateCPU sets the "cpu" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateCPU() *GpuUpsert {
+	u.SetExcluded(gpu.FieldCPU)
+	return u
+}
+
+// AddCPU adds v to the "cpu" field.
+func (u *GpuUpsert) AddCPU(v int) *GpuUpsert {
+	u.Add(gpu.FieldCPU, v)
+	return u
+}
+
+// SetMemory sets the "memory" field.
+func (u *GpuUpsert) SetMemory(v int) *GpuUpsert {
+	u.Set(gpu.FieldMemory, v)
+	return u
+}
+
+// UpdateMemory sets the "memory" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateMemory() *GpuUpsert {
+	u.SetExcluded(gpu.FieldMemory)
+	return u
+}
+
+// AddMemory adds v to the "memory" field.
+func (u *GpuUpsert) AddMemory(v int) *GpuUpsert {
+	u.Add(gpu.FieldMemory, v)
 	return u
 }
 
@@ -620,6 +781,69 @@ func (u *GpuUpsertOne) AddPower(v int) *GpuUpsertOne {
 func (u *GpuUpsertOne) UpdatePower() *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdatePower()
+	})
+}
+
+// SetVideoMemory sets the "video_memory" field.
+func (u *GpuUpsertOne) SetVideoMemory(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetVideoMemory(v)
+	})
+}
+
+// AddVideoMemory adds v to the "video_memory" field.
+func (u *GpuUpsertOne) AddVideoMemory(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddVideoMemory(v)
+	})
+}
+
+// UpdateVideoMemory sets the "video_memory" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateVideoMemory() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateVideoMemory()
+	})
+}
+
+// SetCPU sets the "cpu" field.
+func (u *GpuUpsertOne) SetCPU(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetCPU(v)
+	})
+}
+
+// AddCPU adds v to the "cpu" field.
+func (u *GpuUpsertOne) AddCPU(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddCPU(v)
+	})
+}
+
+// UpdateCPU sets the "cpu" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateCPU() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateCPU()
+	})
+}
+
+// SetMemory sets the "memory" field.
+func (u *GpuUpsertOne) SetMemory(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetMemory(v)
+	})
+}
+
+// AddMemory adds v to the "memory" field.
+func (u *GpuUpsertOne) AddMemory(v int) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddMemory(v)
+	})
+}
+
+// UpdateMemory sets the "memory" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateMemory() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateMemory()
 	})
 }
 
@@ -942,6 +1166,69 @@ func (u *GpuUpsertBulk) AddPower(v int) *GpuUpsertBulk {
 func (u *GpuUpsertBulk) UpdatePower() *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdatePower()
+	})
+}
+
+// SetVideoMemory sets the "video_memory" field.
+func (u *GpuUpsertBulk) SetVideoMemory(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetVideoMemory(v)
+	})
+}
+
+// AddVideoMemory adds v to the "video_memory" field.
+func (u *GpuUpsertBulk) AddVideoMemory(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddVideoMemory(v)
+	})
+}
+
+// UpdateVideoMemory sets the "video_memory" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateVideoMemory() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateVideoMemory()
+	})
+}
+
+// SetCPU sets the "cpu" field.
+func (u *GpuUpsertBulk) SetCPU(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetCPU(v)
+	})
+}
+
+// AddCPU adds v to the "cpu" field.
+func (u *GpuUpsertBulk) AddCPU(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddCPU(v)
+	})
+}
+
+// UpdateCPU sets the "cpu" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateCPU() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateCPU()
+	})
+}
+
+// SetMemory sets the "memory" field.
+func (u *GpuUpsertBulk) SetMemory(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetMemory(v)
+	})
+}
+
+// AddMemory adds v to the "memory" field.
+func (u *GpuUpsertBulk) AddMemory(v int) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddMemory(v)
+	})
+}
+
+// UpdateMemory sets the "memory" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateMemory() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateMemory()
 	})
 }
 

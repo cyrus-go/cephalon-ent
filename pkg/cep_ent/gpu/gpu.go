@@ -30,8 +30,16 @@ const (
 	FieldVersion = "version"
 	// FieldPower holds the string denoting the power field in the database.
 	FieldPower = "power"
+	// FieldVideoMemory holds the string denoting the video_memory field in the database.
+	FieldVideoMemory = "video_memory"
+	// FieldCPU holds the string denoting the cpu field in the database.
+	FieldCPU = "cpu"
+	// FieldMemory holds the string denoting the memory field in the database.
+	FieldMemory = "memory"
 	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
 	EdgeDeviceGpuMissions = "device_gpu_missions"
+	// EdgePrices holds the string denoting the prices edge name in mutations.
+	EdgePrices = "prices"
 	// Table holds the table name of the gpu in the database.
 	Table = "gpus"
 	// DeviceGpuMissionsTable is the table that holds the device_gpu_missions relation/edge.
@@ -41,6 +49,13 @@ const (
 	DeviceGpuMissionsInverseTable = "device_gpu_missions"
 	// DeviceGpuMissionsColumn is the table column denoting the device_gpu_missions relation/edge.
 	DeviceGpuMissionsColumn = "gpu_id"
+	// PricesTable is the table that holds the prices relation/edge.
+	PricesTable = "prices"
+	// PricesInverseTable is the table name for the Price entity.
+	// It exists in this package in order to avoid circular dependency with the "price" package.
+	PricesInverseTable = "prices"
+	// PricesColumn is the table column denoting the prices relation/edge.
+	PricesColumn = "gpu_id"
 )
 
 // Columns holds all SQL columns for gpu fields.
@@ -53,6 +68,9 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldVersion,
 	FieldPower,
+	FieldVideoMemory,
+	FieldCPU,
+	FieldMemory,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -80,6 +98,12 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultPower holds the default value on creation for the "power" field.
 	DefaultPower int
+	// DefaultVideoMemory holds the default value on creation for the "video_memory" field.
+	DefaultVideoMemory int
+	// DefaultCPU holds the default value on creation for the "cpu" field.
+	DefaultCPU int
+	// DefaultMemory holds the default value on creation for the "memory" field.
+	DefaultMemory int
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -139,6 +163,21 @@ func ByPower(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPower, opts...).ToFunc()
 }
 
+// ByVideoMemory orders the results by the video_memory field.
+func ByVideoMemory(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVideoMemory, opts...).ToFunc()
+}
+
+// ByCPU orders the results by the cpu field.
+func ByCPU(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCPU, opts...).ToFunc()
+}
+
+// ByMemory orders the results by the memory field.
+func ByMemory(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMemory, opts...).ToFunc()
+}
+
 // ByDeviceGpuMissionsCount orders the results by device_gpu_missions count.
 func ByDeviceGpuMissionsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -152,10 +191,31 @@ func ByDeviceGpuMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newDeviceGpuMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPricesCount orders the results by prices count.
+func ByPricesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPricesStep(), opts...)
+	}
+}
+
+// ByPrices orders the results by prices terms.
+func ByPrices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPricesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newDeviceGpuMissionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceGpuMissionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, DeviceGpuMissionsTable, DeviceGpuMissionsColumn),
+	)
+}
+func newPricesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PricesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PricesTable, PricesColumn),
 	)
 }

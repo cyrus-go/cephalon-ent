@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -127,6 +128,69 @@ func (gu *GpuUpdate) AddPower(i int) *GpuUpdate {
 	return gu
 }
 
+// SetVideoMemory sets the "video_memory" field.
+func (gu *GpuUpdate) SetVideoMemory(i int) *GpuUpdate {
+	gu.mutation.ResetVideoMemory()
+	gu.mutation.SetVideoMemory(i)
+	return gu
+}
+
+// SetNillableVideoMemory sets the "video_memory" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableVideoMemory(i *int) *GpuUpdate {
+	if i != nil {
+		gu.SetVideoMemory(*i)
+	}
+	return gu
+}
+
+// AddVideoMemory adds i to the "video_memory" field.
+func (gu *GpuUpdate) AddVideoMemory(i int) *GpuUpdate {
+	gu.mutation.AddVideoMemory(i)
+	return gu
+}
+
+// SetCPU sets the "cpu" field.
+func (gu *GpuUpdate) SetCPU(i int) *GpuUpdate {
+	gu.mutation.ResetCPU()
+	gu.mutation.SetCPU(i)
+	return gu
+}
+
+// SetNillableCPU sets the "cpu" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableCPU(i *int) *GpuUpdate {
+	if i != nil {
+		gu.SetCPU(*i)
+	}
+	return gu
+}
+
+// AddCPU adds i to the "cpu" field.
+func (gu *GpuUpdate) AddCPU(i int) *GpuUpdate {
+	gu.mutation.AddCPU(i)
+	return gu
+}
+
+// SetMemory sets the "memory" field.
+func (gu *GpuUpdate) SetMemory(i int) *GpuUpdate {
+	gu.mutation.ResetMemory()
+	gu.mutation.SetMemory(i)
+	return gu
+}
+
+// SetNillableMemory sets the "memory" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableMemory(i *int) *GpuUpdate {
+	if i != nil {
+		gu.SetMemory(*i)
+	}
+	return gu
+}
+
+// AddMemory adds i to the "memory" field.
+func (gu *GpuUpdate) AddMemory(i int) *GpuUpdate {
+	gu.mutation.AddMemory(i)
+	return gu
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (gu *GpuUpdate) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdate {
 	gu.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -140,6 +204,21 @@ func (gu *GpuUpdate) AddDeviceGpuMissions(d ...*DeviceGpuMission) *GpuUpdate {
 		ids[i] = d[i].ID
 	}
 	return gu.AddDeviceGpuMissionIDs(ids...)
+}
+
+// AddPriceIDs adds the "prices" edge to the Price entity by IDs.
+func (gu *GpuUpdate) AddPriceIDs(ids ...int64) *GpuUpdate {
+	gu.mutation.AddPriceIDs(ids...)
+	return gu
+}
+
+// AddPrices adds the "prices" edges to the Price entity.
+func (gu *GpuUpdate) AddPrices(p ...*Price) *GpuUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return gu.AddPriceIDs(ids...)
 }
 
 // Mutation returns the GpuMutation object of the builder.
@@ -166,6 +245,27 @@ func (gu *GpuUpdate) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *GpuUpdate 
 		ids[i] = d[i].ID
 	}
 	return gu.RemoveDeviceGpuMissionIDs(ids...)
+}
+
+// ClearPrices clears all "prices" edges to the Price entity.
+func (gu *GpuUpdate) ClearPrices() *GpuUpdate {
+	gu.mutation.ClearPrices()
+	return gu
+}
+
+// RemovePriceIDs removes the "prices" edge to Price entities by IDs.
+func (gu *GpuUpdate) RemovePriceIDs(ids ...int64) *GpuUpdate {
+	gu.mutation.RemovePriceIDs(ids...)
+	return gu
+}
+
+// RemovePrices removes "prices" edges to Price entities.
+func (gu *GpuUpdate) RemovePrices(p ...*Price) *GpuUpdate {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return gu.RemovePriceIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -253,6 +353,24 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gu.mutation.AddedPower(); ok {
 		_spec.AddField(gpu.FieldPower, field.TypeInt, value)
 	}
+	if value, ok := gu.mutation.VideoMemory(); ok {
+		_spec.SetField(gpu.FieldVideoMemory, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedVideoMemory(); ok {
+		_spec.AddField(gpu.FieldVideoMemory, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.CPU(); ok {
+		_spec.SetField(gpu.FieldCPU, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedCPU(); ok {
+		_spec.AddField(gpu.FieldCPU, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.Memory(); ok {
+		_spec.SetField(gpu.FieldMemory, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedMemory(); ok {
+		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
+	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -291,6 +409,51 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if gu.mutation.PricesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedPricesIDs(); len(nodes) > 0 && !gu.mutation.PricesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.PricesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -415,6 +578,69 @@ func (guo *GpuUpdateOne) AddPower(i int) *GpuUpdateOne {
 	return guo
 }
 
+// SetVideoMemory sets the "video_memory" field.
+func (guo *GpuUpdateOne) SetVideoMemory(i int) *GpuUpdateOne {
+	guo.mutation.ResetVideoMemory()
+	guo.mutation.SetVideoMemory(i)
+	return guo
+}
+
+// SetNillableVideoMemory sets the "video_memory" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableVideoMemory(i *int) *GpuUpdateOne {
+	if i != nil {
+		guo.SetVideoMemory(*i)
+	}
+	return guo
+}
+
+// AddVideoMemory adds i to the "video_memory" field.
+func (guo *GpuUpdateOne) AddVideoMemory(i int) *GpuUpdateOne {
+	guo.mutation.AddVideoMemory(i)
+	return guo
+}
+
+// SetCPU sets the "cpu" field.
+func (guo *GpuUpdateOne) SetCPU(i int) *GpuUpdateOne {
+	guo.mutation.ResetCPU()
+	guo.mutation.SetCPU(i)
+	return guo
+}
+
+// SetNillableCPU sets the "cpu" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableCPU(i *int) *GpuUpdateOne {
+	if i != nil {
+		guo.SetCPU(*i)
+	}
+	return guo
+}
+
+// AddCPU adds i to the "cpu" field.
+func (guo *GpuUpdateOne) AddCPU(i int) *GpuUpdateOne {
+	guo.mutation.AddCPU(i)
+	return guo
+}
+
+// SetMemory sets the "memory" field.
+func (guo *GpuUpdateOne) SetMemory(i int) *GpuUpdateOne {
+	guo.mutation.ResetMemory()
+	guo.mutation.SetMemory(i)
+	return guo
+}
+
+// SetNillableMemory sets the "memory" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableMemory(i *int) *GpuUpdateOne {
+	if i != nil {
+		guo.SetMemory(*i)
+	}
+	return guo
+}
+
+// AddMemory adds i to the "memory" field.
+func (guo *GpuUpdateOne) AddMemory(i int) *GpuUpdateOne {
+	guo.mutation.AddMemory(i)
+	return guo
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (guo *GpuUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdateOne {
 	guo.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -428,6 +654,21 @@ func (guo *GpuUpdateOne) AddDeviceGpuMissions(d ...*DeviceGpuMission) *GpuUpdate
 		ids[i] = d[i].ID
 	}
 	return guo.AddDeviceGpuMissionIDs(ids...)
+}
+
+// AddPriceIDs adds the "prices" edge to the Price entity by IDs.
+func (guo *GpuUpdateOne) AddPriceIDs(ids ...int64) *GpuUpdateOne {
+	guo.mutation.AddPriceIDs(ids...)
+	return guo
+}
+
+// AddPrices adds the "prices" edges to the Price entity.
+func (guo *GpuUpdateOne) AddPrices(p ...*Price) *GpuUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return guo.AddPriceIDs(ids...)
 }
 
 // Mutation returns the GpuMutation object of the builder.
@@ -454,6 +695,27 @@ func (guo *GpuUpdateOne) RemoveDeviceGpuMissions(d ...*DeviceGpuMission) *GpuUpd
 		ids[i] = d[i].ID
 	}
 	return guo.RemoveDeviceGpuMissionIDs(ids...)
+}
+
+// ClearPrices clears all "prices" edges to the Price entity.
+func (guo *GpuUpdateOne) ClearPrices() *GpuUpdateOne {
+	guo.mutation.ClearPrices()
+	return guo
+}
+
+// RemovePriceIDs removes the "prices" edge to Price entities by IDs.
+func (guo *GpuUpdateOne) RemovePriceIDs(ids ...int64) *GpuUpdateOne {
+	guo.mutation.RemovePriceIDs(ids...)
+	return guo
+}
+
+// RemovePrices removes "prices" edges to Price entities.
+func (guo *GpuUpdateOne) RemovePrices(p ...*Price) *GpuUpdateOne {
+	ids := make([]int64, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return guo.RemovePriceIDs(ids...)
 }
 
 // Where appends a list predicates to the GpuUpdate builder.
@@ -571,6 +833,24 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	if value, ok := guo.mutation.AddedPower(); ok {
 		_spec.AddField(gpu.FieldPower, field.TypeInt, value)
 	}
+	if value, ok := guo.mutation.VideoMemory(); ok {
+		_spec.SetField(gpu.FieldVideoMemory, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedVideoMemory(); ok {
+		_spec.AddField(gpu.FieldVideoMemory, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.CPU(); ok {
+		_spec.SetField(gpu.FieldCPU, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedCPU(); ok {
+		_spec.AddField(gpu.FieldCPU, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.Memory(); ok {
+		_spec.SetField(gpu.FieldMemory, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedMemory(); ok {
+		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
+	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -609,6 +889,51 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicegpumission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.PricesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedPricesIDs(); len(nodes) > 0 && !guo.mutation.PricesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.PricesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   gpu.PricesTable,
+			Columns: []string{gpu.PricesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(price.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

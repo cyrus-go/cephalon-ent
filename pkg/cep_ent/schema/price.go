@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -13,6 +14,7 @@ type Price struct {
 
 func (Price) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int64("gpu_id").Default(0).StructTag(`json:"gpu_id,string"`).Comment("外键 gpu id"),
 		field.Enum("gpu_version").GoType(enums.GpuVersion2060).Default(string(enums.GpuVersion2060)).StructTag(`json:"gpu_version"`).Comment("显卡型号"),
 		field.Enum("mission_type").GoType(enums.MissionTypeSdTxt2Img).Default(string(enums.MissionTypeSdTxt2Img)).StructTag(`json:"mission_type"`).Comment("任务类型"),
 		field.Enum("mission_category").GoType(enums.MissionCategorySD).Default(string(enums.MissionCategorySD)).StructTag(`json:"mission_category"`).Comment("任务大类"),
@@ -30,6 +32,7 @@ func (Price) Fields() []ent.Field {
 func (Price) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
+		edge.From("gpu", Gpu.Type).Ref("prices").Field("gpu_id").Unique().Required(),
 	}
 }
 

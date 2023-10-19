@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -87,6 +88,20 @@ func (pu *PriceUpdate) SetDeletedAt(t time.Time) *PriceUpdate {
 func (pu *PriceUpdate) SetNillableDeletedAt(t *time.Time) *PriceUpdate {
 	if t != nil {
 		pu.SetDeletedAt(*t)
+	}
+	return pu
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (pu *PriceUpdate) SetGpuID(i int64) *PriceUpdate {
+	pu.mutation.SetGpuID(i)
+	return pu
+}
+
+// SetNillableGpuID sets the "gpu_id" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableGpuID(i *int64) *PriceUpdate {
+	if i != nil {
+		pu.SetGpuID(*i)
 	}
 	return pu
 }
@@ -236,9 +251,20 @@ func (pu *PriceUpdate) SetNillableIsSensitive(b *bool) *PriceUpdate {
 	return pu
 }
 
+// SetGpu sets the "gpu" edge to the Gpu entity.
+func (pu *PriceUpdate) SetGpu(g *Gpu) *PriceUpdate {
+	return pu.SetGpuID(g.ID)
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (pu *PriceUpdate) Mutation() *PriceMutation {
 	return pu.mutation
+}
+
+// ClearGpu clears the "gpu" edge to the Gpu entity.
+func (pu *PriceUpdate) ClearGpu() *PriceUpdate {
+	pu.mutation.ClearGpu()
+	return pu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -298,6 +324,9 @@ func (pu *PriceUpdate) check() error {
 		if err := price.MissionBillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "mission_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.mission_billing_type": %w`, err)}
 		}
+	}
+	if _, ok := pu.mutation.GpuID(); pu.mutation.GpuCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Price.gpu"`)
 	}
 	return nil
 }
@@ -367,6 +396,35 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.IsSensitive(); ok {
 		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
+	}
+	if pu.mutation.GpuCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   price.GpuTable,
+			Columns: []string{price.GpuColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(gpu.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.GpuIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   price.GpuTable,
+			Columns: []string{price.GpuColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(gpu.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -446,6 +504,20 @@ func (puo *PriceUpdateOne) SetDeletedAt(t time.Time) *PriceUpdateOne {
 func (puo *PriceUpdateOne) SetNillableDeletedAt(t *time.Time) *PriceUpdateOne {
 	if t != nil {
 		puo.SetDeletedAt(*t)
+	}
+	return puo
+}
+
+// SetGpuID sets the "gpu_id" field.
+func (puo *PriceUpdateOne) SetGpuID(i int64) *PriceUpdateOne {
+	puo.mutation.SetGpuID(i)
+	return puo
+}
+
+// SetNillableGpuID sets the "gpu_id" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableGpuID(i *int64) *PriceUpdateOne {
+	if i != nil {
+		puo.SetGpuID(*i)
 	}
 	return puo
 }
@@ -595,9 +667,20 @@ func (puo *PriceUpdateOne) SetNillableIsSensitive(b *bool) *PriceUpdateOne {
 	return puo
 }
 
+// SetGpu sets the "gpu" edge to the Gpu entity.
+func (puo *PriceUpdateOne) SetGpu(g *Gpu) *PriceUpdateOne {
+	return puo.SetGpuID(g.ID)
+}
+
 // Mutation returns the PriceMutation object of the builder.
 func (puo *PriceUpdateOne) Mutation() *PriceMutation {
 	return puo.mutation
+}
+
+// ClearGpu clears the "gpu" edge to the Gpu entity.
+func (puo *PriceUpdateOne) ClearGpu() *PriceUpdateOne {
+	puo.mutation.ClearGpu()
+	return puo
 }
 
 // Where appends a list predicates to the PriceUpdate builder.
@@ -670,6 +753,9 @@ func (puo *PriceUpdateOne) check() error {
 		if err := price.MissionBillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "mission_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "Price.mission_billing_type": %w`, err)}
 		}
+	}
+	if _, ok := puo.mutation.GpuID(); puo.mutation.GpuCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Price.gpu"`)
 	}
 	return nil
 }
@@ -756,6 +842,35 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if value, ok := puo.mutation.IsSensitive(); ok {
 		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
+	}
+	if puo.mutation.GpuCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   price.GpuTable,
+			Columns: []string{price.GpuColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(gpu.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.GpuIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   price.GpuTable,
+			Columns: []string{price.GpuColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(gpu.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Price{config: puo.config}
 	_spec.Assign = _node.assignValues

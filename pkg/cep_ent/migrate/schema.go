@@ -490,6 +490,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
 		{Name: "power", Type: field.TypeInt, Comment: "显卡能力值", Default: 0},
+		{Name: "video_memory", Type: field.TypeInt, Comment: "显存", Default: 40},
+		{Name: "cpu", Type: field.TypeInt, Comment: "CPU", Default: 12},
+		{Name: "memory", Type: field.TypeInt, Comment: "内存", Default: 128},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{
@@ -1070,6 +1073,7 @@ var (
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
 		{Name: "is_deprecated", Type: field.TypeBool, Comment: "价格是否屏蔽，前端置灰，硬选也可以", Default: false},
 		{Name: "is_sensitive", Type: field.TypeBool, Comment: "价格是否敏感，用于特殊类型任务，不能让外部看到选项", Default: false},
+		{Name: "gpu_id", Type: field.TypeInt64, Comment: "外键 gpu id", Default: 0},
 	}
 	// PricesTable holds the schema information for the "prices" table.
 	PricesTable = &schema.Table{
@@ -1077,6 +1081,14 @@ var (
 		Comment:    "任务定价表，表里有数据，任务才有单价，才可以被创建",
 		Columns:    PricesColumns,
 		PrimaryKey: []*schema.Column{PricesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "prices_gpus_prices",
+				Columns:    []*schema.Column{PricesColumns[15]},
+				RefColumns: []*schema.Column{GpusColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// ProfitAccountsColumns holds the columns for the "profit_accounts" table.
 	ProfitAccountsColumns = []*schema.Column{
@@ -1609,6 +1621,7 @@ func init() {
 	MissionProductionsTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}
+	PricesTable.ForeignKeys[0].RefTable = GpusTable
 	PricesTable.Annotation = &entsql.Annotation{}
 	ProfitAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	ProfitAccountsTable.Annotation = &entsql.Annotation{}

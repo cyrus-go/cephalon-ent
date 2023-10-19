@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -25,6 +26,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldGpuID holds the string denoting the gpu_id field in the database.
+	FieldGpuID = "gpu_id"
 	// FieldGpuVersion holds the string denoting the gpu_version field in the database.
 	FieldGpuVersion = "gpu_version"
 	// FieldMissionType holds the string denoting the mission_type field in the database.
@@ -43,8 +46,17 @@ const (
 	FieldIsDeprecated = "is_deprecated"
 	// FieldIsSensitive holds the string denoting the is_sensitive field in the database.
 	FieldIsSensitive = "is_sensitive"
+	// EdgeGpu holds the string denoting the gpu edge name in mutations.
+	EdgeGpu = "gpu"
 	// Table holds the table name of the price in the database.
 	Table = "prices"
+	// GpuTable is the table that holds the gpu relation/edge.
+	GpuTable = "prices"
+	// GpuInverseTable is the table name for the Gpu entity.
+	// It exists in this package in order to avoid circular dependency with the "gpu" package.
+	GpuInverseTable = "gpus"
+	// GpuColumn is the table column denoting the gpu relation/edge.
+	GpuColumn = "gpu_id"
 )
 
 // Columns holds all SQL columns for price fields.
@@ -55,6 +67,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldGpuID,
 	FieldGpuVersion,
 	FieldMissionType,
 	FieldMissionCategory,
@@ -89,6 +102,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
+	// DefaultGpuID holds the default value on creation for the "gpu_id" field.
+	DefaultGpuID int64
 	// DefaultCep holds the default value on creation for the "cep" field.
 	DefaultCep int64
 	// DefaultIsDeprecated holds the default value on creation for the "is_deprecated" field.
@@ -180,6 +195,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
+// ByGpuID orders the results by the gpu_id field.
+func ByGpuID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuID, opts...).ToFunc()
+}
+
 // ByGpuVersion orders the results by the gpu_version field.
 func ByGpuVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGpuVersion, opts...).ToFunc()
@@ -223,4 +243,18 @@ func ByIsDeprecated(opts ...sql.OrderTermOption) OrderOption {
 // ByIsSensitive orders the results by the is_sensitive field.
 func ByIsSensitive(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsSensitive, opts...).ToFunc()
+}
+
+// ByGpuField orders the results by gpu field.
+func ByGpuField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGpuStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newGpuStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GpuInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, GpuTable, GpuColumn),
+	)
 }

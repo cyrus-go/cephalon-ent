@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 )
 
 // GpuQuery is the builder for querying Gpu entities.
@@ -24,6 +25,7 @@ type GpuQuery struct {
 	inters                []Interceptor
 	predicates            []predicate.Gpu
 	withDeviceGpuMissions *DeviceGpuMissionQuery
+	withPrices            *PriceQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (gq *GpuQuery) QueryDeviceGpuMissions() *DeviceGpuMissionQuery {
 			sqlgraph.From(gpu.Table, gpu.FieldID, selector),
 			sqlgraph.To(devicegpumission.Table, devicegpumission.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, gpu.DeviceGpuMissionsTable, gpu.DeviceGpuMissionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPrices chains the current query on the "prices" edge.
+func (gq *GpuQuery) QueryPrices() *PriceQuery {
+	query := (&PriceClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(gpu.Table, gpu.FieldID, selector),
+			sqlgraph.To(price.Table, price.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, gpu.PricesTable, gpu.PricesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +299,7 @@ func (gq *GpuQuery) Clone() *GpuQuery {
 		inters:                append([]Interceptor{}, gq.inters...),
 		predicates:            append([]predicate.Gpu{}, gq.predicates...),
 		withDeviceGpuMissions: gq.withDeviceGpuMissions.Clone(),
+		withPrices:            gq.withPrices.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
@@ -289,6 +314,17 @@ func (gq *GpuQuery) WithDeviceGpuMissions(opts ...func(*DeviceGpuMissionQuery)) 
 		opt(query)
 	}
 	gq.withDeviceGpuMissions = query
+	return gq
+}
+
+// WithPrices tells the query-builder to eager-load the nodes that are connected to
+// the "prices" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GpuQuery) WithPrices(opts ...func(*PriceQuery)) *GpuQuery {
+	query := (&PriceClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withPrices = query
 	return gq
 }
 
@@ -370,8 +406,9 @@ func (gq *GpuQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Gpu, err
 	var (
 		nodes       = []*Gpu{}
 		_spec       = gq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			gq.withDeviceGpuMissions != nil,
+			gq.withPrices != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -399,6 +436,13 @@ func (gq *GpuQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Gpu, err
 			return nil, err
 		}
 	}
+	if query := gq.withPrices; query != nil {
+		if err := gq.loadPrices(ctx, query, nodes,
+			func(n *Gpu) { n.Edges.Prices = []*Price{} },
+			func(n *Gpu, e *Price) { n.Edges.Prices = append(n.Edges.Prices, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -417,6 +461,36 @@ func (gq *GpuQuery) loadDeviceGpuMissions(ctx context.Context, query *DeviceGpuM
 	}
 	query.Where(predicate.DeviceGpuMission(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(gpu.DeviceGpuMissionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GpuID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "gpu_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (gq *GpuQuery) loadPrices(ctx context.Context, query *PriceQuery, nodes []*Gpu, init func(*Gpu), assign func(*Gpu, *Price)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Gpu)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(price.FieldGpuID)
+	}
+	query.Where(predicate.Price(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(gpu.PricesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

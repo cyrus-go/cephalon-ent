@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -29,6 +30,8 @@ type Price struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
+	// 外键 gpu id
+	GpuID int64 `json:"gpu_id,string"`
 	// 显卡型号
 	GpuVersion enums.GpuVersion `json:"gpu_version"`
 	// 任务类型
@@ -46,8 +49,33 @@ type Price struct {
 	// 价格是否屏蔽，前端置灰，硬选也可以
 	IsDeprecated bool `json:"is_deprecated"`
 	// 价格是否敏感，用于特殊类型任务，不能让外部看到选项
-	IsSensitive  bool `json:"is_sensitive"`
+	IsSensitive bool `json:"is_sensitive"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the PriceQuery when eager-loading is set.
+	Edges        PriceEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// PriceEdges holds the relations/edges for other nodes in the graph.
+type PriceEdges struct {
+	// Gpu holds the value of the gpu edge.
+	Gpu *Gpu `json:"gpu,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// GpuOrErr returns the Gpu value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PriceEdges) GpuOrErr() (*Gpu, error) {
+	if e.loadedTypes[0] {
+		if e.Gpu == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: gpu.Label}
+		}
+		return e.Gpu, nil
+	}
+	return nil, &NotLoadedError{edge: "gpu"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -57,7 +85,7 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case price.FieldIsDeprecated, price.FieldIsSensitive:
 			values[i] = new(sql.NullBool)
-		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldCep:
+		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldGpuID, price.FieldCep:
 			values[i] = new(sql.NullInt64)
 		case price.FieldGpuVersion, price.FieldMissionType, price.FieldMissionCategory, price.FieldMissionBillingType:
 			values[i] = new(sql.NullString)
@@ -113,6 +141,12 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				pr.DeletedAt = value.Time
+			}
+		case price.FieldGpuID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gpu_id", values[i])
+			} else if value.Valid {
+				pr.GpuID = value.Int64
 			}
 		case price.FieldGpuVersion:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -183,6 +217,11 @@ func (pr *Price) Value(name string) (ent.Value, error) {
 	return pr.selectValues.Get(name)
 }
 
+// QueryGpu queries the "gpu" edge of the Price entity.
+func (pr *Price) QueryGpu() *GpuQuery {
+	return NewPriceClient(pr.config).QueryGpu(pr)
+}
+
 // Update returns a builder for updating this Price.
 // Note that you need to call Price.Unwrap() before calling this method if this Price
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -220,6 +259,9 @@ func (pr *Price) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(pr.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("gpu_id=")
+	builder.WriteString(fmt.Sprintf("%v", pr.GpuID))
 	builder.WriteString(", ")
 	builder.WriteString("gpu_version=")
 	builder.WriteString(fmt.Sprintf("%v", pr.GpuVersion))

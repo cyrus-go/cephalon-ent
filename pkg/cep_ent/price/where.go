@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -78,6 +79,11 @@ func UpdatedAt(v time.Time) predicate.Price {
 // DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
 func DeletedAt(v time.Time) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// GpuID applies equality check predicate on the "gpu_id" field. It's identical to GpuIDEQ.
+func GpuID(v int64) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldGpuID, v))
 }
 
 // Cep applies equality check predicate on the "cep" field. It's identical to CepEQ.
@@ -303,6 +309,26 @@ func DeletedAtLT(v time.Time) predicate.Price {
 // DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
 func DeletedAtLTE(v time.Time) predicate.Price {
 	return predicate.Price(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// GpuIDEQ applies the EQ predicate on the "gpu_id" field.
+func GpuIDEQ(v int64) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldGpuID, v))
+}
+
+// GpuIDNEQ applies the NEQ predicate on the "gpu_id" field.
+func GpuIDNEQ(v int64) predicate.Price {
+	return predicate.Price(sql.FieldNEQ(FieldGpuID, v))
+}
+
+// GpuIDIn applies the In predicate on the "gpu_id" field.
+func GpuIDIn(vs ...int64) predicate.Price {
+	return predicate.Price(sql.FieldIn(FieldGpuID, vs...))
+}
+
+// GpuIDNotIn applies the NotIn predicate on the "gpu_id" field.
+func GpuIDNotIn(vs ...int64) predicate.Price {
+	return predicate.Price(sql.FieldNotIn(FieldGpuID, vs...))
 }
 
 // GpuVersionEQ applies the EQ predicate on the "gpu_version" field.
@@ -583,6 +609,29 @@ func IsSensitiveEQ(v bool) predicate.Price {
 // IsSensitiveNEQ applies the NEQ predicate on the "is_sensitive" field.
 func IsSensitiveNEQ(v bool) predicate.Price {
 	return predicate.Price(sql.FieldNEQ(FieldIsSensitive, v))
+}
+
+// HasGpu applies the HasEdge predicate on the "gpu" edge.
+func HasGpu() predicate.Price {
+	return predicate.Price(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GpuTable, GpuColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGpuWith applies the HasEdge predicate on the "gpu" edge with a given conditions (other predicates).
+func HasGpuWith(preds ...predicate.Gpu) predicate.Price {
+	return predicate.Price(func(s *sql.Selector) {
+		step := newGpuStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.
