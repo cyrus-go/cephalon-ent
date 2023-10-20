@@ -34,11 +34,11 @@ type Gpu struct {
 	// 显卡能力值
 	Power int `json:"power"`
 	// 显存
-	VideoMemory int `json:"videoMemory"`
+	VideoMemory int `json:"video_memory"`
 	// CPU
 	CPU int `json:"cpu"`
 	// 内存
-	Memory int `json:"videoMemory"`
+	Memory int `json:"memory"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GpuQuery when eager-loading is set.
 	Edges        GpuEdges `json:"edges"`
