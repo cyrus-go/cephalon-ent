@@ -181,6 +181,11 @@ func StartedAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldStartedAt, v))
 }
 
+// FinishedAt applies equality check predicate on the "finished_at" field. It's identical to FinishedAtEQ.
+func FinishedAt(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldFinishedAt, v))
+}
+
 // ExpiredAt applies equality check predicate on the "expired_at" field. It's identical to ExpiredAtEQ.
 func ExpiredAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldExpiredAt, v))
@@ -1644,6 +1649,56 @@ func StartedAtIsNil() predicate.Mission {
 // StartedAtNotNil applies the NotNil predicate on the "started_at" field.
 func StartedAtNotNil() predicate.Mission {
 	return predicate.Mission(sql.FieldNotNull(FieldStartedAt))
+}
+
+// FinishedAtEQ applies the EQ predicate on the "finished_at" field.
+func FinishedAtEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldFinishedAt, v))
+}
+
+// FinishedAtNEQ applies the NEQ predicate on the "finished_at" field.
+func FinishedAtNEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldFinishedAt, v))
+}
+
+// FinishedAtIn applies the In predicate on the "finished_at" field.
+func FinishedAtIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldFinishedAt, vs...))
+}
+
+// FinishedAtNotIn applies the NotIn predicate on the "finished_at" field.
+func FinishedAtNotIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldFinishedAt, vs...))
+}
+
+// FinishedAtGT applies the GT predicate on the "finished_at" field.
+func FinishedAtGT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldFinishedAt, v))
+}
+
+// FinishedAtGTE applies the GTE predicate on the "finished_at" field.
+func FinishedAtGTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldFinishedAt, v))
+}
+
+// FinishedAtLT applies the LT predicate on the "finished_at" field.
+func FinishedAtLT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldFinishedAt, v))
+}
+
+// FinishedAtLTE applies the LTE predicate on the "finished_at" field.
+func FinishedAtLTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldFinishedAt, v))
+}
+
+// FinishedAtIsNil applies the IsNil predicate on the "finished_at" field.
+func FinishedAtIsNil() predicate.Mission {
+	return predicate.Mission(sql.FieldIsNull(FieldFinishedAt))
+}
+
+// FinishedAtNotNil applies the NotNil predicate on the "finished_at" field.
+func FinishedAtNotNil() predicate.Mission {
+	return predicate.Mission(sql.FieldNotNull(FieldFinishedAt))
 }
 
 // ExpiredAtEQ applies the EQ predicate on the "expired_at" field.

@@ -85,6 +85,8 @@ const (
 	FieldBlackDeviceIds = "black_device_ids"
 	// FieldStartedAt holds the string denoting the started_at field in the database.
 	FieldStartedAt = "started_at"
+	// FieldFinishedAt holds the string denoting the finished_at field in the database.
+	FieldFinishedAt = "finished_at"
 	// FieldExpiredAt holds the string denoting the expired_at field in the database.
 	FieldExpiredAt = "expired_at"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
@@ -218,6 +220,7 @@ var Columns = []string{
 	FieldWhiteDeviceIds,
 	FieldBlackDeviceIds,
 	FieldStartedAt,
+	FieldFinishedAt,
 	FieldExpiredAt,
 }
 
@@ -280,6 +283,8 @@ var (
 	DefaultPassword string
 	// DefaultStartedAt holds the default value on creation for the "started_at" field.
 	DefaultStartedAt time.Time
+	// DefaultFinishedAt holds the default value on creation for the "finished_at" field.
+	DefaultFinishedAt time.Time
 	// DefaultExpiredAt holds the default value on creation for the "expired_at" field.
 	DefaultExpiredAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
@@ -529,6 +534,11 @@ func ByBlackDeviceIds(opts ...sql.OrderTermOption) OrderOption {
 // ByStartedAt orders the results by the started_at field.
 func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByFinishedAt orders the results by the finished_at field.
+func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
 }
 
 // ByExpiredAt orders the results by the expired_at field.

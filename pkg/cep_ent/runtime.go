@@ -1123,8 +1123,12 @@ func init() {
 	missionDescStartedAt := missionFields[28].Descriptor()
 	// mission.DefaultStartedAt holds the default value on creation for the started_at field.
 	mission.DefaultStartedAt = missionDescStartedAt.Default.(time.Time)
+	// missionDescFinishedAt is the schema descriptor for finished_at field.
+	missionDescFinishedAt := missionFields[29].Descriptor()
+	// mission.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	mission.DefaultFinishedAt = missionDescFinishedAt.Default.(time.Time)
 	// missionDescExpiredAt is the schema descriptor for expired_at field.
-	missionDescExpiredAt := missionFields[29].Descriptor()
+	missionDescExpiredAt := missionFields[30].Descriptor()
 	// mission.DefaultExpiredAt holds the default value on creation for the expired_at field.
 	mission.DefaultExpiredAt = missionDescExpiredAt.Default.(time.Time)
 	// missionDescID is the schema descriptor for id field.

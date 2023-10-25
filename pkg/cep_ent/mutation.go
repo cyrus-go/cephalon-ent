@@ -21857,6 +21857,7 @@ type MissionMutation struct {
 	white_device_ids              *[]string
 	black_device_ids              *[]string
 	started_at                    *time.Time
+	finished_at                   *time.Time
 	expired_at                    *time.Time
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
@@ -23390,6 +23391,55 @@ func (m *MissionMutation) ResetStartedAt() {
 	delete(m.clearedFields, mission.FieldStartedAt)
 }
 
+// SetFinishedAt sets the "finished_at" field.
+func (m *MissionMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *MissionMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *MissionMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[mission.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *MissionMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[mission.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *MissionMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, mission.FieldFinishedAt)
+}
+
 // SetExpiredAt sets the "expired_at" field.
 func (m *MissionMutation) SetExpiredAt(t time.Time) {
 	m.expired_at = &t
@@ -23875,7 +23925,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 35)
+	fields := make([]string, 0, 36)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -23978,6 +24028,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.started_at != nil {
 		fields = append(fields, mission.FieldStartedAt)
 	}
+	if m.finished_at != nil {
+		fields = append(fields, mission.FieldFinishedAt)
+	}
 	if m.expired_at != nil {
 		fields = append(fields, mission.FieldExpiredAt)
 	}
@@ -24057,6 +24110,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.BlackDeviceIds()
 	case mission.FieldStartedAt:
 		return m.StartedAt()
+	case mission.FieldFinishedAt:
+		return m.FinishedAt()
 	case mission.FieldExpiredAt:
 		return m.ExpiredAt()
 	}
@@ -24136,6 +24191,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldBlackDeviceIds(ctx)
 	case mission.FieldStartedAt:
 		return m.OldStartedAt(ctx)
+	case mission.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
 	case mission.FieldExpiredAt:
 		return m.OldExpiredAt(ctx)
 	}
@@ -24385,6 +24442,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStartedAt(v)
 		return nil
+	case mission.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
 	case mission.FieldExpiredAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -24491,6 +24555,9 @@ func (m *MissionMutation) ClearedFields() []string {
 	if m.FieldCleared(mission.FieldStartedAt) {
 		fields = append(fields, mission.FieldStartedAt)
 	}
+	if m.FieldCleared(mission.FieldFinishedAt) {
+		fields = append(fields, mission.FieldFinishedAt)
+	}
 	if m.FieldCleared(mission.FieldExpiredAt) {
 		fields = append(fields, mission.FieldExpiredAt)
 	}
@@ -24525,6 +24592,9 @@ func (m *MissionMutation) ClearField(name string) error {
 		return nil
 	case mission.FieldStartedAt:
 		m.ClearStartedAt()
+		return nil
+	case mission.FieldFinishedAt:
+		m.ClearFinishedAt()
 		return nil
 	case mission.FieldExpiredAt:
 		m.ClearExpiredAt()
@@ -24638,6 +24708,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldStartedAt:
 		m.ResetStartedAt()
+		return nil
+	case mission.FieldFinishedAt:
+		m.ResetFinishedAt()
 		return nil
 	case mission.FieldExpiredAt:
 		m.ResetExpiredAt()

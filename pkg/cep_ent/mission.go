@@ -94,7 +94,9 @@ type Mission struct {
 	BlackDeviceIds []string `json:"black_device_ids"`
 	// 任务开始时间
 	StartedAt *time.Time `json:"started_at"`
-	// 任务到期时间
+	// 任务结束时间
+	FinishedAt *time.Time `json:"finished_at"`
+	// 任务到期时间（包时任务才有）
 	ExpiredAt *time.Time `json:"expired_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
@@ -254,7 +256,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword:
 			values[i] = new(sql.NullString)
-		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldExpiredAt:
+		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt:
 			values[i] = new(sql.NullTime)
 		case mission.FieldWhiteDeviceIds:
 			values[i] = mission.ValueScanner.WhiteDeviceIds.ScanValue()
@@ -489,6 +491,13 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				m.StartedAt = new(time.Time)
 				*m.StartedAt = value.Time
 			}
+		case mission.FieldFinishedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
+			} else if value.Valid {
+				m.FinishedAt = new(time.Time)
+				*m.FinishedAt = value.Time
+			}
 		case mission.FieldExpiredAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expired_at", values[i])
@@ -683,6 +692,11 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	if v := m.StartedAt; v != nil {
 		builder.WriteString("started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := m.FinishedAt; v != nil {
+		builder.WriteString("finished_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")

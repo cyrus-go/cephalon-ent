@@ -532,6 +532,26 @@ func (mu *MissionUpdate) ClearStartedAt() *MissionUpdate {
 	return mu
 }
 
+// SetFinishedAt sets the "finished_at" field.
+func (mu *MissionUpdate) SetFinishedAt(t time.Time) *MissionUpdate {
+	mu.mutation.SetFinishedAt(t)
+	return mu
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableFinishedAt(t *time.Time) *MissionUpdate {
+	if t != nil {
+		mu.SetFinishedAt(*t)
+	}
+	return mu
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (mu *MissionUpdate) ClearFinishedAt() *MissionUpdate {
+	mu.mutation.ClearFinishedAt()
+	return mu
+}
+
 // SetExpiredAt sets the "expired_at" field.
 func (mu *MissionUpdate) SetExpiredAt(t time.Time) *MissionUpdate {
 	mu.mutation.SetExpiredAt(t)
@@ -1019,6 +1039,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.StartedAtCleared() {
 		_spec.ClearField(mission.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := mu.mutation.FinishedAt(); ok {
+		_spec.SetField(mission.FieldFinishedAt, field.TypeTime, value)
+	}
+	if mu.mutation.FinishedAtCleared() {
+		_spec.ClearField(mission.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := mu.mutation.ExpiredAt(); ok {
 		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)
@@ -1892,6 +1918,26 @@ func (muo *MissionUpdateOne) ClearStartedAt() *MissionUpdateOne {
 	return muo
 }
 
+// SetFinishedAt sets the "finished_at" field.
+func (muo *MissionUpdateOne) SetFinishedAt(t time.Time) *MissionUpdateOne {
+	muo.mutation.SetFinishedAt(t)
+	return muo
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableFinishedAt(t *time.Time) *MissionUpdateOne {
+	if t != nil {
+		muo.SetFinishedAt(*t)
+	}
+	return muo
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (muo *MissionUpdateOne) ClearFinishedAt() *MissionUpdateOne {
+	muo.mutation.ClearFinishedAt()
+	return muo
+}
+
 // SetExpiredAt sets the "expired_at" field.
 func (muo *MissionUpdateOne) SetExpiredAt(t time.Time) *MissionUpdateOne {
 	muo.mutation.SetExpiredAt(t)
@@ -2409,6 +2455,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if muo.mutation.StartedAtCleared() {
 		_spec.ClearField(mission.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := muo.mutation.FinishedAt(); ok {
+		_spec.SetField(mission.FieldFinishedAt, field.TypeTime, value)
+	}
+	if muo.mutation.FinishedAtCleared() {
+		_spec.ClearField(mission.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := muo.mutation.ExpiredAt(); ok {
 		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)

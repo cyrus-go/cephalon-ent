@@ -47,7 +47,8 @@ func (Mission) Fields() []ent.Field {
 		field.String("white_device_ids").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"white_device_ids"`).Comment("任务的设备白名单"),
 		field.String("black_device_ids").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"black_device_ids"`).Comment("任务的设备黑名单"),
 		field.Time("started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"started_at"`).Comment("任务开始时间"),
-		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("任务到期时间"),
+		field.Time("finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"finished_at"`).Comment("任务结束时间"),
+		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("任务到期时间（包时任务才有）"),
 	}
 }
 

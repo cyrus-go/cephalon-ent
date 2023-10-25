@@ -477,6 +477,20 @@ func (mc *MissionCreate) SetNillableStartedAt(t *time.Time) *MissionCreate {
 	return mc
 }
 
+// SetFinishedAt sets the "finished_at" field.
+func (mc *MissionCreate) SetFinishedAt(t time.Time) *MissionCreate {
+	mc.mutation.SetFinishedAt(t)
+	return mc
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableFinishedAt(t *time.Time) *MissionCreate {
+	if t != nil {
+		mc.SetFinishedAt(*t)
+	}
+	return mc
+}
+
 // SetExpiredAt sets the "expired_at" field.
 func (mc *MissionCreate) SetExpiredAt(t time.Time) *MissionCreate {
 	mc.mutation.SetExpiredAt(t)
@@ -773,6 +787,10 @@ func (mc *MissionCreate) defaults() {
 	if _, ok := mc.mutation.StartedAt(); !ok {
 		v := mission.DefaultStartedAt
 		mc.mutation.SetStartedAt(v)
+	}
+	if _, ok := mc.mutation.FinishedAt(); !ok {
+		v := mission.DefaultFinishedAt
+		mc.mutation.SetFinishedAt(v)
 	}
 	if _, ok := mc.mutation.ExpiredAt(); !ok {
 		v := mission.DefaultExpiredAt
@@ -1075,6 +1093,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.StartedAt(); ok {
 		_spec.SetField(mission.FieldStartedAt, field.TypeTime, value)
 		_node.StartedAt = &value
+	}
+	if value, ok := mc.mutation.FinishedAt(); ok {
+		_spec.SetField(mission.FieldFinishedAt, field.TypeTime, value)
+		_node.FinishedAt = &value
 	}
 	if value, ok := mc.mutation.ExpiredAt(); ok {
 		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)
@@ -1752,6 +1774,24 @@ func (u *MissionUpsert) ClearStartedAt() *MissionUpsert {
 	return u
 }
 
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionUpsert) SetFinishedAt(v time.Time) *MissionUpsert {
+	u.Set(mission.FieldFinishedAt, v)
+	return u
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateFinishedAt() *MissionUpsert {
+	u.SetExcluded(mission.FieldFinishedAt)
+	return u
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *MissionUpsert) ClearFinishedAt() *MissionUpsert {
+	u.SetNull(mission.FieldFinishedAt)
+	return u
+}
+
 // SetExpiredAt sets the "expired_at" field.
 func (u *MissionUpsert) SetExpiredAt(v time.Time) *MissionUpsert {
 	u.Set(mission.FieldExpiredAt, v)
@@ -2350,6 +2390,27 @@ func (u *MissionUpsertOne) UpdateStartedAt() *MissionUpsertOne {
 func (u *MissionUpsertOne) ClearStartedAt() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionUpsertOne) SetFinishedAt(v time.Time) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateFinishedAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *MissionUpsertOne) ClearFinishedAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 
@@ -3123,6 +3184,27 @@ func (u *MissionUpsertBulk) UpdateStartedAt() *MissionUpsertBulk {
 func (u *MissionUpsertBulk) ClearStartedAt() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *MissionUpsertBulk) SetFinishedAt(v time.Time) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateFinishedAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *MissionUpsertBulk) ClearFinishedAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 
