@@ -463,6 +463,34 @@ func (mc *MissionCreate) SetBlackDeviceIds(s []string) *MissionCreate {
 	return mc
 }
 
+// SetStartedAt sets the "started_at" field.
+func (mc *MissionCreate) SetStartedAt(t time.Time) *MissionCreate {
+	mc.mutation.SetStartedAt(t)
+	return mc
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableStartedAt(t *time.Time) *MissionCreate {
+	if t != nil {
+		mc.SetStartedAt(*t)
+	}
+	return mc
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (mc *MissionCreate) SetExpiredAt(t time.Time) *MissionCreate {
+	mc.mutation.SetExpiredAt(t)
+	return mc
+}
+
+// SetNillableExpiredAt sets the "expired_at" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableExpiredAt(t *time.Time) *MissionCreate {
+	if t != nil {
+		mc.SetExpiredAt(*t)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -741,6 +769,14 @@ func (mc *MissionCreate) defaults() {
 	if _, ok := mc.mutation.Password(); !ok {
 		v := mission.DefaultPassword
 		mc.mutation.SetPassword(v)
+	}
+	if _, ok := mc.mutation.StartedAt(); !ok {
+		v := mission.DefaultStartedAt
+		mc.mutation.SetStartedAt(v)
+	}
+	if _, ok := mc.mutation.ExpiredAt(); !ok {
+		v := mission.DefaultExpiredAt
+		mc.mutation.SetExpiredAt(v)
 	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
@@ -1035,6 +1071,14 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 		}
 		_spec.SetField(mission.FieldBlackDeviceIds, field.TypeString, vv)
 		_node.BlackDeviceIds = value
+	}
+	if value, ok := mc.mutation.StartedAt(); ok {
+		_spec.SetField(mission.FieldStartedAt, field.TypeTime, value)
+		_node.StartedAt = &value
+	}
+	if value, ok := mc.mutation.ExpiredAt(); ok {
+		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)
+		_node.ExpiredAt = &value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1690,6 +1734,42 @@ func (u *MissionUpsert) ClearBlackDeviceIds() *MissionUpsert {
 	return u
 }
 
+// SetStartedAt sets the "started_at" field.
+func (u *MissionUpsert) SetStartedAt(v time.Time) *MissionUpsert {
+	u.Set(mission.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateStartedAt() *MissionUpsert {
+	u.SetExcluded(mission.FieldStartedAt)
+	return u
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *MissionUpsert) ClearStartedAt() *MissionUpsert {
+	u.SetNull(mission.FieldStartedAt)
+	return u
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (u *MissionUpsert) SetExpiredAt(v time.Time) *MissionUpsert {
+	u.Set(mission.FieldExpiredAt, v)
+	return u
+}
+
+// UpdateExpiredAt sets the "expired_at" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateExpiredAt() *MissionUpsert {
+	u.SetExcluded(mission.FieldExpiredAt)
+	return u
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (u *MissionUpsert) ClearExpiredAt() *MissionUpsert {
+	u.SetNull(mission.FieldExpiredAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2249,6 +2329,48 @@ func (u *MissionUpsertOne) UpdateBlackDeviceIds() *MissionUpsertOne {
 func (u *MissionUpsertOne) ClearBlackDeviceIds() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearBlackDeviceIds()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionUpsertOne) SetStartedAt(v time.Time) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateStartedAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *MissionUpsertOne) ClearStartedAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (u *MissionUpsertOne) SetExpiredAt(v time.Time) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetExpiredAt(v)
+	})
+}
+
+// UpdateExpiredAt sets the "expired_at" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateExpiredAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateExpiredAt()
+	})
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (u *MissionUpsertOne) ClearExpiredAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearExpiredAt()
 	})
 }
 
@@ -2980,6 +3102,48 @@ func (u *MissionUpsertBulk) UpdateBlackDeviceIds() *MissionUpsertBulk {
 func (u *MissionUpsertBulk) ClearBlackDeviceIds() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearBlackDeviceIds()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *MissionUpsertBulk) SetStartedAt(v time.Time) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateStartedAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *MissionUpsertBulk) ClearStartedAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (u *MissionUpsertBulk) SetExpiredAt(v time.Time) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetExpiredAt(v)
+	})
+}
+
+// UpdateExpiredAt sets the "expired_at" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateExpiredAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateExpiredAt()
+	})
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (u *MissionUpsertBulk) ClearExpiredAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearExpiredAt()
 	})
 }
 

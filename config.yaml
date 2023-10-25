@@ -2,5 +2,5 @@ db:
   host: 159.75.243.79
   port: 5432
   username: postgres
-  password: test123456
+  password: StarkSim123456.
   database: cephalon

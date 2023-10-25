@@ -46,6 +46,8 @@ func (Mission) Fields() []ent.Field {
 		field.String("password").Default("cephalon").StructTag(`json:"password"`).Comment("某些任务会使用到的验证密码"),
 		field.String("white_device_ids").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"white_device_ids"`).Comment("任务的设备白名单"),
 		field.String("black_device_ids").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"black_device_ids"`).Comment("任务的设备黑名单"),
+		field.Time("started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"started_at"`).Comment("任务开始时间"),
+		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("任务到期时间"),
 	}
 }
 

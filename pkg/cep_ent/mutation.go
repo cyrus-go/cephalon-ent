@@ -21856,6 +21856,8 @@ type MissionMutation struct {
 	password                      *string
 	white_device_ids              *[]string
 	black_device_ids              *[]string
+	started_at                    *time.Time
+	expired_at                    *time.Time
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -23339,6 +23341,104 @@ func (m *MissionMutation) ResetBlackDeviceIds() {
 	delete(m.clearedFields, mission.FieldBlackDeviceIds)
 }
 
+// SetStartedAt sets the "started_at" field.
+func (m *MissionMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *MissionMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *MissionMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[mission.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *MissionMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[mission.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *MissionMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, mission.FieldStartedAt)
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (m *MissionMutation) SetExpiredAt(t time.Time) {
+	m.expired_at = &t
+}
+
+// ExpiredAt returns the value of the "expired_at" field in the mutation.
+func (m *MissionMutation) ExpiredAt() (r time.Time, exists bool) {
+	v := m.expired_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiredAt returns the old "expired_at" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldExpiredAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiredAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiredAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiredAt: %w", err)
+	}
+	return oldValue.ExpiredAt, nil
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (m *MissionMutation) ClearExpiredAt() {
+	m.expired_at = nil
+	m.clearedFields[mission.FieldExpiredAt] = struct{}{}
+}
+
+// ExpiredAtCleared returns if the "expired_at" field was cleared in this mutation.
+func (m *MissionMutation) ExpiredAtCleared() bool {
+	_, ok := m.clearedFields[mission.FieldExpiredAt]
+	return ok
+}
+
+// ResetExpiredAt resets all changes to the "expired_at" field.
+func (m *MissionMutation) ResetExpiredAt() {
+	m.expired_at = nil
+	delete(m.clearedFields, mission.FieldExpiredAt)
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -23775,7 +23875,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 33)
+	fields := make([]string, 0, 35)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -23875,6 +23975,12 @@ func (m *MissionMutation) Fields() []string {
 	if m.black_device_ids != nil {
 		fields = append(fields, mission.FieldBlackDeviceIds)
 	}
+	if m.started_at != nil {
+		fields = append(fields, mission.FieldStartedAt)
+	}
+	if m.expired_at != nil {
+		fields = append(fields, mission.FieldExpiredAt)
+	}
 	return fields
 }
 
@@ -23949,6 +24055,10 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.WhiteDeviceIds()
 	case mission.FieldBlackDeviceIds:
 		return m.BlackDeviceIds()
+	case mission.FieldStartedAt:
+		return m.StartedAt()
+	case mission.FieldExpiredAt:
+		return m.ExpiredAt()
 	}
 	return nil, false
 }
@@ -24024,6 +24134,10 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldWhiteDeviceIds(ctx)
 	case mission.FieldBlackDeviceIds:
 		return m.OldBlackDeviceIds(ctx)
+	case mission.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case mission.FieldExpiredAt:
+		return m.OldExpiredAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -24264,6 +24378,20 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBlackDeviceIds(v)
 		return nil
+	case mission.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case mission.FieldExpiredAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiredAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -24360,6 +24488,12 @@ func (m *MissionMutation) ClearedFields() []string {
 	if m.FieldCleared(mission.FieldBlackDeviceIds) {
 		fields = append(fields, mission.FieldBlackDeviceIds)
 	}
+	if m.FieldCleared(mission.FieldStartedAt) {
+		fields = append(fields, mission.FieldStartedAt)
+	}
+	if m.FieldCleared(mission.FieldExpiredAt) {
+		fields = append(fields, mission.FieldExpiredAt)
+	}
 	return fields
 }
 
@@ -24388,6 +24522,12 @@ func (m *MissionMutation) ClearField(name string) error {
 		return nil
 	case mission.FieldBlackDeviceIds:
 		m.ClearBlackDeviceIds()
+		return nil
+	case mission.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case mission.FieldExpiredAt:
+		m.ClearExpiredAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission nullable field %s", name)
@@ -24495,6 +24635,12 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldBlackDeviceIds:
 		m.ResetBlackDeviceIds()
+		return nil
+	case mission.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case mission.FieldExpiredAt:
+		m.ResetExpiredAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

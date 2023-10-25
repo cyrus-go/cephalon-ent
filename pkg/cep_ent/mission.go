@@ -92,6 +92,10 @@ type Mission struct {
 	WhiteDeviceIds []string `json:"white_device_ids"`
 	// 任务的设备黑名单
 	BlackDeviceIds []string `json:"black_device_ids"`
+	// 任务开始时间
+	StartedAt *time.Time `json:"started_at"`
+	// 任务到期时间
+	ExpiredAt *time.Time `json:"expired_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges        MissionEdges `json:"edges"`
@@ -250,7 +254,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword:
 			values[i] = new(sql.NullString)
-		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt:
+		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldExpiredAt:
 			values[i] = new(sql.NullTime)
 		case mission.FieldWhiteDeviceIds:
 			values[i] = mission.ValueScanner.WhiteDeviceIds.ScanValue()
@@ -478,6 +482,20 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else {
 				m.BlackDeviceIds = value
 			}
+		case mission.FieldStartedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field started_at", values[i])
+			} else if value.Valid {
+				m.StartedAt = new(time.Time)
+				*m.StartedAt = value.Time
+			}
+		case mission.FieldExpiredAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expired_at", values[i])
+			} else if value.Valid {
+				m.ExpiredAt = new(time.Time)
+				*m.ExpiredAt = value.Time
+			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
 		}
@@ -662,6 +680,16 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("black_device_ids=")
 	builder.WriteString(fmt.Sprintf("%v", m.BlackDeviceIds))
+	builder.WriteString(", ")
+	if v := m.StartedAt; v != nil {
+		builder.WriteString("started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := m.ExpiredAt; v != nil {
+		builder.WriteString("expired_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

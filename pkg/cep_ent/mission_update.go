@@ -512,6 +512,46 @@ func (mu *MissionUpdate) ClearBlackDeviceIds() *MissionUpdate {
 	return mu
 }
 
+// SetStartedAt sets the "started_at" field.
+func (mu *MissionUpdate) SetStartedAt(t time.Time) *MissionUpdate {
+	mu.mutation.SetStartedAt(t)
+	return mu
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableStartedAt(t *time.Time) *MissionUpdate {
+	if t != nil {
+		mu.SetStartedAt(*t)
+	}
+	return mu
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (mu *MissionUpdate) ClearStartedAt() *MissionUpdate {
+	mu.mutation.ClearStartedAt()
+	return mu
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (mu *MissionUpdate) SetExpiredAt(t time.Time) *MissionUpdate {
+	mu.mutation.SetExpiredAt(t)
+	return mu
+}
+
+// SetNillableExpiredAt sets the "expired_at" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableExpiredAt(t *time.Time) *MissionUpdate {
+	if t != nil {
+		mu.SetExpiredAt(*t)
+	}
+	return mu
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (mu *MissionUpdate) ClearExpiredAt() *MissionUpdate {
+	mu.mutation.ClearExpiredAt()
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -973,6 +1013,18 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.BlackDeviceIdsCleared() {
 		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeString)
+	}
+	if value, ok := mu.mutation.StartedAt(); ok {
+		_spec.SetField(mission.FieldStartedAt, field.TypeTime, value)
+	}
+	if mu.mutation.StartedAtCleared() {
+		_spec.ClearField(mission.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := mu.mutation.ExpiredAt(); ok {
+		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)
+	}
+	if mu.mutation.ExpiredAtCleared() {
+		_spec.ClearField(mission.FieldExpiredAt, field.TypeTime)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1820,6 +1872,46 @@ func (muo *MissionUpdateOne) ClearBlackDeviceIds() *MissionUpdateOne {
 	return muo
 }
 
+// SetStartedAt sets the "started_at" field.
+func (muo *MissionUpdateOne) SetStartedAt(t time.Time) *MissionUpdateOne {
+	muo.mutation.SetStartedAt(t)
+	return muo
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableStartedAt(t *time.Time) *MissionUpdateOne {
+	if t != nil {
+		muo.SetStartedAt(*t)
+	}
+	return muo
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (muo *MissionUpdateOne) ClearStartedAt() *MissionUpdateOne {
+	muo.mutation.ClearStartedAt()
+	return muo
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (muo *MissionUpdateOne) SetExpiredAt(t time.Time) *MissionUpdateOne {
+	muo.mutation.SetExpiredAt(t)
+	return muo
+}
+
+// SetNillableExpiredAt sets the "expired_at" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableExpiredAt(t *time.Time) *MissionUpdateOne {
+	if t != nil {
+		muo.SetExpiredAt(*t)
+	}
+	return muo
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (muo *MissionUpdateOne) ClearExpiredAt() *MissionUpdateOne {
+	muo.mutation.ClearExpiredAt()
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -2311,6 +2403,18 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if muo.mutation.BlackDeviceIdsCleared() {
 		_spec.ClearField(mission.FieldBlackDeviceIds, field.TypeString)
+	}
+	if value, ok := muo.mutation.StartedAt(); ok {
+		_spec.SetField(mission.FieldStartedAt, field.TypeTime, value)
+	}
+	if muo.mutation.StartedAtCleared() {
+		_spec.ClearField(mission.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := muo.mutation.ExpiredAt(); ok {
+		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)
+	}
+	if muo.mutation.ExpiredAtCleared() {
+		_spec.ClearField(mission.FieldExpiredAt, field.TypeTime)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

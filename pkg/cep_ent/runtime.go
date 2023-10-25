@@ -1119,6 +1119,14 @@ func init() {
 	// missionDescBlackDeviceIds is the schema descriptor for black_device_ids field.
 	missionDescBlackDeviceIds := missionFields[27].Descriptor()
 	mission.ValueScanner.BlackDeviceIds = missionDescBlackDeviceIds.ValueScanner.(field.TypeValueScanner[[]string])
+	// missionDescStartedAt is the schema descriptor for started_at field.
+	missionDescStartedAt := missionFields[28].Descriptor()
+	// mission.DefaultStartedAt holds the default value on creation for the started_at field.
+	mission.DefaultStartedAt = missionDescStartedAt.Default.(time.Time)
+	// missionDescExpiredAt is the schema descriptor for expired_at field.
+	missionDescExpiredAt := missionFields[29].Descriptor()
+	// mission.DefaultExpiredAt holds the default value on creation for the expired_at field.
+	mission.DefaultExpiredAt = missionDescExpiredAt.Default.(time.Time)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

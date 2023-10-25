@@ -83,6 +83,10 @@ const (
 	FieldWhiteDeviceIds = "white_device_ids"
 	// FieldBlackDeviceIds holds the string denoting the black_device_ids field in the database.
 	FieldBlackDeviceIds = "black_device_ids"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldExpiredAt holds the string denoting the expired_at field in the database.
+	FieldExpiredAt = "expired_at"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -213,6 +217,8 @@ var Columns = []string{
 	FieldPassword,
 	FieldWhiteDeviceIds,
 	FieldBlackDeviceIds,
+	FieldStartedAt,
+	FieldExpiredAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -272,6 +278,10 @@ var (
 	DefaultUsername string
 	// DefaultPassword holds the default value on creation for the "password" field.
 	DefaultPassword string
+	// DefaultStartedAt holds the default value on creation for the "started_at" field.
+	DefaultStartedAt time.Time
+	// DefaultExpiredAt holds the default value on creation for the "expired_at" field.
+	DefaultExpiredAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -514,6 +524,16 @@ func ByWhiteDeviceIds(opts ...sql.OrderTermOption) OrderOption {
 // ByBlackDeviceIds orders the results by the black_device_ids field.
 func ByBlackDeviceIds(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBlackDeviceIds, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByExpiredAt orders the results by the expired_at field.
+func ByExpiredAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiredAt, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.
