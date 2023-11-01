@@ -1958,21 +1958,21 @@ func HasMissionOrdersWith(preds ...predicate.MissionOrder) predicate.Mission {
 	})
 }
 
-// HasRenewalAgreement applies the HasEdge predicate on the "renewal_agreement" edge.
-func HasRenewalAgreement() predicate.Mission {
+// HasRenewalAgreements applies the HasEdge predicate on the "renewal_agreements" edge.
+func HasRenewalAgreements() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, RenewalAgreementTable, RenewalAgreementColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasRenewalAgreementWith applies the HasEdge predicate on the "renewal_agreement" edge with a given conditions (other predicates).
-func HasRenewalAgreementWith(preds ...predicate.RenewalAgreement) predicate.Mission {
+// HasRenewalAgreementsWith applies the HasEdge predicate on the "renewal_agreements" edge with a given conditions (other predicates).
+func HasRenewalAgreementsWith(preds ...predicate.RenewalAgreement) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
-		step := newRenewalAgreementStep()
+		step := newRenewalAgreementsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

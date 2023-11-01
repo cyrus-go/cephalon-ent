@@ -618,23 +618,19 @@ func (mc *MissionCreate) AddMissionOrders(m ...*MissionOrder) *MissionCreate {
 	return mc.AddMissionOrderIDs(ids...)
 }
 
-// SetRenewalAgreementID sets the "renewal_agreement" edge to the RenewalAgreement entity by ID.
-func (mc *MissionCreate) SetRenewalAgreementID(id int64) *MissionCreate {
-	mc.mutation.SetRenewalAgreementID(id)
+// AddRenewalAgreementIDs adds the "renewal_agreements" edge to the RenewalAgreement entity by IDs.
+func (mc *MissionCreate) AddRenewalAgreementIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddRenewalAgreementIDs(ids...)
 	return mc
 }
 
-// SetNillableRenewalAgreementID sets the "renewal_agreement" edge to the RenewalAgreement entity by ID if the given value is not nil.
-func (mc *MissionCreate) SetNillableRenewalAgreementID(id *int64) *MissionCreate {
-	if id != nil {
-		mc = mc.SetRenewalAgreementID(*id)
+// AddRenewalAgreements adds the "renewal_agreements" edges to the RenewalAgreement entity.
+func (mc *MissionCreate) AddRenewalAgreements(r ...*RenewalAgreement) *MissionCreate {
+	ids := make([]int64, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
 	}
-	return mc
-}
-
-// SetRenewalAgreement sets the "renewal_agreement" edge to the RenewalAgreement entity.
-func (mc *MissionCreate) SetRenewalAgreement(r *RenewalAgreement) *MissionCreate {
-	return mc.SetRenewalAgreementID(r.ID)
+	return mc.AddRenewalAgreementIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -1250,12 +1246,12 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := mc.mutation.RenewalAgreementIDs(); len(nodes) > 0 {
+	if nodes := mc.mutation.RenewalAgreementsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   mission.RenewalAgreementTable,
-			Columns: []string{mission.RenewalAgreementColumn},
+			Table:   mission.RenewalAgreementsTable,
+			Columns: []string{mission.RenewalAgreementsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),

@@ -107,8 +107,8 @@ const (
 	EdgeMissionProductions = "mission_productions"
 	// EdgeMissionOrders holds the string denoting the mission_orders edge name in mutations.
 	EdgeMissionOrders = "mission_orders"
-	// EdgeRenewalAgreement holds the string denoting the renewal_agreement edge name in mutations.
-	EdgeRenewalAgreement = "renewal_agreement"
+	// EdgeRenewalAgreements holds the string denoting the renewal_agreements edge name in mutations.
+	EdgeRenewalAgreements = "renewal_agreements"
 	// Table holds the table name of the mission in the database.
 	Table = "missions"
 	// MissionKindTable is the table that holds the mission_kind relation/edge.
@@ -174,13 +174,13 @@ const (
 	MissionOrdersInverseTable = "mission_orders"
 	// MissionOrdersColumn is the table column denoting the mission_orders relation/edge.
 	MissionOrdersColumn = "mission_id"
-	// RenewalAgreementTable is the table that holds the renewal_agreement relation/edge.
-	RenewalAgreementTable = "renewal_agreements"
-	// RenewalAgreementInverseTable is the table name for the RenewalAgreement entity.
+	// RenewalAgreementsTable is the table that holds the renewal_agreements relation/edge.
+	RenewalAgreementsTable = "renewal_agreements"
+	// RenewalAgreementsInverseTable is the table name for the RenewalAgreement entity.
 	// It exists in this package in order to avoid circular dependency with the "renewalagreement" package.
-	RenewalAgreementInverseTable = "renewal_agreements"
-	// RenewalAgreementColumn is the table column denoting the renewal_agreement relation/edge.
-	RenewalAgreementColumn = "mission_id"
+	RenewalAgreementsInverseTable = "renewal_agreements"
+	// RenewalAgreementsColumn is the table column denoting the renewal_agreements relation/edge.
+	RenewalAgreementsColumn = "mission_id"
 )
 
 // Columns holds all SQL columns for mission fields.
@@ -637,10 +637,17 @@ func ByMissionOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByRenewalAgreementField orders the results by renewal_agreement field.
-func ByRenewalAgreementField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByRenewalAgreementsCount orders the results by renewal_agreements count.
+func ByRenewalAgreementsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newRenewalAgreementStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newRenewalAgreementsStep(), opts...)
+	}
+}
+
+// ByRenewalAgreements orders the results by renewal_agreements terms.
+func ByRenewalAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRenewalAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newMissionKindStep() *sqlgraph.Step {
@@ -706,10 +713,10 @@ func newMissionOrdersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionOrdersTable, MissionOrdersColumn),
 	)
 }
-func newRenewalAgreementStep() *sqlgraph.Step {
+func newRenewalAgreementsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(RenewalAgreementInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, RenewalAgreementTable, RenewalAgreementColumn),
+		sqlgraph.To(RenewalAgreementsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
 	)
 }

@@ -557,7 +557,7 @@ func (rac *RenewalAgreementCreate) createSpec() (*RenewalAgreement, *sqlgraph.Cr
 	}
 	if nodes := rac.mutation.MissionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   renewalagreement.MissionTable,
 			Columns: []string{renewalagreement.MissionColumn},

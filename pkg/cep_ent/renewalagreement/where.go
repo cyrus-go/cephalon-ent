@@ -719,7 +719,7 @@ func HasMission() predicate.RenewalAgreement {
 	return predicate.RenewalAgreement(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, MissionTable, MissionColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionTable, MissionColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

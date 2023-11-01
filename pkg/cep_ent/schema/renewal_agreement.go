@@ -37,7 +37,7 @@ func (RenewalAgreement) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("renewal_agreements").Field("user_id").Unique().Required(),
-		edge.From("mission", Mission.Type).Ref("renewal_agreement").Field("mission_id").Unique().Required(),
+		edge.From("mission", Mission.Type).Ref("renewal_agreements").Field("mission_id").Unique().Required(),
 	}
 }
 

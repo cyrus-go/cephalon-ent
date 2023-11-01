@@ -44,7 +44,7 @@ func main() {
 		// 可删字段
 		schema.WithDropColumn(false),
 		// 可删索引
-		schema.WithDropIndex(false),
+		schema.WithDropIndex(true),
 	}
 	// 需知道数据库目标
 	dbUrl := fmt.Sprintf("postgres://%s:%s@%s:%v/%s?sslmode=disable&TimeZone=Asia/Shanghai", dbConf.Username, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Database)
