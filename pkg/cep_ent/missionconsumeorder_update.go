@@ -24,8 +24,9 @@ import (
 // MissionConsumeOrderUpdate is the builder for updating MissionConsumeOrder entities.
 type MissionConsumeOrderUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionConsumeOrderMutation
+	hooks     []Hook
+	mutation  *MissionConsumeOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionConsumeOrderUpdate builder.
@@ -467,6 +468,12 @@ func (mcou *MissionConsumeOrderUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mcou *MissionConsumeOrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionConsumeOrderUpdate {
+	mcou.modifiers = append(mcou.modifiers, modifiers...)
+	return mcou
+}
+
 func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mcou.check(); err != nil {
 		return n, err
@@ -710,6 +717,7 @@ func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mcou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mcou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionconsumeorder.Label}
@@ -725,9 +733,10 @@ func (mcou *MissionConsumeOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 // MissionConsumeOrderUpdateOne is the builder for updating a single MissionConsumeOrder entity.
 type MissionConsumeOrderUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionConsumeOrderMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionConsumeOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1176,6 +1185,12 @@ func (mcouo *MissionConsumeOrderUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mcouo *MissionConsumeOrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionConsumeOrderUpdateOne {
+	mcouo.modifiers = append(mcouo.modifiers, modifiers...)
+	return mcouo
+}
+
 func (mcouo *MissionConsumeOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionConsumeOrder, err error) {
 	if err := mcouo.check(); err != nil {
 		return _node, err
@@ -1436,6 +1451,7 @@ func (mcouo *MissionConsumeOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mcouo.modifiers...)
 	_node = &MissionConsumeOrder{config: mcouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

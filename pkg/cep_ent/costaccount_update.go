@@ -20,8 +20,9 @@ import (
 // CostAccountUpdate is the builder for updating CostAccount entities.
 type CostAccountUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CostAccountMutation
+	hooks     []Hook
+	mutation  *CostAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CostAccountUpdate builder.
@@ -391,6 +392,12 @@ func (cau *CostAccountUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cau *CostAccountUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CostAccountUpdate {
+	cau.modifiers = append(cau.modifiers, modifiers...)
+	return cau
+}
+
 func (cau *CostAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := cau.check(); err != nil {
 		return n, err
@@ -549,6 +556,7 @@ func (cau *CostAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cau.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{costaccount.Label}
@@ -564,9 +572,10 @@ func (cau *CostAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // CostAccountUpdateOne is the builder for updating a single CostAccount entity.
 type CostAccountUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CostAccountMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CostAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -943,6 +952,12 @@ func (cauo *CostAccountUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cauo *CostAccountUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CostAccountUpdateOne {
+	cauo.modifiers = append(cauo.modifiers, modifiers...)
+	return cauo
+}
+
 func (cauo *CostAccountUpdateOne) sqlSave(ctx context.Context) (_node *CostAccount, err error) {
 	if err := cauo.check(); err != nil {
 		return _node, err
@@ -1118,6 +1133,7 @@ func (cauo *CostAccountUpdateOne) sqlSave(ctx context.Context) (_node *CostAccou
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cauo.modifiers...)
 	_node = &CostAccount{config: cauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

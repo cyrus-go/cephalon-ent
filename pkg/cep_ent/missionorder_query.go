@@ -35,6 +35,7 @@ type MissionOrderQuery struct {
 	withMissionBatch *MissionBatchQuery
 	withMission      *MissionQuery
 	withDevice       *DeviceQuery
+	modifiers        []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -604,6 +605,9 @@ func (moq *MissionOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(moq.modifiers) > 0 {
+		_spec.Modifiers = moq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -866,6 +870,9 @@ func (moq *MissionOrderQuery) loadDevice(ctx context.Context, query *DeviceQuery
 
 func (moq *MissionOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := moq.querySpec()
+	if len(moq.modifiers) > 0 {
+		_spec.Modifiers = moq.modifiers
+	}
 	_spec.Node.Columns = moq.ctx.Fields
 	if len(moq.ctx.Fields) > 0 {
 		_spec.Unique = moq.ctx.Unique != nil && *moq.ctx.Unique
@@ -946,6 +953,9 @@ func (moq *MissionOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if moq.ctx.Unique != nil && *moq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range moq.modifiers {
+		m(selector)
+	}
 	for _, p := range moq.predicates {
 		p(selector)
 	}
@@ -961,6 +971,12 @@ func (moq *MissionOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (moq *MissionOrderQuery) Modify(modifiers ...func(s *sql.Selector)) *MissionOrderSelect {
+	moq.modifiers = append(moq.modifiers, modifiers...)
+	return moq.Select()
 }
 
 // MissionOrderGroupBy is the group-by builder for MissionOrder entities.
@@ -1051,4 +1067,10 @@ func (mos *MissionOrderSelect) sqlScan(ctx context.Context, root *MissionOrderQu
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mos *MissionOrderSelect) Modify(modifiers ...func(s *sql.Selector)) *MissionOrderSelect {
+	mos.modifiers = append(mos.modifiers, modifiers...)
+	return mos
 }

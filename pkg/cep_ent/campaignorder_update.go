@@ -22,8 +22,9 @@ import (
 // CampaignOrderUpdate is the builder for updating CampaignOrder entities.
 type CampaignOrderUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CampaignOrderMutation
+	hooks     []Hook
+	mutation  *CampaignOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CampaignOrderUpdate builder.
@@ -257,6 +258,12 @@ func (cou *CampaignOrderUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cou *CampaignOrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CampaignOrderUpdate {
+	cou.modifiers = append(cou.modifiers, modifiers...)
+	return cou
+}
+
 func (cou *CampaignOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := cou.check(); err != nil {
 		return n, err
@@ -419,6 +426,7 @@ func (cou *CampaignOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{campaignorder.Label}
@@ -434,9 +442,10 @@ func (cou *CampaignOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // CampaignOrderUpdateOne is the builder for updating a single CampaignOrder entity.
 type CampaignOrderUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CampaignOrderMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CampaignOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -677,6 +686,12 @@ func (couo *CampaignOrderUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (couo *CampaignOrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CampaignOrderUpdateOne {
+	couo.modifiers = append(couo.modifiers, modifiers...)
+	return couo
+}
+
 func (couo *CampaignOrderUpdateOne) sqlSave(ctx context.Context) (_node *CampaignOrder, err error) {
 	if err := couo.check(); err != nil {
 		return _node, err
@@ -856,6 +871,7 @@ func (couo *CampaignOrderUpdateOne) sqlSave(ctx context.Context) (_node *Campaig
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(couo.modifiers...)
 	_node = &CampaignOrder{config: couo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

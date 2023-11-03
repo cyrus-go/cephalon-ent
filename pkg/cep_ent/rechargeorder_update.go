@@ -22,8 +22,9 @@ import (
 // RechargeOrderUpdate is the builder for updating RechargeOrder entities.
 type RechargeOrderUpdate struct {
 	config
-	hooks    []Hook
-	mutation *RechargeOrderMutation
+	hooks     []Hook
+	mutation  *RechargeOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the RechargeOrderUpdate builder.
@@ -423,6 +424,12 @@ func (rou *RechargeOrderUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (rou *RechargeOrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RechargeOrderUpdate {
+	rou.modifiers = append(rou.modifiers, modifiers...)
+	return rou
+}
+
 func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := rou.check(); err != nil {
 		return n, err
@@ -618,6 +625,7 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(rou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, rou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{rechargeorder.Label}
@@ -633,9 +641,10 @@ func (rou *RechargeOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // RechargeOrderUpdateOne is the builder for updating a single RechargeOrder entity.
 type RechargeOrderUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *RechargeOrderMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *RechargeOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1042,6 +1051,12 @@ func (rouo *RechargeOrderUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (rouo *RechargeOrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RechargeOrderUpdateOne {
+	rouo.modifiers = append(rouo.modifiers, modifiers...)
+	return rouo
+}
+
 func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *RechargeOrder, err error) {
 	if err := rouo.check(); err != nil {
 		return _node, err
@@ -1254,6 +1269,7 @@ func (rouo *RechargeOrderUpdateOne) sqlSave(ctx context.Context) (_node *Recharg
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(rouo.modifiers...)
 	_node = &RechargeOrder{config: rouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

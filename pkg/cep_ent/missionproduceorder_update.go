@@ -24,8 +24,9 @@ import (
 // MissionProduceOrderUpdate is the builder for updating MissionProduceOrder entities.
 type MissionProduceOrderUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionProduceOrderMutation
+	hooks     []Hook
+	mutation  *MissionProduceOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionProduceOrderUpdate builder.
@@ -464,6 +465,12 @@ func (mpou *MissionProduceOrderUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mpou *MissionProduceOrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionProduceOrderUpdate {
+	mpou.modifiers = append(mpou.modifiers, modifiers...)
+	return mpou
+}
+
 func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mpou.check(); err != nil {
 		return n, err
@@ -697,6 +704,7 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mpou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mpou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionproduceorder.Label}
@@ -712,9 +720,10 @@ func (mpou *MissionProduceOrderUpdate) sqlSave(ctx context.Context) (n int, err 
 // MissionProduceOrderUpdateOne is the builder for updating a single MissionProduceOrder entity.
 type MissionProduceOrderUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionProduceOrderMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionProduceOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1160,6 +1169,12 @@ func (mpouo *MissionProduceOrderUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mpouo *MissionProduceOrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionProduceOrderUpdateOne {
+	mpouo.modifiers = append(mpouo.modifiers, modifiers...)
+	return mpouo
+}
+
 func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionProduceOrder, err error) {
 	if err := mpouo.check(); err != nil {
 		return _node, err
@@ -1410,6 +1425,7 @@ func (mpouo *MissionProduceOrderUpdateOne) sqlSave(ctx context.Context) (_node *
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mpouo.modifiers...)
 	_node = &MissionProduceOrder{config: mpouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

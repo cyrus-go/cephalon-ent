@@ -19,8 +19,9 @@ import (
 // LoginRecordUpdate is the builder for updating LoginRecord entities.
 type LoginRecordUpdate struct {
 	config
-	hooks    []Hook
-	mutation *LoginRecordMutation
+	hooks     []Hook
+	mutation  *LoginRecordMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the LoginRecordUpdate builder.
@@ -207,6 +208,12 @@ func (lru *LoginRecordUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (lru *LoginRecordUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *LoginRecordUpdate {
+	lru.modifiers = append(lru.modifiers, modifiers...)
+	return lru
+}
+
 func (lru *LoginRecordUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := lru.check(); err != nil {
 		return n, err
@@ -275,6 +282,7 @@ func (lru *LoginRecordUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(lru.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, lru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{loginrecord.Label}
@@ -290,9 +298,10 @@ func (lru *LoginRecordUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // LoginRecordUpdateOne is the builder for updating a single LoginRecord entity.
 type LoginRecordUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *LoginRecordMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *LoginRecordMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -486,6 +495,12 @@ func (lruo *LoginRecordUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (lruo *LoginRecordUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *LoginRecordUpdateOne {
+	lruo.modifiers = append(lruo.modifiers, modifiers...)
+	return lruo
+}
+
 func (lruo *LoginRecordUpdateOne) sqlSave(ctx context.Context) (_node *LoginRecord, err error) {
 	if err := lruo.check(); err != nil {
 		return _node, err
@@ -571,6 +586,7 @@ func (lruo *LoginRecordUpdateOne) sqlSave(ctx context.Context) (_node *LoginReco
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(lruo.modifiers...)
 	_node = &LoginRecord{config: lruo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

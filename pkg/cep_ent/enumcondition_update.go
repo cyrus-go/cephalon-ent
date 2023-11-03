@@ -18,8 +18,9 @@ import (
 // EnumConditionUpdate is the builder for updating EnumCondition entities.
 type EnumConditionUpdate struct {
 	config
-	hooks    []Hook
-	mutation *EnumConditionMutation
+	hooks     []Hook
+	mutation  *EnumConditionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the EnumConditionUpdate builder.
@@ -173,6 +174,12 @@ func (ecu *EnumConditionUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ecu *EnumConditionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EnumConditionUpdate {
+	ecu.modifiers = append(ecu.modifiers, modifiers...)
+	return ecu
+}
+
 func (ecu *EnumConditionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(enumcondition.Table, enumcondition.Columns, sqlgraph.NewFieldSpec(enumcondition.FieldID, field.TypeInt64))
 	if ps := ecu.mutation.predicates; len(ps) > 0 {
@@ -209,6 +216,7 @@ func (ecu *EnumConditionUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := ecu.mutation.MissionCallWay(); ok {
 		_spec.SetField(enumcondition.FieldMissionCallWay, field.TypeString, value)
 	}
+	_spec.AddModifiers(ecu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ecu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{enumcondition.Label}
@@ -224,9 +232,10 @@ func (ecu *EnumConditionUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // EnumConditionUpdateOne is the builder for updating a single EnumCondition entity.
 type EnumConditionUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *EnumConditionMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *EnumConditionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -387,6 +396,12 @@ func (ecuo *EnumConditionUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ecuo *EnumConditionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EnumConditionUpdateOne {
+	ecuo.modifiers = append(ecuo.modifiers, modifiers...)
+	return ecuo
+}
+
 func (ecuo *EnumConditionUpdateOne) sqlSave(ctx context.Context) (_node *EnumCondition, err error) {
 	_spec := sqlgraph.NewUpdateSpec(enumcondition.Table, enumcondition.Columns, sqlgraph.NewFieldSpec(enumcondition.FieldID, field.TypeInt64))
 	id, ok := ecuo.mutation.ID()
@@ -440,6 +455,7 @@ func (ecuo *EnumConditionUpdateOne) sqlSave(ctx context.Context) (_node *EnumCon
 	if value, ok := ecuo.mutation.MissionCallWay(); ok {
 		_spec.SetField(enumcondition.FieldMissionCallWay, field.TypeString, value)
 	}
+	_spec.AddModifiers(ecuo.modifiers...)
 	_node = &EnumCondition{config: ecuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

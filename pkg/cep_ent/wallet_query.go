@@ -25,6 +25,7 @@ type WalletQuery struct {
 	predicates []predicate.Wallet
 	withUser   *UserQuery
 	withSymbol *SymbolQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -419,6 +420,9 @@ func (wq *WalletQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Walle
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(wq.modifiers) > 0 {
+		_spec.Modifiers = wq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -504,6 +508,9 @@ func (wq *WalletQuery) loadSymbol(ctx context.Context, query *SymbolQuery, nodes
 
 func (wq *WalletQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := wq.querySpec()
+	if len(wq.modifiers) > 0 {
+		_spec.Modifiers = wq.modifiers
+	}
 	_spec.Node.Columns = wq.ctx.Fields
 	if len(wq.ctx.Fields) > 0 {
 		_spec.Unique = wq.ctx.Unique != nil && *wq.ctx.Unique
@@ -572,6 +579,9 @@ func (wq *WalletQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if wq.ctx.Unique != nil && *wq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range wq.modifiers {
+		m(selector)
+	}
 	for _, p := range wq.predicates {
 		p(selector)
 	}
@@ -587,6 +597,12 @@ func (wq *WalletQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (wq *WalletQuery) Modify(modifiers ...func(s *sql.Selector)) *WalletSelect {
+	wq.modifiers = append(wq.modifiers, modifiers...)
+	return wq.Select()
 }
 
 // WalletGroupBy is the group-by builder for Wallet entities.
@@ -677,4 +693,10 @@ func (ws *WalletSelect) sqlScan(ctx context.Context, root *WalletQuery, v any) e
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ws *WalletSelect) Modify(modifiers ...func(s *sql.Selector)) *WalletSelect {
+	ws.modifiers = append(ws.modifiers, modifiers...)
+	return ws
 }

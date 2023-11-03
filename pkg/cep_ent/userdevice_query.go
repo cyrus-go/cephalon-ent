@@ -25,6 +25,7 @@ type UserDeviceQuery struct {
 	predicates []predicate.UserDevice
 	withUser   *UserQuery
 	withDevice *DeviceQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -419,6 +420,9 @@ func (udq *UserDeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(udq.modifiers) > 0 {
+		_spec.Modifiers = udq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -504,6 +508,9 @@ func (udq *UserDeviceQuery) loadDevice(ctx context.Context, query *DeviceQuery, 
 
 func (udq *UserDeviceQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := udq.querySpec()
+	if len(udq.modifiers) > 0 {
+		_spec.Modifiers = udq.modifiers
+	}
 	_spec.Node.Columns = udq.ctx.Fields
 	if len(udq.ctx.Fields) > 0 {
 		_spec.Unique = udq.ctx.Unique != nil && *udq.ctx.Unique
@@ -572,6 +579,9 @@ func (udq *UserDeviceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if udq.ctx.Unique != nil && *udq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range udq.modifiers {
+		m(selector)
+	}
 	for _, p := range udq.predicates {
 		p(selector)
 	}
@@ -587,6 +597,12 @@ func (udq *UserDeviceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (udq *UserDeviceQuery) Modify(modifiers ...func(s *sql.Selector)) *UserDeviceSelect {
+	udq.modifiers = append(udq.modifiers, modifiers...)
+	return udq.Select()
 }
 
 // UserDeviceGroupBy is the group-by builder for UserDevice entities.
@@ -677,4 +693,10 @@ func (uds *UserDeviceSelect) sqlScan(ctx context.Context, root *UserDeviceQuery,
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (uds *UserDeviceSelect) Modify(modifiers ...func(s *sql.Selector)) *UserDeviceSelect {
+	uds.modifiers = append(uds.modifiers, modifiers...)
+	return uds
 }

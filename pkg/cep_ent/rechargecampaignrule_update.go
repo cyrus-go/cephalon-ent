@@ -18,8 +18,9 @@ import (
 // RechargeCampaignRuleUpdate is the builder for updating RechargeCampaignRule entities.
 type RechargeCampaignRuleUpdate struct {
 	config
-	hooks    []Hook
-	mutation *RechargeCampaignRuleMutation
+	hooks     []Hook
+	mutation  *RechargeCampaignRuleMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the RechargeCampaignRuleUpdate builder.
@@ -194,6 +195,12 @@ func (rcru *RechargeCampaignRuleUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (rcru *RechargeCampaignRuleUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RechargeCampaignRuleUpdate {
+	rcru.modifiers = append(rcru.modifiers, modifiers...)
+	return rcru
+}
+
 func (rcru *RechargeCampaignRuleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(rechargecampaignrule.Table, rechargecampaignrule.Columns, sqlgraph.NewFieldSpec(rechargecampaignrule.FieldID, field.TypeInt64))
 	if ps := rcru.mutation.predicates; len(ps) > 0 {
@@ -239,6 +246,7 @@ func (rcru *RechargeCampaignRuleUpdate) sqlSave(ctx context.Context) (n int, err
 	if value, ok := rcru.mutation.AddedGiftPercent(); ok {
 		_spec.AddField(rechargecampaignrule.FieldGiftPercent, field.TypeInt64, value)
 	}
+	_spec.AddModifiers(rcru.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, rcru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{rechargecampaignrule.Label}
@@ -254,9 +262,10 @@ func (rcru *RechargeCampaignRuleUpdate) sqlSave(ctx context.Context) (n int, err
 // RechargeCampaignRuleUpdateOne is the builder for updating a single RechargeCampaignRule entity.
 type RechargeCampaignRuleUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *RechargeCampaignRuleMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *RechargeCampaignRuleMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -438,6 +447,12 @@ func (rcruo *RechargeCampaignRuleUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (rcruo *RechargeCampaignRuleUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RechargeCampaignRuleUpdateOne {
+	rcruo.modifiers = append(rcruo.modifiers, modifiers...)
+	return rcruo
+}
+
 func (rcruo *RechargeCampaignRuleUpdateOne) sqlSave(ctx context.Context) (_node *RechargeCampaignRule, err error) {
 	_spec := sqlgraph.NewUpdateSpec(rechargecampaignrule.Table, rechargecampaignrule.Columns, sqlgraph.NewFieldSpec(rechargecampaignrule.FieldID, field.TypeInt64))
 	id, ok := rcruo.mutation.ID()
@@ -500,6 +515,7 @@ func (rcruo *RechargeCampaignRuleUpdateOne) sqlSave(ctx context.Context) (_node 
 	if value, ok := rcruo.mutation.AddedGiftPercent(); ok {
 		_spec.AddField(rechargecampaignrule.FieldGiftPercent, field.TypeInt64, value)
 	}
+	_spec.AddModifiers(rcruo.modifiers...)
 	_node = &RechargeCampaignRule{config: rcruo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

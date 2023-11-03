@@ -19,8 +19,9 @@ import (
 // ProfitSettingUpdate is the builder for updating ProfitSetting entities.
 type ProfitSettingUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ProfitSettingMutation
+	hooks     []Hook
+	mutation  *ProfitSettingMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ProfitSettingUpdate builder.
@@ -186,6 +187,12 @@ func (psu *ProfitSettingUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (psu *ProfitSettingUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfitSettingUpdate {
+	psu.modifiers = append(psu.modifiers, modifiers...)
+	return psu
+}
+
 func (psu *ProfitSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := psu.check(); err != nil {
 		return n, err
@@ -251,6 +258,7 @@ func (psu *ProfitSettingUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(psu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, psu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profitsetting.Label}
@@ -266,9 +274,10 @@ func (psu *ProfitSettingUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // ProfitSettingUpdateOne is the builder for updating a single ProfitSetting entity.
 type ProfitSettingUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ProfitSettingMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ProfitSettingMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -441,6 +450,12 @@ func (psuo *ProfitSettingUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (psuo *ProfitSettingUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfitSettingUpdateOne {
+	psuo.modifiers = append(psuo.modifiers, modifiers...)
+	return psuo
+}
+
 func (psuo *ProfitSettingUpdateOne) sqlSave(ctx context.Context) (_node *ProfitSetting, err error) {
 	if err := psuo.check(); err != nil {
 		return _node, err
@@ -523,6 +538,7 @@ func (psuo *ProfitSettingUpdateOne) sqlSave(ctx context.Context) (_node *ProfitS
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(psuo.modifiers...)
 	_node = &ProfitSetting{config: psuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

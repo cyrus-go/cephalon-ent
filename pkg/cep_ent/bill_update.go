@@ -24,8 +24,9 @@ import (
 // BillUpdate is the builder for updating Bill entities.
 type BillUpdate struct {
 	config
-	hooks    []Hook
-	mutation *BillMutation
+	hooks     []Hook
+	mutation  *BillMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the BillUpdate builder.
@@ -481,6 +482,12 @@ func (bu *BillUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (bu *BillUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *BillUpdate {
+	bu.modifiers = append(bu.modifiers, modifiers...)
+	return bu
+}
+
 func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := bu.check(); err != nil {
 		return n, err
@@ -724,6 +731,7 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(bu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{bill.Label}
@@ -739,9 +747,10 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // BillUpdateOne is the builder for updating a single Bill entity.
 type BillUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *BillMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *BillMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1204,6 +1213,12 @@ func (buo *BillUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (buo *BillUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *BillUpdateOne {
+	buo.modifiers = append(buo.modifiers, modifiers...)
+	return buo
+}
+
 func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) {
 	if err := buo.check(); err != nil {
 		return _node, err
@@ -1464,6 +1479,7 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(buo.modifiers...)
 	_node = &Bill{config: buo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

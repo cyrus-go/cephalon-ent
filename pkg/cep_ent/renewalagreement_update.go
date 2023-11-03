@@ -21,8 +21,9 @@ import (
 // RenewalAgreementUpdate is the builder for updating RenewalAgreement entities.
 type RenewalAgreementUpdate struct {
 	config
-	hooks    []Hook
-	mutation *RenewalAgreementMutation
+	hooks     []Hook
+	mutation  *RenewalAgreementMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the RenewalAgreementUpdate builder.
@@ -357,6 +358,12 @@ func (rau *RenewalAgreementUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (rau *RenewalAgreementUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RenewalAgreementUpdate {
+	rau.modifiers = append(rau.modifiers, modifiers...)
+	return rau
+}
+
 func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := rau.check(); err != nil {
 		return n, err
@@ -481,6 +488,7 @@ func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(rau.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, rau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{renewalagreement.Label}
@@ -496,9 +504,10 @@ func (rau *RenewalAgreementUpdate) sqlSave(ctx context.Context) (n int, err erro
 // RenewalAgreementUpdateOne is the builder for updating a single RenewalAgreement entity.
 type RenewalAgreementUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *RenewalAgreementMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *RenewalAgreementMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -840,6 +849,12 @@ func (rauo *RenewalAgreementUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (rauo *RenewalAgreementUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RenewalAgreementUpdateOne {
+	rauo.modifiers = append(rauo.modifiers, modifiers...)
+	return rauo
+}
+
 func (rauo *RenewalAgreementUpdateOne) sqlSave(ctx context.Context) (_node *RenewalAgreement, err error) {
 	if err := rauo.check(); err != nil {
 		return _node, err
@@ -981,6 +996,7 @@ func (rauo *RenewalAgreementUpdateOne) sqlSave(ctx context.Context) (_node *Rene
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(rauo.modifiers...)
 	_node = &RenewalAgreement{config: rauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

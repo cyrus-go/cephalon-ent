@@ -25,8 +25,9 @@ import (
 // DeviceUpdate is the builder for updating Device entities.
 type DeviceUpdate struct {
 	config
-	hooks    []Hook
-	mutation *DeviceMutation
+	hooks     []Hook
+	mutation  *DeviceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -457,6 +458,12 @@ func (du *DeviceUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (du *DeviceUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *DeviceUpdate {
+	du.modifiers = append(du.modifiers, modifiers...)
+	return du
+}
+
 func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := du.check(); err != nil {
 		return n, err
@@ -762,6 +769,7 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{device.Label}
@@ -777,9 +785,10 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // DeviceUpdateOne is the builder for updating a single Device entity.
 type DeviceUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *DeviceMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *DeviceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1217,6 +1226,12 @@ func (duo *DeviceUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (duo *DeviceUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *DeviceUpdateOne {
+	duo.modifiers = append(duo.modifiers, modifiers...)
+	return duo
+}
+
 func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err error) {
 	if err := duo.check(); err != nil {
 		return _node, err
@@ -1539,6 +1554,7 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(duo.modifiers...)
 	_node = &Device{config: duo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -23,6 +23,7 @@ type LoginRecordQuery struct {
 	inters     []Interceptor
 	predicates []predicate.LoginRecord
 	withUser   *UserQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -382,6 +383,9 @@ func (lrq *LoginRecordQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(lrq.modifiers) > 0 {
+		_spec.Modifiers = lrq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -432,6 +436,9 @@ func (lrq *LoginRecordQuery) loadUser(ctx context.Context, query *UserQuery, nod
 
 func (lrq *LoginRecordQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := lrq.querySpec()
+	if len(lrq.modifiers) > 0 {
+		_spec.Modifiers = lrq.modifiers
+	}
 	_spec.Node.Columns = lrq.ctx.Fields
 	if len(lrq.ctx.Fields) > 0 {
 		_spec.Unique = lrq.ctx.Unique != nil && *lrq.ctx.Unique
@@ -497,6 +504,9 @@ func (lrq *LoginRecordQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if lrq.ctx.Unique != nil && *lrq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range lrq.modifiers {
+		m(selector)
+	}
 	for _, p := range lrq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (lrq *LoginRecordQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (lrq *LoginRecordQuery) Modify(modifiers ...func(s *sql.Selector)) *LoginRecordSelect {
+	lrq.modifiers = append(lrq.modifiers, modifiers...)
+	return lrq.Select()
 }
 
 // LoginRecordGroupBy is the group-by builder for LoginRecord entities.
@@ -602,4 +618,10 @@ func (lrs *LoginRecordSelect) sqlScan(ctx context.Context, root *LoginRecordQuer
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (lrs *LoginRecordSelect) Modify(modifiers ...func(s *sql.Selector)) *LoginRecordSelect {
+	lrs.modifiers = append(lrs.modifiers, modifiers...)
+	return lrs
 }

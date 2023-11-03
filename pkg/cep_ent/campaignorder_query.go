@@ -30,6 +30,7 @@ type CampaignOrderQuery struct {
 	withCampaign      *CampaignQuery
 	withCostBills     *CostBillQuery
 	withRechargeOrder *RechargeOrderQuery
+	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -494,6 +495,9 @@ func (coq *CampaignOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(coq.modifiers) > 0 {
+		_spec.Modifiers = coq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -652,6 +656,9 @@ func (coq *CampaignOrderQuery) loadRechargeOrder(ctx context.Context, query *Rec
 
 func (coq *CampaignOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := coq.querySpec()
+	if len(coq.modifiers) > 0 {
+		_spec.Modifiers = coq.modifiers
+	}
 	_spec.Node.Columns = coq.ctx.Fields
 	if len(coq.ctx.Fields) > 0 {
 		_spec.Unique = coq.ctx.Unique != nil && *coq.ctx.Unique
@@ -720,6 +727,9 @@ func (coq *CampaignOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if coq.ctx.Unique != nil && *coq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range coq.modifiers {
+		m(selector)
+	}
 	for _, p := range coq.predicates {
 		p(selector)
 	}
@@ -735,6 +745,12 @@ func (coq *CampaignOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (coq *CampaignOrderQuery) Modify(modifiers ...func(s *sql.Selector)) *CampaignOrderSelect {
+	coq.modifiers = append(coq.modifiers, modifiers...)
+	return coq.Select()
 }
 
 // CampaignOrderGroupBy is the group-by builder for CampaignOrder entities.
@@ -825,4 +841,10 @@ func (cos *CampaignOrderSelect) sqlScan(ctx context.Context, root *CampaignOrder
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cos *CampaignOrderSelect) Modify(modifiers ...func(s *sql.Selector)) *CampaignOrderSelect {
+	cos.modifiers = append(cos.modifiers, modifiers...)
+	return cos
 }

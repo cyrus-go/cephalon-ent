@@ -18,8 +18,9 @@ import (
 // InputLogUpdate is the builder for updating InputLog entities.
 type InputLogUpdate struct {
 	config
-	hooks    []Hook
-	mutation *InputLogMutation
+	hooks     []Hook
+	mutation  *InputLogMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the InputLogUpdate builder.
@@ -247,6 +248,12 @@ func (ilu *InputLogUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ilu *InputLogUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *InputLogUpdate {
+	ilu.modifiers = append(ilu.modifiers, modifiers...)
+	return ilu
+}
+
 func (ilu *InputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ilu.check(); err != nil {
 		return n, err
@@ -310,6 +317,7 @@ func (ilu *InputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ilu.mutation.HmacKey(); ok {
 		_spec.SetField(inputlog.FieldHmacKey, field.TypeString, value)
 	}
+	_spec.AddModifiers(ilu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ilu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{inputlog.Label}
@@ -325,9 +333,10 @@ func (ilu *InputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // InputLogUpdateOne is the builder for updating a single InputLog entity.
 type InputLogUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *InputLogMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *InputLogMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -562,6 +571,12 @@ func (iluo *InputLogUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (iluo *InputLogUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *InputLogUpdateOne {
+	iluo.modifiers = append(iluo.modifiers, modifiers...)
+	return iluo
+}
+
 func (iluo *InputLogUpdateOne) sqlSave(ctx context.Context) (_node *InputLog, err error) {
 	if err := iluo.check(); err != nil {
 		return _node, err
@@ -642,6 +657,7 @@ func (iluo *InputLogUpdateOne) sqlSave(ctx context.Context) (_node *InputLog, er
 	if value, ok := iluo.mutation.HmacKey(); ok {
 		_spec.SetField(inputlog.FieldHmacKey, field.TypeString, value)
 	}
+	_spec.AddModifiers(iluo.modifiers...)
 	_node = &InputLog{config: iluo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

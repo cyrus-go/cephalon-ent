@@ -26,6 +26,7 @@ type PlatformAccountQuery struct {
 	predicates    []predicate.PlatformAccount
 	withEarnBills *EarnBillQuery
 	withCostBills *CostBillQuery
+	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -420,6 +421,9 @@ func (paq *PlatformAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(paq.modifiers) > 0 {
+		_spec.Modifiers = paq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -509,6 +513,9 @@ func (paq *PlatformAccountQuery) loadCostBills(ctx context.Context, query *CostB
 
 func (paq *PlatformAccountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := paq.querySpec()
+	if len(paq.modifiers) > 0 {
+		_spec.Modifiers = paq.modifiers
+	}
 	_spec.Node.Columns = paq.ctx.Fields
 	if len(paq.ctx.Fields) > 0 {
 		_spec.Unique = paq.ctx.Unique != nil && *paq.ctx.Unique
@@ -571,6 +578,9 @@ func (paq *PlatformAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if paq.ctx.Unique != nil && *paq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range paq.modifiers {
+		m(selector)
+	}
 	for _, p := range paq.predicates {
 		p(selector)
 	}
@@ -586,6 +596,12 @@ func (paq *PlatformAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (paq *PlatformAccountQuery) Modify(modifiers ...func(s *sql.Selector)) *PlatformAccountSelect {
+	paq.modifiers = append(paq.modifiers, modifiers...)
+	return paq.Select()
 }
 
 // PlatformAccountGroupBy is the group-by builder for PlatformAccount entities.
@@ -676,4 +692,10 @@ func (pas *PlatformAccountSelect) sqlScan(ctx context.Context, root *PlatformAcc
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (pas *PlatformAccountSelect) Modify(modifiers ...func(s *sql.Selector)) *PlatformAccountSelect {
+	pas.modifiers = append(pas.modifiers, modifiers...)
+	return pas
 }

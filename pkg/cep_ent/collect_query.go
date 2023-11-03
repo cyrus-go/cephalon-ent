@@ -23,6 +23,7 @@ type CollectQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Collect
 	withUser   *UserQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -382,6 +383,9 @@ func (cq *CollectQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Coll
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(cq.modifiers) > 0 {
+		_spec.Modifiers = cq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -432,6 +436,9 @@ func (cq *CollectQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 
 func (cq *CollectQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cq.querySpec()
+	if len(cq.modifiers) > 0 {
+		_spec.Modifiers = cq.modifiers
+	}
 	_spec.Node.Columns = cq.ctx.Fields
 	if len(cq.ctx.Fields) > 0 {
 		_spec.Unique = cq.ctx.Unique != nil && *cq.ctx.Unique
@@ -497,6 +504,9 @@ func (cq *CollectQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if cq.ctx.Unique != nil && *cq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range cq.modifiers {
+		m(selector)
+	}
 	for _, p := range cq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (cq *CollectQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cq *CollectQuery) Modify(modifiers ...func(s *sql.Selector)) *CollectSelect {
+	cq.modifiers = append(cq.modifiers, modifiers...)
+	return cq.Select()
 }
 
 // CollectGroupBy is the group-by builder for Collect entities.
@@ -602,4 +618,10 @@ func (cs *CollectSelect) sqlScan(ctx context.Context, root *CollectQuery, v any)
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cs *CollectSelect) Modify(modifiers ...func(s *sql.Selector)) *CollectSelect {
+	cs.modifiers = append(cs.modifiers, modifiers...)
+	return cs
 }

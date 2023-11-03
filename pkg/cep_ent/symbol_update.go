@@ -22,8 +22,9 @@ import (
 // SymbolUpdate is the builder for updating Symbol entities.
 type SymbolUpdate struct {
 	config
-	hooks    []Hook
-	mutation *SymbolMutation
+	hooks     []Hook
+	mutation  *SymbolMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the SymbolUpdate builder.
@@ -293,6 +294,12 @@ func (su *SymbolUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (su *SymbolUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SymbolUpdate {
+	su.modifiers = append(su.modifiers, modifiers...)
+	return su
+}
+
 func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(symbol.Table, symbol.Columns, sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64))
 	if ps := su.mutation.predicates; len(ps) > 0 {
@@ -503,6 +510,7 @@ func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{symbol.Label}
@@ -518,9 +526,10 @@ func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // SymbolUpdateOne is the builder for updating a single Symbol entity.
 type SymbolUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *SymbolMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *SymbolMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -797,6 +806,12 @@ func (suo *SymbolUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (suo *SymbolUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SymbolUpdateOne {
+	suo.modifiers = append(suo.modifiers, modifiers...)
+	return suo
+}
+
 func (suo *SymbolUpdateOne) sqlSave(ctx context.Context) (_node *Symbol, err error) {
 	_spec := sqlgraph.NewUpdateSpec(symbol.Table, symbol.Columns, sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64))
 	id, ok := suo.mutation.ID()
@@ -1024,6 +1039,7 @@ func (suo *SymbolUpdateOne) sqlSave(ctx context.Context) (_node *Symbol, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(suo.modifiers...)
 	_node = &Symbol{config: suo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

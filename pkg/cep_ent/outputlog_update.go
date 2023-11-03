@@ -18,8 +18,9 @@ import (
 // OutputLogUpdate is the builder for updating OutputLog entities.
 type OutputLogUpdate struct {
 	config
-	hooks    []Hook
-	mutation *OutputLogMutation
+	hooks     []Hook
+	mutation  *OutputLogMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the OutputLogUpdate builder.
@@ -238,6 +239,12 @@ func (olu *OutputLogUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (olu *OutputLogUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OutputLogUpdate {
+	olu.modifiers = append(olu.modifiers, modifiers...)
+	return olu
+}
+
 func (olu *OutputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(outputlog.Table, outputlog.Columns, sqlgraph.NewFieldSpec(outputlog.FieldID, field.TypeInt64))
 	if ps := olu.mutation.predicates; len(ps) > 0 {
@@ -298,6 +305,7 @@ func (olu *OutputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := olu.mutation.HmacKey(); ok {
 		_spec.SetField(outputlog.FieldHmacKey, field.TypeString, value)
 	}
+	_spec.AddModifiers(olu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, olu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{outputlog.Label}
@@ -313,9 +321,10 @@ func (olu *OutputLogUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // OutputLogUpdateOne is the builder for updating a single OutputLog entity.
 type OutputLogUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *OutputLogMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *OutputLogMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -541,6 +550,12 @@ func (oluo *OutputLogUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (oluo *OutputLogUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *OutputLogUpdateOne {
+	oluo.modifiers = append(oluo.modifiers, modifiers...)
+	return oluo
+}
+
 func (oluo *OutputLogUpdateOne) sqlSave(ctx context.Context) (_node *OutputLog, err error) {
 	_spec := sqlgraph.NewUpdateSpec(outputlog.Table, outputlog.Columns, sqlgraph.NewFieldSpec(outputlog.FieldID, field.TypeInt64))
 	id, ok := oluo.mutation.ID()
@@ -618,6 +633,7 @@ func (oluo *OutputLogUpdateOne) sqlSave(ctx context.Context) (_node *OutputLog, 
 	if value, ok := oluo.mutation.HmacKey(); ok {
 		_spec.SetField(outputlog.FieldHmacKey, field.TypeString, value)
 	}
+	_spec.AddModifiers(oluo.modifiers...)
 	_node = &OutputLog{config: oluo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

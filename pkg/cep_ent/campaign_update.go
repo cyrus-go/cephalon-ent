@@ -20,8 +20,9 @@ import (
 // CampaignUpdate is the builder for updating Campaign entities.
 type CampaignUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CampaignMutation
+	hooks     []Hook
+	mutation  *CampaignMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CampaignUpdate builder.
@@ -296,6 +297,12 @@ func (cu *CampaignUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cu *CampaignUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CampaignUpdate {
+	cu.modifiers = append(cu.modifiers, modifiers...)
+	return cu
+}
+
 func (cu *CampaignUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(campaign.Table, campaign.Columns, sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64))
 	if ps := cu.mutation.predicates; len(ps) > 0 {
@@ -434,6 +441,7 @@ func (cu *CampaignUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{campaign.Label}
@@ -449,9 +457,10 @@ func (cu *CampaignUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // CampaignUpdateOne is the builder for updating a single Campaign entity.
 type CampaignUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CampaignMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CampaignMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -733,6 +742,12 @@ func (cuo *CampaignUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cuo *CampaignUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CampaignUpdateOne {
+	cuo.modifiers = append(cuo.modifiers, modifiers...)
+	return cuo
+}
+
 func (cuo *CampaignUpdateOne) sqlSave(ctx context.Context) (_node *Campaign, err error) {
 	_spec := sqlgraph.NewUpdateSpec(campaign.Table, campaign.Columns, sqlgraph.NewFieldSpec(campaign.FieldID, field.TypeInt64))
 	id, ok := cuo.mutation.ID()
@@ -888,6 +903,7 @@ func (cuo *CampaignUpdateOne) sqlSave(ctx context.Context) (_node *Campaign, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cuo.modifiers...)
 	_node = &Campaign{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

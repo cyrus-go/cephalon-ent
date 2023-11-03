@@ -21,6 +21,7 @@ type OutputLogQuery struct {
 	order      []outputlog.OrderOption
 	inters     []Interceptor
 	predicates []predicate.OutputLog
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -342,6 +343,9 @@ func (olq *OutputLogQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*O
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(olq.modifiers) > 0 {
+		_spec.Modifiers = olq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -356,6 +360,9 @@ func (olq *OutputLogQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*O
 
 func (olq *OutputLogQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := olq.querySpec()
+	if len(olq.modifiers) > 0 {
+		_spec.Modifiers = olq.modifiers
+	}
 	_spec.Node.Columns = olq.ctx.Fields
 	if len(olq.ctx.Fields) > 0 {
 		_spec.Unique = olq.ctx.Unique != nil && *olq.ctx.Unique
@@ -418,6 +425,9 @@ func (olq *OutputLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if olq.ctx.Unique != nil && *olq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range olq.modifiers {
+		m(selector)
+	}
 	for _, p := range olq.predicates {
 		p(selector)
 	}
@@ -433,6 +443,12 @@ func (olq *OutputLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (olq *OutputLogQuery) Modify(modifiers ...func(s *sql.Selector)) *OutputLogSelect {
+	olq.modifiers = append(olq.modifiers, modifiers...)
+	return olq.Select()
 }
 
 // OutputLogGroupBy is the group-by builder for OutputLog entities.
@@ -523,4 +539,10 @@ func (ols *OutputLogSelect) sqlScan(ctx context.Context, root *OutputLogQuery, v
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ols *OutputLogSelect) Modify(modifiers ...func(s *sql.Selector)) *OutputLogSelect {
+	ols.modifiers = append(ols.modifiers, modifiers...)
+	return ols
 }

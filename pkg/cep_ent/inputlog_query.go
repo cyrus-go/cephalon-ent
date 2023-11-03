@@ -21,6 +21,7 @@ type InputLogQuery struct {
 	order      []inputlog.OrderOption
 	inters     []Interceptor
 	predicates []predicate.InputLog
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -342,6 +343,9 @@ func (ilq *InputLogQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*In
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(ilq.modifiers) > 0 {
+		_spec.Modifiers = ilq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -356,6 +360,9 @@ func (ilq *InputLogQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*In
 
 func (ilq *InputLogQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ilq.querySpec()
+	if len(ilq.modifiers) > 0 {
+		_spec.Modifiers = ilq.modifiers
+	}
 	_spec.Node.Columns = ilq.ctx.Fields
 	if len(ilq.ctx.Fields) > 0 {
 		_spec.Unique = ilq.ctx.Unique != nil && *ilq.ctx.Unique
@@ -418,6 +425,9 @@ func (ilq *InputLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ilq.ctx.Unique != nil && *ilq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range ilq.modifiers {
+		m(selector)
+	}
 	for _, p := range ilq.predicates {
 		p(selector)
 	}
@@ -433,6 +443,12 @@ func (ilq *InputLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ilq *InputLogQuery) Modify(modifiers ...func(s *sql.Selector)) *InputLogSelect {
+	ilq.modifiers = append(ilq.modifiers, modifiers...)
+	return ilq.Select()
 }
 
 // InputLogGroupBy is the group-by builder for InputLog entities.
@@ -523,4 +539,10 @@ func (ils *InputLogSelect) sqlScan(ctx context.Context, root *InputLogQuery, v a
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ils *InputLogSelect) Modify(modifiers ...func(s *sql.Selector)) *InputLogSelect {
+	ils.modifiers = append(ils.modifiers, modifiers...)
+	return ils
 }

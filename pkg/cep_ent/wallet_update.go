@@ -20,8 +20,9 @@ import (
 // WalletUpdate is the builder for updating Wallet entities.
 type WalletUpdate struct {
 	config
-	hooks    []Hook
-	mutation *WalletMutation
+	hooks     []Hook
+	mutation  *WalletMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the WalletUpdate builder.
@@ -215,6 +216,12 @@ func (wu *WalletUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (wu *WalletUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *WalletUpdate {
+	wu.modifiers = append(wu.modifiers, modifiers...)
+	return wu
+}
+
 func (wu *WalletUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := wu.check(); err != nil {
 		return n, err
@@ -309,6 +316,7 @@ func (wu *WalletUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(wu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, wu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{wallet.Label}
@@ -324,9 +332,10 @@ func (wu *WalletUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // WalletUpdateOne is the builder for updating a single Wallet entity.
 type WalletUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *WalletMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *WalletMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -527,6 +536,12 @@ func (wuo *WalletUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (wuo *WalletUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *WalletUpdateOne {
+	wuo.modifiers = append(wuo.modifiers, modifiers...)
+	return wuo
+}
+
 func (wuo *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err error) {
 	if err := wuo.check(); err != nil {
 		return _node, err
@@ -638,6 +653,7 @@ func (wuo *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(wuo.modifiers...)
 	_node = &Wallet{config: wuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

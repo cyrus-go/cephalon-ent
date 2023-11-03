@@ -25,8 +25,9 @@ import (
 // CostBillUpdate is the builder for updating CostBill entities.
 type CostBillUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CostBillMutation
+	hooks     []Hook
+	mutation  *CostBillMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CostBillUpdate builder.
@@ -458,6 +459,12 @@ func (cbu *CostBillUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cbu *CostBillUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CostBillUpdate {
+	cbu.modifiers = append(cbu.modifiers, modifiers...)
+	return cbu
+}
+
 func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := cbu.check(); err != nil {
 		return n, err
@@ -689,6 +696,7 @@ func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cbu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{costbill.Label}
@@ -704,9 +712,10 @@ func (cbu *CostBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // CostBillUpdateOne is the builder for updating a single CostBill entity.
 type CostBillUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CostBillMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CostBillMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1145,6 +1154,12 @@ func (cbuo *CostBillUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cbuo *CostBillUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CostBillUpdateOne {
+	cbuo.modifiers = append(cbuo.modifiers, modifiers...)
+	return cbuo
+}
+
 func (cbuo *CostBillUpdateOne) sqlSave(ctx context.Context) (_node *CostBill, err error) {
 	if err := cbuo.check(); err != nil {
 		return _node, err
@@ -1393,6 +1408,7 @@ func (cbuo *CostBillUpdateOne) sqlSave(ctx context.Context) (_node *CostBill, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(cbuo.modifiers...)
 	_node = &CostBill{config: cbuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -18,8 +18,9 @@ import (
 // EnumMissionStatusUpdate is the builder for updating EnumMissionStatus entities.
 type EnumMissionStatusUpdate struct {
 	config
-	hooks    []Hook
-	mutation *EnumMissionStatusMutation
+	hooks     []Hook
+	mutation  *EnumMissionStatusMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the EnumMissionStatusUpdate builder.
@@ -173,6 +174,12 @@ func (emsu *EnumMissionStatusUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (emsu *EnumMissionStatusUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EnumMissionStatusUpdate {
+	emsu.modifiers = append(emsu.modifiers, modifiers...)
+	return emsu
+}
+
 func (emsu *EnumMissionStatusUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(enummissionstatus.Table, enummissionstatus.Columns, sqlgraph.NewFieldSpec(enummissionstatus.FieldID, field.TypeInt64))
 	if ps := emsu.mutation.predicates; len(ps) > 0 {
@@ -209,6 +216,7 @@ func (emsu *EnumMissionStatusUpdate) sqlSave(ctx context.Context) (n int, err er
 	if value, ok := emsu.mutation.MissionStatus(); ok {
 		_spec.SetField(enummissionstatus.FieldMissionStatus, field.TypeString, value)
 	}
+	_spec.AddModifiers(emsu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, emsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{enummissionstatus.Label}
@@ -224,9 +232,10 @@ func (emsu *EnumMissionStatusUpdate) sqlSave(ctx context.Context) (n int, err er
 // EnumMissionStatusUpdateOne is the builder for updating a single EnumMissionStatus entity.
 type EnumMissionStatusUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *EnumMissionStatusMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *EnumMissionStatusMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -387,6 +396,12 @@ func (emsuo *EnumMissionStatusUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (emsuo *EnumMissionStatusUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EnumMissionStatusUpdateOne {
+	emsuo.modifiers = append(emsuo.modifiers, modifiers...)
+	return emsuo
+}
+
 func (emsuo *EnumMissionStatusUpdateOne) sqlSave(ctx context.Context) (_node *EnumMissionStatus, err error) {
 	_spec := sqlgraph.NewUpdateSpec(enummissionstatus.Table, enummissionstatus.Columns, sqlgraph.NewFieldSpec(enummissionstatus.FieldID, field.TypeInt64))
 	id, ok := emsuo.mutation.ID()
@@ -440,6 +455,7 @@ func (emsuo *EnumMissionStatusUpdateOne) sqlSave(ctx context.Context) (_node *En
 	if value, ok := emsuo.mutation.MissionStatus(); ok {
 		_spec.SetField(enummissionstatus.FieldMissionStatus, field.TypeString, value)
 	}
+	_spec.AddModifiers(emsuo.modifiers...)
 	_node = &EnumMissionStatus{config: emsuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

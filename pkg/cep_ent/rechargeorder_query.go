@@ -30,6 +30,7 @@ type RechargeOrderQuery struct {
 	withCostBills     *CostBillQuery
 	withVxSocial      *VXSocialQuery
 	withCampaignOrder *CampaignOrderQuery
+	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -494,6 +495,9 @@ func (roq *RechargeOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(roq.modifiers) > 0 {
+		_spec.Modifiers = roq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -654,6 +658,9 @@ func (roq *RechargeOrderQuery) loadCampaignOrder(ctx context.Context, query *Cam
 
 func (roq *RechargeOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := roq.querySpec()
+	if len(roq.modifiers) > 0 {
+		_spec.Modifiers = roq.modifiers
+	}
 	_spec.Node.Columns = roq.ctx.Fields
 	if len(roq.ctx.Fields) > 0 {
 		_spec.Unique = roq.ctx.Unique != nil && *roq.ctx.Unique
@@ -725,6 +732,9 @@ func (roq *RechargeOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if roq.ctx.Unique != nil && *roq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range roq.modifiers {
+		m(selector)
+	}
 	for _, p := range roq.predicates {
 		p(selector)
 	}
@@ -740,6 +750,12 @@ func (roq *RechargeOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (roq *RechargeOrderQuery) Modify(modifiers ...func(s *sql.Selector)) *RechargeOrderSelect {
+	roq.modifiers = append(roq.modifiers, modifiers...)
+	return roq.Select()
 }
 
 // RechargeOrderGroupBy is the group-by builder for RechargeOrder entities.
@@ -830,4 +846,10 @@ func (ros *RechargeOrderSelect) sqlScan(ctx context.Context, root *RechargeOrder
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ros *RechargeOrderSelect) Modify(modifiers ...func(s *sql.Selector)) *RechargeOrderSelect {
+	ros.modifiers = append(ros.modifiers, modifiers...)
+	return ros
 }

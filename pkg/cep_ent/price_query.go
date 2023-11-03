@@ -23,6 +23,7 @@ type PriceQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Price
 	withGpu    *GpuQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -382,6 +383,9 @@ func (pq *PriceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Price,
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(pq.modifiers) > 0 {
+		_spec.Modifiers = pq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -432,6 +436,9 @@ func (pq *PriceQuery) loadGpu(ctx context.Context, query *GpuQuery, nodes []*Pri
 
 func (pq *PriceQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := pq.querySpec()
+	if len(pq.modifiers) > 0 {
+		_spec.Modifiers = pq.modifiers
+	}
 	_spec.Node.Columns = pq.ctx.Fields
 	if len(pq.ctx.Fields) > 0 {
 		_spec.Unique = pq.ctx.Unique != nil && *pq.ctx.Unique
@@ -497,6 +504,9 @@ func (pq *PriceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if pq.ctx.Unique != nil && *pq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range pq.modifiers {
+		m(selector)
+	}
 	for _, p := range pq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (pq *PriceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (pq *PriceQuery) Modify(modifiers ...func(s *sql.Selector)) *PriceSelect {
+	pq.modifiers = append(pq.modifiers, modifiers...)
+	return pq.Select()
 }
 
 // PriceGroupBy is the group-by builder for Price entities.
@@ -602,4 +618,10 @@ func (ps *PriceSelect) sqlScan(ctx context.Context, root *PriceQuery, v any) err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ps *PriceSelect) Modify(modifiers ...func(s *sql.Selector)) *PriceSelect {
+	ps.modifiers = append(ps.modifiers, modifiers...)
+	return ps
 }

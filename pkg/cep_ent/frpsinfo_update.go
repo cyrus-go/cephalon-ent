@@ -19,8 +19,9 @@ import (
 // FrpsInfoUpdate is the builder for updating FrpsInfo entities.
 type FrpsInfoUpdate struct {
 	config
-	hooks    []Hook
-	mutation *FrpsInfoMutation
+	hooks     []Hook
+	mutation  *FrpsInfoMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the FrpsInfoUpdate builder.
@@ -259,6 +260,12 @@ func (fiu *FrpsInfoUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (fiu *FrpsInfoUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *FrpsInfoUpdate {
+	fiu.modifiers = append(fiu.modifiers, modifiers...)
+	return fiu
+}
+
 func (fiu *FrpsInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(frpsinfo.Table, frpsinfo.Columns, sqlgraph.NewFieldSpec(frpsinfo.FieldID, field.TypeInt64))
 	if ps := fiu.mutation.predicates; len(ps) > 0 {
@@ -352,6 +359,7 @@ func (fiu *FrpsInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(fiu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, fiu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{frpsinfo.Label}
@@ -367,9 +375,10 @@ func (fiu *FrpsInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // FrpsInfoUpdateOne is the builder for updating a single FrpsInfo entity.
 type FrpsInfoUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *FrpsInfoMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *FrpsInfoMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -615,6 +624,12 @@ func (fiuo *FrpsInfoUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (fiuo *FrpsInfoUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *FrpsInfoUpdateOne {
+	fiuo.modifiers = append(fiuo.modifiers, modifiers...)
+	return fiuo
+}
+
 func (fiuo *FrpsInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpsInfo, err error) {
 	_spec := sqlgraph.NewUpdateSpec(frpsinfo.Table, frpsinfo.Columns, sqlgraph.NewFieldSpec(frpsinfo.FieldID, field.TypeInt64))
 	id, ok := fiuo.mutation.ID()
@@ -725,6 +740,7 @@ func (fiuo *FrpsInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpsInfo, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(fiuo.modifiers...)
 	_node = &FrpsInfo{config: fiuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

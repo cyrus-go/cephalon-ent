@@ -42,6 +42,7 @@ type MissionQuery struct {
 	withMissionProductions   *MissionProductionQuery
 	withMissionOrders        *MissionOrderQuery
 	withRenewalAgreements    *RenewalAgreementQuery
+	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -716,6 +717,9 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mq.modifiers) > 0 {
+		_spec.Modifiers = mq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -1096,6 +1100,9 @@ func (mq *MissionQuery) loadRenewalAgreements(ctx context.Context, query *Renewa
 
 func (mq *MissionQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mq.querySpec()
+	if len(mq.modifiers) > 0 {
+		_spec.Modifiers = mq.modifiers
+	}
 	_spec.Node.Columns = mq.ctx.Fields
 	if len(mq.ctx.Fields) > 0 {
 		_spec.Unique = mq.ctx.Unique != nil && *mq.ctx.Unique
@@ -1170,6 +1177,9 @@ func (mq *MissionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mq.ctx.Unique != nil && *mq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mq.modifiers {
+		m(selector)
+	}
 	for _, p := range mq.predicates {
 		p(selector)
 	}
@@ -1185,6 +1195,12 @@ func (mq *MissionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mq *MissionQuery) Modify(modifiers ...func(s *sql.Selector)) *MissionSelect {
+	mq.modifiers = append(mq.modifiers, modifiers...)
+	return mq.Select()
 }
 
 // MissionGroupBy is the group-by builder for Mission entities.
@@ -1275,4 +1291,10 @@ func (ms *MissionSelect) sqlScan(ctx context.Context, root *MissionQuery, v any)
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ms *MissionSelect) Modify(modifiers ...func(s *sql.Selector)) *MissionSelect {
+	ms.modifiers = append(ms.modifiers, modifiers...)
+	return ms
 }

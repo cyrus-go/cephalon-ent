@@ -26,6 +26,7 @@ type HmacKeyPairQuery struct {
 	predicates          []predicate.HmacKeyPair
 	withMissionKeyPairs *MissionKeyPairQuery
 	withCreatedMissions *MissionQuery
+	modifiers           []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -420,6 +421,9 @@ func (hkpq *HmacKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(hkpq.modifiers) > 0 {
+		_spec.Modifiers = hkpq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -509,6 +513,9 @@ func (hkpq *HmacKeyPairQuery) loadCreatedMissions(ctx context.Context, query *Mi
 
 func (hkpq *HmacKeyPairQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := hkpq.querySpec()
+	if len(hkpq.modifiers) > 0 {
+		_spec.Modifiers = hkpq.modifiers
+	}
 	_spec.Node.Columns = hkpq.ctx.Fields
 	if len(hkpq.ctx.Fields) > 0 {
 		_spec.Unique = hkpq.ctx.Unique != nil && *hkpq.ctx.Unique
@@ -571,6 +578,9 @@ func (hkpq *HmacKeyPairQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if hkpq.ctx.Unique != nil && *hkpq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range hkpq.modifiers {
+		m(selector)
+	}
 	for _, p := range hkpq.predicates {
 		p(selector)
 	}
@@ -586,6 +596,12 @@ func (hkpq *HmacKeyPairQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (hkpq *HmacKeyPairQuery) Modify(modifiers ...func(s *sql.Selector)) *HmacKeyPairSelect {
+	hkpq.modifiers = append(hkpq.modifiers, modifiers...)
+	return hkpq.Select()
 }
 
 // HmacKeyPairGroupBy is the group-by builder for HmacKeyPair entities.
@@ -676,4 +692,10 @@ func (hkps *HmacKeyPairSelect) sqlScan(ctx context.Context, root *HmacKeyPairQue
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (hkps *HmacKeyPairSelect) Modify(modifiers ...func(s *sql.Selector)) *HmacKeyPairSelect {
+	hkps.modifiers = append(hkps.modifiers, modifiers...)
+	return hkps
 }

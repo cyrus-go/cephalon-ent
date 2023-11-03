@@ -26,6 +26,7 @@ type GpuQuery struct {
 	predicates            []predicate.Gpu
 	withDeviceGpuMissions *DeviceGpuMissionQuery
 	withPrices            *PriceQuery
+	modifiers             []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -420,6 +421,9 @@ func (gq *GpuQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Gpu, err
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(gq.modifiers) > 0 {
+		_spec.Modifiers = gq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -509,6 +513,9 @@ func (gq *GpuQuery) loadPrices(ctx context.Context, query *PriceQuery, nodes []*
 
 func (gq *GpuQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := gq.querySpec()
+	if len(gq.modifiers) > 0 {
+		_spec.Modifiers = gq.modifiers
+	}
 	_spec.Node.Columns = gq.ctx.Fields
 	if len(gq.ctx.Fields) > 0 {
 		_spec.Unique = gq.ctx.Unique != nil && *gq.ctx.Unique
@@ -571,6 +578,9 @@ func (gq *GpuQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if gq.ctx.Unique != nil && *gq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range gq.modifiers {
+		m(selector)
+	}
 	for _, p := range gq.predicates {
 		p(selector)
 	}
@@ -586,6 +596,12 @@ func (gq *GpuQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (gq *GpuQuery) Modify(modifiers ...func(s *sql.Selector)) *GpuSelect {
+	gq.modifiers = append(gq.modifiers, modifiers...)
+	return gq.Select()
 }
 
 // GpuGroupBy is the group-by builder for Gpu entities.
@@ -676,4 +692,10 @@ func (gs *GpuSelect) sqlScan(ctx context.Context, root *GpuQuery, v any) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (gs *GpuSelect) Modify(modifiers ...func(s *sql.Selector)) *GpuSelect {
+	gs.modifiers = append(gs.modifiers, modifiers...)
+	return gs
 }

@@ -25,6 +25,7 @@ type MissionKeyPairQuery struct {
 	predicates  []predicate.MissionKeyPair
 	withMission *MissionQuery
 	withKeyPair *HmacKeyPairQuery
+	modifiers   []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -419,6 +420,9 @@ func (mkpq *MissionKeyPairQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mkpq.modifiers) > 0 {
+		_spec.Modifiers = mkpq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -504,6 +508,9 @@ func (mkpq *MissionKeyPairQuery) loadKeyPair(ctx context.Context, query *HmacKey
 
 func (mkpq *MissionKeyPairQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mkpq.querySpec()
+	if len(mkpq.modifiers) > 0 {
+		_spec.Modifiers = mkpq.modifiers
+	}
 	_spec.Node.Columns = mkpq.ctx.Fields
 	if len(mkpq.ctx.Fields) > 0 {
 		_spec.Unique = mkpq.ctx.Unique != nil && *mkpq.ctx.Unique
@@ -572,6 +579,9 @@ func (mkpq *MissionKeyPairQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mkpq.ctx.Unique != nil && *mkpq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mkpq.modifiers {
+		m(selector)
+	}
 	for _, p := range mkpq.predicates {
 		p(selector)
 	}
@@ -587,6 +597,12 @@ func (mkpq *MissionKeyPairQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mkpq *MissionKeyPairQuery) Modify(modifiers ...func(s *sql.Selector)) *MissionKeyPairSelect {
+	mkpq.modifiers = append(mkpq.modifiers, modifiers...)
+	return mkpq.Select()
 }
 
 // MissionKeyPairGroupBy is the group-by builder for MissionKeyPair entities.
@@ -677,4 +693,10 @@ func (mkps *MissionKeyPairSelect) sqlScan(ctx context.Context, root *MissionKeyP
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mkps *MissionKeyPairSelect) Modify(modifiers ...func(s *sql.Selector)) *MissionKeyPairSelect {
+	mkps.modifiers = append(mkps.modifiers, modifiers...)
+	return mkps
 }

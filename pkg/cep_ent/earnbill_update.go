@@ -22,8 +22,9 @@ import (
 // EarnBillUpdate is the builder for updating EarnBill entities.
 type EarnBillUpdate struct {
 	config
-	hooks    []Hook
-	mutation *EarnBillMutation
+	hooks     []Hook
+	mutation  *EarnBillMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the EarnBillUpdate builder.
@@ -400,6 +401,12 @@ func (ebu *EarnBillUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ebu *EarnBillUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EarnBillUpdate {
+	ebu.modifiers = append(ebu.modifiers, modifiers...)
+	return ebu
+}
+
 func (ebu *EarnBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ebu.check(); err != nil {
 		return n, err
@@ -579,6 +586,7 @@ func (ebu *EarnBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(ebu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ebu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{earnbill.Label}
@@ -594,9 +602,10 @@ func (ebu *EarnBillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // EarnBillUpdateOne is the builder for updating a single EarnBill entity.
 type EarnBillUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *EarnBillMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *EarnBillMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -980,6 +989,12 @@ func (ebuo *EarnBillUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (ebuo *EarnBillUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EarnBillUpdateOne {
+	ebuo.modifiers = append(ebuo.modifiers, modifiers...)
+	return ebuo
+}
+
 func (ebuo *EarnBillUpdateOne) sqlSave(ctx context.Context) (_node *EarnBill, err error) {
 	if err := ebuo.check(); err != nil {
 		return _node, err
@@ -1176,6 +1191,7 @@ func (ebuo *EarnBillUpdateOne) sqlSave(ctx context.Context) (_node *EarnBill, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(ebuo.modifiers...)
 	_node = &EarnBill{config: ebuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

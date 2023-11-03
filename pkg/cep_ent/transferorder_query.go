@@ -31,6 +31,7 @@ type TransferOrderQuery struct {
 	withBills      *BillQuery
 	withVxSocial   *VXSocialQuery
 	withSymbol     *SymbolQuery
+	modifiers      []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -530,6 +531,9 @@ func (toq *TransferOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(toq.modifiers) > 0 {
+		_spec.Modifiers = toq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -722,6 +726,9 @@ func (toq *TransferOrderQuery) loadSymbol(ctx context.Context, query *SymbolQuer
 
 func (toq *TransferOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := toq.querySpec()
+	if len(toq.modifiers) > 0 {
+		_spec.Modifiers = toq.modifiers
+	}
 	_spec.Node.Columns = toq.ctx.Fields
 	if len(toq.ctx.Fields) > 0 {
 		_spec.Unique = toq.ctx.Unique != nil && *toq.ctx.Unique
@@ -796,6 +803,9 @@ func (toq *TransferOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if toq.ctx.Unique != nil && *toq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range toq.modifiers {
+		m(selector)
+	}
 	for _, p := range toq.predicates {
 		p(selector)
 	}
@@ -811,6 +821,12 @@ func (toq *TransferOrderQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (toq *TransferOrderQuery) Modify(modifiers ...func(s *sql.Selector)) *TransferOrderSelect {
+	toq.modifiers = append(toq.modifiers, modifiers...)
+	return toq.Select()
 }
 
 // TransferOrderGroupBy is the group-by builder for TransferOrder entities.
@@ -901,4 +917,10 @@ func (tos *TransferOrderSelect) sqlScan(ctx context.Context, root *TransferOrder
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (tos *TransferOrderSelect) Modify(modifiers ...func(s *sql.Selector)) *TransferOrderSelect {
+	tos.modifiers = append(tos.modifiers, modifiers...)
+	return tos
 }

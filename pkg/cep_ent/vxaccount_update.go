@@ -19,8 +19,9 @@ import (
 // VXAccountUpdate is the builder for updating VXAccount entities.
 type VXAccountUpdate struct {
 	config
-	hooks    []Hook
-	mutation *VXAccountMutation
+	hooks     []Hook
+	mutation  *VXAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the VXAccountUpdate builder.
@@ -221,6 +222,12 @@ func (vau *VXAccountUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (vau *VXAccountUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *VXAccountUpdate {
+	vau.modifiers = append(vau.modifiers, modifiers...)
+	return vau
+}
+
 func (vau *VXAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := vau.check(); err != nil {
 		return n, err
@@ -292,6 +299,7 @@ func (vau *VXAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(vau.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, vau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{vxaccount.Label}
@@ -307,9 +315,10 @@ func (vau *VXAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // VXAccountUpdateOne is the builder for updating a single VXAccount entity.
 type VXAccountUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *VXAccountMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *VXAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -517,6 +526,12 @@ func (vauo *VXAccountUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (vauo *VXAccountUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *VXAccountUpdateOne {
+	vauo.modifiers = append(vauo.modifiers, modifiers...)
+	return vauo
+}
+
 func (vauo *VXAccountUpdateOne) sqlSave(ctx context.Context) (_node *VXAccount, err error) {
 	if err := vauo.check(); err != nil {
 		return _node, err
@@ -605,6 +620,7 @@ func (vauo *VXAccountUpdateOne) sqlSave(ctx context.Context) (_node *VXAccount, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(vauo.modifiers...)
 	_node = &VXAccount{config: vauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

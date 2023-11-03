@@ -26,6 +26,7 @@ type CampaignQuery struct {
 	predicates         []predicate.Campaign
 	withInvites        *InviteQuery
 	withCampaignOrders *CampaignOrderQuery
+	modifiers          []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -420,6 +421,9 @@ func (cq *CampaignQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cam
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(cq.modifiers) > 0 {
+		_spec.Modifiers = cq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -509,6 +513,9 @@ func (cq *CampaignQuery) loadCampaignOrders(ctx context.Context, query *Campaign
 
 func (cq *CampaignQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cq.querySpec()
+	if len(cq.modifiers) > 0 {
+		_spec.Modifiers = cq.modifiers
+	}
 	_spec.Node.Columns = cq.ctx.Fields
 	if len(cq.ctx.Fields) > 0 {
 		_spec.Unique = cq.ctx.Unique != nil && *cq.ctx.Unique
@@ -571,6 +578,9 @@ func (cq *CampaignQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if cq.ctx.Unique != nil && *cq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range cq.modifiers {
+		m(selector)
+	}
 	for _, p := range cq.predicates {
 		p(selector)
 	}
@@ -586,6 +596,12 @@ func (cq *CampaignQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cq *CampaignQuery) Modify(modifiers ...func(s *sql.Selector)) *CampaignSelect {
+	cq.modifiers = append(cq.modifiers, modifiers...)
+	return cq.Select()
 }
 
 // CampaignGroupBy is the group-by builder for Campaign entities.
@@ -676,4 +692,10 @@ func (cs *CampaignSelect) sqlScan(ctx context.Context, root *CampaignQuery, v an
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cs *CampaignSelect) Modify(modifiers ...func(s *sql.Selector)) *CampaignSelect {
+	cs.modifiers = append(cs.modifiers, modifiers...)
+	return cs
 }

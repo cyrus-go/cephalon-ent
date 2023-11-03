@@ -26,6 +26,7 @@ type CostAccountQuery struct {
 	predicates    []predicate.CostAccount
 	withUser      *UserQuery
 	withCostBills *CostBillQuery
+	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -420,6 +421,9 @@ func (caq *CostAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(caq.modifiers) > 0 {
+		_spec.Modifiers = caq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -507,6 +511,9 @@ func (caq *CostAccountQuery) loadCostBills(ctx context.Context, query *CostBillQ
 
 func (caq *CostAccountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := caq.querySpec()
+	if len(caq.modifiers) > 0 {
+		_spec.Modifiers = caq.modifiers
+	}
 	_spec.Node.Columns = caq.ctx.Fields
 	if len(caq.ctx.Fields) > 0 {
 		_spec.Unique = caq.ctx.Unique != nil && *caq.ctx.Unique
@@ -572,6 +579,9 @@ func (caq *CostAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if caq.ctx.Unique != nil && *caq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range caq.modifiers {
+		m(selector)
+	}
 	for _, p := range caq.predicates {
 		p(selector)
 	}
@@ -587,6 +597,12 @@ func (caq *CostAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (caq *CostAccountQuery) Modify(modifiers ...func(s *sql.Selector)) *CostAccountSelect {
+	caq.modifiers = append(caq.modifiers, modifiers...)
+	return caq.Select()
 }
 
 // CostAccountGroupBy is the group-by builder for CostAccount entities.
@@ -677,4 +693,10 @@ func (cas *CostAccountSelect) sqlScan(ctx context.Context, root *CostAccountQuer
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cas *CostAccountSelect) Modify(modifiers ...func(s *sql.Selector)) *CostAccountSelect {
+	cas.modifiers = append(cas.modifiers, modifiers...)
+	return cas
 }

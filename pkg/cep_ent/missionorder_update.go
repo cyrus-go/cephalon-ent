@@ -25,8 +25,9 @@ import (
 // MissionOrderUpdate is the builder for updating MissionOrder entities.
 type MissionOrderUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionOrderMutation
+	hooks     []Hook
+	mutation  *MissionOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionOrderUpdate builder.
@@ -623,6 +624,12 @@ func (mou *MissionOrderUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mou *MissionOrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionOrderUpdate {
+	mou.modifiers = append(mou.modifiers, modifiers...)
+	return mou
+}
+
 func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mou.check(); err != nil {
 		return n, err
@@ -938,6 +945,7 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionorder.Label}
@@ -953,9 +961,10 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // MissionOrderUpdateOne is the builder for updating a single MissionOrder entity.
 type MissionOrderUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionOrderMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1559,6 +1568,12 @@ func (mouo *MissionOrderUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mouo *MissionOrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionOrderUpdateOne {
+	mouo.modifiers = append(mouo.modifiers, modifiers...)
+	return mouo
+}
+
 func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionOrder, err error) {
 	if err := mouo.check(); err != nil {
 		return _node, err
@@ -1891,6 +1906,7 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mouo.modifiers...)
 	_node = &MissionOrder{config: mouo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -25,6 +25,7 @@ type RenewalAgreementQuery struct {
 	predicates  []predicate.RenewalAgreement
 	withUser    *UserQuery
 	withMission *MissionQuery
+	modifiers   []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -419,6 +420,9 @@ func (raq *RenewalAgreementQuery) sqlAll(ctx context.Context, hooks ...queryHook
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(raq.modifiers) > 0 {
+		_spec.Modifiers = raq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -504,6 +508,9 @@ func (raq *RenewalAgreementQuery) loadMission(ctx context.Context, query *Missio
 
 func (raq *RenewalAgreementQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := raq.querySpec()
+	if len(raq.modifiers) > 0 {
+		_spec.Modifiers = raq.modifiers
+	}
 	_spec.Node.Columns = raq.ctx.Fields
 	if len(raq.ctx.Fields) > 0 {
 		_spec.Unique = raq.ctx.Unique != nil && *raq.ctx.Unique
@@ -572,6 +579,9 @@ func (raq *RenewalAgreementQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if raq.ctx.Unique != nil && *raq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range raq.modifiers {
+		m(selector)
+	}
 	for _, p := range raq.predicates {
 		p(selector)
 	}
@@ -587,6 +597,12 @@ func (raq *RenewalAgreementQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (raq *RenewalAgreementQuery) Modify(modifiers ...func(s *sql.Selector)) *RenewalAgreementSelect {
+	raq.modifiers = append(raq.modifiers, modifiers...)
+	return raq.Select()
 }
 
 // RenewalAgreementGroupBy is the group-by builder for RenewalAgreement entities.
@@ -677,4 +693,10 @@ func (ras *RenewalAgreementSelect) sqlScan(ctx context.Context, root *RenewalAgr
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ras *RenewalAgreementSelect) Modify(modifiers ...func(s *sql.Selector)) *RenewalAgreementSelect {
+	ras.modifiers = append(ras.modifiers, modifiers...)
+	return ras
 }

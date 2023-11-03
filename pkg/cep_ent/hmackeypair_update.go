@@ -20,8 +20,9 @@ import (
 // HmacKeyPairUpdate is the builder for updating HmacKeyPair entities.
 type HmacKeyPairUpdate struct {
 	config
-	hooks    []Hook
-	mutation *HmacKeyPairMutation
+	hooks     []Hook
+	mutation  *HmacKeyPairMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the HmacKeyPairUpdate builder.
@@ -231,6 +232,12 @@ func (hkpu *HmacKeyPairUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (hkpu *HmacKeyPairUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *HmacKeyPairUpdate {
+	hkpu.modifiers = append(hkpu.modifiers, modifiers...)
+	return hkpu
+}
+
 func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(hmackeypair.Table, hmackeypair.Columns, sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64))
 	if ps := hkpu.mutation.predicates; len(ps) > 0 {
@@ -357,6 +364,7 @@ func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(hkpu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, hkpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{hmackeypair.Label}
@@ -372,9 +380,10 @@ func (hkpu *HmacKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // HmacKeyPairUpdateOne is the builder for updating a single HmacKeyPair entity.
 type HmacKeyPairUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *HmacKeyPairMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *HmacKeyPairMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -591,6 +600,12 @@ func (hkpuo *HmacKeyPairUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (hkpuo *HmacKeyPairUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *HmacKeyPairUpdateOne {
+	hkpuo.modifiers = append(hkpuo.modifiers, modifiers...)
+	return hkpuo
+}
+
 func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyPair, err error) {
 	_spec := sqlgraph.NewUpdateSpec(hmackeypair.Table, hmackeypair.Columns, sqlgraph.NewFieldSpec(hmackeypair.FieldID, field.TypeInt64))
 	id, ok := hkpuo.mutation.ID()
@@ -734,6 +749,7 @@ func (hkpuo *HmacKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *HmacKeyP
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(hkpuo.modifiers...)
 	_node = &HmacKeyPair{config: hkpuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

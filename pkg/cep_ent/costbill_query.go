@@ -33,6 +33,7 @@ type CostBillQuery struct {
 	withMissionConsumeOrder *MissionConsumeOrderQuery
 	withPlatformAccount     *PlatformAccountQuery
 	withCampaignOrder       *CampaignOrderQuery
+	modifiers               []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -567,6 +568,9 @@ func (cbq *CostBillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Co
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(cbq.modifiers) > 0 {
+		_spec.Modifiers = cbq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -792,6 +796,9 @@ func (cbq *CostBillQuery) loadCampaignOrder(ctx context.Context, query *Campaign
 
 func (cbq *CostBillQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cbq.querySpec()
+	if len(cbq.modifiers) > 0 {
+		_spec.Modifiers = cbq.modifiers
+	}
 	_spec.Node.Columns = cbq.ctx.Fields
 	if len(cbq.ctx.Fields) > 0 {
 		_spec.Unique = cbq.ctx.Unique != nil && *cbq.ctx.Unique
@@ -872,6 +879,9 @@ func (cbq *CostBillQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if cbq.ctx.Unique != nil && *cbq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range cbq.modifiers {
+		m(selector)
+	}
 	for _, p := range cbq.predicates {
 		p(selector)
 	}
@@ -887,6 +897,12 @@ func (cbq *CostBillQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cbq *CostBillQuery) Modify(modifiers ...func(s *sql.Selector)) *CostBillSelect {
+	cbq.modifiers = append(cbq.modifiers, modifiers...)
+	return cbq.Select()
 }
 
 // CostBillGroupBy is the group-by builder for CostBill entities.
@@ -977,4 +993,10 @@ func (cbs *CostBillSelect) sqlScan(ctx context.Context, root *CostBillQuery, v a
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cbs *CostBillSelect) Modify(modifiers ...func(s *sql.Selector)) *CostBillSelect {
+	cbs.modifiers = append(cbs.modifiers, modifiers...)
+	return cbs
 }

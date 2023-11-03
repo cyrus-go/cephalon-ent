@@ -32,6 +32,7 @@ type BillQuery struct {
 	withMissionOrder  *MissionOrderQuery
 	withInvite        *InviteQuery
 	withSymbol        *SymbolQuery
+	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -566,6 +567,9 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(bq.modifiers) > 0 {
+		_spec.Modifiers = bq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -791,6 +795,9 @@ func (bq *BillQuery) loadSymbol(ctx context.Context, query *SymbolQuery, nodes [
 
 func (bq *BillQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := bq.querySpec()
+	if len(bq.modifiers) > 0 {
+		_spec.Modifiers = bq.modifiers
+	}
 	_spec.Node.Columns = bq.ctx.Fields
 	if len(bq.ctx.Fields) > 0 {
 		_spec.Unique = bq.ctx.Unique != nil && *bq.ctx.Unique
@@ -871,6 +878,9 @@ func (bq *BillQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if bq.ctx.Unique != nil && *bq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range bq.modifiers {
+		m(selector)
+	}
 	for _, p := range bq.predicates {
 		p(selector)
 	}
@@ -886,6 +896,12 @@ func (bq *BillQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (bq *BillQuery) Modify(modifiers ...func(s *sql.Selector)) *BillSelect {
+	bq.modifiers = append(bq.modifiers, modifiers...)
+	return bq.Select()
 }
 
 // BillGroupBy is the group-by builder for Bill entities.
@@ -976,4 +992,10 @@ func (bs *BillSelect) sqlScan(ctx context.Context, root *BillQuery, v any) error
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (bs *BillSelect) Modify(modifiers ...func(s *sql.Selector)) *BillSelect {
+	bs.modifiers = append(bs.modifiers, modifiers...)
+	return bs
 }

@@ -30,8 +30,9 @@ import (
 // MissionUpdate is the builder for updating Mission entities.
 type MissionUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionMutation
+	hooks     []Hook
+	mutation  *MissionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionUpdate builder.
@@ -909,6 +910,12 @@ func (mu *MissionUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mu *MissionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionUpdate {
+	mu.modifiers = append(mu.modifiers, modifiers...)
+	return mu
+}
+
 func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mu.check(); err != nil {
 		return n, err
@@ -1433,6 +1440,7 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{mission.Label}
@@ -1448,9 +1456,10 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // MissionUpdateOne is the builder for updating a single Mission entity.
 type MissionUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -2335,6 +2344,12 @@ func (muo *MissionUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (muo *MissionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionUpdateOne {
+	muo.modifiers = append(muo.modifiers, modifiers...)
+	return muo
+}
+
 func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err error) {
 	if err := muo.check(); err != nil {
 		return _node, err
@@ -2876,6 +2891,7 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(muo.modifiers...)
 	_node = &Mission{config: muo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

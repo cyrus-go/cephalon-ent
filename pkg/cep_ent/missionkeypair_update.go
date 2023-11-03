@@ -22,8 +22,9 @@ import (
 // MissionKeyPairUpdate is the builder for updating MissionKeyPair entities.
 type MissionKeyPairUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionKeyPairMutation
+	hooks     []Hook
+	mutation  *MissionKeyPairMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionKeyPairUpdate builder.
@@ -266,6 +267,12 @@ func (mkpu *MissionKeyPairUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mkpu *MissionKeyPairUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionKeyPairUpdate {
+	mkpu.modifiers = append(mkpu.modifiers, modifiers...)
+	return mkpu
+}
+
 func (mkpu *MissionKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mkpu.check(); err != nil {
 		return n, err
@@ -380,6 +387,7 @@ func (mkpu *MissionKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mkpu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mkpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionkeypair.Label}
@@ -395,9 +403,10 @@ func (mkpu *MissionKeyPairUpdate) sqlSave(ctx context.Context) (n int, err error
 // MissionKeyPairUpdateOne is the builder for updating a single MissionKeyPair entity.
 type MissionKeyPairUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionKeyPairMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionKeyPairMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -647,6 +656,12 @@ func (mkpuo *MissionKeyPairUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mkpuo *MissionKeyPairUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionKeyPairUpdateOne {
+	mkpuo.modifiers = append(mkpuo.modifiers, modifiers...)
+	return mkpuo
+}
+
 func (mkpuo *MissionKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *MissionKeyPair, err error) {
 	if err := mkpuo.check(); err != nil {
 		return _node, err
@@ -778,6 +793,7 @@ func (mkpuo *MissionKeyPairUpdateOne) sqlSave(ctx context.Context) (_node *Missi
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mkpuo.modifiers...)
 	_node = &MissionKeyPair{config: mkpuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

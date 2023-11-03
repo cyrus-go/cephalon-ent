@@ -20,8 +20,9 @@ import (
 // ProfitAccountUpdate is the builder for updating ProfitAccount entities.
 type ProfitAccountUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ProfitAccountMutation
+	hooks     []Hook
+	mutation  *ProfitAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ProfitAccountUpdate builder.
@@ -244,6 +245,12 @@ func (pau *ProfitAccountUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pau *ProfitAccountUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfitAccountUpdate {
+	pau.modifiers = append(pau.modifiers, modifiers...)
+	return pau
+}
+
 func (pau *ProfitAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pau.check(); err != nil {
 		return n, err
@@ -360,6 +367,7 @@ func (pau *ProfitAccountUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(pau.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profitaccount.Label}
@@ -375,9 +383,10 @@ func (pau *ProfitAccountUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // ProfitAccountUpdateOne is the builder for updating a single ProfitAccount entity.
 type ProfitAccountUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ProfitAccountMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ProfitAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -607,6 +616,12 @@ func (pauo *ProfitAccountUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pauo *ProfitAccountUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfitAccountUpdateOne {
+	pauo.modifiers = append(pauo.modifiers, modifiers...)
+	return pauo
+}
+
 func (pauo *ProfitAccountUpdateOne) sqlSave(ctx context.Context) (_node *ProfitAccount, err error) {
 	if err := pauo.check(); err != nil {
 		return _node, err
@@ -740,6 +755,7 @@ func (pauo *ProfitAccountUpdateOne) sqlSave(ctx context.Context) (_node *ProfitA
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(pauo.modifiers...)
 	_node = &ProfitAccount{config: pauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -28,6 +28,7 @@ type InviteQuery struct {
 	withUser     *UserQuery
 	withCampaign *CampaignQuery
 	withBills    *BillQuery
+	modifiers    []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -457,6 +458,9 @@ func (iq *InviteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Invit
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(iq.modifiers) > 0 {
+		_spec.Modifiers = iq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -579,6 +583,9 @@ func (iq *InviteQuery) loadBills(ctx context.Context, query *BillQuery, nodes []
 
 func (iq *InviteQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := iq.querySpec()
+	if len(iq.modifiers) > 0 {
+		_spec.Modifiers = iq.modifiers
+	}
 	_spec.Node.Columns = iq.ctx.Fields
 	if len(iq.ctx.Fields) > 0 {
 		_spec.Unique = iq.ctx.Unique != nil && *iq.ctx.Unique
@@ -647,6 +654,9 @@ func (iq *InviteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if iq.ctx.Unique != nil && *iq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range iq.modifiers {
+		m(selector)
+	}
 	for _, p := range iq.predicates {
 		p(selector)
 	}
@@ -662,6 +672,12 @@ func (iq *InviteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (iq *InviteQuery) Modify(modifiers ...func(s *sql.Selector)) *InviteSelect {
+	iq.modifiers = append(iq.modifiers, modifiers...)
+	return iq.Select()
 }
 
 // InviteGroupBy is the group-by builder for Invite entities.
@@ -752,4 +768,10 @@ func (is *InviteSelect) sqlScan(ctx context.Context, root *InviteQuery, v any) e
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (is *InviteSelect) Modify(modifiers ...func(s *sql.Selector)) *InviteSelect {
+	is.modifiers = append(is.modifiers, modifiers...)
+	return is
 }

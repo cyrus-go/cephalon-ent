@@ -21,6 +21,7 @@ type RechargeCampaignRuleQuery struct {
 	order      []rechargecampaignrule.OrderOption
 	inters     []Interceptor
 	predicates []predicate.RechargeCampaignRule
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -342,6 +343,9 @@ func (rcrq *RechargeCampaignRuleQuery) sqlAll(ctx context.Context, hooks ...quer
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(rcrq.modifiers) > 0 {
+		_spec.Modifiers = rcrq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -356,6 +360,9 @@ func (rcrq *RechargeCampaignRuleQuery) sqlAll(ctx context.Context, hooks ...quer
 
 func (rcrq *RechargeCampaignRuleQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := rcrq.querySpec()
+	if len(rcrq.modifiers) > 0 {
+		_spec.Modifiers = rcrq.modifiers
+	}
 	_spec.Node.Columns = rcrq.ctx.Fields
 	if len(rcrq.ctx.Fields) > 0 {
 		_spec.Unique = rcrq.ctx.Unique != nil && *rcrq.ctx.Unique
@@ -418,6 +425,9 @@ func (rcrq *RechargeCampaignRuleQuery) sqlQuery(ctx context.Context) *sql.Select
 	if rcrq.ctx.Unique != nil && *rcrq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range rcrq.modifiers {
+		m(selector)
+	}
 	for _, p := range rcrq.predicates {
 		p(selector)
 	}
@@ -433,6 +443,12 @@ func (rcrq *RechargeCampaignRuleQuery) sqlQuery(ctx context.Context) *sql.Select
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (rcrq *RechargeCampaignRuleQuery) Modify(modifiers ...func(s *sql.Selector)) *RechargeCampaignRuleSelect {
+	rcrq.modifiers = append(rcrq.modifiers, modifiers...)
+	return rcrq.Select()
 }
 
 // RechargeCampaignRuleGroupBy is the group-by builder for RechargeCampaignRule entities.
@@ -523,4 +539,10 @@ func (rcrs *RechargeCampaignRuleSelect) sqlScan(ctx context.Context, root *Recha
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (rcrs *RechargeCampaignRuleSelect) Modify(modifiers ...func(s *sql.Selector)) *RechargeCampaignRuleSelect {
+	rcrs.modifiers = append(rcrs.modifiers, modifiers...)
+	return rcrs
 }

@@ -20,8 +20,9 @@ import (
 // PlatformAccountUpdate is the builder for updating PlatformAccount entities.
 type PlatformAccountUpdate struct {
 	config
-	hooks    []Hook
-	mutation *PlatformAccountMutation
+	hooks     []Hook
+	mutation  *PlatformAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the PlatformAccountUpdate builder.
@@ -355,6 +356,12 @@ func (pau *PlatformAccountUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pau *PlatformAccountUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PlatformAccountUpdate {
+	pau.modifiers = append(pau.modifiers, modifiers...)
+	return pau
+}
+
 func (pau *PlatformAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pau.check(); err != nil {
 		return n, err
@@ -514,6 +521,7 @@ func (pau *PlatformAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(pau.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{platformaccount.Label}
@@ -529,9 +537,10 @@ func (pau *PlatformAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 // PlatformAccountUpdateOne is the builder for updating a single PlatformAccount entity.
 type PlatformAccountUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *PlatformAccountMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *PlatformAccountMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -872,6 +881,12 @@ func (pauo *PlatformAccountUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pauo *PlatformAccountUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PlatformAccountUpdateOne {
+	pauo.modifiers = append(pauo.modifiers, modifiers...)
+	return pauo
+}
+
 func (pauo *PlatformAccountUpdateOne) sqlSave(ctx context.Context) (_node *PlatformAccount, err error) {
 	if err := pauo.check(); err != nil {
 		return _node, err
@@ -1048,6 +1063,7 @@ func (pauo *PlatformAccountUpdateOne) sqlSave(ctx context.Context) (_node *Platf
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(pauo.modifiers...)
 	_node = &PlatformAccount{config: pauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -24,6 +24,7 @@ type FrpsInfoQuery struct {
 	inters        []Interceptor
 	predicates    []predicate.FrpsInfo
 	withFrpcInfos *FrpcInfoQuery
+	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -383,6 +384,9 @@ func (fiq *FrpsInfoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Fr
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(fiq.modifiers) > 0 {
+		_spec.Modifiers = fiq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -435,6 +439,9 @@ func (fiq *FrpsInfoQuery) loadFrpcInfos(ctx context.Context, query *FrpcInfoQuer
 
 func (fiq *FrpsInfoQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := fiq.querySpec()
+	if len(fiq.modifiers) > 0 {
+		_spec.Modifiers = fiq.modifiers
+	}
 	_spec.Node.Columns = fiq.ctx.Fields
 	if len(fiq.ctx.Fields) > 0 {
 		_spec.Unique = fiq.ctx.Unique != nil && *fiq.ctx.Unique
@@ -497,6 +504,9 @@ func (fiq *FrpsInfoQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if fiq.ctx.Unique != nil && *fiq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range fiq.modifiers {
+		m(selector)
+	}
 	for _, p := range fiq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (fiq *FrpsInfoQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (fiq *FrpsInfoQuery) Modify(modifiers ...func(s *sql.Selector)) *FrpsInfoSelect {
+	fiq.modifiers = append(fiq.modifiers, modifiers...)
+	return fiq.Select()
 }
 
 // FrpsInfoGroupBy is the group-by builder for FrpsInfo entities.
@@ -602,4 +618,10 @@ func (fis *FrpsInfoSelect) sqlScan(ctx context.Context, root *FrpsInfoQuery, v a
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (fis *FrpsInfoSelect) Modify(modifiers ...func(s *sql.Selector)) *FrpsInfoSelect {
+	fis.modifiers = append(fis.modifiers, modifiers...)
+	return fis
 }

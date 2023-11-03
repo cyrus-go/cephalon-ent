@@ -32,6 +32,7 @@ type MissionConsumeOrderQuery struct {
 	withMissionProduceOrders *MissionProduceOrderQuery
 	withMissionBatch         *MissionBatchQuery
 	withMission              *MissionQuery
+	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -531,6 +532,9 @@ func (mcoq *MissionConsumeOrderQuery) sqlAll(ctx context.Context, hooks ...query
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mcoq.modifiers) > 0 {
+		_spec.Modifiers = mcoq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -728,6 +732,9 @@ func (mcoq *MissionConsumeOrderQuery) loadMission(ctx context.Context, query *Mi
 
 func (mcoq *MissionConsumeOrderQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mcoq.querySpec()
+	if len(mcoq.modifiers) > 0 {
+		_spec.Modifiers = mcoq.modifiers
+	}
 	_spec.Node.Columns = mcoq.ctx.Fields
 	if len(mcoq.ctx.Fields) > 0 {
 		_spec.Unique = mcoq.ctx.Unique != nil && *mcoq.ctx.Unique
@@ -799,6 +806,9 @@ func (mcoq *MissionConsumeOrderQuery) sqlQuery(ctx context.Context) *sql.Selecto
 	if mcoq.ctx.Unique != nil && *mcoq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mcoq.modifiers {
+		m(selector)
+	}
 	for _, p := range mcoq.predicates {
 		p(selector)
 	}
@@ -814,6 +824,12 @@ func (mcoq *MissionConsumeOrderQuery) sqlQuery(ctx context.Context) *sql.Selecto
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mcoq *MissionConsumeOrderQuery) Modify(modifiers ...func(s *sql.Selector)) *MissionConsumeOrderSelect {
+	mcoq.modifiers = append(mcoq.modifiers, modifiers...)
+	return mcoq.Select()
 }
 
 // MissionConsumeOrderGroupBy is the group-by builder for MissionConsumeOrder entities.
@@ -904,4 +920,10 @@ func (mcos *MissionConsumeOrderSelect) sqlScan(ctx context.Context, root *Missio
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mcos *MissionConsumeOrderSelect) Modify(modifiers ...func(s *sql.Selector)) *MissionConsumeOrderSelect {
+	mcos.modifiers = append(mcos.modifiers, modifiers...)
+	return mcos
 }

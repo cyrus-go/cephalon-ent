@@ -21,8 +21,9 @@ import (
 // VXSocialUpdate is the builder for updating VXSocial entities.
 type VXSocialUpdate struct {
 	config
-	hooks    []Hook
-	mutation *VXSocialMutation
+	hooks     []Hook
+	mutation  *VXSocialMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the VXSocialUpdate builder.
@@ -342,6 +343,12 @@ func (vsu *VXSocialUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (vsu *VXSocialUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *VXSocialUpdate {
+	vsu.modifiers = append(vsu.modifiers, modifiers...)
+	return vsu
+}
+
 func (vsu *VXSocialUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := vsu.check(); err != nil {
 		return n, err
@@ -512,6 +519,7 @@ func (vsu *VXSocialUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(vsu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, vsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{vxsocial.Label}
@@ -527,9 +535,10 @@ func (vsu *VXSocialUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // VXSocialUpdateOne is the builder for updating a single VXSocial entity.
 type VXSocialUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *VXSocialMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *VXSocialMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -856,6 +865,12 @@ func (vsuo *VXSocialUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (vsuo *VXSocialUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *VXSocialUpdateOne {
+	vsuo.modifiers = append(vsuo.modifiers, modifiers...)
+	return vsuo
+}
+
 func (vsuo *VXSocialUpdateOne) sqlSave(ctx context.Context) (_node *VXSocial, err error) {
 	if err := vsuo.check(); err != nil {
 		return _node, err
@@ -1043,6 +1058,7 @@ func (vsuo *VXSocialUpdateOne) sqlSave(ctx context.Context) (_node *VXSocial, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(vsuo.modifiers...)
 	_node = &VXSocial{config: vsuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

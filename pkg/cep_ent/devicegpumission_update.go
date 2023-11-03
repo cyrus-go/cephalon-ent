@@ -21,8 +21,9 @@ import (
 // DeviceGpuMissionUpdate is the builder for updating DeviceGpuMission entities.
 type DeviceGpuMissionUpdate struct {
 	config
-	hooks    []Hook
-	mutation *DeviceGpuMissionMutation
+	hooks     []Hook
+	mutation  *DeviceGpuMissionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the DeviceGpuMissionUpdate builder.
@@ -280,6 +281,12 @@ func (dgmu *DeviceGpuMissionUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (dgmu *DeviceGpuMissionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *DeviceGpuMissionUpdate {
+	dgmu.modifiers = append(dgmu.modifiers, modifiers...)
+	return dgmu
+}
+
 func (dgmu *DeviceGpuMissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := dgmu.check(); err != nil {
 		return n, err
@@ -403,6 +410,7 @@ func (dgmu *DeviceGpuMissionUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(dgmu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, dgmu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{devicegpumission.Label}
@@ -418,9 +426,10 @@ func (dgmu *DeviceGpuMissionUpdate) sqlSave(ctx context.Context) (n int, err err
 // DeviceGpuMissionUpdateOne is the builder for updating a single DeviceGpuMission entity.
 type DeviceGpuMissionUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *DeviceGpuMissionMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *DeviceGpuMissionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -685,6 +694,12 @@ func (dgmuo *DeviceGpuMissionUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (dgmuo *DeviceGpuMissionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *DeviceGpuMissionUpdateOne {
+	dgmuo.modifiers = append(dgmuo.modifiers, modifiers...)
+	return dgmuo
+}
+
 func (dgmuo *DeviceGpuMissionUpdateOne) sqlSave(ctx context.Context) (_node *DeviceGpuMission, err error) {
 	if err := dgmuo.check(); err != nil {
 		return _node, err
@@ -825,6 +840,7 @@ func (dgmuo *DeviceGpuMissionUpdateOne) sqlSave(ctx context.Context) (_node *Dev
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(dgmuo.modifiers...)
 	_node = &DeviceGpuMission{config: dgmuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

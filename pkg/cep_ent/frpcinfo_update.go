@@ -20,8 +20,9 @@ import (
 // FrpcInfoUpdate is the builder for updating FrpcInfo entities.
 type FrpcInfoUpdate struct {
 	config
-	hooks    []Hook
-	mutation *FrpcInfoMutation
+	hooks     []Hook
+	mutation  *FrpcInfoMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the FrpcInfoUpdate builder.
@@ -298,6 +299,12 @@ func (fiu *FrpcInfoUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (fiu *FrpcInfoUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *FrpcInfoUpdate {
+	fiu.modifiers = append(fiu.modifiers, modifiers...)
+	return fiu
+}
+
 func (fiu *FrpcInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := fiu.check(); err != nil {
 		return n, err
@@ -410,6 +417,7 @@ func (fiu *FrpcInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(fiu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, fiu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{frpcinfo.Label}
@@ -425,9 +433,10 @@ func (fiu *FrpcInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // FrpcInfoUpdateOne is the builder for updating a single FrpcInfo entity.
 type FrpcInfoUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *FrpcInfoMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *FrpcInfoMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -711,6 +720,12 @@ func (fiuo *FrpcInfoUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (fiuo *FrpcInfoUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *FrpcInfoUpdateOne {
+	fiuo.modifiers = append(fiuo.modifiers, modifiers...)
+	return fiuo
+}
+
 func (fiuo *FrpcInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpcInfo, err error) {
 	if err := fiuo.check(); err != nil {
 		return _node, err
@@ -840,6 +855,7 @@ func (fiuo *FrpcInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpcInfo, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(fiuo.modifiers...)
 	_node = &FrpcInfo{config: fiuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -22,8 +22,9 @@ import (
 // MissionProductionUpdate is the builder for updating MissionProduction entities.
 type MissionProductionUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionProductionMutation
+	hooks     []Hook
+	mutation  *MissionProductionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionProductionUpdate builder.
@@ -341,6 +342,12 @@ func (mpu *MissionProductionUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mpu *MissionProductionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionProductionUpdate {
+	mpu.modifiers = append(mpu.modifiers, modifiers...)
+	return mpu
+}
+
 func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mpu.check(); err != nil {
 		return n, err
@@ -488,6 +495,7 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mpu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionproduction.Label}
@@ -503,9 +511,10 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 // MissionProductionUpdateOne is the builder for updating a single MissionProduction entity.
 type MissionProductionUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionProductionMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionProductionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -830,6 +839,12 @@ func (mpuo *MissionProductionUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mpuo *MissionProductionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionProductionUpdateOne {
+	mpuo.modifiers = append(mpuo.modifiers, modifiers...)
+	return mpuo
+}
+
 func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *MissionProduction, err error) {
 	if err := mpuo.check(); err != nil {
 		return _node, err
@@ -994,6 +1009,7 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mpuo.modifiers...)
 	_node = &MissionProduction{config: mpuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -30,6 +30,7 @@ type MissionBatchQuery struct {
 	withMissionConsumeOrders *MissionConsumeOrderQuery
 	withMissions             *MissionQuery
 	withMissionOrders        *MissionOrderQuery
+	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -494,6 +495,9 @@ func (mbq *MissionBatchQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mbq.modifiers) > 0 {
+		_spec.Modifiers = mbq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -657,6 +661,9 @@ func (mbq *MissionBatchQuery) loadMissionOrders(ctx context.Context, query *Miss
 
 func (mbq *MissionBatchQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mbq.querySpec()
+	if len(mbq.modifiers) > 0 {
+		_spec.Modifiers = mbq.modifiers
+	}
 	_spec.Node.Columns = mbq.ctx.Fields
 	if len(mbq.ctx.Fields) > 0 {
 		_spec.Unique = mbq.ctx.Unique != nil && *mbq.ctx.Unique
@@ -722,6 +729,9 @@ func (mbq *MissionBatchQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mbq.ctx.Unique != nil && *mbq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mbq.modifiers {
+		m(selector)
+	}
 	for _, p := range mbq.predicates {
 		p(selector)
 	}
@@ -737,6 +747,12 @@ func (mbq *MissionBatchQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mbq *MissionBatchQuery) Modify(modifiers ...func(s *sql.Selector)) *MissionBatchSelect {
+	mbq.modifiers = append(mbq.modifiers, modifiers...)
+	return mbq.Select()
 }
 
 // MissionBatchGroupBy is the group-by builder for MissionBatch entities.
@@ -827,4 +843,10 @@ func (mbs *MissionBatchSelect) sqlScan(ctx context.Context, root *MissionBatchQu
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mbs *MissionBatchSelect) Modify(modifiers ...func(s *sql.Selector)) *MissionBatchSelect {
+	mbs.modifiers = append(mbs.modifiers, modifiers...)
+	return mbs
 }

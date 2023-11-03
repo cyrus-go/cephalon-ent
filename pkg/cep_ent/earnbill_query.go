@@ -29,6 +29,7 @@ type EarnBillQuery struct {
 	withProfitAccount        *ProfitAccountQuery
 	withPlatformAccount      *PlatformAccountQuery
 	withMissionProduceOrders *MissionProduceOrderQuery
+	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -493,6 +494,9 @@ func (ebq *EarnBillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ea
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(ebq.modifiers) > 0 {
+		_spec.Modifiers = ebq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -648,6 +652,9 @@ func (ebq *EarnBillQuery) loadMissionProduceOrders(ctx context.Context, query *M
 
 func (ebq *EarnBillQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ebq.querySpec()
+	if len(ebq.modifiers) > 0 {
+		_spec.Modifiers = ebq.modifiers
+	}
 	_spec.Node.Columns = ebq.ctx.Fields
 	if len(ebq.ctx.Fields) > 0 {
 		_spec.Unique = ebq.ctx.Unique != nil && *ebq.ctx.Unique
@@ -722,6 +729,9 @@ func (ebq *EarnBillQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if ebq.ctx.Unique != nil && *ebq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range ebq.modifiers {
+		m(selector)
+	}
 	for _, p := range ebq.predicates {
 		p(selector)
 	}
@@ -737,6 +747,12 @@ func (ebq *EarnBillQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ebq *EarnBillQuery) Modify(modifiers ...func(s *sql.Selector)) *EarnBillSelect {
+	ebq.modifiers = append(ebq.modifiers, modifiers...)
+	return ebq.Select()
 }
 
 // EarnBillGroupBy is the group-by builder for EarnBill entities.
@@ -827,4 +843,10 @@ func (ebs *EarnBillSelect) sqlScan(ctx context.Context, root *EarnBillQuery, v a
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ebs *EarnBillSelect) Modify(modifiers ...func(s *sql.Selector)) *EarnBillSelect {
+	ebs.modifiers = append(ebs.modifiers, modifiers...)
+	return ebs
 }

@@ -23,6 +23,7 @@ type ProfitSettingQuery struct {
 	inters     []Interceptor
 	predicates []predicate.ProfitSetting
 	withUser   *UserQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -382,6 +383,9 @@ func (psq *ProfitSettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(psq.modifiers) > 0 {
+		_spec.Modifiers = psq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -432,6 +436,9 @@ func (psq *ProfitSettingQuery) loadUser(ctx context.Context, query *UserQuery, n
 
 func (psq *ProfitSettingQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := psq.querySpec()
+	if len(psq.modifiers) > 0 {
+		_spec.Modifiers = psq.modifiers
+	}
 	_spec.Node.Columns = psq.ctx.Fields
 	if len(psq.ctx.Fields) > 0 {
 		_spec.Unique = psq.ctx.Unique != nil && *psq.ctx.Unique
@@ -497,6 +504,9 @@ func (psq *ProfitSettingQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if psq.ctx.Unique != nil && *psq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range psq.modifiers {
+		m(selector)
+	}
 	for _, p := range psq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (psq *ProfitSettingQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (psq *ProfitSettingQuery) Modify(modifiers ...func(s *sql.Selector)) *ProfitSettingSelect {
+	psq.modifiers = append(psq.modifiers, modifiers...)
+	return psq.Select()
 }
 
 // ProfitSettingGroupBy is the group-by builder for ProfitSetting entities.
@@ -602,4 +618,10 @@ func (pss *ProfitSettingSelect) sqlScan(ctx context.Context, root *ProfitSetting
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (pss *ProfitSettingSelect) Modify(modifiers ...func(s *sql.Selector)) *ProfitSettingSelect {
+	pss.modifiers = append(pss.modifiers, modifiers...)
+	return pss
 }

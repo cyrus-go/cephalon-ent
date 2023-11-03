@@ -23,8 +23,9 @@ import (
 // TransferOrderUpdate is the builder for updating TransferOrder entities.
 type TransferOrderUpdate struct {
 	config
-	hooks    []Hook
-	mutation *TransferOrderMutation
+	hooks     []Hook
+	mutation  *TransferOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the TransferOrderUpdate builder.
@@ -407,6 +408,12 @@ func (tou *TransferOrderUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (tou *TransferOrderUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransferOrderUpdate {
+	tou.modifiers = append(tou.modifiers, modifiers...)
+	return tou
+}
+
 func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tou.check(); err != nil {
 		return n, err
@@ -619,6 +626,7 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(tou.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, tou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transferorder.Label}
@@ -634,9 +642,10 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // TransferOrderUpdateOne is the builder for updating a single TransferOrder entity.
 type TransferOrderUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *TransferOrderMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *TransferOrderMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -1026,6 +1035,12 @@ func (touo *TransferOrderUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (touo *TransferOrderUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransferOrderUpdateOne {
+	touo.modifiers = append(touo.modifiers, modifiers...)
+	return touo
+}
+
 func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *TransferOrder, err error) {
 	if err := touo.check(); err != nil {
 		return _node, err
@@ -1255,6 +1270,7 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(touo.modifiers...)
 	_node = &TransferOrder{config: touo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

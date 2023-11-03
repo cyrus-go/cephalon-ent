@@ -25,6 +25,7 @@ type DeviceGpuMissionQuery struct {
 	predicates []predicate.DeviceGpuMission
 	withDevice *DeviceQuery
 	withGpu    *GpuQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -419,6 +420,9 @@ func (dgmq *DeviceGpuMissionQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(dgmq.modifiers) > 0 {
+		_spec.Modifiers = dgmq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -504,6 +508,9 @@ func (dgmq *DeviceGpuMissionQuery) loadGpu(ctx context.Context, query *GpuQuery,
 
 func (dgmq *DeviceGpuMissionQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := dgmq.querySpec()
+	if len(dgmq.modifiers) > 0 {
+		_spec.Modifiers = dgmq.modifiers
+	}
 	_spec.Node.Columns = dgmq.ctx.Fields
 	if len(dgmq.ctx.Fields) > 0 {
 		_spec.Unique = dgmq.ctx.Unique != nil && *dgmq.ctx.Unique
@@ -572,6 +579,9 @@ func (dgmq *DeviceGpuMissionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if dgmq.ctx.Unique != nil && *dgmq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range dgmq.modifiers {
+		m(selector)
+	}
 	for _, p := range dgmq.predicates {
 		p(selector)
 	}
@@ -587,6 +597,12 @@ func (dgmq *DeviceGpuMissionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (dgmq *DeviceGpuMissionQuery) Modify(modifiers ...func(s *sql.Selector)) *DeviceGpuMissionSelect {
+	dgmq.modifiers = append(dgmq.modifiers, modifiers...)
+	return dgmq.Select()
 }
 
 // DeviceGpuMissionGroupBy is the group-by builder for DeviceGpuMission entities.
@@ -677,4 +693,10 @@ func (dgms *DeviceGpuMissionSelect) sqlScan(ctx context.Context, root *DeviceGpu
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (dgms *DeviceGpuMissionSelect) Modify(modifiers ...func(s *sql.Selector)) *DeviceGpuMissionSelect {
+	dgms.modifiers = append(dgms.modifiers, modifiers...)
+	return dgms
 }

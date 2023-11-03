@@ -21,8 +21,9 @@ import (
 // GpuUpdate is the builder for updating Gpu entities.
 type GpuUpdate struct {
 	config
-	hooks    []Hook
-	mutation *GpuMutation
+	hooks     []Hook
+	mutation  *GpuMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the GpuUpdate builder.
@@ -314,6 +315,12 @@ func (gu *GpuUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (gu *GpuUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *GpuUpdate {
+	gu.modifiers = append(gu.modifiers, modifiers...)
+	return gu
+}
+
 func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := gu.check(); err != nil {
 		return n, err
@@ -461,6 +468,7 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(gu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, gu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{gpu.Label}
@@ -476,9 +484,10 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // GpuUpdateOne is the builder for updating a single Gpu entity.
 type GpuUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *GpuMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *GpuMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -777,6 +786,12 @@ func (guo *GpuUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (guo *GpuUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *GpuUpdateOne {
+	guo.modifiers = append(guo.modifiers, modifiers...)
+	return guo
+}
+
 func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	if err := guo.check(); err != nil {
 		return _node, err
@@ -941,6 +956,7 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(guo.modifiers...)
 	_node = &Gpu{config: guo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

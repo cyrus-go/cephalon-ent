@@ -28,6 +28,7 @@ type VXSocialQuery struct {
 	withUser           *UserQuery
 	withRechargeOrders *RechargeOrderQuery
 	withTransferOrders *TransferOrderQuery
+	modifiers          []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -457,6 +458,9 @@ func (vsq *VXSocialQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*VX
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(vsq.modifiers) > 0 {
+		_spec.Modifiers = vsq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -581,6 +585,9 @@ func (vsq *VXSocialQuery) loadTransferOrders(ctx context.Context, query *Transfe
 
 func (vsq *VXSocialQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := vsq.querySpec()
+	if len(vsq.modifiers) > 0 {
+		_spec.Modifiers = vsq.modifiers
+	}
 	_spec.Node.Columns = vsq.ctx.Fields
 	if len(vsq.ctx.Fields) > 0 {
 		_spec.Unique = vsq.ctx.Unique != nil && *vsq.ctx.Unique
@@ -646,6 +653,9 @@ func (vsq *VXSocialQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if vsq.ctx.Unique != nil && *vsq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range vsq.modifiers {
+		m(selector)
+	}
 	for _, p := range vsq.predicates {
 		p(selector)
 	}
@@ -661,6 +671,12 @@ func (vsq *VXSocialQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (vsq *VXSocialQuery) Modify(modifiers ...func(s *sql.Selector)) *VXSocialSelect {
+	vsq.modifiers = append(vsq.modifiers, modifiers...)
+	return vsq.Select()
 }
 
 // VXSocialGroupBy is the group-by builder for VXSocial entities.
@@ -751,4 +767,10 @@ func (vss *VXSocialSelect) sqlScan(ctx context.Context, root *VXSocialQuery, v a
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (vss *VXSocialSelect) Modify(modifiers ...func(s *sql.Selector)) *VXSocialSelect {
+	vss.modifiers = append(vss.modifiers, modifiers...)
+	return vss
 }

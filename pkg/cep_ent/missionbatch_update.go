@@ -22,8 +22,9 @@ import (
 // MissionBatchUpdate is the builder for updating MissionBatch entities.
 type MissionBatchUpdate struct {
 	config
-	hooks    []Hook
-	mutation *MissionBatchMutation
+	hooks     []Hook
+	mutation  *MissionBatchMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the MissionBatchUpdate builder.
@@ -290,6 +291,12 @@ func (mbu *MissionBatchUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mbu *MissionBatchUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionBatchUpdate {
+	mbu.modifiers = append(mbu.modifiers, modifiers...)
+	return mbu
+}
+
 func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := mbu.check(); err != nil {
 		return n, err
@@ -487,6 +494,7 @@ func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mbu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{missionbatch.Label}
@@ -502,9 +510,10 @@ func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // MissionBatchUpdateOne is the builder for updating a single MissionBatch entity.
 type MissionBatchUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *MissionBatchMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *MissionBatchMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -778,6 +787,12 @@ func (mbuo *MissionBatchUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (mbuo *MissionBatchUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MissionBatchUpdateOne {
+	mbuo.modifiers = append(mbuo.modifiers, modifiers...)
+	return mbuo
+}
+
 func (mbuo *MissionBatchUpdateOne) sqlSave(ctx context.Context) (_node *MissionBatch, err error) {
 	if err := mbuo.check(); err != nil {
 		return _node, err
@@ -992,6 +1007,7 @@ func (mbuo *MissionBatchUpdateOne) sqlSave(ctx context.Context) (_node *MissionB
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(mbuo.modifiers...)
 	_node = &MissionBatch{config: mbuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -24,6 +24,7 @@ type MissionKindQuery struct {
 	inters       []Interceptor
 	predicates   []predicate.MissionKind
 	withMissions *MissionQuery
+	modifiers    []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -383,6 +384,9 @@ func (mkq *MissionKindQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(mkq.modifiers) > 0 {
+		_spec.Modifiers = mkq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -435,6 +439,9 @@ func (mkq *MissionKindQuery) loadMissions(ctx context.Context, query *MissionQue
 
 func (mkq *MissionKindQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mkq.querySpec()
+	if len(mkq.modifiers) > 0 {
+		_spec.Modifiers = mkq.modifiers
+	}
 	_spec.Node.Columns = mkq.ctx.Fields
 	if len(mkq.ctx.Fields) > 0 {
 		_spec.Unique = mkq.ctx.Unique != nil && *mkq.ctx.Unique
@@ -497,6 +504,9 @@ func (mkq *MissionKindQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mkq.ctx.Unique != nil && *mkq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range mkq.modifiers {
+		m(selector)
+	}
 	for _, p := range mkq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (mkq *MissionKindQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mkq *MissionKindQuery) Modify(modifiers ...func(s *sql.Selector)) *MissionKindSelect {
+	mkq.modifiers = append(mkq.modifiers, modifiers...)
+	return mkq.Select()
 }
 
 // MissionKindGroupBy is the group-by builder for MissionKind entities.
@@ -602,4 +618,10 @@ func (mks *MissionKindSelect) sqlScan(ctx context.Context, root *MissionKindQuer
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (mks *MissionKindSelect) Modify(modifiers ...func(s *sql.Selector)) *MissionKindSelect {
+	mks.modifiers = append(mks.modifiers, modifiers...)
+	return mks
 }

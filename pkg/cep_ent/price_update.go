@@ -20,8 +20,9 @@ import (
 // PriceUpdate is the builder for updating Price entities.
 type PriceUpdate struct {
 	config
-	hooks    []Hook
-	mutation *PriceMutation
+	hooks     []Hook
+	mutation  *PriceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the PriceUpdate builder.
@@ -331,6 +332,12 @@ func (pu *PriceUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (pu *PriceUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PriceUpdate {
+	pu.modifiers = append(pu.modifiers, modifiers...)
+	return pu
+}
+
 func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pu.check(); err != nil {
 		return n, err
@@ -426,6 +433,7 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(pu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{price.Label}
@@ -441,9 +449,10 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // PriceUpdateOne is the builder for updating a single Price entity.
 type PriceUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *PriceMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *PriceMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedBy sets the "created_by" field.
@@ -760,6 +769,12 @@ func (puo *PriceUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (puo *PriceUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PriceUpdateOne {
+	puo.modifiers = append(puo.modifiers, modifiers...)
+	return puo
+}
+
 func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error) {
 	if err := puo.check(); err != nil {
 		return _node, err
@@ -872,6 +887,7 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(puo.modifiers...)
 	_node = &Price{config: puo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

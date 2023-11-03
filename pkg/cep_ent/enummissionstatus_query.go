@@ -21,6 +21,7 @@ type EnumMissionStatusQuery struct {
 	order      []enummissionstatus.OrderOption
 	inters     []Interceptor
 	predicates []predicate.EnumMissionStatus
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -342,6 +343,9 @@ func (emsq *EnumMissionStatusQuery) sqlAll(ctx context.Context, hooks ...queryHo
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
+	if len(emsq.modifiers) > 0 {
+		_spec.Modifiers = emsq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -356,6 +360,9 @@ func (emsq *EnumMissionStatusQuery) sqlAll(ctx context.Context, hooks ...queryHo
 
 func (emsq *EnumMissionStatusQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := emsq.querySpec()
+	if len(emsq.modifiers) > 0 {
+		_spec.Modifiers = emsq.modifiers
+	}
 	_spec.Node.Columns = emsq.ctx.Fields
 	if len(emsq.ctx.Fields) > 0 {
 		_spec.Unique = emsq.ctx.Unique != nil && *emsq.ctx.Unique
@@ -418,6 +425,9 @@ func (emsq *EnumMissionStatusQuery) sqlQuery(ctx context.Context) *sql.Selector 
 	if emsq.ctx.Unique != nil && *emsq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range emsq.modifiers {
+		m(selector)
+	}
 	for _, p := range emsq.predicates {
 		p(selector)
 	}
@@ -433,6 +443,12 @@ func (emsq *EnumMissionStatusQuery) sqlQuery(ctx context.Context) *sql.Selector 
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (emsq *EnumMissionStatusQuery) Modify(modifiers ...func(s *sql.Selector)) *EnumMissionStatusSelect {
+	emsq.modifiers = append(emsq.modifiers, modifiers...)
+	return emsq.Select()
 }
 
 // EnumMissionStatusGroupBy is the group-by builder for EnumMissionStatus entities.
@@ -523,4 +539,10 @@ func (emss *EnumMissionStatusSelect) sqlScan(ctx context.Context, root *EnumMiss
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (emss *EnumMissionStatusSelect) Modify(modifiers ...func(s *sql.Selector)) *EnumMissionStatusSelect {
+	emss.modifiers = append(emss.modifiers, modifiers...)
+	return emss
 }

@@ -23,6 +23,7 @@ type VXAccountQuery struct {
 	inters     []Interceptor
 	predicates []predicate.VXAccount
 	withUser   *UserQuery
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -382,6 +383,9 @@ func (vaq *VXAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*V
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(vaq.modifiers) > 0 {
+		_spec.Modifiers = vaq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -432,6 +436,9 @@ func (vaq *VXAccountQuery) loadUser(ctx context.Context, query *UserQuery, nodes
 
 func (vaq *VXAccountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := vaq.querySpec()
+	if len(vaq.modifiers) > 0 {
+		_spec.Modifiers = vaq.modifiers
+	}
 	_spec.Node.Columns = vaq.ctx.Fields
 	if len(vaq.ctx.Fields) > 0 {
 		_spec.Unique = vaq.ctx.Unique != nil && *vaq.ctx.Unique
@@ -497,6 +504,9 @@ func (vaq *VXAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if vaq.ctx.Unique != nil && *vaq.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range vaq.modifiers {
+		m(selector)
+	}
 	for _, p := range vaq.predicates {
 		p(selector)
 	}
@@ -512,6 +522,12 @@ func (vaq *VXAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (vaq *VXAccountQuery) Modify(modifiers ...func(s *sql.Selector)) *VXAccountSelect {
+	vaq.modifiers = append(vaq.modifiers, modifiers...)
+	return vaq.Select()
 }
 
 // VXAccountGroupBy is the group-by builder for VXAccount entities.
@@ -602,4 +618,10 @@ func (vas *VXAccountSelect) sqlScan(ctx context.Context, root *VXAccountQuery, v
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (vas *VXAccountSelect) Modify(modifiers ...func(s *sql.Selector)) *VXAccountSelect {
+	vas.modifiers = append(vas.modifiers, modifiers...)
+	return vas
 }
