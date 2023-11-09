@@ -15,9 +15,10 @@ const (
 	MissionTypeJpDkTime           MissionType = "jp_dk_time"
 	MissionTypeSshTime            MissionType = "ssh_time"
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
-	//MissionTypeSdTimePlanDay      MissionType = "sd_time_plan_day"
-	//MissionTypeSdTimePlanWeek     MissionType = "sd_time_plan_week"
-	//MissionTypeSdTimePlanMonth    MissionType = "sd_time_plan_month"
+	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
+	MissionTypeJpTimePlan         MissionType = "jp_time_plan"
+	MissionTypeJpDkTimePlan       MissionType = "jp_dk_time_plan"
+	MissionTypeSshTimePlan        MissionType = "ssh_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -34,9 +35,10 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeJpDkTime),
 		string(MissionTypeSshTime),
 		string(MissionTypeSdTimePlan),
-		//string(MissionTypeSdTimePlanDay),
-		//string(MissionTypeSdTimePlanWeek),
-		//string(MissionTypeSdTimePlanMonth),
+		string(MissionTypeWtTimePlan),
+		string(MissionTypeJpTimePlan),
+		string(MissionTypeJpDkTimePlan),
+		string(MissionTypeSshTimePlan),
 	}
 }
 
