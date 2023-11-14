@@ -3,12 +3,13 @@ package enums
 type MissionCategory string
 
 const (
-	MissionCategoryUnknown MissionCategory = "unknown"
-	MissionCategorySD      MissionCategory = "SD"
-	MissionCategoryJP      MissionCategory = "JP"
-	MissionCategoryWT      MissionCategory = "WT"
-	MissionCategoryJPDK    MissionCategory = "JP_DK"
-	MissionCategorySSH     MissionCategory = "SSH"
+	MissionCategoryUnknown  MissionCategory = "unknown"
+	MissionCategorySD       MissionCategory = "SD"
+	MissionCategoryJP       MissionCategory = "JP"
+	MissionCategoryWT       MissionCategory = "WT"
+	MissionCategoryJPDK     MissionCategory = "JP_DK"
+	MissionCategorySSH      MissionCategory = "SSH"
+	MissionCategorySDTOMATO MissionCategory = "SD_TOMATO"
 )
 
 func (obj MissionCategory) Values() []string {
@@ -19,6 +20,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryWT),
 		string(MissionCategoryJPDK),
 		string(MissionCategorySSH),
+		string(MissionCategorySDTOMATO),
 	}
 }
 

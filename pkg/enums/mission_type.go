@@ -14,11 +14,13 @@ const (
 	MissionTypeKeyPair            MissionType = "key_pair"
 	MissionTypeJpDkTime           MissionType = "jp_dk_time"
 	MissionTypeSshTime            MissionType = "ssh_time"
+	MissionTypeSdTomatoTime       MissionType = "sd_tomato_time"
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan         MissionType = "jp_time_plan"
 	MissionTypeJpDkTimePlan       MissionType = "jp_dk_time_plan"
 	MissionTypeSshTimePlan        MissionType = "ssh_time_plan"
+	MissionTypeSdTomatoTimePlan   MissionType = "sd_tomato_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -39,6 +41,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeJpTimePlan),
 		string(MissionTypeJpDkTimePlan),
 		string(MissionTypeSshTimePlan),
+		string(MissionTypeSdTomatoTime),
+		string(MissionTypeSdTomatoTimePlan),
 	}
 }
 
