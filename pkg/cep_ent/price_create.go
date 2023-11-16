@@ -234,6 +234,20 @@ func (pc *PriceCreate) SetNillableIsSensitive(b *bool) *PriceCreate {
 	return pc
 }
 
+// SetIsHotGpu sets the "is_hot_gpu" field.
+func (pc *PriceCreate) SetIsHotGpu(b bool) *PriceCreate {
+	pc.mutation.SetIsHotGpu(b)
+	return pc
+}
+
+// SetNillableIsHotGpu sets the "is_hot_gpu" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableIsHotGpu(b *bool) *PriceCreate {
+	if b != nil {
+		pc.SetIsHotGpu(*b)
+	}
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *PriceCreate) SetID(i int64) *PriceCreate {
 	pc.mutation.SetID(i)
@@ -340,6 +354,10 @@ func (pc *PriceCreate) defaults() {
 		v := price.DefaultIsSensitive
 		pc.mutation.SetIsSensitive(v)
 	}
+	if _, ok := pc.mutation.IsHotGpu(); !ok {
+		v := price.DefaultIsHotGpu
+		pc.mutation.SetIsHotGpu(v)
+	}
 	if _, ok := pc.mutation.ID(); !ok {
 		v := price.DefaultID()
 		pc.mutation.SetID(v)
@@ -406,6 +424,9 @@ func (pc *PriceCreate) check() error {
 	}
 	if _, ok := pc.mutation.IsSensitive(); !ok {
 		return &ValidationError{Name: "is_sensitive", err: errors.New(`cep_ent: missing required field "Price.is_sensitive"`)}
+	}
+	if _, ok := pc.mutation.IsHotGpu(); !ok {
+		return &ValidationError{Name: "is_hot_gpu", err: errors.New(`cep_ent: missing required field "Price.is_hot_gpu"`)}
 	}
 	if _, ok := pc.mutation.GpuID(); !ok {
 		return &ValidationError{Name: "gpu", err: errors.New(`cep_ent: missing required edge "Price.gpu"`)}
@@ -498,6 +519,10 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.IsSensitive(); ok {
 		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
 		_node.IsSensitive = value
+	}
+	if value, ok := pc.mutation.IsHotGpu(); ok {
+		_spec.SetField(price.FieldIsHotGpu, field.TypeBool, value)
+		_node.IsHotGpu = value
 	}
 	if nodes := pc.mutation.GpuIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -763,6 +788,18 @@ func (u *PriceUpsert) SetIsSensitive(v bool) *PriceUpsert {
 // UpdateIsSensitive sets the "is_sensitive" field to the value that was provided on create.
 func (u *PriceUpsert) UpdateIsSensitive() *PriceUpsert {
 	u.SetExcluded(price.FieldIsSensitive)
+	return u
+}
+
+// SetIsHotGpu sets the "is_hot_gpu" field.
+func (u *PriceUpsert) SetIsHotGpu(v bool) *PriceUpsert {
+	u.Set(price.FieldIsHotGpu, v)
+	return u
+}
+
+// UpdateIsHotGpu sets the "is_hot_gpu" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateIsHotGpu() *PriceUpsert {
+	u.SetExcluded(price.FieldIsHotGpu)
 	return u
 }
 
@@ -1045,6 +1082,20 @@ func (u *PriceUpsertOne) SetIsSensitive(v bool) *PriceUpsertOne {
 func (u *PriceUpsertOne) UpdateIsSensitive() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateIsSensitive()
+	})
+}
+
+// SetIsHotGpu sets the "is_hot_gpu" field.
+func (u *PriceUpsertOne) SetIsHotGpu(v bool) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetIsHotGpu(v)
+	})
+}
+
+// UpdateIsHotGpu sets the "is_hot_gpu" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateIsHotGpu() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateIsHotGpu()
 	})
 }
 
@@ -1493,6 +1544,20 @@ func (u *PriceUpsertBulk) SetIsSensitive(v bool) *PriceUpsertBulk {
 func (u *PriceUpsertBulk) UpdateIsSensitive() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateIsSensitive()
+	})
+}
+
+// SetIsHotGpu sets the "is_hot_gpu" field.
+func (u *PriceUpsertBulk) SetIsHotGpu(v bool) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetIsHotGpu(v)
+	})
+}
+
+// UpdateIsHotGpu sets the "is_hot_gpu" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateIsHotGpu() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateIsHotGpu()
 	})
 }
 

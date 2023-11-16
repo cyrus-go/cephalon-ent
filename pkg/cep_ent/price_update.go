@@ -252,6 +252,20 @@ func (pu *PriceUpdate) SetNillableIsSensitive(b *bool) *PriceUpdate {
 	return pu
 }
 
+// SetIsHotGpu sets the "is_hot_gpu" field.
+func (pu *PriceUpdate) SetIsHotGpu(b bool) *PriceUpdate {
+	pu.mutation.SetIsHotGpu(b)
+	return pu
+}
+
+// SetNillableIsHotGpu sets the "is_hot_gpu" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableIsHotGpu(b *bool) *PriceUpdate {
+	if b != nil {
+		pu.SetIsHotGpu(*b)
+	}
+	return pu
+}
+
 // SetGpu sets the "gpu" edge to the Gpu entity.
 func (pu *PriceUpdate) SetGpu(g *Gpu) *PriceUpdate {
 	return pu.SetGpuID(g.ID)
@@ -403,6 +417,9 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.IsSensitive(); ok {
 		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
+	}
+	if value, ok := pu.mutation.IsHotGpu(); ok {
+		_spec.SetField(price.FieldIsHotGpu, field.TypeBool, value)
 	}
 	if pu.mutation.GpuCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -676,6 +693,20 @@ func (puo *PriceUpdateOne) SetNillableIsSensitive(b *bool) *PriceUpdateOne {
 	return puo
 }
 
+// SetIsHotGpu sets the "is_hot_gpu" field.
+func (puo *PriceUpdateOne) SetIsHotGpu(b bool) *PriceUpdateOne {
+	puo.mutation.SetIsHotGpu(b)
+	return puo
+}
+
+// SetNillableIsHotGpu sets the "is_hot_gpu" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableIsHotGpu(b *bool) *PriceUpdateOne {
+	if b != nil {
+		puo.SetIsHotGpu(*b)
+	}
+	return puo
+}
+
 // SetGpu sets the "gpu" edge to the Gpu entity.
 func (puo *PriceUpdateOne) SetGpu(g *Gpu) *PriceUpdateOne {
 	return puo.SetGpuID(g.ID)
@@ -857,6 +888,9 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if value, ok := puo.mutation.IsSensitive(); ok {
 		_spec.SetField(price.FieldIsSensitive, field.TypeBool, value)
+	}
+	if value, ok := puo.mutation.IsHotGpu(); ok {
+		_spec.SetField(price.FieldIsHotGpu, field.TypeBool, value)
 	}
 	if puo.mutation.GpuCleared() {
 		edge := &sqlgraph.EdgeSpec{

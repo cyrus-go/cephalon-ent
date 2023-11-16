@@ -1072,6 +1072,7 @@ var (
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
 		{Name: "is_deprecated", Type: field.TypeBool, Comment: "价格是否屏蔽，前端置灰，硬选也可以", Default: false},
 		{Name: "is_sensitive", Type: field.TypeBool, Comment: "价格是否敏感，用于特殊类型任务，不能让外部看到选项", Default: false},
+		{Name: "is_hot_gpu", Type: field.TypeBool, Comment: "是否为热点 Gpu", Default: false},
 		{Name: "gpu_id", Type: field.TypeInt64, Comment: "外键 gpu id", Default: 0},
 	}
 	// PricesTable holds the schema information for the "prices" table.
@@ -1083,7 +1084,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "prices_gpus_prices",
-				Columns:    []*schema.Column{PricesColumns[15]},
+				Columns:    []*schema.Column{PricesColumns[16]},
 				RefColumns: []*schema.Column{GpusColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

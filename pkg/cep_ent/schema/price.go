@@ -25,6 +25,7 @@ func (Price) Fields() []ent.Field {
 		field.Time("finished_at").Optional().Nillable().StructTag(`json:"finished_at"`).Comment("价格有效时间结束，为空表示永久有效"),
 		field.Bool("is_deprecated").Default(false).StructTag(`json:"is_deprecated"`).Comment("价格是否屏蔽，前端置灰，硬选也可以"),
 		field.Bool("is_sensitive").Default(false).StructTag(`json:"is_sensitive"`).Comment("价格是否敏感，用于特殊类型任务，不能让外部看到选项"),
+		field.Bool("is_hot_gpu").Default(false).StructTag(`json:"is_hot_gpu"`).Comment("是否为热点 Gpu"),
 	}
 }
 

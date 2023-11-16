@@ -50,6 +50,8 @@ type Price struct {
 	IsDeprecated bool `json:"is_deprecated"`
 	// 价格是否敏感，用于特殊类型任务，不能让外部看到选项
 	IsSensitive bool `json:"is_sensitive"`
+	// 是否为热点 Gpu
+	IsHotGpu bool `json:"is_hot_gpu"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PriceQuery when eager-loading is set.
 	Edges        PriceEdges `json:"edges"`
@@ -83,7 +85,7 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case price.FieldIsDeprecated, price.FieldIsSensitive:
+		case price.FieldIsDeprecated, price.FieldIsSensitive, price.FieldIsHotGpu:
 			values[i] = new(sql.NullBool)
 		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldGpuID, price.FieldCep:
 			values[i] = new(sql.NullInt64)
@@ -204,6 +206,12 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.IsSensitive = value.Bool
 			}
+		case price.FieldIsHotGpu:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_hot_gpu", values[i])
+			} else if value.Valid {
+				pr.IsHotGpu = value.Bool
+			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
 		}
@@ -293,6 +301,9 @@ func (pr *Price) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_sensitive=")
 	builder.WriteString(fmt.Sprintf("%v", pr.IsSensitive))
+	builder.WriteString(", ")
+	builder.WriteString("is_hot_gpu=")
+	builder.WriteString(fmt.Sprintf("%v", pr.IsHotGpu))
 	builder.WriteByte(')')
 	return builder.String()
 }

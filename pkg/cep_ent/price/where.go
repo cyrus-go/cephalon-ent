@@ -111,6 +111,11 @@ func IsSensitive(v bool) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldIsSensitive, v))
 }
 
+// IsHotGpu applies equality check predicate on the "is_hot_gpu" field. It's identical to IsHotGpuEQ.
+func IsHotGpu(v bool) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldIsHotGpu, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldCreatedBy, v))
@@ -609,6 +614,16 @@ func IsSensitiveEQ(v bool) predicate.Price {
 // IsSensitiveNEQ applies the NEQ predicate on the "is_sensitive" field.
 func IsSensitiveNEQ(v bool) predicate.Price {
 	return predicate.Price(sql.FieldNEQ(FieldIsSensitive, v))
+}
+
+// IsHotGpuEQ applies the EQ predicate on the "is_hot_gpu" field.
+func IsHotGpuEQ(v bool) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldIsHotGpu, v))
+}
+
+// IsHotGpuNEQ applies the NEQ predicate on the "is_hot_gpu" field.
+func IsHotGpuNEQ(v bool) predicate.Price {
+	return predicate.Price(sql.FieldNEQ(FieldIsHotGpu, v))
 }
 
 // HasGpu applies the HasEdge predicate on the "gpu" edge.

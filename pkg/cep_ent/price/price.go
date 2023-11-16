@@ -46,6 +46,8 @@ const (
 	FieldIsDeprecated = "is_deprecated"
 	// FieldIsSensitive holds the string denoting the is_sensitive field in the database.
 	FieldIsSensitive = "is_sensitive"
+	// FieldIsHotGpu holds the string denoting the is_hot_gpu field in the database.
+	FieldIsHotGpu = "is_hot_gpu"
 	// EdgeGpu holds the string denoting the gpu edge name in mutations.
 	EdgeGpu = "gpu"
 	// Table holds the table name of the price in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldFinishedAt,
 	FieldIsDeprecated,
 	FieldIsSensitive,
+	FieldIsHotGpu,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -110,6 +113,8 @@ var (
 	DefaultIsDeprecated bool
 	// DefaultIsSensitive holds the default value on creation for the "is_sensitive" field.
 	DefaultIsSensitive bool
+	// DefaultIsHotGpu holds the default value on creation for the "is_hot_gpu" field.
+	DefaultIsHotGpu bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -243,6 +248,11 @@ func ByIsDeprecated(opts ...sql.OrderTermOption) OrderOption {
 // ByIsSensitive orders the results by the is_sensitive field.
 func ByIsSensitive(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsSensitive, opts...).ToFunc()
+}
+
+// ByIsHotGpu orders the results by the is_hot_gpu field.
+func ByIsHotGpu(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsHotGpu, opts...).ToFunc()
 }
 
 // ByGpuField orders the results by gpu field.

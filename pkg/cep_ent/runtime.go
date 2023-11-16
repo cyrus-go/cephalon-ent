@@ -1693,6 +1693,10 @@ func init() {
 	priceDescIsSensitive := priceFields[9].Descriptor()
 	// price.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
 	price.DefaultIsSensitive = priceDescIsSensitive.Default.(bool)
+	// priceDescIsHotGpu is the schema descriptor for is_hot_gpu field.
+	priceDescIsHotGpu := priceFields[10].Descriptor()
+	// price.DefaultIsHotGpu holds the default value on creation for the is_hot_gpu field.
+	price.DefaultIsHotGpu = priceDescIsHotGpu.Default.(bool)
 	// priceDescID is the schema descriptor for id field.
 	priceDescID := priceMixinFields0[0].Descriptor()
 	// price.DefaultID holds the default value on creation for the id field.
