@@ -148,7 +148,7 @@ const DefaultMissionCategory enums.MissionCategory = "SD"
 // MissionCategoryValidator is a validator for the "mission_category" field enum values. It is called by the builders before save.
 func MissionCategoryValidator(mc enums.MissionCategory) error {
 	switch mc {
-	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO":
+	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_category field: %q", mc)

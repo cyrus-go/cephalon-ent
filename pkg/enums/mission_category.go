@@ -10,6 +10,7 @@ const (
 	MissionCategoryJPDK     MissionCategory = "JP_DK"
 	MissionCategorySSH      MissionCategory = "SSH"
 	MissionCategorySDTOMATO MissionCategory = "SD_TOMATO"
+	MissionCategorySDCMD    MissionCategory = "SD_CMD"
 )
 
 func (obj MissionCategory) Values() []string {
@@ -21,6 +22,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryJPDK),
 		string(MissionCategorySSH),
 		string(MissionCategorySDTOMATO),
+		string(MissionCategorySDCMD),
 	}
 }
 

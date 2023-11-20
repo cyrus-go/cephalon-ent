@@ -814,7 +814,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan"}, Default: "unknown"},
-		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO"}, Default: "unknown"},
+		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD"}, Default: "unknown"},
 		{Name: "billing_type", Type: field.TypeEnum, Comment: "计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
 	}
 	// MissionKindsTable holds the schema information for the "mission_kinds" table.
@@ -1065,7 +1065,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
 		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan"}, Default: "txt2img"},
-		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO"}, Default: "SD"},
+		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "count"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
