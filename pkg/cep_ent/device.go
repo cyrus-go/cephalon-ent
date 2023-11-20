@@ -52,6 +52,8 @@ type Device struct {
 	CoresNumber int64 `json:"cores_number"`
 	// CPU型号
 	CPU string `json:"cpu,omitempty" json:cpu`
+	// CPU型号
+	Cpus []string `json:"cpus"`
 	// 内存(单位:G)
 	Memory int64 `json:"memory"`
 	// 硬盘(单位:T)
@@ -152,6 +154,8 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case device.FieldCpus:
+			values[i] = device.ValueScanner.Cpus.ScanValue()
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -268,6 +272,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field cpu", values[i])
 			} else if value.Valid {
 				d.CPU = value.String
+			}
+		case device.FieldCpus:
+			if value, err := device.ValueScanner.Cpus.FromValue(values[i]); err != nil {
+				return err
+			} else {
+				d.Cpus = value
 			}
 		case device.FieldMemory:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -394,6 +404,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cpu=")
 	builder.WriteString(d.CPU)
+	builder.WriteString(", ")
+	builder.WriteString("cpus=")
+	builder.WriteString(fmt.Sprintf("%v", d.Cpus))
 	builder.WriteString(", ")
 	builder.WriteString("memory=")
 	builder.WriteString(fmt.Sprintf("%v", d.Memory))

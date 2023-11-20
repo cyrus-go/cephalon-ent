@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -48,6 +49,8 @@ const (
 	FieldCoresNumber = "cores_number"
 	// FieldCPU holds the string denoting the cpu field in the database.
 	FieldCPU = "cpu"
+	// FieldCpus holds the string denoting the cpus field in the database.
+	FieldCpus = "cpus"
 	// FieldMemory holds the string denoting the memory field in the database.
 	FieldMemory = "memory"
 	// FieldDisk holds the string denoting the disk field in the database.
@@ -129,6 +132,7 @@ var Columns = []string{
 	FieldType,
 	FieldCoresNumber,
 	FieldCPU,
+	FieldCpus,
 	FieldMemory,
 	FieldDisk,
 }
@@ -176,6 +180,10 @@ var (
 	DefaultDisk int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
+	// ValueScanner of all Device fields.
+	ValueScanner struct {
+		Cpus field.TypeValueScanner[[]string]
+	}
 )
 
 // State defines the type for the "state" enum field.
@@ -342,6 +350,11 @@ func ByCoresNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByCPU orders the results by the cpu field.
 func ByCPU(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCPU, opts...).ToFunc()
+}
+
+// ByCpus orders the results by the cpus field.
+func ByCpus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCpus, opts...).ToFunc()
 }
 
 // ByMemory orders the results by the memory field.

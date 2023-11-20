@@ -275,6 +275,7 @@ var (
 		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},
 		{Name: "cores_number", Type: field.TypeInt64, Comment: "核心数", Default: 0},
 		{Name: "cpu", Type: field.TypeString, Comment: "CPU型号", Default: ""},
+		{Name: "cpus", Type: field.TypeString, Nullable: true, Comment: "CPU型号", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "memory", Type: field.TypeInt64, Comment: "内存(单位:G)", Default: 0},
 		{Name: "disk", Type: field.TypeInt64, Comment: "硬盘(单位:T)", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
@@ -288,7 +289,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[18]},
+				Columns:    []*schema.Column{DevicesColumns[19]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

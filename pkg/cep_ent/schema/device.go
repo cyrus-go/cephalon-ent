@@ -2,9 +2,11 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -25,6 +27,7 @@ func (Device) Fields() []ent.Field {
 		field.Enum("type").GoType(enums.DeviceTypeOrdinary).Default(string(enums.DeviceTypeOrdinary)).StructTag(`json:"type"`).Comment("设备类型"),
 		field.Int64("cores_number").StructTag(`json:"cores_number"`).Default(0).Comment("核心数"),
 		field.String("cpu").StructTag(`json:cpu`).Default("").Comment("CPU型号"),
+		field.String("cpus").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"cpus"`).Comment("CPU型号"),
 		field.Int64("memory").StructTag(`json:"memory"`).Default(0).Comment("内存(单位:G)"),
 		field.Int64("disk").StructTag(`json:disk`).Default(0).Comment("硬盘(单位:T)"),
 	}

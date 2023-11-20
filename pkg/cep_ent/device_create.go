@@ -253,6 +253,12 @@ func (dc *DeviceCreate) SetNillableCPU(s *string) *DeviceCreate {
 	return dc
 }
 
+// SetCpus sets the "cpus" field.
+func (dc *DeviceCreate) SetCpus(s []string) *DeviceCreate {
+	dc.mutation.SetCpus(s)
+	return dc
+}
+
 // SetMemory sets the "memory" field.
 func (dc *DeviceCreate) SetMemory(i int64) *DeviceCreate {
 	dc.mutation.SetMemory(i)
@@ -574,7 +580,10 @@ func (dc *DeviceCreate) sqlSave(ctx context.Context) (*Device, error) {
 	if err := dc.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := dc.createSpec()
+	_node, _spec, err := dc.createSpec()
+	if err != nil {
+		return nil, err
+	}
 	if err := sqlgraph.CreateNode(ctx, dc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
@@ -590,7 +599,7 @@ func (dc *DeviceCreate) sqlSave(ctx context.Context) (*Device, error) {
 	return _node, nil
 }
 
-func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
+func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	var (
 		_node = &Device{config: dc.config}
 		_spec = sqlgraph.NewCreateSpec(device.Table, sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64))
@@ -659,6 +668,14 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.CPU(); ok {
 		_spec.SetField(device.FieldCPU, field.TypeString, value)
 		_node.CPU = value
+	}
+	if value, ok := dc.mutation.Cpus(); ok {
+		vv, err := device.ValueScanner.Cpus.Value(value)
+		if err != nil {
+			return nil, nil, err
+		}
+		_spec.SetField(device.FieldCpus, field.TypeString, vv)
+		_node.Cpus = value
 	}
 	if value, ok := dc.mutation.Memory(); ok {
 		_spec.SetField(device.FieldMemory, field.TypeInt64, value)
@@ -765,7 +782,7 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return _node, _spec
+	return _node, _spec, nil
 }
 
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
@@ -1018,6 +1035,24 @@ func (u *DeviceUpsert) SetCPU(v string) *DeviceUpsert {
 // UpdateCPU sets the "cpu" field to the value that was provided on create.
 func (u *DeviceUpsert) UpdateCPU() *DeviceUpsert {
 	u.SetExcluded(device.FieldCPU)
+	return u
+}
+
+// SetCpus sets the "cpus" field.
+func (u *DeviceUpsert) SetCpus(v []string) *DeviceUpsert {
+	u.Set(device.FieldCpus, v)
+	return u
+}
+
+// UpdateCpus sets the "cpus" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateCpus() *DeviceUpsert {
+	u.SetExcluded(device.FieldCpus)
+	return u
+}
+
+// ClearCpus clears the value of the "cpus" field.
+func (u *DeviceUpsert) ClearCpus() *DeviceUpsert {
+	u.SetNull(device.FieldCpus)
 	return u
 }
 
@@ -1346,6 +1381,27 @@ func (u *DeviceUpsertOne) UpdateCPU() *DeviceUpsertOne {
 	})
 }
 
+// SetCpus sets the "cpus" field.
+func (u *DeviceUpsertOne) SetCpus(v []string) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCpus(v)
+	})
+}
+
+// UpdateCpus sets the "cpus" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateCpus() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCpus()
+	})
+}
+
+// ClearCpus clears the value of the "cpus" field.
+func (u *DeviceUpsertOne) ClearCpus() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearCpus()
+	})
+}
+
 // SetMemory sets the "memory" field.
 func (u *DeviceUpsertOne) SetMemory(v int64) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
@@ -1451,7 +1507,10 @@ func (dcb *DeviceCreateBulk) Save(ctx context.Context) ([]*Device, error) {
 				}
 				builder.mutation = mutation
 				var err error
-				nodes[i], specs[i] = builder.createSpec()
+				nodes[i], specs[i], err = builder.createSpec()
+				if err != nil {
+					return nil, err
+				}
 				if i < len(mutators)-1 {
 					_, err = mutators[i+1].Mutate(root, dcb.builders[i+1].mutation)
 				} else {
@@ -1840,6 +1899,27 @@ func (u *DeviceUpsertBulk) SetCPU(v string) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateCPU() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateCPU()
+	})
+}
+
+// SetCpus sets the "cpus" field.
+func (u *DeviceUpsertBulk) SetCpus(v []string) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCpus(v)
+	})
+}
+
+// UpdateCpus sets the "cpus" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateCpus() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCpus()
+	})
+}
+
+// ClearCpus clears the value of the "cpus" field.
+func (u *DeviceUpsertBulk) ClearCpus() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.ClearCpus()
 	})
 }
 

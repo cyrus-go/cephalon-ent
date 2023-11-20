@@ -266,6 +266,18 @@ func (du *DeviceUpdate) SetNillableCPU(s *string) *DeviceUpdate {
 	return du
 }
 
+// SetCpus sets the "cpus" field.
+func (du *DeviceUpdate) SetCpus(s []string) *DeviceUpdate {
+	du.mutation.SetCpus(s)
+	return du
+}
+
+// ClearCpus clears the value of the "cpus" field.
+func (du *DeviceUpdate) ClearCpus() *DeviceUpdate {
+	du.mutation.ClearCpus()
+	return du
+}
+
 // SetMemory sets the "memory" field.
 func (du *DeviceUpdate) SetMemory(i int64) *DeviceUpdate {
 	du.mutation.ResetMemory()
@@ -639,6 +651,16 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.CPU(); ok {
 		_spec.SetField(device.FieldCPU, field.TypeString, value)
+	}
+	if value, ok := du.mutation.Cpus(); ok {
+		vv, err := device.ValueScanner.Cpus.Value(value)
+		if err != nil {
+			return 0, err
+		}
+		_spec.SetField(device.FieldCpus, field.TypeString, vv)
+	}
+	if du.mutation.CpusCleared() {
+		_spec.ClearField(device.FieldCpus, field.TypeString)
 	}
 	if value, ok := du.mutation.Memory(); ok {
 		_spec.SetField(device.FieldMemory, field.TypeInt64, value)
@@ -1158,6 +1180,18 @@ func (duo *DeviceUpdateOne) SetNillableCPU(s *string) *DeviceUpdateOne {
 	return duo
 }
 
+// SetCpus sets the "cpus" field.
+func (duo *DeviceUpdateOne) SetCpus(s []string) *DeviceUpdateOne {
+	duo.mutation.SetCpus(s)
+	return duo
+}
+
+// ClearCpus clears the value of the "cpus" field.
+func (duo *DeviceUpdateOne) ClearCpus() *DeviceUpdateOne {
+	duo.mutation.ClearCpus()
+	return duo
+}
+
 // SetMemory sets the "memory" field.
 func (duo *DeviceUpdateOne) SetMemory(i int64) *DeviceUpdateOne {
 	duo.mutation.ResetMemory()
@@ -1561,6 +1595,16 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.CPU(); ok {
 		_spec.SetField(device.FieldCPU, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.Cpus(); ok {
+		vv, err := device.ValueScanner.Cpus.Value(value)
+		if err != nil {
+			return nil, err
+		}
+		_spec.SetField(device.FieldCpus, field.TypeString, vv)
+	}
+	if duo.mutation.CpusCleared() {
+		_spec.ClearField(device.FieldCpus, field.TypeString)
 	}
 	if value, ok := duo.mutation.Memory(); ok {
 		_spec.SetField(device.FieldMemory, field.TypeInt64, value)

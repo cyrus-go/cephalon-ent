@@ -8205,6 +8205,7 @@ type DeviceMutation struct {
 	cores_number                  *int64
 	addcores_number               *int64
 	cpu                           *string
+	cpus                          *[]string
 	memory                        *int64
 	addmemory                     *int64
 	disk                          *int64
@@ -8992,6 +8993,55 @@ func (m *DeviceMutation) ResetCPU() {
 	m.cpu = nil
 }
 
+// SetCpus sets the "cpus" field.
+func (m *DeviceMutation) SetCpus(s []string) {
+	m.cpus = &s
+}
+
+// Cpus returns the value of the "cpus" field in the mutation.
+func (m *DeviceMutation) Cpus() (r []string, exists bool) {
+	v := m.cpus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCpus returns the old "cpus" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldCpus(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCpus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCpus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCpus: %w", err)
+	}
+	return oldValue.Cpus, nil
+}
+
+// ClearCpus clears the value of the "cpus" field.
+func (m *DeviceMutation) ClearCpus() {
+	m.cpus = nil
+	m.clearedFields[device.FieldCpus] = struct{}{}
+}
+
+// CpusCleared returns if the "cpus" field was cleared in this mutation.
+func (m *DeviceMutation) CpusCleared() bool {
+	_, ok := m.clearedFields[device.FieldCpus]
+	return ok
+}
+
+// ResetCpus resets all changes to the "cpus" field.
+func (m *DeviceMutation) ResetCpus() {
+	m.cpus = nil
+	delete(m.clearedFields, device.FieldCpus)
+}
+
 // SetMemory sets the "memory" field.
 func (m *DeviceMutation) SetMemory(i int64) {
 	m.memory = &i
@@ -9435,7 +9485,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -9484,6 +9534,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.cpu != nil {
 		fields = append(fields, device.FieldCPU)
 	}
+	if m.cpus != nil {
+		fields = append(fields, device.FieldCpus)
+	}
 	if m.memory != nil {
 		fields = append(fields, device.FieldMemory)
 	}
@@ -9530,6 +9583,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.CoresNumber()
 	case device.FieldCPU:
 		return m.CPU()
+	case device.FieldCpus:
+		return m.Cpus()
 	case device.FieldMemory:
 		return m.Memory()
 	case device.FieldDisk:
@@ -9575,6 +9630,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldCoresNumber(ctx)
 	case device.FieldCPU:
 		return m.OldCPU(ctx)
+	case device.FieldCpus:
+		return m.OldCpus(ctx)
 	case device.FieldMemory:
 		return m.OldMemory(ctx)
 	case device.FieldDisk:
@@ -9700,6 +9757,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCPU(v)
 		return nil
+	case device.FieldCpus:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCpus(v)
+		return nil
 	case device.FieldMemory:
 		v, ok := value.(int64)
 		if !ok {
@@ -9818,7 +9882,11 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *DeviceMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(device.FieldCpus) {
+		fields = append(fields, device.FieldCpus)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -9831,6 +9899,11 @@ func (m *DeviceMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *DeviceMutation) ClearField(name string) error {
+	switch name {
+	case device.FieldCpus:
+		m.ClearCpus()
+		return nil
+	}
 	return fmt.Errorf("unknown Device nullable field %s", name)
 }
 
@@ -9885,6 +9958,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldCPU:
 		m.ResetCPU()
+		return nil
+	case device.FieldCpus:
+		m.ResetCpus()
 		return nil
 	case device.FieldMemory:
 		m.ResetMemory()

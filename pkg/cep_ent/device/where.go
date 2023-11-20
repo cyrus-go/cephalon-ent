@@ -731,6 +731,16 @@ func CPUContainsFold(v string) predicate.Device {
 	return predicate.Device(sql.FieldContainsFold(FieldCPU, v))
 }
 
+// CpusIsNil applies the IsNil predicate on the "cpus" field.
+func CpusIsNil() predicate.Device {
+	return predicate.Device(sql.FieldIsNull(FieldCpus))
+}
+
+// CpusNotNil applies the NotNil predicate on the "cpus" field.
+func CpusNotNil() predicate.Device {
+	return predicate.Device(sql.FieldNotNull(FieldCpus))
+}
+
 // MemoryEQ applies the EQ predicate on the "memory" field.
 func MemoryEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldMemory, v))

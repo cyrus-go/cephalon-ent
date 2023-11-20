@@ -27,6 +27,17 @@ type CostBill func(*sql.Selector)
 // Device is the predicate function for device builders.
 type Device func(*sql.Selector)
 
+// DeviceOrErr calls the predicate only if the error is not nit.
+func DeviceOrErr(p Device, err error) Device {
+	return func(s *sql.Selector) {
+		if err != nil {
+			s.AddError(err)
+			return
+		}
+		p(s)
+	}
+}
+
 // DeviceGpuMission is the predicate function for devicegpumission builders.
 type DeviceGpuMission func(*sql.Selector)
 
