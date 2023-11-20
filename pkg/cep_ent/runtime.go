@@ -447,6 +447,26 @@ func init() {
 	deviceDescLinking := deviceFields[4].Descriptor()
 	// device.DefaultLinking holds the default value on creation for the linking field.
 	device.DefaultLinking = deviceDescLinking.Default.(bool)
+	// deviceDescName is the schema descriptor for name field.
+	deviceDescName := deviceFields[7].Descriptor()
+	// device.DefaultName holds the default value on creation for the name field.
+	device.DefaultName = deviceDescName.Default.(string)
+	// deviceDescCoresNumber is the schema descriptor for cores_number field.
+	deviceDescCoresNumber := deviceFields[9].Descriptor()
+	// device.DefaultCoresNumber holds the default value on creation for the cores_number field.
+	device.DefaultCoresNumber = deviceDescCoresNumber.Default.(int64)
+	// deviceDescCPU is the schema descriptor for cpu field.
+	deviceDescCPU := deviceFields[10].Descriptor()
+	// device.DefaultCPU holds the default value on creation for the cpu field.
+	device.DefaultCPU = deviceDescCPU.Default.(string)
+	// deviceDescMemory is the schema descriptor for memory field.
+	deviceDescMemory := deviceFields[11].Descriptor()
+	// device.DefaultMemory holds the default value on creation for the memory field.
+	device.DefaultMemory = deviceDescMemory.Default.(int64)
+	// deviceDescDisk is the schema descriptor for disk field.
+	deviceDescDisk := deviceFields[12].Descriptor()
+	// device.DefaultDisk holds the default value on creation for the disk field.
+	device.DefaultDisk = deviceDescDisk.Default.(int64)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.
@@ -1528,16 +1548,20 @@ func init() {
 	missionproductionDescDeviceID := missionproductionFields[5].Descriptor()
 	// missionproduction.DefaultDeviceID holds the default value on creation for the device_id field.
 	missionproduction.DefaultDeviceID = missionproductionDescDeviceID.Default.(int64)
+	// missionproductionDescDeviceSlot is the schema descriptor for device_slot field.
+	missionproductionDescDeviceSlot := missionproductionFields[7].Descriptor()
+	// missionproduction.DefaultDeviceSlot holds the default value on creation for the device_slot field.
+	missionproduction.DefaultDeviceSlot = missionproductionDescDeviceSlot.Default.(int8)
 	// missionproductionDescUrls is the schema descriptor for urls field.
-	missionproductionDescUrls := missionproductionFields[7].Descriptor()
+	missionproductionDescUrls := missionproductionFields[8].Descriptor()
 	// missionproduction.DefaultUrls holds the default value on creation for the urls field.
 	missionproduction.DefaultUrls = missionproductionDescUrls.Default.(string)
 	// missionproductionDescRespStatusCode is the schema descriptor for resp_status_code field.
-	missionproductionDescRespStatusCode := missionproductionFields[8].Descriptor()
+	missionproductionDescRespStatusCode := missionproductionFields[9].Descriptor()
 	// missionproduction.DefaultRespStatusCode holds the default value on creation for the resp_status_code field.
 	missionproduction.DefaultRespStatusCode = missionproductionDescRespStatusCode.Default.(int32)
 	// missionproductionDescRespBody is the schema descriptor for resp_body field.
-	missionproductionDescRespBody := missionproductionFields[9].Descriptor()
+	missionproductionDescRespBody := missionproductionFields[10].Descriptor()
 	// missionproduction.DefaultRespBody holds the default value on creation for the resp_body field.
 	missionproduction.DefaultRespBody = missionproductionDescRespBody.Default.(string)
 	// missionproductionDescID is the schema descriptor for id field.

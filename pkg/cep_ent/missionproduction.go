@@ -46,6 +46,8 @@ type MissionProduction struct {
 	DeviceID int64 `json:"device_id,string"`
 	// 任务使用什么显卡在执行
 	GpuVersion enums.GpuVersion `json:"gpu_version"`
+	// 显卡占用设备的插槽
+	DeviceSlot int8 `json:"device_slot"`
 	// 任务结果链接列表，json 序列化后存储
 	Urls string `json:"urls"`
 	// 内部功能返回码
@@ -115,7 +117,7 @@ func (*MissionProduction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case missionproduction.FieldID, missionproduction.FieldCreatedBy, missionproduction.FieldUpdatedBy, missionproduction.FieldMissionID, missionproduction.FieldUserID, missionproduction.FieldDeviceID, missionproduction.FieldRespStatusCode:
+		case missionproduction.FieldID, missionproduction.FieldCreatedBy, missionproduction.FieldUpdatedBy, missionproduction.FieldMissionID, missionproduction.FieldUserID, missionproduction.FieldDeviceID, missionproduction.FieldDeviceSlot, missionproduction.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
 		case missionproduction.FieldState, missionproduction.FieldGpuVersion, missionproduction.FieldUrls, missionproduction.FieldRespBody:
 			values[i] = new(sql.NullString)
@@ -213,6 +215,12 @@ func (mp *MissionProduction) assignValues(columns []string, values []any) error 
 				return fmt.Errorf("unexpected type %T for field gpu_version", values[i])
 			} else if value.Valid {
 				mp.GpuVersion = enums.GpuVersion(value.String)
+			}
+		case missionproduction.FieldDeviceSlot:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field device_slot", values[i])
+			} else if value.Valid {
+				mp.DeviceSlot = int8(value.Int64)
 			}
 		case missionproduction.FieldUrls:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -318,6 +326,9 @@ func (mp *MissionProduction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("gpu_version=")
 	builder.WriteString(fmt.Sprintf("%v", mp.GpuVersion))
+	builder.WriteString(", ")
+	builder.WriteString("device_slot=")
+	builder.WriteString(fmt.Sprintf("%v", mp.DeviceSlot))
 	builder.WriteString(", ")
 	builder.WriteString("urls=")
 	builder.WriteString(mp.Urls)

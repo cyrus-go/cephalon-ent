@@ -197,6 +197,90 @@ func (dc *DeviceCreate) SetNillableStatus(d *device.Status) *DeviceCreate {
 	return dc
 }
 
+// SetName sets the "name" field.
+func (dc *DeviceCreate) SetName(s string) *DeviceCreate {
+	dc.mutation.SetName(s)
+	return dc
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableName(s *string) *DeviceCreate {
+	if s != nil {
+		dc.SetName(*s)
+	}
+	return dc
+}
+
+// SetType sets the "type" field.
+func (dc *DeviceCreate) SetType(et enums.DeviceType) *DeviceCreate {
+	dc.mutation.SetType(et)
+	return dc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableType(et *enums.DeviceType) *DeviceCreate {
+	if et != nil {
+		dc.SetType(*et)
+	}
+	return dc
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (dc *DeviceCreate) SetCoresNumber(i int64) *DeviceCreate {
+	dc.mutation.SetCoresNumber(i)
+	return dc
+}
+
+// SetNillableCoresNumber sets the "cores_number" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableCoresNumber(i *int64) *DeviceCreate {
+	if i != nil {
+		dc.SetCoresNumber(*i)
+	}
+	return dc
+}
+
+// SetCPU sets the "cpu" field.
+func (dc *DeviceCreate) SetCPU(s string) *DeviceCreate {
+	dc.mutation.SetCPU(s)
+	return dc
+}
+
+// SetNillableCPU sets the "cpu" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableCPU(s *string) *DeviceCreate {
+	if s != nil {
+		dc.SetCPU(*s)
+	}
+	return dc
+}
+
+// SetMemory sets the "memory" field.
+func (dc *DeviceCreate) SetMemory(i int64) *DeviceCreate {
+	dc.mutation.SetMemory(i)
+	return dc
+}
+
+// SetNillableMemory sets the "memory" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableMemory(i *int64) *DeviceCreate {
+	if i != nil {
+		dc.SetMemory(*i)
+	}
+	return dc
+}
+
+// SetDisk sets the "disk" field.
+func (dc *DeviceCreate) SetDisk(i int64) *DeviceCreate {
+	dc.mutation.SetDisk(i)
+	return dc
+}
+
+// SetNillableDisk sets the "disk" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableDisk(i *int64) *DeviceCreate {
+	if i != nil {
+		dc.SetDisk(*i)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -374,6 +458,30 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultStatus
 		dc.mutation.SetStatus(v)
 	}
+	if _, ok := dc.mutation.Name(); !ok {
+		v := device.DefaultName
+		dc.mutation.SetName(v)
+	}
+	if _, ok := dc.mutation.GetType(); !ok {
+		v := device.DefaultType
+		dc.mutation.SetType(v)
+	}
+	if _, ok := dc.mutation.CoresNumber(); !ok {
+		v := device.DefaultCoresNumber
+		dc.mutation.SetCoresNumber(v)
+	}
+	if _, ok := dc.mutation.CPU(); !ok {
+		v := device.DefaultCPU
+		dc.mutation.SetCPU(v)
+	}
+	if _, ok := dc.mutation.Memory(); !ok {
+		v := device.DefaultMemory
+		dc.mutation.SetMemory(v)
+	}
+	if _, ok := dc.mutation.Disk(); !ok {
+		v := device.DefaultDisk
+		dc.mutation.SetDisk(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -432,6 +540,29 @@ func (dc *DeviceCreate) check() error {
 		if err := device.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
 		}
+	}
+	if _, ok := dc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`cep_ent: missing required field "Device.name"`)}
+	}
+	if _, ok := dc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "Device.type"`)}
+	}
+	if v, ok := dc.mutation.GetType(); ok {
+		if err := device.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.type": %w`, err)}
+		}
+	}
+	if _, ok := dc.mutation.CoresNumber(); !ok {
+		return &ValidationError{Name: "cores_number", err: errors.New(`cep_ent: missing required field "Device.cores_number"`)}
+	}
+	if _, ok := dc.mutation.CPU(); !ok {
+		return &ValidationError{Name: "cpu", err: errors.New(`cep_ent: missing required field "Device.cpu"`)}
+	}
+	if _, ok := dc.mutation.Memory(); !ok {
+		return &ValidationError{Name: "memory", err: errors.New(`cep_ent: missing required field "Device.memory"`)}
+	}
+	if _, ok := dc.mutation.Disk(); !ok {
+		return &ValidationError{Name: "disk", err: errors.New(`cep_ent: missing required field "Device.disk"`)}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -512,6 +643,30 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.Status(); ok {
 		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := dc.mutation.Name(); ok {
+		_spec.SetField(device.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if value, ok := dc.mutation.GetType(); ok {
+		_spec.SetField(device.FieldType, field.TypeEnum, value)
+		_node.Type = value
+	}
+	if value, ok := dc.mutation.CoresNumber(); ok {
+		_spec.SetField(device.FieldCoresNumber, field.TypeInt64, value)
+		_node.CoresNumber = value
+	}
+	if value, ok := dc.mutation.CPU(); ok {
+		_spec.SetField(device.FieldCPU, field.TypeString, value)
+		_node.CPU = value
+	}
+	if value, ok := dc.mutation.Memory(); ok {
+		_spec.SetField(device.FieldMemory, field.TypeInt64, value)
+		_node.Memory = value
+	}
+	if value, ok := dc.mutation.Disk(); ok {
+		_spec.SetField(device.FieldDisk, field.TypeInt64, value)
+		_node.Disk = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -812,6 +967,96 @@ func (u *DeviceUpsert) UpdateStatus() *DeviceUpsert {
 	return u
 }
 
+// SetName sets the "name" field.
+func (u *DeviceUpsert) SetName(v string) *DeviceUpsert {
+	u.Set(device.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateName() *DeviceUpsert {
+	u.SetExcluded(device.FieldName)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *DeviceUpsert) SetType(v enums.DeviceType) *DeviceUpsert {
+	u.Set(device.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateType() *DeviceUpsert {
+	u.SetExcluded(device.FieldType)
+	return u
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (u *DeviceUpsert) SetCoresNumber(v int64) *DeviceUpsert {
+	u.Set(device.FieldCoresNumber, v)
+	return u
+}
+
+// UpdateCoresNumber sets the "cores_number" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateCoresNumber() *DeviceUpsert {
+	u.SetExcluded(device.FieldCoresNumber)
+	return u
+}
+
+// AddCoresNumber adds v to the "cores_number" field.
+func (u *DeviceUpsert) AddCoresNumber(v int64) *DeviceUpsert {
+	u.Add(device.FieldCoresNumber, v)
+	return u
+}
+
+// SetCPU sets the "cpu" field.
+func (u *DeviceUpsert) SetCPU(v string) *DeviceUpsert {
+	u.Set(device.FieldCPU, v)
+	return u
+}
+
+// UpdateCPU sets the "cpu" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateCPU() *DeviceUpsert {
+	u.SetExcluded(device.FieldCPU)
+	return u
+}
+
+// SetMemory sets the "memory" field.
+func (u *DeviceUpsert) SetMemory(v int64) *DeviceUpsert {
+	u.Set(device.FieldMemory, v)
+	return u
+}
+
+// UpdateMemory sets the "memory" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateMemory() *DeviceUpsert {
+	u.SetExcluded(device.FieldMemory)
+	return u
+}
+
+// AddMemory adds v to the "memory" field.
+func (u *DeviceUpsert) AddMemory(v int64) *DeviceUpsert {
+	u.Add(device.FieldMemory, v)
+	return u
+}
+
+// SetDisk sets the "disk" field.
+func (u *DeviceUpsert) SetDisk(v int64) *DeviceUpsert {
+	u.Set(device.FieldDisk, v)
+	return u
+}
+
+// UpdateDisk sets the "disk" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateDisk() *DeviceUpsert {
+	u.SetExcluded(device.FieldDisk)
+	return u
+}
+
+// AddDisk adds v to the "disk" field.
+func (u *DeviceUpsert) AddDisk(v int64) *DeviceUpsert {
+	u.Add(device.FieldDisk, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1035,6 +1280,111 @@ func (u *DeviceUpsertOne) SetStatus(v device.Status) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateStatus() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *DeviceUpsertOne) SetName(v string) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateName() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *DeviceUpsertOne) SetType(v enums.DeviceType) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateType() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (u *DeviceUpsertOne) SetCoresNumber(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCoresNumber(v)
+	})
+}
+
+// AddCoresNumber adds v to the "cores_number" field.
+func (u *DeviceUpsertOne) AddCoresNumber(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddCoresNumber(v)
+	})
+}
+
+// UpdateCoresNumber sets the "cores_number" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateCoresNumber() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCoresNumber()
+	})
+}
+
+// SetCPU sets the "cpu" field.
+func (u *DeviceUpsertOne) SetCPU(v string) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCPU(v)
+	})
+}
+
+// UpdateCPU sets the "cpu" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateCPU() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCPU()
+	})
+}
+
+// SetMemory sets the "memory" field.
+func (u *DeviceUpsertOne) SetMemory(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetMemory(v)
+	})
+}
+
+// AddMemory adds v to the "memory" field.
+func (u *DeviceUpsertOne) AddMemory(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddMemory(v)
+	})
+}
+
+// UpdateMemory sets the "memory" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateMemory() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateMemory()
+	})
+}
+
+// SetDisk sets the "disk" field.
+func (u *DeviceUpsertOne) SetDisk(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetDisk(v)
+	})
+}
+
+// AddDisk adds v to the "disk" field.
+func (u *DeviceUpsertOne) AddDisk(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddDisk(v)
+	})
+}
+
+// UpdateDisk sets the "disk" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateDisk() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateDisk()
 	})
 }
 
@@ -1427,6 +1777,111 @@ func (u *DeviceUpsertBulk) SetStatus(v device.Status) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateStatus() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *DeviceUpsertBulk) SetName(v string) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateName() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *DeviceUpsertBulk) SetType(v enums.DeviceType) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateType() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (u *DeviceUpsertBulk) SetCoresNumber(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCoresNumber(v)
+	})
+}
+
+// AddCoresNumber adds v to the "cores_number" field.
+func (u *DeviceUpsertBulk) AddCoresNumber(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddCoresNumber(v)
+	})
+}
+
+// UpdateCoresNumber sets the "cores_number" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateCoresNumber() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCoresNumber()
+	})
+}
+
+// SetCPU sets the "cpu" field.
+func (u *DeviceUpsertBulk) SetCPU(v string) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCPU(v)
+	})
+}
+
+// UpdateCPU sets the "cpu" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateCPU() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCPU()
+	})
+}
+
+// SetMemory sets the "memory" field.
+func (u *DeviceUpsertBulk) SetMemory(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetMemory(v)
+	})
+}
+
+// AddMemory adds v to the "memory" field.
+func (u *DeviceUpsertBulk) AddMemory(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddMemory(v)
+	})
+}
+
+// UpdateMemory sets the "memory" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateMemory() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateMemory()
+	})
+}
+
+// SetDisk sets the "disk" field.
+func (u *DeviceUpsertBulk) SetDisk(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetDisk(v)
+	})
+}
+
+// AddDisk adds v to the "disk" field.
+func (u *DeviceUpsertBulk) AddDisk(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddDisk(v)
+	})
+}
+
+// UpdateDisk sets the "disk" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateDisk() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateDisk()
 	})
 }
 

@@ -8200,6 +8200,15 @@ type DeviceMutation struct {
 	linking                       *bool
 	binding_status                *enums.DeviceBindingStatus
 	status                        *device.Status
+	name                          *string
+	_type                         *enums.DeviceType
+	cores_number                  *int64
+	addcores_number               *int64
+	cpu                           *string
+	memory                        *int64
+	addmemory                     *int64
+	disk                          *int64
+	adddisk                       *int64
 	clearedFields                 map[string]struct{}
 	user                          *int64
 	cleareduser                   bool
@@ -8819,6 +8828,282 @@ func (m *DeviceMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetName sets the "name" field.
+func (m *DeviceMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *DeviceMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *DeviceMutation) ResetName() {
+	m.name = nil
+}
+
+// SetType sets the "type" field.
+func (m *DeviceMutation) SetType(et enums.DeviceType) {
+	m._type = &et
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *DeviceMutation) GetType() (r enums.DeviceType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldType(ctx context.Context) (v enums.DeviceType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *DeviceMutation) ResetType() {
+	m._type = nil
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (m *DeviceMutation) SetCoresNumber(i int64) {
+	m.cores_number = &i
+	m.addcores_number = nil
+}
+
+// CoresNumber returns the value of the "cores_number" field in the mutation.
+func (m *DeviceMutation) CoresNumber() (r int64, exists bool) {
+	v := m.cores_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoresNumber returns the old "cores_number" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldCoresNumber(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoresNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoresNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoresNumber: %w", err)
+	}
+	return oldValue.CoresNumber, nil
+}
+
+// AddCoresNumber adds i to the "cores_number" field.
+func (m *DeviceMutation) AddCoresNumber(i int64) {
+	if m.addcores_number != nil {
+		*m.addcores_number += i
+	} else {
+		m.addcores_number = &i
+	}
+}
+
+// AddedCoresNumber returns the value that was added to the "cores_number" field in this mutation.
+func (m *DeviceMutation) AddedCoresNumber() (r int64, exists bool) {
+	v := m.addcores_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCoresNumber resets all changes to the "cores_number" field.
+func (m *DeviceMutation) ResetCoresNumber() {
+	m.cores_number = nil
+	m.addcores_number = nil
+}
+
+// SetCPU sets the "cpu" field.
+func (m *DeviceMutation) SetCPU(s string) {
+	m.cpu = &s
+}
+
+// CPU returns the value of the "cpu" field in the mutation.
+func (m *DeviceMutation) CPU() (r string, exists bool) {
+	v := m.cpu
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCPU returns the old "cpu" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldCPU(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCPU is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCPU requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCPU: %w", err)
+	}
+	return oldValue.CPU, nil
+}
+
+// ResetCPU resets all changes to the "cpu" field.
+func (m *DeviceMutation) ResetCPU() {
+	m.cpu = nil
+}
+
+// SetMemory sets the "memory" field.
+func (m *DeviceMutation) SetMemory(i int64) {
+	m.memory = &i
+	m.addmemory = nil
+}
+
+// Memory returns the value of the "memory" field in the mutation.
+func (m *DeviceMutation) Memory() (r int64, exists bool) {
+	v := m.memory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMemory returns the old "memory" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldMemory(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMemory is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMemory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMemory: %w", err)
+	}
+	return oldValue.Memory, nil
+}
+
+// AddMemory adds i to the "memory" field.
+func (m *DeviceMutation) AddMemory(i int64) {
+	if m.addmemory != nil {
+		*m.addmemory += i
+	} else {
+		m.addmemory = &i
+	}
+}
+
+// AddedMemory returns the value that was added to the "memory" field in this mutation.
+func (m *DeviceMutation) AddedMemory() (r int64, exists bool) {
+	v := m.addmemory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMemory resets all changes to the "memory" field.
+func (m *DeviceMutation) ResetMemory() {
+	m.memory = nil
+	m.addmemory = nil
+}
+
+// SetDisk sets the "disk" field.
+func (m *DeviceMutation) SetDisk(i int64) {
+	m.disk = &i
+	m.adddisk = nil
+}
+
+// Disk returns the value of the "disk" field in the mutation.
+func (m *DeviceMutation) Disk() (r int64, exists bool) {
+	v := m.disk
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisk returns the old "disk" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldDisk(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisk is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisk requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisk: %w", err)
+	}
+	return oldValue.Disk, nil
+}
+
+// AddDisk adds i to the "disk" field.
+func (m *DeviceMutation) AddDisk(i int64) {
+	if m.adddisk != nil {
+		*m.adddisk += i
+	} else {
+		m.adddisk = &i
+	}
+}
+
+// AddedDisk returns the value that was added to the "disk" field in this mutation.
+func (m *DeviceMutation) AddedDisk() (r int64, exists bool) {
+	v := m.adddisk
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDisk resets all changes to the "disk" field.
+func (m *DeviceMutation) ResetDisk() {
+	m.disk = nil
+	m.adddisk = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -9150,7 +9435,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -9187,6 +9472,24 @@ func (m *DeviceMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, device.FieldStatus)
 	}
+	if m.name != nil {
+		fields = append(fields, device.FieldName)
+	}
+	if m._type != nil {
+		fields = append(fields, device.FieldType)
+	}
+	if m.cores_number != nil {
+		fields = append(fields, device.FieldCoresNumber)
+	}
+	if m.cpu != nil {
+		fields = append(fields, device.FieldCPU)
+	}
+	if m.memory != nil {
+		fields = append(fields, device.FieldMemory)
+	}
+	if m.disk != nil {
+		fields = append(fields, device.FieldDisk)
+	}
 	return fields
 }
 
@@ -9219,6 +9522,18 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.BindingStatus()
 	case device.FieldStatus:
 		return m.Status()
+	case device.FieldName:
+		return m.Name()
+	case device.FieldType:
+		return m.GetType()
+	case device.FieldCoresNumber:
+		return m.CoresNumber()
+	case device.FieldCPU:
+		return m.CPU()
+	case device.FieldMemory:
+		return m.Memory()
+	case device.FieldDisk:
+		return m.Disk()
 	}
 	return nil, false
 }
@@ -9252,6 +9567,18 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldBindingStatus(ctx)
 	case device.FieldStatus:
 		return m.OldStatus(ctx)
+	case device.FieldName:
+		return m.OldName(ctx)
+	case device.FieldType:
+		return m.OldType(ctx)
+	case device.FieldCoresNumber:
+		return m.OldCoresNumber(ctx)
+	case device.FieldCPU:
+		return m.OldCPU(ctx)
+	case device.FieldMemory:
+		return m.OldMemory(ctx)
+	case device.FieldDisk:
+		return m.OldDisk(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -9345,6 +9672,48 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case device.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case device.FieldType:
+		v, ok := value.(enums.DeviceType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case device.FieldCoresNumber:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoresNumber(v)
+		return nil
+	case device.FieldCPU:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCPU(v)
+		return nil
+	case device.FieldMemory:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMemory(v)
+		return nil
+	case device.FieldDisk:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisk(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
 }
@@ -9362,6 +9731,15 @@ func (m *DeviceMutation) AddedFields() []string {
 	if m.addsum_cep != nil {
 		fields = append(fields, device.FieldSumCep)
 	}
+	if m.addcores_number != nil {
+		fields = append(fields, device.FieldCoresNumber)
+	}
+	if m.addmemory != nil {
+		fields = append(fields, device.FieldMemory)
+	}
+	if m.adddisk != nil {
+		fields = append(fields, device.FieldDisk)
+	}
 	return fields
 }
 
@@ -9376,6 +9754,12 @@ func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case device.FieldSumCep:
 		return m.AddedSumCep()
+	case device.FieldCoresNumber:
+		return m.AddedCoresNumber()
+	case device.FieldMemory:
+		return m.AddedMemory()
+	case device.FieldDisk:
+		return m.AddedDisk()
 	}
 	return nil, false
 }
@@ -9405,6 +9789,27 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddSumCep(v)
+		return nil
+	case device.FieldCoresNumber:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCoresNumber(v)
+		return nil
+	case device.FieldMemory:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMemory(v)
+		return nil
+	case device.FieldDisk:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDisk(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device numeric field %s", name)
@@ -9468,6 +9873,24 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case device.FieldName:
+		m.ResetName()
+		return nil
+	case device.FieldType:
+		m.ResetType()
+		return nil
+	case device.FieldCoresNumber:
+		m.ResetCoresNumber()
+		return nil
+	case device.FieldCPU:
+		m.ResetCPU()
+		return nil
+	case device.FieldMemory:
+		m.ResetMemory()
+		return nil
+	case device.FieldDisk:
+		m.ResetDisk()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -33895,6 +34318,8 @@ type MissionProductionMutation struct {
 	device_id                    *int64
 	adddevice_id                 *int64
 	gpu_version                  *enums.GpuVersion
+	device_slot                  *int8
+	adddevice_slot               *int8
 	urls                         *string
 	resp_status_code             *int32
 	addresp_status_code          *int32
@@ -34507,6 +34932,62 @@ func (m *MissionProductionMutation) ResetGpuVersion() {
 	m.gpu_version = nil
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (m *MissionProductionMutation) SetDeviceSlot(i int8) {
+	m.device_slot = &i
+	m.adddevice_slot = nil
+}
+
+// DeviceSlot returns the value of the "device_slot" field in the mutation.
+func (m *MissionProductionMutation) DeviceSlot() (r int8, exists bool) {
+	v := m.device_slot
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceSlot returns the old "device_slot" field's value of the MissionProduction entity.
+// If the MissionProduction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionProductionMutation) OldDeviceSlot(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceSlot is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceSlot requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceSlot: %w", err)
+	}
+	return oldValue.DeviceSlot, nil
+}
+
+// AddDeviceSlot adds i to the "device_slot" field.
+func (m *MissionProductionMutation) AddDeviceSlot(i int8) {
+	if m.adddevice_slot != nil {
+		*m.adddevice_slot += i
+	} else {
+		m.adddevice_slot = &i
+	}
+}
+
+// AddedDeviceSlot returns the value that was added to the "device_slot" field in this mutation.
+func (m *MissionProductionMutation) AddedDeviceSlot() (r int8, exists bool) {
+	v := m.adddevice_slot
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeviceSlot resets all changes to the "device_slot" field.
+func (m *MissionProductionMutation) ResetDeviceSlot() {
+	m.device_slot = nil
+	m.adddevice_slot = nil
+}
+
 // SetUrls sets the "urls" field.
 func (m *MissionProductionMutation) SetUrls(s string) {
 	m.urls = &s
@@ -34762,7 +35243,7 @@ func (m *MissionProductionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionProductionMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, missionproduction.FieldCreatedBy)
 	}
@@ -34798,6 +35279,9 @@ func (m *MissionProductionMutation) Fields() []string {
 	}
 	if m.gpu_version != nil {
 		fields = append(fields, missionproduction.FieldGpuVersion)
+	}
+	if m.device_slot != nil {
+		fields = append(fields, missionproduction.FieldDeviceSlot)
 	}
 	if m.urls != nil {
 		fields = append(fields, missionproduction.FieldUrls)
@@ -34840,6 +35324,8 @@ func (m *MissionProductionMutation) Field(name string) (ent.Value, bool) {
 		return m.DeviceID()
 	case missionproduction.FieldGpuVersion:
 		return m.GpuVersion()
+	case missionproduction.FieldDeviceSlot:
+		return m.DeviceSlot()
 	case missionproduction.FieldUrls:
 		return m.Urls()
 	case missionproduction.FieldRespStatusCode:
@@ -34879,6 +35365,8 @@ func (m *MissionProductionMutation) OldField(ctx context.Context, name string) (
 		return m.OldDeviceID(ctx)
 	case missionproduction.FieldGpuVersion:
 		return m.OldGpuVersion(ctx)
+	case missionproduction.FieldDeviceSlot:
+		return m.OldDeviceSlot(ctx)
 	case missionproduction.FieldUrls:
 		return m.OldUrls(ctx)
 	case missionproduction.FieldRespStatusCode:
@@ -34978,6 +35466,13 @@ func (m *MissionProductionMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetGpuVersion(v)
 		return nil
+	case missionproduction.FieldDeviceSlot:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceSlot(v)
+		return nil
 	case missionproduction.FieldUrls:
 		v, ok := value.(string)
 		if !ok {
@@ -35016,6 +35511,9 @@ func (m *MissionProductionMutation) AddedFields() []string {
 	if m.adddevice_id != nil {
 		fields = append(fields, missionproduction.FieldDeviceID)
 	}
+	if m.adddevice_slot != nil {
+		fields = append(fields, missionproduction.FieldDeviceSlot)
+	}
 	if m.addresp_status_code != nil {
 		fields = append(fields, missionproduction.FieldRespStatusCode)
 	}
@@ -35033,6 +35531,8 @@ func (m *MissionProductionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case missionproduction.FieldDeviceID:
 		return m.AddedDeviceID()
+	case missionproduction.FieldDeviceSlot:
+		return m.AddedDeviceSlot()
 	case missionproduction.FieldRespStatusCode:
 		return m.AddedRespStatusCode()
 	}
@@ -35064,6 +35564,13 @@ func (m *MissionProductionMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeviceID(v)
+		return nil
+	case missionproduction.FieldDeviceSlot:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeviceSlot(v)
 		return nil
 	case missionproduction.FieldRespStatusCode:
 		v, ok := value.(int32)
@@ -35134,6 +35641,9 @@ func (m *MissionProductionMutation) ResetField(name string) error {
 		return nil
 	case missionproduction.FieldGpuVersion:
 		m.ResetGpuVersion()
+		return nil
+	case missionproduction.FieldDeviceSlot:
+		m.ResetDeviceSlot()
 		return nil
 	case missionproduction.FieldUrls:
 		m.ResetUrls()

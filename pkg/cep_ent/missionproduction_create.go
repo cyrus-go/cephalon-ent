@@ -178,6 +178,20 @@ func (mpc *MissionProductionCreate) SetNillableGpuVersion(ev *enums.GpuVersion) 
 	return mpc
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (mpc *MissionProductionCreate) SetDeviceSlot(i int8) *MissionProductionCreate {
+	mpc.mutation.SetDeviceSlot(i)
+	return mpc
+}
+
+// SetNillableDeviceSlot sets the "device_slot" field if the given value is not nil.
+func (mpc *MissionProductionCreate) SetNillableDeviceSlot(i *int8) *MissionProductionCreate {
+	if i != nil {
+		mpc.SetDeviceSlot(*i)
+	}
+	return mpc
+}
+
 // SetUrls sets the "urls" field.
 func (mpc *MissionProductionCreate) SetUrls(s string) *MissionProductionCreate {
 	mpc.mutation.SetUrls(s)
@@ -338,6 +352,10 @@ func (mpc *MissionProductionCreate) defaults() {
 		v := missionproduction.DefaultGpuVersion
 		mpc.mutation.SetGpuVersion(v)
 	}
+	if _, ok := mpc.mutation.DeviceSlot(); !ok {
+		v := missionproduction.DefaultDeviceSlot
+		mpc.mutation.SetDeviceSlot(v)
+	}
 	if _, ok := mpc.mutation.Urls(); !ok {
 		v := missionproduction.DefaultUrls
 		mpc.mutation.SetUrls(v)
@@ -403,6 +421,9 @@ func (mpc *MissionProductionCreate) check() error {
 		if err := missionproduction.GpuVersionValidator(v); err != nil {
 			return &ValidationError{Name: "gpu_version", err: fmt.Errorf(`cep_ent: validator failed for field "MissionProduction.gpu_version": %w`, err)}
 		}
+	}
+	if _, ok := mpc.mutation.DeviceSlot(); !ok {
+		return &ValidationError{Name: "device_slot", err: errors.New(`cep_ent: missing required field "MissionProduction.device_slot"`)}
 	}
 	if _, ok := mpc.mutation.Urls(); !ok {
 		return &ValidationError{Name: "urls", err: errors.New(`cep_ent: missing required field "MissionProduction.urls"`)}
@@ -491,6 +512,10 @@ func (mpc *MissionProductionCreate) createSpec() (*MissionProduction, *sqlgraph.
 	if value, ok := mpc.mutation.GpuVersion(); ok {
 		_spec.SetField(missionproduction.FieldGpuVersion, field.TypeEnum, value)
 		_node.GpuVersion = value
+	}
+	if value, ok := mpc.mutation.DeviceSlot(); ok {
+		_spec.SetField(missionproduction.FieldDeviceSlot, field.TypeInt8, value)
+		_node.DeviceSlot = value
 	}
 	if value, ok := mpc.mutation.Urls(); ok {
 		_spec.SetField(missionproduction.FieldUrls, field.TypeString, value)
@@ -753,6 +778,24 @@ func (u *MissionProductionUpsert) SetGpuVersion(v enums.GpuVersion) *MissionProd
 // UpdateGpuVersion sets the "gpu_version" field to the value that was provided on create.
 func (u *MissionProductionUpsert) UpdateGpuVersion() *MissionProductionUpsert {
 	u.SetExcluded(missionproduction.FieldGpuVersion)
+	return u
+}
+
+// SetDeviceSlot sets the "device_slot" field.
+func (u *MissionProductionUpsert) SetDeviceSlot(v int8) *MissionProductionUpsert {
+	u.Set(missionproduction.FieldDeviceSlot, v)
+	return u
+}
+
+// UpdateDeviceSlot sets the "device_slot" field to the value that was provided on create.
+func (u *MissionProductionUpsert) UpdateDeviceSlot() *MissionProductionUpsert {
+	u.SetExcluded(missionproduction.FieldDeviceSlot)
+	return u
+}
+
+// AddDeviceSlot adds v to the "device_slot" field.
+func (u *MissionProductionUpsert) AddDeviceSlot(v int8) *MissionProductionUpsert {
+	u.Add(missionproduction.FieldDeviceSlot, v)
 	return u
 }
 
@@ -1021,6 +1064,27 @@ func (u *MissionProductionUpsertOne) SetGpuVersion(v enums.GpuVersion) *MissionP
 func (u *MissionProductionUpsertOne) UpdateGpuVersion() *MissionProductionUpsertOne {
 	return u.Update(func(s *MissionProductionUpsert) {
 		s.UpdateGpuVersion()
+	})
+}
+
+// SetDeviceSlot sets the "device_slot" field.
+func (u *MissionProductionUpsertOne) SetDeviceSlot(v int8) *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.SetDeviceSlot(v)
+	})
+}
+
+// AddDeviceSlot adds v to the "device_slot" field.
+func (u *MissionProductionUpsertOne) AddDeviceSlot(v int8) *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.AddDeviceSlot(v)
+	})
+}
+
+// UpdateDeviceSlot sets the "device_slot" field to the value that was provided on create.
+func (u *MissionProductionUpsertOne) UpdateDeviceSlot() *MissionProductionUpsertOne {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.UpdateDeviceSlot()
 	})
 }
 
@@ -1462,6 +1526,27 @@ func (u *MissionProductionUpsertBulk) SetGpuVersion(v enums.GpuVersion) *Mission
 func (u *MissionProductionUpsertBulk) UpdateGpuVersion() *MissionProductionUpsertBulk {
 	return u.Update(func(s *MissionProductionUpsert) {
 		s.UpdateGpuVersion()
+	})
+}
+
+// SetDeviceSlot sets the "device_slot" field.
+func (u *MissionProductionUpsertBulk) SetDeviceSlot(v int8) *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.SetDeviceSlot(v)
+	})
+}
+
+// AddDeviceSlot adds v to the "device_slot" field.
+func (u *MissionProductionUpsertBulk) AddDeviceSlot(v int8) *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.AddDeviceSlot(v)
+	})
+}
+
+// UpdateDeviceSlot sets the "device_slot" field to the value that was provided on create.
+func (u *MissionProductionUpsertBulk) UpdateDeviceSlot() *MissionProductionUpsertBulk {
+	return u.Update(func(s *MissionProductionUpsert) {
+		s.UpdateDeviceSlot()
 	})
 }
 

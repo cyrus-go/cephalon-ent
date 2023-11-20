@@ -184,6 +184,27 @@ func (mpu *MissionProductionUpdate) SetNillableGpuVersion(ev *enums.GpuVersion) 
 	return mpu
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (mpu *MissionProductionUpdate) SetDeviceSlot(i int8) *MissionProductionUpdate {
+	mpu.mutation.ResetDeviceSlot()
+	mpu.mutation.SetDeviceSlot(i)
+	return mpu
+}
+
+// SetNillableDeviceSlot sets the "device_slot" field if the given value is not nil.
+func (mpu *MissionProductionUpdate) SetNillableDeviceSlot(i *int8) *MissionProductionUpdate {
+	if i != nil {
+		mpu.SetDeviceSlot(*i)
+	}
+	return mpu
+}
+
+// AddDeviceSlot adds i to the "device_slot" field.
+func (mpu *MissionProductionUpdate) AddDeviceSlot(i int8) *MissionProductionUpdate {
+	mpu.mutation.AddDeviceSlot(i)
+	return mpu
+}
+
 // SetUrls sets the "urls" field.
 func (mpu *MissionProductionUpdate) SetUrls(s string) *MissionProductionUpdate {
 	mpu.mutation.SetUrls(s)
@@ -395,6 +416,12 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := mpu.mutation.GpuVersion(); ok {
 		_spec.SetField(missionproduction.FieldGpuVersion, field.TypeEnum, value)
+	}
+	if value, ok := mpu.mutation.DeviceSlot(); ok {
+		_spec.SetField(missionproduction.FieldDeviceSlot, field.TypeInt8, value)
+	}
+	if value, ok := mpu.mutation.AddedDeviceSlot(); ok {
+		_spec.AddField(missionproduction.FieldDeviceSlot, field.TypeInt8, value)
 	}
 	if value, ok := mpu.mutation.Urls(); ok {
 		_spec.SetField(missionproduction.FieldUrls, field.TypeString, value)
@@ -668,6 +695,27 @@ func (mpuo *MissionProductionUpdateOne) SetNillableGpuVersion(ev *enums.GpuVersi
 	return mpuo
 }
 
+// SetDeviceSlot sets the "device_slot" field.
+func (mpuo *MissionProductionUpdateOne) SetDeviceSlot(i int8) *MissionProductionUpdateOne {
+	mpuo.mutation.ResetDeviceSlot()
+	mpuo.mutation.SetDeviceSlot(i)
+	return mpuo
+}
+
+// SetNillableDeviceSlot sets the "device_slot" field if the given value is not nil.
+func (mpuo *MissionProductionUpdateOne) SetNillableDeviceSlot(i *int8) *MissionProductionUpdateOne {
+	if i != nil {
+		mpuo.SetDeviceSlot(*i)
+	}
+	return mpuo
+}
+
+// AddDeviceSlot adds i to the "device_slot" field.
+func (mpuo *MissionProductionUpdateOne) AddDeviceSlot(i int8) *MissionProductionUpdateOne {
+	mpuo.mutation.AddDeviceSlot(i)
+	return mpuo
+}
+
 // SetUrls sets the "urls" field.
 func (mpuo *MissionProductionUpdateOne) SetUrls(s string) *MissionProductionUpdateOne {
 	mpuo.mutation.SetUrls(s)
@@ -909,6 +957,12 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 	}
 	if value, ok := mpuo.mutation.GpuVersion(); ok {
 		_spec.SetField(missionproduction.FieldGpuVersion, field.TypeEnum, value)
+	}
+	if value, ok := mpuo.mutation.DeviceSlot(); ok {
+		_spec.SetField(missionproduction.FieldDeviceSlot, field.TypeInt8, value)
+	}
+	if value, ok := mpuo.mutation.AddedDeviceSlot(); ok {
+		_spec.AddField(missionproduction.FieldDeviceSlot, field.TypeInt8, value)
 	}
 	if value, ok := mpuo.mutation.Urls(); ok {
 		_spec.SetField(missionproduction.FieldUrls, field.TypeString, value)

@@ -203,6 +203,111 @@ func (du *DeviceUpdate) SetNillableStatus(d *device.Status) *DeviceUpdate {
 	return du
 }
 
+// SetName sets the "name" field.
+func (du *DeviceUpdate) SetName(s string) *DeviceUpdate {
+	du.mutation.SetName(s)
+	return du
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableName(s *string) *DeviceUpdate {
+	if s != nil {
+		du.SetName(*s)
+	}
+	return du
+}
+
+// SetType sets the "type" field.
+func (du *DeviceUpdate) SetType(et enums.DeviceType) *DeviceUpdate {
+	du.mutation.SetType(et)
+	return du
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableType(et *enums.DeviceType) *DeviceUpdate {
+	if et != nil {
+		du.SetType(*et)
+	}
+	return du
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (du *DeviceUpdate) SetCoresNumber(i int64) *DeviceUpdate {
+	du.mutation.ResetCoresNumber()
+	du.mutation.SetCoresNumber(i)
+	return du
+}
+
+// SetNillableCoresNumber sets the "cores_number" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableCoresNumber(i *int64) *DeviceUpdate {
+	if i != nil {
+		du.SetCoresNumber(*i)
+	}
+	return du
+}
+
+// AddCoresNumber adds i to the "cores_number" field.
+func (du *DeviceUpdate) AddCoresNumber(i int64) *DeviceUpdate {
+	du.mutation.AddCoresNumber(i)
+	return du
+}
+
+// SetCPU sets the "cpu" field.
+func (du *DeviceUpdate) SetCPU(s string) *DeviceUpdate {
+	du.mutation.SetCPU(s)
+	return du
+}
+
+// SetNillableCPU sets the "cpu" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableCPU(s *string) *DeviceUpdate {
+	if s != nil {
+		du.SetCPU(*s)
+	}
+	return du
+}
+
+// SetMemory sets the "memory" field.
+func (du *DeviceUpdate) SetMemory(i int64) *DeviceUpdate {
+	du.mutation.ResetMemory()
+	du.mutation.SetMemory(i)
+	return du
+}
+
+// SetNillableMemory sets the "memory" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableMemory(i *int64) *DeviceUpdate {
+	if i != nil {
+		du.SetMemory(*i)
+	}
+	return du
+}
+
+// AddMemory adds i to the "memory" field.
+func (du *DeviceUpdate) AddMemory(i int64) *DeviceUpdate {
+	du.mutation.AddMemory(i)
+	return du
+}
+
+// SetDisk sets the "disk" field.
+func (du *DeviceUpdate) SetDisk(i int64) *DeviceUpdate {
+	du.mutation.ResetDisk()
+	du.mutation.SetDisk(i)
+	return du
+}
+
+// SetNillableDisk sets the "disk" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableDisk(i *int64) *DeviceUpdate {
+	if i != nil {
+		du.SetDisk(*i)
+	}
+	return du
+}
+
+// AddDisk adds i to the "disk" field.
+func (du *DeviceUpdate) AddDisk(i int64) *DeviceUpdate {
+	du.mutation.AddDisk(i)
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -452,6 +557,11 @@ func (du *DeviceUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
 		}
 	}
+	if v, ok := du.mutation.GetType(); ok {
+		if err := device.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.type": %w`, err)}
+		}
+	}
 	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -514,6 +624,33 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Status(); ok {
 		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.Name(); ok {
+		_spec.SetField(device.FieldName, field.TypeString, value)
+	}
+	if value, ok := du.mutation.GetType(); ok {
+		_spec.SetField(device.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.CoresNumber(); ok {
+		_spec.SetField(device.FieldCoresNumber, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.AddedCoresNumber(); ok {
+		_spec.AddField(device.FieldCoresNumber, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.CPU(); ok {
+		_spec.SetField(device.FieldCPU, field.TypeString, value)
+	}
+	if value, ok := du.mutation.Memory(); ok {
+		_spec.SetField(device.FieldMemory, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.AddedMemory(); ok {
+		_spec.AddField(device.FieldMemory, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.Disk(); ok {
+		_spec.SetField(device.FieldDisk, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.AddedDisk(); ok {
+		_spec.AddField(device.FieldDisk, field.TypeInt64, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -958,6 +1095,111 @@ func (duo *DeviceUpdateOne) SetNillableStatus(d *device.Status) *DeviceUpdateOne
 	return duo
 }
 
+// SetName sets the "name" field.
+func (duo *DeviceUpdateOne) SetName(s string) *DeviceUpdateOne {
+	duo.mutation.SetName(s)
+	return duo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableName(s *string) *DeviceUpdateOne {
+	if s != nil {
+		duo.SetName(*s)
+	}
+	return duo
+}
+
+// SetType sets the "type" field.
+func (duo *DeviceUpdateOne) SetType(et enums.DeviceType) *DeviceUpdateOne {
+	duo.mutation.SetType(et)
+	return duo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableType(et *enums.DeviceType) *DeviceUpdateOne {
+	if et != nil {
+		duo.SetType(*et)
+	}
+	return duo
+}
+
+// SetCoresNumber sets the "cores_number" field.
+func (duo *DeviceUpdateOne) SetCoresNumber(i int64) *DeviceUpdateOne {
+	duo.mutation.ResetCoresNumber()
+	duo.mutation.SetCoresNumber(i)
+	return duo
+}
+
+// SetNillableCoresNumber sets the "cores_number" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableCoresNumber(i *int64) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetCoresNumber(*i)
+	}
+	return duo
+}
+
+// AddCoresNumber adds i to the "cores_number" field.
+func (duo *DeviceUpdateOne) AddCoresNumber(i int64) *DeviceUpdateOne {
+	duo.mutation.AddCoresNumber(i)
+	return duo
+}
+
+// SetCPU sets the "cpu" field.
+func (duo *DeviceUpdateOne) SetCPU(s string) *DeviceUpdateOne {
+	duo.mutation.SetCPU(s)
+	return duo
+}
+
+// SetNillableCPU sets the "cpu" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableCPU(s *string) *DeviceUpdateOne {
+	if s != nil {
+		duo.SetCPU(*s)
+	}
+	return duo
+}
+
+// SetMemory sets the "memory" field.
+func (duo *DeviceUpdateOne) SetMemory(i int64) *DeviceUpdateOne {
+	duo.mutation.ResetMemory()
+	duo.mutation.SetMemory(i)
+	return duo
+}
+
+// SetNillableMemory sets the "memory" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableMemory(i *int64) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetMemory(*i)
+	}
+	return duo
+}
+
+// AddMemory adds i to the "memory" field.
+func (duo *DeviceUpdateOne) AddMemory(i int64) *DeviceUpdateOne {
+	duo.mutation.AddMemory(i)
+	return duo
+}
+
+// SetDisk sets the "disk" field.
+func (duo *DeviceUpdateOne) SetDisk(i int64) *DeviceUpdateOne {
+	duo.mutation.ResetDisk()
+	duo.mutation.SetDisk(i)
+	return duo
+}
+
+// SetNillableDisk sets the "disk" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableDisk(i *int64) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetDisk(*i)
+	}
+	return duo
+}
+
+// AddDisk adds i to the "disk" field.
+func (duo *DeviceUpdateOne) AddDisk(i int64) *DeviceUpdateOne {
+	duo.mutation.AddDisk(i)
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -1220,6 +1462,11 @@ func (duo *DeviceUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "Device.status": %w`, err)}
 		}
 	}
+	if v, ok := duo.mutation.GetType(); ok {
+		if err := device.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.type": %w`, err)}
+		}
+	}
 	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -1299,6 +1546,33 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.Status(); ok {
 		_spec.SetField(device.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.Name(); ok {
+		_spec.SetField(device.FieldName, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.GetType(); ok {
+		_spec.SetField(device.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.CoresNumber(); ok {
+		_spec.SetField(device.FieldCoresNumber, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.AddedCoresNumber(); ok {
+		_spec.AddField(device.FieldCoresNumber, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.CPU(); ok {
+		_spec.SetField(device.FieldCPU, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.Memory(); ok {
+		_spec.SetField(device.FieldMemory, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.AddedMemory(); ok {
+		_spec.AddField(device.FieldMemory, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.Disk(); ok {
+		_spec.SetField(device.FieldDisk, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.AddedDisk(); ok {
+		_spec.AddField(device.FieldDisk, field.TypeInt64, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

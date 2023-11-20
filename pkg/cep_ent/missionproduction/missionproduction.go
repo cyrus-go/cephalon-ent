@@ -40,6 +40,8 @@ const (
 	FieldDeviceID = "device_id"
 	// FieldGpuVersion holds the string denoting the gpu_version field in the database.
 	FieldGpuVersion = "gpu_version"
+	// FieldDeviceSlot holds the string denoting the device_slot field in the database.
+	FieldDeviceSlot = "device_slot"
 	// FieldUrls holds the string denoting the urls field in the database.
 	FieldUrls = "urls"
 	// FieldRespStatusCode holds the string denoting the resp_status_code field in the database.
@@ -92,6 +94,7 @@ var Columns = []string{
 	FieldState,
 	FieldDeviceID,
 	FieldGpuVersion,
+	FieldDeviceSlot,
 	FieldUrls,
 	FieldRespStatusCode,
 	FieldRespBody,
@@ -126,6 +129,8 @@ var (
 	DefaultFinishedAt time.Time
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
 	DefaultDeviceID int64
+	// DefaultDeviceSlot holds the default value on creation for the "device_slot" field.
+	DefaultDeviceSlot int8
 	// DefaultUrls holds the default value on creation for the "urls" field.
 	DefaultUrls string
 	// DefaultRespStatusCode holds the default value on creation for the "resp_status_code" field.
@@ -226,6 +231,11 @@ func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
 // ByGpuVersion orders the results by the gpu_version field.
 func ByGpuVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGpuVersion, opts...).ToFunc()
+}
+
+// ByDeviceSlot orders the results by the device_slot field.
+func ByDeviceSlot(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeviceSlot, opts...).ToFunc()
 }
 
 // ByUrls orders the results by the urls field.

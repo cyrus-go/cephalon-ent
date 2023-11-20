@@ -44,6 +44,18 @@ type Device struct {
 	BindingStatus enums.DeviceBindingStatus `json:"binding_status"`
 	// 设备状态
 	Status device.Status `json:"status"`
+	// 设备名称
+	Name string `json:"name"`
+	// 设备类型
+	Type enums.DeviceType `json:"type"`
+	// 核心数
+	CoresNumber int64 `json:"cores_number"`
+	// CPU型号
+	CPU string `json:"cpu,omitempty" json:cpu`
+	// 内存(单位:G)
+	Memory int64 `json:"memory"`
+	// 硬盘(单位:T)
+	Disk int64 `json:"disk,omitempty" json:disk`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -134,9 +146,9 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case device.FieldLinking:
 			values[i] = new(sql.NullBool)
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep:
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldDisk:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldType, device.FieldCPU:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -232,6 +244,42 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				d.Status = device.Status(value.String)
+			}
+		case device.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				d.Name = value.String
+			}
+		case device.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				d.Type = enums.DeviceType(value.String)
+			}
+		case device.FieldCoresNumber:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cores_number", values[i])
+			} else if value.Valid {
+				d.CoresNumber = value.Int64
+			}
+		case device.FieldCPU:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cpu", values[i])
+			} else if value.Valid {
+				d.CPU = value.String
+			}
+		case device.FieldMemory:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field memory", values[i])
+			} else if value.Valid {
+				d.Memory = value.Int64
+			}
+		case device.FieldDisk:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field disk", values[i])
+			} else if value.Valid {
+				d.Disk = value.Int64
 			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
@@ -334,6 +382,24 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", d.Status))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(d.Name)
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", d.Type))
+	builder.WriteString(", ")
+	builder.WriteString("cores_number=")
+	builder.WriteString(fmt.Sprintf("%v", d.CoresNumber))
+	builder.WriteString(", ")
+	builder.WriteString("cpu=")
+	builder.WriteString(d.CPU)
+	builder.WriteString(", ")
+	builder.WriteString("memory=")
+	builder.WriteString(fmt.Sprintf("%v", d.Memory))
+	builder.WriteString(", ")
+	builder.WriteString("disk=")
+	builder.WriteString(fmt.Sprintf("%v", d.Disk))
 	builder.WriteByte(')')
 	return builder.String()
 }

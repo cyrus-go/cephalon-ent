@@ -24,6 +24,7 @@ func (MissionProduction) Fields() []ent.Field {
 		field.Enum("state").Default(string(enums.MissionStateUnknown)).GoType(enums.MissionStateWaiting).StructTag(`json:"state"`).Comment("任务执行状态情况"),
 		field.Int64("device_id").Default(0).StructTag(`json:"device_id,string"`).Comment("领到任务的设备 ID"),
 		field.Enum("gpu_version").Default(string(enums.GpuVersionUnknown)).GoType(enums.GpuVersion3080).StructTag(`json:"gpu_version"`).Comment("任务使用什么显卡在执行"),
+		field.Int8("device_slot").Default(0).StructTag(`json:"device_slot"`).Comment("显卡占用设备的插槽"),
 		field.String("urls").Default("").StructTag(`json:"urls"`).Comment("任务结果链接列表，json 序列化后存储"),
 		field.Int32("resp_status_code").Default(0).StructTag(`json:"resp_status_code"`).Comment("内部功能返回码"),
 		field.String("resp_body").Default("").StructTag(`json:"resp_body"`).Comment("返回内容体 json 转 string"),

@@ -106,6 +106,11 @@ func DeviceID(v int64) predicate.MissionProduction {
 	return predicate.MissionProduction(sql.FieldEQ(FieldDeviceID, v))
 }
 
+// DeviceSlot applies equality check predicate on the "device_slot" field. It's identical to DeviceSlotEQ.
+func DeviceSlot(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEQ(FieldDeviceSlot, v))
+}
+
 // Urls applies equality check predicate on the "urls" field. It's identical to UrlsEQ.
 func Urls(v string) predicate.MissionProduction {
 	return predicate.MissionProduction(sql.FieldEQ(FieldUrls, v))
@@ -539,6 +544,46 @@ func GpuVersionNotIn(vs ...enums.GpuVersion) predicate.MissionProduction {
 		v[i] = vs[i]
 	}
 	return predicate.MissionProduction(sql.FieldNotIn(FieldGpuVersion, v...))
+}
+
+// DeviceSlotEQ applies the EQ predicate on the "device_slot" field.
+func DeviceSlotEQ(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldEQ(FieldDeviceSlot, v))
+}
+
+// DeviceSlotNEQ applies the NEQ predicate on the "device_slot" field.
+func DeviceSlotNEQ(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldNEQ(FieldDeviceSlot, v))
+}
+
+// DeviceSlotIn applies the In predicate on the "device_slot" field.
+func DeviceSlotIn(vs ...int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldIn(FieldDeviceSlot, vs...))
+}
+
+// DeviceSlotNotIn applies the NotIn predicate on the "device_slot" field.
+func DeviceSlotNotIn(vs ...int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldNotIn(FieldDeviceSlot, vs...))
+}
+
+// DeviceSlotGT applies the GT predicate on the "device_slot" field.
+func DeviceSlotGT(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldGT(FieldDeviceSlot, v))
+}
+
+// DeviceSlotGTE applies the GTE predicate on the "device_slot" field.
+func DeviceSlotGTE(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldGTE(FieldDeviceSlot, v))
+}
+
+// DeviceSlotLT applies the LT predicate on the "device_slot" field.
+func DeviceSlotLT(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldLT(FieldDeviceSlot, v))
+}
+
+// DeviceSlotLTE applies the LTE predicate on the "device_slot" field.
+func DeviceSlotLTE(v int8) predicate.MissionProduction {
+	return predicate.MissionProduction(sql.FieldLTE(FieldDeviceSlot, v))
 }
 
 // UrlsEQ applies the EQ predicate on the "urls" field.

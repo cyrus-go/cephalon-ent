@@ -40,6 +40,18 @@ const (
 	FieldBindingStatus = "binding_status"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
+	// FieldCoresNumber holds the string denoting the cores_number field in the database.
+	FieldCoresNumber = "cores_number"
+	// FieldCPU holds the string denoting the cpu field in the database.
+	FieldCPU = "cpu"
+	// FieldMemory holds the string denoting the memory field in the database.
+	FieldMemory = "memory"
+	// FieldDisk holds the string denoting the disk field in the database.
+	FieldDisk = "disk"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -113,6 +125,12 @@ var Columns = []string{
 	FieldLinking,
 	FieldBindingStatus,
 	FieldStatus,
+	FieldName,
+	FieldType,
+	FieldCoresNumber,
+	FieldCPU,
+	FieldMemory,
+	FieldDisk,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -146,6 +164,16 @@ var (
 	DefaultSumCep int64
 	// DefaultLinking holds the default value on creation for the "linking" field.
 	DefaultLinking bool
+	// DefaultName holds the default value on creation for the "name" field.
+	DefaultName string
+	// DefaultCoresNumber holds the default value on creation for the "cores_number" field.
+	DefaultCoresNumber int64
+	// DefaultCPU holds the default value on creation for the "cpu" field.
+	DefaultCPU string
+	// DefaultMemory holds the default value on creation for the "memory" field.
+	DefaultMemory int64
+	// DefaultDisk holds the default value on creation for the "disk" field.
+	DefaultDisk int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -216,6 +244,18 @@ func StatusValidator(s Status) error {
 	}
 }
 
+const DefaultType enums.DeviceType = "ordinary"
+
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type enums.DeviceType) error {
+	switch _type {
+	case "official", "ordinary":
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for type field: %q", _type)
+	}
+}
+
 // OrderOption defines the ordering options for the Device queries.
 type OrderOption func(*sql.Selector)
 
@@ -282,6 +322,36 @@ func ByBindingStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByCoresNumber orders the results by the cores_number field.
+func ByCoresNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCoresNumber, opts...).ToFunc()
+}
+
+// ByCPU orders the results by the cpu field.
+func ByCPU(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCPU, opts...).ToFunc()
+}
+
+// ByMemory orders the results by the memory field.
+func ByMemory(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMemory, opts...).ToFunc()
+}
+
+// ByDisk orders the results by the disk field.
+func ByDisk(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisk, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

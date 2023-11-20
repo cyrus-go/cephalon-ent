@@ -101,6 +101,31 @@ func Linking(v bool) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldLinking, v))
 }
 
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldName, v))
+}
+
+// CoresNumber applies equality check predicate on the "cores_number" field. It's identical to CoresNumberEQ.
+func CoresNumber(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldCoresNumber, v))
+}
+
+// CPU applies equality check predicate on the "cpu" field. It's identical to CPUEQ.
+func CPU(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldCPU, v))
+}
+
+// Memory applies equality check predicate on the "memory" field. It's identical to MemoryEQ.
+func Memory(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldMemory, v))
+}
+
+// Disk applies equality check predicate on the "disk" field. It's identical to DiskEQ.
+func Disk(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldDisk, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -504,6 +529,286 @@ func StatusIn(vs ...Status) predicate.Device {
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...Status) predicate.Device {
 	return predicate.Device(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Device {
+	return predicate.Device(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldContainsFold(FieldName, v))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v enums.DeviceType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldType, vc))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v enums.DeviceType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldType, vc))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...enums.DeviceType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldType, v...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...enums.DeviceType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldType, v...))
+}
+
+// CoresNumberEQ applies the EQ predicate on the "cores_number" field.
+func CoresNumberEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldCoresNumber, v))
+}
+
+// CoresNumberNEQ applies the NEQ predicate on the "cores_number" field.
+func CoresNumberNEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldCoresNumber, v))
+}
+
+// CoresNumberIn applies the In predicate on the "cores_number" field.
+func CoresNumberIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldCoresNumber, vs...))
+}
+
+// CoresNumberNotIn applies the NotIn predicate on the "cores_number" field.
+func CoresNumberNotIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldCoresNumber, vs...))
+}
+
+// CoresNumberGT applies the GT predicate on the "cores_number" field.
+func CoresNumberGT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldCoresNumber, v))
+}
+
+// CoresNumberGTE applies the GTE predicate on the "cores_number" field.
+func CoresNumberGTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldCoresNumber, v))
+}
+
+// CoresNumberLT applies the LT predicate on the "cores_number" field.
+func CoresNumberLT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldCoresNumber, v))
+}
+
+// CoresNumberLTE applies the LTE predicate on the "cores_number" field.
+func CoresNumberLTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldCoresNumber, v))
+}
+
+// CPUEQ applies the EQ predicate on the "cpu" field.
+func CPUEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldCPU, v))
+}
+
+// CPUNEQ applies the NEQ predicate on the "cpu" field.
+func CPUNEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldCPU, v))
+}
+
+// CPUIn applies the In predicate on the "cpu" field.
+func CPUIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldCPU, vs...))
+}
+
+// CPUNotIn applies the NotIn predicate on the "cpu" field.
+func CPUNotIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldCPU, vs...))
+}
+
+// CPUGT applies the GT predicate on the "cpu" field.
+func CPUGT(v string) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldCPU, v))
+}
+
+// CPUGTE applies the GTE predicate on the "cpu" field.
+func CPUGTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldCPU, v))
+}
+
+// CPULT applies the LT predicate on the "cpu" field.
+func CPULT(v string) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldCPU, v))
+}
+
+// CPULTE applies the LTE predicate on the "cpu" field.
+func CPULTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldCPU, v))
+}
+
+// CPUContains applies the Contains predicate on the "cpu" field.
+func CPUContains(v string) predicate.Device {
+	return predicate.Device(sql.FieldContains(FieldCPU, v))
+}
+
+// CPUHasPrefix applies the HasPrefix predicate on the "cpu" field.
+func CPUHasPrefix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasPrefix(FieldCPU, v))
+}
+
+// CPUHasSuffix applies the HasSuffix predicate on the "cpu" field.
+func CPUHasSuffix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasSuffix(FieldCPU, v))
+}
+
+// CPUEqualFold applies the EqualFold predicate on the "cpu" field.
+func CPUEqualFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldEqualFold(FieldCPU, v))
+}
+
+// CPUContainsFold applies the ContainsFold predicate on the "cpu" field.
+func CPUContainsFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldContainsFold(FieldCPU, v))
+}
+
+// MemoryEQ applies the EQ predicate on the "memory" field.
+func MemoryEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldMemory, v))
+}
+
+// MemoryNEQ applies the NEQ predicate on the "memory" field.
+func MemoryNEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldMemory, v))
+}
+
+// MemoryIn applies the In predicate on the "memory" field.
+func MemoryIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldMemory, vs...))
+}
+
+// MemoryNotIn applies the NotIn predicate on the "memory" field.
+func MemoryNotIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldMemory, vs...))
+}
+
+// MemoryGT applies the GT predicate on the "memory" field.
+func MemoryGT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldMemory, v))
+}
+
+// MemoryGTE applies the GTE predicate on the "memory" field.
+func MemoryGTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldMemory, v))
+}
+
+// MemoryLT applies the LT predicate on the "memory" field.
+func MemoryLT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldMemory, v))
+}
+
+// MemoryLTE applies the LTE predicate on the "memory" field.
+func MemoryLTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldMemory, v))
+}
+
+// DiskEQ applies the EQ predicate on the "disk" field.
+func DiskEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldDisk, v))
+}
+
+// DiskNEQ applies the NEQ predicate on the "disk" field.
+func DiskNEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldDisk, v))
+}
+
+// DiskIn applies the In predicate on the "disk" field.
+func DiskIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldDisk, vs...))
+}
+
+// DiskNotIn applies the NotIn predicate on the "disk" field.
+func DiskNotIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldDisk, vs...))
+}
+
+// DiskGT applies the GT predicate on the "disk" field.
+func DiskGT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldDisk, v))
+}
+
+// DiskGTE applies the GTE predicate on the "disk" field.
+func DiskGTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldDisk, v))
+}
+
+// DiskLT applies the LT predicate on the "disk" field.
+func DiskLT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldDisk, v))
+}
+
+// DiskLTE applies the LTE predicate on the "disk" field.
+func DiskLTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldDisk, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

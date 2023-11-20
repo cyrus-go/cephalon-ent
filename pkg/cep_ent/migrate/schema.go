@@ -271,6 +271,12 @@ var (
 		{Name: "linking", Type: field.TypeBool, Comment: "设备是否正在对接中", Default: false},
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
 		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy"}, Default: "online"},
+		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},
+		{Name: "cores_number", Type: field.TypeInt64, Comment: "核心数", Default: 0},
+		{Name: "cpu", Type: field.TypeString, Comment: "CPU型号", Default: ""},
+		{Name: "memory", Type: field.TypeInt64, Comment: "内存(单位:G)", Default: 0},
+		{Name: "disk", Type: field.TypeInt64, Comment: "硬盘(单位:T)", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -282,7 +288,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[12]},
+				Columns:    []*schema.Column{DevicesColumns[18]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -974,6 +980,7 @@ var (
 		{Name: "state", Type: field.TypeEnum, Comment: "任务执行状态情况", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "unknown"},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "领到任务的设备 ID", Default: 0},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "任务使用什么显卡在执行", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "unknown"},
+		{Name: "device_slot", Type: field.TypeInt8, Comment: "显卡占用设备的插槽", Default: 0},
 		{Name: "urls", Type: field.TypeString, Comment: "任务结果链接列表，json 序列化后存储", Default: ""},
 		{Name: "resp_status_code", Type: field.TypeInt32, Comment: "内部功能返回码", Default: 0},
 		{Name: "resp_body", Type: field.TypeString, Comment: "返回内容体 json 转 string", Default: ""},
@@ -989,13 +996,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "mission_productions_missions_mission_productions",
-				Columns:    []*schema.Column{MissionProductionsColumns[14]},
+				Columns:    []*schema.Column{MissionProductionsColumns[15]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "mission_productions_users_mission_productions",
-				Columns:    []*schema.Column{MissionProductionsColumns[15]},
+				Columns:    []*schema.Column{MissionProductionsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
