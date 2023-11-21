@@ -393,6 +393,76 @@ func (moc *MissionOrderCreate) SetNillableDeviceID(i *int64) *MissionOrderCreate
 	return moc
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (moc *MissionOrderCreate) SetTotalAmount(i int64) *MissionOrderCreate {
+	moc.mutation.SetTotalAmount(i)
+	return moc
+}
+
+// SetNillableTotalAmount sets the "total_amount" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableTotalAmount(i *int64) *MissionOrderCreate {
+	if i != nil {
+		moc.SetTotalAmount(*i)
+	}
+	return moc
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (moc *MissionOrderCreate) SetSettledAmount(i int64) *MissionOrderCreate {
+	moc.mutation.SetSettledAmount(i)
+	return moc
+}
+
+// SetNillableSettledAmount sets the "settled_amount" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableSettledAmount(i *int64) *MissionOrderCreate {
+	if i != nil {
+		moc.SetSettledAmount(*i)
+	}
+	return moc
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (moc *MissionOrderCreate) SetSettledCount(i int64) *MissionOrderCreate {
+	moc.mutation.SetSettledCount(i)
+	return moc
+}
+
+// SetNillableSettledCount sets the "settled_count" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableSettledCount(i *int64) *MissionOrderCreate {
+	if i != nil {
+		moc.SetSettledCount(*i)
+	}
+	return moc
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (moc *MissionOrderCreate) SetTotalSettleCount(i int64) *MissionOrderCreate {
+	moc.mutation.SetTotalSettleCount(i)
+	return moc
+}
+
+// SetNillableTotalSettleCount sets the "total_settle_count" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableTotalSettleCount(i *int64) *MissionOrderCreate {
+	if i != nil {
+		moc.SetTotalSettleCount(*i)
+	}
+	return moc
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (moc *MissionOrderCreate) SetLastSettledAt(t time.Time) *MissionOrderCreate {
+	moc.mutation.SetLastSettledAt(t)
+	return moc
+}
+
+// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableLastSettledAt(t *time.Time) *MissionOrderCreate {
+	if t != nil {
+		moc.SetLastSettledAt(*t)
+	}
+	return moc
+}
+
 // SetID sets the "id" field.
 func (moc *MissionOrderCreate) SetID(i int64) *MissionOrderCreate {
 	moc.mutation.SetID(i)
@@ -591,6 +661,26 @@ func (moc *MissionOrderCreate) defaults() {
 		v := missionorder.DefaultDeviceID
 		moc.mutation.SetDeviceID(v)
 	}
+	if _, ok := moc.mutation.TotalAmount(); !ok {
+		v := missionorder.DefaultTotalAmount
+		moc.mutation.SetTotalAmount(v)
+	}
+	if _, ok := moc.mutation.SettledAmount(); !ok {
+		v := missionorder.DefaultSettledAmount
+		moc.mutation.SetSettledAmount(v)
+	}
+	if _, ok := moc.mutation.SettledCount(); !ok {
+		v := missionorder.DefaultSettledCount
+		moc.mutation.SetSettledCount(v)
+	}
+	if _, ok := moc.mutation.TotalSettleCount(); !ok {
+		v := missionorder.DefaultTotalSettleCount
+		moc.mutation.SetTotalSettleCount(v)
+	}
+	if _, ok := moc.mutation.LastSettledAt(); !ok {
+		v := missionorder.DefaultLastSettledAt
+		moc.mutation.SetLastSettledAt(v)
+	}
 	if _, ok := moc.mutation.ID(); !ok {
 		v := missionorder.DefaultID()
 		moc.mutation.SetID(v)
@@ -687,6 +777,21 @@ func (moc *MissionOrderCreate) check() error {
 	}
 	if _, ok := moc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device_id", err: errors.New(`cep_ent: missing required field "MissionOrder.device_id"`)}
+	}
+	if _, ok := moc.mutation.TotalAmount(); !ok {
+		return &ValidationError{Name: "total_amount", err: errors.New(`cep_ent: missing required field "MissionOrder.total_amount"`)}
+	}
+	if _, ok := moc.mutation.SettledAmount(); !ok {
+		return &ValidationError{Name: "settled_amount", err: errors.New(`cep_ent: missing required field "MissionOrder.settled_amount"`)}
+	}
+	if _, ok := moc.mutation.SettledCount(); !ok {
+		return &ValidationError{Name: "settled_count", err: errors.New(`cep_ent: missing required field "MissionOrder.settled_count"`)}
+	}
+	if _, ok := moc.mutation.TotalSettleCount(); !ok {
+		return &ValidationError{Name: "total_settle_count", err: errors.New(`cep_ent: missing required field "MissionOrder.total_settle_count"`)}
+	}
+	if _, ok := moc.mutation.LastSettledAt(); !ok {
+		return &ValidationError{Name: "last_settled_at", err: errors.New(`cep_ent: missing required field "MissionOrder.last_settled_at"`)}
 	}
 	if _, ok := moc.mutation.ConsumeUserID(); !ok {
 		return &ValidationError{Name: "consume_user", err: errors.New(`cep_ent: missing required edge "MissionOrder.consume_user"`)}
@@ -818,6 +923,26 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 	if value, ok := moc.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
 		_node.MissionBatchNumber = value
+	}
+	if value, ok := moc.mutation.TotalAmount(); ok {
+		_spec.SetField(missionorder.FieldTotalAmount, field.TypeInt64, value)
+		_node.TotalAmount = value
+	}
+	if value, ok := moc.mutation.SettledAmount(); ok {
+		_spec.SetField(missionorder.FieldSettledAmount, field.TypeInt64, value)
+		_node.SettledAmount = value
+	}
+	if value, ok := moc.mutation.SettledCount(); ok {
+		_spec.SetField(missionorder.FieldSettledCount, field.TypeInt64, value)
+		_node.SettledCount = value
+	}
+	if value, ok := moc.mutation.TotalSettleCount(); ok {
+		_spec.SetField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
+		_node.TotalSettleCount = value
+	}
+	if value, ok := moc.mutation.LastSettledAt(); ok {
+		_spec.SetField(missionorder.FieldLastSettledAt, field.TypeTime, value)
+		_node.LastSettledAt = value
 	}
 	if nodes := moc.mutation.ConsumeUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1343,6 +1468,90 @@ func (u *MissionOrderUpsert) UpdateDeviceID() *MissionOrderUpsert {
 	return u
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (u *MissionOrderUpsert) SetTotalAmount(v int64) *MissionOrderUpsert {
+	u.Set(missionorder.FieldTotalAmount, v)
+	return u
+}
+
+// UpdateTotalAmount sets the "total_amount" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateTotalAmount() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldTotalAmount)
+	return u
+}
+
+// AddTotalAmount adds v to the "total_amount" field.
+func (u *MissionOrderUpsert) AddTotalAmount(v int64) *MissionOrderUpsert {
+	u.Add(missionorder.FieldTotalAmount, v)
+	return u
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (u *MissionOrderUpsert) SetSettledAmount(v int64) *MissionOrderUpsert {
+	u.Set(missionorder.FieldSettledAmount, v)
+	return u
+}
+
+// UpdateSettledAmount sets the "settled_amount" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateSettledAmount() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldSettledAmount)
+	return u
+}
+
+// AddSettledAmount adds v to the "settled_amount" field.
+func (u *MissionOrderUpsert) AddSettledAmount(v int64) *MissionOrderUpsert {
+	u.Add(missionorder.FieldSettledAmount, v)
+	return u
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (u *MissionOrderUpsert) SetSettledCount(v int64) *MissionOrderUpsert {
+	u.Set(missionorder.FieldSettledCount, v)
+	return u
+}
+
+// UpdateSettledCount sets the "settled_count" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateSettledCount() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldSettledCount)
+	return u
+}
+
+// AddSettledCount adds v to the "settled_count" field.
+func (u *MissionOrderUpsert) AddSettledCount(v int64) *MissionOrderUpsert {
+	u.Add(missionorder.FieldSettledCount, v)
+	return u
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (u *MissionOrderUpsert) SetTotalSettleCount(v int64) *MissionOrderUpsert {
+	u.Set(missionorder.FieldTotalSettleCount, v)
+	return u
+}
+
+// UpdateTotalSettleCount sets the "total_settle_count" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateTotalSettleCount() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldTotalSettleCount)
+	return u
+}
+
+// AddTotalSettleCount adds v to the "total_settle_count" field.
+func (u *MissionOrderUpsert) AddTotalSettleCount(v int64) *MissionOrderUpsert {
+	u.Add(missionorder.FieldTotalSettleCount, v)
+	return u
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (u *MissionOrderUpsert) SetLastSettledAt(v time.Time) *MissionOrderUpsert {
+	u.Set(missionorder.FieldLastSettledAt, v)
+	return u
+}
+
+// UpdateLastSettledAt sets the "last_settled_at" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateLastSettledAt() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldLastSettledAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1804,6 +2013,104 @@ func (u *MissionOrderUpsertOne) SetDeviceID(v int64) *MissionOrderUpsertOne {
 func (u *MissionOrderUpsertOne) UpdateDeviceID() *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateDeviceID()
+	})
+}
+
+// SetTotalAmount sets the "total_amount" field.
+func (u *MissionOrderUpsertOne) SetTotalAmount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetTotalAmount(v)
+	})
+}
+
+// AddTotalAmount adds v to the "total_amount" field.
+func (u *MissionOrderUpsertOne) AddTotalAmount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddTotalAmount(v)
+	})
+}
+
+// UpdateTotalAmount sets the "total_amount" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateTotalAmount() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateTotalAmount()
+	})
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (u *MissionOrderUpsertOne) SetSettledAmount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetSettledAmount(v)
+	})
+}
+
+// AddSettledAmount adds v to the "settled_amount" field.
+func (u *MissionOrderUpsertOne) AddSettledAmount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddSettledAmount(v)
+	})
+}
+
+// UpdateSettledAmount sets the "settled_amount" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateSettledAmount() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateSettledAmount()
+	})
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (u *MissionOrderUpsertOne) SetSettledCount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetSettledCount(v)
+	})
+}
+
+// AddSettledCount adds v to the "settled_count" field.
+func (u *MissionOrderUpsertOne) AddSettledCount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddSettledCount(v)
+	})
+}
+
+// UpdateSettledCount sets the "settled_count" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateSettledCount() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateSettledCount()
+	})
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (u *MissionOrderUpsertOne) SetTotalSettleCount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetTotalSettleCount(v)
+	})
+}
+
+// AddTotalSettleCount adds v to the "total_settle_count" field.
+func (u *MissionOrderUpsertOne) AddTotalSettleCount(v int64) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddTotalSettleCount(v)
+	})
+}
+
+// UpdateTotalSettleCount sets the "total_settle_count" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateTotalSettleCount() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateTotalSettleCount()
+	})
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (u *MissionOrderUpsertOne) SetLastSettledAt(v time.Time) *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetLastSettledAt(v)
+	})
+}
+
+// UpdateLastSettledAt sets the "last_settled_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateLastSettledAt() *MissionOrderUpsertOne {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateLastSettledAt()
 	})
 }
 
@@ -2434,6 +2741,104 @@ func (u *MissionOrderUpsertBulk) SetDeviceID(v int64) *MissionOrderUpsertBulk {
 func (u *MissionOrderUpsertBulk) UpdateDeviceID() *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
 		s.UpdateDeviceID()
+	})
+}
+
+// SetTotalAmount sets the "total_amount" field.
+func (u *MissionOrderUpsertBulk) SetTotalAmount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetTotalAmount(v)
+	})
+}
+
+// AddTotalAmount adds v to the "total_amount" field.
+func (u *MissionOrderUpsertBulk) AddTotalAmount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddTotalAmount(v)
+	})
+}
+
+// UpdateTotalAmount sets the "total_amount" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateTotalAmount() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateTotalAmount()
+	})
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (u *MissionOrderUpsertBulk) SetSettledAmount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetSettledAmount(v)
+	})
+}
+
+// AddSettledAmount adds v to the "settled_amount" field.
+func (u *MissionOrderUpsertBulk) AddSettledAmount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddSettledAmount(v)
+	})
+}
+
+// UpdateSettledAmount sets the "settled_amount" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateSettledAmount() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateSettledAmount()
+	})
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (u *MissionOrderUpsertBulk) SetSettledCount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetSettledCount(v)
+	})
+}
+
+// AddSettledCount adds v to the "settled_count" field.
+func (u *MissionOrderUpsertBulk) AddSettledCount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddSettledCount(v)
+	})
+}
+
+// UpdateSettledCount sets the "settled_count" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateSettledCount() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateSettledCount()
+	})
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (u *MissionOrderUpsertBulk) SetTotalSettleCount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetTotalSettleCount(v)
+	})
+}
+
+// AddTotalSettleCount adds v to the "total_settle_count" field.
+func (u *MissionOrderUpsertBulk) AddTotalSettleCount(v int64) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.AddTotalSettleCount(v)
+	})
+}
+
+// UpdateTotalSettleCount sets the "total_settle_count" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateTotalSettleCount() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateTotalSettleCount()
+	})
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (u *MissionOrderUpsertBulk) SetLastSettledAt(v time.Time) *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.SetLastSettledAt(v)
+	})
+}
+
+// UpdateLastSettledAt sets the "last_settled_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateLastSettledAt() *MissionOrderUpsertBulk {
+	return u.Update(func(s *MissionOrderUpsert) {
+		s.UpdateLastSettledAt()
 	})
 }
 

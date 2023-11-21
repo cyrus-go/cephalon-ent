@@ -76,6 +76,16 @@ type MissionOrder struct {
 	MissionBatchNumber string `json:"mission_batch_number"`
 	// 关联的设备 id
 	DeviceID int64 `json:"device_id,string"`
+	// 订单总金额
+	TotalAmount int64 `json:"total_amount"`
+	// 已结算金额
+	SettledAmount int64 `json:"settled_amount"`
+	// 已结算次数
+	SettledCount int64 `json:"settled_count"`
+	// 总结算次数
+	TotalSettleCount int64 `json:"total_settle_count"`
+	// 上一次结算时间
+	LastSettledAt time.Time `json:"last_settled_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionOrderQuery when eager-loading is set.
 	Edges        MissionOrderEdges `json:"edges"`
@@ -195,11 +205,11 @@ func (*MissionOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case missionorder.FieldID, missionorder.FieldCreatedBy, missionorder.FieldUpdatedBy, missionorder.FieldMissionID, missionorder.FieldSymbolID, missionorder.FieldConsumeUserID, missionorder.FieldConsumeAmount, missionorder.FieldProduceUserID, missionorder.FieldProduceAmount, missionorder.FieldGasAmount, missionorder.FieldBuyDuration, missionorder.FieldMissionBatchID, missionorder.FieldDeviceID:
+		case missionorder.FieldID, missionorder.FieldCreatedBy, missionorder.FieldUpdatedBy, missionorder.FieldMissionID, missionorder.FieldSymbolID, missionorder.FieldConsumeUserID, missionorder.FieldConsumeAmount, missionorder.FieldProduceUserID, missionorder.FieldProduceAmount, missionorder.FieldGasAmount, missionorder.FieldBuyDuration, missionorder.FieldMissionBatchID, missionorder.FieldDeviceID, missionorder.FieldTotalAmount, missionorder.FieldSettledAmount, missionorder.FieldSettledCount, missionorder.FieldTotalSettleCount:
 			values[i] = new(sql.NullInt64)
 		case missionorder.FieldStatus, missionorder.FieldMissionType, missionorder.FieldMissionBillingType, missionorder.FieldCallWay, missionorder.FieldSerialNumber, missionorder.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
-		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt, missionorder.FieldExpiredWarningTime:
+		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt, missionorder.FieldExpiredWarningTime, missionorder.FieldLastSettledAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -381,6 +391,36 @@ func (mo *MissionOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mo.DeviceID = value.Int64
 			}
+		case missionorder.FieldTotalAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_amount", values[i])
+			} else if value.Valid {
+				mo.TotalAmount = value.Int64
+			}
+		case missionorder.FieldSettledAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field settled_amount", values[i])
+			} else if value.Valid {
+				mo.SettledAmount = value.Int64
+			}
+		case missionorder.FieldSettledCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field settled_count", values[i])
+			} else if value.Valid {
+				mo.SettledCount = value.Int64
+			}
+		case missionorder.FieldTotalSettleCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_settle_count", values[i])
+			} else if value.Valid {
+				mo.TotalSettleCount = value.Int64
+			}
+		case missionorder.FieldLastSettledAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_settled_at", values[i])
+			} else if value.Valid {
+				mo.LastSettledAt = value.Time
+			}
 		default:
 			mo.selectValues.Set(columns[i], values[i])
 		}
@@ -535,6 +575,21 @@ func (mo *MissionOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("device_id=")
 	builder.WriteString(fmt.Sprintf("%v", mo.DeviceID))
+	builder.WriteString(", ")
+	builder.WriteString("total_amount=")
+	builder.WriteString(fmt.Sprintf("%v", mo.TotalAmount))
+	builder.WriteString(", ")
+	builder.WriteString("settled_amount=")
+	builder.WriteString(fmt.Sprintf("%v", mo.SettledAmount))
+	builder.WriteString(", ")
+	builder.WriteString("settled_count=")
+	builder.WriteString(fmt.Sprintf("%v", mo.SettledCount))
+	builder.WriteString(", ")
+	builder.WriteString("total_settle_count=")
+	builder.WriteString(fmt.Sprintf("%v", mo.TotalSettleCount))
+	builder.WriteString(", ")
+	builder.WriteString("last_settled_at=")
+	builder.WriteString(mo.LastSettledAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

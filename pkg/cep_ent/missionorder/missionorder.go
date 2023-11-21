@@ -68,6 +68,16 @@ const (
 	FieldMissionBatchNumber = "mission_batch_number"
 	// FieldDeviceID holds the string denoting the device_id field in the database.
 	FieldDeviceID = "device_id"
+	// FieldTotalAmount holds the string denoting the total_amount field in the database.
+	FieldTotalAmount = "total_amount"
+	// FieldSettledAmount holds the string denoting the settled_amount field in the database.
+	FieldSettledAmount = "settled_amount"
+	// FieldSettledCount holds the string denoting the settled_count field in the database.
+	FieldSettledCount = "settled_count"
+	// FieldTotalSettleCount holds the string denoting the total_settle_count field in the database.
+	FieldTotalSettleCount = "total_settle_count"
+	// FieldLastSettledAt holds the string denoting the last_settled_at field in the database.
+	FieldLastSettledAt = "last_settled_at"
 	// EdgeConsumeUser holds the string denoting the consume_user edge name in mutations.
 	EdgeConsumeUser = "consume_user"
 	// EdgeProduceUser holds the string denoting the produce_user edge name in mutations.
@@ -164,6 +174,11 @@ var Columns = []string{
 	FieldMissionBatchID,
 	FieldMissionBatchNumber,
 	FieldDeviceID,
+	FieldTotalAmount,
+	FieldSettledAmount,
+	FieldSettledCount,
+	FieldTotalSettleCount,
+	FieldLastSettledAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -223,6 +238,16 @@ var (
 	DefaultMissionBatchNumber string
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
 	DefaultDeviceID int64
+	// DefaultTotalAmount holds the default value on creation for the "total_amount" field.
+	DefaultTotalAmount int64
+	// DefaultSettledAmount holds the default value on creation for the "settled_amount" field.
+	DefaultSettledAmount int64
+	// DefaultSettledCount holds the default value on creation for the "settled_count" field.
+	DefaultSettledCount int64
+	// DefaultTotalSettleCount holds the default value on creation for the "total_settle_count" field.
+	DefaultTotalSettleCount int64
+	// DefaultLastSettledAt holds the default value on creation for the "last_settled_at" field.
+	DefaultLastSettledAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -411,6 +436,31 @@ func ByMissionBatchNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByDeviceID orders the results by the device_id field.
 func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
+}
+
+// ByTotalAmount orders the results by the total_amount field.
+func ByTotalAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalAmount, opts...).ToFunc()
+}
+
+// BySettledAmount orders the results by the settled_amount field.
+func BySettledAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSettledAmount, opts...).ToFunc()
+}
+
+// BySettledCount orders the results by the settled_count field.
+func BySettledCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSettledCount, opts...).ToFunc()
+}
+
+// ByTotalSettleCount orders the results by the total_settle_count field.
+func ByTotalSettleCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalSettleCount, opts...).ToFunc()
+}
+
+// ByLastSettledAt orders the results by the last_settled_at field.
+func ByLastSettledAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastSettledAt, opts...).ToFunc()
 }
 
 // ByConsumeUserField orders the results by consume_user field.

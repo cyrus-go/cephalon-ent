@@ -438,6 +438,104 @@ func (mou *MissionOrderUpdate) SetNillableDeviceID(i *int64) *MissionOrderUpdate
 	return mou
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (mou *MissionOrderUpdate) SetTotalAmount(i int64) *MissionOrderUpdate {
+	mou.mutation.ResetTotalAmount()
+	mou.mutation.SetTotalAmount(i)
+	return mou
+}
+
+// SetNillableTotalAmount sets the "total_amount" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableTotalAmount(i *int64) *MissionOrderUpdate {
+	if i != nil {
+		mou.SetTotalAmount(*i)
+	}
+	return mou
+}
+
+// AddTotalAmount adds i to the "total_amount" field.
+func (mou *MissionOrderUpdate) AddTotalAmount(i int64) *MissionOrderUpdate {
+	mou.mutation.AddTotalAmount(i)
+	return mou
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (mou *MissionOrderUpdate) SetSettledAmount(i int64) *MissionOrderUpdate {
+	mou.mutation.ResetSettledAmount()
+	mou.mutation.SetSettledAmount(i)
+	return mou
+}
+
+// SetNillableSettledAmount sets the "settled_amount" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableSettledAmount(i *int64) *MissionOrderUpdate {
+	if i != nil {
+		mou.SetSettledAmount(*i)
+	}
+	return mou
+}
+
+// AddSettledAmount adds i to the "settled_amount" field.
+func (mou *MissionOrderUpdate) AddSettledAmount(i int64) *MissionOrderUpdate {
+	mou.mutation.AddSettledAmount(i)
+	return mou
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (mou *MissionOrderUpdate) SetSettledCount(i int64) *MissionOrderUpdate {
+	mou.mutation.ResetSettledCount()
+	mou.mutation.SetSettledCount(i)
+	return mou
+}
+
+// SetNillableSettledCount sets the "settled_count" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableSettledCount(i *int64) *MissionOrderUpdate {
+	if i != nil {
+		mou.SetSettledCount(*i)
+	}
+	return mou
+}
+
+// AddSettledCount adds i to the "settled_count" field.
+func (mou *MissionOrderUpdate) AddSettledCount(i int64) *MissionOrderUpdate {
+	mou.mutation.AddSettledCount(i)
+	return mou
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (mou *MissionOrderUpdate) SetTotalSettleCount(i int64) *MissionOrderUpdate {
+	mou.mutation.ResetTotalSettleCount()
+	mou.mutation.SetTotalSettleCount(i)
+	return mou
+}
+
+// SetNillableTotalSettleCount sets the "total_settle_count" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableTotalSettleCount(i *int64) *MissionOrderUpdate {
+	if i != nil {
+		mou.SetTotalSettleCount(*i)
+	}
+	return mou
+}
+
+// AddTotalSettleCount adds i to the "total_settle_count" field.
+func (mou *MissionOrderUpdate) AddTotalSettleCount(i int64) *MissionOrderUpdate {
+	mou.mutation.AddTotalSettleCount(i)
+	return mou
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (mou *MissionOrderUpdate) SetLastSettledAt(t time.Time) *MissionOrderUpdate {
+	mou.mutation.SetLastSettledAt(t)
+	return mou
+}
+
+// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableLastSettledAt(t *time.Time) *MissionOrderUpdate {
+	if t != nil {
+		mou.SetLastSettledAt(*t)
+	}
+	return mou
+}
+
 // SetConsumeUser sets the "consume_user" edge to the User entity.
 func (mou *MissionOrderUpdate) SetConsumeUser(u *User) *MissionOrderUpdate {
 	return mou.SetConsumeUserID(u.ID)
@@ -725,6 +823,33 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mou.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
+	}
+	if value, ok := mou.mutation.TotalAmount(); ok {
+		_spec.SetField(missionorder.FieldTotalAmount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.AddedTotalAmount(); ok {
+		_spec.AddField(missionorder.FieldTotalAmount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.SettledAmount(); ok {
+		_spec.SetField(missionorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.AddedSettledAmount(); ok {
+		_spec.AddField(missionorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.SettledCount(); ok {
+		_spec.SetField(missionorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.AddedSettledCount(); ok {
+		_spec.AddField(missionorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.TotalSettleCount(); ok {
+		_spec.SetField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.AddedTotalSettleCount(); ok {
+		_spec.AddField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := mou.mutation.LastSettledAt(); ok {
+		_spec.SetField(missionorder.FieldLastSettledAt, field.TypeTime, value)
 	}
 	if mou.mutation.ConsumeUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1369,6 +1494,104 @@ func (mouo *MissionOrderUpdateOne) SetNillableDeviceID(i *int64) *MissionOrderUp
 	return mouo
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (mouo *MissionOrderUpdateOne) SetTotalAmount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.ResetTotalAmount()
+	mouo.mutation.SetTotalAmount(i)
+	return mouo
+}
+
+// SetNillableTotalAmount sets the "total_amount" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableTotalAmount(i *int64) *MissionOrderUpdateOne {
+	if i != nil {
+		mouo.SetTotalAmount(*i)
+	}
+	return mouo
+}
+
+// AddTotalAmount adds i to the "total_amount" field.
+func (mouo *MissionOrderUpdateOne) AddTotalAmount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.AddTotalAmount(i)
+	return mouo
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (mouo *MissionOrderUpdateOne) SetSettledAmount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.ResetSettledAmount()
+	mouo.mutation.SetSettledAmount(i)
+	return mouo
+}
+
+// SetNillableSettledAmount sets the "settled_amount" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableSettledAmount(i *int64) *MissionOrderUpdateOne {
+	if i != nil {
+		mouo.SetSettledAmount(*i)
+	}
+	return mouo
+}
+
+// AddSettledAmount adds i to the "settled_amount" field.
+func (mouo *MissionOrderUpdateOne) AddSettledAmount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.AddSettledAmount(i)
+	return mouo
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (mouo *MissionOrderUpdateOne) SetSettledCount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.ResetSettledCount()
+	mouo.mutation.SetSettledCount(i)
+	return mouo
+}
+
+// SetNillableSettledCount sets the "settled_count" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableSettledCount(i *int64) *MissionOrderUpdateOne {
+	if i != nil {
+		mouo.SetSettledCount(*i)
+	}
+	return mouo
+}
+
+// AddSettledCount adds i to the "settled_count" field.
+func (mouo *MissionOrderUpdateOne) AddSettledCount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.AddSettledCount(i)
+	return mouo
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (mouo *MissionOrderUpdateOne) SetTotalSettleCount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.ResetTotalSettleCount()
+	mouo.mutation.SetTotalSettleCount(i)
+	return mouo
+}
+
+// SetNillableTotalSettleCount sets the "total_settle_count" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableTotalSettleCount(i *int64) *MissionOrderUpdateOne {
+	if i != nil {
+		mouo.SetTotalSettleCount(*i)
+	}
+	return mouo
+}
+
+// AddTotalSettleCount adds i to the "total_settle_count" field.
+func (mouo *MissionOrderUpdateOne) AddTotalSettleCount(i int64) *MissionOrderUpdateOne {
+	mouo.mutation.AddTotalSettleCount(i)
+	return mouo
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (mouo *MissionOrderUpdateOne) SetLastSettledAt(t time.Time) *MissionOrderUpdateOne {
+	mouo.mutation.SetLastSettledAt(t)
+	return mouo
+}
+
+// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableLastSettledAt(t *time.Time) *MissionOrderUpdateOne {
+	if t != nil {
+		mouo.SetLastSettledAt(*t)
+	}
+	return mouo
+}
+
 // SetConsumeUser sets the "consume_user" edge to the User entity.
 func (mouo *MissionOrderUpdateOne) SetConsumeUser(u *User) *MissionOrderUpdateOne {
 	return mouo.SetConsumeUserID(u.ID)
@@ -1686,6 +1909,33 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 	}
 	if value, ok := mouo.mutation.MissionBatchNumber(); ok {
 		_spec.SetField(missionorder.FieldMissionBatchNumber, field.TypeString, value)
+	}
+	if value, ok := mouo.mutation.TotalAmount(); ok {
+		_spec.SetField(missionorder.FieldTotalAmount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.AddedTotalAmount(); ok {
+		_spec.AddField(missionorder.FieldTotalAmount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.SettledAmount(); ok {
+		_spec.SetField(missionorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.AddedSettledAmount(); ok {
+		_spec.AddField(missionorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.SettledCount(); ok {
+		_spec.SetField(missionorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.AddedSettledCount(); ok {
+		_spec.AddField(missionorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.TotalSettleCount(); ok {
+		_spec.SetField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.AddedTotalSettleCount(); ok {
+		_spec.AddField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := mouo.mutation.LastSettledAt(); ok {
+		_spec.SetField(missionorder.FieldLastSettledAt, field.TypeTime, value)
 	}
 	if mouo.mutation.ConsumeUserCleared() {
 		edge := &sqlgraph.EdgeSpec{

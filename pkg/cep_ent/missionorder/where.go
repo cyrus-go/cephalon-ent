@@ -166,6 +166,31 @@ func DeviceID(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldDeviceID, v))
 }
 
+// TotalAmount applies equality check predicate on the "total_amount" field. It's identical to TotalAmountEQ.
+func TotalAmount(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldTotalAmount, v))
+}
+
+// SettledAmount applies equality check predicate on the "settled_amount" field. It's identical to SettledAmountEQ.
+func SettledAmount(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldSettledAmount, v))
+}
+
+// SettledCount applies equality check predicate on the "settled_count" field. It's identical to SettledCountEQ.
+func SettledCount(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldSettledCount, v))
+}
+
+// TotalSettleCount applies equality check predicate on the "total_settle_count" field. It's identical to TotalSettleCountEQ.
+func TotalSettleCount(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldTotalSettleCount, v))
+}
+
+// LastSettledAt applies equality check predicate on the "last_settled_at" field. It's identical to LastSettledAtEQ.
+func LastSettledAt(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldLastSettledAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -1124,6 +1149,206 @@ func DeviceIDIn(vs ...int64) predicate.MissionOrder {
 // DeviceIDNotIn applies the NotIn predicate on the "device_id" field.
 func DeviceIDNotIn(vs ...int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldNotIn(FieldDeviceID, vs...))
+}
+
+// TotalAmountEQ applies the EQ predicate on the "total_amount" field.
+func TotalAmountEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldTotalAmount, v))
+}
+
+// TotalAmountNEQ applies the NEQ predicate on the "total_amount" field.
+func TotalAmountNEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldTotalAmount, v))
+}
+
+// TotalAmountIn applies the In predicate on the "total_amount" field.
+func TotalAmountIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldTotalAmount, vs...))
+}
+
+// TotalAmountNotIn applies the NotIn predicate on the "total_amount" field.
+func TotalAmountNotIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldTotalAmount, vs...))
+}
+
+// TotalAmountGT applies the GT predicate on the "total_amount" field.
+func TotalAmountGT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldTotalAmount, v))
+}
+
+// TotalAmountGTE applies the GTE predicate on the "total_amount" field.
+func TotalAmountGTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldTotalAmount, v))
+}
+
+// TotalAmountLT applies the LT predicate on the "total_amount" field.
+func TotalAmountLT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldTotalAmount, v))
+}
+
+// TotalAmountLTE applies the LTE predicate on the "total_amount" field.
+func TotalAmountLTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldTotalAmount, v))
+}
+
+// SettledAmountEQ applies the EQ predicate on the "settled_amount" field.
+func SettledAmountEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldSettledAmount, v))
+}
+
+// SettledAmountNEQ applies the NEQ predicate on the "settled_amount" field.
+func SettledAmountNEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldSettledAmount, v))
+}
+
+// SettledAmountIn applies the In predicate on the "settled_amount" field.
+func SettledAmountIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldSettledAmount, vs...))
+}
+
+// SettledAmountNotIn applies the NotIn predicate on the "settled_amount" field.
+func SettledAmountNotIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldSettledAmount, vs...))
+}
+
+// SettledAmountGT applies the GT predicate on the "settled_amount" field.
+func SettledAmountGT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldSettledAmount, v))
+}
+
+// SettledAmountGTE applies the GTE predicate on the "settled_amount" field.
+func SettledAmountGTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldSettledAmount, v))
+}
+
+// SettledAmountLT applies the LT predicate on the "settled_amount" field.
+func SettledAmountLT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldSettledAmount, v))
+}
+
+// SettledAmountLTE applies the LTE predicate on the "settled_amount" field.
+func SettledAmountLTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldSettledAmount, v))
+}
+
+// SettledCountEQ applies the EQ predicate on the "settled_count" field.
+func SettledCountEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldSettledCount, v))
+}
+
+// SettledCountNEQ applies the NEQ predicate on the "settled_count" field.
+func SettledCountNEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldSettledCount, v))
+}
+
+// SettledCountIn applies the In predicate on the "settled_count" field.
+func SettledCountIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldSettledCount, vs...))
+}
+
+// SettledCountNotIn applies the NotIn predicate on the "settled_count" field.
+func SettledCountNotIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldSettledCount, vs...))
+}
+
+// SettledCountGT applies the GT predicate on the "settled_count" field.
+func SettledCountGT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldSettledCount, v))
+}
+
+// SettledCountGTE applies the GTE predicate on the "settled_count" field.
+func SettledCountGTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldSettledCount, v))
+}
+
+// SettledCountLT applies the LT predicate on the "settled_count" field.
+func SettledCountLT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldSettledCount, v))
+}
+
+// SettledCountLTE applies the LTE predicate on the "settled_count" field.
+func SettledCountLTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldSettledCount, v))
+}
+
+// TotalSettleCountEQ applies the EQ predicate on the "total_settle_count" field.
+func TotalSettleCountEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountNEQ applies the NEQ predicate on the "total_settle_count" field.
+func TotalSettleCountNEQ(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountIn applies the In predicate on the "total_settle_count" field.
+func TotalSettleCountIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldTotalSettleCount, vs...))
+}
+
+// TotalSettleCountNotIn applies the NotIn predicate on the "total_settle_count" field.
+func TotalSettleCountNotIn(vs ...int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldTotalSettleCount, vs...))
+}
+
+// TotalSettleCountGT applies the GT predicate on the "total_settle_count" field.
+func TotalSettleCountGT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountGTE applies the GTE predicate on the "total_settle_count" field.
+func TotalSettleCountGTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountLT applies the LT predicate on the "total_settle_count" field.
+func TotalSettleCountLT(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountLTE applies the LTE predicate on the "total_settle_count" field.
+func TotalSettleCountLTE(v int64) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldTotalSettleCount, v))
+}
+
+// LastSettledAtEQ applies the EQ predicate on the "last_settled_at" field.
+func LastSettledAtEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldLastSettledAt, v))
+}
+
+// LastSettledAtNEQ applies the NEQ predicate on the "last_settled_at" field.
+func LastSettledAtNEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldLastSettledAt, v))
+}
+
+// LastSettledAtIn applies the In predicate on the "last_settled_at" field.
+func LastSettledAtIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldLastSettledAt, vs...))
+}
+
+// LastSettledAtNotIn applies the NotIn predicate on the "last_settled_at" field.
+func LastSettledAtNotIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldLastSettledAt, vs...))
+}
+
+// LastSettledAtGT applies the GT predicate on the "last_settled_at" field.
+func LastSettledAtGT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldLastSettledAt, v))
+}
+
+// LastSettledAtGTE applies the GTE predicate on the "last_settled_at" field.
+func LastSettledAtGTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldLastSettledAt, v))
+}
+
+// LastSettledAtLT applies the LT predicate on the "last_settled_at" field.
+func LastSettledAtLT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldLastSettledAt, v))
+}
+
+// LastSettledAtLTE applies the LTE predicate on the "last_settled_at" field.
+func LastSettledAtLTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldLastSettledAt, v))
 }
 
 // HasConsumeUser applies the HasEdge predicate on the "consume_user" edge.

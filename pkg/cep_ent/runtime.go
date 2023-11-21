@@ -1437,6 +1437,26 @@ func init() {
 	missionorderDescDeviceID := missionorderFields[20].Descriptor()
 	// missionorder.DefaultDeviceID holds the default value on creation for the device_id field.
 	missionorder.DefaultDeviceID = missionorderDescDeviceID.Default.(int64)
+	// missionorderDescTotalAmount is the schema descriptor for total_amount field.
+	missionorderDescTotalAmount := missionorderFields[21].Descriptor()
+	// missionorder.DefaultTotalAmount holds the default value on creation for the total_amount field.
+	missionorder.DefaultTotalAmount = missionorderDescTotalAmount.Default.(int64)
+	// missionorderDescSettledAmount is the schema descriptor for settled_amount field.
+	missionorderDescSettledAmount := missionorderFields[22].Descriptor()
+	// missionorder.DefaultSettledAmount holds the default value on creation for the settled_amount field.
+	missionorder.DefaultSettledAmount = missionorderDescSettledAmount.Default.(int64)
+	// missionorderDescSettledCount is the schema descriptor for settled_count field.
+	missionorderDescSettledCount := missionorderFields[23].Descriptor()
+	// missionorder.DefaultSettledCount holds the default value on creation for the settled_count field.
+	missionorder.DefaultSettledCount = missionorderDescSettledCount.Default.(int64)
+	// missionorderDescTotalSettleCount is the schema descriptor for total_settle_count field.
+	missionorderDescTotalSettleCount := missionorderFields[24].Descriptor()
+	// missionorder.DefaultTotalSettleCount holds the default value on creation for the total_settle_count field.
+	missionorder.DefaultTotalSettleCount = missionorderDescTotalSettleCount.Default.(int64)
+	// missionorderDescLastSettledAt is the schema descriptor for last_settled_at field.
+	missionorderDescLastSettledAt := missionorderFields[25].Descriptor()
+	// missionorder.DefaultLastSettledAt holds the default value on creation for the last_settled_at field.
+	missionorder.DefaultLastSettledAt = missionorderDescLastSettledAt.Default.(time.Time)
 	// missionorderDescID is the schema descriptor for id field.
 	missionorderDescID := missionorderMixinFields0[0].Descriptor()
 	// missionorder.DefaultID holds the default value on creation for the id field.

@@ -30283,54 +30283,63 @@ func (m *MissionKindMutation) ResetEdge(name string) error {
 // MissionOrderMutation represents an operation that mutates the MissionOrder nodes in the graph.
 type MissionOrderMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	created_by           *int64
-	addcreated_by        *int64
-	updated_by           *int64
-	addupdated_by        *int64
-	created_at           *time.Time
-	updated_at           *time.Time
-	deleted_at           *time.Time
-	status               *enums.MissionOrderStatus
-	consume_amount       *int64
-	addconsume_amount    *int64
-	produce_amount       *int64
-	addproduce_amount    *int64
-	gas_amount           *int64
-	addgas_amount        *int64
-	mission_type         *enums.MissionType
-	mission_billing_type *enums.MissionBillingType
-	call_way             *enums.MissionCallWay
-	serial_number        *string
-	started_at           *time.Time
-	finished_at          *time.Time
-	buy_duration         *int64
-	addbuy_duration      *int64
-	plan_started_at      *time.Time
-	plan_finished_at     *time.Time
-	expired_warning_time *time.Time
-	mission_batch_number *string
-	clearedFields        map[string]struct{}
-	consume_user         *int64
-	clearedconsume_user  bool
-	produce_user         *int64
-	clearedproduce_user  bool
-	symbol               *int64
-	clearedsymbol        bool
-	bills                map[int64]struct{}
-	removedbills         map[int64]struct{}
-	clearedbills         bool
-	mission_batch        *int64
-	clearedmission_batch bool
-	mission              *int64
-	clearedmission       bool
-	device               *int64
-	cleareddevice        bool
-	done                 bool
-	oldValue             func(context.Context) (*MissionOrder, error)
-	predicates           []predicate.MissionOrder
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	status                *enums.MissionOrderStatus
+	consume_amount        *int64
+	addconsume_amount     *int64
+	produce_amount        *int64
+	addproduce_amount     *int64
+	gas_amount            *int64
+	addgas_amount         *int64
+	mission_type          *enums.MissionType
+	mission_billing_type  *enums.MissionBillingType
+	call_way              *enums.MissionCallWay
+	serial_number         *string
+	started_at            *time.Time
+	finished_at           *time.Time
+	buy_duration          *int64
+	addbuy_duration       *int64
+	plan_started_at       *time.Time
+	plan_finished_at      *time.Time
+	expired_warning_time  *time.Time
+	mission_batch_number  *string
+	total_amount          *int64
+	addtotal_amount       *int64
+	settled_amount        *int64
+	addsettled_amount     *int64
+	settled_count         *int64
+	addsettled_count      *int64
+	total_settle_count    *int64
+	addtotal_settle_count *int64
+	last_settled_at       *time.Time
+	clearedFields         map[string]struct{}
+	consume_user          *int64
+	clearedconsume_user   bool
+	produce_user          *int64
+	clearedproduce_user   bool
+	symbol                *int64
+	clearedsymbol         bool
+	bills                 map[int64]struct{}
+	removedbills          map[int64]struct{}
+	clearedbills          bool
+	mission_batch         *int64
+	clearedmission_batch  bool
+	mission               *int64
+	clearedmission        bool
+	device                *int64
+	cleareddevice         bool
+	done                  bool
+	oldValue              func(context.Context) (*MissionOrder, error)
+	predicates            []predicate.MissionOrder
 }
 
 var _ ent.Mutation = (*MissionOrderMutation)(nil)
@@ -31532,6 +31541,266 @@ func (m *MissionOrderMutation) ResetDeviceID() {
 	m.device = nil
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (m *MissionOrderMutation) SetTotalAmount(i int64) {
+	m.total_amount = &i
+	m.addtotal_amount = nil
+}
+
+// TotalAmount returns the value of the "total_amount" field in the mutation.
+func (m *MissionOrderMutation) TotalAmount() (r int64, exists bool) {
+	v := m.total_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalAmount returns the old "total_amount" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldTotalAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalAmount: %w", err)
+	}
+	return oldValue.TotalAmount, nil
+}
+
+// AddTotalAmount adds i to the "total_amount" field.
+func (m *MissionOrderMutation) AddTotalAmount(i int64) {
+	if m.addtotal_amount != nil {
+		*m.addtotal_amount += i
+	} else {
+		m.addtotal_amount = &i
+	}
+}
+
+// AddedTotalAmount returns the value that was added to the "total_amount" field in this mutation.
+func (m *MissionOrderMutation) AddedTotalAmount() (r int64, exists bool) {
+	v := m.addtotal_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalAmount resets all changes to the "total_amount" field.
+func (m *MissionOrderMutation) ResetTotalAmount() {
+	m.total_amount = nil
+	m.addtotal_amount = nil
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (m *MissionOrderMutation) SetSettledAmount(i int64) {
+	m.settled_amount = &i
+	m.addsettled_amount = nil
+}
+
+// SettledAmount returns the value of the "settled_amount" field in the mutation.
+func (m *MissionOrderMutation) SettledAmount() (r int64, exists bool) {
+	v := m.settled_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettledAmount returns the old "settled_amount" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldSettledAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettledAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettledAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettledAmount: %w", err)
+	}
+	return oldValue.SettledAmount, nil
+}
+
+// AddSettledAmount adds i to the "settled_amount" field.
+func (m *MissionOrderMutation) AddSettledAmount(i int64) {
+	if m.addsettled_amount != nil {
+		*m.addsettled_amount += i
+	} else {
+		m.addsettled_amount = &i
+	}
+}
+
+// AddedSettledAmount returns the value that was added to the "settled_amount" field in this mutation.
+func (m *MissionOrderMutation) AddedSettledAmount() (r int64, exists bool) {
+	v := m.addsettled_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSettledAmount resets all changes to the "settled_amount" field.
+func (m *MissionOrderMutation) ResetSettledAmount() {
+	m.settled_amount = nil
+	m.addsettled_amount = nil
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (m *MissionOrderMutation) SetSettledCount(i int64) {
+	m.settled_count = &i
+	m.addsettled_count = nil
+}
+
+// SettledCount returns the value of the "settled_count" field in the mutation.
+func (m *MissionOrderMutation) SettledCount() (r int64, exists bool) {
+	v := m.settled_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettledCount returns the old "settled_count" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldSettledCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettledCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettledCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettledCount: %w", err)
+	}
+	return oldValue.SettledCount, nil
+}
+
+// AddSettledCount adds i to the "settled_count" field.
+func (m *MissionOrderMutation) AddSettledCount(i int64) {
+	if m.addsettled_count != nil {
+		*m.addsettled_count += i
+	} else {
+		m.addsettled_count = &i
+	}
+}
+
+// AddedSettledCount returns the value that was added to the "settled_count" field in this mutation.
+func (m *MissionOrderMutation) AddedSettledCount() (r int64, exists bool) {
+	v := m.addsettled_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSettledCount resets all changes to the "settled_count" field.
+func (m *MissionOrderMutation) ResetSettledCount() {
+	m.settled_count = nil
+	m.addsettled_count = nil
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (m *MissionOrderMutation) SetTotalSettleCount(i int64) {
+	m.total_settle_count = &i
+	m.addtotal_settle_count = nil
+}
+
+// TotalSettleCount returns the value of the "total_settle_count" field in the mutation.
+func (m *MissionOrderMutation) TotalSettleCount() (r int64, exists bool) {
+	v := m.total_settle_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalSettleCount returns the old "total_settle_count" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldTotalSettleCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalSettleCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalSettleCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalSettleCount: %w", err)
+	}
+	return oldValue.TotalSettleCount, nil
+}
+
+// AddTotalSettleCount adds i to the "total_settle_count" field.
+func (m *MissionOrderMutation) AddTotalSettleCount(i int64) {
+	if m.addtotal_settle_count != nil {
+		*m.addtotal_settle_count += i
+	} else {
+		m.addtotal_settle_count = &i
+	}
+}
+
+// AddedTotalSettleCount returns the value that was added to the "total_settle_count" field in this mutation.
+func (m *MissionOrderMutation) AddedTotalSettleCount() (r int64, exists bool) {
+	v := m.addtotal_settle_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalSettleCount resets all changes to the "total_settle_count" field.
+func (m *MissionOrderMutation) ResetTotalSettleCount() {
+	m.total_settle_count = nil
+	m.addtotal_settle_count = nil
+}
+
+// SetLastSettledAt sets the "last_settled_at" field.
+func (m *MissionOrderMutation) SetLastSettledAt(t time.Time) {
+	m.last_settled_at = &t
+}
+
+// LastSettledAt returns the value of the "last_settled_at" field in the mutation.
+func (m *MissionOrderMutation) LastSettledAt() (r time.Time, exists bool) {
+	v := m.last_settled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastSettledAt returns the old "last_settled_at" field's value of the MissionOrder entity.
+// If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionOrderMutation) OldLastSettledAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastSettledAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastSettledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastSettledAt: %w", err)
+	}
+	return oldValue.LastSettledAt, nil
+}
+
+// ResetLastSettledAt resets all changes to the "last_settled_at" field.
+func (m *MissionOrderMutation) ResetLastSettledAt() {
+	m.last_settled_at = nil
+}
+
 // ClearConsumeUser clears the "consume_user" edge to the User entity.
 func (m *MissionOrderMutation) ClearConsumeUser() {
 	m.clearedconsume_user = true
@@ -31782,7 +32051,7 @@ func (m *MissionOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionOrderMutation) Fields() []string {
-	fields := make([]string, 0, 26)
+	fields := make([]string, 0, 31)
 	if m.created_by != nil {
 		fields = append(fields, missionorder.FieldCreatedBy)
 	}
@@ -31861,6 +32130,21 @@ func (m *MissionOrderMutation) Fields() []string {
 	if m.device != nil {
 		fields = append(fields, missionorder.FieldDeviceID)
 	}
+	if m.total_amount != nil {
+		fields = append(fields, missionorder.FieldTotalAmount)
+	}
+	if m.settled_amount != nil {
+		fields = append(fields, missionorder.FieldSettledAmount)
+	}
+	if m.settled_count != nil {
+		fields = append(fields, missionorder.FieldSettledCount)
+	}
+	if m.total_settle_count != nil {
+		fields = append(fields, missionorder.FieldTotalSettleCount)
+	}
+	if m.last_settled_at != nil {
+		fields = append(fields, missionorder.FieldLastSettledAt)
+	}
 	return fields
 }
 
@@ -31921,6 +32205,16 @@ func (m *MissionOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionBatchNumber()
 	case missionorder.FieldDeviceID:
 		return m.DeviceID()
+	case missionorder.FieldTotalAmount:
+		return m.TotalAmount()
+	case missionorder.FieldSettledAmount:
+		return m.SettledAmount()
+	case missionorder.FieldSettledCount:
+		return m.SettledCount()
+	case missionorder.FieldTotalSettleCount:
+		return m.TotalSettleCount()
+	case missionorder.FieldLastSettledAt:
+		return m.LastSettledAt()
 	}
 	return nil, false
 }
@@ -31982,6 +32276,16 @@ func (m *MissionOrderMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldMissionBatchNumber(ctx)
 	case missionorder.FieldDeviceID:
 		return m.OldDeviceID(ctx)
+	case missionorder.FieldTotalAmount:
+		return m.OldTotalAmount(ctx)
+	case missionorder.FieldSettledAmount:
+		return m.OldSettledAmount(ctx)
+	case missionorder.FieldSettledCount:
+		return m.OldSettledCount(ctx)
+	case missionorder.FieldTotalSettleCount:
+		return m.OldTotalSettleCount(ctx)
+	case missionorder.FieldLastSettledAt:
+		return m.OldLastSettledAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown MissionOrder field %s", name)
 }
@@ -32173,6 +32477,41 @@ func (m *MissionOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeviceID(v)
 		return nil
+	case missionorder.FieldTotalAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalAmount(v)
+		return nil
+	case missionorder.FieldSettledAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettledAmount(v)
+		return nil
+	case missionorder.FieldSettledCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettledCount(v)
+		return nil
+	case missionorder.FieldTotalSettleCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalSettleCount(v)
+		return nil
+	case missionorder.FieldLastSettledAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastSettledAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder field %s", name)
 }
@@ -32199,6 +32538,18 @@ func (m *MissionOrderMutation) AddedFields() []string {
 	if m.addbuy_duration != nil {
 		fields = append(fields, missionorder.FieldBuyDuration)
 	}
+	if m.addtotal_amount != nil {
+		fields = append(fields, missionorder.FieldTotalAmount)
+	}
+	if m.addsettled_amount != nil {
+		fields = append(fields, missionorder.FieldSettledAmount)
+	}
+	if m.addsettled_count != nil {
+		fields = append(fields, missionorder.FieldSettledCount)
+	}
+	if m.addtotal_settle_count != nil {
+		fields = append(fields, missionorder.FieldTotalSettleCount)
+	}
 	return fields
 }
 
@@ -32219,6 +32570,14 @@ func (m *MissionOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedGasAmount()
 	case missionorder.FieldBuyDuration:
 		return m.AddedBuyDuration()
+	case missionorder.FieldTotalAmount:
+		return m.AddedTotalAmount()
+	case missionorder.FieldSettledAmount:
+		return m.AddedSettledAmount()
+	case missionorder.FieldSettledCount:
+		return m.AddedSettledCount()
+	case missionorder.FieldTotalSettleCount:
+		return m.AddedTotalSettleCount()
 	}
 	return nil, false
 }
@@ -32269,6 +32628,34 @@ func (m *MissionOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBuyDuration(v)
+		return nil
+	case missionorder.FieldTotalAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalAmount(v)
+		return nil
+	case missionorder.FieldSettledAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSettledAmount(v)
+		return nil
+	case missionorder.FieldSettledCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSettledCount(v)
+		return nil
+	case missionorder.FieldTotalSettleCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalSettleCount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder numeric field %s", name)
@@ -32395,6 +32782,21 @@ func (m *MissionOrderMutation) ResetField(name string) error {
 		return nil
 	case missionorder.FieldDeviceID:
 		m.ResetDeviceID()
+		return nil
+	case missionorder.FieldTotalAmount:
+		m.ResetTotalAmount()
+		return nil
+	case missionorder.FieldSettledAmount:
+		m.ResetSettledAmount()
+		return nil
+	case missionorder.FieldSettledCount:
+		m.ResetSettledCount()
+		return nil
+	case missionorder.FieldTotalSettleCount:
+		m.ResetTotalSettleCount()
+		return nil
+	case missionorder.FieldLastSettledAt:
+		m.ResetLastSettledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder field %s", name)
