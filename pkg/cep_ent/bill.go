@@ -42,6 +42,8 @@ type Bill struct {
 	Way enums.BillWay `json:"way"`
 	// 外键币种 id
 	SymbolID int64 `json:"symbol_id,string"`
+	// 外键分润币种 id
+	ProfitSymbolID int64 `json:"profit_symbol_id,string"`
 	// 消耗多少货币金额
 	Amount int64 `json:"amount"`
 	// 流水目标钱包 id
@@ -168,7 +170,7 @@ func (*Bill) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case bill.FieldID, bill.FieldCreatedBy, bill.FieldUpdatedBy, bill.FieldOrderID, bill.FieldSymbolID, bill.FieldAmount, bill.FieldTargetUserID, bill.FieldTargetBeforeAmount, bill.FieldTargetAfterAmount, bill.FieldSourceUserID, bill.FieldSourceBeforeAmount, bill.FieldSourceAfterAmount, bill.FieldInviteID:
+		case bill.FieldID, bill.FieldCreatedBy, bill.FieldUpdatedBy, bill.FieldOrderID, bill.FieldSymbolID, bill.FieldProfitSymbolID, bill.FieldAmount, bill.FieldTargetUserID, bill.FieldTargetBeforeAmount, bill.FieldTargetAfterAmount, bill.FieldSourceUserID, bill.FieldSourceBeforeAmount, bill.FieldSourceAfterAmount, bill.FieldInviteID:
 			values[i] = new(sql.NullInt64)
 		case bill.FieldType, bill.FieldWay, bill.FieldSerialNumber:
 			values[i] = new(sql.NullString)
@@ -248,6 +250,12 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
 			} else if value.Valid {
 				b.SymbolID = value.Int64
+			}
+		case bill.FieldProfitSymbolID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field profit_symbol_id", values[i])
+			} else if value.Valid {
+				b.ProfitSymbolID = value.Int64
 			}
 		case bill.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -395,6 +403,9 @@ func (b *Bill) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("symbol_id=")
 	builder.WriteString(fmt.Sprintf("%v", b.SymbolID))
+	builder.WriteString(", ")
+	builder.WriteString("profit_symbol_id=")
+	builder.WriteString(fmt.Sprintf("%v", b.ProfitSymbolID))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", b.Amount))

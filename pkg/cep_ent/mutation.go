@@ -123,6 +123,8 @@ type BillMutation struct {
 	deleted_at              *time.Time
 	_type                   *enums.BillType
 	way                     *enums.BillWay
+	profit_symbol_id        *int64
+	addprofit_symbol_id     *int64
 	amount                  *int64
 	addamount               *int64
 	target_before_amount    *int64
@@ -631,6 +633,62 @@ func (m *BillMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
 // ResetSymbolID resets all changes to the "symbol_id" field.
 func (m *BillMutation) ResetSymbolID() {
 	m.symbol = nil
+}
+
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (m *BillMutation) SetProfitSymbolID(i int64) {
+	m.profit_symbol_id = &i
+	m.addprofit_symbol_id = nil
+}
+
+// ProfitSymbolID returns the value of the "profit_symbol_id" field in the mutation.
+func (m *BillMutation) ProfitSymbolID() (r int64, exists bool) {
+	v := m.profit_symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProfitSymbolID returns the old "profit_symbol_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldProfitSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProfitSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProfitSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProfitSymbolID: %w", err)
+	}
+	return oldValue.ProfitSymbolID, nil
+}
+
+// AddProfitSymbolID adds i to the "profit_symbol_id" field.
+func (m *BillMutation) AddProfitSymbolID(i int64) {
+	if m.addprofit_symbol_id != nil {
+		*m.addprofit_symbol_id += i
+	} else {
+		m.addprofit_symbol_id = &i
+	}
+}
+
+// AddedProfitSymbolID returns the value that was added to the "profit_symbol_id" field in this mutation.
+func (m *BillMutation) AddedProfitSymbolID() (r int64, exists bool) {
+	v := m.addprofit_symbol_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProfitSymbolID resets all changes to the "profit_symbol_id" field.
+func (m *BillMutation) ResetProfitSymbolID() {
+	m.profit_symbol_id = nil
+	m.addprofit_symbol_id = nil
 }
 
 // SetAmount sets the "amount" field.
@@ -1279,7 +1337,7 @@ func (m *BillMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BillMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_by != nil {
 		fields = append(fields, bill.FieldCreatedBy)
 	}
@@ -1306,6 +1364,9 @@ func (m *BillMutation) Fields() []string {
 	}
 	if m.symbol != nil {
 		fields = append(fields, bill.FieldSymbolID)
+	}
+	if m.profit_symbol_id != nil {
+		fields = append(fields, bill.FieldProfitSymbolID)
 	}
 	if m.amount != nil {
 		fields = append(fields, bill.FieldAmount)
@@ -1360,6 +1421,8 @@ func (m *BillMutation) Field(name string) (ent.Value, bool) {
 		return m.Way()
 	case bill.FieldSymbolID:
 		return m.SymbolID()
+	case bill.FieldProfitSymbolID:
+		return m.ProfitSymbolID()
 	case bill.FieldAmount:
 		return m.Amount()
 	case bill.FieldTargetUserID:
@@ -1405,6 +1468,8 @@ func (m *BillMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldWay(ctx)
 	case bill.FieldSymbolID:
 		return m.OldSymbolID(ctx)
+	case bill.FieldProfitSymbolID:
+		return m.OldProfitSymbolID(ctx)
 	case bill.FieldAmount:
 		return m.OldAmount(ctx)
 	case bill.FieldTargetUserID:
@@ -1495,6 +1560,13 @@ func (m *BillMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSymbolID(v)
 		return nil
+	case bill.FieldProfitSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProfitSymbolID(v)
+		return nil
 	case bill.FieldAmount:
 		v, ok := value.(int64)
 		if !ok {
@@ -1572,6 +1644,9 @@ func (m *BillMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, bill.FieldUpdatedBy)
 	}
+	if m.addprofit_symbol_id != nil {
+		fields = append(fields, bill.FieldProfitSymbolID)
+	}
 	if m.addamount != nil {
 		fields = append(fields, bill.FieldAmount)
 	}
@@ -1599,6 +1674,8 @@ func (m *BillMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case bill.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case bill.FieldProfitSymbolID:
+		return m.AddedProfitSymbolID()
 	case bill.FieldAmount:
 		return m.AddedAmount()
 	case bill.FieldTargetBeforeAmount:
@@ -1631,6 +1708,13 @@ func (m *BillMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
+		return nil
+	case bill.FieldProfitSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProfitSymbolID(v)
 		return nil
 	case bill.FieldAmount:
 		v, ok := value.(int64)
@@ -1729,6 +1813,9 @@ func (m *BillMutation) ResetField(name string) error {
 		return nil
 	case bill.FieldSymbolID:
 		m.ResetSymbolID()
+		return nil
+	case bill.FieldProfitSymbolID:
+		m.ResetProfitSymbolID()
 		return nil
 	case bill.FieldAmount:
 		m.ResetAmount()

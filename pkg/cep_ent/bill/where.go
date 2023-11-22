@@ -91,6 +91,11 @@ func SymbolID(v int64) predicate.Bill {
 	return predicate.Bill(sql.FieldEQ(FieldSymbolID, v))
 }
 
+// ProfitSymbolID applies equality check predicate on the "profit_symbol_id" field. It's identical to ProfitSymbolIDEQ.
+func ProfitSymbolID(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldProfitSymbolID, v))
+}
+
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v int64) predicate.Bill {
 	return predicate.Bill(sql.FieldEQ(FieldAmount, v))
@@ -444,6 +449,46 @@ func SymbolIDIn(vs ...int64) predicate.Bill {
 // SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
 func SymbolIDNotIn(vs ...int64) predicate.Bill {
 	return predicate.Bill(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// ProfitSymbolIDEQ applies the EQ predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDEQ(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldProfitSymbolID, v))
+}
+
+// ProfitSymbolIDNEQ applies the NEQ predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDNEQ(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldProfitSymbolID, v))
+}
+
+// ProfitSymbolIDIn applies the In predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDIn(vs ...int64) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldProfitSymbolID, vs...))
+}
+
+// ProfitSymbolIDNotIn applies the NotIn predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDNotIn(vs ...int64) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldProfitSymbolID, vs...))
+}
+
+// ProfitSymbolIDGT applies the GT predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDGT(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldProfitSymbolID, v))
+}
+
+// ProfitSymbolIDGTE applies the GTE predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDGTE(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldProfitSymbolID, v))
+}
+
+// ProfitSymbolIDLT applies the LT predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDLT(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldProfitSymbolID, v))
+}
+
+// ProfitSymbolIDLTE applies the LTE predicate on the "profit_symbol_id" field.
+func ProfitSymbolIDLTE(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldProfitSymbolID, v))
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.

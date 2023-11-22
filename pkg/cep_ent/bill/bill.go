@@ -34,6 +34,8 @@ const (
 	FieldWay = "way"
 	// FieldSymbolID holds the string denoting the symbol_id field in the database.
 	FieldSymbolID = "symbol_id"
+	// FieldProfitSymbolID holds the string denoting the profit_symbol_id field in the database.
+	FieldProfitSymbolID = "profit_symbol_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldTargetUserID holds the string denoting the target_user_id field in the database.
@@ -122,6 +124,7 @@ var Columns = []string{
 	FieldOrderID,
 	FieldWay,
 	FieldSymbolID,
+	FieldProfitSymbolID,
 	FieldAmount,
 	FieldTargetUserID,
 	FieldTargetBeforeAmount,
@@ -160,6 +163,8 @@ var (
 	DefaultOrderID int64
 	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
 	DefaultSymbolID int64
+	// DefaultProfitSymbolID holds the default value on creation for the "profit_symbol_id" field.
+	DefaultProfitSymbolID int64
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount int64
 	// DefaultTargetUserID holds the default value on creation for the "target_user_id" field.
@@ -257,6 +262,11 @@ func ByWay(opts ...sql.OrderTermOption) OrderOption {
 // BySymbolID orders the results by the symbol_id field.
 func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
+}
+
+// ByProfitSymbolID orders the results by the profit_symbol_id field.
+func ByProfitSymbolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProfitSymbolID, opts...).ToFunc()
 }
 
 // ByAmount orders the results by the amount field.

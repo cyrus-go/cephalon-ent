@@ -154,6 +154,20 @@ func (bc *BillCreate) SetNillableSymbolID(i *int64) *BillCreate {
 	return bc
 }
 
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (bc *BillCreate) SetProfitSymbolID(i int64) *BillCreate {
+	bc.mutation.SetProfitSymbolID(i)
+	return bc
+}
+
+// SetNillableProfitSymbolID sets the "profit_symbol_id" field if the given value is not nil.
+func (bc *BillCreate) SetNillableProfitSymbolID(i *int64) *BillCreate {
+	if i != nil {
+		bc.SetProfitSymbolID(*i)
+	}
+	return bc
+}
+
 // SetAmount sets the "amount" field.
 func (bc *BillCreate) SetAmount(i int64) *BillCreate {
 	bc.mutation.SetAmount(i)
@@ -423,6 +437,10 @@ func (bc *BillCreate) defaults() {
 		v := bill.DefaultSymbolID
 		bc.mutation.SetSymbolID(v)
 	}
+	if _, ok := bc.mutation.ProfitSymbolID(); !ok {
+		v := bill.DefaultProfitSymbolID
+		bc.mutation.SetProfitSymbolID(v)
+	}
 	if _, ok := bc.mutation.Amount(); !ok {
 		v := bill.DefaultAmount
 		bc.mutation.SetAmount(v)
@@ -500,6 +518,9 @@ func (bc *BillCreate) check() error {
 	}
 	if _, ok := bc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "Bill.symbol_id"`)}
+	}
+	if _, ok := bc.mutation.ProfitSymbolID(); !ok {
+		return &ValidationError{Name: "profit_symbol_id", err: errors.New(`cep_ent: missing required field "Bill.profit_symbol_id"`)}
 	}
 	if _, ok := bc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "Bill.amount"`)}
@@ -600,6 +621,10 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 	if value, ok := bc.mutation.Way(); ok {
 		_spec.SetField(bill.FieldWay, field.TypeEnum, value)
 		_node.Way = value
+	}
+	if value, ok := bc.mutation.ProfitSymbolID(); ok {
+		_spec.SetField(bill.FieldProfitSymbolID, field.TypeInt64, value)
+		_node.ProfitSymbolID = value
 	}
 	if value, ok := bc.mutation.Amount(); ok {
 		_spec.SetField(bill.FieldAmount, field.TypeInt64, value)
@@ -890,6 +915,24 @@ func (u *BillUpsert) SetSymbolID(v int64) *BillUpsert {
 // UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
 func (u *BillUpsert) UpdateSymbolID() *BillUpsert {
 	u.SetExcluded(bill.FieldSymbolID)
+	return u
+}
+
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (u *BillUpsert) SetProfitSymbolID(v int64) *BillUpsert {
+	u.Set(bill.FieldProfitSymbolID, v)
+	return u
+}
+
+// UpdateProfitSymbolID sets the "profit_symbol_id" field to the value that was provided on create.
+func (u *BillUpsert) UpdateProfitSymbolID() *BillUpsert {
+	u.SetExcluded(bill.FieldProfitSymbolID)
+	return u
+}
+
+// AddProfitSymbolID adds v to the "profit_symbol_id" field.
+func (u *BillUpsert) AddProfitSymbolID(v int64) *BillUpsert {
+	u.Add(bill.FieldProfitSymbolID, v)
 	return u
 }
 
@@ -1212,6 +1255,27 @@ func (u *BillUpsertOne) SetSymbolID(v int64) *BillUpsertOne {
 func (u *BillUpsertOne) UpdateSymbolID() *BillUpsertOne {
 	return u.Update(func(s *BillUpsert) {
 		s.UpdateSymbolID()
+	})
+}
+
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (u *BillUpsertOne) SetProfitSymbolID(v int64) *BillUpsertOne {
+	return u.Update(func(s *BillUpsert) {
+		s.SetProfitSymbolID(v)
+	})
+}
+
+// AddProfitSymbolID adds v to the "profit_symbol_id" field.
+func (u *BillUpsertOne) AddProfitSymbolID(v int64) *BillUpsertOne {
+	return u.Update(func(s *BillUpsert) {
+		s.AddProfitSymbolID(v)
+	})
+}
+
+// UpdateProfitSymbolID sets the "profit_symbol_id" field to the value that was provided on create.
+func (u *BillUpsertOne) UpdateProfitSymbolID() *BillUpsertOne {
+	return u.Update(func(s *BillUpsert) {
+		s.UpdateProfitSymbolID()
 	})
 }
 
@@ -1723,6 +1787,27 @@ func (u *BillUpsertBulk) SetSymbolID(v int64) *BillUpsertBulk {
 func (u *BillUpsertBulk) UpdateSymbolID() *BillUpsertBulk {
 	return u.Update(func(s *BillUpsert) {
 		s.UpdateSymbolID()
+	})
+}
+
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (u *BillUpsertBulk) SetProfitSymbolID(v int64) *BillUpsertBulk {
+	return u.Update(func(s *BillUpsert) {
+		s.SetProfitSymbolID(v)
+	})
+}
+
+// AddProfitSymbolID adds v to the "profit_symbol_id" field.
+func (u *BillUpsertBulk) AddProfitSymbolID(v int64) *BillUpsertBulk {
+	return u.Update(func(s *BillUpsert) {
+		s.AddProfitSymbolID(v)
+	})
+}
+
+// UpdateProfitSymbolID sets the "profit_symbol_id" field to the value that was provided on create.
+func (u *BillUpsertBulk) UpdateProfitSymbolID() *BillUpsertBulk {
+	return u.Update(func(s *BillUpsert) {
+		s.UpdateProfitSymbolID()
 	})
 }
 

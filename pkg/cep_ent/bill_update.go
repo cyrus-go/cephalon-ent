@@ -159,6 +159,27 @@ func (bu *BillUpdate) SetNillableSymbolID(i *int64) *BillUpdate {
 	return bu
 }
 
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (bu *BillUpdate) SetProfitSymbolID(i int64) *BillUpdate {
+	bu.mutation.ResetProfitSymbolID()
+	bu.mutation.SetProfitSymbolID(i)
+	return bu
+}
+
+// SetNillableProfitSymbolID sets the "profit_symbol_id" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableProfitSymbolID(i *int64) *BillUpdate {
+	if i != nil {
+		bu.SetProfitSymbolID(*i)
+	}
+	return bu
+}
+
+// AddProfitSymbolID adds i to the "profit_symbol_id" field.
+func (bu *BillUpdate) AddProfitSymbolID(i int64) *BillUpdate {
+	bu.mutation.AddProfitSymbolID(i)
+	return bu
+}
+
 // SetAmount sets the "amount" field.
 func (bu *BillUpdate) SetAmount(i int64) *BillUpdate {
 	bu.mutation.ResetAmount()
@@ -524,6 +545,12 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := bu.mutation.Way(); ok {
 		_spec.SetField(bill.FieldWay, field.TypeEnum, value)
 	}
+	if value, ok := bu.mutation.ProfitSymbolID(); ok {
+		_spec.SetField(bill.FieldProfitSymbolID, field.TypeInt64, value)
+	}
+	if value, ok := bu.mutation.AddedProfitSymbolID(); ok {
+		_spec.AddField(bill.FieldProfitSymbolID, field.TypeInt64, value)
+	}
 	if value, ok := bu.mutation.Amount(); ok {
 		_spec.SetField(bill.FieldAmount, field.TypeInt64, value)
 	}
@@ -874,6 +901,27 @@ func (buo *BillUpdateOne) SetNillableSymbolID(i *int64) *BillUpdateOne {
 	if i != nil {
 		buo.SetSymbolID(*i)
 	}
+	return buo
+}
+
+// SetProfitSymbolID sets the "profit_symbol_id" field.
+func (buo *BillUpdateOne) SetProfitSymbolID(i int64) *BillUpdateOne {
+	buo.mutation.ResetProfitSymbolID()
+	buo.mutation.SetProfitSymbolID(i)
+	return buo
+}
+
+// SetNillableProfitSymbolID sets the "profit_symbol_id" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableProfitSymbolID(i *int64) *BillUpdateOne {
+	if i != nil {
+		buo.SetProfitSymbolID(*i)
+	}
+	return buo
+}
+
+// AddProfitSymbolID adds i to the "profit_symbol_id" field.
+func (buo *BillUpdateOne) AddProfitSymbolID(i int64) *BillUpdateOne {
+	buo.mutation.AddProfitSymbolID(i)
 	return buo
 }
 
@@ -1271,6 +1319,12 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 	}
 	if value, ok := buo.mutation.Way(); ok {
 		_spec.SetField(bill.FieldWay, field.TypeEnum, value)
+	}
+	if value, ok := buo.mutation.ProfitSymbolID(); ok {
+		_spec.SetField(bill.FieldProfitSymbolID, field.TypeInt64, value)
+	}
+	if value, ok := buo.mutation.AddedProfitSymbolID(); ok {
+		_spec.AddField(bill.FieldProfitSymbolID, field.TypeInt64, value)
 	}
 	if value, ok := buo.mutation.Amount(); ok {
 		_spec.SetField(bill.FieldAmount, field.TypeInt64, value)
