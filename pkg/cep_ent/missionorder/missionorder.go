@@ -246,8 +246,6 @@ var (
 	DefaultSettledCount int64
 	// DefaultTotalSettleCount holds the default value on creation for the "total_settle_count" field.
 	DefaultTotalSettleCount int64
-	// DefaultLastSettledAt holds the default value on creation for the "last_settled_at" field.
-	DefaultLastSettledAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )

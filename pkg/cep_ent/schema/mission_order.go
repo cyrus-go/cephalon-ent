@@ -44,7 +44,7 @@ func (MissionOrder) Fields() []ent.Field {
 		field.Int64("settled_amount").Default(0).StructTag(`json:"settled_amount"`).Comment("已结算金额"),
 		field.Int64("settled_count").Default(0).StructTag(`json:"settled_count"`).Comment("已结算次数"),
 		field.Int64("total_settle_count").Default(0).StructTag(`json:"total_settle_count"`).Comment("总结算次数"),
-		field.Time("last_settled_at").Annotations(entsql.Annotation{Default: "'0001-01-01 00:00:00.0000000 +00:00'"}).Default(common.ZeroTime).StructTag(`json:"last_settled_at"`).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).Comment("上一次结算时间"),
+		field.Time("last_settled_at").Annotations(entsql.Annotation{Default: "'0001-01-01 00:00:00.0000000 +00:00'"}).StructTag(`json:"last_settled_at"`).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).Comment("上一次结算时间"),
 	}
 }
 

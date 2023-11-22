@@ -528,14 +528,6 @@ func (mou *MissionOrderUpdate) SetLastSettledAt(t time.Time) *MissionOrderUpdate
 	return mou
 }
 
-// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
-func (mou *MissionOrderUpdate) SetNillableLastSettledAt(t *time.Time) *MissionOrderUpdate {
-	if t != nil {
-		mou.SetLastSettledAt(*t)
-	}
-	return mou
-}
-
 // SetConsumeUser sets the "consume_user" edge to the User entity.
 func (mou *MissionOrderUpdate) SetConsumeUser(u *User) *MissionOrderUpdate {
 	return mou.SetConsumeUserID(u.ID)
@@ -1581,14 +1573,6 @@ func (mouo *MissionOrderUpdateOne) AddTotalSettleCount(i int64) *MissionOrderUpd
 // SetLastSettledAt sets the "last_settled_at" field.
 func (mouo *MissionOrderUpdateOne) SetLastSettledAt(t time.Time) *MissionOrderUpdateOne {
 	mouo.mutation.SetLastSettledAt(t)
-	return mouo
-}
-
-// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
-func (mouo *MissionOrderUpdateOne) SetNillableLastSettledAt(t *time.Time) *MissionOrderUpdateOne {
-	if t != nil {
-		mouo.SetLastSettledAt(*t)
-	}
 	return mouo
 }
 

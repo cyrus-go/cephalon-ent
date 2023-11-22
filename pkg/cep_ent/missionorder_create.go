@@ -455,14 +455,6 @@ func (moc *MissionOrderCreate) SetLastSettledAt(t time.Time) *MissionOrderCreate
 	return moc
 }
 
-// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
-func (moc *MissionOrderCreate) SetNillableLastSettledAt(t *time.Time) *MissionOrderCreate {
-	if t != nil {
-		moc.SetLastSettledAt(*t)
-	}
-	return moc
-}
-
 // SetID sets the "id" field.
 func (moc *MissionOrderCreate) SetID(i int64) *MissionOrderCreate {
 	moc.mutation.SetID(i)
@@ -676,10 +668,6 @@ func (moc *MissionOrderCreate) defaults() {
 	if _, ok := moc.mutation.TotalSettleCount(); !ok {
 		v := missionorder.DefaultTotalSettleCount
 		moc.mutation.SetTotalSettleCount(v)
-	}
-	if _, ok := moc.mutation.LastSettledAt(); !ok {
-		v := missionorder.DefaultLastSettledAt
-		moc.mutation.SetLastSettledAt(v)
 	}
 	if _, ok := moc.mutation.ID(); !ok {
 		v := missionorder.DefaultID()

@@ -1457,10 +1457,6 @@ func init() {
 	missionorderDescTotalSettleCount := missionorderFields[24].Descriptor()
 	// missionorder.DefaultTotalSettleCount holds the default value on creation for the total_settle_count field.
 	missionorder.DefaultTotalSettleCount = missionorderDescTotalSettleCount.Default.(int64)
-	// missionorderDescLastSettledAt is the schema descriptor for last_settled_at field.
-	missionorderDescLastSettledAt := missionorderFields[25].Descriptor()
-	// missionorder.DefaultLastSettledAt holds the default value on creation for the last_settled_at field.
-	missionorder.DefaultLastSettledAt = missionorderDescLastSettledAt.Default.(time.Time)
 	// missionorderDescID is the schema descriptor for id field.
 	missionorderDescID := missionorderMixinFields0[0].Descriptor()
 	// missionorder.DefaultID holds the default value on creation for the id field.
