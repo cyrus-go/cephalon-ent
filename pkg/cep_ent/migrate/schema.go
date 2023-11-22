@@ -859,7 +859,7 @@ var (
 		{Name: "settled_amount", Type: field.TypeInt64, Comment: "已结算金额", Default: 0},
 		{Name: "settled_count", Type: field.TypeInt64, Comment: "已结算次数", Default: 0},
 		{Name: "total_settle_count", Type: field.TypeInt64, Comment: "总结算次数", Default: 0},
-		{Name: "last_settled_at", Type: field.TypeTime, Comment: "上一次结算时间", SchemaType: map[string]string{"postgres": "timestamptz default '0001-01-01 00:00:00.0000000 +00:00'"}},
+		{Name: "last_settled_at", Type: field.TypeTime, Comment: "上一次结算时间", Default: "'0001-01-01 00:00:00.0000000 +00:00'", SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "关联的设备 id", Default: 0},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
