@@ -432,19 +432,19 @@ func MaxOnlineMissionLTE(v int8) predicate.DeviceGpuMission {
 }
 
 // GpuStatusEQ applies the EQ predicate on the "gpu_status" field.
-func GpuStatusEQ(v enums.DeviceStatus) predicate.DeviceGpuMission {
+func GpuStatusEQ(v enums.GpuStatus) predicate.DeviceGpuMission {
 	vc := v
 	return predicate.DeviceGpuMission(sql.FieldEQ(FieldGpuStatus, vc))
 }
 
 // GpuStatusNEQ applies the NEQ predicate on the "gpu_status" field.
-func GpuStatusNEQ(v enums.DeviceStatus) predicate.DeviceGpuMission {
+func GpuStatusNEQ(v enums.GpuStatus) predicate.DeviceGpuMission {
 	vc := v
 	return predicate.DeviceGpuMission(sql.FieldNEQ(FieldGpuStatus, vc))
 }
 
 // GpuStatusIn applies the In predicate on the "gpu_status" field.
-func GpuStatusIn(vs ...enums.DeviceStatus) predicate.DeviceGpuMission {
+func GpuStatusIn(vs ...enums.GpuStatus) predicate.DeviceGpuMission {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -453,7 +453,7 @@ func GpuStatusIn(vs ...enums.DeviceStatus) predicate.DeviceGpuMission {
 }
 
 // GpuStatusNotIn applies the NotIn predicate on the "gpu_status" field.
-func GpuStatusNotIn(vs ...enums.DeviceStatus) predicate.DeviceGpuMission {
+func GpuStatusNotIn(vs ...enums.GpuStatus) predicate.DeviceGpuMission {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]

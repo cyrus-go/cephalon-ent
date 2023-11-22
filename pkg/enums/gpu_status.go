@@ -3,10 +3,10 @@ package enums
 type GpuStatus string
 
 const (
-	GpuStatusOnline  DeviceStatus = "online"
-	GpuStatusOffline DeviceStatus = "offline"
-	GpuStatusBusy    DeviceStatus = "busy"
-	GpuStatusFree    DeviceStatus = "free"
+	GpuStatusOnline  GpuStatus = "online"
+	GpuStatusOffline GpuStatus = "offline"
+	GpuStatusBusy    GpuStatus = "busy"
+	GpuStatusFree    GpuStatus = "free"
 )
 
 func (GpuStatus) Values() []string {

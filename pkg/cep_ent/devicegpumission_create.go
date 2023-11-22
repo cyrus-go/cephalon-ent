@@ -158,13 +158,13 @@ func (dgmc *DeviceGpuMissionCreate) SetNillableMaxOnlineMission(i *int8) *Device
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (dgmc *DeviceGpuMissionCreate) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionCreate {
+func (dgmc *DeviceGpuMissionCreate) SetGpuStatus(es enums.GpuStatus) *DeviceGpuMissionCreate {
 	dgmc.mutation.SetGpuStatus(es)
 	return dgmc
 }
 
 // SetNillableGpuStatus sets the "gpu_status" field if the given value is not nil.
-func (dgmc *DeviceGpuMissionCreate) SetNillableGpuStatus(es *enums.DeviceStatus) *DeviceGpuMissionCreate {
+func (dgmc *DeviceGpuMissionCreate) SetNillableGpuStatus(es *enums.GpuStatus) *DeviceGpuMissionCreate {
 	if es != nil {
 		dgmc.SetGpuStatus(*es)
 	}
@@ -634,7 +634,7 @@ func (u *DeviceGpuMissionUpsert) AddMaxOnlineMission(v int8) *DeviceGpuMissionUp
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (u *DeviceGpuMissionUpsert) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsert {
+func (u *DeviceGpuMissionUpsert) SetGpuStatus(v enums.GpuStatus) *DeviceGpuMissionUpsert {
 	u.Set(devicegpumission.FieldGpuStatus, v)
 	return u
 }
@@ -876,7 +876,7 @@ func (u *DeviceGpuMissionUpsertOne) UpdateMaxOnlineMission() *DeviceGpuMissionUp
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (u *DeviceGpuMissionUpsertOne) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsertOne {
+func (u *DeviceGpuMissionUpsertOne) SetGpuStatus(v enums.GpuStatus) *DeviceGpuMissionUpsertOne {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
 		s.SetGpuStatus(v)
 	})
@@ -1292,7 +1292,7 @@ func (u *DeviceGpuMissionUpsertBulk) UpdateMaxOnlineMission() *DeviceGpuMissionU
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (u *DeviceGpuMissionUpsertBulk) SetGpuStatus(v enums.DeviceStatus) *DeviceGpuMissionUpsertBulk {
+func (u *DeviceGpuMissionUpsertBulk) SetGpuStatus(v enums.GpuStatus) *DeviceGpuMissionUpsertBulk {
 	return u.Update(func(s *DeviceGpuMissionUpsert) {
 		s.SetGpuStatus(v)
 	})

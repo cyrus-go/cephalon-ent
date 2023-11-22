@@ -42,7 +42,7 @@ type DeviceGpuMission struct {
 	// 最大同时在线任务
 	MaxOnlineMission int8 `json:"max_online_mission"`
 	// gpu 当前状态
-	GpuStatus enums.DeviceStatus `json:"gpu_status"`
+	GpuStatus enums.GpuStatus `json:"gpu_status"`
 	// 正在做的任务 id
 	MissionID []int64 `json:"mission_id"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -188,7 +188,7 @@ func (dgm *DeviceGpuMission) assignValues(columns []string, values []any) error 
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field gpu_status", values[i])
 			} else if value.Valid {
-				dgm.GpuStatus = enums.DeviceStatus(value.String)
+				dgm.GpuStatus = enums.GpuStatus(value.String)
 			}
 		case devicegpumission.FieldMissionID:
 			if value, err := devicegpumission.ValueScanner.MissionID.FromValue(values[i]); err != nil {

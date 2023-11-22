@@ -177,13 +177,13 @@ func (dgmu *DeviceGpuMissionUpdate) AddMaxOnlineMission(i int8) *DeviceGpuMissio
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (dgmu *DeviceGpuMissionUpdate) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionUpdate {
+func (dgmu *DeviceGpuMissionUpdate) SetGpuStatus(es enums.GpuStatus) *DeviceGpuMissionUpdate {
 	dgmu.mutation.SetGpuStatus(es)
 	return dgmu
 }
 
 // SetNillableGpuStatus sets the "gpu_status" field if the given value is not nil.
-func (dgmu *DeviceGpuMissionUpdate) SetNillableGpuStatus(es *enums.DeviceStatus) *DeviceGpuMissionUpdate {
+func (dgmu *DeviceGpuMissionUpdate) SetNillableGpuStatus(es *enums.GpuStatus) *DeviceGpuMissionUpdate {
 	if es != nil {
 		dgmu.SetGpuStatus(*es)
 	}
@@ -577,13 +577,13 @@ func (dgmuo *DeviceGpuMissionUpdateOne) AddMaxOnlineMission(i int8) *DeviceGpuMi
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (dgmuo *DeviceGpuMissionUpdateOne) SetGpuStatus(es enums.DeviceStatus) *DeviceGpuMissionUpdateOne {
+func (dgmuo *DeviceGpuMissionUpdateOne) SetGpuStatus(es enums.GpuStatus) *DeviceGpuMissionUpdateOne {
 	dgmuo.mutation.SetGpuStatus(es)
 	return dgmuo
 }
 
 // SetNillableGpuStatus sets the "gpu_status" field if the given value is not nil.
-func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableGpuStatus(es *enums.DeviceStatus) *DeviceGpuMissionUpdateOne {
+func (dgmuo *DeviceGpuMissionUpdateOne) SetNillableGpuStatus(es *enums.GpuStatus) *DeviceGpuMissionUpdateOne {
 	if es != nil {
 		dgmuo.SetGpuStatus(*es)
 	}

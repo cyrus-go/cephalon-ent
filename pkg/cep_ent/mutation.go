@@ -10283,7 +10283,7 @@ type DeviceGpuMissionMutation struct {
 	adddevice_slot        *int8
 	max_online_mission    *int8
 	addmax_online_mission *int8
-	gpu_status            *enums.DeviceStatus
+	gpu_status            *enums.GpuStatus
 	mission_id            *[]int64
 	clearedFields         map[string]struct{}
 	device                *int64
@@ -10853,12 +10853,12 @@ func (m *DeviceGpuMissionMutation) ResetMaxOnlineMission() {
 }
 
 // SetGpuStatus sets the "gpu_status" field.
-func (m *DeviceGpuMissionMutation) SetGpuStatus(es enums.DeviceStatus) {
+func (m *DeviceGpuMissionMutation) SetGpuStatus(es enums.GpuStatus) {
 	m.gpu_status = &es
 }
 
 // GpuStatus returns the value of the "gpu_status" field in the mutation.
-func (m *DeviceGpuMissionMutation) GpuStatus() (r enums.DeviceStatus, exists bool) {
+func (m *DeviceGpuMissionMutation) GpuStatus() (r enums.GpuStatus, exists bool) {
 	v := m.gpu_status
 	if v == nil {
 		return
@@ -10869,7 +10869,7 @@ func (m *DeviceGpuMissionMutation) GpuStatus() (r enums.DeviceStatus, exists boo
 // OldGpuStatus returns the old "gpu_status" field's value of the DeviceGpuMission entity.
 // If the DeviceGpuMission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceGpuMissionMutation) OldGpuStatus(ctx context.Context) (v enums.DeviceStatus, err error) {
+func (m *DeviceGpuMissionMutation) OldGpuStatus(ctx context.Context) (v enums.GpuStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGpuStatus is only allowed on UpdateOne operations")
 	}
@@ -11207,7 +11207,7 @@ func (m *DeviceGpuMissionMutation) SetField(name string, value ent.Value) error 
 		m.SetMaxOnlineMission(v)
 		return nil
 	case devicegpumission.FieldGpuStatus:
-		v, ok := value.(enums.DeviceStatus)
+		v, ok := value.(enums.GpuStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
