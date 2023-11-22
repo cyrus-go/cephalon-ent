@@ -16,6 +16,7 @@ const (
 	MissionTypeSshTime            MissionType = "ssh_time"
 	MissionTypeSdTomatoTime       MissionType = "sd_tomato_time"
 	MissionTypeSdCmdTime          MissionType = "sd_cmd_time"
+	MissionTypeSdBingoTime        MissionType = "sd_bingo_time"
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan         MissionType = "jp_time_plan"
@@ -23,6 +24,7 @@ const (
 	MissionTypeSshTimePlan        MissionType = "ssh_time_plan"
 	MissionTypeSdTomatoTimePlan   MissionType = "sd_tomato_time_plan"
 	MissionTypeSdCmdTimePlan      MissionType = "sd_cmd_time_plan"
+	MissionTypeSdBingoTimePlan    MissionType = "sd_bingo_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -47,6 +49,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdTomatoTimePlan),
 		string(MissionTypeSdCmdTime),
 		string(MissionTypeSdCmdTimePlan),
+		string(MissionTypeSdBingoTime),
+		string(MissionTypeSdBingoTimePlan),
 	}
 }
 
