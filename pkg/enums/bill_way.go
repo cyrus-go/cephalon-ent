@@ -18,6 +18,7 @@ const (
 	BillWayActiveShare          BillWay = "active_share"
 	BillWayActiveRecharge       BillWay = "active_recharge"
 	BillWayTransferManual       BillWay = "transfer_manual"
+	BillWayTransferWithdrawal   BillWay = "transfer_withdrawal"
 	BillWayFirstInviteRecharge  BillWay = "first_invite_recharge"
 )
 
@@ -39,6 +40,7 @@ func (BillWay) Values() []string {
 		string(BillWayActiveRecharge),
 		string(BillWayTransferManual),
 		string(BillWayFirstInviteRecharge),
+		string(BillWayTransferWithdrawal),
 	}
 }
 
