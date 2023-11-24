@@ -62,7 +62,7 @@ type MissionOrder struct {
 	StartedAt time.Time `json:"started_at"`
 	// 任务结束执行时刻
 	FinishedAt time.Time `json:"finished_at"`
-	// 包时任务订单购买的时长（单位：小时）
+	// 包时任务订单购买的时长
 	BuyDuration int64 `json:"buy_duration"`
 	// 任务计划开始时间（包时）
 	PlanStartedAt *time.Time `json:"plan_started_at"`
@@ -85,7 +85,7 @@ type MissionOrder struct {
 	// 总结算次数
 	TotalSettleCount int64 `json:"total_settle_count"`
 	// 上一次结算时间
-	LastSettledAt time.Time `json:"last_settled_at"`
+	LatelySettledAt time.Time `json:"lately_settled_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionOrderQuery when eager-loading is set.
 	Edges        MissionOrderEdges `json:"edges"`
@@ -209,7 +209,7 @@ func (*MissionOrder) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case missionorder.FieldStatus, missionorder.FieldMissionType, missionorder.FieldMissionBillingType, missionorder.FieldCallWay, missionorder.FieldSerialNumber, missionorder.FieldMissionBatchNumber:
 			values[i] = new(sql.NullString)
-		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt, missionorder.FieldExpiredWarningTime, missionorder.FieldLastSettledAt:
+		case missionorder.FieldCreatedAt, missionorder.FieldUpdatedAt, missionorder.FieldDeletedAt, missionorder.FieldStartedAt, missionorder.FieldFinishedAt, missionorder.FieldPlanStartedAt, missionorder.FieldPlanFinishedAt, missionorder.FieldExpiredWarningTime, missionorder.FieldLatelySettledAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -415,11 +415,11 @@ func (mo *MissionOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				mo.TotalSettleCount = value.Int64
 			}
-		case missionorder.FieldLastSettledAt:
+		case missionorder.FieldLatelySettledAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field last_settled_at", values[i])
+				return fmt.Errorf("unexpected type %T for field lately_settled_at", values[i])
 			} else if value.Valid {
-				mo.LastSettledAt = value.Time
+				mo.LatelySettledAt = value.Time
 			}
 		default:
 			mo.selectValues.Set(columns[i], values[i])
@@ -588,8 +588,8 @@ func (mo *MissionOrder) String() string {
 	builder.WriteString("total_settle_count=")
 	builder.WriteString(fmt.Sprintf("%v", mo.TotalSettleCount))
 	builder.WriteString(", ")
-	builder.WriteString("last_settled_at=")
-	builder.WriteString(mo.LastSettledAt.Format(time.ANSIC))
+	builder.WriteString("lately_settled_at=")
+	builder.WriteString(mo.LatelySettledAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

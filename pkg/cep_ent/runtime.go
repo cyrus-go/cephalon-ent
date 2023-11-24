@@ -17,6 +17,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
@@ -27,6 +30,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -688,6 +692,147 @@ func init() {
 	enummissionstatusDescID := enummissionstatusMixinFields0[0].Descriptor()
 	// enummissionstatus.DefaultID holds the default value on creation for the id field.
 	enummissionstatus.DefaultID = enummissionstatusDescID.Default.(func() int64)
+	extraserviceMixin := schema.ExtraService{}.Mixin()
+	extraserviceMixinFields0 := extraserviceMixin[0].Fields()
+	_ = extraserviceMixinFields0
+	extraserviceFields := schema.ExtraService{}.Fields()
+	_ = extraserviceFields
+	// extraserviceDescCreatedBy is the schema descriptor for created_by field.
+	extraserviceDescCreatedBy := extraserviceMixinFields0[1].Descriptor()
+	// extraservice.DefaultCreatedBy holds the default value on creation for the created_by field.
+	extraservice.DefaultCreatedBy = extraserviceDescCreatedBy.Default.(int64)
+	// extraserviceDescUpdatedBy is the schema descriptor for updated_by field.
+	extraserviceDescUpdatedBy := extraserviceMixinFields0[2].Descriptor()
+	// extraservice.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	extraservice.DefaultUpdatedBy = extraserviceDescUpdatedBy.Default.(int64)
+	// extraserviceDescCreatedAt is the schema descriptor for created_at field.
+	extraserviceDescCreatedAt := extraserviceMixinFields0[3].Descriptor()
+	// extraservice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	extraservice.DefaultCreatedAt = extraserviceDescCreatedAt.Default.(func() time.Time)
+	// extraserviceDescUpdatedAt is the schema descriptor for updated_at field.
+	extraserviceDescUpdatedAt := extraserviceMixinFields0[4].Descriptor()
+	// extraservice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	extraservice.DefaultUpdatedAt = extraserviceDescUpdatedAt.Default.(func() time.Time)
+	// extraservice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	extraservice.UpdateDefaultUpdatedAt = extraserviceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// extraserviceDescDeletedAt is the schema descriptor for deleted_at field.
+	extraserviceDescDeletedAt := extraserviceMixinFields0[5].Descriptor()
+	// extraservice.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	extraservice.DefaultDeletedAt = extraserviceDescDeletedAt.Default.(time.Time)
+	// extraserviceDescName is the schema descriptor for name field.
+	extraserviceDescName := extraserviceFields[0].Descriptor()
+	// extraservice.DefaultName holds the default value on creation for the name field.
+	extraservice.DefaultName = extraserviceDescName.Default.(string)
+	// extraserviceDescID is the schema descriptor for id field.
+	extraserviceDescID := extraserviceMixinFields0[0].Descriptor()
+	// extraservice.DefaultID holds the default value on creation for the id field.
+	extraservice.DefaultID = extraserviceDescID.Default.(func() int64)
+	extraserviceorderMixin := schema.ExtraServiceOrder{}.Mixin()
+	extraserviceorderMixinFields0 := extraserviceorderMixin[0].Fields()
+	_ = extraserviceorderMixinFields0
+	extraserviceorderFields := schema.ExtraServiceOrder{}.Fields()
+	_ = extraserviceorderFields
+	// extraserviceorderDescCreatedBy is the schema descriptor for created_by field.
+	extraserviceorderDescCreatedBy := extraserviceorderMixinFields0[1].Descriptor()
+	// extraserviceorder.DefaultCreatedBy holds the default value on creation for the created_by field.
+	extraserviceorder.DefaultCreatedBy = extraserviceorderDescCreatedBy.Default.(int64)
+	// extraserviceorderDescUpdatedBy is the schema descriptor for updated_by field.
+	extraserviceorderDescUpdatedBy := extraserviceorderMixinFields0[2].Descriptor()
+	// extraserviceorder.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	extraserviceorder.DefaultUpdatedBy = extraserviceorderDescUpdatedBy.Default.(int64)
+	// extraserviceorderDescCreatedAt is the schema descriptor for created_at field.
+	extraserviceorderDescCreatedAt := extraserviceorderMixinFields0[3].Descriptor()
+	// extraserviceorder.DefaultCreatedAt holds the default value on creation for the created_at field.
+	extraserviceorder.DefaultCreatedAt = extraserviceorderDescCreatedAt.Default.(func() time.Time)
+	// extraserviceorderDescUpdatedAt is the schema descriptor for updated_at field.
+	extraserviceorderDescUpdatedAt := extraserviceorderMixinFields0[4].Descriptor()
+	// extraserviceorder.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	extraserviceorder.DefaultUpdatedAt = extraserviceorderDescUpdatedAt.Default.(func() time.Time)
+	// extraserviceorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	extraserviceorder.UpdateDefaultUpdatedAt = extraserviceorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// extraserviceorderDescDeletedAt is the schema descriptor for deleted_at field.
+	extraserviceorderDescDeletedAt := extraserviceorderMixinFields0[5].Descriptor()
+	// extraserviceorder.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	extraserviceorder.DefaultDeletedAt = extraserviceorderDescDeletedAt.Default.(time.Time)
+	// extraserviceorderDescMissionID is the schema descriptor for mission_id field.
+	extraserviceorderDescMissionID := extraserviceorderFields[0].Descriptor()
+	// extraserviceorder.DefaultMissionID holds the default value on creation for the mission_id field.
+	extraserviceorder.DefaultMissionID = extraserviceorderDescMissionID.Default.(int64)
+	// extraserviceorderDescAmount is the schema descriptor for amount field.
+	extraserviceorderDescAmount := extraserviceorderFields[1].Descriptor()
+	// extraserviceorder.DefaultAmount holds the default value on creation for the amount field.
+	extraserviceorder.DefaultAmount = extraserviceorderDescAmount.Default.(int64)
+	// extraserviceorderDescSymbolID is the schema descriptor for symbol_id field.
+	extraserviceorderDescSymbolID := extraserviceorderFields[2].Descriptor()
+	// extraserviceorder.DefaultSymbolID holds the default value on creation for the symbol_id field.
+	extraserviceorder.DefaultSymbolID = extraserviceorderDescSymbolID.Default.(int64)
+	// extraserviceorderDescBuyDuration is the schema descriptor for buy_duration field.
+	extraserviceorderDescBuyDuration := extraserviceorderFields[4].Descriptor()
+	// extraserviceorder.DefaultBuyDuration holds the default value on creation for the buy_duration field.
+	extraserviceorder.DefaultBuyDuration = extraserviceorderDescBuyDuration.Default.(int64)
+	// extraserviceorderDescPlanStartedAt is the schema descriptor for plan_started_at field.
+	extraserviceorderDescPlanStartedAt := extraserviceorderFields[5].Descriptor()
+	// extraserviceorder.DefaultPlanStartedAt holds the default value on creation for the plan_started_at field.
+	extraserviceorder.DefaultPlanStartedAt = extraserviceorderDescPlanStartedAt.Default.(time.Time)
+	// extraserviceorderDescPlanFinishedAt is the schema descriptor for plan_finished_at field.
+	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[6].Descriptor()
+	// extraserviceorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
+	extraserviceorder.DefaultPlanFinishedAt = extraserviceorderDescPlanFinishedAt.Default.(time.Time)
+	// extraserviceorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
+	extraserviceorderDescMissionBatchID := extraserviceorderFields[7].Descriptor()
+	// extraserviceorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
+	extraserviceorder.DefaultMissionBatchID = extraserviceorderDescMissionBatchID.Default.(int64)
+	// extraserviceorderDescID is the schema descriptor for id field.
+	extraserviceorderDescID := extraserviceorderMixinFields0[0].Descriptor()
+	// extraserviceorder.DefaultID holds the default value on creation for the id field.
+	extraserviceorder.DefaultID = extraserviceorderDescID.Default.(func() int64)
+	extraservicepriceMixin := schema.ExtraServicePrice{}.Mixin()
+	extraservicepriceMixinFields0 := extraservicepriceMixin[0].Fields()
+	_ = extraservicepriceMixinFields0
+	extraservicepriceFields := schema.ExtraServicePrice{}.Fields()
+	_ = extraservicepriceFields
+	// extraservicepriceDescCreatedBy is the schema descriptor for created_by field.
+	extraservicepriceDescCreatedBy := extraservicepriceMixinFields0[1].Descriptor()
+	// extraserviceprice.DefaultCreatedBy holds the default value on creation for the created_by field.
+	extraserviceprice.DefaultCreatedBy = extraservicepriceDescCreatedBy.Default.(int64)
+	// extraservicepriceDescUpdatedBy is the schema descriptor for updated_by field.
+	extraservicepriceDescUpdatedBy := extraservicepriceMixinFields0[2].Descriptor()
+	// extraserviceprice.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	extraserviceprice.DefaultUpdatedBy = extraservicepriceDescUpdatedBy.Default.(int64)
+	// extraservicepriceDescCreatedAt is the schema descriptor for created_at field.
+	extraservicepriceDescCreatedAt := extraservicepriceMixinFields0[3].Descriptor()
+	// extraserviceprice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	extraserviceprice.DefaultCreatedAt = extraservicepriceDescCreatedAt.Default.(func() time.Time)
+	// extraservicepriceDescUpdatedAt is the schema descriptor for updated_at field.
+	extraservicepriceDescUpdatedAt := extraservicepriceMixinFields0[4].Descriptor()
+	// extraserviceprice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	extraserviceprice.DefaultUpdatedAt = extraservicepriceDescUpdatedAt.Default.(func() time.Time)
+	// extraserviceprice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	extraserviceprice.UpdateDefaultUpdatedAt = extraservicepriceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// extraservicepriceDescDeletedAt is the schema descriptor for deleted_at field.
+	extraservicepriceDescDeletedAt := extraservicepriceMixinFields0[5].Descriptor()
+	// extraserviceprice.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	extraserviceprice.DefaultDeletedAt = extraservicepriceDescDeletedAt.Default.(time.Time)
+	// extraservicepriceDescExtraServiceID is the schema descriptor for extra_service_id field.
+	extraservicepriceDescExtraServiceID := extraservicepriceFields[1].Descriptor()
+	// extraserviceprice.DefaultExtraServiceID holds the default value on creation for the extra_service_id field.
+	extraserviceprice.DefaultExtraServiceID = extraservicepriceDescExtraServiceID.Default.(int64)
+	// extraservicepriceDescCep is the schema descriptor for cep field.
+	extraservicepriceDescCep := extraservicepriceFields[2].Descriptor()
+	// extraserviceprice.DefaultCep holds the default value on creation for the cep field.
+	extraserviceprice.DefaultCep = extraservicepriceDescCep.Default.(int64)
+	// extraservicepriceDescIsDeprecated is the schema descriptor for is_deprecated field.
+	extraservicepriceDescIsDeprecated := extraservicepriceFields[5].Descriptor()
+	// extraserviceprice.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
+	extraserviceprice.DefaultIsDeprecated = extraservicepriceDescIsDeprecated.Default.(bool)
+	// extraservicepriceDescIsSensitive is the schema descriptor for is_sensitive field.
+	extraservicepriceDescIsSensitive := extraservicepriceFields[6].Descriptor()
+	// extraserviceprice.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
+	extraserviceprice.DefaultIsSensitive = extraservicepriceDescIsSensitive.Default.(bool)
+	// extraservicepriceDescID is the schema descriptor for id field.
+	extraservicepriceDescID := extraservicepriceMixinFields0[0].Descriptor()
+	// extraserviceprice.DefaultID holds the default value on creation for the id field.
+	extraserviceprice.DefaultID = extraservicepriceDescID.Default.(func() int64)
 	frpcinfoMixin := schema.FrpcInfo{}.Mixin()
 	frpcinfoMixinFields0 := frpcinfoMixin[0].Fields()
 	_ = frpcinfoMixinFields0
@@ -1158,6 +1303,10 @@ func init() {
 	missionDescExpiredAt := missionFields[30].Descriptor()
 	// mission.DefaultExpiredAt holds the default value on creation for the expired_at field.
 	mission.DefaultExpiredAt = missionDescExpiredAt.Default.(time.Time)
+	// missionDescFreeAt is the schema descriptor for free_at field.
+	missionDescFreeAt := missionFields[31].Descriptor()
+	// mission.DefaultFreeAt holds the default value on creation for the free_at field.
+	mission.DefaultFreeAt = missionDescFreeAt.Default.(time.Time)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.
@@ -1272,6 +1421,45 @@ func init() {
 	missionconsumeorderDescID := missionconsumeorderMixinFields0[0].Descriptor()
 	// missionconsumeorder.DefaultID holds the default value on creation for the id field.
 	missionconsumeorder.DefaultID = missionconsumeorderDescID.Default.(func() int64)
+	missionextraserviceMixin := schema.MissionExtraService{}.Mixin()
+	missionextraserviceMixinFields0 := missionextraserviceMixin[0].Fields()
+	_ = missionextraserviceMixinFields0
+	missionextraserviceFields := schema.MissionExtraService{}.Fields()
+	_ = missionextraserviceFields
+	// missionextraserviceDescCreatedBy is the schema descriptor for created_by field.
+	missionextraserviceDescCreatedBy := missionextraserviceMixinFields0[1].Descriptor()
+	// missionextraservice.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionextraservice.DefaultCreatedBy = missionextraserviceDescCreatedBy.Default.(int64)
+	// missionextraserviceDescUpdatedBy is the schema descriptor for updated_by field.
+	missionextraserviceDescUpdatedBy := missionextraserviceMixinFields0[2].Descriptor()
+	// missionextraservice.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionextraservice.DefaultUpdatedBy = missionextraserviceDescUpdatedBy.Default.(int64)
+	// missionextraserviceDescCreatedAt is the schema descriptor for created_at field.
+	missionextraserviceDescCreatedAt := missionextraserviceMixinFields0[3].Descriptor()
+	// missionextraservice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionextraservice.DefaultCreatedAt = missionextraserviceDescCreatedAt.Default.(func() time.Time)
+	// missionextraserviceDescUpdatedAt is the schema descriptor for updated_at field.
+	missionextraserviceDescUpdatedAt := missionextraserviceMixinFields0[4].Descriptor()
+	// missionextraservice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionextraservice.DefaultUpdatedAt = missionextraserviceDescUpdatedAt.Default.(func() time.Time)
+	// missionextraservice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionextraservice.UpdateDefaultUpdatedAt = missionextraserviceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionextraserviceDescDeletedAt is the schema descriptor for deleted_at field.
+	missionextraserviceDescDeletedAt := missionextraserviceMixinFields0[5].Descriptor()
+	// missionextraservice.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionextraservice.DefaultDeletedAt = missionextraserviceDescDeletedAt.Default.(time.Time)
+	// missionextraserviceDescMissionID is the schema descriptor for mission_id field.
+	missionextraserviceDescMissionID := missionextraserviceFields[0].Descriptor()
+	// missionextraservice.DefaultMissionID holds the default value on creation for the mission_id field.
+	missionextraservice.DefaultMissionID = missionextraserviceDescMissionID.Default.(int64)
+	// missionextraserviceDescExtraServiceID is the schema descriptor for extra_service_id field.
+	missionextraserviceDescExtraServiceID := missionextraserviceFields[1].Descriptor()
+	// missionextraservice.DefaultExtraServiceID holds the default value on creation for the extra_service_id field.
+	missionextraservice.DefaultExtraServiceID = missionextraserviceDescExtraServiceID.Default.(int64)
+	// missionextraserviceDescID is the schema descriptor for id field.
+	missionextraserviceDescID := missionextraserviceMixinFields0[0].Descriptor()
+	// missionextraservice.DefaultID holds the default value on creation for the id field.
+	missionextraservice.DefaultID = missionextraserviceDescID.Default.(func() int64)
 	missionkeypairMixin := schema.MissionKeyPair{}.Mixin()
 	missionkeypairMixinFields0 := missionkeypairMixin[0].Fields()
 	_ = missionkeypairMixinFields0
@@ -1457,10 +1645,10 @@ func init() {
 	missionorderDescTotalSettleCount := missionorderFields[24].Descriptor()
 	// missionorder.DefaultTotalSettleCount holds the default value on creation for the total_settle_count field.
 	missionorder.DefaultTotalSettleCount = missionorderDescTotalSettleCount.Default.(int64)
-	// missionorderDescLastSettledAt is the schema descriptor for last_settled_at field.
-	missionorderDescLastSettledAt := missionorderFields[25].Descriptor()
-	// missionorder.DefaultLastSettledAt holds the default value on creation for the last_settled_at field.
-	missionorder.DefaultLastSettledAt = missionorderDescLastSettledAt.Default.(time.Time)
+	// missionorderDescLatelySettledAt is the schema descriptor for lately_settled_at field.
+	missionorderDescLatelySettledAt := missionorderFields[25].Descriptor()
+	// missionorder.DefaultLatelySettledAt holds the default value on creation for the lately_settled_at field.
+	missionorder.DefaultLatelySettledAt = missionorderDescLatelySettledAt.Default.(time.Time)
 	// missionorderDescID is the schema descriptor for id field.
 	missionorderDescID := missionorderMixinFields0[0].Descriptor()
 	// missionorder.DefaultID holds the default value on creation for the id field.

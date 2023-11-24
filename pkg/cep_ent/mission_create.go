@@ -11,10 +11,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -505,6 +508,20 @@ func (mc *MissionCreate) SetNillableExpiredAt(t *time.Time) *MissionCreate {
 	return mc
 }
 
+// SetFreeAt sets the "free_at" field.
+func (mc *MissionCreate) SetFreeAt(t time.Time) *MissionCreate {
+	mc.mutation.SetFreeAt(t)
+	return mc
+}
+
+// SetNillableFreeAt sets the "free_at" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableFreeAt(t *time.Time) *MissionCreate {
+	if t != nil {
+		mc.SetFreeAt(*t)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -631,6 +648,51 @@ func (mc *MissionCreate) AddRenewalAgreements(r ...*RenewalAgreement) *MissionCr
 		ids[i] = r[i].ID
 	}
 	return mc.AddRenewalAgreementIDs(ids...)
+}
+
+// AddMissionExtraServiceIDs adds the "mission_extra_services" edge to the MissionExtraService entity by IDs.
+func (mc *MissionCreate) AddMissionExtraServiceIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddMissionExtraServiceIDs(ids...)
+	return mc
+}
+
+// AddMissionExtraServices adds the "mission_extra_services" edges to the MissionExtraService entity.
+func (mc *MissionCreate) AddMissionExtraServices(m ...*MissionExtraService) *MissionCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mc.AddMissionExtraServiceIDs(ids...)
+}
+
+// AddExtraServiceIDs adds the "extra_services" edge to the ExtraService entity by IDs.
+func (mc *MissionCreate) AddExtraServiceIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddExtraServiceIDs(ids...)
+	return mc
+}
+
+// AddExtraServices adds the "extra_services" edges to the ExtraService entity.
+func (mc *MissionCreate) AddExtraServices(e ...*ExtraService) *MissionCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mc.AddExtraServiceIDs(ids...)
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (mc *MissionCreate) AddExtraServiceOrderIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddExtraServiceOrderIDs(ids...)
+	return mc
+}
+
+// AddExtraServiceOrders adds the "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mc *MissionCreate) AddExtraServiceOrders(e ...*ExtraServiceOrder) *MissionCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mc.AddExtraServiceOrderIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -792,6 +854,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultExpiredAt
 		mc.mutation.SetExpiredAt(v)
 	}
+	if _, ok := mc.mutation.FreeAt(); !ok {
+		v := mission.DefaultFreeAt
+		mc.mutation.SetFreeAt(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -913,6 +979,9 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`cep_ent: missing required field "Mission.password"`)}
+	}
+	if _, ok := mc.mutation.FreeAt(); !ok {
+		return &ValidationError{Name: "free_at", err: errors.New(`cep_ent: missing required field "Mission.free_at"`)}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1098,6 +1167,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 		_spec.SetField(mission.FieldExpiredAt, field.TypeTime, value)
 		_node.ExpiredAt = &value
 	}
+	if value, ok := mc.mutation.FreeAt(); ok {
+		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
+		_node.FreeAt = value
+	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -1255,6 +1328,54 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionExtraServicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.ExtraServicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.ExtraServiceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1803,6 +1924,18 @@ func (u *MissionUpsert) UpdateExpiredAt() *MissionUpsert {
 // ClearExpiredAt clears the value of the "expired_at" field.
 func (u *MissionUpsert) ClearExpiredAt() *MissionUpsert {
 	u.SetNull(mission.FieldExpiredAt)
+	return u
+}
+
+// SetFreeAt sets the "free_at" field.
+func (u *MissionUpsert) SetFreeAt(v time.Time) *MissionUpsert {
+	u.Set(mission.FieldFreeAt, v)
+	return u
+}
+
+// UpdateFreeAt sets the "free_at" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateFreeAt() *MissionUpsert {
+	u.SetExcluded(mission.FieldFreeAt)
 	return u
 }
 
@@ -2428,6 +2561,20 @@ func (u *MissionUpsertOne) UpdateExpiredAt() *MissionUpsertOne {
 func (u *MissionUpsertOne) ClearExpiredAt() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearExpiredAt()
+	})
+}
+
+// SetFreeAt sets the "free_at" field.
+func (u *MissionUpsertOne) SetFreeAt(v time.Time) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetFreeAt(v)
+	})
+}
+
+// UpdateFreeAt sets the "free_at" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateFreeAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateFreeAt()
 	})
 }
 
@@ -3222,6 +3369,20 @@ func (u *MissionUpsertBulk) UpdateExpiredAt() *MissionUpsertBulk {
 func (u *MissionUpsertBulk) ClearExpiredAt() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearExpiredAt()
+	})
+}
+
+// SetFreeAt sets the "free_at" field.
+func (u *MissionUpsertBulk) SetFreeAt(v time.Time) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetFreeAt(v)
+	})
+}
+
+// UpdateFreeAt sets the "free_at" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateFreeAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateFreeAt()
 	})
 }
 

@@ -522,16 +522,16 @@ func (mou *MissionOrderUpdate) AddTotalSettleCount(i int64) *MissionOrderUpdate 
 	return mou
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (mou *MissionOrderUpdate) SetLastSettledAt(t time.Time) *MissionOrderUpdate {
-	mou.mutation.SetLastSettledAt(t)
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (mou *MissionOrderUpdate) SetLatelySettledAt(t time.Time) *MissionOrderUpdate {
+	mou.mutation.SetLatelySettledAt(t)
 	return mou
 }
 
-// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
-func (mou *MissionOrderUpdate) SetNillableLastSettledAt(t *time.Time) *MissionOrderUpdate {
+// SetNillableLatelySettledAt sets the "lately_settled_at" field if the given value is not nil.
+func (mou *MissionOrderUpdate) SetNillableLatelySettledAt(t *time.Time) *MissionOrderUpdate {
 	if t != nil {
-		mou.SetLastSettledAt(*t)
+		mou.SetLatelySettledAt(*t)
 	}
 	return mou
 }
@@ -848,8 +848,8 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mou.mutation.AddedTotalSettleCount(); ok {
 		_spec.AddField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
 	}
-	if value, ok := mou.mutation.LastSettledAt(); ok {
-		_spec.SetField(missionorder.FieldLastSettledAt, field.TypeTime, value)
+	if value, ok := mou.mutation.LatelySettledAt(); ok {
+		_spec.SetField(missionorder.FieldLatelySettledAt, field.TypeTime, value)
 	}
 	if mou.mutation.ConsumeUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1578,16 +1578,16 @@ func (mouo *MissionOrderUpdateOne) AddTotalSettleCount(i int64) *MissionOrderUpd
 	return mouo
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (mouo *MissionOrderUpdateOne) SetLastSettledAt(t time.Time) *MissionOrderUpdateOne {
-	mouo.mutation.SetLastSettledAt(t)
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (mouo *MissionOrderUpdateOne) SetLatelySettledAt(t time.Time) *MissionOrderUpdateOne {
+	mouo.mutation.SetLatelySettledAt(t)
 	return mouo
 }
 
-// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
-func (mouo *MissionOrderUpdateOne) SetNillableLastSettledAt(t *time.Time) *MissionOrderUpdateOne {
+// SetNillableLatelySettledAt sets the "lately_settled_at" field if the given value is not nil.
+func (mouo *MissionOrderUpdateOne) SetNillableLatelySettledAt(t *time.Time) *MissionOrderUpdateOne {
 	if t != nil {
-		mouo.SetLastSettledAt(*t)
+		mouo.SetLatelySettledAt(*t)
 	}
 	return mouo
 }
@@ -1934,8 +1934,8 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 	if value, ok := mouo.mutation.AddedTotalSettleCount(); ok {
 		_spec.AddField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
 	}
-	if value, ok := mouo.mutation.LastSettledAt(); ok {
-		_spec.SetField(missionorder.FieldLastSettledAt, field.TypeTime, value)
+	if value, ok := mouo.mutation.LatelySettledAt(); ok {
+		_spec.SetField(missionorder.FieldLatelySettledAt, field.TypeTime, value)
 	}
 	if mouo.mutation.ConsumeUserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -22,6 +22,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
@@ -32,6 +35,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -76,6 +80,9 @@ const (
 	TypeEarnBill             = "EarnBill"
 	TypeEnumCondition        = "EnumCondition"
 	TypeEnumMissionStatus    = "EnumMissionStatus"
+	TypeExtraService         = "ExtraService"
+	TypeExtraServiceOrder    = "ExtraServiceOrder"
+	TypeExtraServicePrice    = "ExtraServicePrice"
 	TypeFrpcInfo             = "FrpcInfo"
 	TypeFrpsInfo             = "FrpsInfo"
 	TypeGpu                  = "Gpu"
@@ -86,6 +93,7 @@ const (
 	TypeMission              = "Mission"
 	TypeMissionBatch         = "MissionBatch"
 	TypeMissionConsumeOrder  = "MissionConsumeOrder"
+	TypeMissionExtraService  = "MissionExtraService"
 	TypeMissionKeyPair       = "MissionKeyPair"
 	TypeMissionKind          = "MissionKind"
 	TypeMissionOrder         = "MissionOrder"
@@ -14595,6 +14603,3564 @@ func (m *EnumMissionStatusMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown EnumMissionStatus edge %s", name)
 }
 
+// ExtraServiceMutation represents an operation that mutates the ExtraService nodes in the graph.
+type ExtraServiceMutation struct {
+	config
+	op                            Op
+	typ                           string
+	id                            *int64
+	created_by                    *int64
+	addcreated_by                 *int64
+	updated_by                    *int64
+	addupdated_by                 *int64
+	created_at                    *time.Time
+	updated_at                    *time.Time
+	deleted_at                    *time.Time
+	name                          *string
+	extra_service_type            *enums.ExtraServiceType
+	started_at                    *time.Time
+	finished_at                   *time.Time
+	clearedFields                 map[string]struct{}
+	missions                      map[int64]struct{}
+	removedmissions               map[int64]struct{}
+	clearedmissions               bool
+	mission_extra_services        map[int64]struct{}
+	removedmission_extra_services map[int64]struct{}
+	clearedmission_extra_services bool
+	extra_service_prices          map[int64]struct{}
+	removedextra_service_prices   map[int64]struct{}
+	clearedextra_service_prices   bool
+	done                          bool
+	oldValue                      func(context.Context) (*ExtraService, error)
+	predicates                    []predicate.ExtraService
+}
+
+var _ ent.Mutation = (*ExtraServiceMutation)(nil)
+
+// extraserviceOption allows management of the mutation configuration using functional options.
+type extraserviceOption func(*ExtraServiceMutation)
+
+// newExtraServiceMutation creates new mutation for the ExtraService entity.
+func newExtraServiceMutation(c config, op Op, opts ...extraserviceOption) *ExtraServiceMutation {
+	m := &ExtraServiceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExtraService,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExtraServiceID sets the ID field of the mutation.
+func withExtraServiceID(id int64) extraserviceOption {
+	return func(m *ExtraServiceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ExtraService
+		)
+		m.oldValue = func(ctx context.Context) (*ExtraService, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ExtraService.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExtraService sets the old ExtraService of the mutation.
+func withExtraService(node *ExtraService) extraserviceOption {
+	return func(m *ExtraServiceMutation) {
+		m.oldValue = func(context.Context) (*ExtraService, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExtraServiceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExtraServiceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ExtraService entities.
+func (m *ExtraServiceMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ExtraServiceMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ExtraServiceMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ExtraService.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ExtraServiceMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ExtraServiceMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *ExtraServiceMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ExtraServiceMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ExtraServiceMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ExtraServiceMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ExtraServiceMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *ExtraServiceMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ExtraServiceMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ExtraServiceMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ExtraServiceMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ExtraServiceMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ExtraServiceMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ExtraServiceMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ExtraServiceMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ExtraServiceMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ExtraServiceMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ExtraServiceMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ExtraServiceMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *ExtraServiceMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ExtraServiceMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ExtraServiceMutation) ResetName() {
+	m.name = nil
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (m *ExtraServiceMutation) SetExtraServiceType(est enums.ExtraServiceType) {
+	m.extra_service_type = &est
+}
+
+// ExtraServiceType returns the value of the "extra_service_type" field in the mutation.
+func (m *ExtraServiceMutation) ExtraServiceType() (r enums.ExtraServiceType, exists bool) {
+	v := m.extra_service_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceType returns the old "extra_service_type" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldExtraServiceType(ctx context.Context) (v enums.ExtraServiceType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceType: %w", err)
+	}
+	return oldValue.ExtraServiceType, nil
+}
+
+// ResetExtraServiceType resets all changes to the "extra_service_type" field.
+func (m *ExtraServiceMutation) ResetExtraServiceType() {
+	m.extra_service_type = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *ExtraServiceMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *ExtraServiceMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *ExtraServiceMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[extraservice.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *ExtraServiceMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[extraservice.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *ExtraServiceMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, extraservice.FieldStartedAt)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *ExtraServiceMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *ExtraServiceMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the ExtraService entity.
+// If the ExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *ExtraServiceMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[extraservice.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *ExtraServiceMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[extraservice.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *ExtraServiceMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, extraservice.FieldFinishedAt)
+}
+
+// AddMissionIDs adds the "missions" edge to the Mission entity by ids.
+func (m *ExtraServiceMutation) AddMissionIDs(ids ...int64) {
+	if m.missions == nil {
+		m.missions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.missions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissions clears the "missions" edge to the Mission entity.
+func (m *ExtraServiceMutation) ClearMissions() {
+	m.clearedmissions = true
+}
+
+// MissionsCleared reports if the "missions" edge to the Mission entity was cleared.
+func (m *ExtraServiceMutation) MissionsCleared() bool {
+	return m.clearedmissions
+}
+
+// RemoveMissionIDs removes the "missions" edge to the Mission entity by IDs.
+func (m *ExtraServiceMutation) RemoveMissionIDs(ids ...int64) {
+	if m.removedmissions == nil {
+		m.removedmissions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.missions, ids[i])
+		m.removedmissions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissions returns the removed IDs of the "missions" edge to the Mission entity.
+func (m *ExtraServiceMutation) RemovedMissionsIDs() (ids []int64) {
+	for id := range m.removedmissions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionsIDs returns the "missions" edge IDs in the mutation.
+func (m *ExtraServiceMutation) MissionsIDs() (ids []int64) {
+	for id := range m.missions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissions resets all changes to the "missions" edge.
+func (m *ExtraServiceMutation) ResetMissions() {
+	m.missions = nil
+	m.clearedmissions = false
+	m.removedmissions = nil
+}
+
+// AddMissionExtraServiceIDs adds the "mission_extra_services" edge to the MissionExtraService entity by ids.
+func (m *ExtraServiceMutation) AddMissionExtraServiceIDs(ids ...int64) {
+	if m.mission_extra_services == nil {
+		m.mission_extra_services = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_extra_services[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionExtraServices clears the "mission_extra_services" edge to the MissionExtraService entity.
+func (m *ExtraServiceMutation) ClearMissionExtraServices() {
+	m.clearedmission_extra_services = true
+}
+
+// MissionExtraServicesCleared reports if the "mission_extra_services" edge to the MissionExtraService entity was cleared.
+func (m *ExtraServiceMutation) MissionExtraServicesCleared() bool {
+	return m.clearedmission_extra_services
+}
+
+// RemoveMissionExtraServiceIDs removes the "mission_extra_services" edge to the MissionExtraService entity by IDs.
+func (m *ExtraServiceMutation) RemoveMissionExtraServiceIDs(ids ...int64) {
+	if m.removedmission_extra_services == nil {
+		m.removedmission_extra_services = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_extra_services, ids[i])
+		m.removedmission_extra_services[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionExtraServices returns the removed IDs of the "mission_extra_services" edge to the MissionExtraService entity.
+func (m *ExtraServiceMutation) RemovedMissionExtraServicesIDs() (ids []int64) {
+	for id := range m.removedmission_extra_services {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionExtraServicesIDs returns the "mission_extra_services" edge IDs in the mutation.
+func (m *ExtraServiceMutation) MissionExtraServicesIDs() (ids []int64) {
+	for id := range m.mission_extra_services {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionExtraServices resets all changes to the "mission_extra_services" edge.
+func (m *ExtraServiceMutation) ResetMissionExtraServices() {
+	m.mission_extra_services = nil
+	m.clearedmission_extra_services = false
+	m.removedmission_extra_services = nil
+}
+
+// AddExtraServicePriceIDs adds the "extra_service_prices" edge to the ExtraServicePrice entity by ids.
+func (m *ExtraServiceMutation) AddExtraServicePriceIDs(ids ...int64) {
+	if m.extra_service_prices == nil {
+		m.extra_service_prices = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.extra_service_prices[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExtraServicePrices clears the "extra_service_prices" edge to the ExtraServicePrice entity.
+func (m *ExtraServiceMutation) ClearExtraServicePrices() {
+	m.clearedextra_service_prices = true
+}
+
+// ExtraServicePricesCleared reports if the "extra_service_prices" edge to the ExtraServicePrice entity was cleared.
+func (m *ExtraServiceMutation) ExtraServicePricesCleared() bool {
+	return m.clearedextra_service_prices
+}
+
+// RemoveExtraServicePriceIDs removes the "extra_service_prices" edge to the ExtraServicePrice entity by IDs.
+func (m *ExtraServiceMutation) RemoveExtraServicePriceIDs(ids ...int64) {
+	if m.removedextra_service_prices == nil {
+		m.removedextra_service_prices = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.extra_service_prices, ids[i])
+		m.removedextra_service_prices[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExtraServicePrices returns the removed IDs of the "extra_service_prices" edge to the ExtraServicePrice entity.
+func (m *ExtraServiceMutation) RemovedExtraServicePricesIDs() (ids []int64) {
+	for id := range m.removedextra_service_prices {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExtraServicePricesIDs returns the "extra_service_prices" edge IDs in the mutation.
+func (m *ExtraServiceMutation) ExtraServicePricesIDs() (ids []int64) {
+	for id := range m.extra_service_prices {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExtraServicePrices resets all changes to the "extra_service_prices" edge.
+func (m *ExtraServiceMutation) ResetExtraServicePrices() {
+	m.extra_service_prices = nil
+	m.clearedextra_service_prices = false
+	m.removedextra_service_prices = nil
+}
+
+// Where appends a list predicates to the ExtraServiceMutation builder.
+func (m *ExtraServiceMutation) Where(ps ...predicate.ExtraService) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ExtraServiceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ExtraServiceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ExtraService, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ExtraServiceMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ExtraServiceMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ExtraService).
+func (m *ExtraServiceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ExtraServiceMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_by != nil {
+		fields = append(fields, extraservice.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, extraservice.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, extraservice.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, extraservice.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, extraservice.FieldDeletedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, extraservice.FieldName)
+	}
+	if m.extra_service_type != nil {
+		fields = append(fields, extraservice.FieldExtraServiceType)
+	}
+	if m.started_at != nil {
+		fields = append(fields, extraservice.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, extraservice.FieldFinishedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ExtraServiceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case extraservice.FieldCreatedBy:
+		return m.CreatedBy()
+	case extraservice.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case extraservice.FieldCreatedAt:
+		return m.CreatedAt()
+	case extraservice.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case extraservice.FieldDeletedAt:
+		return m.DeletedAt()
+	case extraservice.FieldName:
+		return m.Name()
+	case extraservice.FieldExtraServiceType:
+		return m.ExtraServiceType()
+	case extraservice.FieldStartedAt:
+		return m.StartedAt()
+	case extraservice.FieldFinishedAt:
+		return m.FinishedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ExtraServiceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case extraservice.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case extraservice.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case extraservice.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case extraservice.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case extraservice.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case extraservice.FieldName:
+		return m.OldName(ctx)
+	case extraservice.FieldExtraServiceType:
+		return m.OldExtraServiceType(ctx)
+	case extraservice.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case extraservice.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown ExtraService field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExtraServiceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case extraservice.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case extraservice.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case extraservice.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case extraservice.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case extraservice.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case extraservice.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case extraservice.FieldExtraServiceType:
+		v, ok := value.(enums.ExtraServiceType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceType(v)
+		return nil
+	case extraservice.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case extraservice.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraService field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ExtraServiceMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, extraservice.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, extraservice.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ExtraServiceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case extraservice.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case extraservice.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExtraServiceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case extraservice.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case extraservice.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraService numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ExtraServiceMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(extraservice.FieldStartedAt) {
+		fields = append(fields, extraservice.FieldStartedAt)
+	}
+	if m.FieldCleared(extraservice.FieldFinishedAt) {
+		fields = append(fields, extraservice.FieldFinishedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ExtraServiceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExtraServiceMutation) ClearField(name string) error {
+	switch name {
+	case extraservice.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case extraservice.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraService nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ExtraServiceMutation) ResetField(name string) error {
+	switch name {
+	case extraservice.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case extraservice.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case extraservice.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case extraservice.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case extraservice.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case extraservice.FieldName:
+		m.ResetName()
+		return nil
+	case extraservice.FieldExtraServiceType:
+		m.ResetExtraServiceType()
+		return nil
+	case extraservice.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case extraservice.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraService field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ExtraServiceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.missions != nil {
+		edges = append(edges, extraservice.EdgeMissions)
+	}
+	if m.mission_extra_services != nil {
+		edges = append(edges, extraservice.EdgeMissionExtraServices)
+	}
+	if m.extra_service_prices != nil {
+		edges = append(edges, extraservice.EdgeExtraServicePrices)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ExtraServiceMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case extraservice.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.missions))
+		for id := range m.missions {
+			ids = append(ids, id)
+		}
+		return ids
+	case extraservice.EdgeMissionExtraServices:
+		ids := make([]ent.Value, 0, len(m.mission_extra_services))
+		for id := range m.mission_extra_services {
+			ids = append(ids, id)
+		}
+		return ids
+	case extraservice.EdgeExtraServicePrices:
+		ids := make([]ent.Value, 0, len(m.extra_service_prices))
+		for id := range m.extra_service_prices {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ExtraServiceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedmissions != nil {
+		edges = append(edges, extraservice.EdgeMissions)
+	}
+	if m.removedmission_extra_services != nil {
+		edges = append(edges, extraservice.EdgeMissionExtraServices)
+	}
+	if m.removedextra_service_prices != nil {
+		edges = append(edges, extraservice.EdgeExtraServicePrices)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ExtraServiceMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case extraservice.EdgeMissions:
+		ids := make([]ent.Value, 0, len(m.removedmissions))
+		for id := range m.removedmissions {
+			ids = append(ids, id)
+		}
+		return ids
+	case extraservice.EdgeMissionExtraServices:
+		ids := make([]ent.Value, 0, len(m.removedmission_extra_services))
+		for id := range m.removedmission_extra_services {
+			ids = append(ids, id)
+		}
+		return ids
+	case extraservice.EdgeExtraServicePrices:
+		ids := make([]ent.Value, 0, len(m.removedextra_service_prices))
+		for id := range m.removedextra_service_prices {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ExtraServiceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedmissions {
+		edges = append(edges, extraservice.EdgeMissions)
+	}
+	if m.clearedmission_extra_services {
+		edges = append(edges, extraservice.EdgeMissionExtraServices)
+	}
+	if m.clearedextra_service_prices {
+		edges = append(edges, extraservice.EdgeExtraServicePrices)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ExtraServiceMutation) EdgeCleared(name string) bool {
+	switch name {
+	case extraservice.EdgeMissions:
+		return m.clearedmissions
+	case extraservice.EdgeMissionExtraServices:
+		return m.clearedmission_extra_services
+	case extraservice.EdgeExtraServicePrices:
+		return m.clearedextra_service_prices
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ExtraServiceMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ExtraService unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ExtraServiceMutation) ResetEdge(name string) error {
+	switch name {
+	case extraservice.EdgeMissions:
+		m.ResetMissions()
+		return nil
+	case extraservice.EdgeMissionExtraServices:
+		m.ResetMissionExtraServices()
+		return nil
+	case extraservice.EdgeExtraServicePrices:
+		m.ResetExtraServicePrices()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraService edge %s", name)
+}
+
+// ExtraServiceOrderMutation represents an operation that mutates the ExtraServiceOrder nodes in the graph.
+type ExtraServiceOrderMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int64
+	created_by           *int64
+	addcreated_by        *int64
+	updated_by           *int64
+	addupdated_by        *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	amount               *int64
+	addamount            *int64
+	extra_service_type   *enums.ExtraServiceType
+	buy_duration         *int64
+	addbuy_duration      *int64
+	plan_started_at      *time.Time
+	plan_finished_at     *time.Time
+	clearedFields        map[string]struct{}
+	mission              *int64
+	clearedmission       bool
+	symbol               *int64
+	clearedsymbol        bool
+	mission_batch        *int64
+	clearedmission_batch bool
+	done                 bool
+	oldValue             func(context.Context) (*ExtraServiceOrder, error)
+	predicates           []predicate.ExtraServiceOrder
+}
+
+var _ ent.Mutation = (*ExtraServiceOrderMutation)(nil)
+
+// extraserviceorderOption allows management of the mutation configuration using functional options.
+type extraserviceorderOption func(*ExtraServiceOrderMutation)
+
+// newExtraServiceOrderMutation creates new mutation for the ExtraServiceOrder entity.
+func newExtraServiceOrderMutation(c config, op Op, opts ...extraserviceorderOption) *ExtraServiceOrderMutation {
+	m := &ExtraServiceOrderMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExtraServiceOrder,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExtraServiceOrderID sets the ID field of the mutation.
+func withExtraServiceOrderID(id int64) extraserviceorderOption {
+	return func(m *ExtraServiceOrderMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ExtraServiceOrder
+		)
+		m.oldValue = func(ctx context.Context) (*ExtraServiceOrder, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ExtraServiceOrder.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExtraServiceOrder sets the old ExtraServiceOrder of the mutation.
+func withExtraServiceOrder(node *ExtraServiceOrder) extraserviceorderOption {
+	return func(m *ExtraServiceOrderMutation) {
+		m.oldValue = func(context.Context) (*ExtraServiceOrder, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExtraServiceOrderMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExtraServiceOrderMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ExtraServiceOrder entities.
+func (m *ExtraServiceOrderMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ExtraServiceOrderMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ExtraServiceOrderMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ExtraServiceOrder.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ExtraServiceOrderMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ExtraServiceOrderMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *ExtraServiceOrderMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ExtraServiceOrderMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ExtraServiceOrderMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ExtraServiceOrderMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *ExtraServiceOrderMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ExtraServiceOrderMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ExtraServiceOrderMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ExtraServiceOrderMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ExtraServiceOrderMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ExtraServiceOrderMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ExtraServiceOrderMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ExtraServiceOrderMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetMissionID sets the "mission_id" field.
+func (m *ExtraServiceOrderMutation) SetMissionID(i int64) {
+	m.mission = &i
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *ExtraServiceOrderMutation) MissionID() (r int64, exists bool) {
+	v := m.mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *ExtraServiceOrderMutation) ResetMissionID() {
+	m.mission = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *ExtraServiceOrderMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *ExtraServiceOrderMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *ExtraServiceOrderMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *ExtraServiceOrderMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// SetSymbolID sets the "symbol_id" field.
+func (m *ExtraServiceOrderMutation) SetSymbolID(i int64) {
+	m.symbol = &i
+}
+
+// SymbolID returns the value of the "symbol_id" field in the mutation.
+func (m *ExtraServiceOrderMutation) SymbolID() (r int64, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbolID returns the old "symbol_id" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldSymbolID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbolID: %w", err)
+	}
+	return oldValue.SymbolID, nil
+}
+
+// ResetSymbolID resets all changes to the "symbol_id" field.
+func (m *ExtraServiceOrderMutation) ResetSymbolID() {
+	m.symbol = nil
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (m *ExtraServiceOrderMutation) SetExtraServiceType(est enums.ExtraServiceType) {
+	m.extra_service_type = &est
+}
+
+// ExtraServiceType returns the value of the "extra_service_type" field in the mutation.
+func (m *ExtraServiceOrderMutation) ExtraServiceType() (r enums.ExtraServiceType, exists bool) {
+	v := m.extra_service_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceType returns the old "extra_service_type" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldExtraServiceType(ctx context.Context) (v enums.ExtraServiceType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceType: %w", err)
+	}
+	return oldValue.ExtraServiceType, nil
+}
+
+// ResetExtraServiceType resets all changes to the "extra_service_type" field.
+func (m *ExtraServiceOrderMutation) ResetExtraServiceType() {
+	m.extra_service_type = nil
+}
+
+// SetBuyDuration sets the "buy_duration" field.
+func (m *ExtraServiceOrderMutation) SetBuyDuration(i int64) {
+	m.buy_duration = &i
+	m.addbuy_duration = nil
+}
+
+// BuyDuration returns the value of the "buy_duration" field in the mutation.
+func (m *ExtraServiceOrderMutation) BuyDuration() (r int64, exists bool) {
+	v := m.buy_duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBuyDuration returns the old "buy_duration" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldBuyDuration(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBuyDuration is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBuyDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBuyDuration: %w", err)
+	}
+	return oldValue.BuyDuration, nil
+}
+
+// AddBuyDuration adds i to the "buy_duration" field.
+func (m *ExtraServiceOrderMutation) AddBuyDuration(i int64) {
+	if m.addbuy_duration != nil {
+		*m.addbuy_duration += i
+	} else {
+		m.addbuy_duration = &i
+	}
+}
+
+// AddedBuyDuration returns the value that was added to the "buy_duration" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedBuyDuration() (r int64, exists bool) {
+	v := m.addbuy_duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBuyDuration resets all changes to the "buy_duration" field.
+func (m *ExtraServiceOrderMutation) ResetBuyDuration() {
+	m.buy_duration = nil
+	m.addbuy_duration = nil
+}
+
+// SetPlanStartedAt sets the "plan_started_at" field.
+func (m *ExtraServiceOrderMutation) SetPlanStartedAt(t time.Time) {
+	m.plan_started_at = &t
+}
+
+// PlanStartedAt returns the value of the "plan_started_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) PlanStartedAt() (r time.Time, exists bool) {
+	v := m.plan_started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlanStartedAt returns the old "plan_started_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldPlanStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlanStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlanStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlanStartedAt: %w", err)
+	}
+	return oldValue.PlanStartedAt, nil
+}
+
+// ClearPlanStartedAt clears the value of the "plan_started_at" field.
+func (m *ExtraServiceOrderMutation) ClearPlanStartedAt() {
+	m.plan_started_at = nil
+	m.clearedFields[extraserviceorder.FieldPlanStartedAt] = struct{}{}
+}
+
+// PlanStartedAtCleared returns if the "plan_started_at" field was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) PlanStartedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceorder.FieldPlanStartedAt]
+	return ok
+}
+
+// ResetPlanStartedAt resets all changes to the "plan_started_at" field.
+func (m *ExtraServiceOrderMutation) ResetPlanStartedAt() {
+	m.plan_started_at = nil
+	delete(m.clearedFields, extraserviceorder.FieldPlanStartedAt)
+}
+
+// SetPlanFinishedAt sets the "plan_finished_at" field.
+func (m *ExtraServiceOrderMutation) SetPlanFinishedAt(t time.Time) {
+	m.plan_finished_at = &t
+}
+
+// PlanFinishedAt returns the value of the "plan_finished_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) PlanFinishedAt() (r time.Time, exists bool) {
+	v := m.plan_finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlanFinishedAt returns the old "plan_finished_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldPlanFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlanFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlanFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlanFinishedAt: %w", err)
+	}
+	return oldValue.PlanFinishedAt, nil
+}
+
+// ClearPlanFinishedAt clears the value of the "plan_finished_at" field.
+func (m *ExtraServiceOrderMutation) ClearPlanFinishedAt() {
+	m.plan_finished_at = nil
+	m.clearedFields[extraserviceorder.FieldPlanFinishedAt] = struct{}{}
+}
+
+// PlanFinishedAtCleared returns if the "plan_finished_at" field was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) PlanFinishedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceorder.FieldPlanFinishedAt]
+	return ok
+}
+
+// ResetPlanFinishedAt resets all changes to the "plan_finished_at" field.
+func (m *ExtraServiceOrderMutation) ResetPlanFinishedAt() {
+	m.plan_finished_at = nil
+	delete(m.clearedFields, extraserviceorder.FieldPlanFinishedAt)
+}
+
+// SetMissionBatchID sets the "mission_batch_id" field.
+func (m *ExtraServiceOrderMutation) SetMissionBatchID(i int64) {
+	m.mission_batch = &i
+}
+
+// MissionBatchID returns the value of the "mission_batch_id" field in the mutation.
+func (m *ExtraServiceOrderMutation) MissionBatchID() (r int64, exists bool) {
+	v := m.mission_batch
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionBatchID returns the old "mission_batch_id" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldMissionBatchID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionBatchID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionBatchID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionBatchID: %w", err)
+	}
+	return oldValue.MissionBatchID, nil
+}
+
+// ResetMissionBatchID resets all changes to the "mission_batch_id" field.
+func (m *ExtraServiceOrderMutation) ResetMissionBatchID() {
+	m.mission_batch = nil
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (m *ExtraServiceOrderMutation) ClearMission() {
+	m.clearedmission = true
+	m.clearedFields[extraserviceorder.FieldMissionID] = struct{}{}
+}
+
+// MissionCleared reports if the "mission" edge to the Mission entity was cleared.
+func (m *ExtraServiceOrderMutation) MissionCleared() bool {
+	return m.clearedmission
+}
+
+// MissionIDs returns the "mission" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionID instead. It exists only for internal usage by the builders.
+func (m *ExtraServiceOrderMutation) MissionIDs() (ids []int64) {
+	if id := m.mission; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMission resets all changes to the "mission" edge.
+func (m *ExtraServiceOrderMutation) ResetMission() {
+	m.mission = nil
+	m.clearedmission = false
+}
+
+// ClearSymbol clears the "symbol" edge to the Symbol entity.
+func (m *ExtraServiceOrderMutation) ClearSymbol() {
+	m.clearedsymbol = true
+	m.clearedFields[extraserviceorder.FieldSymbolID] = struct{}{}
+}
+
+// SymbolCleared reports if the "symbol" edge to the Symbol entity was cleared.
+func (m *ExtraServiceOrderMutation) SymbolCleared() bool {
+	return m.clearedsymbol
+}
+
+// SymbolIDs returns the "symbol" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SymbolID instead. It exists only for internal usage by the builders.
+func (m *ExtraServiceOrderMutation) SymbolIDs() (ids []int64) {
+	if id := m.symbol; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSymbol resets all changes to the "symbol" edge.
+func (m *ExtraServiceOrderMutation) ResetSymbol() {
+	m.symbol = nil
+	m.clearedsymbol = false
+}
+
+// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
+func (m *ExtraServiceOrderMutation) ClearMissionBatch() {
+	m.clearedmission_batch = true
+	m.clearedFields[extraserviceorder.FieldMissionBatchID] = struct{}{}
+}
+
+// MissionBatchCleared reports if the "mission_batch" edge to the MissionBatch entity was cleared.
+func (m *ExtraServiceOrderMutation) MissionBatchCleared() bool {
+	return m.clearedmission_batch
+}
+
+// MissionBatchIDs returns the "mission_batch" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionBatchID instead. It exists only for internal usage by the builders.
+func (m *ExtraServiceOrderMutation) MissionBatchIDs() (ids []int64) {
+	if id := m.mission_batch; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionBatch resets all changes to the "mission_batch" edge.
+func (m *ExtraServiceOrderMutation) ResetMissionBatch() {
+	m.mission_batch = nil
+	m.clearedmission_batch = false
+}
+
+// Where appends a list predicates to the ExtraServiceOrderMutation builder.
+func (m *ExtraServiceOrderMutation) Where(ps ...predicate.ExtraServiceOrder) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ExtraServiceOrderMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ExtraServiceOrderMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ExtraServiceOrder, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ExtraServiceOrderMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ExtraServiceOrderMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ExtraServiceOrder).
+func (m *ExtraServiceOrderMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ExtraServiceOrderMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_by != nil {
+		fields = append(fields, extraserviceorder.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, extraserviceorder.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, extraserviceorder.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, extraserviceorder.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, extraserviceorder.FieldDeletedAt)
+	}
+	if m.mission != nil {
+		fields = append(fields, extraserviceorder.FieldMissionID)
+	}
+	if m.amount != nil {
+		fields = append(fields, extraserviceorder.FieldAmount)
+	}
+	if m.symbol != nil {
+		fields = append(fields, extraserviceorder.FieldSymbolID)
+	}
+	if m.extra_service_type != nil {
+		fields = append(fields, extraserviceorder.FieldExtraServiceType)
+	}
+	if m.buy_duration != nil {
+		fields = append(fields, extraserviceorder.FieldBuyDuration)
+	}
+	if m.plan_started_at != nil {
+		fields = append(fields, extraserviceorder.FieldPlanStartedAt)
+	}
+	if m.plan_finished_at != nil {
+		fields = append(fields, extraserviceorder.FieldPlanFinishedAt)
+	}
+	if m.mission_batch != nil {
+		fields = append(fields, extraserviceorder.FieldMissionBatchID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case extraserviceorder.FieldCreatedBy:
+		return m.CreatedBy()
+	case extraserviceorder.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case extraserviceorder.FieldCreatedAt:
+		return m.CreatedAt()
+	case extraserviceorder.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case extraserviceorder.FieldDeletedAt:
+		return m.DeletedAt()
+	case extraserviceorder.FieldMissionID:
+		return m.MissionID()
+	case extraserviceorder.FieldAmount:
+		return m.Amount()
+	case extraserviceorder.FieldSymbolID:
+		return m.SymbolID()
+	case extraserviceorder.FieldExtraServiceType:
+		return m.ExtraServiceType()
+	case extraserviceorder.FieldBuyDuration:
+		return m.BuyDuration()
+	case extraserviceorder.FieldPlanStartedAt:
+		return m.PlanStartedAt()
+	case extraserviceorder.FieldPlanFinishedAt:
+		return m.PlanFinishedAt()
+	case extraserviceorder.FieldMissionBatchID:
+		return m.MissionBatchID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case extraserviceorder.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case extraserviceorder.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case extraserviceorder.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case extraserviceorder.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case extraserviceorder.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case extraserviceorder.FieldMissionID:
+		return m.OldMissionID(ctx)
+	case extraserviceorder.FieldAmount:
+		return m.OldAmount(ctx)
+	case extraserviceorder.FieldSymbolID:
+		return m.OldSymbolID(ctx)
+	case extraserviceorder.FieldExtraServiceType:
+		return m.OldExtraServiceType(ctx)
+	case extraserviceorder.FieldBuyDuration:
+		return m.OldBuyDuration(ctx)
+	case extraserviceorder.FieldPlanStartedAt:
+		return m.OldPlanStartedAt(ctx)
+	case extraserviceorder.FieldPlanFinishedAt:
+		return m.OldPlanFinishedAt(ctx)
+	case extraserviceorder.FieldMissionBatchID:
+		return m.OldMissionBatchID(ctx)
+	}
+	return nil, fmt.Errorf("unknown ExtraServiceOrder field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case extraserviceorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case extraserviceorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case extraserviceorder.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case extraserviceorder.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case extraserviceorder.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case extraserviceorder.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
+		return nil
+	case extraserviceorder.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case extraserviceorder.FieldSymbolID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbolID(v)
+		return nil
+	case extraserviceorder.FieldExtraServiceType:
+		v, ok := value.(enums.ExtraServiceType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceType(v)
+		return nil
+	case extraserviceorder.FieldBuyDuration:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBuyDuration(v)
+		return nil
+	case extraserviceorder.FieldPlanStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlanStartedAt(v)
+		return nil
+	case extraserviceorder.FieldPlanFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlanFinishedAt(v)
+		return nil
+	case extraserviceorder.FieldMissionBatchID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionBatchID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServiceOrder field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ExtraServiceOrderMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, extraserviceorder.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, extraserviceorder.FieldUpdatedBy)
+	}
+	if m.addamount != nil {
+		fields = append(fields, extraserviceorder.FieldAmount)
+	}
+	if m.addbuy_duration != nil {
+		fields = append(fields, extraserviceorder.FieldBuyDuration)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ExtraServiceOrderMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case extraserviceorder.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case extraserviceorder.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case extraserviceorder.FieldAmount:
+		return m.AddedAmount()
+	case extraserviceorder.FieldBuyDuration:
+		return m.AddedBuyDuration()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExtraServiceOrderMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case extraserviceorder.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case extraserviceorder.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case extraserviceorder.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	case extraserviceorder.FieldBuyDuration:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBuyDuration(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServiceOrder numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ExtraServiceOrderMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(extraserviceorder.FieldPlanStartedAt) {
+		fields = append(fields, extraserviceorder.FieldPlanStartedAt)
+	}
+	if m.FieldCleared(extraserviceorder.FieldPlanFinishedAt) {
+		fields = append(fields, extraserviceorder.FieldPlanFinishedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ExtraServiceOrderMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExtraServiceOrderMutation) ClearField(name string) error {
+	switch name {
+	case extraserviceorder.FieldPlanStartedAt:
+		m.ClearPlanStartedAt()
+		return nil
+	case extraserviceorder.FieldPlanFinishedAt:
+		m.ClearPlanFinishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServiceOrder nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ExtraServiceOrderMutation) ResetField(name string) error {
+	switch name {
+	case extraserviceorder.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case extraserviceorder.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case extraserviceorder.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case extraserviceorder.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case extraserviceorder.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case extraserviceorder.FieldMissionID:
+		m.ResetMissionID()
+		return nil
+	case extraserviceorder.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case extraserviceorder.FieldSymbolID:
+		m.ResetSymbolID()
+		return nil
+	case extraserviceorder.FieldExtraServiceType:
+		m.ResetExtraServiceType()
+		return nil
+	case extraserviceorder.FieldBuyDuration:
+		m.ResetBuyDuration()
+		return nil
+	case extraserviceorder.FieldPlanStartedAt:
+		m.ResetPlanStartedAt()
+		return nil
+	case extraserviceorder.FieldPlanFinishedAt:
+		m.ResetPlanFinishedAt()
+		return nil
+	case extraserviceorder.FieldMissionBatchID:
+		m.ResetMissionBatchID()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServiceOrder field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ExtraServiceOrderMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.mission != nil {
+		edges = append(edges, extraserviceorder.EdgeMission)
+	}
+	if m.symbol != nil {
+		edges = append(edges, extraserviceorder.EdgeSymbol)
+	}
+	if m.mission_batch != nil {
+		edges = append(edges, extraserviceorder.EdgeMissionBatch)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ExtraServiceOrderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case extraserviceorder.EdgeMission:
+		if id := m.mission; id != nil {
+			return []ent.Value{*id}
+		}
+	case extraserviceorder.EdgeSymbol:
+		if id := m.symbol; id != nil {
+			return []ent.Value{*id}
+		}
+	case extraserviceorder.EdgeMissionBatch:
+		if id := m.mission_batch; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ExtraServiceOrderMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ExtraServiceOrderMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ExtraServiceOrderMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedmission {
+		edges = append(edges, extraserviceorder.EdgeMission)
+	}
+	if m.clearedsymbol {
+		edges = append(edges, extraserviceorder.EdgeSymbol)
+	}
+	if m.clearedmission_batch {
+		edges = append(edges, extraserviceorder.EdgeMissionBatch)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case extraserviceorder.EdgeMission:
+		return m.clearedmission
+	case extraserviceorder.EdgeSymbol:
+		return m.clearedsymbol
+	case extraserviceorder.EdgeMissionBatch:
+		return m.clearedmission_batch
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ExtraServiceOrderMutation) ClearEdge(name string) error {
+	switch name {
+	case extraserviceorder.EdgeMission:
+		m.ClearMission()
+		return nil
+	case extraserviceorder.EdgeSymbol:
+		m.ClearSymbol()
+		return nil
+	case extraserviceorder.EdgeMissionBatch:
+		m.ClearMissionBatch()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServiceOrder unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ExtraServiceOrderMutation) ResetEdge(name string) error {
+	switch name {
+	case extraserviceorder.EdgeMission:
+		m.ResetMission()
+		return nil
+	case extraserviceorder.EdgeSymbol:
+		m.ResetSymbol()
+		return nil
+	case extraserviceorder.EdgeMissionBatch:
+		m.ResetMissionBatch()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServiceOrder edge %s", name)
+}
+
+// ExtraServicePriceMutation represents an operation that mutates the ExtraServicePrice nodes in the graph.
+type ExtraServicePriceMutation struct {
+	config
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	extra_service_billing_type *enums.ExtraServiceBillingType
+	cep                        *int64
+	addcep                     *int64
+	started_at                 *time.Time
+	finished_at                *time.Time
+	is_deprecated              *bool
+	is_sensitive               *bool
+	clearedFields              map[string]struct{}
+	extra_service              *int64
+	clearedextra_service       bool
+	done                       bool
+	oldValue                   func(context.Context) (*ExtraServicePrice, error)
+	predicates                 []predicate.ExtraServicePrice
+}
+
+var _ ent.Mutation = (*ExtraServicePriceMutation)(nil)
+
+// extraservicepriceOption allows management of the mutation configuration using functional options.
+type extraservicepriceOption func(*ExtraServicePriceMutation)
+
+// newExtraServicePriceMutation creates new mutation for the ExtraServicePrice entity.
+func newExtraServicePriceMutation(c config, op Op, opts ...extraservicepriceOption) *ExtraServicePriceMutation {
+	m := &ExtraServicePriceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExtraServicePrice,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExtraServicePriceID sets the ID field of the mutation.
+func withExtraServicePriceID(id int64) extraservicepriceOption {
+	return func(m *ExtraServicePriceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ExtraServicePrice
+		)
+		m.oldValue = func(ctx context.Context) (*ExtraServicePrice, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ExtraServicePrice.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExtraServicePrice sets the old ExtraServicePrice of the mutation.
+func withExtraServicePrice(node *ExtraServicePrice) extraservicepriceOption {
+	return func(m *ExtraServicePriceMutation) {
+		m.oldValue = func(context.Context) (*ExtraServicePrice, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExtraServicePriceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExtraServicePriceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ExtraServicePrice entities.
+func (m *ExtraServicePriceMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ExtraServicePriceMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ExtraServicePriceMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ExtraServicePrice.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ExtraServicePriceMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ExtraServicePriceMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *ExtraServicePriceMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ExtraServicePriceMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ExtraServicePriceMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ExtraServicePriceMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ExtraServicePriceMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *ExtraServicePriceMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ExtraServicePriceMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ExtraServicePriceMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ExtraServicePriceMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ExtraServicePriceMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ExtraServicePriceMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ExtraServicePriceMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ExtraServicePriceMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ExtraServicePriceMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ExtraServicePriceMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ExtraServicePriceMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ExtraServicePriceMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (m *ExtraServicePriceMutation) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) {
+	m.extra_service_billing_type = &esbt
+}
+
+// ExtraServiceBillingType returns the value of the "extra_service_billing_type" field in the mutation.
+func (m *ExtraServicePriceMutation) ExtraServiceBillingType() (r enums.ExtraServiceBillingType, exists bool) {
+	v := m.extra_service_billing_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceBillingType returns the old "extra_service_billing_type" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldExtraServiceBillingType(ctx context.Context) (v enums.ExtraServiceBillingType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceBillingType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceBillingType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceBillingType: %w", err)
+	}
+	return oldValue.ExtraServiceBillingType, nil
+}
+
+// ResetExtraServiceBillingType resets all changes to the "extra_service_billing_type" field.
+func (m *ExtraServicePriceMutation) ResetExtraServiceBillingType() {
+	m.extra_service_billing_type = nil
+}
+
+// SetExtraServiceID sets the "extra_service_id" field.
+func (m *ExtraServicePriceMutation) SetExtraServiceID(i int64) {
+	m.extra_service = &i
+}
+
+// ExtraServiceID returns the value of the "extra_service_id" field in the mutation.
+func (m *ExtraServicePriceMutation) ExtraServiceID() (r int64, exists bool) {
+	v := m.extra_service
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceID returns the old "extra_service_id" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldExtraServiceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceID: %w", err)
+	}
+	return oldValue.ExtraServiceID, nil
+}
+
+// ResetExtraServiceID resets all changes to the "extra_service_id" field.
+func (m *ExtraServicePriceMutation) ResetExtraServiceID() {
+	m.extra_service = nil
+}
+
+// SetCep sets the "cep" field.
+func (m *ExtraServicePriceMutation) SetCep(i int64) {
+	m.cep = &i
+	m.addcep = nil
+}
+
+// Cep returns the value of the "cep" field in the mutation.
+func (m *ExtraServicePriceMutation) Cep() (r int64, exists bool) {
+	v := m.cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCep returns the old "cep" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCep: %w", err)
+	}
+	return oldValue.Cep, nil
+}
+
+// AddCep adds i to the "cep" field.
+func (m *ExtraServicePriceMutation) AddCep(i int64) {
+	if m.addcep != nil {
+		*m.addcep += i
+	} else {
+		m.addcep = &i
+	}
+}
+
+// AddedCep returns the value that was added to the "cep" field in this mutation.
+func (m *ExtraServicePriceMutation) AddedCep() (r int64, exists bool) {
+	v := m.addcep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCep resets all changes to the "cep" field.
+func (m *ExtraServicePriceMutation) ResetCep() {
+	m.cep = nil
+	m.addcep = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *ExtraServicePriceMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *ExtraServicePriceMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *ExtraServicePriceMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[extraserviceprice.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *ExtraServicePriceMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceprice.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *ExtraServicePriceMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, extraserviceprice.FieldStartedAt)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *ExtraServicePriceMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *ExtraServicePriceMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *ExtraServicePriceMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[extraserviceprice.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *ExtraServicePriceMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceprice.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *ExtraServicePriceMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, extraserviceprice.FieldFinishedAt)
+}
+
+// SetIsDeprecated sets the "is_deprecated" field.
+func (m *ExtraServicePriceMutation) SetIsDeprecated(b bool) {
+	m.is_deprecated = &b
+}
+
+// IsDeprecated returns the value of the "is_deprecated" field in the mutation.
+func (m *ExtraServicePriceMutation) IsDeprecated() (r bool, exists bool) {
+	v := m.is_deprecated
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsDeprecated returns the old "is_deprecated" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldIsDeprecated(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsDeprecated is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsDeprecated requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsDeprecated: %w", err)
+	}
+	return oldValue.IsDeprecated, nil
+}
+
+// ResetIsDeprecated resets all changes to the "is_deprecated" field.
+func (m *ExtraServicePriceMutation) ResetIsDeprecated() {
+	m.is_deprecated = nil
+}
+
+// SetIsSensitive sets the "is_sensitive" field.
+func (m *ExtraServicePriceMutation) SetIsSensitive(b bool) {
+	m.is_sensitive = &b
+}
+
+// IsSensitive returns the value of the "is_sensitive" field in the mutation.
+func (m *ExtraServicePriceMutation) IsSensitive() (r bool, exists bool) {
+	v := m.is_sensitive
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsSensitive returns the old "is_sensitive" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldIsSensitive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsSensitive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsSensitive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsSensitive: %w", err)
+	}
+	return oldValue.IsSensitive, nil
+}
+
+// ResetIsSensitive resets all changes to the "is_sensitive" field.
+func (m *ExtraServicePriceMutation) ResetIsSensitive() {
+	m.is_sensitive = nil
+}
+
+// ClearExtraService clears the "extra_service" edge to the ExtraService entity.
+func (m *ExtraServicePriceMutation) ClearExtraService() {
+	m.clearedextra_service = true
+	m.clearedFields[extraserviceprice.FieldExtraServiceID] = struct{}{}
+}
+
+// ExtraServiceCleared reports if the "extra_service" edge to the ExtraService entity was cleared.
+func (m *ExtraServicePriceMutation) ExtraServiceCleared() bool {
+	return m.clearedextra_service
+}
+
+// ExtraServiceIDs returns the "extra_service" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ExtraServiceID instead. It exists only for internal usage by the builders.
+func (m *ExtraServicePriceMutation) ExtraServiceIDs() (ids []int64) {
+	if id := m.extra_service; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExtraService resets all changes to the "extra_service" edge.
+func (m *ExtraServicePriceMutation) ResetExtraService() {
+	m.extra_service = nil
+	m.clearedextra_service = false
+}
+
+// Where appends a list predicates to the ExtraServicePriceMutation builder.
+func (m *ExtraServicePriceMutation) Where(ps ...predicate.ExtraServicePrice) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ExtraServicePriceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ExtraServicePriceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ExtraServicePrice, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ExtraServicePriceMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ExtraServicePriceMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ExtraServicePrice).
+func (m *ExtraServicePriceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ExtraServicePriceMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_by != nil {
+		fields = append(fields, extraserviceprice.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, extraserviceprice.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, extraserviceprice.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, extraserviceprice.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, extraserviceprice.FieldDeletedAt)
+	}
+	if m.extra_service_billing_type != nil {
+		fields = append(fields, extraserviceprice.FieldExtraServiceBillingType)
+	}
+	if m.extra_service != nil {
+		fields = append(fields, extraserviceprice.FieldExtraServiceID)
+	}
+	if m.cep != nil {
+		fields = append(fields, extraserviceprice.FieldCep)
+	}
+	if m.started_at != nil {
+		fields = append(fields, extraserviceprice.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, extraserviceprice.FieldFinishedAt)
+	}
+	if m.is_deprecated != nil {
+		fields = append(fields, extraserviceprice.FieldIsDeprecated)
+	}
+	if m.is_sensitive != nil {
+		fields = append(fields, extraserviceprice.FieldIsSensitive)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ExtraServicePriceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case extraserviceprice.FieldCreatedBy:
+		return m.CreatedBy()
+	case extraserviceprice.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case extraserviceprice.FieldCreatedAt:
+		return m.CreatedAt()
+	case extraserviceprice.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case extraserviceprice.FieldDeletedAt:
+		return m.DeletedAt()
+	case extraserviceprice.FieldExtraServiceBillingType:
+		return m.ExtraServiceBillingType()
+	case extraserviceprice.FieldExtraServiceID:
+		return m.ExtraServiceID()
+	case extraserviceprice.FieldCep:
+		return m.Cep()
+	case extraserviceprice.FieldStartedAt:
+		return m.StartedAt()
+	case extraserviceprice.FieldFinishedAt:
+		return m.FinishedAt()
+	case extraserviceprice.FieldIsDeprecated:
+		return m.IsDeprecated()
+	case extraserviceprice.FieldIsSensitive:
+		return m.IsSensitive()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ExtraServicePriceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case extraserviceprice.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case extraserviceprice.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case extraserviceprice.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case extraserviceprice.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case extraserviceprice.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case extraserviceprice.FieldExtraServiceBillingType:
+		return m.OldExtraServiceBillingType(ctx)
+	case extraserviceprice.FieldExtraServiceID:
+		return m.OldExtraServiceID(ctx)
+	case extraserviceprice.FieldCep:
+		return m.OldCep(ctx)
+	case extraserviceprice.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case extraserviceprice.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	case extraserviceprice.FieldIsDeprecated:
+		return m.OldIsDeprecated(ctx)
+	case extraserviceprice.FieldIsSensitive:
+		return m.OldIsSensitive(ctx)
+	}
+	return nil, fmt.Errorf("unknown ExtraServicePrice field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExtraServicePriceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case extraserviceprice.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case extraserviceprice.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case extraserviceprice.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case extraserviceprice.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case extraserviceprice.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case extraserviceprice.FieldExtraServiceBillingType:
+		v, ok := value.(enums.ExtraServiceBillingType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceBillingType(v)
+		return nil
+	case extraserviceprice.FieldExtraServiceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceID(v)
+		return nil
+	case extraserviceprice.FieldCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCep(v)
+		return nil
+	case extraserviceprice.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case extraserviceprice.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	case extraserviceprice.FieldIsDeprecated:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsDeprecated(v)
+		return nil
+	case extraserviceprice.FieldIsSensitive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsSensitive(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServicePrice field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ExtraServicePriceMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, extraserviceprice.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, extraserviceprice.FieldUpdatedBy)
+	}
+	if m.addcep != nil {
+		fields = append(fields, extraserviceprice.FieldCep)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ExtraServicePriceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case extraserviceprice.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case extraserviceprice.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case extraserviceprice.FieldCep:
+		return m.AddedCep()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ExtraServicePriceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case extraserviceprice.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case extraserviceprice.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case extraserviceprice.FieldCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCep(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServicePrice numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ExtraServicePriceMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(extraserviceprice.FieldStartedAt) {
+		fields = append(fields, extraserviceprice.FieldStartedAt)
+	}
+	if m.FieldCleared(extraserviceprice.FieldFinishedAt) {
+		fields = append(fields, extraserviceprice.FieldFinishedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ExtraServicePriceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExtraServicePriceMutation) ClearField(name string) error {
+	switch name {
+	case extraserviceprice.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case extraserviceprice.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServicePrice nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ExtraServicePriceMutation) ResetField(name string) error {
+	switch name {
+	case extraserviceprice.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case extraserviceprice.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case extraserviceprice.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case extraserviceprice.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case extraserviceprice.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case extraserviceprice.FieldExtraServiceBillingType:
+		m.ResetExtraServiceBillingType()
+		return nil
+	case extraserviceprice.FieldExtraServiceID:
+		m.ResetExtraServiceID()
+		return nil
+	case extraserviceprice.FieldCep:
+		m.ResetCep()
+		return nil
+	case extraserviceprice.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case extraserviceprice.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	case extraserviceprice.FieldIsDeprecated:
+		m.ResetIsDeprecated()
+		return nil
+	case extraserviceprice.FieldIsSensitive:
+		m.ResetIsSensitive()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServicePrice field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ExtraServicePriceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.extra_service != nil {
+		edges = append(edges, extraserviceprice.EdgeExtraService)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ExtraServicePriceMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case extraserviceprice.EdgeExtraService:
+		if id := m.extra_service; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ExtraServicePriceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ExtraServicePriceMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ExtraServicePriceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedextra_service {
+		edges = append(edges, extraserviceprice.EdgeExtraService)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ExtraServicePriceMutation) EdgeCleared(name string) bool {
+	switch name {
+	case extraserviceprice.EdgeExtraService:
+		return m.clearedextra_service
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ExtraServicePriceMutation) ClearEdge(name string) error {
+	switch name {
+	case extraserviceprice.EdgeExtraService:
+		m.ClearExtraService()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServicePrice unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ExtraServicePriceMutation) ResetEdge(name string) error {
+	switch name {
+	case extraserviceprice.EdgeExtraService:
+		m.ResetExtraService()
+		return nil
+	}
+	return fmt.Errorf("unknown ExtraServicePrice edge %s", name)
+}
+
 // FrpcInfoMutation represents an operation that mutates the FrpcInfo nodes in the graph.
 type FrpcInfoMutation struct {
 	config
@@ -22445,6 +26011,7 @@ type MissionMutation struct {
 	started_at                    *time.Time
 	finished_at                   *time.Time
 	expired_at                    *time.Time
+	free_at                       *time.Time
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -22471,6 +26038,15 @@ type MissionMutation struct {
 	renewal_agreements            map[int64]struct{}
 	removedrenewal_agreements     map[int64]struct{}
 	clearedrenewal_agreements     bool
+	mission_extra_services        map[int64]struct{}
+	removedmission_extra_services map[int64]struct{}
+	clearedmission_extra_services bool
+	extra_services                map[int64]struct{}
+	removedextra_services         map[int64]struct{}
+	clearedextra_services         bool
+	extra_service_orders          map[int64]struct{}
+	removedextra_service_orders   map[int64]struct{}
+	clearedextra_service_orders   bool
 	done                          bool
 	oldValue                      func(context.Context) (*Mission, error)
 	predicates                    []predicate.Mission
@@ -24076,6 +27652,42 @@ func (m *MissionMutation) ResetExpiredAt() {
 	delete(m.clearedFields, mission.FieldExpiredAt)
 }
 
+// SetFreeAt sets the "free_at" field.
+func (m *MissionMutation) SetFreeAt(t time.Time) {
+	m.free_at = &t
+}
+
+// FreeAt returns the value of the "free_at" field in the mutation.
+func (m *MissionMutation) FreeAt() (r time.Time, exists bool) {
+	v := m.free_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFreeAt returns the old "free_at" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldFreeAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFreeAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFreeAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFreeAt: %w", err)
+	}
+	return oldValue.FreeAt, nil
+}
+
+// ResetFreeAt resets all changes to the "free_at" field.
+func (m *MissionMutation) ResetFreeAt() {
+	m.free_at = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -24493,6 +28105,168 @@ func (m *MissionMutation) ResetRenewalAgreements() {
 	m.removedrenewal_agreements = nil
 }
 
+// AddMissionExtraServiceIDs adds the "mission_extra_services" edge to the MissionExtraService entity by ids.
+func (m *MissionMutation) AddMissionExtraServiceIDs(ids ...int64) {
+	if m.mission_extra_services == nil {
+		m.mission_extra_services = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_extra_services[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionExtraServices clears the "mission_extra_services" edge to the MissionExtraService entity.
+func (m *MissionMutation) ClearMissionExtraServices() {
+	m.clearedmission_extra_services = true
+}
+
+// MissionExtraServicesCleared reports if the "mission_extra_services" edge to the MissionExtraService entity was cleared.
+func (m *MissionMutation) MissionExtraServicesCleared() bool {
+	return m.clearedmission_extra_services
+}
+
+// RemoveMissionExtraServiceIDs removes the "mission_extra_services" edge to the MissionExtraService entity by IDs.
+func (m *MissionMutation) RemoveMissionExtraServiceIDs(ids ...int64) {
+	if m.removedmission_extra_services == nil {
+		m.removedmission_extra_services = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_extra_services, ids[i])
+		m.removedmission_extra_services[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionExtraServices returns the removed IDs of the "mission_extra_services" edge to the MissionExtraService entity.
+func (m *MissionMutation) RemovedMissionExtraServicesIDs() (ids []int64) {
+	for id := range m.removedmission_extra_services {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionExtraServicesIDs returns the "mission_extra_services" edge IDs in the mutation.
+func (m *MissionMutation) MissionExtraServicesIDs() (ids []int64) {
+	for id := range m.mission_extra_services {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionExtraServices resets all changes to the "mission_extra_services" edge.
+func (m *MissionMutation) ResetMissionExtraServices() {
+	m.mission_extra_services = nil
+	m.clearedmission_extra_services = false
+	m.removedmission_extra_services = nil
+}
+
+// AddExtraServiceIDs adds the "extra_services" edge to the ExtraService entity by ids.
+func (m *MissionMutation) AddExtraServiceIDs(ids ...int64) {
+	if m.extra_services == nil {
+		m.extra_services = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.extra_services[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExtraServices clears the "extra_services" edge to the ExtraService entity.
+func (m *MissionMutation) ClearExtraServices() {
+	m.clearedextra_services = true
+}
+
+// ExtraServicesCleared reports if the "extra_services" edge to the ExtraService entity was cleared.
+func (m *MissionMutation) ExtraServicesCleared() bool {
+	return m.clearedextra_services
+}
+
+// RemoveExtraServiceIDs removes the "extra_services" edge to the ExtraService entity by IDs.
+func (m *MissionMutation) RemoveExtraServiceIDs(ids ...int64) {
+	if m.removedextra_services == nil {
+		m.removedextra_services = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.extra_services, ids[i])
+		m.removedextra_services[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExtraServices returns the removed IDs of the "extra_services" edge to the ExtraService entity.
+func (m *MissionMutation) RemovedExtraServicesIDs() (ids []int64) {
+	for id := range m.removedextra_services {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExtraServicesIDs returns the "extra_services" edge IDs in the mutation.
+func (m *MissionMutation) ExtraServicesIDs() (ids []int64) {
+	for id := range m.extra_services {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExtraServices resets all changes to the "extra_services" edge.
+func (m *MissionMutation) ResetExtraServices() {
+	m.extra_services = nil
+	m.clearedextra_services = false
+	m.removedextra_services = nil
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by ids.
+func (m *MissionMutation) AddExtraServiceOrderIDs(ids ...int64) {
+	if m.extra_service_orders == nil {
+		m.extra_service_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.extra_service_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExtraServiceOrders clears the "extra_service_orders" edge to the ExtraServiceOrder entity.
+func (m *MissionMutation) ClearExtraServiceOrders() {
+	m.clearedextra_service_orders = true
+}
+
+// ExtraServiceOrdersCleared reports if the "extra_service_orders" edge to the ExtraServiceOrder entity was cleared.
+func (m *MissionMutation) ExtraServiceOrdersCleared() bool {
+	return m.clearedextra_service_orders
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (m *MissionMutation) RemoveExtraServiceOrderIDs(ids ...int64) {
+	if m.removedextra_service_orders == nil {
+		m.removedextra_service_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.extra_service_orders, ids[i])
+		m.removedextra_service_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExtraServiceOrders returns the removed IDs of the "extra_service_orders" edge to the ExtraServiceOrder entity.
+func (m *MissionMutation) RemovedExtraServiceOrdersIDs() (ids []int64) {
+	for id := range m.removedextra_service_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExtraServiceOrdersIDs returns the "extra_service_orders" edge IDs in the mutation.
+func (m *MissionMutation) ExtraServiceOrdersIDs() (ids []int64) {
+	for id := range m.extra_service_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExtraServiceOrders resets all changes to the "extra_service_orders" edge.
+func (m *MissionMutation) ResetExtraServiceOrders() {
+	m.extra_service_orders = nil
+	m.clearedextra_service_orders = false
+	m.removedextra_service_orders = nil
+}
+
 // Where appends a list predicates to the MissionMutation builder.
 func (m *MissionMutation) Where(ps ...predicate.Mission) {
 	m.predicates = append(m.predicates, ps...)
@@ -24527,7 +28301,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 36)
+	fields := make([]string, 0, 37)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -24636,6 +28410,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.expired_at != nil {
 		fields = append(fields, mission.FieldExpiredAt)
 	}
+	if m.free_at != nil {
+		fields = append(fields, mission.FieldFreeAt)
+	}
 	return fields
 }
 
@@ -24716,6 +28493,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.FinishedAt()
 	case mission.FieldExpiredAt:
 		return m.ExpiredAt()
+	case mission.FieldFreeAt:
+		return m.FreeAt()
 	}
 	return nil, false
 }
@@ -24797,6 +28576,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldFinishedAt(ctx)
 	case mission.FieldExpiredAt:
 		return m.OldExpiredAt(ctx)
+	case mission.FieldFreeAt:
+		return m.OldFreeAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -25058,6 +28839,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetExpiredAt(v)
 		return nil
+	case mission.FieldFreeAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFreeAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -25317,13 +29105,16 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldExpiredAt:
 		m.ResetExpiredAt()
 		return nil
+	case mission.FieldFreeAt:
+		m.ResetFreeAt()
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 13)
 	if m.mission_kind != nil {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
@@ -25353,6 +29144,15 @@ func (m *MissionMutation) AddedEdges() []string {
 	}
 	if m.renewal_agreements != nil {
 		edges = append(edges, mission.EdgeRenewalAgreements)
+	}
+	if m.mission_extra_services != nil {
+		edges = append(edges, mission.EdgeMissionExtraServices)
+	}
+	if m.extra_services != nil {
+		edges = append(edges, mission.EdgeExtraServices)
+	}
+	if m.extra_service_orders != nil {
+		edges = append(edges, mission.EdgeExtraServiceOrders)
 	}
 	return edges
 }
@@ -25411,13 +29211,31 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeMissionExtraServices:
+		ids := make([]ent.Value, 0, len(m.mission_extra_services))
+		for id := range m.mission_extra_services {
+			ids = append(ids, id)
+		}
+		return ids
+	case mission.EdgeExtraServices:
+		ids := make([]ent.Value, 0, len(m.extra_services))
+		for id := range m.extra_services {
+			ids = append(ids, id)
+		}
+		return ids
+	case mission.EdgeExtraServiceOrders:
+		ids := make([]ent.Value, 0, len(m.extra_service_orders))
+		for id := range m.extra_service_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 13)
 	if m.removedmission_key_pairs != nil {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
@@ -25432,6 +29250,15 @@ func (m *MissionMutation) RemovedEdges() []string {
 	}
 	if m.removedrenewal_agreements != nil {
 		edges = append(edges, mission.EdgeRenewalAgreements)
+	}
+	if m.removedmission_extra_services != nil {
+		edges = append(edges, mission.EdgeMissionExtraServices)
+	}
+	if m.removedextra_services != nil {
+		edges = append(edges, mission.EdgeExtraServices)
+	}
+	if m.removedextra_service_orders != nil {
+		edges = append(edges, mission.EdgeExtraServiceOrders)
 	}
 	return edges
 }
@@ -25470,13 +29297,31 @@ func (m *MissionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeMissionExtraServices:
+		ids := make([]ent.Value, 0, len(m.removedmission_extra_services))
+		for id := range m.removedmission_extra_services {
+			ids = append(ids, id)
+		}
+		return ids
+	case mission.EdgeExtraServices:
+		ids := make([]ent.Value, 0, len(m.removedextra_services))
+		for id := range m.removedextra_services {
+			ids = append(ids, id)
+		}
+		return ids
+	case mission.EdgeExtraServiceOrders:
+		ids := make([]ent.Value, 0, len(m.removedextra_service_orders))
+		for id := range m.removedextra_service_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 13)
 	if m.clearedmission_kind {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
@@ -25507,6 +29352,15 @@ func (m *MissionMutation) ClearedEdges() []string {
 	if m.clearedrenewal_agreements {
 		edges = append(edges, mission.EdgeRenewalAgreements)
 	}
+	if m.clearedmission_extra_services {
+		edges = append(edges, mission.EdgeMissionExtraServices)
+	}
+	if m.clearedextra_services {
+		edges = append(edges, mission.EdgeExtraServices)
+	}
+	if m.clearedextra_service_orders {
+		edges = append(edges, mission.EdgeExtraServiceOrders)
+	}
 	return edges
 }
 
@@ -25534,6 +29388,12 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_orders
 	case mission.EdgeRenewalAgreements:
 		return m.clearedrenewal_agreements
+	case mission.EdgeMissionExtraServices:
+		return m.clearedmission_extra_services
+	case mission.EdgeExtraServices:
+		return m.clearedextra_services
+	case mission.EdgeExtraServiceOrders:
+		return m.clearedextra_service_orders
 	}
 	return false
 }
@@ -25595,6 +29455,15 @@ func (m *MissionMutation) ResetEdge(name string) error {
 	case mission.EdgeRenewalAgreements:
 		m.ResetRenewalAgreements()
 		return nil
+	case mission.EdgeMissionExtraServices:
+		m.ResetMissionExtraServices()
+		return nil
+	case mission.EdgeExtraServices:
+		m.ResetExtraServices()
+		return nil
+	case mission.EdgeExtraServiceOrders:
+		m.ResetExtraServiceOrders()
+		return nil
 	}
 	return fmt.Errorf("unknown Mission edge %s", name)
 }
@@ -25625,6 +29494,9 @@ type MissionBatchMutation struct {
 	mission_orders                map[int64]struct{}
 	removedmission_orders         map[int64]struct{}
 	clearedmission_orders         bool
+	extra_service_order           map[int64]struct{}
+	removedextra_service_order    map[int64]struct{}
+	clearedextra_service_order    bool
 	done                          bool
 	oldValue                      func(context.Context) (*MissionBatch, error)
 	predicates                    []predicate.MissionBatch
@@ -26215,6 +30087,60 @@ func (m *MissionBatchMutation) ResetMissionOrders() {
 	m.removedmission_orders = nil
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by ids.
+func (m *MissionBatchMutation) AddExtraServiceOrderIDs(ids ...int64) {
+	if m.extra_service_order == nil {
+		m.extra_service_order = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.extra_service_order[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExtraServiceOrder clears the "extra_service_order" edge to the ExtraServiceOrder entity.
+func (m *MissionBatchMutation) ClearExtraServiceOrder() {
+	m.clearedextra_service_order = true
+}
+
+// ExtraServiceOrderCleared reports if the "extra_service_order" edge to the ExtraServiceOrder entity was cleared.
+func (m *MissionBatchMutation) ExtraServiceOrderCleared() bool {
+	return m.clearedextra_service_order
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (m *MissionBatchMutation) RemoveExtraServiceOrderIDs(ids ...int64) {
+	if m.removedextra_service_order == nil {
+		m.removedextra_service_order = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.extra_service_order, ids[i])
+		m.removedextra_service_order[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExtraServiceOrder returns the removed IDs of the "extra_service_order" edge to the ExtraServiceOrder entity.
+func (m *MissionBatchMutation) RemovedExtraServiceOrderIDs() (ids []int64) {
+	for id := range m.removedextra_service_order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExtraServiceOrderIDs returns the "extra_service_order" edge IDs in the mutation.
+func (m *MissionBatchMutation) ExtraServiceOrderIDs() (ids []int64) {
+	for id := range m.extra_service_order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExtraServiceOrder resets all changes to the "extra_service_order" edge.
+func (m *MissionBatchMutation) ResetExtraServiceOrder() {
+	m.extra_service_order = nil
+	m.clearedextra_service_order = false
+	m.removedextra_service_order = nil
+}
+
 // Where appends a list predicates to the MissionBatchMutation builder.
 func (m *MissionBatchMutation) Where(ps ...predicate.MissionBatch) {
 	m.predicates = append(m.predicates, ps...)
@@ -26477,7 +30403,7 @@ func (m *MissionBatchMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionBatchMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.user != nil {
 		edges = append(edges, missionbatch.EdgeUser)
 	}
@@ -26489,6 +30415,9 @@ func (m *MissionBatchMutation) AddedEdges() []string {
 	}
 	if m.mission_orders != nil {
 		edges = append(edges, missionbatch.EdgeMissionOrders)
+	}
+	if m.extra_service_order != nil {
+		edges = append(edges, missionbatch.EdgeExtraServiceOrder)
 	}
 	return edges
 }
@@ -26519,13 +30448,19 @@ func (m *MissionBatchMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionbatch.EdgeExtraServiceOrder:
+		ids := make([]ent.Value, 0, len(m.extra_service_order))
+		for id := range m.extra_service_order {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionBatchMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedmission_consume_orders != nil {
 		edges = append(edges, missionbatch.EdgeMissionConsumeOrders)
 	}
@@ -26534,6 +30469,9 @@ func (m *MissionBatchMutation) RemovedEdges() []string {
 	}
 	if m.removedmission_orders != nil {
 		edges = append(edges, missionbatch.EdgeMissionOrders)
+	}
+	if m.removedextra_service_order != nil {
+		edges = append(edges, missionbatch.EdgeExtraServiceOrder)
 	}
 	return edges
 }
@@ -26560,13 +30498,19 @@ func (m *MissionBatchMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionbatch.EdgeExtraServiceOrder:
+		ids := make([]ent.Value, 0, len(m.removedextra_service_order))
+		for id := range m.removedextra_service_order {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionBatchMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.cleareduser {
 		edges = append(edges, missionbatch.EdgeUser)
 	}
@@ -26578,6 +30522,9 @@ func (m *MissionBatchMutation) ClearedEdges() []string {
 	}
 	if m.clearedmission_orders {
 		edges = append(edges, missionbatch.EdgeMissionOrders)
+	}
+	if m.clearedextra_service_order {
+		edges = append(edges, missionbatch.EdgeExtraServiceOrder)
 	}
 	return edges
 }
@@ -26594,6 +30541,8 @@ func (m *MissionBatchMutation) EdgeCleared(name string) bool {
 		return m.clearedmissions
 	case missionbatch.EdgeMissionOrders:
 		return m.clearedmission_orders
+	case missionbatch.EdgeExtraServiceOrder:
+		return m.clearedextra_service_order
 	}
 	return false
 }
@@ -26624,6 +30573,9 @@ func (m *MissionBatchMutation) ResetEdge(name string) error {
 		return nil
 	case missionbatch.EdgeMissionOrders:
 		m.ResetMissionOrders()
+		return nil
+	case missionbatch.EdgeExtraServiceOrder:
+		m.ResetExtraServiceOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionBatch edge %s", name)
@@ -28326,6 +32278,831 @@ func (m *MissionConsumeOrderMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown MissionConsumeOrder edge %s", name)
+}
+
+// MissionExtraServiceMutation represents an operation that mutates the MissionExtraService nodes in the graph.
+type MissionExtraServiceMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int64
+	created_by           *int64
+	addcreated_by        *int64
+	updated_by           *int64
+	addupdated_by        *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	clearedFields        map[string]struct{}
+	mission              *int64
+	clearedmission       bool
+	extra_service        *int64
+	clearedextra_service bool
+	done                 bool
+	oldValue             func(context.Context) (*MissionExtraService, error)
+	predicates           []predicate.MissionExtraService
+}
+
+var _ ent.Mutation = (*MissionExtraServiceMutation)(nil)
+
+// missionextraserviceOption allows management of the mutation configuration using functional options.
+type missionextraserviceOption func(*MissionExtraServiceMutation)
+
+// newMissionExtraServiceMutation creates new mutation for the MissionExtraService entity.
+func newMissionExtraServiceMutation(c config, op Op, opts ...missionextraserviceOption) *MissionExtraServiceMutation {
+	m := &MissionExtraServiceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMissionExtraService,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMissionExtraServiceID sets the ID field of the mutation.
+func withMissionExtraServiceID(id int64) missionextraserviceOption {
+	return func(m *MissionExtraServiceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MissionExtraService
+		)
+		m.oldValue = func(ctx context.Context) (*MissionExtraService, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MissionExtraService.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMissionExtraService sets the old MissionExtraService of the mutation.
+func withMissionExtraService(node *MissionExtraService) missionextraserviceOption {
+	return func(m *MissionExtraServiceMutation) {
+		m.oldValue = func(context.Context) (*MissionExtraService, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MissionExtraServiceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MissionExtraServiceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MissionExtraService entities.
+func (m *MissionExtraServiceMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MissionExtraServiceMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MissionExtraServiceMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MissionExtraService.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MissionExtraServiceMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MissionExtraServiceMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *MissionExtraServiceMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MissionExtraServiceMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MissionExtraServiceMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MissionExtraServiceMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MissionExtraServiceMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *MissionExtraServiceMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MissionExtraServiceMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MissionExtraServiceMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MissionExtraServiceMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MissionExtraServiceMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MissionExtraServiceMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MissionExtraServiceMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MissionExtraServiceMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MissionExtraServiceMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MissionExtraServiceMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MissionExtraServiceMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MissionExtraServiceMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetMissionID sets the "mission_id" field.
+func (m *MissionExtraServiceMutation) SetMissionID(i int64) {
+	m.mission = &i
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *MissionExtraServiceMutation) MissionID() (r int64, exists bool) {
+	v := m.mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *MissionExtraServiceMutation) ResetMissionID() {
+	m.mission = nil
+}
+
+// SetExtraServiceID sets the "extra_service_id" field.
+func (m *MissionExtraServiceMutation) SetExtraServiceID(i int64) {
+	m.extra_service = &i
+}
+
+// ExtraServiceID returns the value of the "extra_service_id" field in the mutation.
+func (m *MissionExtraServiceMutation) ExtraServiceID() (r int64, exists bool) {
+	v := m.extra_service
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceID returns the old "extra_service_id" field's value of the MissionExtraService entity.
+// If the MissionExtraService object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionExtraServiceMutation) OldExtraServiceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceID: %w", err)
+	}
+	return oldValue.ExtraServiceID, nil
+}
+
+// ResetExtraServiceID resets all changes to the "extra_service_id" field.
+func (m *MissionExtraServiceMutation) ResetExtraServiceID() {
+	m.extra_service = nil
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (m *MissionExtraServiceMutation) ClearMission() {
+	m.clearedmission = true
+	m.clearedFields[missionextraservice.FieldMissionID] = struct{}{}
+}
+
+// MissionCleared reports if the "mission" edge to the Mission entity was cleared.
+func (m *MissionExtraServiceMutation) MissionCleared() bool {
+	return m.clearedmission
+}
+
+// MissionIDs returns the "mission" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionID instead. It exists only for internal usage by the builders.
+func (m *MissionExtraServiceMutation) MissionIDs() (ids []int64) {
+	if id := m.mission; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMission resets all changes to the "mission" edge.
+func (m *MissionExtraServiceMutation) ResetMission() {
+	m.mission = nil
+	m.clearedmission = false
+}
+
+// ClearExtraService clears the "extra_service" edge to the ExtraService entity.
+func (m *MissionExtraServiceMutation) ClearExtraService() {
+	m.clearedextra_service = true
+	m.clearedFields[missionextraservice.FieldExtraServiceID] = struct{}{}
+}
+
+// ExtraServiceCleared reports if the "extra_service" edge to the ExtraService entity was cleared.
+func (m *MissionExtraServiceMutation) ExtraServiceCleared() bool {
+	return m.clearedextra_service
+}
+
+// ExtraServiceIDs returns the "extra_service" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ExtraServiceID instead. It exists only for internal usage by the builders.
+func (m *MissionExtraServiceMutation) ExtraServiceIDs() (ids []int64) {
+	if id := m.extra_service; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetExtraService resets all changes to the "extra_service" edge.
+func (m *MissionExtraServiceMutation) ResetExtraService() {
+	m.extra_service = nil
+	m.clearedextra_service = false
+}
+
+// Where appends a list predicates to the MissionExtraServiceMutation builder.
+func (m *MissionExtraServiceMutation) Where(ps ...predicate.MissionExtraService) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MissionExtraServiceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MissionExtraServiceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MissionExtraService, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MissionExtraServiceMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MissionExtraServiceMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MissionExtraService).
+func (m *MissionExtraServiceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MissionExtraServiceMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_by != nil {
+		fields = append(fields, missionextraservice.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, missionextraservice.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, missionextraservice.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, missionextraservice.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, missionextraservice.FieldDeletedAt)
+	}
+	if m.mission != nil {
+		fields = append(fields, missionextraservice.FieldMissionID)
+	}
+	if m.extra_service != nil {
+		fields = append(fields, missionextraservice.FieldExtraServiceID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MissionExtraServiceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case missionextraservice.FieldCreatedBy:
+		return m.CreatedBy()
+	case missionextraservice.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case missionextraservice.FieldCreatedAt:
+		return m.CreatedAt()
+	case missionextraservice.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case missionextraservice.FieldDeletedAt:
+		return m.DeletedAt()
+	case missionextraservice.FieldMissionID:
+		return m.MissionID()
+	case missionextraservice.FieldExtraServiceID:
+		return m.ExtraServiceID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MissionExtraServiceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case missionextraservice.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case missionextraservice.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case missionextraservice.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case missionextraservice.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case missionextraservice.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case missionextraservice.FieldMissionID:
+		return m.OldMissionID(ctx)
+	case missionextraservice.FieldExtraServiceID:
+		return m.OldExtraServiceID(ctx)
+	}
+	return nil, fmt.Errorf("unknown MissionExtraService field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionExtraServiceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case missionextraservice.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case missionextraservice.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case missionextraservice.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case missionextraservice.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case missionextraservice.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case missionextraservice.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
+		return nil
+	case missionextraservice.FieldExtraServiceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionExtraService field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MissionExtraServiceMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, missionextraservice.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, missionextraservice.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MissionExtraServiceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case missionextraservice.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case missionextraservice.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionExtraServiceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case missionextraservice.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case missionextraservice.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionExtraService numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MissionExtraServiceMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MissionExtraServiceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MissionExtraServiceMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown MissionExtraService nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MissionExtraServiceMutation) ResetField(name string) error {
+	switch name {
+	case missionextraservice.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case missionextraservice.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case missionextraservice.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case missionextraservice.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case missionextraservice.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case missionextraservice.FieldMissionID:
+		m.ResetMissionID()
+		return nil
+	case missionextraservice.FieldExtraServiceID:
+		m.ResetExtraServiceID()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionExtraService field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MissionExtraServiceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.mission != nil {
+		edges = append(edges, missionextraservice.EdgeMission)
+	}
+	if m.extra_service != nil {
+		edges = append(edges, missionextraservice.EdgeExtraService)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MissionExtraServiceMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case missionextraservice.EdgeMission:
+		if id := m.mission; id != nil {
+			return []ent.Value{*id}
+		}
+	case missionextraservice.EdgeExtraService:
+		if id := m.extra_service; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MissionExtraServiceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MissionExtraServiceMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MissionExtraServiceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedmission {
+		edges = append(edges, missionextraservice.EdgeMission)
+	}
+	if m.clearedextra_service {
+		edges = append(edges, missionextraservice.EdgeExtraService)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MissionExtraServiceMutation) EdgeCleared(name string) bool {
+	switch name {
+	case missionextraservice.EdgeMission:
+		return m.clearedmission
+	case missionextraservice.EdgeExtraService:
+		return m.clearedextra_service
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MissionExtraServiceMutation) ClearEdge(name string) error {
+	switch name {
+	case missionextraservice.EdgeMission:
+		m.ClearMission()
+		return nil
+	case missionextraservice.EdgeExtraService:
+		m.ClearExtraService()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionExtraService unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MissionExtraServiceMutation) ResetEdge(name string) error {
+	switch name {
+	case missionextraservice.EdgeMission:
+		m.ResetMission()
+		return nil
+	case missionextraservice.EdgeExtraService:
+		m.ResetExtraService()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionExtraService edge %s", name)
 }
 
 // MissionKeyPairMutation represents an operation that mutates the MissionKeyPair nodes in the graph.
@@ -30407,7 +35184,7 @@ type MissionOrderMutation struct {
 	addsettled_count      *int64
 	total_settle_count    *int64
 	addtotal_settle_count *int64
-	last_settled_at       *time.Time
+	lately_settled_at     *time.Time
 	clearedFields         map[string]struct{}
 	consume_user          *int64
 	clearedconsume_user   bool
@@ -31852,40 +36629,40 @@ func (m *MissionOrderMutation) ResetTotalSettleCount() {
 	m.addtotal_settle_count = nil
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (m *MissionOrderMutation) SetLastSettledAt(t time.Time) {
-	m.last_settled_at = &t
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (m *MissionOrderMutation) SetLatelySettledAt(t time.Time) {
+	m.lately_settled_at = &t
 }
 
-// LastSettledAt returns the value of the "last_settled_at" field in the mutation.
-func (m *MissionOrderMutation) LastSettledAt() (r time.Time, exists bool) {
-	v := m.last_settled_at
+// LatelySettledAt returns the value of the "lately_settled_at" field in the mutation.
+func (m *MissionOrderMutation) LatelySettledAt() (r time.Time, exists bool) {
+	v := m.lately_settled_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLastSettledAt returns the old "last_settled_at" field's value of the MissionOrder entity.
+// OldLatelySettledAt returns the old "lately_settled_at" field's value of the MissionOrder entity.
 // If the MissionOrder object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MissionOrderMutation) OldLastSettledAt(ctx context.Context) (v time.Time, err error) {
+func (m *MissionOrderMutation) OldLatelySettledAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLastSettledAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldLatelySettledAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLastSettledAt requires an ID field in the mutation")
+		return v, errors.New("OldLatelySettledAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLastSettledAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldLatelySettledAt: %w", err)
 	}
-	return oldValue.LastSettledAt, nil
+	return oldValue.LatelySettledAt, nil
 }
 
-// ResetLastSettledAt resets all changes to the "last_settled_at" field.
-func (m *MissionOrderMutation) ResetLastSettledAt() {
-	m.last_settled_at = nil
+// ResetLatelySettledAt resets all changes to the "lately_settled_at" field.
+func (m *MissionOrderMutation) ResetLatelySettledAt() {
+	m.lately_settled_at = nil
 }
 
 // ClearConsumeUser clears the "consume_user" edge to the User entity.
@@ -32229,8 +37006,8 @@ func (m *MissionOrderMutation) Fields() []string {
 	if m.total_settle_count != nil {
 		fields = append(fields, missionorder.FieldTotalSettleCount)
 	}
-	if m.last_settled_at != nil {
-		fields = append(fields, missionorder.FieldLastSettledAt)
+	if m.lately_settled_at != nil {
+		fields = append(fields, missionorder.FieldLatelySettledAt)
 	}
 	return fields
 }
@@ -32300,8 +37077,8 @@ func (m *MissionOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.SettledCount()
 	case missionorder.FieldTotalSettleCount:
 		return m.TotalSettleCount()
-	case missionorder.FieldLastSettledAt:
-		return m.LastSettledAt()
+	case missionorder.FieldLatelySettledAt:
+		return m.LatelySettledAt()
 	}
 	return nil, false
 }
@@ -32371,8 +37148,8 @@ func (m *MissionOrderMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldSettledCount(ctx)
 	case missionorder.FieldTotalSettleCount:
 		return m.OldTotalSettleCount(ctx)
-	case missionorder.FieldLastSettledAt:
-		return m.OldLastSettledAt(ctx)
+	case missionorder.FieldLatelySettledAt:
+		return m.OldLatelySettledAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown MissionOrder field %s", name)
 }
@@ -32592,12 +37369,12 @@ func (m *MissionOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTotalSettleCount(v)
 		return nil
-	case missionorder.FieldLastSettledAt:
+	case missionorder.FieldLatelySettledAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLastSettledAt(v)
+		m.SetLatelySettledAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder field %s", name)
@@ -32882,8 +37659,8 @@ func (m *MissionOrderMutation) ResetField(name string) error {
 	case missionorder.FieldTotalSettleCount:
 		m.ResetTotalSettleCount()
 		return nil
-	case missionorder.FieldLastSettledAt:
-		m.ResetLastSettledAt()
+	case missionorder.FieldLatelySettledAt:
+		m.ResetLatelySettledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder field %s", name)
@@ -45899,33 +50676,36 @@ func (m *RenewalAgreementMutation) ResetEdge(name string) error {
 // SymbolMutation represents an operation that mutates the Symbol nodes in the graph.
 type SymbolMutation struct {
 	config
-	op                     Op
-	typ                    string
-	id                     *int64
-	created_by             *int64
-	addcreated_by          *int64
-	updated_by             *int64
-	addupdated_by          *int64
-	created_at             *time.Time
-	updated_at             *time.Time
-	deleted_at             *time.Time
-	name                   *string
-	clearedFields          map[string]struct{}
-	wallets                map[int64]struct{}
-	removedwallets         map[int64]struct{}
-	clearedwallets         bool
-	bills                  map[int64]struct{}
-	removedbills           map[int64]struct{}
-	clearedbills           bool
-	mission_orders         map[int64]struct{}
-	removedmission_orders  map[int64]struct{}
-	clearedmission_orders  bool
-	transfer_orders        map[int64]struct{}
-	removedtransfer_orders map[int64]struct{}
-	clearedtransfer_orders bool
-	done                   bool
-	oldValue               func(context.Context) (*Symbol, error)
-	predicates             []predicate.Symbol
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	name                       *string
+	clearedFields              map[string]struct{}
+	wallets                    map[int64]struct{}
+	removedwallets             map[int64]struct{}
+	clearedwallets             bool
+	bills                      map[int64]struct{}
+	removedbills               map[int64]struct{}
+	clearedbills               bool
+	mission_orders             map[int64]struct{}
+	removedmission_orders      map[int64]struct{}
+	clearedmission_orders      bool
+	transfer_orders            map[int64]struct{}
+	removedtransfer_orders     map[int64]struct{}
+	clearedtransfer_orders     bool
+	extra_service_order        map[int64]struct{}
+	removedextra_service_order map[int64]struct{}
+	clearedextra_service_order bool
+	done                       bool
+	oldValue                   func(context.Context) (*Symbol, error)
+	predicates                 []predicate.Symbol
 }
 
 var _ ent.Mutation = (*SymbolMutation)(nil)
@@ -46504,6 +51284,60 @@ func (m *SymbolMutation) ResetTransferOrders() {
 	m.removedtransfer_orders = nil
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by ids.
+func (m *SymbolMutation) AddExtraServiceOrderIDs(ids ...int64) {
+	if m.extra_service_order == nil {
+		m.extra_service_order = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.extra_service_order[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExtraServiceOrder clears the "extra_service_order" edge to the ExtraServiceOrder entity.
+func (m *SymbolMutation) ClearExtraServiceOrder() {
+	m.clearedextra_service_order = true
+}
+
+// ExtraServiceOrderCleared reports if the "extra_service_order" edge to the ExtraServiceOrder entity was cleared.
+func (m *SymbolMutation) ExtraServiceOrderCleared() bool {
+	return m.clearedextra_service_order
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (m *SymbolMutation) RemoveExtraServiceOrderIDs(ids ...int64) {
+	if m.removedextra_service_order == nil {
+		m.removedextra_service_order = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.extra_service_order, ids[i])
+		m.removedextra_service_order[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExtraServiceOrder returns the removed IDs of the "extra_service_order" edge to the ExtraServiceOrder entity.
+func (m *SymbolMutation) RemovedExtraServiceOrderIDs() (ids []int64) {
+	for id := range m.removedextra_service_order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExtraServiceOrderIDs returns the "extra_service_order" edge IDs in the mutation.
+func (m *SymbolMutation) ExtraServiceOrderIDs() (ids []int64) {
+	for id := range m.extra_service_order {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExtraServiceOrder resets all changes to the "extra_service_order" edge.
+func (m *SymbolMutation) ResetExtraServiceOrder() {
+	m.extra_service_order = nil
+	m.clearedextra_service_order = false
+	m.removedextra_service_order = nil
+}
+
 // Where appends a list predicates to the SymbolMutation builder.
 func (m *SymbolMutation) Where(ps ...predicate.Symbol) {
 	m.predicates = append(m.predicates, ps...)
@@ -46749,7 +51583,7 @@ func (m *SymbolMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SymbolMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.wallets != nil {
 		edges = append(edges, symbol.EdgeWallets)
 	}
@@ -46761,6 +51595,9 @@ func (m *SymbolMutation) AddedEdges() []string {
 	}
 	if m.transfer_orders != nil {
 		edges = append(edges, symbol.EdgeTransferOrders)
+	}
+	if m.extra_service_order != nil {
+		edges = append(edges, symbol.EdgeExtraServiceOrder)
 	}
 	return edges
 }
@@ -46793,13 +51630,19 @@ func (m *SymbolMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case symbol.EdgeExtraServiceOrder:
+		ids := make([]ent.Value, 0, len(m.extra_service_order))
+		for id := range m.extra_service_order {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SymbolMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedwallets != nil {
 		edges = append(edges, symbol.EdgeWallets)
 	}
@@ -46811,6 +51654,9 @@ func (m *SymbolMutation) RemovedEdges() []string {
 	}
 	if m.removedtransfer_orders != nil {
 		edges = append(edges, symbol.EdgeTransferOrders)
+	}
+	if m.removedextra_service_order != nil {
+		edges = append(edges, symbol.EdgeExtraServiceOrder)
 	}
 	return edges
 }
@@ -46843,13 +51689,19 @@ func (m *SymbolMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case symbol.EdgeExtraServiceOrder:
+		ids := make([]ent.Value, 0, len(m.removedextra_service_order))
+		for id := range m.removedextra_service_order {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SymbolMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedwallets {
 		edges = append(edges, symbol.EdgeWallets)
 	}
@@ -46861,6 +51713,9 @@ func (m *SymbolMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransfer_orders {
 		edges = append(edges, symbol.EdgeTransferOrders)
+	}
+	if m.clearedextra_service_order {
+		edges = append(edges, symbol.EdgeExtraServiceOrder)
 	}
 	return edges
 }
@@ -46877,6 +51732,8 @@ func (m *SymbolMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_orders
 	case symbol.EdgeTransferOrders:
 		return m.clearedtransfer_orders
+	case symbol.EdgeExtraServiceOrder:
+		return m.clearedextra_service_order
 	}
 	return false
 }
@@ -46904,6 +51761,9 @@ func (m *SymbolMutation) ResetEdge(name string) error {
 		return nil
 	case symbol.EdgeTransferOrders:
 		m.ResetTransferOrders()
+		return nil
+	case symbol.EdgeExtraServiceOrder:
+		m.ResetExtraServiceOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown Symbol edge %s", name)

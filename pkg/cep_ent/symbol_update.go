@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
@@ -169,6 +170,21 @@ func (su *SymbolUpdate) AddTransferOrders(t ...*TransferOrder) *SymbolUpdate {
 	return su.AddTransferOrderIDs(ids...)
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (su *SymbolUpdate) AddExtraServiceOrderIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.AddExtraServiceOrderIDs(ids...)
+	return su
+}
+
+// AddExtraServiceOrder adds the "extra_service_order" edges to the ExtraServiceOrder entity.
+func (su *SymbolUpdate) AddExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.AddExtraServiceOrderIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (su *SymbolUpdate) Mutation() *SymbolMutation {
 	return su.mutation
@@ -256,6 +272,27 @@ func (su *SymbolUpdate) RemoveTransferOrders(t ...*TransferOrder) *SymbolUpdate 
 		ids[i] = t[i].ID
 	}
 	return su.RemoveTransferOrderIDs(ids...)
+}
+
+// ClearExtraServiceOrder clears all "extra_service_order" edges to the ExtraServiceOrder entity.
+func (su *SymbolUpdate) ClearExtraServiceOrder() *SymbolUpdate {
+	su.mutation.ClearExtraServiceOrder()
+	return su
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_order" edge to ExtraServiceOrder entities by IDs.
+func (su *SymbolUpdate) RemoveExtraServiceOrderIDs(ids ...int64) *SymbolUpdate {
+	su.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return su
+}
+
+// RemoveExtraServiceOrder removes "extra_service_order" edges to ExtraServiceOrder entities.
+func (su *SymbolUpdate) RemoveExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -510,6 +547,51 @@ func (su *SymbolUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if su.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedExtraServiceOrderIDs(); len(nodes) > 0 && !su.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.ExtraServiceOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -668,6 +750,21 @@ func (suo *SymbolUpdateOne) AddTransferOrders(t ...*TransferOrder) *SymbolUpdate
 	return suo.AddTransferOrderIDs(ids...)
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (suo *SymbolUpdateOne) AddExtraServiceOrderIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.AddExtraServiceOrderIDs(ids...)
+	return suo
+}
+
+// AddExtraServiceOrder adds the "extra_service_order" edges to the ExtraServiceOrder entity.
+func (suo *SymbolUpdateOne) AddExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.AddExtraServiceOrderIDs(ids...)
+}
+
 // Mutation returns the SymbolMutation object of the builder.
 func (suo *SymbolUpdateOne) Mutation() *SymbolMutation {
 	return suo.mutation
@@ -755,6 +852,27 @@ func (suo *SymbolUpdateOne) RemoveTransferOrders(t ...*TransferOrder) *SymbolUpd
 		ids[i] = t[i].ID
 	}
 	return suo.RemoveTransferOrderIDs(ids...)
+}
+
+// ClearExtraServiceOrder clears all "extra_service_order" edges to the ExtraServiceOrder entity.
+func (suo *SymbolUpdateOne) ClearExtraServiceOrder() *SymbolUpdateOne {
+	suo.mutation.ClearExtraServiceOrder()
+	return suo
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_order" edge to ExtraServiceOrder entities by IDs.
+func (suo *SymbolUpdateOne) RemoveExtraServiceOrderIDs(ids ...int64) *SymbolUpdateOne {
+	suo.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return suo
+}
+
+// RemoveExtraServiceOrder removes "extra_service_order" edges to ExtraServiceOrder entities.
+func (suo *SymbolUpdateOne) RemoveExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the SymbolUpdate builder.
@@ -1032,6 +1150,51 @@ func (suo *SymbolUpdateOne) sqlSave(ctx context.Context) (_node *Symbol, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedExtraServiceOrderIDs(); len(nodes) > 0 && !suo.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.ExtraServiceOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -49,6 +49,7 @@ func (Mission) Fields() []ent.Field {
 		field.Time("started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"started_at"`).Comment("任务开始时间"),
 		field.Time("finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"finished_at"`).Comment("任务结束时间"),
 		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("任务到期时间（包时任务才有）"),
+		field.Time("free_at").Default(common.ZeroTime).SchemaType(map[string]string{dialect.Postgres: "timestamptz default '0001-01-01 00:00:00.00000 +00:00'"}).StructTag(`json:"free_at"`).Comment("任务释放时刻"),
 	}
 }
 
@@ -65,6 +66,9 @@ func (Mission) Edges() []ent.Edge {
 		edge.To("mission_productions", MissionProduction.Type),
 		edge.To("mission_orders", MissionOrder.Type),
 		edge.To("renewal_agreements", RenewalAgreement.Type),
+		edge.To("mission_extra_services", MissionExtraService.Type),
+		edge.To("extra_services", ExtraService.Type),
+		edge.To("extra_service_orders", ExtraServiceOrder.Type),
 	}
 }
 

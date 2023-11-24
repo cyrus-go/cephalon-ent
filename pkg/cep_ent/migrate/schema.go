@@ -424,6 +424,110 @@ var (
 		Columns:    EnumMissionStatusColumns,
 		PrimaryKey: []*schema.Column{EnumMissionStatusColumns[0]},
 	}
+	// ExtraServicesColumns holds the columns for the "extra_services" table.
+	ExtraServicesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "附加服务名称", Default: ""},
+		{Name: "extra_service_type", Type: field.TypeEnum, Comment: "附加服务类型", Enums: []string{"unknown", "vpn"}, Default: "unknown"},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "附加服务购买时间开始，为空表示永久有效"},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "附加服务购买时间结束，为空表示永久有效"},
+		{Name: "mission_extra_services", Type: field.TypeInt64, Nullable: true},
+	}
+	// ExtraServicesTable holds the schema information for the "extra_services" table.
+	ExtraServicesTable = &schema.Table{
+		Name:       "extra_services",
+		Comment:    "附加服务表",
+		Columns:    ExtraServicesColumns,
+		PrimaryKey: []*schema.Column{ExtraServicesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "extra_services_missions_extra_services",
+				Columns:    []*schema.Column{ExtraServicesColumns[10]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ExtraServiceOrdersColumns holds the columns for the "extra_service_orders" table.
+	ExtraServiceOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "amount", Type: field.TypeInt64, Comment: "订单的货币消耗量", Default: 0},
+		{Name: "extra_service_type", Type: field.TypeEnum, Comment: "附加服务类型", Enums: []string{"unknown", "vpn"}, Default: "unknown"},
+		{Name: "buy_duration", Type: field.TypeInt64, Comment: "包时任务订单购买的时长", Default: 0},
+		{Name: "plan_started_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划开始时间（包时）"},
+		{Name: "plan_finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划结束时间（包时）"},
+		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
+		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
+	}
+	// ExtraServiceOrdersTable holds the schema information for the "extra_service_orders" table.
+	ExtraServiceOrdersTable = &schema.Table{
+		Name:       "extra_service_orders",
+		Comment:    "附加服务订单表",
+		Columns:    ExtraServiceOrdersColumns,
+		PrimaryKey: []*schema.Column{ExtraServiceOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "extra_service_orders_missions_extra_service_orders",
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[11]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "extra_service_orders_mission_batches_extra_service_order",
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[12]},
+				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "extra_service_orders_symbols_extra_service_order",
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[13]},
+				RefColumns: []*schema.Column{SymbolsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// ExtraServicePricesColumns holds the columns for the "extra_service_prices" table.
+	ExtraServicePricesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "extra_service_billing_type", Type: field.TypeEnum, Comment: "附加服务订单类型", Enums: []string{"unknown", "vpn_time_plan_hour", "vpn_time_plan_day", "vpn_time_plan_week", "vpn_time_plan_month", "vpn_time_plan_volume", "hold"}, Default: "unknown"},
+		{Name: "cep", Type: field.TypeInt64, Comment: "附加服务单价", Default: 0},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
+		{Name: "is_deprecated", Type: field.TypeBool, Comment: "价格是否屏蔽，前端置灰，硬选也可以", Default: false},
+		{Name: "is_sensitive", Type: field.TypeBool, Comment: "价格是否敏感，用于特殊类型任务，不能让外部看到选项", Default: false},
+		{Name: "extra_service_id", Type: field.TypeInt64, Comment: "附加服务 id，外键关联附加服务", Default: 0},
+	}
+	// ExtraServicePricesTable holds the schema information for the "extra_service_prices" table.
+	ExtraServicePricesTable = &schema.Table{
+		Name:       "extra_service_prices",
+		Comment:    "附加服务价格表",
+		Columns:    ExtraServicePricesColumns,
+		PrimaryKey: []*schema.Column{ExtraServicePricesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "extra_service_prices_extra_services_extra_service_prices",
+				Columns:    []*schema.Column{ExtraServicePricesColumns[12]},
+				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// FrpcInfosColumns holds the columns for the "frpc_infos" table.
 	FrpcInfosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -663,6 +767,8 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "任务开始时间"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务结束时间"},
 		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "任务到期时间（包时任务才有）"},
+		{Name: "free_at", Type: field.TypeTime, Comment: "任务释放时刻", SchemaType: map[string]string{"postgres": "timestamptz default '0001-01-01 00:00:00.00000 +00:00'"}},
+		{Name: "extra_service_missions", Type: field.TypeInt64, Nullable: true},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键关联任务批次", Default: 0},
 		{Name: "mission_kind_id", Type: field.TypeInt64, Comment: "外键，任务种类 id", Default: 0},
@@ -676,26 +782,32 @@ var (
 		PrimaryKey: []*schema.Column{MissionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:     "missions_extra_services_missions",
+				Columns:    []*schema.Column{MissionsColumns[34]},
+				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[33]},
+				Columns:    []*schema.Column{MissionsColumns[35]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_batches_missions",
-				Columns:    []*schema.Column{MissionsColumns[34]},
+				Columns:    []*schema.Column{MissionsColumns[36]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_kinds_missions",
-				Columns:    []*schema.Column{MissionsColumns[35]},
+				Columns:    []*schema.Column{MissionsColumns[37]},
 				RefColumns: []*schema.Column{MissionKindsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_users_missions",
-				Columns:    []*schema.Column{MissionsColumns[36]},
+				Columns:    []*schema.Column{MissionsColumns[38]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -776,6 +888,38 @@ var (
 			},
 		},
 	}
+	// MissionExtraServicesColumns holds the columns for the "mission_extra_services" table.
+	MissionExtraServicesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "extra_service_id", Type: field.TypeInt64, Comment: "外键附加服务 id", Default: 0},
+		{Name: "mission_id", Type: field.TypeInt64, Comment: "外键任务 id", Default: 0},
+	}
+	// MissionExtraServicesTable holds the schema information for the "mission_extra_services" table.
+	MissionExtraServicesTable = &schema.Table{
+		Name:       "mission_extra_services",
+		Comment:    "任务与附加服务的中间关系",
+		Columns:    MissionExtraServicesColumns,
+		PrimaryKey: []*schema.Column{MissionExtraServicesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mission_extra_services_extra_services_mission_extra_services",
+				Columns:    []*schema.Column{MissionExtraServicesColumns[6]},
+				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "mission_extra_services_missions_mission_extra_services",
+				Columns:    []*schema.Column{MissionExtraServicesColumns[7]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// MissionKeyPairsColumns holds the columns for the "mission_key_pairs" table.
 	MissionKeyPairsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -850,7 +994,7 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始执行时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务结束执行时刻"},
-		{Name: "buy_duration", Type: field.TypeInt64, Comment: "包时任务订单购买的时长（单位：小时）", Default: 0},
+		{Name: "buy_duration", Type: field.TypeInt64, Comment: "包时任务订单购买的时长", Default: 0},
 		{Name: "plan_started_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划开始时间（包时）"},
 		{Name: "plan_finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划结束时间（包时）"},
 		{Name: "expired_warning_time", Type: field.TypeTime, Nullable: true, Comment: "包时任务到期提醒时间（发了通知提醒就更新该时间）"},
@@ -859,7 +1003,7 @@ var (
 		{Name: "settled_amount", Type: field.TypeInt64, Comment: "已结算金额", Default: 0},
 		{Name: "settled_count", Type: field.TypeInt64, Comment: "已结算次数", Default: 0},
 		{Name: "total_settle_count", Type: field.TypeInt64, Comment: "总结算次数", Default: 0},
-		{Name: "last_settled_at", Type: field.TypeTime, Comment: "上一次结算时间", Default: "'0001-01-01 00:00:00.0000000 +00:00'", SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "lately_settled_at", Type: field.TypeTime, Comment: "上一次结算时间", Default: "'0001-01-01 00:00:00.0000000 +00:00'", SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "关联的设备 id", Default: 0},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
@@ -1521,6 +1665,9 @@ var (
 		EarnBillsTable,
 		EnumConditionsTable,
 		EnumMissionStatusTable,
+		ExtraServicesTable,
+		ExtraServiceOrdersTable,
+		ExtraServicePricesTable,
 		FrpcInfosTable,
 		FrpsInfosTable,
 		GpusTable,
@@ -1531,6 +1678,7 @@ var (
 		MissionsTable,
 		MissionBatchesTable,
 		MissionConsumeOrdersTable,
+		MissionExtraServicesTable,
 		MissionKeyPairsTable,
 		MissionKindsTable,
 		MissionOrdersTable,
@@ -1589,6 +1737,14 @@ func init() {
 	EarnBillsTable.Annotation = &entsql.Annotation{}
 	EnumConditionsTable.Annotation = &entsql.Annotation{}
 	EnumMissionStatusTable.Annotation = &entsql.Annotation{}
+	ExtraServicesTable.ForeignKeys[0].RefTable = MissionsTable
+	ExtraServicesTable.Annotation = &entsql.Annotation{}
+	ExtraServiceOrdersTable.ForeignKeys[0].RefTable = MissionsTable
+	ExtraServiceOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
+	ExtraServiceOrdersTable.ForeignKeys[2].RefTable = SymbolsTable
+	ExtraServiceOrdersTable.Annotation = &entsql.Annotation{}
+	ExtraServicePricesTable.ForeignKeys[0].RefTable = ExtraServicesTable
+	ExtraServicePricesTable.Annotation = &entsql.Annotation{}
 	FrpcInfosTable.ForeignKeys[0].RefTable = DevicesTable
 	FrpcInfosTable.ForeignKeys[1].RefTable = FrpsInfosTable
 	FrpcInfosTable.Annotation = &entsql.Annotation{}
@@ -1601,10 +1757,11 @@ func init() {
 	InvitesTable.Annotation = &entsql.Annotation{}
 	LoginRecordsTable.ForeignKeys[0].RefTable = UsersTable
 	LoginRecordsTable.Annotation = &entsql.Annotation{}
-	MissionsTable.ForeignKeys[0].RefTable = HmacKeyPairsTable
-	MissionsTable.ForeignKeys[1].RefTable = MissionBatchesTable
-	MissionsTable.ForeignKeys[2].RefTable = MissionKindsTable
-	MissionsTable.ForeignKeys[3].RefTable = UsersTable
+	MissionsTable.ForeignKeys[0].RefTable = ExtraServicesTable
+	MissionsTable.ForeignKeys[1].RefTable = HmacKeyPairsTable
+	MissionsTable.ForeignKeys[2].RefTable = MissionBatchesTable
+	MissionsTable.ForeignKeys[3].RefTable = MissionKindsTable
+	MissionsTable.ForeignKeys[4].RefTable = UsersTable
 	MissionsTable.Annotation = &entsql.Annotation{}
 	MissionBatchesTable.ForeignKeys[0].RefTable = UsersTable
 	MissionBatchesTable.Annotation = &entsql.Annotation{}
@@ -1612,6 +1769,9 @@ func init() {
 	MissionConsumeOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
 	MissionConsumeOrdersTable.ForeignKeys[2].RefTable = UsersTable
 	MissionConsumeOrdersTable.Annotation = &entsql.Annotation{}
+	MissionExtraServicesTable.ForeignKeys[0].RefTable = ExtraServicesTable
+	MissionExtraServicesTable.ForeignKeys[1].RefTable = MissionsTable
+	MissionExtraServicesTable.Annotation = &entsql.Annotation{}
 	MissionKeyPairsTable.ForeignKeys[0].RefTable = HmacKeyPairsTable
 	MissionKeyPairsTable.ForeignKeys[1].RefTable = MissionsTable
 	MissionKeyPairsTable.Annotation = &entsql.Annotation{}

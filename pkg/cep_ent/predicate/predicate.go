@@ -61,6 +61,15 @@ type EnumCondition func(*sql.Selector)
 // EnumMissionStatus is the predicate function for enummissionstatus builders.
 type EnumMissionStatus func(*sql.Selector)
 
+// ExtraService is the predicate function for extraservice builders.
+type ExtraService func(*sql.Selector)
+
+// ExtraServiceOrder is the predicate function for extraserviceorder builders.
+type ExtraServiceOrder func(*sql.Selector)
+
+// ExtraServicePrice is the predicate function for extraserviceprice builders.
+type ExtraServicePrice func(*sql.Selector)
+
 // FrpcInfo is the predicate function for frpcinfo builders.
 type FrpcInfo func(*sql.Selector)
 
@@ -101,6 +110,9 @@ type MissionBatch func(*sql.Selector)
 
 // MissionConsumeOrder is the predicate function for missionconsumeorder builders.
 type MissionConsumeOrder func(*sql.Selector)
+
+// MissionExtraService is the predicate function for missionextraservice builders.
+type MissionExtraService func(*sql.Selector)
 
 // MissionKeyPair is the predicate function for missionkeypair builders.
 type MissionKeyPair func(*sql.Selector)

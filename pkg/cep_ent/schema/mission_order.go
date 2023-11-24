@@ -9,7 +9,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
-	"time"
 )
 
 // MissionOrder holds the schema definition for the MissionOrder entity.
@@ -34,7 +33,7 @@ func (MissionOrder) Fields() []ent.Field {
 		field.String("serial_number").Default("").StructTag(`json:"serial_number"`).Comment("订单序列号"),
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("任务开始执行时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("任务结束执行时刻"),
-		field.Int64("buy_duration").Default(0).StructTag(`json:"buy_duration"`).Comment("包时任务订单购买的时长（单位：小时）"),
+		field.Int64("buy_duration").Default(0).StructTag(`json:"buy_duration"`).Comment("包时任务订单购买的时长"),
 		field.Time("plan_started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_started_at"`).Comment("任务计划开始时间（包时）"),
 		field.Time("plan_finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_finished_at"`).Comment("任务计划结束时间（包时）"),
 		field.Time("expired_warning_time").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_warning_time"`).Comment("包时任务到期提醒时间（发了通知提醒就更新该时间）"),
@@ -45,7 +44,7 @@ func (MissionOrder) Fields() []ent.Field {
 		field.Int64("settled_amount").Default(0).StructTag(`json:"settled_amount"`).Comment("已结算金额"),
 		field.Int64("settled_count").Default(0).StructTag(`json:"settled_count"`).Comment("已结算次数"),
 		field.Int64("total_settle_count").Default(0).StructTag(`json:"total_settle_count"`).Comment("总结算次数"),
-		field.Time("last_settled_at").Annotations(entsql.Annotation{Default: "'0001-01-01 00:00:00.0000000 +00:00'"}).Default(time.Now()).StructTag(`json:"last_settled_at"`).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).Comment("上一次结算时间"),
+		field.Time("lately_settled_at").Annotations(entsql.Annotation{Default: "'0001-01-01 00:00:00.0000000 +00:00'"}).Default(common.ZeroTime).StructTag(`json:"lately_settled_at"`).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).Comment("上一次结算时间"),
 	}
 }
 

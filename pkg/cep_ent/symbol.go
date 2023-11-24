@@ -46,9 +46,11 @@ type SymbolEdges struct {
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
 	// TransferOrders holds the value of the transfer_orders edge.
 	TransferOrders []*TransferOrder `json:"transfer_orders,omitempty"`
+	// ExtraServiceOrder holds the value of the extra_service_order edge.
+	ExtraServiceOrder []*ExtraServiceOrder `json:"extra_service_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // WalletsOrErr returns the Wallets value or an error if the edge
@@ -85,6 +87,15 @@ func (e SymbolEdges) TransferOrdersOrErr() ([]*TransferOrder, error) {
 		return e.TransferOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "transfer_orders"}
+}
+
+// ExtraServiceOrderOrErr returns the ExtraServiceOrder value or an error if the edge
+// was not loaded in eager-loading.
+func (e SymbolEdges) ExtraServiceOrderOrErr() ([]*ExtraServiceOrder, error) {
+	if e.loadedTypes[4] {
+		return e.ExtraServiceOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "extra_service_order"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -186,6 +197,11 @@ func (s *Symbol) QueryMissionOrders() *MissionOrderQuery {
 // QueryTransferOrders queries the "transfer_orders" edge of the Symbol entity.
 func (s *Symbol) QueryTransferOrders() *TransferOrderQuery {
 	return NewSymbolClient(s.config).QueryTransferOrders(s)
+}
+
+// QueryExtraServiceOrder queries the "extra_service_order" edge of the Symbol entity.
+func (s *Symbol) QueryExtraServiceOrder() *ExtraServiceOrderQuery {
+	return NewSymbolClient(s.config).QueryExtraServiceOrder(s)
 }
 
 // Update returns a builder for updating this Symbol.

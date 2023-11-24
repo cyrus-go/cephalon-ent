@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -186,6 +187,21 @@ func (mbc *MissionBatchCreate) AddMissionOrders(m ...*MissionOrder) *MissionBatc
 		ids[i] = m[i].ID
 	}
 	return mbc.AddMissionOrderIDs(ids...)
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (mbc *MissionBatchCreate) AddExtraServiceOrderIDs(ids ...int64) *MissionBatchCreate {
+	mbc.mutation.AddExtraServiceOrderIDs(ids...)
+	return mbc
+}
+
+// AddExtraServiceOrder adds the "extra_service_order" edges to the ExtraServiceOrder entity.
+func (mbc *MissionBatchCreate) AddExtraServiceOrder(e ...*ExtraServiceOrder) *MissionBatchCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mbc.AddExtraServiceOrderIDs(ids...)
 }
 
 // Mutation returns the MissionBatchMutation object of the builder.
@@ -398,6 +414,22 @@ func (mbc *MissionBatchCreate) createSpec() (*MissionBatch, *sqlgraph.CreateSpec
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mbc.mutation.ExtraServiceOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

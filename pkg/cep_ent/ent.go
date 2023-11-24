@@ -23,6 +23,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
@@ -33,6 +36,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -124,6 +128,9 @@ func checkColumn(table, column string) error {
 			earnbill.Table:             earnbill.ValidColumn,
 			enumcondition.Table:        enumcondition.ValidColumn,
 			enummissionstatus.Table:    enummissionstatus.ValidColumn,
+			extraservice.Table:         extraservice.ValidColumn,
+			extraserviceorder.Table:    extraserviceorder.ValidColumn,
+			extraserviceprice.Table:    extraserviceprice.ValidColumn,
 			frpcinfo.Table:             frpcinfo.ValidColumn,
 			frpsinfo.Table:             frpsinfo.ValidColumn,
 			gpu.Table:                  gpu.ValidColumn,
@@ -134,6 +141,7 @@ func checkColumn(table, column string) error {
 			mission.Table:              mission.ValidColumn,
 			missionbatch.Table:         missionbatch.ValidColumn,
 			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,
+			missionextraservice.Table:  missionextraservice.ValidColumn,
 			missionkeypair.Table:       missionkeypair.ValidColumn,
 			missionkind.Table:          missionkind.ValidColumn,
 			missionorder.Table:         missionorder.ValidColumn,

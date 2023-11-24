@@ -449,16 +449,16 @@ func (moc *MissionOrderCreate) SetNillableTotalSettleCount(i *int64) *MissionOrd
 	return moc
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (moc *MissionOrderCreate) SetLastSettledAt(t time.Time) *MissionOrderCreate {
-	moc.mutation.SetLastSettledAt(t)
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (moc *MissionOrderCreate) SetLatelySettledAt(t time.Time) *MissionOrderCreate {
+	moc.mutation.SetLatelySettledAt(t)
 	return moc
 }
 
-// SetNillableLastSettledAt sets the "last_settled_at" field if the given value is not nil.
-func (moc *MissionOrderCreate) SetNillableLastSettledAt(t *time.Time) *MissionOrderCreate {
+// SetNillableLatelySettledAt sets the "lately_settled_at" field if the given value is not nil.
+func (moc *MissionOrderCreate) SetNillableLatelySettledAt(t *time.Time) *MissionOrderCreate {
 	if t != nil {
-		moc.SetLastSettledAt(*t)
+		moc.SetLatelySettledAt(*t)
 	}
 	return moc
 }
@@ -677,9 +677,9 @@ func (moc *MissionOrderCreate) defaults() {
 		v := missionorder.DefaultTotalSettleCount
 		moc.mutation.SetTotalSettleCount(v)
 	}
-	if _, ok := moc.mutation.LastSettledAt(); !ok {
-		v := missionorder.DefaultLastSettledAt
-		moc.mutation.SetLastSettledAt(v)
+	if _, ok := moc.mutation.LatelySettledAt(); !ok {
+		v := missionorder.DefaultLatelySettledAt
+		moc.mutation.SetLatelySettledAt(v)
 	}
 	if _, ok := moc.mutation.ID(); !ok {
 		v := missionorder.DefaultID()
@@ -790,8 +790,8 @@ func (moc *MissionOrderCreate) check() error {
 	if _, ok := moc.mutation.TotalSettleCount(); !ok {
 		return &ValidationError{Name: "total_settle_count", err: errors.New(`cep_ent: missing required field "MissionOrder.total_settle_count"`)}
 	}
-	if _, ok := moc.mutation.LastSettledAt(); !ok {
-		return &ValidationError{Name: "last_settled_at", err: errors.New(`cep_ent: missing required field "MissionOrder.last_settled_at"`)}
+	if _, ok := moc.mutation.LatelySettledAt(); !ok {
+		return &ValidationError{Name: "lately_settled_at", err: errors.New(`cep_ent: missing required field "MissionOrder.lately_settled_at"`)}
 	}
 	if _, ok := moc.mutation.ConsumeUserID(); !ok {
 		return &ValidationError{Name: "consume_user", err: errors.New(`cep_ent: missing required edge "MissionOrder.consume_user"`)}
@@ -940,9 +940,9 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 		_spec.SetField(missionorder.FieldTotalSettleCount, field.TypeInt64, value)
 		_node.TotalSettleCount = value
 	}
-	if value, ok := moc.mutation.LastSettledAt(); ok {
-		_spec.SetField(missionorder.FieldLastSettledAt, field.TypeTime, value)
-		_node.LastSettledAt = value
+	if value, ok := moc.mutation.LatelySettledAt(); ok {
+		_spec.SetField(missionorder.FieldLatelySettledAt, field.TypeTime, value)
+		_node.LatelySettledAt = value
 	}
 	if nodes := moc.mutation.ConsumeUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1540,15 +1540,15 @@ func (u *MissionOrderUpsert) AddTotalSettleCount(v int64) *MissionOrderUpsert {
 	return u
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (u *MissionOrderUpsert) SetLastSettledAt(v time.Time) *MissionOrderUpsert {
-	u.Set(missionorder.FieldLastSettledAt, v)
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (u *MissionOrderUpsert) SetLatelySettledAt(v time.Time) *MissionOrderUpsert {
+	u.Set(missionorder.FieldLatelySettledAt, v)
 	return u
 }
 
-// UpdateLastSettledAt sets the "last_settled_at" field to the value that was provided on create.
-func (u *MissionOrderUpsert) UpdateLastSettledAt() *MissionOrderUpsert {
-	u.SetExcluded(missionorder.FieldLastSettledAt)
+// UpdateLatelySettledAt sets the "lately_settled_at" field to the value that was provided on create.
+func (u *MissionOrderUpsert) UpdateLatelySettledAt() *MissionOrderUpsert {
+	u.SetExcluded(missionorder.FieldLatelySettledAt)
 	return u
 }
 
@@ -2100,17 +2100,17 @@ func (u *MissionOrderUpsertOne) UpdateTotalSettleCount() *MissionOrderUpsertOne 
 	})
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (u *MissionOrderUpsertOne) SetLastSettledAt(v time.Time) *MissionOrderUpsertOne {
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (u *MissionOrderUpsertOne) SetLatelySettledAt(v time.Time) *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
-		s.SetLastSettledAt(v)
+		s.SetLatelySettledAt(v)
 	})
 }
 
-// UpdateLastSettledAt sets the "last_settled_at" field to the value that was provided on create.
-func (u *MissionOrderUpsertOne) UpdateLastSettledAt() *MissionOrderUpsertOne {
+// UpdateLatelySettledAt sets the "lately_settled_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertOne) UpdateLatelySettledAt() *MissionOrderUpsertOne {
 	return u.Update(func(s *MissionOrderUpsert) {
-		s.UpdateLastSettledAt()
+		s.UpdateLatelySettledAt()
 	})
 }
 
@@ -2828,17 +2828,17 @@ func (u *MissionOrderUpsertBulk) UpdateTotalSettleCount() *MissionOrderUpsertBul
 	})
 }
 
-// SetLastSettledAt sets the "last_settled_at" field.
-func (u *MissionOrderUpsertBulk) SetLastSettledAt(v time.Time) *MissionOrderUpsertBulk {
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (u *MissionOrderUpsertBulk) SetLatelySettledAt(v time.Time) *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
-		s.SetLastSettledAt(v)
+		s.SetLatelySettledAt(v)
 	})
 }
 
-// UpdateLastSettledAt sets the "last_settled_at" field to the value that was provided on create.
-func (u *MissionOrderUpsertBulk) UpdateLastSettledAt() *MissionOrderUpsertBulk {
+// UpdateLatelySettledAt sets the "lately_settled_at" field to the value that was provided on create.
+func (u *MissionOrderUpsertBulk) UpdateLatelySettledAt() *MissionOrderUpsertBulk {
 	return u.Update(func(s *MissionOrderUpsert) {
-		s.UpdateLastSettledAt()
+		s.UpdateLatelySettledAt()
 	})
 }
 

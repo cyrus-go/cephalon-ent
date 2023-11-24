@@ -12,10 +12,13 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -573,6 +576,20 @@ func (mu *MissionUpdate) ClearExpiredAt() *MissionUpdate {
 	return mu
 }
 
+// SetFreeAt sets the "free_at" field.
+func (mu *MissionUpdate) SetFreeAt(t time.Time) *MissionUpdate {
+	mu.mutation.SetFreeAt(t)
+	return mu
+}
+
+// SetNillableFreeAt sets the "free_at" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableFreeAt(t *time.Time) *MissionUpdate {
+	if t != nil {
+		mu.SetFreeAt(*t)
+	}
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -685,6 +702,51 @@ func (mu *MissionUpdate) AddRenewalAgreements(r ...*RenewalAgreement) *MissionUp
 		ids[i] = r[i].ID
 	}
 	return mu.AddRenewalAgreementIDs(ids...)
+}
+
+// AddMissionExtraServiceIDs adds the "mission_extra_services" edge to the MissionExtraService entity by IDs.
+func (mu *MissionUpdate) AddMissionExtraServiceIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.AddMissionExtraServiceIDs(ids...)
+	return mu
+}
+
+// AddMissionExtraServices adds the "mission_extra_services" edges to the MissionExtraService entity.
+func (mu *MissionUpdate) AddMissionExtraServices(m ...*MissionExtraService) *MissionUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.AddMissionExtraServiceIDs(ids...)
+}
+
+// AddExtraServiceIDs adds the "extra_services" edge to the ExtraService entity by IDs.
+func (mu *MissionUpdate) AddExtraServiceIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.AddExtraServiceIDs(ids...)
+	return mu
+}
+
+// AddExtraServices adds the "extra_services" edges to the ExtraService entity.
+func (mu *MissionUpdate) AddExtraServices(e ...*ExtraService) *MissionUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mu.AddExtraServiceIDs(ids...)
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (mu *MissionUpdate) AddExtraServiceOrderIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.AddExtraServiceOrderIDs(ids...)
+	return mu
+}
+
+// AddExtraServiceOrders adds the "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mu *MissionUpdate) AddExtraServiceOrders(e ...*ExtraServiceOrder) *MissionUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mu.AddExtraServiceOrderIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -825,6 +887,69 @@ func (mu *MissionUpdate) RemoveRenewalAgreements(r ...*RenewalAgreement) *Missio
 		ids[i] = r[i].ID
 	}
 	return mu.RemoveRenewalAgreementIDs(ids...)
+}
+
+// ClearMissionExtraServices clears all "mission_extra_services" edges to the MissionExtraService entity.
+func (mu *MissionUpdate) ClearMissionExtraServices() *MissionUpdate {
+	mu.mutation.ClearMissionExtraServices()
+	return mu
+}
+
+// RemoveMissionExtraServiceIDs removes the "mission_extra_services" edge to MissionExtraService entities by IDs.
+func (mu *MissionUpdate) RemoveMissionExtraServiceIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.RemoveMissionExtraServiceIDs(ids...)
+	return mu
+}
+
+// RemoveMissionExtraServices removes "mission_extra_services" edges to MissionExtraService entities.
+func (mu *MissionUpdate) RemoveMissionExtraServices(m ...*MissionExtraService) *MissionUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.RemoveMissionExtraServiceIDs(ids...)
+}
+
+// ClearExtraServices clears all "extra_services" edges to the ExtraService entity.
+func (mu *MissionUpdate) ClearExtraServices() *MissionUpdate {
+	mu.mutation.ClearExtraServices()
+	return mu
+}
+
+// RemoveExtraServiceIDs removes the "extra_services" edge to ExtraService entities by IDs.
+func (mu *MissionUpdate) RemoveExtraServiceIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.RemoveExtraServiceIDs(ids...)
+	return mu
+}
+
+// RemoveExtraServices removes "extra_services" edges to ExtraService entities.
+func (mu *MissionUpdate) RemoveExtraServices(e ...*ExtraService) *MissionUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mu.RemoveExtraServiceIDs(ids...)
+}
+
+// ClearExtraServiceOrders clears all "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mu *MissionUpdate) ClearExtraServiceOrders() *MissionUpdate {
+	mu.mutation.ClearExtraServiceOrders()
+	return mu
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_orders" edge to ExtraServiceOrder entities by IDs.
+func (mu *MissionUpdate) RemoveExtraServiceOrderIDs(ids ...int64) *MissionUpdate {
+	mu.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return mu
+}
+
+// RemoveExtraServiceOrders removes "extra_service_orders" edges to ExtraServiceOrder entities.
+func (mu *MissionUpdate) RemoveExtraServiceOrders(e ...*ExtraServiceOrder) *MissionUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mu.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1069,6 +1194,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.ExpiredAtCleared() {
 		_spec.ClearField(mission.FieldExpiredAt, field.TypeTime)
+	}
+	if value, ok := mu.mutation.FreeAt(); ok {
+		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1433,6 +1561,141 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.MissionExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedMissionExtraServicesIDs(); len(nodes) > 0 && !mu.mutation.MissionExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionExtraServicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.ExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedExtraServicesIDs(); len(nodes) > 0 && !mu.mutation.ExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.ExtraServicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedExtraServiceOrdersIDs(); len(nodes) > 0 && !mu.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.ExtraServiceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1994,6 +2257,20 @@ func (muo *MissionUpdateOne) ClearExpiredAt() *MissionUpdateOne {
 	return muo
 }
 
+// SetFreeAt sets the "free_at" field.
+func (muo *MissionUpdateOne) SetFreeAt(t time.Time) *MissionUpdateOne {
+	muo.mutation.SetFreeAt(t)
+	return muo
+}
+
+// SetNillableFreeAt sets the "free_at" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableFreeAt(t *time.Time) *MissionUpdateOne {
+	if t != nil {
+		muo.SetFreeAt(*t)
+	}
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -2106,6 +2383,51 @@ func (muo *MissionUpdateOne) AddRenewalAgreements(r ...*RenewalAgreement) *Missi
 		ids[i] = r[i].ID
 	}
 	return muo.AddRenewalAgreementIDs(ids...)
+}
+
+// AddMissionExtraServiceIDs adds the "mission_extra_services" edge to the MissionExtraService entity by IDs.
+func (muo *MissionUpdateOne) AddMissionExtraServiceIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.AddMissionExtraServiceIDs(ids...)
+	return muo
+}
+
+// AddMissionExtraServices adds the "mission_extra_services" edges to the MissionExtraService entity.
+func (muo *MissionUpdateOne) AddMissionExtraServices(m ...*MissionExtraService) *MissionUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.AddMissionExtraServiceIDs(ids...)
+}
+
+// AddExtraServiceIDs adds the "extra_services" edge to the ExtraService entity by IDs.
+func (muo *MissionUpdateOne) AddExtraServiceIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.AddExtraServiceIDs(ids...)
+	return muo
+}
+
+// AddExtraServices adds the "extra_services" edges to the ExtraService entity.
+func (muo *MissionUpdateOne) AddExtraServices(e ...*ExtraService) *MissionUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return muo.AddExtraServiceIDs(ids...)
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (muo *MissionUpdateOne) AddExtraServiceOrderIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.AddExtraServiceOrderIDs(ids...)
+	return muo
+}
+
+// AddExtraServiceOrders adds the "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (muo *MissionUpdateOne) AddExtraServiceOrders(e ...*ExtraServiceOrder) *MissionUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return muo.AddExtraServiceOrderIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -2246,6 +2568,69 @@ func (muo *MissionUpdateOne) RemoveRenewalAgreements(r ...*RenewalAgreement) *Mi
 		ids[i] = r[i].ID
 	}
 	return muo.RemoveRenewalAgreementIDs(ids...)
+}
+
+// ClearMissionExtraServices clears all "mission_extra_services" edges to the MissionExtraService entity.
+func (muo *MissionUpdateOne) ClearMissionExtraServices() *MissionUpdateOne {
+	muo.mutation.ClearMissionExtraServices()
+	return muo
+}
+
+// RemoveMissionExtraServiceIDs removes the "mission_extra_services" edge to MissionExtraService entities by IDs.
+func (muo *MissionUpdateOne) RemoveMissionExtraServiceIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.RemoveMissionExtraServiceIDs(ids...)
+	return muo
+}
+
+// RemoveMissionExtraServices removes "mission_extra_services" edges to MissionExtraService entities.
+func (muo *MissionUpdateOne) RemoveMissionExtraServices(m ...*MissionExtraService) *MissionUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.RemoveMissionExtraServiceIDs(ids...)
+}
+
+// ClearExtraServices clears all "extra_services" edges to the ExtraService entity.
+func (muo *MissionUpdateOne) ClearExtraServices() *MissionUpdateOne {
+	muo.mutation.ClearExtraServices()
+	return muo
+}
+
+// RemoveExtraServiceIDs removes the "extra_services" edge to ExtraService entities by IDs.
+func (muo *MissionUpdateOne) RemoveExtraServiceIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.RemoveExtraServiceIDs(ids...)
+	return muo
+}
+
+// RemoveExtraServices removes "extra_services" edges to ExtraService entities.
+func (muo *MissionUpdateOne) RemoveExtraServices(e ...*ExtraService) *MissionUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return muo.RemoveExtraServiceIDs(ids...)
+}
+
+// ClearExtraServiceOrders clears all "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (muo *MissionUpdateOne) ClearExtraServiceOrders() *MissionUpdateOne {
+	muo.mutation.ClearExtraServiceOrders()
+	return muo
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_orders" edge to ExtraServiceOrder entities by IDs.
+func (muo *MissionUpdateOne) RemoveExtraServiceOrderIDs(ids ...int64) *MissionUpdateOne {
+	muo.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return muo
+}
+
+// RemoveExtraServiceOrders removes "extra_service_orders" edges to ExtraServiceOrder entities.
+func (muo *MissionUpdateOne) RemoveExtraServiceOrders(e ...*ExtraServiceOrder) *MissionUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return muo.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionUpdate builder.
@@ -2520,6 +2905,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if muo.mutation.ExpiredAtCleared() {
 		_spec.ClearField(mission.FieldExpiredAt, field.TypeTime)
+	}
+	if value, ok := muo.mutation.FreeAt(); ok {
+		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2884,6 +3272,141 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.MissionExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedMissionExtraServicesIDs(); len(nodes) > 0 && !muo.mutation.MissionExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionExtraServicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionExtraServicesTable,
+			Columns: []string{mission.MissionExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionextraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.ExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedExtraServicesIDs(); len(nodes) > 0 && !muo.mutation.ExtraServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.ExtraServicesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServicesTable,
+			Columns: []string{mission.ExtraServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraservice.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedExtraServiceOrdersIDs(); len(nodes) > 0 && !muo.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.ExtraServiceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.ExtraServiceOrdersTable,
+			Columns: []string{mission.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

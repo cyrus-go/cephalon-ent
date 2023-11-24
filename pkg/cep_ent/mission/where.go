@@ -191,6 +191,11 @@ func ExpiredAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldExpiredAt, v))
 }
 
+// FreeAt applies equality check predicate on the "free_at" field. It's identical to FreeAtEQ.
+func FreeAt(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldFreeAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -1751,6 +1756,46 @@ func ExpiredAtNotNil() predicate.Mission {
 	return predicate.Mission(sql.FieldNotNull(FieldExpiredAt))
 }
 
+// FreeAtEQ applies the EQ predicate on the "free_at" field.
+func FreeAtEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldFreeAt, v))
+}
+
+// FreeAtNEQ applies the NEQ predicate on the "free_at" field.
+func FreeAtNEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldFreeAt, v))
+}
+
+// FreeAtIn applies the In predicate on the "free_at" field.
+func FreeAtIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldFreeAt, vs...))
+}
+
+// FreeAtNotIn applies the NotIn predicate on the "free_at" field.
+func FreeAtNotIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldFreeAt, vs...))
+}
+
+// FreeAtGT applies the GT predicate on the "free_at" field.
+func FreeAtGT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldFreeAt, v))
+}
+
+// FreeAtGTE applies the GTE predicate on the "free_at" field.
+func FreeAtGTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldFreeAt, v))
+}
+
+// FreeAtLT applies the LT predicate on the "free_at" field.
+func FreeAtLT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldFreeAt, v))
+}
+
+// FreeAtLTE applies the LTE predicate on the "free_at" field.
+func FreeAtLTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldFreeAt, v))
+}
+
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.
 func HasMissionKind() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
@@ -1973,6 +2018,75 @@ func HasRenewalAgreements() predicate.Mission {
 func HasRenewalAgreementsWith(preds ...predicate.RenewalAgreement) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := newRenewalAgreementsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionExtraServices applies the HasEdge predicate on the "mission_extra_services" edge.
+func HasMissionExtraServices() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionExtraServicesTable, MissionExtraServicesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionExtraServicesWith applies the HasEdge predicate on the "mission_extra_services" edge with a given conditions (other predicates).
+func HasMissionExtraServicesWith(preds ...predicate.MissionExtraService) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionExtraServicesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasExtraServices applies the HasEdge predicate on the "extra_services" edge.
+func HasExtraServices() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExtraServicesTable, ExtraServicesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExtraServicesWith applies the HasEdge predicate on the "extra_services" edge with a given conditions (other predicates).
+func HasExtraServicesWith(preds ...predicate.ExtraService) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newExtraServicesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasExtraServiceOrders applies the HasEdge predicate on the "extra_service_orders" edge.
+func HasExtraServiceOrders() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrdersTable, ExtraServiceOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExtraServiceOrdersWith applies the HasEdge predicate on the "extra_service_orders" edge with a given conditions (other predicates).
+func HasExtraServiceOrdersWith(preds ...predicate.ExtraServiceOrder) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newExtraServiceOrdersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

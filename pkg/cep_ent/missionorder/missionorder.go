@@ -76,8 +76,8 @@ const (
 	FieldSettledCount = "settled_count"
 	// FieldTotalSettleCount holds the string denoting the total_settle_count field in the database.
 	FieldTotalSettleCount = "total_settle_count"
-	// FieldLastSettledAt holds the string denoting the last_settled_at field in the database.
-	FieldLastSettledAt = "last_settled_at"
+	// FieldLatelySettledAt holds the string denoting the lately_settled_at field in the database.
+	FieldLatelySettledAt = "lately_settled_at"
 	// EdgeConsumeUser holds the string denoting the consume_user edge name in mutations.
 	EdgeConsumeUser = "consume_user"
 	// EdgeProduceUser holds the string denoting the produce_user edge name in mutations.
@@ -178,7 +178,7 @@ var Columns = []string{
 	FieldSettledAmount,
 	FieldSettledCount,
 	FieldTotalSettleCount,
-	FieldLastSettledAt,
+	FieldLatelySettledAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -246,8 +246,8 @@ var (
 	DefaultSettledCount int64
 	// DefaultTotalSettleCount holds the default value on creation for the "total_settle_count" field.
 	DefaultTotalSettleCount int64
-	// DefaultLastSettledAt holds the default value on creation for the "last_settled_at" field.
-	DefaultLastSettledAt time.Time
+	// DefaultLatelySettledAt holds the default value on creation for the "lately_settled_at" field.
+	DefaultLatelySettledAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -458,9 +458,9 @@ func ByTotalSettleCount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTotalSettleCount, opts...).ToFunc()
 }
 
-// ByLastSettledAt orders the results by the last_settled_at field.
-func ByLastSettledAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLastSettledAt, opts...).ToFunc()
+// ByLatelySettledAt orders the results by the lately_settled_at field.
+func ByLatelySettledAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLatelySettledAt, opts...).ToFunc()
 }
 
 // ByConsumeUserField orders the results by consume_user field.

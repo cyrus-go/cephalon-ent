@@ -490,6 +490,7 @@ func (hkpq *HmacKeyPairQuery) loadCreatedMissions(ctx context.Context, query *Mi
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(mission.FieldKeyPairID)
 	}
