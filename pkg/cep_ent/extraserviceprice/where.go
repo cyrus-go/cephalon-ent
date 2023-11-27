@@ -311,6 +311,36 @@ func DeletedAtLTE(v time.Time) predicate.ExtraServicePrice {
 	return predicate.ExtraServicePrice(sql.FieldLTE(FieldDeletedAt, v))
 }
 
+// ExtraServiceTypeEQ applies the EQ predicate on the "extra_service_type" field.
+func ExtraServiceTypeEQ(v enums.ExtraServiceType) predicate.ExtraServicePrice {
+	vc := v
+	return predicate.ExtraServicePrice(sql.FieldEQ(FieldExtraServiceType, vc))
+}
+
+// ExtraServiceTypeNEQ applies the NEQ predicate on the "extra_service_type" field.
+func ExtraServiceTypeNEQ(v enums.ExtraServiceType) predicate.ExtraServicePrice {
+	vc := v
+	return predicate.ExtraServicePrice(sql.FieldNEQ(FieldExtraServiceType, vc))
+}
+
+// ExtraServiceTypeIn applies the In predicate on the "extra_service_type" field.
+func ExtraServiceTypeIn(vs ...enums.ExtraServiceType) predicate.ExtraServicePrice {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExtraServicePrice(sql.FieldIn(FieldExtraServiceType, v...))
+}
+
+// ExtraServiceTypeNotIn applies the NotIn predicate on the "extra_service_type" field.
+func ExtraServiceTypeNotIn(vs ...enums.ExtraServiceType) predicate.ExtraServicePrice {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExtraServicePrice(sql.FieldNotIn(FieldExtraServiceType, v...))
+}
+
 // ExtraServiceBillingTypeEQ applies the EQ predicate on the "extra_service_billing_type" field.
 func ExtraServiceBillingTypeEQ(v enums.ExtraServiceBillingType) predicate.ExtraServicePrice {
 	vc := v

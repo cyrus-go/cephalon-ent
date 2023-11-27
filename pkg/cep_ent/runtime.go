@@ -814,19 +814,19 @@ func init() {
 	// extraserviceprice.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	extraserviceprice.DefaultDeletedAt = extraservicepriceDescDeletedAt.Default.(time.Time)
 	// extraservicepriceDescExtraServiceID is the schema descriptor for extra_service_id field.
-	extraservicepriceDescExtraServiceID := extraservicepriceFields[1].Descriptor()
+	extraservicepriceDescExtraServiceID := extraservicepriceFields[2].Descriptor()
 	// extraserviceprice.DefaultExtraServiceID holds the default value on creation for the extra_service_id field.
 	extraserviceprice.DefaultExtraServiceID = extraservicepriceDescExtraServiceID.Default.(int64)
 	// extraservicepriceDescCep is the schema descriptor for cep field.
-	extraservicepriceDescCep := extraservicepriceFields[2].Descriptor()
+	extraservicepriceDescCep := extraservicepriceFields[3].Descriptor()
 	// extraserviceprice.DefaultCep holds the default value on creation for the cep field.
 	extraserviceprice.DefaultCep = extraservicepriceDescCep.Default.(int64)
 	// extraservicepriceDescIsDeprecated is the schema descriptor for is_deprecated field.
-	extraservicepriceDescIsDeprecated := extraservicepriceFields[5].Descriptor()
+	extraservicepriceDescIsDeprecated := extraservicepriceFields[6].Descriptor()
 	// extraserviceprice.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
 	extraserviceprice.DefaultIsDeprecated = extraservicepriceDescIsDeprecated.Default.(bool)
 	// extraservicepriceDescIsSensitive is the schema descriptor for is_sensitive field.
-	extraservicepriceDescIsSensitive := extraservicepriceFields[6].Descriptor()
+	extraservicepriceDescIsSensitive := extraservicepriceFields[7].Descriptor()
 	// extraserviceprice.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
 	extraserviceprice.DefaultIsSensitive = extraservicepriceDescIsSensitive.Default.(bool)
 	// extraservicepriceDescID is the schema descriptor for id field.

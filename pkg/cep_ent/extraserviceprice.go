@@ -30,6 +30,8 @@ type ExtraServicePrice struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
+	// 附加服务类型
+	ExtraServiceType enums.ExtraServiceType `json:"extra_service_type"`
 	// 附加服务订单类型
 	ExtraServiceBillingType enums.ExtraServiceBillingType `json:"extra_service_billing_type"`
 	// 附加服务 id，外键关联附加服务
@@ -81,7 +83,7 @@ func (*ExtraServicePrice) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case extraserviceprice.FieldID, extraserviceprice.FieldCreatedBy, extraserviceprice.FieldUpdatedBy, extraserviceprice.FieldExtraServiceID, extraserviceprice.FieldCep:
 			values[i] = new(sql.NullInt64)
-		case extraserviceprice.FieldExtraServiceBillingType:
+		case extraserviceprice.FieldExtraServiceType, extraserviceprice.FieldExtraServiceBillingType:
 			values[i] = new(sql.NullString)
 		case extraserviceprice.FieldCreatedAt, extraserviceprice.FieldUpdatedAt, extraserviceprice.FieldDeletedAt, extraserviceprice.FieldStartedAt, extraserviceprice.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -135,6 +137,12 @@ func (esp *ExtraServicePrice) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				esp.DeletedAt = value.Time
+			}
+		case extraserviceprice.FieldExtraServiceType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field extra_service_type", values[i])
+			} else if value.Valid {
+				esp.ExtraServiceType = enums.ExtraServiceType(value.String)
 			}
 		case extraserviceprice.FieldExtraServiceBillingType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -235,6 +243,9 @@ func (esp *ExtraServicePrice) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(esp.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("extra_service_type=")
+	builder.WriteString(fmt.Sprintf("%v", esp.ExtraServiceType))
 	builder.WriteString(", ")
 	builder.WriteString("extra_service_billing_type=")
 	builder.WriteString(fmt.Sprintf("%v", esp.ExtraServiceBillingType))

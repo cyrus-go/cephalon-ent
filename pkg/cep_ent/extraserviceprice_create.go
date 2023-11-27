@@ -94,6 +94,20 @@ func (espc *ExtraServicePriceCreate) SetNillableDeletedAt(t *time.Time) *ExtraSe
 	return espc
 }
 
+// SetExtraServiceType sets the "extra_service_type" field.
+func (espc *ExtraServicePriceCreate) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServicePriceCreate {
+	espc.mutation.SetExtraServiceType(est)
+	return espc
+}
+
+// SetNillableExtraServiceType sets the "extra_service_type" field if the given value is not nil.
+func (espc *ExtraServicePriceCreate) SetNillableExtraServiceType(est *enums.ExtraServiceType) *ExtraServicePriceCreate {
+	if est != nil {
+		espc.SetExtraServiceType(*est)
+	}
+	return espc
+}
+
 // SetExtraServiceBillingType sets the "extra_service_billing_type" field.
 func (espc *ExtraServicePriceCreate) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServicePriceCreate {
 	espc.mutation.SetExtraServiceBillingType(esbt)
@@ -266,6 +280,10 @@ func (espc *ExtraServicePriceCreate) defaults() {
 		v := extraserviceprice.DefaultDeletedAt
 		espc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := espc.mutation.ExtraServiceType(); !ok {
+		v := extraserviceprice.DefaultExtraServiceType
+		espc.mutation.SetExtraServiceType(v)
+	}
 	if _, ok := espc.mutation.ExtraServiceBillingType(); !ok {
 		v := extraserviceprice.DefaultExtraServiceBillingType
 		espc.mutation.SetExtraServiceBillingType(v)
@@ -308,6 +326,14 @@ func (espc *ExtraServicePriceCreate) check() error {
 	}
 	if _, ok := espc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`cep_ent: missing required field "ExtraServicePrice.deleted_at"`)}
+	}
+	if _, ok := espc.mutation.ExtraServiceType(); !ok {
+		return &ValidationError{Name: "extra_service_type", err: errors.New(`cep_ent: missing required field "ExtraServicePrice.extra_service_type"`)}
+	}
+	if v, ok := espc.mutation.ExtraServiceType(); ok {
+		if err := extraserviceprice.ExtraServiceTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServicePrice.extra_service_type": %w`, err)}
+		}
 	}
 	if _, ok := espc.mutation.ExtraServiceBillingType(); !ok {
 		return &ValidationError{Name: "extra_service_billing_type", err: errors.New(`cep_ent: missing required field "ExtraServicePrice.extra_service_billing_type"`)}
@@ -384,6 +410,10 @@ func (espc *ExtraServicePriceCreate) createSpec() (*ExtraServicePrice, *sqlgraph
 	if value, ok := espc.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceprice.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := espc.mutation.ExtraServiceType(); ok {
+		_spec.SetField(extraserviceprice.FieldExtraServiceType, field.TypeEnum, value)
+		_node.ExtraServiceType = value
 	}
 	if value, ok := espc.mutation.ExtraServiceBillingType(); ok {
 		_spec.SetField(extraserviceprice.FieldExtraServiceBillingType, field.TypeEnum, value)
@@ -535,6 +565,18 @@ func (u *ExtraServicePriceUpsert) SetDeletedAt(v time.Time) *ExtraServicePriceUp
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
 func (u *ExtraServicePriceUpsert) UpdateDeletedAt() *ExtraServicePriceUpsert {
 	u.SetExcluded(extraserviceprice.FieldDeletedAt)
+	return u
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (u *ExtraServicePriceUpsert) SetExtraServiceType(v enums.ExtraServiceType) *ExtraServicePriceUpsert {
+	u.Set(extraserviceprice.FieldExtraServiceType, v)
+	return u
+}
+
+// UpdateExtraServiceType sets the "extra_service_type" field to the value that was provided on create.
+func (u *ExtraServicePriceUpsert) UpdateExtraServiceType() *ExtraServicePriceUpsert {
+	u.SetExcluded(extraserviceprice.FieldExtraServiceType)
 	return u
 }
 
@@ -758,6 +800,20 @@ func (u *ExtraServicePriceUpsertOne) SetDeletedAt(v time.Time) *ExtraServicePric
 func (u *ExtraServicePriceUpsertOne) UpdateDeletedAt() *ExtraServicePriceUpsertOne {
 	return u.Update(func(s *ExtraServicePriceUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (u *ExtraServicePriceUpsertOne) SetExtraServiceType(v enums.ExtraServiceType) *ExtraServicePriceUpsertOne {
+	return u.Update(func(s *ExtraServicePriceUpsert) {
+		s.SetExtraServiceType(v)
+	})
+}
+
+// UpdateExtraServiceType sets the "extra_service_type" field to the value that was provided on create.
+func (u *ExtraServicePriceUpsertOne) UpdateExtraServiceType() *ExtraServicePriceUpsertOne {
+	return u.Update(func(s *ExtraServicePriceUpsert) {
+		s.UpdateExtraServiceType()
 	})
 }
 
@@ -1164,6 +1220,20 @@ func (u *ExtraServicePriceUpsertBulk) SetDeletedAt(v time.Time) *ExtraServicePri
 func (u *ExtraServicePriceUpsertBulk) UpdateDeletedAt() *ExtraServicePriceUpsertBulk {
 	return u.Update(func(s *ExtraServicePriceUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (u *ExtraServicePriceUpsertBulk) SetExtraServiceType(v enums.ExtraServiceType) *ExtraServicePriceUpsertBulk {
+	return u.Update(func(s *ExtraServicePriceUpsert) {
+		s.SetExtraServiceType(v)
+	})
+}
+
+// UpdateExtraServiceType sets the "extra_service_type" field to the value that was provided on create.
+func (u *ExtraServicePriceUpsertBulk) UpdateExtraServiceType() *ExtraServicePriceUpsertBulk {
+	return u.Update(func(s *ExtraServicePriceUpsert) {
+		s.UpdateExtraServiceType()
 	})
 }
 

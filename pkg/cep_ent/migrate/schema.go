@@ -505,7 +505,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "extra_service_billing_type", Type: field.TypeEnum, Comment: "附加服务订单类型", Enums: []string{"unknown", "vpn_time_plan_hour", "vpn_time_plan_day", "vpn_time_plan_week", "vpn_time_plan_month", "vpn_time_plan_volume", "hold"}, Default: "unknown"},
+		{Name: "extra_service_type", Type: field.TypeEnum, Comment: "附加服务类型", Enums: []string{"unknown", "vpn"}, Default: "unknown"},
+		{Name: "extra_service_billing_type", Type: field.TypeEnum, Comment: "附加服务订单类型", Enums: []string{"unknown", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month", "time_plan_volume", "hold"}, Default: "unknown"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "附加服务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
@@ -522,7 +523,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "extra_service_prices_extra_services_extra_service_prices",
-				Columns:    []*schema.Column{ExtraServicePricesColumns[12]},
+				Columns:    []*schema.Column{ExtraServicePricesColumns[13]},
 				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

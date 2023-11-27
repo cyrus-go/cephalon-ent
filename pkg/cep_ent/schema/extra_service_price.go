@@ -16,7 +16,8 @@ type ExtraServicePrice struct {
 // Fields of the ExtraServicePrice
 func (ExtraServicePrice) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("extra_service_billing_type").GoType(enums.ExtraServiceBillingTypeVPNTimePlanDay).Default(string(enums.ExtraServiceBillingTypeUnknown)).StructTag(`json:"extra_service_billing_type"`).Comment("附加服务订单类型"),
+		field.Enum("extra_service_type").GoType(enums.ExtraServiceTypeVPN).Default(string(enums.ExtraServiceTypeUnknown)).StructTag(`json:"extra_service_type"`).Comment("附加服务类型"),
+		field.Enum("extra_service_billing_type").GoType(enums.ExtraServiceBillingTypeTimePlanDay).Default(string(enums.ExtraServiceBillingTypeUnknown)).StructTag(`json:"extra_service_billing_type"`).Comment("附加服务订单类型"),
 		field.Int64("extra_service_id").Default(0).StructTag(`json:extra_service_id,string`).Comment("附加服务 id，外键关联附加服务"),
 		field.Int64("cep").Default(0).StructTag(`json:"cep"`).Comment("附加服务单价"),
 		field.Time("started_at").Optional().Nillable().StructTag(`json:"started_at"`).Comment("价格有效时间开始，为空表示永久有效"),

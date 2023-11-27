@@ -17051,6 +17051,7 @@ type ExtraServicePriceMutation struct {
 	created_at                 *time.Time
 	updated_at                 *time.Time
 	deleted_at                 *time.Time
+	extra_service_type         *enums.ExtraServiceType
 	extra_service_billing_type *enums.ExtraServiceBillingType
 	cep                        *int64
 	addcep                     *int64
@@ -17388,6 +17389,42 @@ func (m *ExtraServicePriceMutation) OldDeletedAt(ctx context.Context) (v time.Ti
 // ResetDeletedAt resets all changes to the "deleted_at" field.
 func (m *ExtraServicePriceMutation) ResetDeletedAt() {
 	m.deleted_at = nil
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (m *ExtraServicePriceMutation) SetExtraServiceType(est enums.ExtraServiceType) {
+	m.extra_service_type = &est
+}
+
+// ExtraServiceType returns the value of the "extra_service_type" field in the mutation.
+func (m *ExtraServicePriceMutation) ExtraServiceType() (r enums.ExtraServiceType, exists bool) {
+	v := m.extra_service_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceType returns the old "extra_service_type" field's value of the ExtraServicePrice entity.
+// If the ExtraServicePrice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServicePriceMutation) OldExtraServiceType(ctx context.Context) (v enums.ExtraServiceType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceType: %w", err)
+	}
+	return oldValue.ExtraServiceType, nil
+}
+
+// ResetExtraServiceType resets all changes to the "extra_service_type" field.
+func (m *ExtraServicePriceMutation) ResetExtraServiceType() {
+	m.extra_service_type = nil
 }
 
 // SetExtraServiceBillingType sets the "extra_service_billing_type" field.
@@ -17749,7 +17786,7 @@ func (m *ExtraServicePriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServicePriceMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceprice.FieldCreatedBy)
 	}
@@ -17764,6 +17801,9 @@ func (m *ExtraServicePriceMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, extraserviceprice.FieldDeletedAt)
+	}
+	if m.extra_service_type != nil {
+		fields = append(fields, extraserviceprice.FieldExtraServiceType)
 	}
 	if m.extra_service_billing_type != nil {
 		fields = append(fields, extraserviceprice.FieldExtraServiceBillingType)
@@ -17804,6 +17844,8 @@ func (m *ExtraServicePriceMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case extraserviceprice.FieldDeletedAt:
 		return m.DeletedAt()
+	case extraserviceprice.FieldExtraServiceType:
+		return m.ExtraServiceType()
 	case extraserviceprice.FieldExtraServiceBillingType:
 		return m.ExtraServiceBillingType()
 	case extraserviceprice.FieldExtraServiceID:
@@ -17837,6 +17879,8 @@ func (m *ExtraServicePriceMutation) OldField(ctx context.Context, name string) (
 		return m.OldUpdatedAt(ctx)
 	case extraserviceprice.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case extraserviceprice.FieldExtraServiceType:
+		return m.OldExtraServiceType(ctx)
 	case extraserviceprice.FieldExtraServiceBillingType:
 		return m.OldExtraServiceBillingType(ctx)
 	case extraserviceprice.FieldExtraServiceID:
@@ -17894,6 +17938,13 @@ func (m *ExtraServicePriceMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case extraserviceprice.FieldExtraServiceType:
+		v, ok := value.(enums.ExtraServiceType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceType(v)
 		return nil
 	case extraserviceprice.FieldExtraServiceBillingType:
 		v, ok := value.(enums.ExtraServiceBillingType)
@@ -18061,6 +18112,9 @@ func (m *ExtraServicePriceMutation) ResetField(name string) error {
 		return nil
 	case extraserviceprice.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case extraserviceprice.FieldExtraServiceType:
+		m.ResetExtraServiceType()
 		return nil
 	case extraserviceprice.FieldExtraServiceBillingType:
 		m.ResetExtraServiceBillingType()

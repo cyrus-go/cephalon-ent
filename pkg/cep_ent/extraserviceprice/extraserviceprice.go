@@ -26,6 +26,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldExtraServiceType holds the string denoting the extra_service_type field in the database.
+	FieldExtraServiceType = "extra_service_type"
 	// FieldExtraServiceBillingType holds the string denoting the extra_service_billing_type field in the database.
 	FieldExtraServiceBillingType = "extra_service_billing_type"
 	// FieldExtraServiceID holds the string denoting the extra_service_id field in the database.
@@ -61,6 +63,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldExtraServiceType,
 	FieldExtraServiceBillingType,
 	FieldExtraServiceID,
 	FieldCep,
@@ -105,12 +108,24 @@ var (
 	DefaultID func() int64
 )
 
+const DefaultExtraServiceType enums.ExtraServiceType = "unknown"
+
+// ExtraServiceTypeValidator is a validator for the "extra_service_type" field enum values. It is called by the builders before save.
+func ExtraServiceTypeValidator(est enums.ExtraServiceType) error {
+	switch est {
+	case "unknown", "vpn":
+		return nil
+	default:
+		return fmt.Errorf("extraserviceprice: invalid enum value for extra_service_type field: %q", est)
+	}
+}
+
 const DefaultExtraServiceBillingType enums.ExtraServiceBillingType = "unknown"
 
 // ExtraServiceBillingTypeValidator is a validator for the "extra_service_billing_type" field enum values. It is called by the builders before save.
 func ExtraServiceBillingTypeValidator(esbt enums.ExtraServiceBillingType) error {
 	switch esbt {
-	case "unknown", "vpn_time_plan_hour", "vpn_time_plan_day", "vpn_time_plan_week", "vpn_time_plan_month", "vpn_time_plan_volume", "hold":
+	case "unknown", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month", "time_plan_volume", "hold":
 		return nil
 	default:
 		return fmt.Errorf("extraserviceprice: invalid enum value for extra_service_billing_type field: %q", esbt)
@@ -148,6 +163,11 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedAt orders the results by the deleted_at field.
 func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByExtraServiceType orders the results by the extra_service_type field.
+func ByExtraServiceType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExtraServiceType, opts...).ToFunc()
 }
 
 // ByExtraServiceBillingType orders the results by the extra_service_billing_type field.

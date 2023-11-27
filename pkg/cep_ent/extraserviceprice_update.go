@@ -93,6 +93,20 @@ func (espu *ExtraServicePriceUpdate) SetNillableDeletedAt(t *time.Time) *ExtraSe
 	return espu
 }
 
+// SetExtraServiceType sets the "extra_service_type" field.
+func (espu *ExtraServicePriceUpdate) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServicePriceUpdate {
+	espu.mutation.SetExtraServiceType(est)
+	return espu
+}
+
+// SetNillableExtraServiceType sets the "extra_service_type" field if the given value is not nil.
+func (espu *ExtraServicePriceUpdate) SetNillableExtraServiceType(est *enums.ExtraServiceType) *ExtraServicePriceUpdate {
+	if est != nil {
+		espu.SetExtraServiceType(*est)
+	}
+	return espu
+}
+
 // SetExtraServiceBillingType sets the "extra_service_billing_type" field.
 func (espu *ExtraServicePriceUpdate) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServicePriceUpdate {
 	espu.mutation.SetExtraServiceBillingType(esbt)
@@ -264,6 +278,11 @@ func (espu *ExtraServicePriceUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (espu *ExtraServicePriceUpdate) check() error {
+	if v, ok := espu.mutation.ExtraServiceType(); ok {
+		if err := extraserviceprice.ExtraServiceTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServicePrice.extra_service_type": %w`, err)}
+		}
+	}
 	if v, ok := espu.mutation.ExtraServiceBillingType(); ok {
 		if err := extraserviceprice.ExtraServiceBillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServicePrice.extra_service_billing_type": %w`, err)}
@@ -310,6 +329,9 @@ func (espu *ExtraServicePriceUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if value, ok := espu.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceprice.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := espu.mutation.ExtraServiceType(); ok {
+		_spec.SetField(extraserviceprice.FieldExtraServiceType, field.TypeEnum, value)
 	}
 	if value, ok := espu.mutation.ExtraServiceBillingType(); ok {
 		_spec.SetField(extraserviceprice.FieldExtraServiceBillingType, field.TypeEnum, value)
@@ -447,6 +469,20 @@ func (espuo *ExtraServicePriceUpdateOne) SetDeletedAt(t time.Time) *ExtraService
 func (espuo *ExtraServicePriceUpdateOne) SetNillableDeletedAt(t *time.Time) *ExtraServicePriceUpdateOne {
 	if t != nil {
 		espuo.SetDeletedAt(*t)
+	}
+	return espuo
+}
+
+// SetExtraServiceType sets the "extra_service_type" field.
+func (espuo *ExtraServicePriceUpdateOne) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServicePriceUpdateOne {
+	espuo.mutation.SetExtraServiceType(est)
+	return espuo
+}
+
+// SetNillableExtraServiceType sets the "extra_service_type" field if the given value is not nil.
+func (espuo *ExtraServicePriceUpdateOne) SetNillableExtraServiceType(est *enums.ExtraServiceType) *ExtraServicePriceUpdateOne {
+	if est != nil {
+		espuo.SetExtraServiceType(*est)
 	}
 	return espuo
 }
@@ -635,6 +671,11 @@ func (espuo *ExtraServicePriceUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (espuo *ExtraServicePriceUpdateOne) check() error {
+	if v, ok := espuo.mutation.ExtraServiceType(); ok {
+		if err := extraserviceprice.ExtraServiceTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServicePrice.extra_service_type": %w`, err)}
+		}
+	}
 	if v, ok := espuo.mutation.ExtraServiceBillingType(); ok {
 		if err := extraserviceprice.ExtraServiceBillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServicePrice.extra_service_billing_type": %w`, err)}
@@ -698,6 +739,9 @@ func (espuo *ExtraServicePriceUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	}
 	if value, ok := espuo.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceprice.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := espuo.mutation.ExtraServiceType(); ok {
+		_spec.SetField(extraserviceprice.FieldExtraServiceType, field.TypeEnum, value)
 	}
 	if value, ok := espuo.mutation.ExtraServiceBillingType(); ok {
 		_spec.SetField(extraserviceprice.FieldExtraServiceBillingType, field.TypeEnum, value)
