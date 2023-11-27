@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -49,7 +50,7 @@ func (Mission) Fields() []ent.Field {
 		field.Time("started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"started_at"`).Comment("任务开始时间"),
 		field.Time("finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"finished_at"`).Comment("任务结束时间"),
 		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("任务到期时间（包时任务才有）"),
-		field.Time("free_at").Default(common.ZeroTime).SchemaType(map[string]string{dialect.Postgres: "timestamptz default '0001-01-01 00:00:00.00000 +00:00'"}).StructTag(`json:"free_at"`).Comment("任务释放时刻"),
+		field.Time("free_at").Default(common.ZeroTime).Annotations(entsql.Annotation{Default: "CURRENT_TIMESTAMP"}).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).StructTag(`json:"free_at"`).Comment("任务释放时刻"),
 	}
 }
 
