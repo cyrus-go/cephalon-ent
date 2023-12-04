@@ -8,6 +8,7 @@ const (
 	TransferOrderTypeRechargeVX     TransferOrderType = "recharge_vx"
 	TransferOrderTypeRechargeAlipay TransferOrderType = "recharge_alipay"
 	TransferOrderTypeManual         TransferOrderType = "manual"
+	TransferOrderTypeDrawl          TransferOrderType = "drawl"
 )
 
 func (TransferOrderType) Values() []string {
@@ -17,6 +18,7 @@ func (TransferOrderType) Values() []string {
 		string(TransferOrderTypeRechargeVX),
 		string(TransferOrderTypeRechargeAlipay),
 		string(TransferOrderTypeManual),
+		string(TransferOrderTypeDrawl),
 	}
 }
 
