@@ -19,7 +19,7 @@ const (
 	BillWaySpecialChannelRecharge BillWay = "special_channel_recharge"
 	BillWayActiveRecharge         BillWay = "active_recharge"
 	BillWayTransferManual         BillWay = "transfer_manual"
-	BillWayTransferWithdrawal     BillWay = "transfer_withdrawal"
+	BillWayTransferWithdraw       BillWay = "transfer_withdraw"
 	BillWayFirstInviteRecharge    BillWay = "first_invite_recharge"
 )
 
@@ -41,7 +41,7 @@ func (BillWay) Values() []string {
 		string(BillWayActiveRecharge),
 		string(BillWayTransferManual),
 		string(BillWayFirstInviteRecharge),
-		string(BillWayTransferWithdrawal),
+		string(BillWayTransferWithdraw),
 		string(BillWaySpecialChannelRecharge),
 	}
 }
