@@ -130,6 +130,20 @@ func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
 	return uc
 }
 
+// SetNickName sets the "nick_name" field.
+func (uc *UserCreate) SetNickName(s string) *UserCreate {
+	uc.mutation.SetNickName(s)
+	return uc
+}
+
+// SetNillableNickName sets the "nick_name" field if the given value is not nil.
+func (uc *UserCreate) SetNillableNickName(s *string) *UserCreate {
+	if s != nil {
+		uc.SetNickName(*s)
+	}
+	return uc
+}
+
 // SetJpgURL sets the "jpg_url" field.
 func (uc *UserCreate) SetJpgURL(s string) *UserCreate {
 	uc.mutation.SetJpgURL(s)
@@ -776,6 +790,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultName
 		uc.mutation.SetName(v)
 	}
+	if _, ok := uc.mutation.NickName(); !ok {
+		v := user.DefaultNickName
+		uc.mutation.SetNickName(v)
+	}
 	if _, ok := uc.mutation.JpgURL(); !ok {
 		v := user.DefaultJpgURL
 		uc.mutation.SetJpgURL(v)
@@ -841,6 +859,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`cep_ent: missing required field "User.name"`)}
+	}
+	if _, ok := uc.mutation.NickName(); !ok {
+		return &ValidationError{Name: "nick_name", err: errors.New(`cep_ent: missing required field "User.nick_name"`)}
 	}
 	if _, ok := uc.mutation.JpgURL(); !ok {
 		return &ValidationError{Name: "jpg_url", err: errors.New(`cep_ent: missing required field "User.jpg_url"`)}
@@ -936,6 +957,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := uc.mutation.NickName(); ok {
+		_spec.SetField(user.FieldNickName, field.TypeString, value)
+		_node.NickName = value
 	}
 	if value, ok := uc.mutation.JpgURL(); ok {
 		_spec.SetField(user.FieldJpgURL, field.TypeString, value)
@@ -1562,6 +1587,18 @@ func (u *UserUpsert) UpdateName() *UserUpsert {
 	return u
 }
 
+// SetNickName sets the "nick_name" field.
+func (u *UserUpsert) SetNickName(v string) *UserUpsert {
+	u.Set(user.FieldNickName, v)
+	return u
+}
+
+// UpdateNickName sets the "nick_name" field to the value that was provided on create.
+func (u *UserUpsert) UpdateNickName() *UserUpsert {
+	u.SetExcluded(user.FieldNickName)
+	return u
+}
+
 // SetJpgURL sets the "jpg_url" field.
 func (u *UserUpsert) SetJpgURL(v string) *UserUpsert {
 	u.Set(user.FieldJpgURL, v)
@@ -1814,6 +1851,20 @@ func (u *UserUpsertOne) SetName(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateName() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetNickName sets the "nick_name" field.
+func (u *UserUpsertOne) SetNickName(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetNickName(v)
+	})
+}
+
+// UpdateNickName sets the "nick_name" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateNickName() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateNickName()
 	})
 }
 
@@ -2255,6 +2306,20 @@ func (u *UserUpsertBulk) SetName(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateName() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetNickName sets the "nick_name" field.
+func (u *UserUpsertBulk) SetNickName(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetNickName(v)
+	})
+}
+
+// UpdateNickName sets the "nick_name" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateNickName() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateNickName()
 	})
 }
 

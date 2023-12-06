@@ -16,6 +16,7 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Default("请设置昵称").StructTag(`json:"name"`).Comment("用户名"),
+		field.String("nick_name").Default("请设置昵称").StructTag(`json:"nick_name"`).Comment("用户昵称"),
 		field.String("jpg_url").Default("").StructTag(`json:"jpg_url"`).Comment("头像"),
 		field.String("key").Default("").StructTag(`json:"key"`).Comment("用户在任务中枢密钥对的键"),
 		field.String("secret").Default("").Sensitive().Comment("用户在任务中枢的密钥对的值"),

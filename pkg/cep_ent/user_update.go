@@ -129,6 +129,20 @@ func (uu *UserUpdate) SetNillableName(s *string) *UserUpdate {
 	return uu
 }
 
+// SetNickName sets the "nick_name" field.
+func (uu *UserUpdate) SetNickName(s string) *UserUpdate {
+	uu.mutation.SetNickName(s)
+	return uu
+}
+
+// SetNillableNickName sets the "nick_name" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableNickName(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetNickName(*s)
+	}
+	return uu
+}
+
 // SetJpgURL sets the "jpg_url" field.
 func (uu *UserUpdate) SetJpgURL(s string) *UserUpdate {
 	uu.mutation.SetJpgURL(s)
@@ -1358,6 +1372,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.NickName(); ok {
+		_spec.SetField(user.FieldNickName, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.JpgURL(); ok {
 		_spec.SetField(user.FieldJpgURL, field.TypeString, value)
@@ -2741,6 +2758,20 @@ func (uuo *UserUpdateOne) SetNillableName(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetNickName sets the "nick_name" field.
+func (uuo *UserUpdateOne) SetNickName(s string) *UserUpdateOne {
+	uuo.mutation.SetNickName(s)
+	return uuo
+}
+
+// SetNillableNickName sets the "nick_name" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableNickName(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetNickName(*s)
+	}
+	return uuo
+}
+
 // SetJpgURL sets the "jpg_url" field.
 func (uuo *UserUpdateOne) SetJpgURL(s string) *UserUpdateOne {
 	uuo.mutation.SetJpgURL(s)
@@ -4000,6 +4031,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.NickName(); ok {
+		_spec.SetField(user.FieldNickName, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.JpgURL(); ok {
 		_spec.SetField(user.FieldJpgURL, field.TypeString, value)

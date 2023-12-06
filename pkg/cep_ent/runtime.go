@@ -2320,40 +2320,44 @@ func init() {
 	userDescName := userFields[0].Descriptor()
 	// user.DefaultName holds the default value on creation for the name field.
 	user.DefaultName = userDescName.Default.(string)
+	// userDescNickName is the schema descriptor for nick_name field.
+	userDescNickName := userFields[1].Descriptor()
+	// user.DefaultNickName holds the default value on creation for the nick_name field.
+	user.DefaultNickName = userDescNickName.Default.(string)
 	// userDescJpgURL is the schema descriptor for jpg_url field.
-	userDescJpgURL := userFields[1].Descriptor()
+	userDescJpgURL := userFields[2].Descriptor()
 	// user.DefaultJpgURL holds the default value on creation for the jpg_url field.
 	user.DefaultJpgURL = userDescJpgURL.Default.(string)
 	// userDescKey is the schema descriptor for key field.
-	userDescKey := userFields[2].Descriptor()
+	userDescKey := userFields[3].Descriptor()
 	// user.DefaultKey holds the default value on creation for the key field.
 	user.DefaultKey = userDescKey.Default.(string)
 	// userDescSecret is the schema descriptor for secret field.
-	userDescSecret := userFields[3].Descriptor()
+	userDescSecret := userFields[4].Descriptor()
 	// user.DefaultSecret holds the default value on creation for the secret field.
 	user.DefaultSecret = userDescSecret.Default.(string)
 	// userDescPhone is the schema descriptor for phone field.
-	userDescPhone := userFields[4].Descriptor()
+	userDescPhone := userFields[5].Descriptor()
 	// user.DefaultPhone holds the default value on creation for the phone field.
 	user.DefaultPhone = userDescPhone.Default.(string)
 	// userDescPassword is the schema descriptor for password field.
-	userDescPassword := userFields[5].Descriptor()
+	userDescPassword := userFields[6].Descriptor()
 	// user.DefaultPassword holds the default value on creation for the password field.
 	user.DefaultPassword = userDescPassword.Default.(string)
 	// userDescIsFrozen is the schema descriptor for is_frozen field.
-	userDescIsFrozen := userFields[6].Descriptor()
+	userDescIsFrozen := userFields[7].Descriptor()
 	// user.DefaultIsFrozen holds the default value on creation for the is_frozen field.
 	user.DefaultIsFrozen = userDescIsFrozen.Default.(bool)
 	// userDescIsRecharge is the schema descriptor for is_recharge field.
-	userDescIsRecharge := userFields[7].Descriptor()
+	userDescIsRecharge := userFields[8].Descriptor()
 	// user.DefaultIsRecharge holds the default value on creation for the is_recharge field.
 	user.DefaultIsRecharge = userDescIsRecharge.Default.(bool)
 	// userDescParentID is the schema descriptor for parent_id field.
-	userDescParentID := userFields[9].Descriptor()
+	userDescParentID := userFields[10].Descriptor()
 	// user.DefaultParentID holds the default value on creation for the parent_id field.
 	user.DefaultParentID = userDescParentID.Default.(int64)
 	// userDescPopVersion is the schema descriptor for pop_version field.
-	userDescPopVersion := userFields[10].Descriptor()
+	userDescPopVersion := userFields[11].Descriptor()
 	// user.DefaultPopVersion holds the default value on creation for the pop_version field.
 	user.DefaultPopVersion = userDescPopVersion.Default.(string)
 	// userDescID is the schema descriptor for id field.

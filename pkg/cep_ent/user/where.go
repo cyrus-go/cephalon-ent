@@ -85,6 +85,11 @@ func Name(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
 }
 
+// NickName applies equality check predicate on the "nick_name" field. It's identical to NickNameEQ.
+func NickName(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldNickName, v))
+}
+
 // JpgURL applies equality check predicate on the "jpg_url" field. It's identical to JpgURLEQ.
 func JpgURL(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldJpgURL, v))
@@ -393,6 +398,71 @@ func NameEqualFold(v string) predicate.User {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldName, v))
+}
+
+// NickNameEQ applies the EQ predicate on the "nick_name" field.
+func NickNameEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldNickName, v))
+}
+
+// NickNameNEQ applies the NEQ predicate on the "nick_name" field.
+func NickNameNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldNickName, v))
+}
+
+// NickNameIn applies the In predicate on the "nick_name" field.
+func NickNameIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldNickName, vs...))
+}
+
+// NickNameNotIn applies the NotIn predicate on the "nick_name" field.
+func NickNameNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldNickName, vs...))
+}
+
+// NickNameGT applies the GT predicate on the "nick_name" field.
+func NickNameGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldNickName, v))
+}
+
+// NickNameGTE applies the GTE predicate on the "nick_name" field.
+func NickNameGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldNickName, v))
+}
+
+// NickNameLT applies the LT predicate on the "nick_name" field.
+func NickNameLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldNickName, v))
+}
+
+// NickNameLTE applies the LTE predicate on the "nick_name" field.
+func NickNameLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldNickName, v))
+}
+
+// NickNameContains applies the Contains predicate on the "nick_name" field.
+func NickNameContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldNickName, v))
+}
+
+// NickNameHasPrefix applies the HasPrefix predicate on the "nick_name" field.
+func NickNameHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldNickName, v))
+}
+
+// NickNameHasSuffix applies the HasSuffix predicate on the "nick_name" field.
+func NickNameHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldNickName, v))
+}
+
+// NickNameEqualFold applies the EqualFold predicate on the "nick_name" field.
+func NickNameEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldNickName, v))
+}
+
+// NickNameContainsFold applies the ContainsFold predicate on the "nick_name" field.
+func NickNameContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldNickName, v))
 }
 
 // JpgURLEQ applies the EQ predicate on the "jpg_url" field.

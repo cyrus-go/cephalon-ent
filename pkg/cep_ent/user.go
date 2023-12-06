@@ -32,6 +32,8 @@ type User struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 用户名
 	Name string `json:"name"`
+	// 用户昵称
+	NickName string `json:"nick_name"`
 	// 头像
 	JpgURL string `json:"jpg_url"`
 	// 用户在任务中枢密钥对的键
@@ -405,7 +407,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion:
+		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -465,6 +467,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				u.Name = value.String
+			}
+		case user.FieldNickName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field nick_name", values[i])
+			} else if value.Valid {
+				u.NickName = value.String
 			}
 		case user.FieldJpgURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -724,6 +732,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(u.Name)
+	builder.WriteString(", ")
+	builder.WriteString("nick_name=")
+	builder.WriteString(u.NickName)
 	builder.WriteString(", ")
 	builder.WriteString("jpg_url=")
 	builder.WriteString(u.JpgURL)

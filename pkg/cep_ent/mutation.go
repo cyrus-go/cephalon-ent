@@ -53339,6 +53339,7 @@ type UserMutation struct {
 	updated_at                     *time.Time
 	deleted_at                     *time.Time
 	name                           *string
+	nick_name                      *string
 	jpg_url                        *string
 	key                            *string
 	secret                         *string
@@ -53796,6 +53797,42 @@ func (m *UserMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *UserMutation) ResetName() {
 	m.name = nil
+}
+
+// SetNickName sets the "nick_name" field.
+func (m *UserMutation) SetNickName(s string) {
+	m.nick_name = &s
+}
+
+// NickName returns the value of the "nick_name" field in the mutation.
+func (m *UserMutation) NickName() (r string, exists bool) {
+	v := m.nick_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNickName returns the old "nick_name" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldNickName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNickName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNickName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNickName: %w", err)
+	}
+	return oldValue.NickName, nil
+}
+
+// ResetNickName resets all changes to the "nick_name" field.
+func (m *UserMutation) ResetNickName() {
+	m.nick_name = nil
 }
 
 // SetJpgURL sets the "jpg_url" field.
@@ -55701,7 +55738,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -55719,6 +55756,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
+	}
+	if m.nick_name != nil {
+		fields = append(fields, user.FieldNickName)
 	}
 	if m.jpg_url != nil {
 		fields = append(fields, user.FieldJpgURL)
@@ -55770,6 +55810,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case user.FieldName:
 		return m.Name()
+	case user.FieldNickName:
+		return m.NickName()
 	case user.FieldJpgURL:
 		return m.JpgURL()
 	case user.FieldKey:
@@ -55811,6 +55853,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeletedAt(ctx)
 	case user.FieldName:
 		return m.OldName(ctx)
+	case user.FieldNickName:
+		return m.OldNickName(ctx)
 	case user.FieldJpgURL:
 		return m.OldJpgURL(ctx)
 	case user.FieldKey:
@@ -55881,6 +55925,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case user.FieldNickName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNickName(v)
 		return nil
 	case user.FieldJpgURL:
 		v, ok := value.(string)
@@ -56045,6 +56096,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldName:
 		m.ResetName()
+		return nil
+	case user.FieldNickName:
+		m.ResetNickName()
 		return nil
 	case user.FieldJpgURL:
 		m.ResetJpgURL()
