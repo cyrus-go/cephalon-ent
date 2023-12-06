@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -173,6 +174,21 @@ func (mbu *MissionBatchUpdate) AddMissionOrders(m ...*MissionOrder) *MissionBatc
 	return mbu.AddMissionOrderIDs(ids...)
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (mbu *MissionBatchUpdate) AddExtraServiceOrderIDs(ids ...int64) *MissionBatchUpdate {
+	mbu.mutation.AddExtraServiceOrderIDs(ids...)
+	return mbu
+}
+
+// AddExtraServiceOrder adds the "extra_service_order" edges to the ExtraServiceOrder entity.
+func (mbu *MissionBatchUpdate) AddExtraServiceOrder(e ...*ExtraServiceOrder) *MissionBatchUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mbu.AddExtraServiceOrderIDs(ids...)
+}
+
 // Mutation returns the MissionBatchMutation object of the builder.
 func (mbu *MissionBatchUpdate) Mutation() *MissionBatchMutation {
 	return mbu.mutation
@@ -245,6 +261,27 @@ func (mbu *MissionBatchUpdate) RemoveMissionOrders(m ...*MissionOrder) *MissionB
 		ids[i] = m[i].ID
 	}
 	return mbu.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearExtraServiceOrder clears all "extra_service_order" edges to the ExtraServiceOrder entity.
+func (mbu *MissionBatchUpdate) ClearExtraServiceOrder() *MissionBatchUpdate {
+	mbu.mutation.ClearExtraServiceOrder()
+	return mbu
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_order" edge to ExtraServiceOrder entities by IDs.
+func (mbu *MissionBatchUpdate) RemoveExtraServiceOrderIDs(ids ...int64) *MissionBatchUpdate {
+	mbu.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return mbu
+}
+
+// RemoveExtraServiceOrder removes "extra_service_order" edges to ExtraServiceOrder entities.
+func (mbu *MissionBatchUpdate) RemoveExtraServiceOrder(e ...*ExtraServiceOrder) *MissionBatchUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mbu.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -494,6 +531,51 @@ func (mbu *MissionBatchUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if mbu.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbu.mutation.RemovedExtraServiceOrderIDs(); len(nodes) > 0 && !mbu.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbu.mutation.ExtraServiceOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(mbu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mbu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -656,6 +738,21 @@ func (mbuo *MissionBatchUpdateOne) AddMissionOrders(m ...*MissionOrder) *Mission
 	return mbuo.AddMissionOrderIDs(ids...)
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (mbuo *MissionBatchUpdateOne) AddExtraServiceOrderIDs(ids ...int64) *MissionBatchUpdateOne {
+	mbuo.mutation.AddExtraServiceOrderIDs(ids...)
+	return mbuo
+}
+
+// AddExtraServiceOrder adds the "extra_service_order" edges to the ExtraServiceOrder entity.
+func (mbuo *MissionBatchUpdateOne) AddExtraServiceOrder(e ...*ExtraServiceOrder) *MissionBatchUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mbuo.AddExtraServiceOrderIDs(ids...)
+}
+
 // Mutation returns the MissionBatchMutation object of the builder.
 func (mbuo *MissionBatchUpdateOne) Mutation() *MissionBatchMutation {
 	return mbuo.mutation
@@ -728,6 +825,27 @@ func (mbuo *MissionBatchUpdateOne) RemoveMissionOrders(m ...*MissionOrder) *Miss
 		ids[i] = m[i].ID
 	}
 	return mbuo.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearExtraServiceOrder clears all "extra_service_order" edges to the ExtraServiceOrder entity.
+func (mbuo *MissionBatchUpdateOne) ClearExtraServiceOrder() *MissionBatchUpdateOne {
+	mbuo.mutation.ClearExtraServiceOrder()
+	return mbuo
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_order" edge to ExtraServiceOrder entities by IDs.
+func (mbuo *MissionBatchUpdateOne) RemoveExtraServiceOrderIDs(ids ...int64) *MissionBatchUpdateOne {
+	mbuo.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return mbuo
+}
+
+// RemoveExtraServiceOrder removes "extra_service_order" edges to ExtraServiceOrder entities.
+func (mbuo *MissionBatchUpdateOne) RemoveExtraServiceOrder(e ...*ExtraServiceOrder) *MissionBatchUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mbuo.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionBatchUpdate builder.
@@ -1000,6 +1118,51 @@ func (mbuo *MissionBatchUpdateOne) sqlSave(ctx context.Context) (_node *MissionB
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mbuo.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbuo.mutation.RemovedExtraServiceOrderIDs(); len(nodes) > 0 && !mbuo.mutation.ExtraServiceOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mbuo.mutation.ExtraServiceOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionbatch.ExtraServiceOrderTable,
+			Columns: []string{missionbatch.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

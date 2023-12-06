@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
@@ -182,6 +183,21 @@ func (sc *SymbolCreate) AddTransferOrders(t ...*TransferOrder) *SymbolCreate {
 		ids[i] = t[i].ID
 	}
 	return sc.AddTransferOrderIDs(ids...)
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_order" edge to the ExtraServiceOrder entity by IDs.
+func (sc *SymbolCreate) AddExtraServiceOrderIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddExtraServiceOrderIDs(ids...)
+	return sc
+}
+
+// AddExtraServiceOrder adds the "extra_service_order" edges to the ExtraServiceOrder entity.
+func (sc *SymbolCreate) AddExtraServiceOrder(e ...*ExtraServiceOrder) *SymbolCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return sc.AddExtraServiceOrderIDs(ids...)
 }
 
 // Mutation returns the SymbolMutation object of the builder.
@@ -383,6 +399,22 @@ func (sc *SymbolCreate) createSpec() (*Symbol, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.ExtraServiceOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.ExtraServiceOrderTable,
+			Columns: []string{symbol.ExtraServiceOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

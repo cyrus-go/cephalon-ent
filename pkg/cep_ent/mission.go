@@ -97,10 +97,13 @@ type Mission struct {
 	FinishedAt *time.Time `json:"finished_at"`
 	// 任务到期时间（包时任务才有）
 	ExpiredAt *time.Time `json:"expired_at"`
+	// 任务释放时刻
+	FreeAt time.Time `json:"free_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
-	Edges        MissionEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                  MissionEdges `json:"edges"`
+	extra_service_missions *int64
+	selectValues           sql.SelectValues
 }
 
 // MissionEdges holds the relations/edges for other nodes in the graph.
@@ -125,9 +128,15 @@ type MissionEdges struct {
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
 	// RenewalAgreements holds the value of the renewal_agreements edge.
 	RenewalAgreements []*RenewalAgreement `json:"renewal_agreements,omitempty"`
+	// MissionExtraServices holds the value of the mission_extra_services edge.
+	MissionExtraServices []*MissionExtraService `json:"mission_extra_services,omitempty"`
+	// ExtraServices holds the value of the extra_services edge.
+	ExtraServices []*ExtraService `json:"extra_services,omitempty"`
+	// ExtraServiceOrders holds the value of the extra_service_orders edge.
+	ExtraServiceOrders []*ExtraServiceOrder `json:"extra_service_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [13]bool
 }
 
 // MissionKindOrErr returns the MissionKind value or an error if the edge
@@ -240,6 +249,33 @@ func (e MissionEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
 	return nil, &NotLoadedError{edge: "renewal_agreements"}
 }
 
+// MissionExtraServicesOrErr returns the MissionExtraServices value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) MissionExtraServicesOrErr() ([]*MissionExtraService, error) {
+	if e.loadedTypes[10] {
+		return e.MissionExtraServices, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_extra_services"}
+}
+
+// ExtraServicesOrErr returns the ExtraServices value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) ExtraServicesOrErr() ([]*ExtraService, error) {
+	if e.loadedTypes[11] {
+		return e.ExtraServices, nil
+	}
+	return nil, &NotLoadedError{edge: "extra_services"}
+}
+
+// ExtraServiceOrdersOrErr returns the ExtraServiceOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) ExtraServiceOrdersOrErr() ([]*ExtraServiceOrder, error) {
+	if e.loadedTypes[12] {
+		return e.ExtraServiceOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "extra_service_orders"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Mission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -251,12 +287,14 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword:
 			values[i] = new(sql.NullString)
-		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt:
+		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt:
 			values[i] = new(sql.NullTime)
 		case mission.FieldWhiteDeviceIds:
 			values[i] = mission.ValueScanner.WhiteDeviceIds.ScanValue()
 		case mission.FieldBlackDeviceIds:
 			values[i] = mission.ValueScanner.BlackDeviceIds.ScanValue()
+		case mission.ForeignKeys[0]: // extra_service_missions
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -500,6 +538,19 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 				m.ExpiredAt = new(time.Time)
 				*m.ExpiredAt = value.Time
 			}
+		case mission.FieldFreeAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field free_at", values[i])
+			} else if value.Valid {
+				m.FreeAt = value.Time
+			}
+		case mission.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
+			} else if value.Valid {
+				m.extra_service_missions = new(int64)
+				*m.extra_service_missions = int64(value.Int64)
+			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
 		}
@@ -561,6 +612,21 @@ func (m *Mission) QueryMissionOrders() *MissionOrderQuery {
 // QueryRenewalAgreements queries the "renewal_agreements" edge of the Mission entity.
 func (m *Mission) QueryRenewalAgreements() *RenewalAgreementQuery {
 	return NewMissionClient(m.config).QueryRenewalAgreements(m)
+}
+
+// QueryMissionExtraServices queries the "mission_extra_services" edge of the Mission entity.
+func (m *Mission) QueryMissionExtraServices() *MissionExtraServiceQuery {
+	return NewMissionClient(m.config).QueryMissionExtraServices(m)
+}
+
+// QueryExtraServices queries the "extra_services" edge of the Mission entity.
+func (m *Mission) QueryExtraServices() *ExtraServiceQuery {
+	return NewMissionClient(m.config).QueryExtraServices(m)
+}
+
+// QueryExtraServiceOrders queries the "extra_service_orders" edge of the Mission entity.
+func (m *Mission) QueryExtraServiceOrders() *ExtraServiceOrderQuery {
+	return NewMissionClient(m.config).QueryExtraServiceOrders(m)
 }
 
 // Update returns a builder for updating this Mission.
@@ -699,6 +765,9 @@ func (m *Mission) String() string {
 		builder.WriteString("expired_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("free_at=")
+	builder.WriteString(m.FreeAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

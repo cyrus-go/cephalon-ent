@@ -49,9 +49,11 @@ type MissionBatchEdges struct {
 	Missions []*Mission `json:"missions,omitempty"`
 	// MissionOrders holds the value of the mission_orders edge.
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
+	// ExtraServiceOrder holds the value of the extra_service_order edge.
+	ExtraServiceOrder []*ExtraServiceOrder `json:"extra_service_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -92,6 +94,15 @@ func (e MissionBatchEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
 		return e.MissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_orders"}
+}
+
+// ExtraServiceOrderOrErr returns the ExtraServiceOrder value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionBatchEdges) ExtraServiceOrderOrErr() ([]*ExtraServiceOrder, error) {
+	if e.loadedTypes[4] {
+		return e.ExtraServiceOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "extra_service_order"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -199,6 +210,11 @@ func (mb *MissionBatch) QueryMissions() *MissionQuery {
 // QueryMissionOrders queries the "mission_orders" edge of the MissionBatch entity.
 func (mb *MissionBatch) QueryMissionOrders() *MissionOrderQuery {
 	return NewMissionBatchClient(mb.config).QueryMissionOrders(mb)
+}
+
+// QueryExtraServiceOrder queries the "extra_service_order" edge of the MissionBatch entity.
+func (mb *MissionBatch) QueryExtraServiceOrder() *ExtraServiceOrderQuery {
+	return NewMissionBatchClient(mb.config).QueryExtraServiceOrder(mb)
 }
 
 // Update returns a builder for updating this MissionBatch.

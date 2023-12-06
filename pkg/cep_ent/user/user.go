@@ -27,6 +27,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldNickName holds the string denoting the nick_name field in the database.
+	FieldNickName = "nick_name"
 	// FieldJpgURL holds the string denoting the jpg_url field in the database.
 	FieldJpgURL = "jpg_url"
 	// FieldKey holds the string denoting the key field in the database.
@@ -315,6 +317,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldName,
+	FieldNickName,
 	FieldJpgURL,
 	FieldKey,
 	FieldSecret,
@@ -352,6 +355,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultName holds the default value on creation for the "name" field.
 	DefaultName string
+	// DefaultNickName holds the default value on creation for the "nick_name" field.
+	DefaultNickName string
 	// DefaultJpgURL holds the default value on creation for the "jpg_url" field.
 	DefaultJpgURL string
 	// DefaultKey holds the default value on creation for the "key" field.
@@ -436,6 +441,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByNickName orders the results by the nick_name field.
+func ByNickName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNickName, opts...).ToFunc()
 }
 
 // ByJpgURL orders the results by the jpg_url field.

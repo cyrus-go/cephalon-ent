@@ -186,9 +186,9 @@ func TotalSettleCount(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldEQ(FieldTotalSettleCount, v))
 }
 
-// LastSettledAt applies equality check predicate on the "last_settled_at" field. It's identical to LastSettledAtEQ.
-func LastSettledAt(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldEQ(FieldLastSettledAt, v))
+// LatelySettledAt applies equality check predicate on the "lately_settled_at" field. It's identical to LatelySettledAtEQ.
+func LatelySettledAt(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldLatelySettledAt, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -1311,44 +1311,44 @@ func TotalSettleCountLTE(v int64) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.FieldLTE(FieldTotalSettleCount, v))
 }
 
-// LastSettledAtEQ applies the EQ predicate on the "last_settled_at" field.
-func LastSettledAtEQ(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldEQ(FieldLastSettledAt, v))
+// LatelySettledAtEQ applies the EQ predicate on the "lately_settled_at" field.
+func LatelySettledAtEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldEQ(FieldLatelySettledAt, v))
 }
 
-// LastSettledAtNEQ applies the NEQ predicate on the "last_settled_at" field.
-func LastSettledAtNEQ(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldNEQ(FieldLastSettledAt, v))
+// LatelySettledAtNEQ applies the NEQ predicate on the "lately_settled_at" field.
+func LatelySettledAtNEQ(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNEQ(FieldLatelySettledAt, v))
 }
 
-// LastSettledAtIn applies the In predicate on the "last_settled_at" field.
-func LastSettledAtIn(vs ...time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldIn(FieldLastSettledAt, vs...))
+// LatelySettledAtIn applies the In predicate on the "lately_settled_at" field.
+func LatelySettledAtIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldIn(FieldLatelySettledAt, vs...))
 }
 
-// LastSettledAtNotIn applies the NotIn predicate on the "last_settled_at" field.
-func LastSettledAtNotIn(vs ...time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldNotIn(FieldLastSettledAt, vs...))
+// LatelySettledAtNotIn applies the NotIn predicate on the "lately_settled_at" field.
+func LatelySettledAtNotIn(vs ...time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldNotIn(FieldLatelySettledAt, vs...))
 }
 
-// LastSettledAtGT applies the GT predicate on the "last_settled_at" field.
-func LastSettledAtGT(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldGT(FieldLastSettledAt, v))
+// LatelySettledAtGT applies the GT predicate on the "lately_settled_at" field.
+func LatelySettledAtGT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGT(FieldLatelySettledAt, v))
 }
 
-// LastSettledAtGTE applies the GTE predicate on the "last_settled_at" field.
-func LastSettledAtGTE(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldGTE(FieldLastSettledAt, v))
+// LatelySettledAtGTE applies the GTE predicate on the "lately_settled_at" field.
+func LatelySettledAtGTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldGTE(FieldLatelySettledAt, v))
 }
 
-// LastSettledAtLT applies the LT predicate on the "last_settled_at" field.
-func LastSettledAtLT(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldLT(FieldLastSettledAt, v))
+// LatelySettledAtLT applies the LT predicate on the "lately_settled_at" field.
+func LatelySettledAtLT(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLT(FieldLatelySettledAt, v))
 }
 
-// LastSettledAtLTE applies the LTE predicate on the "last_settled_at" field.
-func LastSettledAtLTE(v time.Time) predicate.MissionOrder {
-	return predicate.MissionOrder(sql.FieldLTE(FieldLastSettledAt, v))
+// LatelySettledAtLTE applies the LTE predicate on the "lately_settled_at" field.
+func LatelySettledAtLTE(v time.Time) predicate.MissionOrder {
+	return predicate.MissionOrder(sql.FieldLTE(FieldLatelySettledAt, v))
 }
 
 // HasConsumeUser applies the HasEdge predicate on the "consume_user" edge.

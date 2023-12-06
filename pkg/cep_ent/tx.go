@@ -34,6 +34,12 @@ type Tx struct {
 	EnumCondition *EnumConditionClient
 	// EnumMissionStatus is the client for interacting with the EnumMissionStatus builders.
 	EnumMissionStatus *EnumMissionStatusClient
+	// ExtraService is the client for interacting with the ExtraService builders.
+	ExtraService *ExtraServiceClient
+	// ExtraServiceOrder is the client for interacting with the ExtraServiceOrder builders.
+	ExtraServiceOrder *ExtraServiceOrderClient
+	// ExtraServicePrice is the client for interacting with the ExtraServicePrice builders.
+	ExtraServicePrice *ExtraServicePriceClient
 	// FrpcInfo is the client for interacting with the FrpcInfo builders.
 	FrpcInfo *FrpcInfoClient
 	// FrpsInfo is the client for interacting with the FrpsInfo builders.
@@ -54,6 +60,8 @@ type Tx struct {
 	MissionBatch *MissionBatchClient
 	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
 	MissionConsumeOrder *MissionConsumeOrderClient
+	// MissionExtraService is the client for interacting with the MissionExtraService builders.
+	MissionExtraService *MissionExtraServiceClient
 	// MissionKeyPair is the client for interacting with the MissionKeyPair builders.
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
@@ -236,6 +244,9 @@ func (tx *Tx) init() {
 	tx.EarnBill = NewEarnBillClient(tx.config)
 	tx.EnumCondition = NewEnumConditionClient(tx.config)
 	tx.EnumMissionStatus = NewEnumMissionStatusClient(tx.config)
+	tx.ExtraService = NewExtraServiceClient(tx.config)
+	tx.ExtraServiceOrder = NewExtraServiceOrderClient(tx.config)
+	tx.ExtraServicePrice = NewExtraServicePriceClient(tx.config)
 	tx.FrpcInfo = NewFrpcInfoClient(tx.config)
 	tx.FrpsInfo = NewFrpsInfoClient(tx.config)
 	tx.Gpu = NewGpuClient(tx.config)
@@ -246,6 +257,7 @@ func (tx *Tx) init() {
 	tx.Mission = NewMissionClient(tx.config)
 	tx.MissionBatch = NewMissionBatchClient(tx.config)
 	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)
+	tx.MissionExtraService = NewMissionExtraServiceClient(tx.config)
 	tx.MissionKeyPair = NewMissionKeyPairClient(tx.config)
 	tx.MissionKind = NewMissionKindClient(tx.config)
 	tx.MissionOrder = NewMissionOrderClient(tx.config)

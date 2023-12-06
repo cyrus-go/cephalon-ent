@@ -89,6 +89,8 @@ const (
 	FieldFinishedAt = "finished_at"
 	// FieldExpiredAt holds the string denoting the expired_at field in the database.
 	FieldExpiredAt = "expired_at"
+	// FieldFreeAt holds the string denoting the free_at field in the database.
+	FieldFreeAt = "free_at"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -109,6 +111,12 @@ const (
 	EdgeMissionOrders = "mission_orders"
 	// EdgeRenewalAgreements holds the string denoting the renewal_agreements edge name in mutations.
 	EdgeRenewalAgreements = "renewal_agreements"
+	// EdgeMissionExtraServices holds the string denoting the mission_extra_services edge name in mutations.
+	EdgeMissionExtraServices = "mission_extra_services"
+	// EdgeExtraServices holds the string denoting the extra_services edge name in mutations.
+	EdgeExtraServices = "extra_services"
+	// EdgeExtraServiceOrders holds the string denoting the extra_service_orders edge name in mutations.
+	EdgeExtraServiceOrders = "extra_service_orders"
 	// Table holds the table name of the mission in the database.
 	Table = "missions"
 	// MissionKindTable is the table that holds the mission_kind relation/edge.
@@ -181,6 +189,27 @@ const (
 	RenewalAgreementsInverseTable = "renewal_agreements"
 	// RenewalAgreementsColumn is the table column denoting the renewal_agreements relation/edge.
 	RenewalAgreementsColumn = "mission_id"
+	// MissionExtraServicesTable is the table that holds the mission_extra_services relation/edge.
+	MissionExtraServicesTable = "mission_extra_services"
+	// MissionExtraServicesInverseTable is the table name for the MissionExtraService entity.
+	// It exists in this package in order to avoid circular dependency with the "missionextraservice" package.
+	MissionExtraServicesInverseTable = "mission_extra_services"
+	// MissionExtraServicesColumn is the table column denoting the mission_extra_services relation/edge.
+	MissionExtraServicesColumn = "mission_id"
+	// ExtraServicesTable is the table that holds the extra_services relation/edge.
+	ExtraServicesTable = "extra_services"
+	// ExtraServicesInverseTable is the table name for the ExtraService entity.
+	// It exists in this package in order to avoid circular dependency with the "extraservice" package.
+	ExtraServicesInverseTable = "extra_services"
+	// ExtraServicesColumn is the table column denoting the extra_services relation/edge.
+	ExtraServicesColumn = "mission_extra_services"
+	// ExtraServiceOrdersTable is the table that holds the extra_service_orders relation/edge.
+	ExtraServiceOrdersTable = "extra_service_orders"
+	// ExtraServiceOrdersInverseTable is the table name for the ExtraServiceOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "extraserviceorder" package.
+	ExtraServiceOrdersInverseTable = "extra_service_orders"
+	// ExtraServiceOrdersColumn is the table column denoting the extra_service_orders relation/edge.
+	ExtraServiceOrdersColumn = "mission_id"
 )
 
 // Columns holds all SQL columns for mission fields.
@@ -222,12 +251,24 @@ var Columns = []string{
 	FieldStartedAt,
 	FieldFinishedAt,
 	FieldExpiredAt,
+	FieldFreeAt,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"extra_service_missions",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -287,6 +328,8 @@ var (
 	DefaultFinishedAt time.Time
 	// DefaultExpiredAt holds the default value on creation for the "expired_at" field.
 	DefaultExpiredAt time.Time
+	// DefaultFreeAt holds the default value on creation for the "free_at" field.
+	DefaultFreeAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -546,6 +589,11 @@ func ByExpiredAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiredAt, opts...).ToFunc()
 }
 
+// ByFreeAt orders the results by the free_at field.
+func ByFreeAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFreeAt, opts...).ToFunc()
+}
+
 // ByMissionKindField orders the results by mission_kind field.
 func ByMissionKindField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -650,6 +698,48 @@ func ByRenewalAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newRenewalAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionExtraServicesCount orders the results by mission_extra_services count.
+func ByMissionExtraServicesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionExtraServicesStep(), opts...)
+	}
+}
+
+// ByMissionExtraServices orders the results by mission_extra_services terms.
+func ByMissionExtraServices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionExtraServicesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByExtraServicesCount orders the results by extra_services count.
+func ByExtraServicesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExtraServicesStep(), opts...)
+	}
+}
+
+// ByExtraServices orders the results by extra_services terms.
+func ByExtraServices(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExtraServicesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByExtraServiceOrdersCount orders the results by extra_service_orders count.
+func ByExtraServiceOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExtraServiceOrdersStep(), opts...)
+	}
+}
+
+// ByExtraServiceOrders orders the results by extra_service_orders terms.
+func ByExtraServiceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExtraServiceOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newMissionKindStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -718,5 +808,26 @@ func newRenewalAgreementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RenewalAgreementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
+	)
+}
+func newMissionExtraServicesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionExtraServicesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionExtraServicesTable, MissionExtraServicesColumn),
+	)
+}
+func newExtraServicesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExtraServicesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ExtraServicesTable, ExtraServicesColumn),
+	)
+}
+func newExtraServiceOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExtraServiceOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrdersTable, ExtraServiceOrdersColumn),
 	)
 }

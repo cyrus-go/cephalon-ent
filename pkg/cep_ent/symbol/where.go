@@ -442,6 +442,29 @@ func HasTransferOrdersWith(preds ...predicate.TransferOrder) predicate.Symbol {
 	})
 }
 
+// HasExtraServiceOrder applies the HasEdge predicate on the "extra_service_order" edge.
+func HasExtraServiceOrder() predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrderTable, ExtraServiceOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExtraServiceOrderWith applies the HasEdge predicate on the "extra_service_order" edge with a given conditions (other predicates).
+func HasExtraServiceOrderWith(preds ...predicate.ExtraServiceOrder) predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := newExtraServiceOrderStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Symbol) predicate.Symbol {
 	return predicate.Symbol(sql.AndPredicates(predicates...))

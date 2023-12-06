@@ -141,6 +141,42 @@ func (f EnumMissionStatusFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.EnumMissionStatusMutation", m)
 }
 
+// The ExtraServiceFunc type is an adapter to allow the use of ordinary
+// function as ExtraService mutator.
+type ExtraServiceFunc func(context.Context, *cep_ent.ExtraServiceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExtraServiceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ExtraServiceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ExtraServiceMutation", m)
+}
+
+// The ExtraServiceOrderFunc type is an adapter to allow the use of ordinary
+// function as ExtraServiceOrder mutator.
+type ExtraServiceOrderFunc func(context.Context, *cep_ent.ExtraServiceOrderMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExtraServiceOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ExtraServiceOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ExtraServiceOrderMutation", m)
+}
+
+// The ExtraServicePriceFunc type is an adapter to allow the use of ordinary
+// function as ExtraServicePrice mutator.
+type ExtraServicePriceFunc func(context.Context, *cep_ent.ExtraServicePriceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExtraServicePriceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ExtraServicePriceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ExtraServicePriceMutation", m)
+}
+
 // The FrpcInfoFunc type is an adapter to allow the use of ordinary
 // function as FrpcInfo mutator.
 type FrpcInfoFunc func(context.Context, *cep_ent.FrpcInfoMutation) (cep_ent.Value, error)
@@ -259,6 +295,18 @@ func (f MissionConsumeOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionConsumeOrderMutation", m)
+}
+
+// The MissionExtraServiceFunc type is an adapter to allow the use of ordinary
+// function as MissionExtraService mutator.
+type MissionExtraServiceFunc func(context.Context, *cep_ent.MissionExtraServiceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionExtraServiceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionExtraServiceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionExtraServiceMutation", m)
 }
 
 // The MissionKeyPairFunc type is an adapter to allow the use of ordinary

@@ -11,10 +11,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -42,6 +45,10 @@ type MissionQuery struct {
 	withMissionProductions   *MissionProductionQuery
 	withMissionOrders        *MissionOrderQuery
 	withRenewalAgreements    *RenewalAgreementQuery
+	withMissionExtraServices *MissionExtraServiceQuery
+	withExtraServices        *ExtraServiceQuery
+	withExtraServiceOrders   *ExtraServiceOrderQuery
+	withFKs                  bool
 	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -299,6 +306,72 @@ func (mq *MissionQuery) QueryRenewalAgreements() *RenewalAgreementQuery {
 	return query
 }
 
+// QueryMissionExtraServices chains the current query on the "mission_extra_services" edge.
+func (mq *MissionQuery) QueryMissionExtraServices() *MissionExtraServiceQuery {
+	query := (&MissionExtraServiceClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(missionextraservice.Table, missionextraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionExtraServicesTable, mission.MissionExtraServicesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExtraServices chains the current query on the "extra_services" edge.
+func (mq *MissionQuery) QueryExtraServices() *ExtraServiceQuery {
+	query := (&ExtraServiceClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(extraservice.Table, extraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.ExtraServicesTable, mission.ExtraServicesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExtraServiceOrders chains the current query on the "extra_service_orders" edge.
+func (mq *MissionQuery) QueryExtraServiceOrders() *ExtraServiceOrderQuery {
+	query := (&ExtraServiceOrderClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.ExtraServiceOrdersTable, mission.ExtraServiceOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Mission entity from the query.
 // Returns a *NotFoundError when no Mission was found.
 func (mq *MissionQuery) First(ctx context.Context) (*Mission, error) {
@@ -501,6 +574,9 @@ func (mq *MissionQuery) Clone() *MissionQuery {
 		withMissionProductions:   mq.withMissionProductions.Clone(),
 		withMissionOrders:        mq.withMissionOrders.Clone(),
 		withRenewalAgreements:    mq.withRenewalAgreements.Clone(),
+		withMissionExtraServices: mq.withMissionExtraServices.Clone(),
+		withExtraServices:        mq.withExtraServices.Clone(),
+		withExtraServiceOrders:   mq.withExtraServiceOrders.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -617,6 +693,39 @@ func (mq *MissionQuery) WithRenewalAgreements(opts ...func(*RenewalAgreementQuer
 	return mq
 }
 
+// WithMissionExtraServices tells the query-builder to eager-load the nodes that are connected to
+// the "mission_extra_services" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithMissionExtraServices(opts ...func(*MissionExtraServiceQuery)) *MissionQuery {
+	query := (&MissionExtraServiceClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withMissionExtraServices = query
+	return mq
+}
+
+// WithExtraServices tells the query-builder to eager-load the nodes that are connected to
+// the "extra_services" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithExtraServices(opts ...func(*ExtraServiceQuery)) *MissionQuery {
+	query := (&ExtraServiceClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withExtraServices = query
+	return mq
+}
+
+// WithExtraServiceOrders tells the query-builder to eager-load the nodes that are connected to
+// the "extra_service_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithExtraServiceOrders(opts ...func(*ExtraServiceOrderQuery)) *MissionQuery {
+	query := (&ExtraServiceOrderClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withExtraServiceOrders = query
+	return mq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -694,8 +803,9 @@ func (mq *MissionQuery) prepareQuery(ctx context.Context) error {
 func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Mission, error) {
 	var (
 		nodes       = []*Mission{}
+		withFKs     = mq.withFKs
 		_spec       = mq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [13]bool{
 			mq.withMissionKind != nil,
 			mq.withUser != nil,
 			mq.withMissionKeyPairs != nil,
@@ -706,8 +816,14 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 			mq.withMissionProductions != nil,
 			mq.withMissionOrders != nil,
 			mq.withRenewalAgreements != nil,
+			mq.withMissionExtraServices != nil,
+			mq.withExtraServices != nil,
+			mq.withExtraServiceOrders != nil,
 		}
 	)
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, mission.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Mission).scanValues(nil, columns)
 	}
@@ -796,6 +912,31 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 			func(n *Mission) { n.Edges.RenewalAgreements = []*RenewalAgreement{} },
 			func(n *Mission, e *RenewalAgreement) {
 				n.Edges.RenewalAgreements = append(n.Edges.RenewalAgreements, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withMissionExtraServices; query != nil {
+		if err := mq.loadMissionExtraServices(ctx, query, nodes,
+			func(n *Mission) { n.Edges.MissionExtraServices = []*MissionExtraService{} },
+			func(n *Mission, e *MissionExtraService) {
+				n.Edges.MissionExtraServices = append(n.Edges.MissionExtraServices, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withExtraServices; query != nil {
+		if err := mq.loadExtraServices(ctx, query, nodes,
+			func(n *Mission) { n.Edges.ExtraServices = []*ExtraService{} },
+			func(n *Mission, e *ExtraService) { n.Edges.ExtraServices = append(n.Edges.ExtraServices, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withExtraServiceOrders; query != nil {
+		if err := mq.loadExtraServiceOrders(ctx, query, nodes,
+			func(n *Mission) { n.Edges.ExtraServiceOrders = []*ExtraServiceOrder{} },
+			func(n *Mission, e *ExtraServiceOrder) {
+				n.Edges.ExtraServiceOrders = append(n.Edges.ExtraServiceOrders, e)
 			}); err != nil {
 			return nil, err
 		}
@@ -1082,6 +1223,97 @@ func (mq *MissionQuery) loadRenewalAgreements(ctx context.Context, query *Renewa
 	}
 	query.Where(predicate.RenewalAgreement(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(mission.RenewalAgreementsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mq *MissionQuery) loadMissionExtraServices(ctx context.Context, query *MissionExtraServiceQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionExtraService)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionextraservice.FieldMissionID)
+	}
+	query.Where(predicate.MissionExtraService(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.MissionExtraServicesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mq *MissionQuery) loadExtraServices(ctx context.Context, query *ExtraServiceQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *ExtraService)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.ExtraService(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.ExtraServicesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.mission_extra_services
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "mission_extra_services" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_extra_services" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mq *MissionQuery) loadExtraServiceOrders(ctx context.Context, query *ExtraServiceOrderQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *ExtraServiceOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(extraserviceorder.FieldMissionID)
+	}
+	query.Where(predicate.ExtraServiceOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.ExtraServiceOrdersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

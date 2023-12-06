@@ -26,6 +26,7 @@ func (MissionBatch) Edges() []ent.Edge {
 		edge.To("mission_consume_orders", MissionConsumeOrder.Type),
 		edge.To("missions", Mission.Type),
 		edge.To("mission_orders", MissionOrder.Type),
+		edge.To("extra_service_order", ExtraServiceOrder.Type),
 	}
 }
 

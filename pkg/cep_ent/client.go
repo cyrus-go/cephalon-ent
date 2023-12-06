@@ -26,6 +26,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceprice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
@@ -36,6 +39,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -85,6 +89,12 @@ type Client struct {
 	EnumCondition *EnumConditionClient
 	// EnumMissionStatus is the client for interacting with the EnumMissionStatus builders.
 	EnumMissionStatus *EnumMissionStatusClient
+	// ExtraService is the client for interacting with the ExtraService builders.
+	ExtraService *ExtraServiceClient
+	// ExtraServiceOrder is the client for interacting with the ExtraServiceOrder builders.
+	ExtraServiceOrder *ExtraServiceOrderClient
+	// ExtraServicePrice is the client for interacting with the ExtraServicePrice builders.
+	ExtraServicePrice *ExtraServicePriceClient
 	// FrpcInfo is the client for interacting with the FrpcInfo builders.
 	FrpcInfo *FrpcInfoClient
 	// FrpsInfo is the client for interacting with the FrpsInfo builders.
@@ -105,6 +115,8 @@ type Client struct {
 	MissionBatch *MissionBatchClient
 	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
 	MissionConsumeOrder *MissionConsumeOrderClient
+	// MissionExtraService is the client for interacting with the MissionExtraService builders.
+	MissionExtraService *MissionExtraServiceClient
 	// MissionKeyPair is the client for interacting with the MissionKeyPair builders.
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
@@ -169,6 +181,9 @@ func (c *Client) init() {
 	c.EarnBill = NewEarnBillClient(c.config)
 	c.EnumCondition = NewEnumConditionClient(c.config)
 	c.EnumMissionStatus = NewEnumMissionStatusClient(c.config)
+	c.ExtraService = NewExtraServiceClient(c.config)
+	c.ExtraServiceOrder = NewExtraServiceOrderClient(c.config)
+	c.ExtraServicePrice = NewExtraServicePriceClient(c.config)
 	c.FrpcInfo = NewFrpcInfoClient(c.config)
 	c.FrpsInfo = NewFrpsInfoClient(c.config)
 	c.Gpu = NewGpuClient(c.config)
@@ -179,6 +194,7 @@ func (c *Client) init() {
 	c.Mission = NewMissionClient(c.config)
 	c.MissionBatch = NewMissionBatchClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
+	c.MissionExtraService = NewMissionExtraServiceClient(c.config)
 	c.MissionKeyPair = NewMissionKeyPairClient(c.config)
 	c.MissionKind = NewMissionKindClient(c.config)
 	c.MissionOrder = NewMissionOrderClient(c.config)
@@ -295,6 +311,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EarnBill:             NewEarnBillClient(cfg),
 		EnumCondition:        NewEnumConditionClient(cfg),
 		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
+		ExtraService:         NewExtraServiceClient(cfg),
+		ExtraServiceOrder:    NewExtraServiceOrderClient(cfg),
+		ExtraServicePrice:    NewExtraServicePriceClient(cfg),
 		FrpcInfo:             NewFrpcInfoClient(cfg),
 		FrpsInfo:             NewFrpsInfoClient(cfg),
 		Gpu:                  NewGpuClient(cfg),
@@ -305,6 +324,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
+		MissionExtraService:  NewMissionExtraServiceClient(cfg),
 		MissionKeyPair:       NewMissionKeyPairClient(cfg),
 		MissionKind:          NewMissionKindClient(cfg),
 		MissionOrder:         NewMissionOrderClient(cfg),
@@ -355,6 +375,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EarnBill:             NewEarnBillClient(cfg),
 		EnumCondition:        NewEnumConditionClient(cfg),
 		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
+		ExtraService:         NewExtraServiceClient(cfg),
+		ExtraServiceOrder:    NewExtraServiceOrderClient(cfg),
+		ExtraServicePrice:    NewExtraServicePriceClient(cfg),
 		FrpcInfo:             NewFrpcInfoClient(cfg),
 		FrpsInfo:             NewFrpsInfoClient(cfg),
 		Gpu:                  NewGpuClient(cfg),
@@ -365,6 +388,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
+		MissionExtraService:  NewMissionExtraServiceClient(cfg),
 		MissionKeyPair:       NewMissionKeyPairClient(cfg),
 		MissionKind:          NewMissionKindClient(cfg),
 		MissionOrder:         NewMissionOrderClient(cfg),
@@ -416,8 +440,9 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Bill, c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill,
 		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite,
-		c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
+		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.LoginRecord,
+		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionExtraService,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
@@ -434,8 +459,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Bill, c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill,
 		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite,
-		c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
+		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.LoginRecord,
+		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionExtraService,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
@@ -471,6 +497,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.EnumCondition.mutate(ctx, m)
 	case *EnumMissionStatusMutation:
 		return c.EnumMissionStatus.mutate(ctx, m)
+	case *ExtraServiceMutation:
+		return c.ExtraService.mutate(ctx, m)
+	case *ExtraServiceOrderMutation:
+		return c.ExtraServiceOrder.mutate(ctx, m)
+	case *ExtraServicePriceMutation:
+		return c.ExtraServicePrice.mutate(ctx, m)
 	case *FrpcInfoMutation:
 		return c.FrpcInfo.mutate(ctx, m)
 	case *FrpsInfoMutation:
@@ -491,6 +523,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MissionBatch.mutate(ctx, m)
 	case *MissionConsumeOrderMutation:
 		return c.MissionConsumeOrder.mutate(ctx, m)
+	case *MissionExtraServiceMutation:
+		return c.MissionExtraService.mutate(ctx, m)
 	case *MissionKeyPairMutation:
 		return c.MissionKeyPair.mutate(ctx, m)
 	case *MissionKindMutation:
@@ -2527,6 +2561,517 @@ func (c *EnumMissionStatusClient) mutate(ctx context.Context, m *EnumMissionStat
 	}
 }
 
+// ExtraServiceClient is a client for the ExtraService schema.
+type ExtraServiceClient struct {
+	config
+}
+
+// NewExtraServiceClient returns a client for the ExtraService from the given config.
+func NewExtraServiceClient(c config) *ExtraServiceClient {
+	return &ExtraServiceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `extraservice.Hooks(f(g(h())))`.
+func (c *ExtraServiceClient) Use(hooks ...Hook) {
+	c.hooks.ExtraService = append(c.hooks.ExtraService, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `extraservice.Intercept(f(g(h())))`.
+func (c *ExtraServiceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ExtraService = append(c.inters.ExtraService, interceptors...)
+}
+
+// Create returns a builder for creating a ExtraService entity.
+func (c *ExtraServiceClient) Create() *ExtraServiceCreate {
+	mutation := newExtraServiceMutation(c.config, OpCreate)
+	return &ExtraServiceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ExtraService entities.
+func (c *ExtraServiceClient) CreateBulk(builders ...*ExtraServiceCreate) *ExtraServiceCreateBulk {
+	return &ExtraServiceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExtraServiceClient) MapCreateBulk(slice any, setFunc func(*ExtraServiceCreate, int)) *ExtraServiceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExtraServiceCreateBulk{err: fmt.Errorf("calling to ExtraServiceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExtraServiceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExtraServiceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExtraService.
+func (c *ExtraServiceClient) Update() *ExtraServiceUpdate {
+	mutation := newExtraServiceMutation(c.config, OpUpdate)
+	return &ExtraServiceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExtraServiceClient) UpdateOne(es *ExtraService) *ExtraServiceUpdateOne {
+	mutation := newExtraServiceMutation(c.config, OpUpdateOne, withExtraService(es))
+	return &ExtraServiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExtraServiceClient) UpdateOneID(id int64) *ExtraServiceUpdateOne {
+	mutation := newExtraServiceMutation(c.config, OpUpdateOne, withExtraServiceID(id))
+	return &ExtraServiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExtraService.
+func (c *ExtraServiceClient) Delete() *ExtraServiceDelete {
+	mutation := newExtraServiceMutation(c.config, OpDelete)
+	return &ExtraServiceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExtraServiceClient) DeleteOne(es *ExtraService) *ExtraServiceDeleteOne {
+	return c.DeleteOneID(es.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExtraServiceClient) DeleteOneID(id int64) *ExtraServiceDeleteOne {
+	builder := c.Delete().Where(extraservice.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExtraServiceDeleteOne{builder}
+}
+
+// Query returns a query builder for ExtraService.
+func (c *ExtraServiceClient) Query() *ExtraServiceQuery {
+	return &ExtraServiceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExtraService},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ExtraService entity by its id.
+func (c *ExtraServiceClient) Get(ctx context.Context, id int64) (*ExtraService, error) {
+	return c.Query().Where(extraservice.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExtraServiceClient) GetX(ctx context.Context, id int64) *ExtraService {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMissions queries the missions edge of a ExtraService.
+func (c *ExtraServiceClient) QueryMissions(es *ExtraService) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := es.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraservice.Table, extraservice.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, extraservice.MissionsTable, extraservice.MissionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(es.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionExtraServices queries the mission_extra_services edge of a ExtraService.
+func (c *ExtraServiceClient) QueryMissionExtraServices(es *ExtraService) *MissionExtraServiceQuery {
+	query := (&MissionExtraServiceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := es.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraservice.Table, extraservice.FieldID, id),
+			sqlgraph.To(missionextraservice.Table, missionextraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, extraservice.MissionExtraServicesTable, extraservice.MissionExtraServicesColumn),
+		)
+		fromV = sqlgraph.Neighbors(es.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExtraServicePrices queries the extra_service_prices edge of a ExtraService.
+func (c *ExtraServiceClient) QueryExtraServicePrices(es *ExtraService) *ExtraServicePriceQuery {
+	query := (&ExtraServicePriceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := es.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraservice.Table, extraservice.FieldID, id),
+			sqlgraph.To(extraserviceprice.Table, extraserviceprice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, extraservice.ExtraServicePricesTable, extraservice.ExtraServicePricesColumn),
+		)
+		fromV = sqlgraph.Neighbors(es.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ExtraServiceClient) Hooks() []Hook {
+	return c.hooks.ExtraService
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExtraServiceClient) Interceptors() []Interceptor {
+	return c.inters.ExtraService
+}
+
+func (c *ExtraServiceClient) mutate(ctx context.Context, m *ExtraServiceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExtraServiceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExtraServiceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExtraServiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExtraServiceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown ExtraService mutation op: %q", m.Op())
+	}
+}
+
+// ExtraServiceOrderClient is a client for the ExtraServiceOrder schema.
+type ExtraServiceOrderClient struct {
+	config
+}
+
+// NewExtraServiceOrderClient returns a client for the ExtraServiceOrder from the given config.
+func NewExtraServiceOrderClient(c config) *ExtraServiceOrderClient {
+	return &ExtraServiceOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `extraserviceorder.Hooks(f(g(h())))`.
+func (c *ExtraServiceOrderClient) Use(hooks ...Hook) {
+	c.hooks.ExtraServiceOrder = append(c.hooks.ExtraServiceOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `extraserviceorder.Intercept(f(g(h())))`.
+func (c *ExtraServiceOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ExtraServiceOrder = append(c.inters.ExtraServiceOrder, interceptors...)
+}
+
+// Create returns a builder for creating a ExtraServiceOrder entity.
+func (c *ExtraServiceOrderClient) Create() *ExtraServiceOrderCreate {
+	mutation := newExtraServiceOrderMutation(c.config, OpCreate)
+	return &ExtraServiceOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ExtraServiceOrder entities.
+func (c *ExtraServiceOrderClient) CreateBulk(builders ...*ExtraServiceOrderCreate) *ExtraServiceOrderCreateBulk {
+	return &ExtraServiceOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExtraServiceOrderClient) MapCreateBulk(slice any, setFunc func(*ExtraServiceOrderCreate, int)) *ExtraServiceOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExtraServiceOrderCreateBulk{err: fmt.Errorf("calling to ExtraServiceOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExtraServiceOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExtraServiceOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) Update() *ExtraServiceOrderUpdate {
+	mutation := newExtraServiceOrderMutation(c.config, OpUpdate)
+	return &ExtraServiceOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExtraServiceOrderClient) UpdateOne(eso *ExtraServiceOrder) *ExtraServiceOrderUpdateOne {
+	mutation := newExtraServiceOrderMutation(c.config, OpUpdateOne, withExtraServiceOrder(eso))
+	return &ExtraServiceOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExtraServiceOrderClient) UpdateOneID(id int64) *ExtraServiceOrderUpdateOne {
+	mutation := newExtraServiceOrderMutation(c.config, OpUpdateOne, withExtraServiceOrderID(id))
+	return &ExtraServiceOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) Delete() *ExtraServiceOrderDelete {
+	mutation := newExtraServiceOrderMutation(c.config, OpDelete)
+	return &ExtraServiceOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExtraServiceOrderClient) DeleteOne(eso *ExtraServiceOrder) *ExtraServiceOrderDeleteOne {
+	return c.DeleteOneID(eso.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExtraServiceOrderClient) DeleteOneID(id int64) *ExtraServiceOrderDeleteOne {
+	builder := c.Delete().Where(extraserviceorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExtraServiceOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) Query() *ExtraServiceOrderQuery {
+	return &ExtraServiceOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExtraServiceOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ExtraServiceOrder entity by its id.
+func (c *ExtraServiceOrderClient) Get(ctx context.Context, id int64) (*ExtraServiceOrder, error) {
+	return c.Query().Where(extraserviceorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExtraServiceOrderClient) GetX(ctx context.Context, id int64) *ExtraServiceOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMission queries the mission edge of a ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) QueryMission(eso *ExtraServiceOrder) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eso.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraserviceorder.Table, extraserviceorder.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceorder.MissionTable, extraserviceorder.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(eso.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySymbol queries the symbol edge of a ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) QuerySymbol(eso *ExtraServiceOrder) *SymbolQuery {
+	query := (&SymbolClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eso.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraserviceorder.Table, extraserviceorder.FieldID, id),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceorder.SymbolTable, extraserviceorder.SymbolColumn),
+		)
+		fromV = sqlgraph.Neighbors(eso.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionBatch queries the mission_batch edge of a ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) QueryMissionBatch(eso *ExtraServiceOrder) *MissionBatchQuery {
+	query := (&MissionBatchClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eso.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraserviceorder.Table, extraserviceorder.FieldID, id),
+			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceorder.MissionBatchTable, extraserviceorder.MissionBatchColumn),
+		)
+		fromV = sqlgraph.Neighbors(eso.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ExtraServiceOrderClient) Hooks() []Hook {
+	return c.hooks.ExtraServiceOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExtraServiceOrderClient) Interceptors() []Interceptor {
+	return c.inters.ExtraServiceOrder
+}
+
+func (c *ExtraServiceOrderClient) mutate(ctx context.Context, m *ExtraServiceOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExtraServiceOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExtraServiceOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExtraServiceOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExtraServiceOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown ExtraServiceOrder mutation op: %q", m.Op())
+	}
+}
+
+// ExtraServicePriceClient is a client for the ExtraServicePrice schema.
+type ExtraServicePriceClient struct {
+	config
+}
+
+// NewExtraServicePriceClient returns a client for the ExtraServicePrice from the given config.
+func NewExtraServicePriceClient(c config) *ExtraServicePriceClient {
+	return &ExtraServicePriceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `extraserviceprice.Hooks(f(g(h())))`.
+func (c *ExtraServicePriceClient) Use(hooks ...Hook) {
+	c.hooks.ExtraServicePrice = append(c.hooks.ExtraServicePrice, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `extraserviceprice.Intercept(f(g(h())))`.
+func (c *ExtraServicePriceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ExtraServicePrice = append(c.inters.ExtraServicePrice, interceptors...)
+}
+
+// Create returns a builder for creating a ExtraServicePrice entity.
+func (c *ExtraServicePriceClient) Create() *ExtraServicePriceCreate {
+	mutation := newExtraServicePriceMutation(c.config, OpCreate)
+	return &ExtraServicePriceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ExtraServicePrice entities.
+func (c *ExtraServicePriceClient) CreateBulk(builders ...*ExtraServicePriceCreate) *ExtraServicePriceCreateBulk {
+	return &ExtraServicePriceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExtraServicePriceClient) MapCreateBulk(slice any, setFunc func(*ExtraServicePriceCreate, int)) *ExtraServicePriceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExtraServicePriceCreateBulk{err: fmt.Errorf("calling to ExtraServicePriceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExtraServicePriceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExtraServicePriceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExtraServicePrice.
+func (c *ExtraServicePriceClient) Update() *ExtraServicePriceUpdate {
+	mutation := newExtraServicePriceMutation(c.config, OpUpdate)
+	return &ExtraServicePriceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExtraServicePriceClient) UpdateOne(esp *ExtraServicePrice) *ExtraServicePriceUpdateOne {
+	mutation := newExtraServicePriceMutation(c.config, OpUpdateOne, withExtraServicePrice(esp))
+	return &ExtraServicePriceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExtraServicePriceClient) UpdateOneID(id int64) *ExtraServicePriceUpdateOne {
+	mutation := newExtraServicePriceMutation(c.config, OpUpdateOne, withExtraServicePriceID(id))
+	return &ExtraServicePriceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExtraServicePrice.
+func (c *ExtraServicePriceClient) Delete() *ExtraServicePriceDelete {
+	mutation := newExtraServicePriceMutation(c.config, OpDelete)
+	return &ExtraServicePriceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExtraServicePriceClient) DeleteOne(esp *ExtraServicePrice) *ExtraServicePriceDeleteOne {
+	return c.DeleteOneID(esp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExtraServicePriceClient) DeleteOneID(id int64) *ExtraServicePriceDeleteOne {
+	builder := c.Delete().Where(extraserviceprice.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExtraServicePriceDeleteOne{builder}
+}
+
+// Query returns a query builder for ExtraServicePrice.
+func (c *ExtraServicePriceClient) Query() *ExtraServicePriceQuery {
+	return &ExtraServicePriceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExtraServicePrice},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ExtraServicePrice entity by its id.
+func (c *ExtraServicePriceClient) Get(ctx context.Context, id int64) (*ExtraServicePrice, error) {
+	return c.Query().Where(extraserviceprice.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExtraServicePriceClient) GetX(ctx context.Context, id int64) *ExtraServicePrice {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryExtraService queries the extra_service edge of a ExtraServicePrice.
+func (c *ExtraServicePriceClient) QueryExtraService(esp *ExtraServicePrice) *ExtraServiceQuery {
+	query := (&ExtraServiceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := esp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraserviceprice.Table, extraserviceprice.FieldID, id),
+			sqlgraph.To(extraservice.Table, extraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceprice.ExtraServiceTable, extraserviceprice.ExtraServiceColumn),
+		)
+		fromV = sqlgraph.Neighbors(esp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ExtraServicePriceClient) Hooks() []Hook {
+	return c.hooks.ExtraServicePrice
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExtraServicePriceClient) Interceptors() []Interceptor {
+	return c.inters.ExtraServicePrice
+}
+
+func (c *ExtraServicePriceClient) mutate(ctx context.Context, m *ExtraServicePriceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExtraServicePriceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExtraServicePriceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExtraServicePriceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExtraServicePriceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown ExtraServicePrice mutation op: %q", m.Op())
+	}
+}
+
 // FrpcInfoClient is a client for the FrpcInfo schema.
 type FrpcInfoClient struct {
 	config
@@ -3902,6 +4447,54 @@ func (c *MissionClient) QueryRenewalAgreements(m *Mission) *RenewalAgreementQuer
 	return query
 }
 
+// QueryMissionExtraServices queries the mission_extra_services edge of a Mission.
+func (c *MissionClient) QueryMissionExtraServices(m *Mission) *MissionExtraServiceQuery {
+	query := (&MissionExtraServiceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(missionextraservice.Table, missionextraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionExtraServicesTable, mission.MissionExtraServicesColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExtraServices queries the extra_services edge of a Mission.
+func (c *MissionClient) QueryExtraServices(m *Mission) *ExtraServiceQuery {
+	query := (&ExtraServiceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(extraservice.Table, extraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.ExtraServicesTable, mission.ExtraServicesColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExtraServiceOrders queries the extra_service_orders edge of a Mission.
+func (c *MissionClient) QueryExtraServiceOrders(m *Mission) *ExtraServiceOrderQuery {
+	query := (&ExtraServiceOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.ExtraServiceOrdersTable, mission.ExtraServiceOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MissionClient) Hooks() []Hook {
 	return c.hooks.Mission
@@ -4092,6 +4685,22 @@ func (c *MissionBatchClient) QueryMissionOrders(mb *MissionBatch) *MissionOrderQ
 			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
 			sqlgraph.To(missionorder.Table, missionorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.MissionOrdersTable, missionbatch.MissionOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExtraServiceOrder queries the extra_service_order edge of a MissionBatch.
+func (c *MissionBatchClient) QueryExtraServiceOrder(mb *MissionBatch) *ExtraServiceOrderQuery {
+	query := (&ExtraServiceOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mb.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionbatch.Table, missionbatch.FieldID, id),
+			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionbatch.ExtraServiceOrderTable, missionbatch.ExtraServiceOrderColumn),
 		)
 		fromV = sqlgraph.Neighbors(mb.driver.Dialect(), step)
 		return fromV, nil
@@ -4334,6 +4943,171 @@ func (c *MissionConsumeOrderClient) mutate(ctx context.Context, m *MissionConsum
 		return (&MissionConsumeOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown MissionConsumeOrder mutation op: %q", m.Op())
+	}
+}
+
+// MissionExtraServiceClient is a client for the MissionExtraService schema.
+type MissionExtraServiceClient struct {
+	config
+}
+
+// NewMissionExtraServiceClient returns a client for the MissionExtraService from the given config.
+func NewMissionExtraServiceClient(c config) *MissionExtraServiceClient {
+	return &MissionExtraServiceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionextraservice.Hooks(f(g(h())))`.
+func (c *MissionExtraServiceClient) Use(hooks ...Hook) {
+	c.hooks.MissionExtraService = append(c.hooks.MissionExtraService, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionextraservice.Intercept(f(g(h())))`.
+func (c *MissionExtraServiceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionExtraService = append(c.inters.MissionExtraService, interceptors...)
+}
+
+// Create returns a builder for creating a MissionExtraService entity.
+func (c *MissionExtraServiceClient) Create() *MissionExtraServiceCreate {
+	mutation := newMissionExtraServiceMutation(c.config, OpCreate)
+	return &MissionExtraServiceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionExtraService entities.
+func (c *MissionExtraServiceClient) CreateBulk(builders ...*MissionExtraServiceCreate) *MissionExtraServiceCreateBulk {
+	return &MissionExtraServiceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MissionExtraServiceClient) MapCreateBulk(slice any, setFunc func(*MissionExtraServiceCreate, int)) *MissionExtraServiceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MissionExtraServiceCreateBulk{err: fmt.Errorf("calling to MissionExtraServiceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MissionExtraServiceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MissionExtraServiceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionExtraService.
+func (c *MissionExtraServiceClient) Update() *MissionExtraServiceUpdate {
+	mutation := newMissionExtraServiceMutation(c.config, OpUpdate)
+	return &MissionExtraServiceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionExtraServiceClient) UpdateOne(mes *MissionExtraService) *MissionExtraServiceUpdateOne {
+	mutation := newMissionExtraServiceMutation(c.config, OpUpdateOne, withMissionExtraService(mes))
+	return &MissionExtraServiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionExtraServiceClient) UpdateOneID(id int64) *MissionExtraServiceUpdateOne {
+	mutation := newMissionExtraServiceMutation(c.config, OpUpdateOne, withMissionExtraServiceID(id))
+	return &MissionExtraServiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionExtraService.
+func (c *MissionExtraServiceClient) Delete() *MissionExtraServiceDelete {
+	mutation := newMissionExtraServiceMutation(c.config, OpDelete)
+	return &MissionExtraServiceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionExtraServiceClient) DeleteOne(mes *MissionExtraService) *MissionExtraServiceDeleteOne {
+	return c.DeleteOneID(mes.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionExtraServiceClient) DeleteOneID(id int64) *MissionExtraServiceDeleteOne {
+	builder := c.Delete().Where(missionextraservice.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionExtraServiceDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionExtraService.
+func (c *MissionExtraServiceClient) Query() *MissionExtraServiceQuery {
+	return &MissionExtraServiceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionExtraService},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionExtraService entity by its id.
+func (c *MissionExtraServiceClient) Get(ctx context.Context, id int64) (*MissionExtraService, error) {
+	return c.Query().Where(missionextraservice.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionExtraServiceClient) GetX(ctx context.Context, id int64) *MissionExtraService {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryMission queries the mission edge of a MissionExtraService.
+func (c *MissionExtraServiceClient) QueryMission(mes *MissionExtraService) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mes.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionextraservice.Table, missionextraservice.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionextraservice.MissionTable, missionextraservice.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(mes.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExtraService queries the extra_service edge of a MissionExtraService.
+func (c *MissionExtraServiceClient) QueryExtraService(mes *MissionExtraService) *ExtraServiceQuery {
+	query := (&ExtraServiceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mes.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionextraservice.Table, missionextraservice.FieldID, id),
+			sqlgraph.To(extraservice.Table, extraservice.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionextraservice.ExtraServiceTable, missionextraservice.ExtraServiceColumn),
+		)
+		fromV = sqlgraph.Neighbors(mes.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MissionExtraServiceClient) Hooks() []Hook {
+	return c.hooks.MissionExtraService
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionExtraServiceClient) Interceptors() []Interceptor {
+	return c.inters.MissionExtraService
+}
+
+func (c *MissionExtraServiceClient) mutate(ctx context.Context, m *MissionExtraServiceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionExtraServiceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionExtraServiceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionExtraServiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionExtraServiceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionExtraService mutation op: %q", m.Op())
 	}
 }
 
@@ -6718,6 +7492,22 @@ func (c *SymbolClient) QueryTransferOrders(s *Symbol) *TransferOrderQuery {
 	return query
 }
 
+// QueryExtraServiceOrder queries the extra_service_order edge of a Symbol.
+func (c *SymbolClient) QueryExtraServiceOrder(s *Symbol) *ExtraServiceOrderQuery {
+	query := (&ExtraServiceOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, id),
+			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.ExtraServiceOrderTable, symbol.ExtraServiceOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *SymbolClient) Hooks() []Hook {
 	return c.hooks.Symbol
@@ -8217,9 +9007,10 @@ func (c *WalletClient) mutate(ctx context.Context, m *WalletMutation) (Value, er
 type (
 	hooks struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
-		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
-		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
-		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
+		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
+		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
+		InputLog, Invite, LoginRecord, Mission, MissionBatch, MissionConsumeOrder,
+		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
@@ -8227,9 +9018,10 @@ type (
 	}
 	inters struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
-		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, FrpcInfo,
-		FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
-		MissionBatch, MissionConsumeOrder, MissionKeyPair, MissionKind, MissionOrder,
+		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
+		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
+		InputLog, Invite, LoginRecord, Mission, MissionBatch, MissionConsumeOrder,
+		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
