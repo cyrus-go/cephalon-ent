@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // WithdrawAccountCreate is the builder for creating a WithdrawAccount entity.
@@ -122,15 +123,15 @@ func (wac *WithdrawAccountCreate) SetNillableBusinessName(s *string) *WithdrawAc
 }
 
 // SetBusinessType sets the "business_type" field.
-func (wac *WithdrawAccountCreate) SetBusinessType(s string) *WithdrawAccountCreate {
-	wac.mutation.SetBusinessType(s)
+func (wac *WithdrawAccountCreate) SetBusinessType(et enums.BusinessType) *WithdrawAccountCreate {
+	wac.mutation.SetBusinessType(et)
 	return wac
 }
 
 // SetNillableBusinessType sets the "business_type" field if the given value is not nil.
-func (wac *WithdrawAccountCreate) SetNillableBusinessType(s *string) *WithdrawAccountCreate {
-	if s != nil {
-		wac.SetBusinessType(*s)
+func (wac *WithdrawAccountCreate) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountCreate {
+	if et != nil {
+		wac.SetBusinessType(*et)
 	}
 	return wac
 }
@@ -271,6 +272,11 @@ func (wac *WithdrawAccountCreate) check() error {
 	if _, ok := wac.mutation.BusinessType(); !ok {
 		return &ValidationError{Name: "business_type", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_type"`)}
 	}
+	if v, ok := wac.mutation.BusinessType(); ok {
+		if err := withdrawaccount.BusinessTypeValidator(v); err != nil {
+			return &ValidationError{Name: "business_type", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.business_type": %w`, err)}
+		}
+	}
 	if _, ok := wac.mutation.BusinessID(); !ok {
 		return &ValidationError{Name: "business_id", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_id"`)}
 	}
@@ -335,7 +341,7 @@ func (wac *WithdrawAccountCreate) createSpec() (*WithdrawAccount, *sqlgraph.Crea
 		_node.BusinessName = value
 	}
 	if value, ok := wac.mutation.BusinessType(); ok {
-		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeString, value)
+		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
 		_node.BusinessType = value
 	}
 	if value, ok := wac.mutation.BusinessID(); ok {
@@ -496,7 +502,7 @@ func (u *WithdrawAccountUpsert) UpdateBusinessName() *WithdrawAccountUpsert {
 }
 
 // SetBusinessType sets the "business_type" field.
-func (u *WithdrawAccountUpsert) SetBusinessType(v string) *WithdrawAccountUpsert {
+func (u *WithdrawAccountUpsert) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsert {
 	u.Set(withdrawaccount.FieldBusinessType, v)
 	return u
 }
@@ -675,7 +681,7 @@ func (u *WithdrawAccountUpsertOne) UpdateBusinessName() *WithdrawAccountUpsertOn
 }
 
 // SetBusinessType sets the "business_type" field.
-func (u *WithdrawAccountUpsertOne) SetBusinessType(v string) *WithdrawAccountUpsertOne {
+func (u *WithdrawAccountUpsertOne) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.SetBusinessType(v)
 	})
@@ -1025,7 +1031,7 @@ func (u *WithdrawAccountUpsertBulk) UpdateBusinessName() *WithdrawAccountUpsertB
 }
 
 // SetBusinessType sets the "business_type" field.
-func (u *WithdrawAccountUpsertBulk) SetBusinessType(v string) *WithdrawAccountUpsertBulk {
+func (u *WithdrawAccountUpsertBulk) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.SetBusinessType(v)
 	})

@@ -1662,8 +1662,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "business_name", Type: field.TypeString, Comment: "商户名称", Default: "0"},
-		{Name: "business_type", Type: field.TypeString, Comment: "商户名称", Default: "0"},
+		{Name: "business_name", Type: field.TypeString, Comment: "商户名称", Default: ""},
+		{Name: "business_type", Type: field.TypeEnum, Comment: "商户类型", Enums: []string{"yun", "wft"}, Default: "yun"},
 		{Name: "business_id", Type: field.TypeInt64, Comment: "货币余额", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}

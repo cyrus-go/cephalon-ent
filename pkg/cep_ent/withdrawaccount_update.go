@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // WithdrawAccountUpdate is the builder for updating WithdrawAccount entities.
@@ -121,15 +122,15 @@ func (wau *WithdrawAccountUpdate) SetNillableBusinessName(s *string) *WithdrawAc
 }
 
 // SetBusinessType sets the "business_type" field.
-func (wau *WithdrawAccountUpdate) SetBusinessType(s string) *WithdrawAccountUpdate {
-	wau.mutation.SetBusinessType(s)
+func (wau *WithdrawAccountUpdate) SetBusinessType(et enums.BusinessType) *WithdrawAccountUpdate {
+	wau.mutation.SetBusinessType(et)
 	return wau
 }
 
 // SetNillableBusinessType sets the "business_type" field if the given value is not nil.
-func (wau *WithdrawAccountUpdate) SetNillableBusinessType(s *string) *WithdrawAccountUpdate {
-	if s != nil {
-		wau.SetBusinessType(*s)
+func (wau *WithdrawAccountUpdate) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountUpdate {
+	if et != nil {
+		wau.SetBusinessType(*et)
 	}
 	return wau
 }
@@ -209,6 +210,11 @@ func (wau *WithdrawAccountUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (wau *WithdrawAccountUpdate) check() error {
+	if v, ok := wau.mutation.BusinessType(); ok {
+		if err := withdrawaccount.BusinessTypeValidator(v); err != nil {
+			return &ValidationError{Name: "business_type", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.business_type": %w`, err)}
+		}
+	}
 	if _, ok := wau.mutation.UserID(); wau.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "WithdrawAccount.user"`)
 	}
@@ -255,7 +261,7 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 		_spec.SetField(withdrawaccount.FieldBusinessName, field.TypeString, value)
 	}
 	if value, ok := wau.mutation.BusinessType(); ok {
-		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeString, value)
+		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
 	}
 	if value, ok := wau.mutation.BusinessID(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
@@ -405,15 +411,15 @@ func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessName(s *string) *Withdr
 }
 
 // SetBusinessType sets the "business_type" field.
-func (wauo *WithdrawAccountUpdateOne) SetBusinessType(s string) *WithdrawAccountUpdateOne {
-	wauo.mutation.SetBusinessType(s)
+func (wauo *WithdrawAccountUpdateOne) SetBusinessType(et enums.BusinessType) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetBusinessType(et)
 	return wauo
 }
 
 // SetNillableBusinessType sets the "business_type" field if the given value is not nil.
-func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessType(s *string) *WithdrawAccountUpdateOne {
-	if s != nil {
-		wauo.SetBusinessType(*s)
+func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountUpdateOne {
+	if et != nil {
+		wauo.SetBusinessType(*et)
 	}
 	return wauo
 }
@@ -506,6 +512,11 @@ func (wauo *WithdrawAccountUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (wauo *WithdrawAccountUpdateOne) check() error {
+	if v, ok := wauo.mutation.BusinessType(); ok {
+		if err := withdrawaccount.BusinessTypeValidator(v); err != nil {
+			return &ValidationError{Name: "business_type", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.business_type": %w`, err)}
+		}
+	}
 	if _, ok := wauo.mutation.UserID(); wauo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "WithdrawAccount.user"`)
 	}
@@ -569,7 +580,7 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 		_spec.SetField(withdrawaccount.FieldBusinessName, field.TypeString, value)
 	}
 	if value, ok := wauo.mutation.BusinessType(); ok {
-		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeString, value)
+		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
 	}
 	if value, ok := wauo.mutation.BusinessID(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)

@@ -2592,10 +2592,6 @@ func init() {
 	withdrawaccountDescBusinessName := withdrawaccountFields[1].Descriptor()
 	// withdrawaccount.DefaultBusinessName holds the default value on creation for the business_name field.
 	withdrawaccount.DefaultBusinessName = withdrawaccountDescBusinessName.Default.(string)
-	// withdrawaccountDescBusinessType is the schema descriptor for business_type field.
-	withdrawaccountDescBusinessType := withdrawaccountFields[2].Descriptor()
-	// withdrawaccount.DefaultBusinessType holds the default value on creation for the business_type field.
-	withdrawaccount.DefaultBusinessType = withdrawaccountDescBusinessType.Default.(string)
 	// withdrawaccountDescBusinessID is the schema descriptor for business_id field.
 	withdrawaccountDescBusinessID := withdrawaccountFields[3].Descriptor()
 	// withdrawaccount.DefaultBusinessID holds the default value on creation for the business_id field.

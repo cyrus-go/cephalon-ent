@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 提现账户，用来提供提现渠道
@@ -32,9 +33,9 @@ type WithdrawAccount struct {
 	// 外键用户 id
 	UserID int64 `json:"user_id,string"`
 	// 商户名称
-	BusinessName string `json:"symbol_id,string"`
-	// 商户名称
-	BusinessType string `json:"symbol_id,string"`
+	BusinessName string `json:"business_name"`
+	// 商户类型
+	BusinessType enums.BusinessType `json:"business_type"`
 	// 货币余额
 	BusinessID int64 `json:"amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -143,7 +144,7 @@ func (wa *WithdrawAccount) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field business_type", values[i])
 			} else if value.Valid {
-				wa.BusinessType = value.String
+				wa.BusinessType = enums.BusinessType(value.String)
 			}
 		case withdrawaccount.FieldBusinessID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -214,7 +215,7 @@ func (wa *WithdrawAccount) String() string {
 	builder.WriteString(wa.BusinessName)
 	builder.WriteString(", ")
 	builder.WriteString("business_type=")
-	builder.WriteString(wa.BusinessType)
+	builder.WriteString(fmt.Sprintf("%v", wa.BusinessType))
 	builder.WriteString(", ")
 	builder.WriteString("business_id=")
 	builder.WriteString(fmt.Sprintf("%v", wa.BusinessID))

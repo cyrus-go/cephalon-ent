@@ -60970,7 +60970,7 @@ type WithdrawAccountMutation struct {
 	updated_at     *time.Time
 	deleted_at     *time.Time
 	business_name  *string
-	business_type  *string
+	business_type  *enums.BusinessType
 	business_id    *int64
 	addbusiness_id *int64
 	clearedFields  map[string]struct{}
@@ -61378,12 +61378,12 @@ func (m *WithdrawAccountMutation) ResetBusinessName() {
 }
 
 // SetBusinessType sets the "business_type" field.
-func (m *WithdrawAccountMutation) SetBusinessType(s string) {
-	m.business_type = &s
+func (m *WithdrawAccountMutation) SetBusinessType(et enums.BusinessType) {
+	m.business_type = &et
 }
 
 // BusinessType returns the value of the "business_type" field in the mutation.
-func (m *WithdrawAccountMutation) BusinessType() (r string, exists bool) {
+func (m *WithdrawAccountMutation) BusinessType() (r enums.BusinessType, exists bool) {
 	v := m.business_type
 	if v == nil {
 		return
@@ -61394,7 +61394,7 @@ func (m *WithdrawAccountMutation) BusinessType() (r string, exists bool) {
 // OldBusinessType returns the old "business_type" field's value of the WithdrawAccount entity.
 // If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v string, err error) {
+func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v enums.BusinessType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBusinessType is only allowed on UpdateOne operations")
 	}
@@ -61670,7 +61670,7 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 		m.SetBusinessName(v)
 		return nil
 	case withdrawaccount.FieldBusinessType:
-		v, ok := value.(string)
+		v, ok := value.(enums.BusinessType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

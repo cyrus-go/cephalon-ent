@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -88,11 +89,6 @@ func UserID(v int64) predicate.WithdrawAccount {
 // BusinessName applies equality check predicate on the "business_name" field. It's identical to BusinessNameEQ.
 func BusinessName(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessName, v))
-}
-
-// BusinessType applies equality check predicate on the "business_type" field. It's identical to BusinessTypeEQ.
-func BusinessType(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessType, v))
 }
 
 // BusinessID applies equality check predicate on the "business_id" field. It's identical to BusinessIDEQ.
@@ -386,68 +382,33 @@ func BusinessNameContainsFold(v string) predicate.WithdrawAccount {
 }
 
 // BusinessTypeEQ applies the EQ predicate on the "business_type" field.
-func BusinessTypeEQ(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessType, v))
+func BusinessTypeEQ(v enums.BusinessType) predicate.WithdrawAccount {
+	vc := v
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessType, vc))
 }
 
 // BusinessTypeNEQ applies the NEQ predicate on the "business_type" field.
-func BusinessTypeNEQ(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldNEQ(FieldBusinessType, v))
+func BusinessTypeNEQ(v enums.BusinessType) predicate.WithdrawAccount {
+	vc := v
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldBusinessType, vc))
 }
 
 // BusinessTypeIn applies the In predicate on the "business_type" field.
-func BusinessTypeIn(vs ...string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldIn(FieldBusinessType, vs...))
+func BusinessTypeIn(vs ...enums.BusinessType) predicate.WithdrawAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WithdrawAccount(sql.FieldIn(FieldBusinessType, v...))
 }
 
 // BusinessTypeNotIn applies the NotIn predicate on the "business_type" field.
-func BusinessTypeNotIn(vs ...string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldNotIn(FieldBusinessType, vs...))
-}
-
-// BusinessTypeGT applies the GT predicate on the "business_type" field.
-func BusinessTypeGT(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldGT(FieldBusinessType, v))
-}
-
-// BusinessTypeGTE applies the GTE predicate on the "business_type" field.
-func BusinessTypeGTE(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldGTE(FieldBusinessType, v))
-}
-
-// BusinessTypeLT applies the LT predicate on the "business_type" field.
-func BusinessTypeLT(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldLT(FieldBusinessType, v))
-}
-
-// BusinessTypeLTE applies the LTE predicate on the "business_type" field.
-func BusinessTypeLTE(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldLTE(FieldBusinessType, v))
-}
-
-// BusinessTypeContains applies the Contains predicate on the "business_type" field.
-func BusinessTypeContains(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldContains(FieldBusinessType, v))
-}
-
-// BusinessTypeHasPrefix applies the HasPrefix predicate on the "business_type" field.
-func BusinessTypeHasPrefix(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldBusinessType, v))
-}
-
-// BusinessTypeHasSuffix applies the HasSuffix predicate on the "business_type" field.
-func BusinessTypeHasSuffix(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldBusinessType, v))
-}
-
-// BusinessTypeEqualFold applies the EqualFold predicate on the "business_type" field.
-func BusinessTypeEqualFold(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldBusinessType, v))
-}
-
-// BusinessTypeContainsFold applies the ContainsFold predicate on the "business_type" field.
-func BusinessTypeContainsFold(v string) predicate.WithdrawAccount {
-	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldBusinessType, v))
+func BusinessTypeNotIn(vs ...enums.BusinessType) predicate.WithdrawAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldBusinessType, v...))
 }
 
 // BusinessIDEQ applies the EQ predicate on the "business_id" field.

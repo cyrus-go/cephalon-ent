@@ -3,10 +3,12 @@
 package withdrawaccount
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -86,13 +88,23 @@ var (
 	DefaultUserID int64
 	// DefaultBusinessName holds the default value on creation for the "business_name" field.
 	DefaultBusinessName string
-	// DefaultBusinessType holds the default value on creation for the "business_type" field.
-	DefaultBusinessType string
 	// DefaultBusinessID holds the default value on creation for the "business_id" field.
 	DefaultBusinessID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultBusinessType enums.BusinessType = "yun"
+
+// BusinessTypeValidator is a validator for the "business_type" field enum values. It is called by the builders before save.
+func BusinessTypeValidator(bt enums.BusinessType) error {
+	switch bt {
+	case "yun", "wft":
+		return nil
+	default:
+		return fmt.Errorf("withdrawaccount: invalid enum value for business_type field: %q", bt)
+	}
+}
 
 // OrderOption defines the ordering options for the WithdrawAccount queries.
 type OrderOption func(*sql.Selector)
