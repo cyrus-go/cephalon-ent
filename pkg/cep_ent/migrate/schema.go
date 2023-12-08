@@ -1654,6 +1654,34 @@ var (
 			},
 		},
 	}
+	// WithdrawAccountsColumns holds the columns for the "withdraw_accounts" table.
+	WithdrawAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "business_name", Type: field.TypeString, Comment: "商户名称", Default: "0"},
+		{Name: "business_type", Type: field.TypeString, Comment: "商户名称", Default: "0"},
+		{Name: "business_id", Type: field.TypeInt64, Comment: "货币余额", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
+	}
+	// WithdrawAccountsTable holds the schema information for the "withdraw_accounts" table.
+	WithdrawAccountsTable = &schema.Table{
+		Name:       "withdraw_accounts",
+		Comment:    "提现账户，用来提供提现渠道",
+		Columns:    WithdrawAccountsColumns,
+		PrimaryKey: []*schema.Column{WithdrawAccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "withdraw_accounts_users_withdraw_accounts",
+				Columns:    []*schema.Column{WithdrawAccountsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		BillsTable,
@@ -1701,6 +1729,7 @@ var (
 		VxAccountsTable,
 		VxSocialsTable,
 		WalletsTable,
+		WithdrawAccountsTable,
 	}
 )
 
@@ -1828,4 +1857,6 @@ func init() {
 	WalletsTable.ForeignKeys[0].RefTable = SymbolsTable
 	WalletsTable.ForeignKeys[1].RefTable = UsersTable
 	WalletsTable.Annotation = &entsql.Annotation{}
+	WithdrawAccountsTable.ForeignKeys[0].RefTable = UsersTable
+	WithdrawAccountsTable.Annotation = &entsql.Annotation{}
 }

@@ -102,6 +102,8 @@ type Tx struct {
 	VXSocial *VXSocialClient
 	// Wallet is the client for interacting with the Wallet builders.
 	Wallet *WalletClient
+	// WithdrawAccount is the client for interacting with the WithdrawAccount builders.
+	WithdrawAccount *WithdrawAccountClient
 
 	// lazily loaded.
 	client     *Client
@@ -278,6 +280,7 @@ func (tx *Tx) init() {
 	tx.VXAccount = NewVXAccountClient(tx.config)
 	tx.VXSocial = NewVXSocialClient(tx.config)
 	tx.Wallet = NewWalletClient(tx.config)
+	tx.WithdrawAccount = NewWithdrawAccountClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

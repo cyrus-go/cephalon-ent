@@ -60,6 +60,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 )
 
 // Client is the client that holds all ent builders.
@@ -157,6 +158,8 @@ type Client struct {
 	VXSocial *VXSocialClient
 	// Wallet is the client for interacting with the Wallet builders.
 	Wallet *WalletClient
+	// WithdrawAccount is the client for interacting with the WithdrawAccount builders.
+	WithdrawAccount *WithdrawAccountClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -215,6 +218,7 @@ func (c *Client) init() {
 	c.VXAccount = NewVXAccountClient(c.config)
 	c.VXSocial = NewVXSocialClient(c.config)
 	c.Wallet = NewWalletClient(c.config)
+	c.WithdrawAccount = NewWithdrawAccountClient(c.config)
 }
 
 type (
@@ -345,6 +349,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		VXAccount:            NewVXAccountClient(cfg),
 		VXSocial:             NewVXSocialClient(cfg),
 		Wallet:               NewWalletClient(cfg),
+		WithdrawAccount:      NewWithdrawAccountClient(cfg),
 	}, nil
 }
 
@@ -409,6 +414,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		VXAccount:            NewVXAccountClient(cfg),
 		VXSocial:             NewVXSocialClient(cfg),
 		Wallet:               NewWalletClient(cfg),
+		WithdrawAccount:      NewWithdrawAccountClient(cfg),
 	}, nil
 }
 
@@ -447,7 +453,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
 		c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
-		c.Wallet,
+		c.Wallet, c.WithdrawAccount,
 	} {
 		n.Use(hooks...)
 	}
@@ -466,7 +472,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
 		c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
-		c.Wallet,
+		c.Wallet, c.WithdrawAccount,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -565,6 +571,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.VXSocial.mutate(ctx, m)
 	case *WalletMutation:
 		return c.Wallet.mutate(ctx, m)
+	case *WithdrawAccountMutation:
+		return c.WithdrawAccount.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown mutation type %T", m)
 	}
@@ -8158,6 +8166,22 @@ func (c *UserClient) QueryWallets(u *User) *WalletQuery {
 	return query
 }
 
+// QueryWithdrawAccounts queries the withdraw_accounts edge of a User.
+func (c *UserClient) QueryWithdrawAccounts(u *User) *WithdrawAccountQuery {
+	query := (&WithdrawAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(withdrawaccount.Table, withdrawaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawAccountsTable, user.WithdrawAccountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryIncomeBills queries the income_bills edge of a User.
 func (c *UserClient) QueryIncomeBills(u *User) *BillQuery {
 	query := (&BillClient{config: c.config}).Query()
@@ -9003,6 +9027,155 @@ func (c *WalletClient) mutate(ctx context.Context, m *WalletMutation) (Value, er
 	}
 }
 
+// WithdrawAccountClient is a client for the WithdrawAccount schema.
+type WithdrawAccountClient struct {
+	config
+}
+
+// NewWithdrawAccountClient returns a client for the WithdrawAccount from the given config.
+func NewWithdrawAccountClient(c config) *WithdrawAccountClient {
+	return &WithdrawAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `withdrawaccount.Hooks(f(g(h())))`.
+func (c *WithdrawAccountClient) Use(hooks ...Hook) {
+	c.hooks.WithdrawAccount = append(c.hooks.WithdrawAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `withdrawaccount.Intercept(f(g(h())))`.
+func (c *WithdrawAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.WithdrawAccount = append(c.inters.WithdrawAccount, interceptors...)
+}
+
+// Create returns a builder for creating a WithdrawAccount entity.
+func (c *WithdrawAccountClient) Create() *WithdrawAccountCreate {
+	mutation := newWithdrawAccountMutation(c.config, OpCreate)
+	return &WithdrawAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of WithdrawAccount entities.
+func (c *WithdrawAccountClient) CreateBulk(builders ...*WithdrawAccountCreate) *WithdrawAccountCreateBulk {
+	return &WithdrawAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *WithdrawAccountClient) MapCreateBulk(slice any, setFunc func(*WithdrawAccountCreate, int)) *WithdrawAccountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &WithdrawAccountCreateBulk{err: fmt.Errorf("calling to WithdrawAccountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*WithdrawAccountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &WithdrawAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for WithdrawAccount.
+func (c *WithdrawAccountClient) Update() *WithdrawAccountUpdate {
+	mutation := newWithdrawAccountMutation(c.config, OpUpdate)
+	return &WithdrawAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WithdrawAccountClient) UpdateOne(wa *WithdrawAccount) *WithdrawAccountUpdateOne {
+	mutation := newWithdrawAccountMutation(c.config, OpUpdateOne, withWithdrawAccount(wa))
+	return &WithdrawAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WithdrawAccountClient) UpdateOneID(id int64) *WithdrawAccountUpdateOne {
+	mutation := newWithdrawAccountMutation(c.config, OpUpdateOne, withWithdrawAccountID(id))
+	return &WithdrawAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for WithdrawAccount.
+func (c *WithdrawAccountClient) Delete() *WithdrawAccountDelete {
+	mutation := newWithdrawAccountMutation(c.config, OpDelete)
+	return &WithdrawAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WithdrawAccountClient) DeleteOne(wa *WithdrawAccount) *WithdrawAccountDeleteOne {
+	return c.DeleteOneID(wa.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WithdrawAccountClient) DeleteOneID(id int64) *WithdrawAccountDeleteOne {
+	builder := c.Delete().Where(withdrawaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WithdrawAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for WithdrawAccount.
+func (c *WithdrawAccountClient) Query() *WithdrawAccountQuery {
+	return &WithdrawAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWithdrawAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a WithdrawAccount entity by its id.
+func (c *WithdrawAccountClient) Get(ctx context.Context, id int64) (*WithdrawAccount, error) {
+	return c.Query().Where(withdrawaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WithdrawAccountClient) GetX(ctx context.Context, id int64) *WithdrawAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a WithdrawAccount.
+func (c *WithdrawAccountClient) QueryUser(wa *WithdrawAccount) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := wa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawaccount.Table, withdrawaccount.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawaccount.UserTable, withdrawaccount.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(wa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *WithdrawAccountClient) Hooks() []Hook {
+	return c.hooks.WithdrawAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *WithdrawAccountClient) Interceptors() []Interceptor {
+	return c.inters.WithdrawAccount
+}
+
+func (c *WithdrawAccountClient) mutate(ctx context.Context, m *WithdrawAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WithdrawAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WithdrawAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WithdrawAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WithdrawAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown WithdrawAccount mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
@@ -9014,7 +9187,7 @@ type (
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
-		Wallet []ent.Hook
+		Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
 		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
@@ -9025,6 +9198,6 @@ type (
 		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
 		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
-		Wallet []ent.Interceptor
+		Wallet, WithdrawAccount []ent.Interceptor
 	}
 )

@@ -57,6 +57,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -114,6 +115,7 @@ const (
 	TypeVXAccount            = "VXAccount"
 	TypeVXSocial             = "VXSocial"
 	TypeWallet               = "Wallet"
+	TypeWithdrawAccount      = "WithdrawAccount"
 )
 
 // BillMutation represents an operation that mutates the Bill nodes in the graph.
@@ -53404,6 +53406,9 @@ type UserMutation struct {
 	wallets                        map[int64]struct{}
 	removedwallets                 map[int64]struct{}
 	clearedwallets                 bool
+	withdraw_accounts              map[int64]struct{}
+	removedwithdraw_accounts       map[int64]struct{}
+	clearedwithdraw_accounts       bool
 	income_bills                   map[int64]struct{}
 	removedincome_bills            map[int64]struct{}
 	clearedincome_bills            bool
@@ -55164,6 +55169,60 @@ func (m *UserMutation) ResetWallets() {
 	m.removedwallets = nil
 }
 
+// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by ids.
+func (m *UserMutation) AddWithdrawAccountIDs(ids ...int64) {
+	if m.withdraw_accounts == nil {
+		m.withdraw_accounts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.withdraw_accounts[ids[i]] = struct{}{}
+	}
+}
+
+// ClearWithdrawAccounts clears the "withdraw_accounts" edge to the WithdrawAccount entity.
+func (m *UserMutation) ClearWithdrawAccounts() {
+	m.clearedwithdraw_accounts = true
+}
+
+// WithdrawAccountsCleared reports if the "withdraw_accounts" edge to the WithdrawAccount entity was cleared.
+func (m *UserMutation) WithdrawAccountsCleared() bool {
+	return m.clearedwithdraw_accounts
+}
+
+// RemoveWithdrawAccountIDs removes the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
+func (m *UserMutation) RemoveWithdrawAccountIDs(ids ...int64) {
+	if m.removedwithdraw_accounts == nil {
+		m.removedwithdraw_accounts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.withdraw_accounts, ids[i])
+		m.removedwithdraw_accounts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWithdrawAccounts returns the removed IDs of the "withdraw_accounts" edge to the WithdrawAccount entity.
+func (m *UserMutation) RemovedWithdrawAccountsIDs() (ids []int64) {
+	for id := range m.removedwithdraw_accounts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WithdrawAccountsIDs returns the "withdraw_accounts" edge IDs in the mutation.
+func (m *UserMutation) WithdrawAccountsIDs() (ids []int64) {
+	for id := range m.withdraw_accounts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWithdrawAccounts resets all changes to the "withdraw_accounts" edge.
+func (m *UserMutation) ResetWithdrawAccounts() {
+	m.withdraw_accounts = nil
+	m.clearedwithdraw_accounts = false
+	m.removedwithdraw_accounts = nil
+}
+
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by ids.
 func (m *UserMutation) AddIncomeBillIDs(ids ...int64) {
 	if m.income_bills == nil {
@@ -56136,7 +56195,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 29)
+	edges := make([]string, 0, 30)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -56193,6 +56252,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.wallets != nil {
 		edges = append(edges, user.EdgeWallets)
+	}
+	if m.withdraw_accounts != nil {
+		edges = append(edges, user.EdgeWithdrawAccounts)
 	}
 	if m.income_bills != nil {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -56339,6 +56401,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeWithdrawAccounts:
+		ids := make([]ent.Value, 0, len(m.withdraw_accounts))
+		for id := range m.withdraw_accounts {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeIncomeBills:
 		ids := make([]ent.Value, 0, len(m.income_bills))
 		for id := range m.income_bills {
@@ -56405,7 +56473,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 29)
+	edges := make([]string, 0, 30)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -56453,6 +56521,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedwallets != nil {
 		edges = append(edges, user.EdgeWallets)
+	}
+	if m.removedwithdraw_accounts != nil {
+		edges = append(edges, user.EdgeWithdrawAccounts)
 	}
 	if m.removedincome_bills != nil {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -56587,6 +56658,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeWithdrawAccounts:
+		ids := make([]ent.Value, 0, len(m.removedwithdraw_accounts))
+		for id := range m.removedwithdraw_accounts {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeIncomeBills:
 		ids := make([]ent.Value, 0, len(m.removedincome_bills))
 		for id := range m.removedincome_bills {
@@ -56653,7 +56730,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 29)
+	edges := make([]string, 0, 30)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -56710,6 +56787,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedwallets {
 		edges = append(edges, user.EdgeWallets)
+	}
+	if m.clearedwithdraw_accounts {
+		edges = append(edges, user.EdgeWithdrawAccounts)
 	}
 	if m.clearedincome_bills {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -56786,6 +56866,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedcampaign_orders
 	case user.EdgeWallets:
 		return m.clearedwallets
+	case user.EdgeWithdrawAccounts:
+		return m.clearedwithdraw_accounts
 	case user.EdgeIncomeBills:
 		return m.clearedincome_bills
 	case user.EdgeOutcomeBills:
@@ -56887,6 +56969,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeWallets:
 		m.ResetWallets()
+		return nil
+	case user.EdgeWithdrawAccounts:
+		m.ResetWithdrawAccounts()
 		return nil
 	case user.EdgeIncomeBills:
 		m.ResetIncomeBills()
@@ -60869,4 +60954,924 @@ func (m *WalletMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Wallet edge %s", name)
+}
+
+// WithdrawAccountMutation represents an operation that mutates the WithdrawAccount nodes in the graph.
+type WithdrawAccountMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int64
+	created_by     *int64
+	addcreated_by  *int64
+	updated_by     *int64
+	addupdated_by  *int64
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	business_name  *string
+	business_type  *string
+	business_id    *int64
+	addbusiness_id *int64
+	clearedFields  map[string]struct{}
+	user           *int64
+	cleareduser    bool
+	done           bool
+	oldValue       func(context.Context) (*WithdrawAccount, error)
+	predicates     []predicate.WithdrawAccount
+}
+
+var _ ent.Mutation = (*WithdrawAccountMutation)(nil)
+
+// withdrawaccountOption allows management of the mutation configuration using functional options.
+type withdrawaccountOption func(*WithdrawAccountMutation)
+
+// newWithdrawAccountMutation creates new mutation for the WithdrawAccount entity.
+func newWithdrawAccountMutation(c config, op Op, opts ...withdrawaccountOption) *WithdrawAccountMutation {
+	m := &WithdrawAccountMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeWithdrawAccount,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withWithdrawAccountID sets the ID field of the mutation.
+func withWithdrawAccountID(id int64) withdrawaccountOption {
+	return func(m *WithdrawAccountMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *WithdrawAccount
+		)
+		m.oldValue = func(ctx context.Context) (*WithdrawAccount, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().WithdrawAccount.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withWithdrawAccount sets the old WithdrawAccount of the mutation.
+func withWithdrawAccount(node *WithdrawAccount) withdrawaccountOption {
+	return func(m *WithdrawAccountMutation) {
+		m.oldValue = func(context.Context) (*WithdrawAccount, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m WithdrawAccountMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m WithdrawAccountMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of WithdrawAccount entities.
+func (m *WithdrawAccountMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *WithdrawAccountMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *WithdrawAccountMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().WithdrawAccount.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *WithdrawAccountMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *WithdrawAccountMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *WithdrawAccountMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *WithdrawAccountMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *WithdrawAccountMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *WithdrawAccountMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *WithdrawAccountMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *WithdrawAccountMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *WithdrawAccountMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *WithdrawAccountMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *WithdrawAccountMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *WithdrawAccountMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *WithdrawAccountMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *WithdrawAccountMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *WithdrawAccountMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *WithdrawAccountMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *WithdrawAccountMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *WithdrawAccountMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *WithdrawAccountMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *WithdrawAccountMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *WithdrawAccountMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *WithdrawAccountMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetBusinessName sets the "business_name" field.
+func (m *WithdrawAccountMutation) SetBusinessName(s string) {
+	m.business_name = &s
+}
+
+// BusinessName returns the value of the "business_name" field in the mutation.
+func (m *WithdrawAccountMutation) BusinessName() (r string, exists bool) {
+	v := m.business_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBusinessName returns the old "business_name" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBusinessName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBusinessName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBusinessName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBusinessName: %w", err)
+	}
+	return oldValue.BusinessName, nil
+}
+
+// ResetBusinessName resets all changes to the "business_name" field.
+func (m *WithdrawAccountMutation) ResetBusinessName() {
+	m.business_name = nil
+}
+
+// SetBusinessType sets the "business_type" field.
+func (m *WithdrawAccountMutation) SetBusinessType(s string) {
+	m.business_type = &s
+}
+
+// BusinessType returns the value of the "business_type" field in the mutation.
+func (m *WithdrawAccountMutation) BusinessType() (r string, exists bool) {
+	v := m.business_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBusinessType returns the old "business_type" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBusinessType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBusinessType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBusinessType: %w", err)
+	}
+	return oldValue.BusinessType, nil
+}
+
+// ResetBusinessType resets all changes to the "business_type" field.
+func (m *WithdrawAccountMutation) ResetBusinessType() {
+	m.business_type = nil
+}
+
+// SetBusinessID sets the "business_id" field.
+func (m *WithdrawAccountMutation) SetBusinessID(i int64) {
+	m.business_id = &i
+	m.addbusiness_id = nil
+}
+
+// BusinessID returns the value of the "business_id" field in the mutation.
+func (m *WithdrawAccountMutation) BusinessID() (r int64, exists bool) {
+	v := m.business_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBusinessID returns the old "business_id" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBusinessID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBusinessID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBusinessID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBusinessID: %w", err)
+	}
+	return oldValue.BusinessID, nil
+}
+
+// AddBusinessID adds i to the "business_id" field.
+func (m *WithdrawAccountMutation) AddBusinessID(i int64) {
+	if m.addbusiness_id != nil {
+		*m.addbusiness_id += i
+	} else {
+		m.addbusiness_id = &i
+	}
+}
+
+// AddedBusinessID returns the value that was added to the "business_id" field in this mutation.
+func (m *WithdrawAccountMutation) AddedBusinessID() (r int64, exists bool) {
+	v := m.addbusiness_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBusinessID resets all changes to the "business_id" field.
+func (m *WithdrawAccountMutation) ResetBusinessID() {
+	m.business_id = nil
+	m.addbusiness_id = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *WithdrawAccountMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[withdrawaccount.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *WithdrawAccountMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *WithdrawAccountMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *WithdrawAccountMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the WithdrawAccountMutation builder.
+func (m *WithdrawAccountMutation) Where(ps ...predicate.WithdrawAccount) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the WithdrawAccountMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *WithdrawAccountMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.WithdrawAccount, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *WithdrawAccountMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *WithdrawAccountMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (WithdrawAccount).
+func (m *WithdrawAccountMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *WithdrawAccountMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_by != nil {
+		fields = append(fields, withdrawaccount.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, withdrawaccount.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, withdrawaccount.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, withdrawaccount.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, withdrawaccount.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, withdrawaccount.FieldUserID)
+	}
+	if m.business_name != nil {
+		fields = append(fields, withdrawaccount.FieldBusinessName)
+	}
+	if m.business_type != nil {
+		fields = append(fields, withdrawaccount.FieldBusinessType)
+	}
+	if m.business_id != nil {
+		fields = append(fields, withdrawaccount.FieldBusinessID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case withdrawaccount.FieldCreatedBy:
+		return m.CreatedBy()
+	case withdrawaccount.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case withdrawaccount.FieldCreatedAt:
+		return m.CreatedAt()
+	case withdrawaccount.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case withdrawaccount.FieldDeletedAt:
+		return m.DeletedAt()
+	case withdrawaccount.FieldUserID:
+		return m.UserID()
+	case withdrawaccount.FieldBusinessName:
+		return m.BusinessName()
+	case withdrawaccount.FieldBusinessType:
+		return m.BusinessType()
+	case withdrawaccount.FieldBusinessID:
+		return m.BusinessID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case withdrawaccount.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case withdrawaccount.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case withdrawaccount.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case withdrawaccount.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case withdrawaccount.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case withdrawaccount.FieldUserID:
+		return m.OldUserID(ctx)
+	case withdrawaccount.FieldBusinessName:
+		return m.OldBusinessName(ctx)
+	case withdrawaccount.FieldBusinessType:
+		return m.OldBusinessType(ctx)
+	case withdrawaccount.FieldBusinessID:
+		return m.OldBusinessID(ctx)
+	}
+	return nil, fmt.Errorf("unknown WithdrawAccount field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case withdrawaccount.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case withdrawaccount.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case withdrawaccount.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case withdrawaccount.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case withdrawaccount.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case withdrawaccount.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case withdrawaccount.FieldBusinessName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBusinessName(v)
+		return nil
+	case withdrawaccount.FieldBusinessType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBusinessType(v)
+		return nil
+	case withdrawaccount.FieldBusinessID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBusinessID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown WithdrawAccount field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *WithdrawAccountMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, withdrawaccount.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, withdrawaccount.FieldUpdatedBy)
+	}
+	if m.addbusiness_id != nil {
+		fields = append(fields, withdrawaccount.FieldBusinessID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *WithdrawAccountMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case withdrawaccount.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case withdrawaccount.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case withdrawaccount.FieldBusinessID:
+		return m.AddedBusinessID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *WithdrawAccountMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case withdrawaccount.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case withdrawaccount.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case withdrawaccount.FieldBusinessID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBusinessID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown WithdrawAccount numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *WithdrawAccountMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *WithdrawAccountMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *WithdrawAccountMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown WithdrawAccount nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *WithdrawAccountMutation) ResetField(name string) error {
+	switch name {
+	case withdrawaccount.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case withdrawaccount.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case withdrawaccount.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case withdrawaccount.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case withdrawaccount.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case withdrawaccount.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case withdrawaccount.FieldBusinessName:
+		m.ResetBusinessName()
+		return nil
+	case withdrawaccount.FieldBusinessType:
+		m.ResetBusinessType()
+		return nil
+	case withdrawaccount.FieldBusinessID:
+		m.ResetBusinessID()
+		return nil
+	}
+	return fmt.Errorf("unknown WithdrawAccount field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *WithdrawAccountMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, withdrawaccount.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *WithdrawAccountMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case withdrawaccount.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *WithdrawAccountMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *WithdrawAccountMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *WithdrawAccountMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, withdrawaccount.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *WithdrawAccountMutation) EdgeCleared(name string) bool {
+	switch name {
+	case withdrawaccount.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *WithdrawAccountMutation) ClearEdge(name string) error {
+	switch name {
+	case withdrawaccount.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown WithdrawAccount unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *WithdrawAccountMutation) ResetEdge(name string) error {
+	switch name {
+	case withdrawaccount.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown WithdrawAccount edge %s", name)
 }
