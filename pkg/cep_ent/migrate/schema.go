@@ -272,7 +272,7 @@ var (
 		{Name: "linking", Type: field.TypeBool, Comment: "设备是否正在对接中", Default: false},
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
 		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy"}, Default: "online"},
-		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: ""},
+		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: "默认设备名称"},
 		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},
 		{Name: "cores_number", Type: field.TypeInt64, Comment: "核心数", Default: 0},
 		{Name: "cpu", Type: field.TypeString, Comment: "CPU型号", Default: ""},
