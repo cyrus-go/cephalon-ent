@@ -150,6 +150,62 @@ func (wac *WithdrawAccountCreate) SetNillableBusinessID(i *int64) *WithdrawAccou
 	return wac
 }
 
+// SetPersonalName sets the "personal_name" field.
+func (wac *WithdrawAccountCreate) SetPersonalName(s string) *WithdrawAccountCreate {
+	wac.mutation.SetPersonalName(s)
+	return wac
+}
+
+// SetNillablePersonalName sets the "personal_name" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillablePersonalName(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetPersonalName(*s)
+	}
+	return wac
+}
+
+// SetPhone sets the "phone" field.
+func (wac *WithdrawAccountCreate) SetPhone(s string) *WithdrawAccountCreate {
+	wac.mutation.SetPhone(s)
+	return wac
+}
+
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillablePhone(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetPhone(*s)
+	}
+	return wac
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (wac *WithdrawAccountCreate) SetBankCardNumber(s string) *WithdrawAccountCreate {
+	wac.mutation.SetBankCardNumber(s)
+	return wac
+}
+
+// SetNillableBankCardNumber sets the "bank_card_number" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableBankCardNumber(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetBankCardNumber(*s)
+	}
+	return wac
+}
+
+// SetBank sets the "bank" field.
+func (wac *WithdrawAccountCreate) SetBank(s string) *WithdrawAccountCreate {
+	wac.mutation.SetBank(s)
+	return wac
+}
+
+// SetNillableBank sets the "bank" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableBank(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetBank(*s)
+	}
+	return wac
+}
+
 // SetID sets the "id" field.
 func (wac *WithdrawAccountCreate) SetID(i int64) *WithdrawAccountCreate {
 	wac.mutation.SetID(i)
@@ -240,6 +296,22 @@ func (wac *WithdrawAccountCreate) defaults() {
 		v := withdrawaccount.DefaultBusinessID
 		wac.mutation.SetBusinessID(v)
 	}
+	if _, ok := wac.mutation.PersonalName(); !ok {
+		v := withdrawaccount.DefaultPersonalName
+		wac.mutation.SetPersonalName(v)
+	}
+	if _, ok := wac.mutation.Phone(); !ok {
+		v := withdrawaccount.DefaultPhone
+		wac.mutation.SetPhone(v)
+	}
+	if _, ok := wac.mutation.BankCardNumber(); !ok {
+		v := withdrawaccount.DefaultBankCardNumber
+		wac.mutation.SetBankCardNumber(v)
+	}
+	if _, ok := wac.mutation.Bank(); !ok {
+		v := withdrawaccount.DefaultBank
+		wac.mutation.SetBank(v)
+	}
 	if _, ok := wac.mutation.ID(); !ok {
 		v := withdrawaccount.DefaultID()
 		wac.mutation.SetID(v)
@@ -279,6 +351,18 @@ func (wac *WithdrawAccountCreate) check() error {
 	}
 	if _, ok := wac.mutation.BusinessID(); !ok {
 		return &ValidationError{Name: "business_id", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_id"`)}
+	}
+	if _, ok := wac.mutation.PersonalName(); !ok {
+		return &ValidationError{Name: "personal_name", err: errors.New(`cep_ent: missing required field "WithdrawAccount.personal_name"`)}
+	}
+	if _, ok := wac.mutation.Phone(); !ok {
+		return &ValidationError{Name: "phone", err: errors.New(`cep_ent: missing required field "WithdrawAccount.phone"`)}
+	}
+	if _, ok := wac.mutation.BankCardNumber(); !ok {
+		return &ValidationError{Name: "bank_card_number", err: errors.New(`cep_ent: missing required field "WithdrawAccount.bank_card_number"`)}
+	}
+	if _, ok := wac.mutation.Bank(); !ok {
+		return &ValidationError{Name: "bank", err: errors.New(`cep_ent: missing required field "WithdrawAccount.bank"`)}
 	}
 	if _, ok := wac.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "WithdrawAccount.user"`)}
@@ -347,6 +431,22 @@ func (wac *WithdrawAccountCreate) createSpec() (*WithdrawAccount, *sqlgraph.Crea
 	if value, ok := wac.mutation.BusinessID(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
 		_node.BusinessID = value
+	}
+	if value, ok := wac.mutation.PersonalName(); ok {
+		_spec.SetField(withdrawaccount.FieldPersonalName, field.TypeString, value)
+		_node.PersonalName = value
+	}
+	if value, ok := wac.mutation.Phone(); ok {
+		_spec.SetField(withdrawaccount.FieldPhone, field.TypeString, value)
+		_node.Phone = value
+	}
+	if value, ok := wac.mutation.BankCardNumber(); ok {
+		_spec.SetField(withdrawaccount.FieldBankCardNumber, field.TypeString, value)
+		_node.BankCardNumber = value
+	}
+	if value, ok := wac.mutation.Bank(); ok {
+		_spec.SetField(withdrawaccount.FieldBank, field.TypeString, value)
+		_node.Bank = value
 	}
 	if nodes := wac.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -531,6 +631,54 @@ func (u *WithdrawAccountUpsert) AddBusinessID(v int64) *WithdrawAccountUpsert {
 	return u
 }
 
+// SetPersonalName sets the "personal_name" field.
+func (u *WithdrawAccountUpsert) SetPersonalName(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldPersonalName, v)
+	return u
+}
+
+// UpdatePersonalName sets the "personal_name" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdatePersonalName() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldPersonalName)
+	return u
+}
+
+// SetPhone sets the "phone" field.
+func (u *WithdrawAccountUpsert) SetPhone(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldPhone, v)
+	return u
+}
+
+// UpdatePhone sets the "phone" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdatePhone() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldPhone)
+	return u
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (u *WithdrawAccountUpsert) SetBankCardNumber(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldBankCardNumber, v)
+	return u
+}
+
+// UpdateBankCardNumber sets the "bank_card_number" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateBankCardNumber() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldBankCardNumber)
+	return u
+}
+
+// SetBank sets the "bank" field.
+func (u *WithdrawAccountUpsert) SetBank(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldBank, v)
+	return u
+}
+
+// UpdateBank sets the "bank" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateBank() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldBank)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -712,6 +860,62 @@ func (u *WithdrawAccountUpsertOne) AddBusinessID(v int64) *WithdrawAccountUpsert
 func (u *WithdrawAccountUpsertOne) UpdateBusinessID() *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateBusinessID()
+	})
+}
+
+// SetPersonalName sets the "personal_name" field.
+func (u *WithdrawAccountUpsertOne) SetPersonalName(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetPersonalName(v)
+	})
+}
+
+// UpdatePersonalName sets the "personal_name" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdatePersonalName() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdatePersonalName()
+	})
+}
+
+// SetPhone sets the "phone" field.
+func (u *WithdrawAccountUpsertOne) SetPhone(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetPhone(v)
+	})
+}
+
+// UpdatePhone sets the "phone" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdatePhone() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdatePhone()
+	})
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (u *WithdrawAccountUpsertOne) SetBankCardNumber(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetBankCardNumber(v)
+	})
+}
+
+// UpdateBankCardNumber sets the "bank_card_number" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateBankCardNumber() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateBankCardNumber()
+	})
+}
+
+// SetBank sets the "bank" field.
+func (u *WithdrawAccountUpsertOne) SetBank(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetBank(v)
+	})
+}
+
+// UpdateBank sets the "bank" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateBank() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateBank()
 	})
 }
 
@@ -1062,6 +1266,62 @@ func (u *WithdrawAccountUpsertBulk) AddBusinessID(v int64) *WithdrawAccountUpser
 func (u *WithdrawAccountUpsertBulk) UpdateBusinessID() *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateBusinessID()
+	})
+}
+
+// SetPersonalName sets the "personal_name" field.
+func (u *WithdrawAccountUpsertBulk) SetPersonalName(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetPersonalName(v)
+	})
+}
+
+// UpdatePersonalName sets the "personal_name" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdatePersonalName() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdatePersonalName()
+	})
+}
+
+// SetPhone sets the "phone" field.
+func (u *WithdrawAccountUpsertBulk) SetPhone(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetPhone(v)
+	})
+}
+
+// UpdatePhone sets the "phone" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdatePhone() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdatePhone()
+	})
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (u *WithdrawAccountUpsertBulk) SetBankCardNumber(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetBankCardNumber(v)
+	})
+}
+
+// UpdateBankCardNumber sets the "bank_card_number" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateBankCardNumber() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateBankCardNumber()
+	})
+}
+
+// SetBank sets the "bank" field.
+func (u *WithdrawAccountUpsertBulk) SetBank(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetBank(v)
+	})
+}
+
+// UpdateBank sets the "bank" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateBank() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateBank()
 	})
 }
 

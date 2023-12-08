@@ -34,6 +34,14 @@ const (
 	FieldBusinessType = "business_type"
 	// FieldBusinessID holds the string denoting the business_id field in the database.
 	FieldBusinessID = "business_id"
+	// FieldPersonalName holds the string denoting the personal_name field in the database.
+	FieldPersonalName = "personal_name"
+	// FieldPhone holds the string denoting the phone field in the database.
+	FieldPhone = "phone"
+	// FieldBankCardNumber holds the string denoting the bank_card_number field in the database.
+	FieldBankCardNumber = "bank_card_number"
+	// FieldBank holds the string denoting the bank field in the database.
+	FieldBank = "bank"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the withdrawaccount in the database.
@@ -59,6 +67,10 @@ var Columns = []string{
 	FieldBusinessName,
 	FieldBusinessType,
 	FieldBusinessID,
+	FieldPersonalName,
+	FieldPhone,
+	FieldBankCardNumber,
+	FieldBank,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -90,6 +102,14 @@ var (
 	DefaultBusinessName string
 	// DefaultBusinessID holds the default value on creation for the "business_id" field.
 	DefaultBusinessID int64
+	// DefaultPersonalName holds the default value on creation for the "personal_name" field.
+	DefaultPersonalName string
+	// DefaultPhone holds the default value on creation for the "phone" field.
+	DefaultPhone string
+	// DefaultBankCardNumber holds the default value on creation for the "bank_card_number" field.
+	DefaultBankCardNumber string
+	// DefaultBank holds the default value on creation for the "bank" field.
+	DefaultBank string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -157,6 +177,26 @@ func ByBusinessType(opts ...sql.OrderTermOption) OrderOption {
 // ByBusinessID orders the results by the business_id field.
 func ByBusinessID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBusinessID, opts...).ToFunc()
+}
+
+// ByPersonalName orders the results by the personal_name field.
+func ByPersonalName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPersonalName, opts...).ToFunc()
+}
+
+// ByPhone orders the results by the phone field.
+func ByPhone(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPhone, opts...).ToFunc()
+}
+
+// ByBankCardNumber orders the results by the bank_card_number field.
+func ByBankCardNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBankCardNumber, opts...).ToFunc()
+}
+
+// ByBank orders the results by the bank field.
+func ByBank(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBank, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

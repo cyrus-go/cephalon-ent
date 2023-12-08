@@ -96,6 +96,26 @@ func BusinessID(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessID, v))
 }
 
+// PersonalName applies equality check predicate on the "personal_name" field. It's identical to PersonalNameEQ.
+func PersonalName(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldPersonalName, v))
+}
+
+// Phone applies equality check predicate on the "phone" field. It's identical to PhoneEQ.
+func Phone(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldPhone, v))
+}
+
+// BankCardNumber applies equality check predicate on the "bank_card_number" field. It's identical to BankCardNumberEQ.
+func BankCardNumber(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldBankCardNumber, v))
+}
+
+// Bank applies equality check predicate on the "bank" field. It's identical to BankEQ.
+func Bank(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldBank, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldCreatedBy, v))
@@ -449,6 +469,266 @@ func BusinessIDLT(v int64) predicate.WithdrawAccount {
 // BusinessIDLTE applies the LTE predicate on the "business_id" field.
 func BusinessIDLTE(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldLTE(FieldBusinessID, v))
+}
+
+// PersonalNameEQ applies the EQ predicate on the "personal_name" field.
+func PersonalNameEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldPersonalName, v))
+}
+
+// PersonalNameNEQ applies the NEQ predicate on the "personal_name" field.
+func PersonalNameNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldPersonalName, v))
+}
+
+// PersonalNameIn applies the In predicate on the "personal_name" field.
+func PersonalNameIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldPersonalName, vs...))
+}
+
+// PersonalNameNotIn applies the NotIn predicate on the "personal_name" field.
+func PersonalNameNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldPersonalName, vs...))
+}
+
+// PersonalNameGT applies the GT predicate on the "personal_name" field.
+func PersonalNameGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldPersonalName, v))
+}
+
+// PersonalNameGTE applies the GTE predicate on the "personal_name" field.
+func PersonalNameGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldPersonalName, v))
+}
+
+// PersonalNameLT applies the LT predicate on the "personal_name" field.
+func PersonalNameLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldPersonalName, v))
+}
+
+// PersonalNameLTE applies the LTE predicate on the "personal_name" field.
+func PersonalNameLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldPersonalName, v))
+}
+
+// PersonalNameContains applies the Contains predicate on the "personal_name" field.
+func PersonalNameContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldPersonalName, v))
+}
+
+// PersonalNameHasPrefix applies the HasPrefix predicate on the "personal_name" field.
+func PersonalNameHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldPersonalName, v))
+}
+
+// PersonalNameHasSuffix applies the HasSuffix predicate on the "personal_name" field.
+func PersonalNameHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldPersonalName, v))
+}
+
+// PersonalNameEqualFold applies the EqualFold predicate on the "personal_name" field.
+func PersonalNameEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldPersonalName, v))
+}
+
+// PersonalNameContainsFold applies the ContainsFold predicate on the "personal_name" field.
+func PersonalNameContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldPersonalName, v))
+}
+
+// PhoneEQ applies the EQ predicate on the "phone" field.
+func PhoneEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldPhone, v))
+}
+
+// PhoneNEQ applies the NEQ predicate on the "phone" field.
+func PhoneNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldPhone, v))
+}
+
+// PhoneIn applies the In predicate on the "phone" field.
+func PhoneIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldPhone, vs...))
+}
+
+// PhoneNotIn applies the NotIn predicate on the "phone" field.
+func PhoneNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldPhone, vs...))
+}
+
+// PhoneGT applies the GT predicate on the "phone" field.
+func PhoneGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldPhone, v))
+}
+
+// PhoneGTE applies the GTE predicate on the "phone" field.
+func PhoneGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldPhone, v))
+}
+
+// PhoneLT applies the LT predicate on the "phone" field.
+func PhoneLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldPhone, v))
+}
+
+// PhoneLTE applies the LTE predicate on the "phone" field.
+func PhoneLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldPhone, v))
+}
+
+// PhoneContains applies the Contains predicate on the "phone" field.
+func PhoneContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldPhone, v))
+}
+
+// PhoneHasPrefix applies the HasPrefix predicate on the "phone" field.
+func PhoneHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldPhone, v))
+}
+
+// PhoneHasSuffix applies the HasSuffix predicate on the "phone" field.
+func PhoneHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldPhone, v))
+}
+
+// PhoneEqualFold applies the EqualFold predicate on the "phone" field.
+func PhoneEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldPhone, v))
+}
+
+// PhoneContainsFold applies the ContainsFold predicate on the "phone" field.
+func PhoneContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldPhone, v))
+}
+
+// BankCardNumberEQ applies the EQ predicate on the "bank_card_number" field.
+func BankCardNumberEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldBankCardNumber, v))
+}
+
+// BankCardNumberNEQ applies the NEQ predicate on the "bank_card_number" field.
+func BankCardNumberNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldBankCardNumber, v))
+}
+
+// BankCardNumberIn applies the In predicate on the "bank_card_number" field.
+func BankCardNumberIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldBankCardNumber, vs...))
+}
+
+// BankCardNumberNotIn applies the NotIn predicate on the "bank_card_number" field.
+func BankCardNumberNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldBankCardNumber, vs...))
+}
+
+// BankCardNumberGT applies the GT predicate on the "bank_card_number" field.
+func BankCardNumberGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldBankCardNumber, v))
+}
+
+// BankCardNumberGTE applies the GTE predicate on the "bank_card_number" field.
+func BankCardNumberGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldBankCardNumber, v))
+}
+
+// BankCardNumberLT applies the LT predicate on the "bank_card_number" field.
+func BankCardNumberLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldBankCardNumber, v))
+}
+
+// BankCardNumberLTE applies the LTE predicate on the "bank_card_number" field.
+func BankCardNumberLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldBankCardNumber, v))
+}
+
+// BankCardNumberContains applies the Contains predicate on the "bank_card_number" field.
+func BankCardNumberContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldBankCardNumber, v))
+}
+
+// BankCardNumberHasPrefix applies the HasPrefix predicate on the "bank_card_number" field.
+func BankCardNumberHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldBankCardNumber, v))
+}
+
+// BankCardNumberHasSuffix applies the HasSuffix predicate on the "bank_card_number" field.
+func BankCardNumberHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldBankCardNumber, v))
+}
+
+// BankCardNumberEqualFold applies the EqualFold predicate on the "bank_card_number" field.
+func BankCardNumberEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldBankCardNumber, v))
+}
+
+// BankCardNumberContainsFold applies the ContainsFold predicate on the "bank_card_number" field.
+func BankCardNumberContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldBankCardNumber, v))
+}
+
+// BankEQ applies the EQ predicate on the "bank" field.
+func BankEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldBank, v))
+}
+
+// BankNEQ applies the NEQ predicate on the "bank" field.
+func BankNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldBank, v))
+}
+
+// BankIn applies the In predicate on the "bank" field.
+func BankIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldBank, vs...))
+}
+
+// BankNotIn applies the NotIn predicate on the "bank" field.
+func BankNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldBank, vs...))
+}
+
+// BankGT applies the GT predicate on the "bank" field.
+func BankGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldBank, v))
+}
+
+// BankGTE applies the GTE predicate on the "bank" field.
+func BankGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldBank, v))
+}
+
+// BankLT applies the LT predicate on the "bank" field.
+func BankLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldBank, v))
+}
+
+// BankLTE applies the LTE predicate on the "bank" field.
+func BankLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldBank, v))
+}
+
+// BankContains applies the Contains predicate on the "bank" field.
+func BankContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldBank, v))
+}
+
+// BankHasPrefix applies the HasPrefix predicate on the "bank" field.
+func BankHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldBank, v))
+}
+
+// BankHasSuffix applies the HasSuffix predicate on the "bank" field.
+func BankHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldBank, v))
+}
+
+// BankEqualFold applies the EqualFold predicate on the "bank" field.
+func BankEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldBank, v))
+}
+
+// BankContainsFold applies the ContainsFold predicate on the "bank" field.
+func BankContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldBank, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

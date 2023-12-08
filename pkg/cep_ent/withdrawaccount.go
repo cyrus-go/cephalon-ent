@@ -32,12 +32,20 @@ type WithdrawAccount struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键用户 id
 	UserID int64 `json:"user_id,string"`
-	// 商户名称
+	// 威付通商户名称
 	BusinessName string `json:"business_name"`
 	// 商户类型
 	BusinessType enums.BusinessType `json:"business_type"`
-	// 货币余额
-	BusinessID int64 `json:"amount"`
+	// 商户 id
+	BusinessID int64 `json:"business_id"`
+	// 个人商户名称
+	PersonalName string `json:"personal_name"`
+	// 个人商户手机号
+	Phone string `json:"phone"`
+	// 银行卡号
+	BankCardNumber string `json:"bank_card_number"`
+	// 开户支行
+	Bank string `json:"bank"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WithdrawAccountQuery when eager-loading is set.
 	Edges        WithdrawAccountEdges `json:"edges"`
@@ -73,7 +81,7 @@ func (*WithdrawAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case withdrawaccount.FieldID, withdrawaccount.FieldCreatedBy, withdrawaccount.FieldUpdatedBy, withdrawaccount.FieldUserID, withdrawaccount.FieldBusinessID:
 			values[i] = new(sql.NullInt64)
-		case withdrawaccount.FieldBusinessName, withdrawaccount.FieldBusinessType:
+		case withdrawaccount.FieldBusinessName, withdrawaccount.FieldBusinessType, withdrawaccount.FieldPersonalName, withdrawaccount.FieldPhone, withdrawaccount.FieldBankCardNumber, withdrawaccount.FieldBank:
 			values[i] = new(sql.NullString)
 		case withdrawaccount.FieldCreatedAt, withdrawaccount.FieldUpdatedAt, withdrawaccount.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -152,6 +160,30 @@ func (wa *WithdrawAccount) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				wa.BusinessID = value.Int64
 			}
+		case withdrawaccount.FieldPersonalName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field personal_name", values[i])
+			} else if value.Valid {
+				wa.PersonalName = value.String
+			}
+		case withdrawaccount.FieldPhone:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field phone", values[i])
+			} else if value.Valid {
+				wa.Phone = value.String
+			}
+		case withdrawaccount.FieldBankCardNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field bank_card_number", values[i])
+			} else if value.Valid {
+				wa.BankCardNumber = value.String
+			}
+		case withdrawaccount.FieldBank:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field bank", values[i])
+			} else if value.Valid {
+				wa.Bank = value.String
+			}
 		default:
 			wa.selectValues.Set(columns[i], values[i])
 		}
@@ -219,6 +251,18 @@ func (wa *WithdrawAccount) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("business_id=")
 	builder.WriteString(fmt.Sprintf("%v", wa.BusinessID))
+	builder.WriteString(", ")
+	builder.WriteString("personal_name=")
+	builder.WriteString(wa.PersonalName)
+	builder.WriteString(", ")
+	builder.WriteString("phone=")
+	builder.WriteString(wa.Phone)
+	builder.WriteString(", ")
+	builder.WriteString("bank_card_number=")
+	builder.WriteString(wa.BankCardNumber)
+	builder.WriteString(", ")
+	builder.WriteString("bank=")
+	builder.WriteString(wa.Bank)
 	builder.WriteByte(')')
 	return builder.String()
 }

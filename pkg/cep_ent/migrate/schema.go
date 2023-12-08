@@ -1662,9 +1662,13 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "business_name", Type: field.TypeString, Comment: "商户名称", Default: ""},
+		{Name: "business_name", Type: field.TypeString, Comment: "威付通商户名称", Default: ""},
 		{Name: "business_type", Type: field.TypeEnum, Comment: "商户类型", Enums: []string{"yun", "wft"}, Default: "yun"},
-		{Name: "business_id", Type: field.TypeInt64, Comment: "货币余额", Default: 0},
+		{Name: "business_id", Type: field.TypeInt64, Comment: "商户 id", Default: 0},
+		{Name: "personal_name", Type: field.TypeString, Comment: "个人商户名称", Default: "未设置昵称"},
+		{Name: "phone", Type: field.TypeString, Comment: "个人商户手机号", Default: ""},
+		{Name: "bank_card_number", Type: field.TypeString, Comment: "银行卡号", Default: ""},
+		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// WithdrawAccountsTable holds the schema information for the "withdraw_accounts" table.
@@ -1676,7 +1680,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "withdraw_accounts_users_withdraw_accounts",
-				Columns:    []*schema.Column{WithdrawAccountsColumns[9]},
+				Columns:    []*schema.Column{WithdrawAccountsColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

@@ -60959,26 +60959,30 @@ func (m *WalletMutation) ResetEdge(name string) error {
 // WithdrawAccountMutation represents an operation that mutates the WithdrawAccount nodes in the graph.
 type WithdrawAccountMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int64
-	created_by     *int64
-	addcreated_by  *int64
-	updated_by     *int64
-	addupdated_by  *int64
-	created_at     *time.Time
-	updated_at     *time.Time
-	deleted_at     *time.Time
-	business_name  *string
-	business_type  *enums.BusinessType
-	business_id    *int64
-	addbusiness_id *int64
-	clearedFields  map[string]struct{}
-	user           *int64
-	cleareduser    bool
-	done           bool
-	oldValue       func(context.Context) (*WithdrawAccount, error)
-	predicates     []predicate.WithdrawAccount
+	op               Op
+	typ              string
+	id               *int64
+	created_by       *int64
+	addcreated_by    *int64
+	updated_by       *int64
+	addupdated_by    *int64
+	created_at       *time.Time
+	updated_at       *time.Time
+	deleted_at       *time.Time
+	business_name    *string
+	business_type    *enums.BusinessType
+	business_id      *int64
+	addbusiness_id   *int64
+	personal_name    *string
+	phone            *string
+	bank_card_number *string
+	bank             *string
+	clearedFields    map[string]struct{}
+	user             *int64
+	cleareduser      bool
+	done             bool
+	oldValue         func(context.Context) (*WithdrawAccount, error)
+	predicates       []predicate.WithdrawAccount
 }
 
 var _ ent.Mutation = (*WithdrawAccountMutation)(nil)
@@ -61469,6 +61473,150 @@ func (m *WithdrawAccountMutation) ResetBusinessID() {
 	m.addbusiness_id = nil
 }
 
+// SetPersonalName sets the "personal_name" field.
+func (m *WithdrawAccountMutation) SetPersonalName(s string) {
+	m.personal_name = &s
+}
+
+// PersonalName returns the value of the "personal_name" field in the mutation.
+func (m *WithdrawAccountMutation) PersonalName() (r string, exists bool) {
+	v := m.personal_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPersonalName returns the old "personal_name" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldPersonalName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPersonalName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPersonalName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPersonalName: %w", err)
+	}
+	return oldValue.PersonalName, nil
+}
+
+// ResetPersonalName resets all changes to the "personal_name" field.
+func (m *WithdrawAccountMutation) ResetPersonalName() {
+	m.personal_name = nil
+}
+
+// SetPhone sets the "phone" field.
+func (m *WithdrawAccountMutation) SetPhone(s string) {
+	m.phone = &s
+}
+
+// Phone returns the value of the "phone" field in the mutation.
+func (m *WithdrawAccountMutation) Phone() (r string, exists bool) {
+	v := m.phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhone returns the old "phone" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhone: %w", err)
+	}
+	return oldValue.Phone, nil
+}
+
+// ResetPhone resets all changes to the "phone" field.
+func (m *WithdrawAccountMutation) ResetPhone() {
+	m.phone = nil
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (m *WithdrawAccountMutation) SetBankCardNumber(s string) {
+	m.bank_card_number = &s
+}
+
+// BankCardNumber returns the value of the "bank_card_number" field in the mutation.
+func (m *WithdrawAccountMutation) BankCardNumber() (r string, exists bool) {
+	v := m.bank_card_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBankCardNumber returns the old "bank_card_number" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBankCardNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBankCardNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBankCardNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBankCardNumber: %w", err)
+	}
+	return oldValue.BankCardNumber, nil
+}
+
+// ResetBankCardNumber resets all changes to the "bank_card_number" field.
+func (m *WithdrawAccountMutation) ResetBankCardNumber() {
+	m.bank_card_number = nil
+}
+
+// SetBank sets the "bank" field.
+func (m *WithdrawAccountMutation) SetBank(s string) {
+	m.bank = &s
+}
+
+// Bank returns the value of the "bank" field in the mutation.
+func (m *WithdrawAccountMutation) Bank() (r string, exists bool) {
+	v := m.bank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBank returns the old "bank" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBank(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBank is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBank requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBank: %w", err)
+	}
+	return oldValue.Bank, nil
+}
+
+// ResetBank resets all changes to the "bank" field.
+func (m *WithdrawAccountMutation) ResetBank() {
+	m.bank = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *WithdrawAccountMutation) ClearUser() {
 	m.cleareduser = true
@@ -61530,7 +61678,7 @@ func (m *WithdrawAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawAccountMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, withdrawaccount.FieldCreatedBy)
 	}
@@ -61558,6 +61706,18 @@ func (m *WithdrawAccountMutation) Fields() []string {
 	if m.business_id != nil {
 		fields = append(fields, withdrawaccount.FieldBusinessID)
 	}
+	if m.personal_name != nil {
+		fields = append(fields, withdrawaccount.FieldPersonalName)
+	}
+	if m.phone != nil {
+		fields = append(fields, withdrawaccount.FieldPhone)
+	}
+	if m.bank_card_number != nil {
+		fields = append(fields, withdrawaccount.FieldBankCardNumber)
+	}
+	if m.bank != nil {
+		fields = append(fields, withdrawaccount.FieldBank)
+	}
 	return fields
 }
 
@@ -61584,6 +61744,14 @@ func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.BusinessType()
 	case withdrawaccount.FieldBusinessID:
 		return m.BusinessID()
+	case withdrawaccount.FieldPersonalName:
+		return m.PersonalName()
+	case withdrawaccount.FieldPhone:
+		return m.Phone()
+	case withdrawaccount.FieldBankCardNumber:
+		return m.BankCardNumber()
+	case withdrawaccount.FieldBank:
+		return m.Bank()
 	}
 	return nil, false
 }
@@ -61611,6 +61779,14 @@ func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (en
 		return m.OldBusinessType(ctx)
 	case withdrawaccount.FieldBusinessID:
 		return m.OldBusinessID(ctx)
+	case withdrawaccount.FieldPersonalName:
+		return m.OldPersonalName(ctx)
+	case withdrawaccount.FieldPhone:
+		return m.OldPhone(ctx)
+	case withdrawaccount.FieldBankCardNumber:
+		return m.OldBankCardNumber(ctx)
+	case withdrawaccount.FieldBank:
+		return m.OldBank(ctx)
 	}
 	return nil, fmt.Errorf("unknown WithdrawAccount field %s", name)
 }
@@ -61682,6 +61858,34 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBusinessID(v)
+		return nil
+	case withdrawaccount.FieldPersonalName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPersonalName(v)
+		return nil
+	case withdrawaccount.FieldPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhone(v)
+		return nil
+	case withdrawaccount.FieldBankCardNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBankCardNumber(v)
+		return nil
+	case withdrawaccount.FieldBank:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBank(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)
@@ -61797,6 +62001,18 @@ func (m *WithdrawAccountMutation) ResetField(name string) error {
 		return nil
 	case withdrawaccount.FieldBusinessID:
 		m.ResetBusinessID()
+		return nil
+	case withdrawaccount.FieldPersonalName:
+		m.ResetPersonalName()
+		return nil
+	case withdrawaccount.FieldPhone:
+		m.ResetPhone()
+		return nil
+	case withdrawaccount.FieldBankCardNumber:
+		m.ResetBankCardNumber()
+		return nil
+	case withdrawaccount.FieldBank:
+		m.ResetBank()
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)

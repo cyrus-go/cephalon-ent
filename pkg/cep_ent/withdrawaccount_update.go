@@ -156,6 +156,62 @@ func (wau *WithdrawAccountUpdate) AddBusinessID(i int64) *WithdrawAccountUpdate 
 	return wau
 }
 
+// SetPersonalName sets the "personal_name" field.
+func (wau *WithdrawAccountUpdate) SetPersonalName(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetPersonalName(s)
+	return wau
+}
+
+// SetNillablePersonalName sets the "personal_name" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillablePersonalName(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetPersonalName(*s)
+	}
+	return wau
+}
+
+// SetPhone sets the "phone" field.
+func (wau *WithdrawAccountUpdate) SetPhone(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetPhone(s)
+	return wau
+}
+
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillablePhone(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetPhone(*s)
+	}
+	return wau
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (wau *WithdrawAccountUpdate) SetBankCardNumber(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetBankCardNumber(s)
+	return wau
+}
+
+// SetNillableBankCardNumber sets the "bank_card_number" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableBankCardNumber(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetBankCardNumber(*s)
+	}
+	return wau
+}
+
+// SetBank sets the "bank" field.
+func (wau *WithdrawAccountUpdate) SetBank(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetBank(s)
+	return wau
+}
+
+// SetNillableBank sets the "bank" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableBank(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetBank(*s)
+	}
+	return wau
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wau *WithdrawAccountUpdate) SetUser(u *User) *WithdrawAccountUpdate {
 	return wau.SetUserID(u.ID)
@@ -268,6 +324,18 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := wau.mutation.AddedBusinessID(); ok {
 		_spec.AddField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
+	}
+	if value, ok := wau.mutation.PersonalName(); ok {
+		_spec.SetField(withdrawaccount.FieldPersonalName, field.TypeString, value)
+	}
+	if value, ok := wau.mutation.Phone(); ok {
+		_spec.SetField(withdrawaccount.FieldPhone, field.TypeString, value)
+	}
+	if value, ok := wau.mutation.BankCardNumber(); ok {
+		_spec.SetField(withdrawaccount.FieldBankCardNumber, field.TypeString, value)
+	}
+	if value, ok := wau.mutation.Bank(); ok {
+		_spec.SetField(withdrawaccount.FieldBank, field.TypeString, value)
 	}
 	if wau.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -445,6 +513,62 @@ func (wauo *WithdrawAccountUpdateOne) AddBusinessID(i int64) *WithdrawAccountUpd
 	return wauo
 }
 
+// SetPersonalName sets the "personal_name" field.
+func (wauo *WithdrawAccountUpdateOne) SetPersonalName(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetPersonalName(s)
+	return wauo
+}
+
+// SetNillablePersonalName sets the "personal_name" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillablePersonalName(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetPersonalName(*s)
+	}
+	return wauo
+}
+
+// SetPhone sets the "phone" field.
+func (wauo *WithdrawAccountUpdateOne) SetPhone(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetPhone(s)
+	return wauo
+}
+
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillablePhone(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetPhone(*s)
+	}
+	return wauo
+}
+
+// SetBankCardNumber sets the "bank_card_number" field.
+func (wauo *WithdrawAccountUpdateOne) SetBankCardNumber(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetBankCardNumber(s)
+	return wauo
+}
+
+// SetNillableBankCardNumber sets the "bank_card_number" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableBankCardNumber(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetBankCardNumber(*s)
+	}
+	return wauo
+}
+
+// SetBank sets the "bank" field.
+func (wauo *WithdrawAccountUpdateOne) SetBank(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetBank(s)
+	return wauo
+}
+
+// SetNillableBank sets the "bank" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableBank(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetBank(*s)
+	}
+	return wauo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wauo *WithdrawAccountUpdateOne) SetUser(u *User) *WithdrawAccountUpdateOne {
 	return wauo.SetUserID(u.ID)
@@ -587,6 +711,18 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 	}
 	if value, ok := wauo.mutation.AddedBusinessID(); ok {
 		_spec.AddField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
+	}
+	if value, ok := wauo.mutation.PersonalName(); ok {
+		_spec.SetField(withdrawaccount.FieldPersonalName, field.TypeString, value)
+	}
+	if value, ok := wauo.mutation.Phone(); ok {
+		_spec.SetField(withdrawaccount.FieldPhone, field.TypeString, value)
+	}
+	if value, ok := wauo.mutation.BankCardNumber(); ok {
+		_spec.SetField(withdrawaccount.FieldBankCardNumber, field.TypeString, value)
+	}
+	if value, ok := wauo.mutation.Bank(); ok {
+		_spec.SetField(withdrawaccount.FieldBank, field.TypeString, value)
 	}
 	if wauo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
