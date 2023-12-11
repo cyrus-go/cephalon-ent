@@ -59,6 +59,7 @@ func (MissionOrder) Edges() []ent.Edge {
 		edge.From("mission_batch", MissionBatch.Type).Ref("mission_orders").Field("mission_batch_id").Unique().Required(),
 		edge.From("mission", Mission.Type).Ref("mission_orders").Field("mission_id").Unique().Required(),
 		edge.From("device", Device.Type).Ref("mission_orders").Field("device_id").Unique().Required(),
+		edge.To("extra_service_orders", ExtraServiceOrder.Type),
 	}
 }
 

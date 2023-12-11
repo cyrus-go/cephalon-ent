@@ -15761,6 +15761,8 @@ type ExtraServiceOrderMutation struct {
 	clearedFields        map[string]struct{}
 	mission              *int64
 	clearedmission       bool
+	mission_order        *int64
+	clearedmission_order bool
 	symbol               *int64
 	clearedsymbol        bool
 	mission_batch        *int64
@@ -16130,6 +16132,42 @@ func (m *ExtraServiceOrderMutation) ResetMissionID() {
 	m.mission = nil
 }
 
+// SetMissionOrderID sets the "mission_order_id" field.
+func (m *ExtraServiceOrderMutation) SetMissionOrderID(i int64) {
+	m.mission_order = &i
+}
+
+// MissionOrderID returns the value of the "mission_order_id" field in the mutation.
+func (m *ExtraServiceOrderMutation) MissionOrderID() (r int64, exists bool) {
+	v := m.mission_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionOrderID returns the old "mission_order_id" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldMissionOrderID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionOrderID: %w", err)
+	}
+	return oldValue.MissionOrderID, nil
+}
+
+// ResetMissionOrderID resets all changes to the "mission_order_id" field.
+func (m *ExtraServiceOrderMutation) ResetMissionOrderID() {
+	m.mission_order = nil
+}
+
 // SetAmount sets the "amount" field.
 func (m *ExtraServiceOrderMutation) SetAmount(i int64) {
 	m.amount = &i
@@ -16475,6 +16513,33 @@ func (m *ExtraServiceOrderMutation) ResetMission() {
 	m.clearedmission = false
 }
 
+// ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
+func (m *ExtraServiceOrderMutation) ClearMissionOrder() {
+	m.clearedmission_order = true
+	m.clearedFields[extraserviceorder.FieldMissionOrderID] = struct{}{}
+}
+
+// MissionOrderCleared reports if the "mission_order" edge to the MissionOrder entity was cleared.
+func (m *ExtraServiceOrderMutation) MissionOrderCleared() bool {
+	return m.clearedmission_order
+}
+
+// MissionOrderIDs returns the "mission_order" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionOrderID instead. It exists only for internal usage by the builders.
+func (m *ExtraServiceOrderMutation) MissionOrderIDs() (ids []int64) {
+	if id := m.mission_order; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionOrder resets all changes to the "mission_order" edge.
+func (m *ExtraServiceOrderMutation) ResetMissionOrder() {
+	m.mission_order = nil
+	m.clearedmission_order = false
+}
+
 // ClearSymbol clears the "symbol" edge to the Symbol entity.
 func (m *ExtraServiceOrderMutation) ClearSymbol() {
 	m.clearedsymbol = true
@@ -16563,7 +16628,7 @@ func (m *ExtraServiceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServiceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceorder.FieldCreatedBy)
 	}
@@ -16581,6 +16646,9 @@ func (m *ExtraServiceOrderMutation) Fields() []string {
 	}
 	if m.mission != nil {
 		fields = append(fields, extraserviceorder.FieldMissionID)
+	}
+	if m.mission_order != nil {
+		fields = append(fields, extraserviceorder.FieldMissionOrderID)
 	}
 	if m.amount != nil {
 		fields = append(fields, extraserviceorder.FieldAmount)
@@ -16623,6 +16691,8 @@ func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case extraserviceorder.FieldMissionID:
 		return m.MissionID()
+	case extraserviceorder.FieldMissionOrderID:
+		return m.MissionOrderID()
 	case extraserviceorder.FieldAmount:
 		return m.Amount()
 	case extraserviceorder.FieldSymbolID:
@@ -16658,6 +16728,8 @@ func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (
 		return m.OldDeletedAt(ctx)
 	case extraserviceorder.FieldMissionID:
 		return m.OldMissionID(ctx)
+	case extraserviceorder.FieldMissionOrderID:
+		return m.OldMissionOrderID(ctx)
 	case extraserviceorder.FieldAmount:
 		return m.OldAmount(ctx)
 	case extraserviceorder.FieldSymbolID:
@@ -16722,6 +16794,13 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionID(v)
+		return nil
+	case extraserviceorder.FieldMissionOrderID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionOrderID(v)
 		return nil
 	case extraserviceorder.FieldAmount:
 		v, ok := value.(int64)
@@ -16905,6 +16984,9 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 	case extraserviceorder.FieldMissionID:
 		m.ResetMissionID()
 		return nil
+	case extraserviceorder.FieldMissionOrderID:
+		m.ResetMissionOrderID()
+		return nil
 	case extraserviceorder.FieldAmount:
 		m.ResetAmount()
 		return nil
@@ -16932,9 +17014,12 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ExtraServiceOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.mission != nil {
 		edges = append(edges, extraserviceorder.EdgeMission)
+	}
+	if m.mission_order != nil {
+		edges = append(edges, extraserviceorder.EdgeMissionOrder)
 	}
 	if m.symbol != nil {
 		edges = append(edges, extraserviceorder.EdgeSymbol)
@@ -16953,6 +17038,10 @@ func (m *ExtraServiceOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.mission; id != nil {
 			return []ent.Value{*id}
 		}
+	case extraserviceorder.EdgeMissionOrder:
+		if id := m.mission_order; id != nil {
+			return []ent.Value{*id}
+		}
 	case extraserviceorder.EdgeSymbol:
 		if id := m.symbol; id != nil {
 			return []ent.Value{*id}
@@ -16967,7 +17056,7 @@ func (m *ExtraServiceOrderMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ExtraServiceOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -16979,9 +17068,12 @@ func (m *ExtraServiceOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ExtraServiceOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedmission {
 		edges = append(edges, extraserviceorder.EdgeMission)
+	}
+	if m.clearedmission_order {
+		edges = append(edges, extraserviceorder.EdgeMissionOrder)
 	}
 	if m.clearedsymbol {
 		edges = append(edges, extraserviceorder.EdgeSymbol)
@@ -16998,6 +17090,8 @@ func (m *ExtraServiceOrderMutation) EdgeCleared(name string) bool {
 	switch name {
 	case extraserviceorder.EdgeMission:
 		return m.clearedmission
+	case extraserviceorder.EdgeMissionOrder:
+		return m.clearedmission_order
 	case extraserviceorder.EdgeSymbol:
 		return m.clearedsymbol
 	case extraserviceorder.EdgeMissionBatch:
@@ -17012,6 +17106,9 @@ func (m *ExtraServiceOrderMutation) ClearEdge(name string) error {
 	switch name {
 	case extraserviceorder.EdgeMission:
 		m.ClearMission()
+		return nil
+	case extraserviceorder.EdgeMissionOrder:
+		m.ClearMissionOrder()
 		return nil
 	case extraserviceorder.EdgeSymbol:
 		m.ClearSymbol()
@@ -17029,6 +17126,9 @@ func (m *ExtraServiceOrderMutation) ResetEdge(name string) error {
 	switch name {
 	case extraserviceorder.EdgeMission:
 		m.ResetMission()
+		return nil
+	case extraserviceorder.EdgeMissionOrder:
+		m.ResetMissionOrder()
 		return nil
 	case extraserviceorder.EdgeSymbol:
 		m.ResetSymbol()
@@ -35203,63 +35303,66 @@ func (m *MissionKindMutation) ResetEdge(name string) error {
 // MissionOrderMutation represents an operation that mutates the MissionOrder nodes in the graph.
 type MissionOrderMutation struct {
 	config
-	op                    Op
-	typ                   string
-	id                    *int64
-	created_by            *int64
-	addcreated_by         *int64
-	updated_by            *int64
-	addupdated_by         *int64
-	created_at            *time.Time
-	updated_at            *time.Time
-	deleted_at            *time.Time
-	status                *enums.MissionOrderStatus
-	consume_amount        *int64
-	addconsume_amount     *int64
-	produce_amount        *int64
-	addproduce_amount     *int64
-	gas_amount            *int64
-	addgas_amount         *int64
-	mission_type          *enums.MissionType
-	mission_billing_type  *enums.MissionBillingType
-	call_way              *enums.MissionCallWay
-	serial_number         *string
-	started_at            *time.Time
-	finished_at           *time.Time
-	buy_duration          *int64
-	addbuy_duration       *int64
-	plan_started_at       *time.Time
-	plan_finished_at      *time.Time
-	expired_warning_time  *time.Time
-	mission_batch_number  *string
-	total_amount          *int64
-	addtotal_amount       *int64
-	settled_amount        *int64
-	addsettled_amount     *int64
-	settled_count         *int64
-	addsettled_count      *int64
-	total_settle_count    *int64
-	addtotal_settle_count *int64
-	lately_settled_at     *time.Time
-	clearedFields         map[string]struct{}
-	consume_user          *int64
-	clearedconsume_user   bool
-	produce_user          *int64
-	clearedproduce_user   bool
-	symbol                *int64
-	clearedsymbol         bool
-	bills                 map[int64]struct{}
-	removedbills          map[int64]struct{}
-	clearedbills          bool
-	mission_batch         *int64
-	clearedmission_batch  bool
-	mission               *int64
-	clearedmission        bool
-	device                *int64
-	cleareddevice         bool
-	done                  bool
-	oldValue              func(context.Context) (*MissionOrder, error)
-	predicates            []predicate.MissionOrder
+	op                          Op
+	typ                         string
+	id                          *int64
+	created_by                  *int64
+	addcreated_by               *int64
+	updated_by                  *int64
+	addupdated_by               *int64
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	deleted_at                  *time.Time
+	status                      *enums.MissionOrderStatus
+	consume_amount              *int64
+	addconsume_amount           *int64
+	produce_amount              *int64
+	addproduce_amount           *int64
+	gas_amount                  *int64
+	addgas_amount               *int64
+	mission_type                *enums.MissionType
+	mission_billing_type        *enums.MissionBillingType
+	call_way                    *enums.MissionCallWay
+	serial_number               *string
+	started_at                  *time.Time
+	finished_at                 *time.Time
+	buy_duration                *int64
+	addbuy_duration             *int64
+	plan_started_at             *time.Time
+	plan_finished_at            *time.Time
+	expired_warning_time        *time.Time
+	mission_batch_number        *string
+	total_amount                *int64
+	addtotal_amount             *int64
+	settled_amount              *int64
+	addsettled_amount           *int64
+	settled_count               *int64
+	addsettled_count            *int64
+	total_settle_count          *int64
+	addtotal_settle_count       *int64
+	lately_settled_at           *time.Time
+	clearedFields               map[string]struct{}
+	consume_user                *int64
+	clearedconsume_user         bool
+	produce_user                *int64
+	clearedproduce_user         bool
+	symbol                      *int64
+	clearedsymbol               bool
+	bills                       map[int64]struct{}
+	removedbills                map[int64]struct{}
+	clearedbills                bool
+	mission_batch               *int64
+	clearedmission_batch        bool
+	mission                     *int64
+	clearedmission              bool
+	device                      *int64
+	cleareddevice               bool
+	extra_service_orders        map[int64]struct{}
+	removedextra_service_orders map[int64]struct{}
+	clearedextra_service_orders bool
+	done                        bool
+	oldValue                    func(context.Context) (*MissionOrder, error)
+	predicates                  []predicate.MissionOrder
 }
 
 var _ ent.Mutation = (*MissionOrderMutation)(nil)
@@ -36937,6 +37040,60 @@ func (m *MissionOrderMutation) ResetDevice() {
 	m.cleareddevice = false
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by ids.
+func (m *MissionOrderMutation) AddExtraServiceOrderIDs(ids ...int64) {
+	if m.extra_service_orders == nil {
+		m.extra_service_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.extra_service_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearExtraServiceOrders clears the "extra_service_orders" edge to the ExtraServiceOrder entity.
+func (m *MissionOrderMutation) ClearExtraServiceOrders() {
+	m.clearedextra_service_orders = true
+}
+
+// ExtraServiceOrdersCleared reports if the "extra_service_orders" edge to the ExtraServiceOrder entity was cleared.
+func (m *MissionOrderMutation) ExtraServiceOrdersCleared() bool {
+	return m.clearedextra_service_orders
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (m *MissionOrderMutation) RemoveExtraServiceOrderIDs(ids ...int64) {
+	if m.removedextra_service_orders == nil {
+		m.removedextra_service_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.extra_service_orders, ids[i])
+		m.removedextra_service_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedExtraServiceOrders returns the removed IDs of the "extra_service_orders" edge to the ExtraServiceOrder entity.
+func (m *MissionOrderMutation) RemovedExtraServiceOrdersIDs() (ids []int64) {
+	for id := range m.removedextra_service_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ExtraServiceOrdersIDs returns the "extra_service_orders" edge IDs in the mutation.
+func (m *MissionOrderMutation) ExtraServiceOrdersIDs() (ids []int64) {
+	for id := range m.extra_service_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetExtraServiceOrders resets all changes to the "extra_service_orders" edge.
+func (m *MissionOrderMutation) ResetExtraServiceOrders() {
+	m.extra_service_orders = nil
+	m.clearedextra_service_orders = false
+	m.removedextra_service_orders = nil
+}
+
 // Where appends a list predicates to the MissionOrderMutation builder.
 func (m *MissionOrderMutation) Where(ps ...predicate.MissionOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -37724,7 +37881,7 @@ func (m *MissionOrderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.consume_user != nil {
 		edges = append(edges, missionorder.EdgeConsumeUser)
 	}
@@ -37745,6 +37902,9 @@ func (m *MissionOrderMutation) AddedEdges() []string {
 	}
 	if m.device != nil {
 		edges = append(edges, missionorder.EdgeDevice)
+	}
+	if m.extra_service_orders != nil {
+		edges = append(edges, missionorder.EdgeExtraServiceOrders)
 	}
 	return edges
 }
@@ -37783,15 +37943,24 @@ func (m *MissionOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.device; id != nil {
 			return []ent.Value{*id}
 		}
+	case missionorder.EdgeExtraServiceOrders:
+		ids := make([]ent.Value, 0, len(m.extra_service_orders))
+		for id := range m.extra_service_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedbills != nil {
 		edges = append(edges, missionorder.EdgeBills)
+	}
+	if m.removedextra_service_orders != nil {
+		edges = append(edges, missionorder.EdgeExtraServiceOrders)
 	}
 	return edges
 }
@@ -37806,13 +37975,19 @@ func (m *MissionOrderMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case missionorder.EdgeExtraServiceOrders:
+		ids := make([]ent.Value, 0, len(m.removedextra_service_orders))
+		for id := range m.removedextra_service_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.clearedconsume_user {
 		edges = append(edges, missionorder.EdgeConsumeUser)
 	}
@@ -37833,6 +38008,9 @@ func (m *MissionOrderMutation) ClearedEdges() []string {
 	}
 	if m.cleareddevice {
 		edges = append(edges, missionorder.EdgeDevice)
+	}
+	if m.clearedextra_service_orders {
+		edges = append(edges, missionorder.EdgeExtraServiceOrders)
 	}
 	return edges
 }
@@ -37855,6 +38033,8 @@ func (m *MissionOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedmission
 	case missionorder.EdgeDevice:
 		return m.cleareddevice
+	case missionorder.EdgeExtraServiceOrders:
+		return m.clearedextra_service_orders
 	}
 	return false
 }
@@ -37909,6 +38089,9 @@ func (m *MissionOrderMutation) ResetEdge(name string) error {
 		return nil
 	case missionorder.EdgeDevice:
 		m.ResetDevice()
+		return nil
+	case missionorder.EdgeExtraServiceOrders:
+		m.ResetExtraServiceOrders()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionOrder edge %s", name)

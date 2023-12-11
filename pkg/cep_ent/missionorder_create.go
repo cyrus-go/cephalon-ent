@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -520,6 +521,21 @@ func (moc *MissionOrderCreate) SetMission(m *Mission) *MissionOrderCreate {
 // SetDevice sets the "device" edge to the Device entity.
 func (moc *MissionOrderCreate) SetDevice(d *Device) *MissionOrderCreate {
 	return moc.SetDeviceID(d.ID)
+}
+
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (moc *MissionOrderCreate) AddExtraServiceOrderIDs(ids ...int64) *MissionOrderCreate {
+	moc.mutation.AddExtraServiceOrderIDs(ids...)
+	return moc
+}
+
+// AddExtraServiceOrders adds the "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (moc *MissionOrderCreate) AddExtraServiceOrders(e ...*ExtraServiceOrder) *MissionOrderCreate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return moc.AddExtraServiceOrderIDs(ids...)
 }
 
 // Mutation returns the MissionOrderMutation object of the builder.
@@ -1060,6 +1076,22 @@ func (moc *MissionOrderCreate) createSpec() (*MissionOrder, *sqlgraph.CreateSpec
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.DeviceID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := moc.mutation.ExtraServiceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

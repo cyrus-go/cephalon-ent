@@ -92,6 +92,8 @@ const (
 	EdgeMission = "mission"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
+	// EdgeExtraServiceOrders holds the string denoting the extra_service_orders edge name in mutations.
+	EdgeExtraServiceOrders = "extra_service_orders"
 	// Table holds the table name of the missionorder in the database.
 	Table = "mission_orders"
 	// ConsumeUserTable is the table that holds the consume_user relation/edge.
@@ -143,6 +145,13 @@ const (
 	DeviceInverseTable = "devices"
 	// DeviceColumn is the table column denoting the device relation/edge.
 	DeviceColumn = "device_id"
+	// ExtraServiceOrdersTable is the table that holds the extra_service_orders relation/edge.
+	ExtraServiceOrdersTable = "extra_service_orders"
+	// ExtraServiceOrdersInverseTable is the table name for the ExtraServiceOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "extraserviceorder" package.
+	ExtraServiceOrdersInverseTable = "extra_service_orders"
+	// ExtraServiceOrdersColumn is the table column denoting the extra_service_orders relation/edge.
+	ExtraServiceOrdersColumn = "mission_order_id"
 )
 
 // Columns holds all SQL columns for missionorder fields.
@@ -518,6 +527,20 @@ func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newDeviceStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByExtraServiceOrdersCount orders the results by extra_service_orders count.
+func ByExtraServiceOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExtraServiceOrdersStep(), opts...)
+	}
+}
+
+// ByExtraServiceOrders orders the results by extra_service_orders terms.
+func ByExtraServiceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExtraServiceOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newConsumeUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -565,5 +588,12 @@ func newDeviceStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, DeviceTable, DeviceColumn),
+	)
+}
+func newExtraServiceOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExtraServiceOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrdersTable, ExtraServiceOrdersColumn),
 	)
 }

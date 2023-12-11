@@ -86,6 +86,11 @@ func MissionID(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldMissionID, v))
 }
 
+// MissionOrderID applies equality check predicate on the "mission_order_id" field. It's identical to MissionOrderIDEQ.
+func MissionOrderID(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldMissionOrderID, v))
+}
+
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldAmount, v))
@@ -334,6 +339,26 @@ func MissionIDIn(vs ...int64) predicate.ExtraServiceOrder {
 // MissionIDNotIn applies the NotIn predicate on the "mission_id" field.
 func MissionIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldMissionID, vs...))
+}
+
+// MissionOrderIDEQ applies the EQ predicate on the "mission_order_id" field.
+func MissionOrderIDEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldMissionOrderID, v))
+}
+
+// MissionOrderIDNEQ applies the NEQ predicate on the "mission_order_id" field.
+func MissionOrderIDNEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldMissionOrderID, v))
+}
+
+// MissionOrderIDIn applies the In predicate on the "mission_order_id" field.
+func MissionOrderIDIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldMissionOrderID, vs...))
+}
+
+// MissionOrderIDNotIn applies the NotIn predicate on the "mission_order_id" field.
+func MissionOrderIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldMissionOrderID, vs...))
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.
@@ -601,6 +626,29 @@ func HasMission() predicate.ExtraServiceOrder {
 func HasMissionWith(preds ...predicate.Mission) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(func(s *sql.Selector) {
 		step := newMissionStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionOrder applies the HasEdge predicate on the "mission_order" edge.
+func HasMissionOrder() predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionOrderTable, MissionOrderColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionOrderWith applies the HasEdge predicate on the "mission_order" edge with a given conditions (other predicates).
+func HasMissionOrderWith(preds ...predicate.MissionOrder) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(func(s *sql.Selector) {
+		step := newMissionOrderStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

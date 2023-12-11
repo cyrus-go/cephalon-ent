@@ -759,28 +759,32 @@ func init() {
 	extraserviceorderDescMissionID := extraserviceorderFields[0].Descriptor()
 	// extraserviceorder.DefaultMissionID holds the default value on creation for the mission_id field.
 	extraserviceorder.DefaultMissionID = extraserviceorderDescMissionID.Default.(int64)
+	// extraserviceorderDescMissionOrderID is the schema descriptor for mission_order_id field.
+	extraserviceorderDescMissionOrderID := extraserviceorderFields[1].Descriptor()
+	// extraserviceorder.DefaultMissionOrderID holds the default value on creation for the mission_order_id field.
+	extraserviceorder.DefaultMissionOrderID = extraserviceorderDescMissionOrderID.Default.(int64)
 	// extraserviceorderDescAmount is the schema descriptor for amount field.
-	extraserviceorderDescAmount := extraserviceorderFields[1].Descriptor()
+	extraserviceorderDescAmount := extraserviceorderFields[2].Descriptor()
 	// extraserviceorder.DefaultAmount holds the default value on creation for the amount field.
 	extraserviceorder.DefaultAmount = extraserviceorderDescAmount.Default.(int64)
 	// extraserviceorderDescSymbolID is the schema descriptor for symbol_id field.
-	extraserviceorderDescSymbolID := extraserviceorderFields[2].Descriptor()
+	extraserviceorderDescSymbolID := extraserviceorderFields[3].Descriptor()
 	// extraserviceorder.DefaultSymbolID holds the default value on creation for the symbol_id field.
 	extraserviceorder.DefaultSymbolID = extraserviceorderDescSymbolID.Default.(int64)
 	// extraserviceorderDescBuyDuration is the schema descriptor for buy_duration field.
-	extraserviceorderDescBuyDuration := extraserviceorderFields[4].Descriptor()
+	extraserviceorderDescBuyDuration := extraserviceorderFields[5].Descriptor()
 	// extraserviceorder.DefaultBuyDuration holds the default value on creation for the buy_duration field.
 	extraserviceorder.DefaultBuyDuration = extraserviceorderDescBuyDuration.Default.(int64)
 	// extraserviceorderDescPlanStartedAt is the schema descriptor for plan_started_at field.
-	extraserviceorderDescPlanStartedAt := extraserviceorderFields[5].Descriptor()
+	extraserviceorderDescPlanStartedAt := extraserviceorderFields[6].Descriptor()
 	// extraserviceorder.DefaultPlanStartedAt holds the default value on creation for the plan_started_at field.
 	extraserviceorder.DefaultPlanStartedAt = extraserviceorderDescPlanStartedAt.Default.(time.Time)
 	// extraserviceorderDescPlanFinishedAt is the schema descriptor for plan_finished_at field.
-	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[6].Descriptor()
+	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[7].Descriptor()
 	// extraserviceorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
 	extraserviceorder.DefaultPlanFinishedAt = extraserviceorderDescPlanFinishedAt.Default.(time.Time)
 	// extraserviceorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	extraserviceorderDescMissionBatchID := extraserviceorderFields[7].Descriptor()
+	extraserviceorderDescMissionBatchID := extraserviceorderFields[8].Descriptor()
 	// extraserviceorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	extraserviceorder.DefaultMissionBatchID = extraserviceorderDescMissionBatchID.Default.(int64)
 	// extraserviceorderDescID is the schema descriptor for id field.

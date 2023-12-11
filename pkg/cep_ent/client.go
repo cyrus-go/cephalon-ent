@@ -2874,6 +2874,22 @@ func (c *ExtraServiceOrderClient) QueryMission(eso *ExtraServiceOrder) *MissionQ
 	return query
 }
 
+// QueryMissionOrder queries the mission_order edge of a ExtraServiceOrder.
+func (c *ExtraServiceOrderClient) QueryMissionOrder(eso *ExtraServiceOrder) *MissionOrderQuery {
+	query := (&MissionOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := eso.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraserviceorder.Table, extraserviceorder.FieldID, id),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceorder.MissionOrderTable, extraserviceorder.MissionOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(eso.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QuerySymbol queries the symbol edge of a ExtraServiceOrder.
 func (c *ExtraServiceOrderClient) QuerySymbol(eso *ExtraServiceOrder) *SymbolQuery {
 	query := (&SymbolClient{config: c.config}).Query()
@@ -5646,6 +5662,22 @@ func (c *MissionOrderClient) QueryDevice(mo *MissionOrder) *DeviceQuery {
 			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
 			sqlgraph.To(device.Table, device.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.DeviceTable, missionorder.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryExtraServiceOrders queries the extra_service_orders edge of a MissionOrder.
+func (c *MissionOrderClient) QueryExtraServiceOrders(mo *MissionOrder) *ExtraServiceOrderQuery {
+	query := (&ExtraServiceOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mo.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, id),
+			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionorder.ExtraServiceOrdersTable, missionorder.ExtraServiceOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(mo.driver.Dialect(), step)
 		return fromV, nil

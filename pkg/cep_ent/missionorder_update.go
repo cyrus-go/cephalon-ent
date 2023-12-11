@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -581,6 +582,21 @@ func (mou *MissionOrderUpdate) SetDevice(d *Device) *MissionOrderUpdate {
 	return mou.SetDeviceID(d.ID)
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (mou *MissionOrderUpdate) AddExtraServiceOrderIDs(ids ...int64) *MissionOrderUpdate {
+	mou.mutation.AddExtraServiceOrderIDs(ids...)
+	return mou
+}
+
+// AddExtraServiceOrders adds the "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mou *MissionOrderUpdate) AddExtraServiceOrders(e ...*ExtraServiceOrder) *MissionOrderUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mou.AddExtraServiceOrderIDs(ids...)
+}
+
 // Mutation returns the MissionOrderMutation object of the builder.
 func (mou *MissionOrderUpdate) Mutation() *MissionOrderMutation {
 	return mou.mutation
@@ -641,6 +657,27 @@ func (mou *MissionOrderUpdate) ClearMission() *MissionOrderUpdate {
 func (mou *MissionOrderUpdate) ClearDevice() *MissionOrderUpdate {
 	mou.mutation.ClearDevice()
 	return mou
+}
+
+// ClearExtraServiceOrders clears all "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mou *MissionOrderUpdate) ClearExtraServiceOrders() *MissionOrderUpdate {
+	mou.mutation.ClearExtraServiceOrders()
+	return mou
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_orders" edge to ExtraServiceOrder entities by IDs.
+func (mou *MissionOrderUpdate) RemoveExtraServiceOrderIDs(ids ...int64) *MissionOrderUpdate {
+	mou.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return mou
+}
+
+// RemoveExtraServiceOrders removes "extra_service_orders" edges to ExtraServiceOrder entities.
+func (mou *MissionOrderUpdate) RemoveExtraServiceOrders(e ...*ExtraServiceOrder) *MissionOrderUpdate {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mou.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1063,6 +1100,51 @@ func (mou *MissionOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mou.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mou.mutation.RemovedExtraServiceOrdersIDs(); len(nodes) > 0 && !mou.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mou.mutation.ExtraServiceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1637,6 +1719,21 @@ func (mouo *MissionOrderUpdateOne) SetDevice(d *Device) *MissionOrderUpdateOne {
 	return mouo.SetDeviceID(d.ID)
 }
 
+// AddExtraServiceOrderIDs adds the "extra_service_orders" edge to the ExtraServiceOrder entity by IDs.
+func (mouo *MissionOrderUpdateOne) AddExtraServiceOrderIDs(ids ...int64) *MissionOrderUpdateOne {
+	mouo.mutation.AddExtraServiceOrderIDs(ids...)
+	return mouo
+}
+
+// AddExtraServiceOrders adds the "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mouo *MissionOrderUpdateOne) AddExtraServiceOrders(e ...*ExtraServiceOrder) *MissionOrderUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mouo.AddExtraServiceOrderIDs(ids...)
+}
+
 // Mutation returns the MissionOrderMutation object of the builder.
 func (mouo *MissionOrderUpdateOne) Mutation() *MissionOrderMutation {
 	return mouo.mutation
@@ -1697,6 +1794,27 @@ func (mouo *MissionOrderUpdateOne) ClearMission() *MissionOrderUpdateOne {
 func (mouo *MissionOrderUpdateOne) ClearDevice() *MissionOrderUpdateOne {
 	mouo.mutation.ClearDevice()
 	return mouo
+}
+
+// ClearExtraServiceOrders clears all "extra_service_orders" edges to the ExtraServiceOrder entity.
+func (mouo *MissionOrderUpdateOne) ClearExtraServiceOrders() *MissionOrderUpdateOne {
+	mouo.mutation.ClearExtraServiceOrders()
+	return mouo
+}
+
+// RemoveExtraServiceOrderIDs removes the "extra_service_orders" edge to ExtraServiceOrder entities by IDs.
+func (mouo *MissionOrderUpdateOne) RemoveExtraServiceOrderIDs(ids ...int64) *MissionOrderUpdateOne {
+	mouo.mutation.RemoveExtraServiceOrderIDs(ids...)
+	return mouo
+}
+
+// RemoveExtraServiceOrders removes "extra_service_orders" edges to ExtraServiceOrder entities.
+func (mouo *MissionOrderUpdateOne) RemoveExtraServiceOrders(e ...*ExtraServiceOrder) *MissionOrderUpdateOne {
+	ids := make([]int64, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return mouo.RemoveExtraServiceOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the MissionOrderUpdate builder.
@@ -2149,6 +2267,51 @@ func (mouo *MissionOrderUpdateOne) sqlSave(ctx context.Context) (_node *MissionO
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mouo.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mouo.mutation.RemovedExtraServiceOrdersIDs(); len(nodes) > 0 && !mouo.mutation.ExtraServiceOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mouo.mutation.ExtraServiceOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   missionorder.ExtraServiceOrdersTable,
+			Columns: []string{missionorder.ExtraServiceOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

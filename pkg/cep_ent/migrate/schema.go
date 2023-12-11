@@ -468,6 +468,7 @@ var (
 		{Name: "plan_finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划结束时间（包时）"},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
+		{Name: "mission_order_id", Type: field.TypeInt64, Comment: "任务订单 id，外键关联任务订单", Default: 0},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 	}
 	// ExtraServiceOrdersTable holds the schema information for the "extra_service_orders" table.
@@ -490,8 +491,14 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "extra_service_orders_symbols_extra_service_order",
+				Symbol:     "extra_service_orders_mission_orders_extra_service_orders",
 				Columns:    []*schema.Column{ExtraServiceOrdersColumns[13]},
+				RefColumns: []*schema.Column{MissionOrdersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "extra_service_orders_symbols_extra_service_order",
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[14]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1776,7 +1783,8 @@ func init() {
 	ExtraServicesTable.Annotation = &entsql.Annotation{}
 	ExtraServiceOrdersTable.ForeignKeys[0].RefTable = MissionsTable
 	ExtraServiceOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
-	ExtraServiceOrdersTable.ForeignKeys[2].RefTable = SymbolsTable
+	ExtraServiceOrdersTable.ForeignKeys[2].RefTable = MissionOrdersTable
+	ExtraServiceOrdersTable.ForeignKeys[3].RefTable = SymbolsTable
 	ExtraServiceOrdersTable.Annotation = &entsql.Annotation{}
 	ExtraServicePricesTable.ForeignKeys[0].RefTable = ExtraServicesTable
 	ExtraServicePricesTable.Annotation = &entsql.Annotation{}

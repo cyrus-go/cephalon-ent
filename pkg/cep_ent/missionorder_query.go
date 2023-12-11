@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -24,18 +25,19 @@ import (
 // MissionOrderQuery is the builder for querying MissionOrder entities.
 type MissionOrderQuery struct {
 	config
-	ctx              *QueryContext
-	order            []missionorder.OrderOption
-	inters           []Interceptor
-	predicates       []predicate.MissionOrder
-	withConsumeUser  *UserQuery
-	withProduceUser  *UserQuery
-	withSymbol       *SymbolQuery
-	withBills        *BillQuery
-	withMissionBatch *MissionBatchQuery
-	withMission      *MissionQuery
-	withDevice       *DeviceQuery
-	modifiers        []func(*sql.Selector)
+	ctx                    *QueryContext
+	order                  []missionorder.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.MissionOrder
+	withConsumeUser        *UserQuery
+	withProduceUser        *UserQuery
+	withSymbol             *SymbolQuery
+	withBills              *BillQuery
+	withMissionBatch       *MissionBatchQuery
+	withMission            *MissionQuery
+	withDevice             *DeviceQuery
+	withExtraServiceOrders *ExtraServiceOrderQuery
+	modifiers              []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -219,6 +221,28 @@ func (moq *MissionOrderQuery) QueryDevice() *DeviceQuery {
 			sqlgraph.From(missionorder.Table, missionorder.FieldID, selector),
 			sqlgraph.To(device.Table, device.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionorder.DeviceTable, missionorder.DeviceColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(moq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExtraServiceOrders chains the current query on the "extra_service_orders" edge.
+func (moq *MissionOrderQuery) QueryExtraServiceOrders() *ExtraServiceOrderQuery {
+	query := (&ExtraServiceOrderClient{config: moq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := moq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := moq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionorder.Table, missionorder.FieldID, selector),
+			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, missionorder.ExtraServiceOrdersTable, missionorder.ExtraServiceOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(moq.driver.Dialect(), step)
 		return fromU, nil
@@ -413,18 +437,19 @@ func (moq *MissionOrderQuery) Clone() *MissionOrderQuery {
 		return nil
 	}
 	return &MissionOrderQuery{
-		config:           moq.config,
-		ctx:              moq.ctx.Clone(),
-		order:            append([]missionorder.OrderOption{}, moq.order...),
-		inters:           append([]Interceptor{}, moq.inters...),
-		predicates:       append([]predicate.MissionOrder{}, moq.predicates...),
-		withConsumeUser:  moq.withConsumeUser.Clone(),
-		withProduceUser:  moq.withProduceUser.Clone(),
-		withSymbol:       moq.withSymbol.Clone(),
-		withBills:        moq.withBills.Clone(),
-		withMissionBatch: moq.withMissionBatch.Clone(),
-		withMission:      moq.withMission.Clone(),
-		withDevice:       moq.withDevice.Clone(),
+		config:                 moq.config,
+		ctx:                    moq.ctx.Clone(),
+		order:                  append([]missionorder.OrderOption{}, moq.order...),
+		inters:                 append([]Interceptor{}, moq.inters...),
+		predicates:             append([]predicate.MissionOrder{}, moq.predicates...),
+		withConsumeUser:        moq.withConsumeUser.Clone(),
+		withProduceUser:        moq.withProduceUser.Clone(),
+		withSymbol:             moq.withSymbol.Clone(),
+		withBills:              moq.withBills.Clone(),
+		withMissionBatch:       moq.withMissionBatch.Clone(),
+		withMission:            moq.withMission.Clone(),
+		withDevice:             moq.withDevice.Clone(),
+		withExtraServiceOrders: moq.withExtraServiceOrders.Clone(),
 		// clone intermediate query.
 		sql:  moq.sql.Clone(),
 		path: moq.path,
@@ -508,6 +533,17 @@ func (moq *MissionOrderQuery) WithDevice(opts ...func(*DeviceQuery)) *MissionOrd
 	return moq
 }
 
+// WithExtraServiceOrders tells the query-builder to eager-load the nodes that are connected to
+// the "extra_service_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (moq *MissionOrderQuery) WithExtraServiceOrders(opts ...func(*ExtraServiceOrderQuery)) *MissionOrderQuery {
+	query := (&ExtraServiceOrderClient{config: moq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	moq.withExtraServiceOrders = query
+	return moq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -586,7 +622,7 @@ func (moq *MissionOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*MissionOrder{}
 		_spec       = moq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
 			moq.withConsumeUser != nil,
 			moq.withProduceUser != nil,
 			moq.withSymbol != nil,
@@ -594,6 +630,7 @@ func (moq *MissionOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 			moq.withMissionBatch != nil,
 			moq.withMission != nil,
 			moq.withDevice != nil,
+			moq.withExtraServiceOrders != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -657,6 +694,15 @@ func (moq *MissionOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if query := moq.withDevice; query != nil {
 		if err := moq.loadDevice(ctx, query, nodes, nil,
 			func(n *MissionOrder, e *Device) { n.Edges.Device = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := moq.withExtraServiceOrders; query != nil {
+		if err := moq.loadExtraServiceOrders(ctx, query, nodes,
+			func(n *MissionOrder) { n.Edges.ExtraServiceOrders = []*ExtraServiceOrder{} },
+			func(n *MissionOrder, e *ExtraServiceOrder) {
+				n.Edges.ExtraServiceOrders = append(n.Edges.ExtraServiceOrders, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -864,6 +910,36 @@ func (moq *MissionOrderQuery) loadDevice(ctx context.Context, query *DeviceQuery
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (moq *MissionOrderQuery) loadExtraServiceOrders(ctx context.Context, query *ExtraServiceOrderQuery, nodes []*MissionOrder, init func(*MissionOrder), assign func(*MissionOrder, *ExtraServiceOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*MissionOrder)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(extraserviceorder.FieldMissionOrderID)
+	}
+	query.Where(predicate.ExtraServiceOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(missionorder.ExtraServiceOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionOrderID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_order_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

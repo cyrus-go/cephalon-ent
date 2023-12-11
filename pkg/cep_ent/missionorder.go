@@ -108,9 +108,11 @@ type MissionOrderEdges struct {
 	Mission *Mission `json:"mission,omitempty"`
 	// Device holds the value of the device edge.
 	Device *Device `json:"device,omitempty"`
+	// ExtraServiceOrders holds the value of the extra_service_orders edge.
+	ExtraServiceOrders []*ExtraServiceOrder `json:"extra_service_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // ConsumeUserOrErr returns the ConsumeUser value or an error if the edge
@@ -198,6 +200,15 @@ func (e MissionOrderEdges) DeviceOrErr() (*Device, error) {
 		return e.Device, nil
 	}
 	return nil, &NotLoadedError{edge: "device"}
+}
+
+// ExtraServiceOrdersOrErr returns the ExtraServiceOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionOrderEdges) ExtraServiceOrdersOrErr() ([]*ExtraServiceOrder, error) {
+	if e.loadedTypes[7] {
+		return e.ExtraServiceOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "extra_service_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -467,6 +478,11 @@ func (mo *MissionOrder) QueryMission() *MissionQuery {
 // QueryDevice queries the "device" edge of the MissionOrder entity.
 func (mo *MissionOrder) QueryDevice() *DeviceQuery {
 	return NewMissionOrderClient(mo.config).QueryDevice(mo)
+}
+
+// QueryExtraServiceOrders queries the "extra_service_orders" edge of the MissionOrder entity.
+func (mo *MissionOrder) QueryExtraServiceOrders() *ExtraServiceOrderQuery {
+	return NewMissionOrderClient(mo.config).QueryExtraServiceOrders(mo)
 }
 
 // Update returns a builder for updating this MissionOrder.

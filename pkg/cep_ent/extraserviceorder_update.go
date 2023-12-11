@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -105,6 +106,20 @@ func (esou *ExtraServiceOrderUpdate) SetMissionID(i int64) *ExtraServiceOrderUpd
 func (esou *ExtraServiceOrderUpdate) SetNillableMissionID(i *int64) *ExtraServiceOrderUpdate {
 	if i != nil {
 		esou.SetMissionID(*i)
+	}
+	return esou
+}
+
+// SetMissionOrderID sets the "mission_order_id" field.
+func (esou *ExtraServiceOrderUpdate) SetMissionOrderID(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.SetMissionOrderID(i)
+	return esou
+}
+
+// SetNillableMissionOrderID sets the "mission_order_id" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableMissionOrderID(i *int64) *ExtraServiceOrderUpdate {
+	if i != nil {
+		esou.SetMissionOrderID(*i)
 	}
 	return esou
 }
@@ -238,6 +253,11 @@ func (esou *ExtraServiceOrderUpdate) SetMission(m *Mission) *ExtraServiceOrderUp
 	return esou.SetMissionID(m.ID)
 }
 
+// SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
+func (esou *ExtraServiceOrderUpdate) SetMissionOrder(m *MissionOrder) *ExtraServiceOrderUpdate {
+	return esou.SetMissionOrderID(m.ID)
+}
+
 // SetSymbol sets the "symbol" edge to the Symbol entity.
 func (esou *ExtraServiceOrderUpdate) SetSymbol(s *Symbol) *ExtraServiceOrderUpdate {
 	return esou.SetSymbolID(s.ID)
@@ -256,6 +276,12 @@ func (esou *ExtraServiceOrderUpdate) Mutation() *ExtraServiceOrderMutation {
 // ClearMission clears the "mission" edge to the Mission entity.
 func (esou *ExtraServiceOrderUpdate) ClearMission() *ExtraServiceOrderUpdate {
 	esou.mutation.ClearMission()
+	return esou
+}
+
+// ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
+func (esou *ExtraServiceOrderUpdate) ClearMissionOrder() *ExtraServiceOrderUpdate {
+	esou.mutation.ClearMissionOrder()
 	return esou
 }
 
@@ -316,6 +342,9 @@ func (esou *ExtraServiceOrderUpdate) check() error {
 	}
 	if _, ok := esou.mutation.MissionID(); esou.mutation.MissionCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "ExtraServiceOrder.mission"`)
+	}
+	if _, ok := esou.mutation.MissionOrderID(); esou.mutation.MissionOrderCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "ExtraServiceOrder.mission_order"`)
 	}
 	if _, ok := esou.mutation.SymbolID(); esou.mutation.SymbolCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "ExtraServiceOrder.symbol"`)
@@ -411,6 +440,35 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if esou.mutation.MissionOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   extraserviceorder.MissionOrderTable,
+			Columns: []string{extraserviceorder.MissionOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := esou.mutation.MissionOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   extraserviceorder.MissionOrderTable,
+			Columns: []string{extraserviceorder.MissionOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -574,6 +632,20 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableMissionID(i *int64) *ExtraSe
 	return esouo
 }
 
+// SetMissionOrderID sets the "mission_order_id" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetMissionOrderID(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.SetMissionOrderID(i)
+	return esouo
+}
+
+// SetNillableMissionOrderID sets the "mission_order_id" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableMissionOrderID(i *int64) *ExtraServiceOrderUpdateOne {
+	if i != nil {
+		esouo.SetMissionOrderID(*i)
+	}
+	return esouo
+}
+
 // SetAmount sets the "amount" field.
 func (esouo *ExtraServiceOrderUpdateOne) SetAmount(i int64) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.ResetAmount()
@@ -703,6 +775,11 @@ func (esouo *ExtraServiceOrderUpdateOne) SetMission(m *Mission) *ExtraServiceOrd
 	return esouo.SetMissionID(m.ID)
 }
 
+// SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
+func (esouo *ExtraServiceOrderUpdateOne) SetMissionOrder(m *MissionOrder) *ExtraServiceOrderUpdateOne {
+	return esouo.SetMissionOrderID(m.ID)
+}
+
 // SetSymbol sets the "symbol" edge to the Symbol entity.
 func (esouo *ExtraServiceOrderUpdateOne) SetSymbol(s *Symbol) *ExtraServiceOrderUpdateOne {
 	return esouo.SetSymbolID(s.ID)
@@ -721,6 +798,12 @@ func (esouo *ExtraServiceOrderUpdateOne) Mutation() *ExtraServiceOrderMutation {
 // ClearMission clears the "mission" edge to the Mission entity.
 func (esouo *ExtraServiceOrderUpdateOne) ClearMission() *ExtraServiceOrderUpdateOne {
 	esouo.mutation.ClearMission()
+	return esouo
+}
+
+// ClearMissionOrder clears the "mission_order" edge to the MissionOrder entity.
+func (esouo *ExtraServiceOrderUpdateOne) ClearMissionOrder() *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ClearMissionOrder()
 	return esouo
 }
 
@@ -794,6 +877,9 @@ func (esouo *ExtraServiceOrderUpdateOne) check() error {
 	}
 	if _, ok := esouo.mutation.MissionID(); esouo.mutation.MissionCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "ExtraServiceOrder.mission"`)
+	}
+	if _, ok := esouo.mutation.MissionOrderID(); esouo.mutation.MissionOrderCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "ExtraServiceOrder.mission_order"`)
 	}
 	if _, ok := esouo.mutation.SymbolID(); esouo.mutation.SymbolCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "ExtraServiceOrder.symbol"`)
@@ -906,6 +992,35 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if esouo.mutation.MissionOrderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   extraserviceorder.MissionOrderTable,
+			Columns: []string{extraserviceorder.MissionOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := esouo.mutation.MissionOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   extraserviceorder.MissionOrderTable,
+			Columns: []string{extraserviceorder.MissionOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -34,6 +35,8 @@ type ExtraServiceOrder struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 任务 id，外键关联任务
 	MissionID int64 `json:"mission_id,string"`
+	// 任务订单 id，外键关联任务订单
+	MissionOrderID int64 `json:"mission_order_id,string"`
 	// 订单的货币消耗量
 	Amount int64 `json:"amount"`
 	// 币种 id
@@ -58,13 +61,15 @@ type ExtraServiceOrder struct {
 type ExtraServiceOrderEdges struct {
 	// Mission holds the value of the mission edge.
 	Mission *Mission `json:"mission,omitempty"`
+	// MissionOrder holds the value of the mission_order edge.
+	MissionOrder *MissionOrder `json:"mission_order,omitempty"`
 	// Symbol holds the value of the symbol edge.
 	Symbol *Symbol `json:"symbol,omitempty"`
 	// MissionBatch holds the value of the mission_batch edge.
 	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // MissionOrErr returns the Mission value or an error if the edge
@@ -80,10 +85,23 @@ func (e ExtraServiceOrderEdges) MissionOrErr() (*Mission, error) {
 	return nil, &NotLoadedError{edge: "mission"}
 }
 
+// MissionOrderOrErr returns the MissionOrder value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ExtraServiceOrderEdges) MissionOrderOrErr() (*MissionOrder, error) {
+	if e.loadedTypes[1] {
+		if e.MissionOrder == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionorder.Label}
+		}
+		return e.MissionOrder, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_order"}
+}
+
 // SymbolOrErr returns the Symbol value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ExtraServiceOrderEdges) SymbolOrErr() (*Symbol, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.Symbol == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: symbol.Label}
@@ -96,7 +114,7 @@ func (e ExtraServiceOrderEdges) SymbolOrErr() (*Symbol, error) {
 // MissionBatchOrErr returns the MissionBatch value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ExtraServiceOrderEdges) MissionBatchOrErr() (*MissionBatch, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		if e.MissionBatch == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionbatch.Label}
@@ -111,7 +129,7 @@ func (*ExtraServiceOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
+		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
 		case extraserviceorder.FieldExtraServiceType:
 			values[i] = new(sql.NullString)
@@ -173,6 +191,12 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field mission_id", values[i])
 			} else if value.Valid {
 				eso.MissionID = value.Int64
+			}
+		case extraserviceorder.FieldMissionOrderID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field mission_order_id", values[i])
+			} else if value.Valid {
+				eso.MissionOrderID = value.Int64
 			}
 		case extraserviceorder.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -236,6 +260,11 @@ func (eso *ExtraServiceOrder) QueryMission() *MissionQuery {
 	return NewExtraServiceOrderClient(eso.config).QueryMission(eso)
 }
 
+// QueryMissionOrder queries the "mission_order" edge of the ExtraServiceOrder entity.
+func (eso *ExtraServiceOrder) QueryMissionOrder() *MissionOrderQuery {
+	return NewExtraServiceOrderClient(eso.config).QueryMissionOrder(eso)
+}
+
 // QuerySymbol queries the "symbol" edge of the ExtraServiceOrder entity.
 func (eso *ExtraServiceOrder) QuerySymbol() *SymbolQuery {
 	return NewExtraServiceOrderClient(eso.config).QuerySymbol(eso)
@@ -286,6 +315,9 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_id=")
 	builder.WriteString(fmt.Sprintf("%v", eso.MissionID))
+	builder.WriteString(", ")
+	builder.WriteString("mission_order_id=")
+	builder.WriteString(fmt.Sprintf("%v", eso.MissionOrderID))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", eso.Amount))
