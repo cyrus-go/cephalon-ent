@@ -549,6 +549,18 @@ func (f WalletFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.WalletMutation", m)
 }
 
+// The WithdrawAccountFunc type is an adapter to allow the use of ordinary
+// function as WithdrawAccount mutator.
+type WithdrawAccountFunc func(context.Context, *cep_ent.WithdrawAccountMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WithdrawAccountFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.WithdrawAccountMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.WithdrawAccountMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, cep_ent.Mutation) bool
 

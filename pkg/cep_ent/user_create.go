@@ -36,6 +36,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -579,6 +580,21 @@ func (uc *UserCreate) AddWallets(w ...*Wallet) *UserCreate {
 		ids[i] = w[i].ID
 	}
 	return uc.AddWalletIDs(ids...)
+}
+
+// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
+func (uc *UserCreate) AddWithdrawAccountIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddWithdrawAccountIDs(ids...)
+	return uc
+}
+
+// AddWithdrawAccounts adds the "withdraw_accounts" edges to the WithdrawAccount entity.
+func (uc *UserCreate) AddWithdrawAccounts(w ...*WithdrawAccount) *UserCreate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uc.AddWithdrawAccountIDs(ids...)
 }
 
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
@@ -1296,6 +1312,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(wallet.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.WithdrawAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawAccountsTable,
+			Columns: []string{user.WithdrawAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

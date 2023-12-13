@@ -51,6 +51,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("invites", Invite.Type),
 		edge.To("campaign_orders", CampaignOrder.Type),
 		edge.To("wallets", Wallet.Type),
+		edge.To("withdraw_accounts", WithdrawAccount.Type),
 		edge.To("income_bills", Bill.Type),
 		edge.To("outcome_bills", Bill.Type),
 		edge.To("mission_productions", MissionProduction.Type),

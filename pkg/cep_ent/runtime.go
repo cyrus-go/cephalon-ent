@@ -52,6 +52,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -758,28 +759,32 @@ func init() {
 	extraserviceorderDescMissionID := extraserviceorderFields[0].Descriptor()
 	// extraserviceorder.DefaultMissionID holds the default value on creation for the mission_id field.
 	extraserviceorder.DefaultMissionID = extraserviceorderDescMissionID.Default.(int64)
+	// extraserviceorderDescMissionOrderID is the schema descriptor for mission_order_id field.
+	extraserviceorderDescMissionOrderID := extraserviceorderFields[1].Descriptor()
+	// extraserviceorder.DefaultMissionOrderID holds the default value on creation for the mission_order_id field.
+	extraserviceorder.DefaultMissionOrderID = extraserviceorderDescMissionOrderID.Default.(int64)
 	// extraserviceorderDescAmount is the schema descriptor for amount field.
-	extraserviceorderDescAmount := extraserviceorderFields[1].Descriptor()
+	extraserviceorderDescAmount := extraserviceorderFields[2].Descriptor()
 	// extraserviceorder.DefaultAmount holds the default value on creation for the amount field.
 	extraserviceorder.DefaultAmount = extraserviceorderDescAmount.Default.(int64)
 	// extraserviceorderDescSymbolID is the schema descriptor for symbol_id field.
-	extraserviceorderDescSymbolID := extraserviceorderFields[2].Descriptor()
+	extraserviceorderDescSymbolID := extraserviceorderFields[3].Descriptor()
 	// extraserviceorder.DefaultSymbolID holds the default value on creation for the symbol_id field.
 	extraserviceorder.DefaultSymbolID = extraserviceorderDescSymbolID.Default.(int64)
 	// extraserviceorderDescBuyDuration is the schema descriptor for buy_duration field.
-	extraserviceorderDescBuyDuration := extraserviceorderFields[4].Descriptor()
+	extraserviceorderDescBuyDuration := extraserviceorderFields[5].Descriptor()
 	// extraserviceorder.DefaultBuyDuration holds the default value on creation for the buy_duration field.
 	extraserviceorder.DefaultBuyDuration = extraserviceorderDescBuyDuration.Default.(int64)
 	// extraserviceorderDescPlanStartedAt is the schema descriptor for plan_started_at field.
-	extraserviceorderDescPlanStartedAt := extraserviceorderFields[5].Descriptor()
+	extraserviceorderDescPlanStartedAt := extraserviceorderFields[6].Descriptor()
 	// extraserviceorder.DefaultPlanStartedAt holds the default value on creation for the plan_started_at field.
 	extraserviceorder.DefaultPlanStartedAt = extraserviceorderDescPlanStartedAt.Default.(time.Time)
 	// extraserviceorderDescPlanFinishedAt is the schema descriptor for plan_finished_at field.
-	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[6].Descriptor()
+	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[7].Descriptor()
 	// extraserviceorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
 	extraserviceorder.DefaultPlanFinishedAt = extraserviceorderDescPlanFinishedAt.Default.(time.Time)
 	// extraserviceorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	extraserviceorderDescMissionBatchID := extraserviceorderFields[7].Descriptor()
+	extraserviceorderDescMissionBatchID := extraserviceorderFields[8].Descriptor()
 	// extraserviceorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	extraserviceorder.DefaultMissionBatchID = extraserviceorderDescMissionBatchID.Default.(int64)
 	// extraserviceorderDescID is the schema descriptor for id field.
@@ -2556,4 +2561,63 @@ func init() {
 	walletDescID := walletMixinFields0[0].Descriptor()
 	// wallet.DefaultID holds the default value on creation for the id field.
 	wallet.DefaultID = walletDescID.Default.(func() int64)
+	withdrawaccountMixin := schema.WithdrawAccount{}.Mixin()
+	withdrawaccountMixinFields0 := withdrawaccountMixin[0].Fields()
+	_ = withdrawaccountMixinFields0
+	withdrawaccountFields := schema.WithdrawAccount{}.Fields()
+	_ = withdrawaccountFields
+	// withdrawaccountDescCreatedBy is the schema descriptor for created_by field.
+	withdrawaccountDescCreatedBy := withdrawaccountMixinFields0[1].Descriptor()
+	// withdrawaccount.DefaultCreatedBy holds the default value on creation for the created_by field.
+	withdrawaccount.DefaultCreatedBy = withdrawaccountDescCreatedBy.Default.(int64)
+	// withdrawaccountDescUpdatedBy is the schema descriptor for updated_by field.
+	withdrawaccountDescUpdatedBy := withdrawaccountMixinFields0[2].Descriptor()
+	// withdrawaccount.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	withdrawaccount.DefaultUpdatedBy = withdrawaccountDescUpdatedBy.Default.(int64)
+	// withdrawaccountDescCreatedAt is the schema descriptor for created_at field.
+	withdrawaccountDescCreatedAt := withdrawaccountMixinFields0[3].Descriptor()
+	// withdrawaccount.DefaultCreatedAt holds the default value on creation for the created_at field.
+	withdrawaccount.DefaultCreatedAt = withdrawaccountDescCreatedAt.Default.(func() time.Time)
+	// withdrawaccountDescUpdatedAt is the schema descriptor for updated_at field.
+	withdrawaccountDescUpdatedAt := withdrawaccountMixinFields0[4].Descriptor()
+	// withdrawaccount.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	withdrawaccount.DefaultUpdatedAt = withdrawaccountDescUpdatedAt.Default.(func() time.Time)
+	// withdrawaccount.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	withdrawaccount.UpdateDefaultUpdatedAt = withdrawaccountDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// withdrawaccountDescDeletedAt is the schema descriptor for deleted_at field.
+	withdrawaccountDescDeletedAt := withdrawaccountMixinFields0[5].Descriptor()
+	// withdrawaccount.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	withdrawaccount.DefaultDeletedAt = withdrawaccountDescDeletedAt.Default.(time.Time)
+	// withdrawaccountDescUserID is the schema descriptor for user_id field.
+	withdrawaccountDescUserID := withdrawaccountFields[0].Descriptor()
+	// withdrawaccount.DefaultUserID holds the default value on creation for the user_id field.
+	withdrawaccount.DefaultUserID = withdrawaccountDescUserID.Default.(int64)
+	// withdrawaccountDescBusinessName is the schema descriptor for business_name field.
+	withdrawaccountDescBusinessName := withdrawaccountFields[1].Descriptor()
+	// withdrawaccount.DefaultBusinessName holds the default value on creation for the business_name field.
+	withdrawaccount.DefaultBusinessName = withdrawaccountDescBusinessName.Default.(string)
+	// withdrawaccountDescBusinessID is the schema descriptor for business_id field.
+	withdrawaccountDescBusinessID := withdrawaccountFields[3].Descriptor()
+	// withdrawaccount.DefaultBusinessID holds the default value on creation for the business_id field.
+	withdrawaccount.DefaultBusinessID = withdrawaccountDescBusinessID.Default.(int64)
+	// withdrawaccountDescPersonalName is the schema descriptor for personal_name field.
+	withdrawaccountDescPersonalName := withdrawaccountFields[4].Descriptor()
+	// withdrawaccount.DefaultPersonalName holds the default value on creation for the personal_name field.
+	withdrawaccount.DefaultPersonalName = withdrawaccountDescPersonalName.Default.(string)
+	// withdrawaccountDescPhone is the schema descriptor for phone field.
+	withdrawaccountDescPhone := withdrawaccountFields[5].Descriptor()
+	// withdrawaccount.DefaultPhone holds the default value on creation for the phone field.
+	withdrawaccount.DefaultPhone = withdrawaccountDescPhone.Default.(string)
+	// withdrawaccountDescBankCardNumber is the schema descriptor for bank_card_number field.
+	withdrawaccountDescBankCardNumber := withdrawaccountFields[6].Descriptor()
+	// withdrawaccount.DefaultBankCardNumber holds the default value on creation for the bank_card_number field.
+	withdrawaccount.DefaultBankCardNumber = withdrawaccountDescBankCardNumber.Default.(string)
+	// withdrawaccountDescBank is the schema descriptor for bank field.
+	withdrawaccountDescBank := withdrawaccountFields[7].Descriptor()
+	// withdrawaccount.DefaultBank holds the default value on creation for the bank field.
+	withdrawaccount.DefaultBank = withdrawaccountDescBank.Default.(string)
+	// withdrawaccountDescID is the schema descriptor for id field.
+	withdrawaccountDescID := withdrawaccountMixinFields0[0].Descriptor()
+	// withdrawaccount.DefaultID holds the default value on creation for the id field.
+	withdrawaccount.DefaultID = withdrawaccountDescID.Default.(func() int64)
 }

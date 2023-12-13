@@ -17,6 +17,9 @@ const (
 	MissionTypeSdTomatoTime       MissionType = "sd_tomato_time"
 	MissionTypeSdCmdTime          MissionType = "sd_cmd_time"
 	MissionTypeSdBingoTime        MissionType = "sd_bingo_time"
+	MissionTypeFooocusTime        MissionType = "fooocus_time"
+	MissionTypeTabbyTime          MissionType = "tabby_time"
+	MissionTypeJpCondaTime        MissionType = "jp_conda_time"
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan         MissionType = "jp_time_plan"
@@ -25,6 +28,9 @@ const (
 	MissionTypeSdTomatoTimePlan   MissionType = "sd_tomato_time_plan"
 	MissionTypeSdCmdTimePlan      MissionType = "sd_cmd_time_plan"
 	MissionTypeSdBingoTimePlan    MissionType = "sd_bingo_time_plan"
+	MissionTypeFooocusTimePlan    MissionType = "fooocus_time_plan"
+	MissionTypeTabbyTimePlan      MissionType = "tabby_time_plan"
+	MissionTypeJpCondaTimePlan    MissionType = "jp_conda_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -51,6 +57,12 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdCmdTimePlan),
 		string(MissionTypeSdBingoTime),
 		string(MissionTypeSdBingoTimePlan),
+		string(MissionTypeFooocusTime),
+		string(MissionTypeFooocusTimePlan),
+		string(MissionTypeTabbyTime),
+		string(MissionTypeTabbyTimePlan),
+		string(MissionTypeJpCondaTime),
+		string(MissionTypeJpCondaTimePlan),
 	}
 }
 

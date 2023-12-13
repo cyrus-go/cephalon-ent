@@ -23,7 +23,7 @@ func (Device) Fields() []ent.Field {
 		field.Bool("linking").Default(false).StructTag(`json:"linking"`).Comment("设备是否正在对接中"),
 		field.Enum("binding_status").GoType(enums.DeviceBindingStatusInit).Default(string(enums.DeviceBindingStatusInit)).StructTag(`json:"binding_status"`).Comment("设备的绑定状态"),
 		field.Enum("status").Values("online", "offline", "busy").Default("online").StructTag(`json:"status"`).Comment("设备状态"),
-		field.String("name").StructTag(`json:"name"`).Default("").Comment("设备名称"),
+		field.String("name").StructTag(`json:"name"`).Default("默认设备名称").Comment("设备名称"),
 		field.Enum("type").GoType(enums.DeviceTypeOrdinary).Default(string(enums.DeviceTypeOrdinary)).StructTag(`json:"type"`).Comment("设备类型"),
 		field.Int64("cores_number").StructTag(`json:"cores_number"`).Default(0).Comment("核心数"),
 		field.String("cpu").StructTag(`json:cpu`).Default("").Comment("CPU型号"),

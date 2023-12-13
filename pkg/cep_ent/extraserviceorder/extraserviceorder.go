@@ -28,6 +28,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldMissionID holds the string denoting the mission_id field in the database.
 	FieldMissionID = "mission_id"
+	// FieldMissionOrderID holds the string denoting the mission_order_id field in the database.
+	FieldMissionOrderID = "mission_order_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldSymbolID holds the string denoting the symbol_id field in the database.
@@ -44,6 +46,8 @@ const (
 	FieldMissionBatchID = "mission_batch_id"
 	// EdgeMission holds the string denoting the mission edge name in mutations.
 	EdgeMission = "mission"
+	// EdgeMissionOrder holds the string denoting the mission_order edge name in mutations.
+	EdgeMissionOrder = "mission_order"
 	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
 	EdgeSymbol = "symbol"
 	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
@@ -57,6 +61,13 @@ const (
 	MissionInverseTable = "missions"
 	// MissionColumn is the table column denoting the mission relation/edge.
 	MissionColumn = "mission_id"
+	// MissionOrderTable is the table that holds the mission_order relation/edge.
+	MissionOrderTable = "extra_service_orders"
+	// MissionOrderInverseTable is the table name for the MissionOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "missionorder" package.
+	MissionOrderInverseTable = "mission_orders"
+	// MissionOrderColumn is the table column denoting the mission_order relation/edge.
+	MissionOrderColumn = "mission_order_id"
 	// SymbolTable is the table that holds the symbol relation/edge.
 	SymbolTable = "extra_service_orders"
 	// SymbolInverseTable is the table name for the Symbol entity.
@@ -82,6 +93,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldMissionID,
+	FieldMissionOrderID,
 	FieldAmount,
 	FieldSymbolID,
 	FieldExtraServiceType,
@@ -116,6 +128,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultMissionID holds the default value on creation for the "mission_id" field.
 	DefaultMissionID int64
+	// DefaultMissionOrderID holds the default value on creation for the "mission_order_id" field.
+	DefaultMissionOrderID int64
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount int64
 	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
@@ -182,6 +196,11 @@ func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionID, opts...).ToFunc()
 }
 
+// ByMissionOrderID orders the results by the mission_order_id field.
+func ByMissionOrderID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMissionOrderID, opts...).ToFunc()
+}
+
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
@@ -224,6 +243,13 @@ func ByMissionField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByMissionOrderField orders the results by mission_order field.
+func ByMissionOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionOrderStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // BySymbolField orders the results by symbol field.
 func BySymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -242,6 +268,13 @@ func newMissionStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, MissionTable, MissionColumn),
+	)
+}
+func newMissionOrderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionOrderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, MissionOrderTable, MissionOrderColumn),
 	)
 }
 func newSymbolStep() *sqlgraph.Step {

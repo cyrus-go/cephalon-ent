@@ -100,6 +100,8 @@ type UserEdges struct {
 	CampaignOrders []*CampaignOrder `json:"campaign_orders,omitempty"`
 	// Wallets holds the value of the wallets edge.
 	Wallets []*Wallet `json:"wallets,omitempty"`
+	// WithdrawAccounts holds the value of the withdraw_accounts edge.
+	WithdrawAccounts []*WithdrawAccount `json:"withdraw_accounts,omitempty"`
 	// IncomeBills holds the value of the income_bills edge.
 	IncomeBills []*Bill `json:"income_bills,omitempty"`
 	// OutcomeBills holds the value of the outcome_bills edge.
@@ -122,7 +124,7 @@ type UserEdges struct {
 	RenewalAgreements []*RenewalAgreement `json:"renewal_agreements,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [29]bool
+	loadedTypes [30]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -308,10 +310,19 @@ func (e UserEdges) WalletsOrErr() ([]*Wallet, error) {
 	return nil, &NotLoadedError{edge: "wallets"}
 }
 
+// WithdrawAccountsOrErr returns the WithdrawAccounts value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) WithdrawAccountsOrErr() ([]*WithdrawAccount, error) {
+	if e.loadedTypes[19] {
+		return e.WithdrawAccounts, nil
+	}
+	return nil, &NotLoadedError{edge: "withdraw_accounts"}
+}
+
 // IncomeBillsOrErr returns the IncomeBills value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) IncomeBillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[19] {
+	if e.loadedTypes[20] {
 		return e.IncomeBills, nil
 	}
 	return nil, &NotLoadedError{edge: "income_bills"}
@@ -320,7 +331,7 @@ func (e UserEdges) IncomeBillsOrErr() ([]*Bill, error) {
 // OutcomeBillsOrErr returns the OutcomeBills value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OutcomeBillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[20] {
+	if e.loadedTypes[21] {
 		return e.OutcomeBills, nil
 	}
 	return nil, &NotLoadedError{edge: "outcome_bills"}
@@ -329,7 +340,7 @@ func (e UserEdges) OutcomeBillsOrErr() ([]*Bill, error) {
 // MissionProductionsOrErr returns the MissionProductions value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
-	if e.loadedTypes[21] {
+	if e.loadedTypes[22] {
 		return e.MissionProductions, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_productions"}
@@ -338,7 +349,7 @@ func (e UserEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
 // MissionsOrErr returns the Missions value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionsOrErr() ([]*Mission, error) {
-	if e.loadedTypes[22] {
+	if e.loadedTypes[23] {
 		return e.Missions, nil
 	}
 	return nil, &NotLoadedError{edge: "missions"}
@@ -347,7 +358,7 @@ func (e UserEdges) MissionsOrErr() ([]*Mission, error) {
 // IncomeTransferOrdersOrErr returns the IncomeTransferOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) IncomeTransferOrdersOrErr() ([]*TransferOrder, error) {
-	if e.loadedTypes[23] {
+	if e.loadedTypes[24] {
 		return e.IncomeTransferOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "income_transfer_orders"}
@@ -356,7 +367,7 @@ func (e UserEdges) IncomeTransferOrdersOrErr() ([]*TransferOrder, error) {
 // OutcomeTransferOrdersOrErr returns the OutcomeTransferOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OutcomeTransferOrdersOrErr() ([]*TransferOrder, error) {
-	if e.loadedTypes[24] {
+	if e.loadedTypes[25] {
 		return e.OutcomeTransferOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "outcome_transfer_orders"}
@@ -365,7 +376,7 @@ func (e UserEdges) OutcomeTransferOrdersOrErr() ([]*TransferOrder, error) {
 // ConsumeMissionOrdersOrErr returns the ConsumeMissionOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ConsumeMissionOrdersOrErr() ([]*MissionOrder, error) {
-	if e.loadedTypes[25] {
+	if e.loadedTypes[26] {
 		return e.ConsumeMissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "consume_mission_orders"}
@@ -374,7 +385,7 @@ func (e UserEdges) ConsumeMissionOrdersOrErr() ([]*MissionOrder, error) {
 // ProduceMissionOrdersOrErr returns the ProduceMissionOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ProduceMissionOrdersOrErr() ([]*MissionOrder, error) {
-	if e.loadedTypes[26] {
+	if e.loadedTypes[27] {
 		return e.ProduceMissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "produce_mission_orders"}
@@ -383,7 +394,7 @@ func (e UserEdges) ProduceMissionOrdersOrErr() ([]*MissionOrder, error) {
 // LoginRecordsOrErr returns the LoginRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) LoginRecordsOrErr() ([]*LoginRecord, error) {
-	if e.loadedTypes[27] {
+	if e.loadedTypes[28] {
 		return e.LoginRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "login_records"}
@@ -392,7 +403,7 @@ func (e UserEdges) LoginRecordsOrErr() ([]*LoginRecord, error) {
 // RenewalAgreementsOrErr returns the RenewalAgreements value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
-	if e.loadedTypes[28] {
+	if e.loadedTypes[29] {
 		return e.RenewalAgreements, nil
 	}
 	return nil, &NotLoadedError{edge: "renewal_agreements"}
@@ -640,6 +651,11 @@ func (u *User) QueryCampaignOrders() *CampaignOrderQuery {
 // QueryWallets queries the "wallets" edge of the User entity.
 func (u *User) QueryWallets() *WalletQuery {
 	return NewUserClient(u.config).QueryWallets(u)
+}
+
+// QueryWithdrawAccounts queries the "withdraw_accounts" edge of the User entity.
+func (u *User) QueryWithdrawAccounts() *WithdrawAccountQuery {
+	return NewUserClient(u.config).QueryWithdrawAccounts(u)
 }
 
 // QueryIncomeBills queries the "income_bills" edge of the User entity.

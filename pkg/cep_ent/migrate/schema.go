@@ -272,7 +272,7 @@ var (
 		{Name: "linking", Type: field.TypeBool, Comment: "设备是否正在对接中", Default: false},
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
 		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy"}, Default: "online"},
-		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: ""},
+		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: "默认设备名称"},
 		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},
 		{Name: "cores_number", Type: field.TypeInt64, Comment: "核心数", Default: 0},
 		{Name: "cpu", Type: field.TypeString, Comment: "CPU型号", Default: ""},
@@ -468,6 +468,7 @@ var (
 		{Name: "plan_finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划结束时间（包时）"},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "任务批次外键", Default: 0},
+		{Name: "mission_order_id", Type: field.TypeInt64, Comment: "任务订单 id，外键关联任务订单", Default: 0},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 	}
 	// ExtraServiceOrdersTable holds the schema information for the "extra_service_orders" table.
@@ -490,8 +491,14 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "extra_service_orders_symbols_extra_service_order",
+				Symbol:     "extra_service_orders_mission_orders_extra_service_orders",
 				Columns:    []*schema.Column{ExtraServiceOrdersColumns[13]},
+				RefColumns: []*schema.Column{MissionOrdersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "extra_service_orders_symbols_extra_service_order",
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[14]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -741,7 +748,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan"}, Default: "unknown"},
 		{Name: "body", Type: field.TypeString, Comment: "任务的请求参数体", Default: ""},
 		{Name: "call_back_url", Type: field.TypeString, Comment: "回调地址，空字符串表示不回调", Default: ""},
 		{Name: "call_back_info", Type: field.TypeString, Nullable: true, Comment: "回调时带上的参数，接收任何类型数据后 json 压缩"},
@@ -851,7 +858,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Comment: "任务订单的状态，注意不强关联任务的状态", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "failed", "succeed"}, Default: "unknown"},
 		{Name: "pure_cep", Type: field.TypeInt64, Comment: "任务消耗的本金 cep 量", Default: 0},
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务消耗的赠送 cep 量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan"}, Default: "unknown"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
 		{Name: "call_way", Type: field.TypeEnum, Comment: "调用方式，API 调用或者微信小程序调用", Enums: []string{"unknown", "api", "yuan_hui", "dev_platform"}, Default: "api"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
@@ -966,8 +973,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan"}, Default: "unknown"},
-		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务单位类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan"}, Default: "unknown"},
+		{Name: "category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO", "FOOOCUS", "TABBY", "JP_CONDA"}, Default: "unknown"},
 		{Name: "billing_type", Type: field.TypeEnum, Comment: "计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
 	}
 	// MissionKindsTable holds the schema information for the "mission_kinds" table.
@@ -989,7 +996,7 @@ var (
 		{Name: "consume_amount", Type: field.TypeInt64, Comment: "订单的货币消耗量", Default: 0},
 		{Name: "produce_amount", Type: field.TypeInt64, Comment: "订单的货币分润量", Default: 0},
 		{Name: "gas_amount", Type: field.TypeInt64, Comment: "订单的平台收量，不记录用户 id，因为都是记载到 genesis 用户", Default: 0},
-		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan"}, Default: "unknown"},
+		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型，等于任务表的类型字段", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan"}, Default: "unknown"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "是否为计时类型任务", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
 		{Name: "call_way", Type: field.TypeEnum, Comment: "调用方式，API 调用或者微信小程序调用", Enums: []string{"unknown", "api", "yuan_hui", "dev_platform"}, Default: "unknown"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
@@ -1071,7 +1078,7 @@ var (
 		{Name: "gift_cep", Type: field.TypeInt64, Comment: "任务收益的赠送 cep 量", Default: 0},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Comment: "任务订单分润", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务类型，计时或者次数任务", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan"}, Default: "unknown"},
 		{Name: "is_time", Type: field.TypeBool, Comment: "是否为计时类型任务", Default: false},
 		{Name: "serial_number", Type: field.TypeString, Comment: "订单序列号", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "生产者接该任务用的设备 id", Default: 0},
@@ -1223,8 +1230,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "显卡型号", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100"}, Default: "RTX2060"},
-		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan"}, Default: "txt2img"},
-		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO"}, Default: "SD"},
+		{Name: "mission_type", Type: field.TypeEnum, Comment: "任务类型", Enums: []string{"unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan"}, Default: "txt2img"},
+		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO", "FOOOCUS", "TABBY", "JP_CONDA"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "count"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
@@ -1654,6 +1661,38 @@ var (
 			},
 		},
 	}
+	// WithdrawAccountsColumns holds the columns for the "withdraw_accounts" table.
+	WithdrawAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "business_name", Type: field.TypeString, Comment: "威付通商户名称", Default: ""},
+		{Name: "business_type", Type: field.TypeEnum, Comment: "商户类型", Enums: []string{"yun", "wft"}, Default: "yun"},
+		{Name: "business_id", Type: field.TypeInt64, Comment: "商户 id", Default: 0},
+		{Name: "personal_name", Type: field.TypeString, Comment: "个人商户名称", Default: "未设置昵称"},
+		{Name: "phone", Type: field.TypeString, Comment: "个人商户手机号", Default: ""},
+		{Name: "bank_card_number", Type: field.TypeString, Comment: "银行卡号", Default: ""},
+		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
+	}
+	// WithdrawAccountsTable holds the schema information for the "withdraw_accounts" table.
+	WithdrawAccountsTable = &schema.Table{
+		Name:       "withdraw_accounts",
+		Comment:    "提现账户，用来提供提现渠道",
+		Columns:    WithdrawAccountsColumns,
+		PrimaryKey: []*schema.Column{WithdrawAccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "withdraw_accounts_users_withdraw_accounts",
+				Columns:    []*schema.Column{WithdrawAccountsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		BillsTable,
@@ -1701,6 +1740,7 @@ var (
 		VxAccountsTable,
 		VxSocialsTable,
 		WalletsTable,
+		WithdrawAccountsTable,
 	}
 )
 
@@ -1743,7 +1783,8 @@ func init() {
 	ExtraServicesTable.Annotation = &entsql.Annotation{}
 	ExtraServiceOrdersTable.ForeignKeys[0].RefTable = MissionsTable
 	ExtraServiceOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
-	ExtraServiceOrdersTable.ForeignKeys[2].RefTable = SymbolsTable
+	ExtraServiceOrdersTable.ForeignKeys[2].RefTable = MissionOrdersTable
+	ExtraServiceOrdersTable.ForeignKeys[3].RefTable = SymbolsTable
 	ExtraServiceOrdersTable.Annotation = &entsql.Annotation{}
 	ExtraServicePricesTable.ForeignKeys[0].RefTable = ExtraServicesTable
 	ExtraServicePricesTable.Annotation = &entsql.Annotation{}
@@ -1828,4 +1869,6 @@ func init() {
 	WalletsTable.ForeignKeys[0].RefTable = SymbolsTable
 	WalletsTable.ForeignKeys[1].RefTable = UsersTable
 	WalletsTable.Annotation = &entsql.Annotation{}
+	WithdrawAccountsTable.ForeignKeys[0].RefTable = UsersTable
+	WithdrawAccountsTable.Annotation = &entsql.Annotation{}
 }

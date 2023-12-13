@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 )
@@ -25,6 +26,7 @@ type ExtraServiceOrderQuery struct {
 	inters           []Interceptor
 	predicates       []predicate.ExtraServiceOrder
 	withMission      *MissionQuery
+	withMissionOrder *MissionOrderQuery
 	withSymbol       *SymbolQuery
 	withMissionBatch *MissionBatchQuery
 	modifiers        []func(*sql.Selector)
@@ -79,6 +81,28 @@ func (esoq *ExtraServiceOrderQuery) QueryMission() *MissionQuery {
 			sqlgraph.From(extraserviceorder.Table, extraserviceorder.FieldID, selector),
 			sqlgraph.To(mission.Table, mission.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceorder.MissionTable, extraserviceorder.MissionColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(esoq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissionOrder chains the current query on the "mission_order" edge.
+func (esoq *ExtraServiceOrderQuery) QueryMissionOrder() *MissionOrderQuery {
+	query := (&MissionOrderClient{config: esoq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := esoq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := esoq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(extraserviceorder.Table, extraserviceorder.FieldID, selector),
+			sqlgraph.To(missionorder.Table, missionorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, extraserviceorder.MissionOrderTable, extraserviceorder.MissionOrderColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(esoq.driver.Dialect(), step)
 		return fromU, nil
@@ -323,6 +347,7 @@ func (esoq *ExtraServiceOrderQuery) Clone() *ExtraServiceOrderQuery {
 		inters:           append([]Interceptor{}, esoq.inters...),
 		predicates:       append([]predicate.ExtraServiceOrder{}, esoq.predicates...),
 		withMission:      esoq.withMission.Clone(),
+		withMissionOrder: esoq.withMissionOrder.Clone(),
 		withSymbol:       esoq.withSymbol.Clone(),
 		withMissionBatch: esoq.withMissionBatch.Clone(),
 		// clone intermediate query.
@@ -339,6 +364,17 @@ func (esoq *ExtraServiceOrderQuery) WithMission(opts ...func(*MissionQuery)) *Ex
 		opt(query)
 	}
 	esoq.withMission = query
+	return esoq
+}
+
+// WithMissionOrder tells the query-builder to eager-load the nodes that are connected to
+// the "mission_order" edge. The optional arguments are used to configure the query builder of the edge.
+func (esoq *ExtraServiceOrderQuery) WithMissionOrder(opts ...func(*MissionOrderQuery)) *ExtraServiceOrderQuery {
+	query := (&MissionOrderClient{config: esoq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	esoq.withMissionOrder = query
 	return esoq
 }
 
@@ -442,8 +478,9 @@ func (esoq *ExtraServiceOrderQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	var (
 		nodes       = []*ExtraServiceOrder{}
 		_spec       = esoq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			esoq.withMission != nil,
+			esoq.withMissionOrder != nil,
 			esoq.withSymbol != nil,
 			esoq.withMissionBatch != nil,
 		}
@@ -472,6 +509,12 @@ func (esoq *ExtraServiceOrderQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	if query := esoq.withMission; query != nil {
 		if err := esoq.loadMission(ctx, query, nodes, nil,
 			func(n *ExtraServiceOrder, e *Mission) { n.Edges.Mission = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := esoq.withMissionOrder; query != nil {
+		if err := esoq.loadMissionOrder(ctx, query, nodes, nil,
+			func(n *ExtraServiceOrder, e *MissionOrder) { n.Edges.MissionOrder = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -512,6 +555,35 @@ func (esoq *ExtraServiceOrderQuery) loadMission(ctx context.Context, query *Miss
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "mission_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (esoq *ExtraServiceOrderQuery) loadMissionOrder(ctx context.Context, query *MissionOrderQuery, nodes []*ExtraServiceOrder, init func(*ExtraServiceOrder), assign func(*ExtraServiceOrder, *MissionOrder)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*ExtraServiceOrder)
+	for i := range nodes {
+		fk := nodes[i].MissionOrderID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(missionorder.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "mission_order_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -608,6 +680,9 @@ func (esoq *ExtraServiceOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if esoq.withMission != nil {
 			_spec.Node.AddColumnOnce(extraserviceorder.FieldMissionID)
+		}
+		if esoq.withMissionOrder != nil {
+			_spec.Node.AddColumnOnce(extraserviceorder.FieldMissionOrderID)
 		}
 		if esoq.withSymbol != nil {
 			_spec.Node.AddColumnOnce(extraserviceorder.FieldSymbolID)

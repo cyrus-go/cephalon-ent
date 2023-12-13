@@ -1512,6 +1512,29 @@ func HasDeviceWith(preds ...predicate.Device) predicate.MissionOrder {
 	})
 }
 
+// HasExtraServiceOrders applies the HasEdge predicate on the "extra_service_orders" edge.
+func HasExtraServiceOrders() predicate.MissionOrder {
+	return predicate.MissionOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrdersTable, ExtraServiceOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasExtraServiceOrdersWith applies the HasEdge predicate on the "extra_service_orders" edge with a given conditions (other predicates).
+func HasExtraServiceOrdersWith(preds ...predicate.ExtraServiceOrder) predicate.MissionOrder {
+	return predicate.MissionOrder(func(s *sql.Selector) {
+		step := newExtraServiceOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.MissionOrder) predicate.MissionOrder {
 	return predicate.MissionOrder(sql.AndPredicates(predicates...))

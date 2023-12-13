@@ -173,3 +173,6 @@ type VXSocial func(*sql.Selector)
 
 // Wallet is the predicate function for wallet builders.
 type Wallet func(*sql.Selector)
+
+// WithdrawAccount is the predicate function for withdrawaccount builders.
+type WithdrawAccount func(*sql.Selector)

@@ -37,6 +37,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 )
 
 // UserQuery is the builder for querying User entities.
@@ -65,6 +66,7 @@ type UserQuery struct {
 	withInvites               *InviteQuery
 	withCampaignOrders        *CampaignOrderQuery
 	withWallets               *WalletQuery
+	withWithdrawAccounts      *WithdrawAccountQuery
 	withIncomeBills           *BillQuery
 	withOutcomeBills          *BillQuery
 	withMissionProductions    *MissionProductionQuery
@@ -530,6 +532,28 @@ func (uq *UserQuery) QueryWallets() *WalletQuery {
 	return query
 }
 
+// QueryWithdrawAccounts chains the current query on the "withdraw_accounts" edge.
+func (uq *UserQuery) QueryWithdrawAccounts() *WithdrawAccountQuery {
+	query := (&WithdrawAccountClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(withdrawaccount.Table, withdrawaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawAccountsTable, user.WithdrawAccountsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryIncomeBills chains the current query on the "income_bills" edge.
 func (uq *UserQuery) QueryIncomeBills() *BillQuery {
 	query := (&BillClient{config: uq.config}).Query()
@@ -961,6 +985,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withInvites:               uq.withInvites.Clone(),
 		withCampaignOrders:        uq.withCampaignOrders.Clone(),
 		withWallets:               uq.withWallets.Clone(),
+		withWithdrawAccounts:      uq.withWithdrawAccounts.Clone(),
 		withIncomeBills:           uq.withIncomeBills.Clone(),
 		withOutcomeBills:          uq.withOutcomeBills.Clone(),
 		withMissionProductions:    uq.withMissionProductions.Clone(),
@@ -1186,6 +1211,17 @@ func (uq *UserQuery) WithWallets(opts ...func(*WalletQuery)) *UserQuery {
 	return uq
 }
 
+// WithWithdrawAccounts tells the query-builder to eager-load the nodes that are connected to
+// the "withdraw_accounts" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithWithdrawAccounts(opts ...func(*WithdrawAccountQuery)) *UserQuery {
+	query := (&WithdrawAccountClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withWithdrawAccounts = query
+	return uq
+}
+
 // WithIncomeBills tells the query-builder to eager-load the nodes that are connected to
 // the "income_bills" edge. The optional arguments are used to configure the query builder of the edge.
 func (uq *UserQuery) WithIncomeBills(opts ...func(*BillQuery)) *UserQuery {
@@ -1374,7 +1410,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [29]bool{
+		loadedTypes = [30]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1394,6 +1430,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withInvites != nil,
 			uq.withCampaignOrders != nil,
 			uq.withWallets != nil,
+			uq.withWithdrawAccounts != nil,
 			uq.withIncomeBills != nil,
 			uq.withOutcomeBills != nil,
 			uq.withMissionProductions != nil,
@@ -1558,6 +1595,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadWallets(ctx, query, nodes,
 			func(n *User) { n.Edges.Wallets = []*Wallet{} },
 			func(n *User, e *Wallet) { n.Edges.Wallets = append(n.Edges.Wallets, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withWithdrawAccounts; query != nil {
+		if err := uq.loadWithdrawAccounts(ctx, query, nodes,
+			func(n *User) { n.Edges.WithdrawAccounts = []*WithdrawAccount{} },
+			func(n *User, e *WithdrawAccount) { n.Edges.WithdrawAccounts = append(n.Edges.WithdrawAccounts, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2189,6 +2233,36 @@ func (uq *UserQuery) loadWallets(ctx context.Context, query *WalletQuery, nodes 
 	}
 	query.Where(predicate.Wallet(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.WalletsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadWithdrawAccounts(ctx context.Context, query *WithdrawAccountQuery, nodes []*User, init func(*User), assign func(*User, *WithdrawAccount)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(withdrawaccount.FieldUserID)
+	}
+	query.Where(predicate.WithdrawAccount(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.WithdrawAccountsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

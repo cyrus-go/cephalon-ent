@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/extraserviceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -106,6 +107,20 @@ func (esoc *ExtraServiceOrderCreate) SetMissionID(i int64) *ExtraServiceOrderCre
 func (esoc *ExtraServiceOrderCreate) SetNillableMissionID(i *int64) *ExtraServiceOrderCreate {
 	if i != nil {
 		esoc.SetMissionID(*i)
+	}
+	return esoc
+}
+
+// SetMissionOrderID sets the "mission_order_id" field.
+func (esoc *ExtraServiceOrderCreate) SetMissionOrderID(i int64) *ExtraServiceOrderCreate {
+	esoc.mutation.SetMissionOrderID(i)
+	return esoc
+}
+
+// SetNillableMissionOrderID sets the "mission_order_id" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableMissionOrderID(i *int64) *ExtraServiceOrderCreate {
+	if i != nil {
+		esoc.SetMissionOrderID(*i)
 	}
 	return esoc
 }
@@ -227,6 +242,11 @@ func (esoc *ExtraServiceOrderCreate) SetMission(m *Mission) *ExtraServiceOrderCr
 	return esoc.SetMissionID(m.ID)
 }
 
+// SetMissionOrder sets the "mission_order" edge to the MissionOrder entity.
+func (esoc *ExtraServiceOrderCreate) SetMissionOrder(m *MissionOrder) *ExtraServiceOrderCreate {
+	return esoc.SetMissionOrderID(m.ID)
+}
+
 // SetSymbol sets the "symbol" edge to the Symbol entity.
 func (esoc *ExtraServiceOrderCreate) SetSymbol(s *Symbol) *ExtraServiceOrderCreate {
 	return esoc.SetSymbolID(s.ID)
@@ -296,6 +316,10 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultMissionID
 		esoc.mutation.SetMissionID(v)
 	}
+	if _, ok := esoc.mutation.MissionOrderID(); !ok {
+		v := extraserviceorder.DefaultMissionOrderID
+		esoc.mutation.SetMissionOrderID(v)
+	}
 	if _, ok := esoc.mutation.Amount(); !ok {
 		v := extraserviceorder.DefaultAmount
 		esoc.mutation.SetAmount(v)
@@ -350,6 +374,9 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	if _, ok := esoc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.mission_id"`)}
 	}
+	if _, ok := esoc.mutation.MissionOrderID(); !ok {
+		return &ValidationError{Name: "mission_order_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.mission_order_id"`)}
+	}
 	if _, ok := esoc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.amount"`)}
 	}
@@ -372,6 +399,9 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	}
 	if _, ok := esoc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission", err: errors.New(`cep_ent: missing required edge "ExtraServiceOrder.mission"`)}
+	}
+	if _, ok := esoc.mutation.MissionOrderID(); !ok {
+		return &ValidationError{Name: "mission_order", err: errors.New(`cep_ent: missing required edge "ExtraServiceOrder.mission_order"`)}
 	}
 	if _, ok := esoc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "ExtraServiceOrder.symbol"`)}
@@ -467,6 +497,23 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.MissionID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := esoc.mutation.MissionOrderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   extraserviceorder.MissionOrderTable,
+			Columns: []string{extraserviceorder.MissionOrderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionOrderID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := esoc.mutation.SymbolIDs(); len(nodes) > 0 {
@@ -624,6 +671,18 @@ func (u *ExtraServiceOrderUpsert) SetMissionID(v int64) *ExtraServiceOrderUpsert
 // UpdateMissionID sets the "mission_id" field to the value that was provided on create.
 func (u *ExtraServiceOrderUpsert) UpdateMissionID() *ExtraServiceOrderUpsert {
 	u.SetExcluded(extraserviceorder.FieldMissionID)
+	return u
+}
+
+// SetMissionOrderID sets the "mission_order_id" field.
+func (u *ExtraServiceOrderUpsert) SetMissionOrderID(v int64) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldMissionOrderID, v)
+	return u
+}
+
+// UpdateMissionOrderID sets the "mission_order_id" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateMissionOrderID() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldMissionOrderID)
 	return u
 }
 
@@ -867,6 +926,20 @@ func (u *ExtraServiceOrderUpsertOne) SetMissionID(v int64) *ExtraServiceOrderUps
 func (u *ExtraServiceOrderUpsertOne) UpdateMissionID() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateMissionID()
+	})
+}
+
+// SetMissionOrderID sets the "mission_order_id" field.
+func (u *ExtraServiceOrderUpsertOne) SetMissionOrderID(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetMissionOrderID(v)
+	})
+}
+
+// UpdateMissionOrderID sets the "mission_order_id" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateMissionOrderID() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateMissionOrderID()
 	})
 }
 
@@ -1294,6 +1367,20 @@ func (u *ExtraServiceOrderUpsertBulk) SetMissionID(v int64) *ExtraServiceOrderUp
 func (u *ExtraServiceOrderUpsertBulk) UpdateMissionID() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateMissionID()
+	})
+}
+
+// SetMissionOrderID sets the "mission_order_id" field.
+func (u *ExtraServiceOrderUpsertBulk) SetMissionOrderID(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetMissionOrderID(v)
+	})
+}
+
+// UpdateMissionOrderID sets the "mission_order_id" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateMissionOrderID() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateMissionOrderID()
 	})
 }
 
