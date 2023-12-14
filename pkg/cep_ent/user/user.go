@@ -49,6 +49,10 @@ const (
 	FieldParentID = "parent_id"
 	// FieldPopVersion holds the string denoting the pop_version field in the database.
 	FieldPopVersion = "pop_version"
+	// FieldAreaCode holds the string denoting the area_code field in the database.
+	FieldAreaCode = "area_code"
+	// FieldEmail holds the string denoting the email field in the database.
+	FieldEmail = "email"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -337,6 +341,8 @@ var Columns = []string{
 	FieldUserType,
 	FieldParentID,
 	FieldPopVersion,
+	FieldAreaCode,
+	FieldEmail,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -384,6 +390,10 @@ var (
 	DefaultParentID int64
 	// DefaultPopVersion holds the default value on creation for the "pop_version" field.
 	DefaultPopVersion string
+	// DefaultAreaCode holds the default value on creation for the "area_code" field.
+	DefaultAreaCode string
+	// DefaultEmail holds the default value on creation for the "email" field.
+	DefaultEmail string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -505,6 +515,16 @@ func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 // ByPopVersion orders the results by the pop_version field.
 func ByPopVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPopVersion, opts...).ToFunc()
+}
+
+// ByAreaCode orders the results by the area_code field.
+func ByAreaCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAreaCode, opts...).ToFunc()
+}
+
+// ByEmail orders the results by the email field.
+func ByEmail(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmail, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

@@ -135,6 +135,16 @@ func PopVersion(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPopVersion, v))
 }
 
+// AreaCode applies equality check predicate on the "area_code" field. It's identical to AreaCodeEQ.
+func AreaCode(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAreaCode, v))
+}
+
+// Email applies equality check predicate on the "email" field. It's identical to EmailEQ.
+func Email(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldEmail, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
@@ -913,6 +923,136 @@ func PopVersionEqualFold(v string) predicate.User {
 // PopVersionContainsFold applies the ContainsFold predicate on the "pop_version" field.
 func PopVersionContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldPopVersion, v))
+}
+
+// AreaCodeEQ applies the EQ predicate on the "area_code" field.
+func AreaCodeEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAreaCode, v))
+}
+
+// AreaCodeNEQ applies the NEQ predicate on the "area_code" field.
+func AreaCodeNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldAreaCode, v))
+}
+
+// AreaCodeIn applies the In predicate on the "area_code" field.
+func AreaCodeIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldAreaCode, vs...))
+}
+
+// AreaCodeNotIn applies the NotIn predicate on the "area_code" field.
+func AreaCodeNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldAreaCode, vs...))
+}
+
+// AreaCodeGT applies the GT predicate on the "area_code" field.
+func AreaCodeGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldAreaCode, v))
+}
+
+// AreaCodeGTE applies the GTE predicate on the "area_code" field.
+func AreaCodeGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldAreaCode, v))
+}
+
+// AreaCodeLT applies the LT predicate on the "area_code" field.
+func AreaCodeLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldAreaCode, v))
+}
+
+// AreaCodeLTE applies the LTE predicate on the "area_code" field.
+func AreaCodeLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldAreaCode, v))
+}
+
+// AreaCodeContains applies the Contains predicate on the "area_code" field.
+func AreaCodeContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldAreaCode, v))
+}
+
+// AreaCodeHasPrefix applies the HasPrefix predicate on the "area_code" field.
+func AreaCodeHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldAreaCode, v))
+}
+
+// AreaCodeHasSuffix applies the HasSuffix predicate on the "area_code" field.
+func AreaCodeHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldAreaCode, v))
+}
+
+// AreaCodeEqualFold applies the EqualFold predicate on the "area_code" field.
+func AreaCodeEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldAreaCode, v))
+}
+
+// AreaCodeContainsFold applies the ContainsFold predicate on the "area_code" field.
+func AreaCodeContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldAreaCode, v))
+}
+
+// EmailEQ applies the EQ predicate on the "email" field.
+func EmailEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldEmail, v))
+}
+
+// EmailNEQ applies the NEQ predicate on the "email" field.
+func EmailNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldEmail, v))
+}
+
+// EmailIn applies the In predicate on the "email" field.
+func EmailIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldEmail, vs...))
+}
+
+// EmailNotIn applies the NotIn predicate on the "email" field.
+func EmailNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldEmail, vs...))
+}
+
+// EmailGT applies the GT predicate on the "email" field.
+func EmailGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldEmail, v))
+}
+
+// EmailGTE applies the GTE predicate on the "email" field.
+func EmailGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldEmail, v))
+}
+
+// EmailLT applies the LT predicate on the "email" field.
+func EmailLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldEmail, v))
+}
+
+// EmailLTE applies the LTE predicate on the "email" field.
+func EmailLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldEmail, v))
+}
+
+// EmailContains applies the Contains predicate on the "email" field.
+func EmailContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldEmail, v))
+}
+
+// EmailHasPrefix applies the HasPrefix predicate on the "email" field.
+func EmailHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldEmail, v))
+}
+
+// EmailHasSuffix applies the HasSuffix predicate on the "email" field.
+func EmailHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldEmail, v))
+}
+
+// EmailEqualFold applies the EqualFold predicate on the "email" field.
+func EmailEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldEmail, v))
+}
+
+// EmailContainsFold applies the ContainsFold predicate on the "email" field.
+func EmailContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldEmail, v))
 }
 
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.

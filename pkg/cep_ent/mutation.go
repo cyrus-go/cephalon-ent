@@ -53534,6 +53534,8 @@ type UserMutation struct {
 	is_recharge                    *bool
 	user_type                      *user.UserType
 	pop_version                    *string
+	area_code                      *string
+	email                          *string
 	clearedFields                  map[string]struct{}
 	vx_accounts                    map[int64]struct{}
 	removedvx_accounts             map[int64]struct{}
@@ -54381,6 +54383,78 @@ func (m *UserMutation) OldPopVersion(ctx context.Context) (v string, err error) 
 // ResetPopVersion resets all changes to the "pop_version" field.
 func (m *UserMutation) ResetPopVersion() {
 	m.pop_version = nil
+}
+
+// SetAreaCode sets the "area_code" field.
+func (m *UserMutation) SetAreaCode(s string) {
+	m.area_code = &s
+}
+
+// AreaCode returns the value of the "area_code" field in the mutation.
+func (m *UserMutation) AreaCode() (r string, exists bool) {
+	v := m.area_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAreaCode returns the old "area_code" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAreaCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAreaCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAreaCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAreaCode: %w", err)
+	}
+	return oldValue.AreaCode, nil
+}
+
+// ResetAreaCode resets all changes to the "area_code" field.
+func (m *UserMutation) ResetAreaCode() {
+	m.area_code = nil
+}
+
+// SetEmail sets the "email" field.
+func (m *UserMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the value of the "email" field in the mutation.
+func (m *UserMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old "email" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ResetEmail resets all changes to the "email" field.
+func (m *UserMutation) ResetEmail() {
+	m.email = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -55980,7 +56054,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 19)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -56032,6 +56106,12 @@ func (m *UserMutation) Fields() []string {
 	if m.pop_version != nil {
 		fields = append(fields, user.FieldPopVersion)
 	}
+	if m.area_code != nil {
+		fields = append(fields, user.FieldAreaCode)
+	}
+	if m.email != nil {
+		fields = append(fields, user.FieldEmail)
+	}
 	return fields
 }
 
@@ -56074,6 +56154,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.ParentID()
 	case user.FieldPopVersion:
 		return m.PopVersion()
+	case user.FieldAreaCode:
+		return m.AreaCode()
+	case user.FieldEmail:
+		return m.Email()
 	}
 	return nil, false
 }
@@ -56117,6 +56201,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldParentID(ctx)
 	case user.FieldPopVersion:
 		return m.OldPopVersion(ctx)
+	case user.FieldAreaCode:
+		return m.OldAreaCode(ctx)
+	case user.FieldEmail:
+		return m.OldEmail(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -56245,6 +56333,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPopVersion(v)
 		return nil
+	case user.FieldAreaCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAreaCode(v)
+		return nil
+	case user.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -56371,6 +56473,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPopVersion:
 		m.ResetPopVersion()
+		return nil
+	case user.FieldAreaCode:
+		m.ResetAreaCode()
+		return nil
+	case user.FieldEmail:
+		m.ResetEmail()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

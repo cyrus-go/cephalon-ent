@@ -2365,6 +2365,14 @@ func init() {
 	userDescPopVersion := userFields[11].Descriptor()
 	// user.DefaultPopVersion holds the default value on creation for the pop_version field.
 	user.DefaultPopVersion = userDescPopVersion.Default.(string)
+	// userDescAreaCode is the schema descriptor for area_code field.
+	userDescAreaCode := userFields[12].Descriptor()
+	// user.DefaultAreaCode holds the default value on creation for the area_code field.
+	user.DefaultAreaCode = userDescAreaCode.Default.(string)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[13].Descriptor()
+	// user.DefaultEmail holds the default value on creation for the email field.
+	user.DefaultEmail = userDescEmail.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

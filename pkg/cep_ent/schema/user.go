@@ -27,6 +27,8 @@ func (User) Fields() []ent.Field {
 		field.Enum("user_type").Values("personal", "enterprise").Default("personal").StructTag(`json:"user_type"`).Comment("用户类型"),
 		field.Int64("parent_id").Default(0).StructTag(`json:"parent_id,string"`).Comment("邀请人用户 id"),
 		field.String("pop_version").Default("").StructTag(`json:"pop_version"`).Comment("用户最新弹窗版本"),
+		field.String("area_code").Default("+86").StructTag(`json:"area_code"`).Comment("国家区号"),
+		field.String("email").Default("").StructTag(`json:"email"'`).Comment("邮箱"),
 	}
 }
 

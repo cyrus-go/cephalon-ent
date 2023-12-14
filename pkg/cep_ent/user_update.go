@@ -284,6 +284,34 @@ func (uu *UserUpdate) SetNillablePopVersion(s *string) *UserUpdate {
 	return uu
 }
 
+// SetAreaCode sets the "area_code" field.
+func (uu *UserUpdate) SetAreaCode(s string) *UserUpdate {
+	uu.mutation.SetAreaCode(s)
+	return uu
+}
+
+// SetNillableAreaCode sets the "area_code" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAreaCode(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetAreaCode(*s)
+	}
+	return uu
+}
+
+// SetEmail sets the "email" field.
+func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
+	uu.mutation.SetEmail(s)
+	return uu
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetEmail(*s)
+	}
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -1439,6 +1467,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.PopVersion(); ok {
 		_spec.SetField(user.FieldPopVersion, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.AreaCode(); ok {
+		_spec.SetField(user.FieldAreaCode, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2994,6 +3028,34 @@ func (uuo *UserUpdateOne) SetNillablePopVersion(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetAreaCode sets the "area_code" field.
+func (uuo *UserUpdateOne) SetAreaCode(s string) *UserUpdateOne {
+	uuo.mutation.SetAreaCode(s)
+	return uuo
+}
+
+// SetNillableAreaCode sets the "area_code" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAreaCode(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetAreaCode(*s)
+	}
+	return uuo
+}
+
+// SetEmail sets the "email" field.
+func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
+	uuo.mutation.SetEmail(s)
+	return uuo
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetEmail(*s)
+	}
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -4179,6 +4241,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.PopVersion(); ok {
 		_spec.SetField(user.FieldPopVersion, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.AreaCode(); ok {
+		_spec.SetField(user.FieldAreaCode, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

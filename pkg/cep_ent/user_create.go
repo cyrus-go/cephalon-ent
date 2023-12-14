@@ -285,6 +285,34 @@ func (uc *UserCreate) SetNillablePopVersion(s *string) *UserCreate {
 	return uc
 }
 
+// SetAreaCode sets the "area_code" field.
+func (uc *UserCreate) SetAreaCode(s string) *UserCreate {
+	uc.mutation.SetAreaCode(s)
+	return uc
+}
+
+// SetNillableAreaCode sets the "area_code" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAreaCode(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAreaCode(*s)
+	}
+	return uc
+}
+
+// SetEmail sets the "email" field.
+func (uc *UserCreate) SetEmail(s string) *UserCreate {
+	uc.mutation.SetEmail(s)
+	return uc
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (uc *UserCreate) SetNillableEmail(s *string) *UserCreate {
+	if s != nil {
+		uc.SetEmail(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -850,6 +878,14 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultPopVersion
 		uc.mutation.SetPopVersion(v)
 	}
+	if _, ok := uc.mutation.AreaCode(); !ok {
+		v := user.DefaultAreaCode
+		uc.mutation.SetAreaCode(v)
+	}
+	if _, ok := uc.mutation.Email(); !ok {
+		v := user.DefaultEmail
+		uc.mutation.SetEmail(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -913,6 +949,12 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.PopVersion(); !ok {
 		return &ValidationError{Name: "pop_version", err: errors.New(`cep_ent: missing required field "User.pop_version"`)}
+	}
+	if _, ok := uc.mutation.AreaCode(); !ok {
+		return &ValidationError{Name: "area_code", err: errors.New(`cep_ent: missing required field "User.area_code"`)}
+	}
+	if _, ok := uc.mutation.Email(); !ok {
+		return &ValidationError{Name: "email", err: errors.New(`cep_ent: missing required field "User.email"`)}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -1013,6 +1055,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.PopVersion(); ok {
 		_spec.SetField(user.FieldPopVersion, field.TypeString, value)
 		_node.PopVersion = value
+	}
+	if value, ok := uc.mutation.AreaCode(); ok {
+		_spec.SetField(user.FieldAreaCode, field.TypeString, value)
+		_node.AreaCode = value
+	}
+	if value, ok := uc.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+		_node.Email = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1751,6 +1801,30 @@ func (u *UserUpsert) UpdatePopVersion() *UserUpsert {
 	return u
 }
 
+// SetAreaCode sets the "area_code" field.
+func (u *UserUpsert) SetAreaCode(v string) *UserUpsert {
+	u.Set(user.FieldAreaCode, v)
+	return u
+}
+
+// UpdateAreaCode sets the "area_code" field to the value that was provided on create.
+func (u *UserUpsert) UpdateAreaCode() *UserUpsert {
+	u.SetExcluded(user.FieldAreaCode)
+	return u
+}
+
+// SetEmail sets the "email" field.
+func (u *UserUpsert) SetEmail(v string) *UserUpsert {
+	u.Set(user.FieldEmail, v)
+	return u
+}
+
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserUpsert) UpdateEmail() *UserUpsert {
+	u.SetExcluded(user.FieldEmail)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2037,6 +2111,34 @@ func (u *UserUpsertOne) SetPopVersion(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdatePopVersion() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdatePopVersion()
+	})
+}
+
+// SetAreaCode sets the "area_code" field.
+func (u *UserUpsertOne) SetAreaCode(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAreaCode(v)
+	})
+}
+
+// UpdateAreaCode sets the "area_code" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateAreaCode() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAreaCode()
+	})
+}
+
+// SetEmail sets the "email" field.
+func (u *UserUpsertOne) SetEmail(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetEmail(v)
+	})
+}
+
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateEmail()
 	})
 }
 
@@ -2492,6 +2594,34 @@ func (u *UserUpsertBulk) SetPopVersion(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdatePopVersion() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdatePopVersion()
+	})
+}
+
+// SetAreaCode sets the "area_code" field.
+func (u *UserUpsertBulk) SetAreaCode(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAreaCode(v)
+	})
+}
+
+// UpdateAreaCode sets the "area_code" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateAreaCode() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAreaCode()
+	})
+}
+
+// SetEmail sets the "email" field.
+func (u *UserUpsertBulk) SetEmail(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetEmail(v)
+	})
+}
+
+// UpdateEmail sets the "email" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateEmail()
 	})
 }
 
