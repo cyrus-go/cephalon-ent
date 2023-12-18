@@ -41,6 +41,8 @@ type ExtraServiceOrder struct {
 	Amount int64 `json:"amount"`
 	// 币种 id
 	SymbolID int64 `json:"symbol_id,string"`
+	// 任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟
+	UnitCep int64 `json:"unit_cep"`
 	// 附加服务类型
 	ExtraServiceType enums.ExtraServiceType `json:"extra_service_type"`
 	// 包时任务订单购买的时长
@@ -129,7 +131,7 @@ func (*ExtraServiceOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
+		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldUnitCep, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
 		case extraserviceorder.FieldExtraServiceType:
 			values[i] = new(sql.NullString)
@@ -209,6 +211,12 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
 			} else if value.Valid {
 				eso.SymbolID = value.Int64
+			}
+		case extraserviceorder.FieldUnitCep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field unit_cep", values[i])
+			} else if value.Valid {
+				eso.UnitCep = value.Int64
 			}
 		case extraserviceorder.FieldExtraServiceType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -324,6 +332,9 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("symbol_id=")
 	builder.WriteString(fmt.Sprintf("%v", eso.SymbolID))
+	builder.WriteString(", ")
+	builder.WriteString("unit_cep=")
+	builder.WriteString(fmt.Sprintf("%v", eso.UnitCep))
 	builder.WriteString(", ")
 	builder.WriteString("extra_service_type=")
 	builder.WriteString(fmt.Sprintf("%v", eso.ExtraServiceType))

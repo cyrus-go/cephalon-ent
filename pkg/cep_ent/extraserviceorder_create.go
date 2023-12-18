@@ -153,6 +153,20 @@ func (esoc *ExtraServiceOrderCreate) SetNillableSymbolID(i *int64) *ExtraService
 	return esoc
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (esoc *ExtraServiceOrderCreate) SetUnitCep(i int64) *ExtraServiceOrderCreate {
+	esoc.mutation.SetUnitCep(i)
+	return esoc
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableUnitCep(i *int64) *ExtraServiceOrderCreate {
+	if i != nil {
+		esoc.SetUnitCep(*i)
+	}
+	return esoc
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (esoc *ExtraServiceOrderCreate) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServiceOrderCreate {
 	esoc.mutation.SetExtraServiceType(est)
@@ -328,6 +342,10 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultSymbolID
 		esoc.mutation.SetSymbolID(v)
 	}
+	if _, ok := esoc.mutation.UnitCep(); !ok {
+		v := extraserviceorder.DefaultUnitCep
+		esoc.mutation.SetUnitCep(v)
+	}
 	if _, ok := esoc.mutation.ExtraServiceType(); !ok {
 		v := extraserviceorder.DefaultExtraServiceType
 		esoc.mutation.SetExtraServiceType(v)
@@ -382,6 +400,9 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	}
 	if _, ok := esoc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.symbol_id"`)}
+	}
+	if _, ok := esoc.mutation.UnitCep(); !ok {
+		return &ValidationError{Name: "unit_cep", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.unit_cep"`)}
 	}
 	if _, ok := esoc.mutation.ExtraServiceType(); !ok {
 		return &ValidationError{Name: "extra_service_type", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.extra_service_type"`)}
@@ -465,6 +486,10 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	if value, ok := esoc.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)
 		_node.Amount = value
+	}
+	if value, ok := esoc.mutation.UnitCep(); ok {
+		_spec.SetField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
+		_node.UnitCep = value
 	}
 	if value, ok := esoc.mutation.ExtraServiceType(); ok {
 		_spec.SetField(extraserviceorder.FieldExtraServiceType, field.TypeEnum, value)
@@ -713,6 +738,24 @@ func (u *ExtraServiceOrderUpsert) SetSymbolID(v int64) *ExtraServiceOrderUpsert 
 // UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
 func (u *ExtraServiceOrderUpsert) UpdateSymbolID() *ExtraServiceOrderUpsert {
 	u.SetExcluded(extraserviceorder.FieldSymbolID)
+	return u
+}
+
+// SetUnitCep sets the "unit_cep" field.
+func (u *ExtraServiceOrderUpsert) SetUnitCep(v int64) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldUnitCep, v)
+	return u
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateUnitCep() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldUnitCep)
+	return u
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *ExtraServiceOrderUpsert) AddUnitCep(v int64) *ExtraServiceOrderUpsert {
+	u.Add(extraserviceorder.FieldUnitCep, v)
 	return u
 }
 
@@ -975,6 +1018,27 @@ func (u *ExtraServiceOrderUpsertOne) SetSymbolID(v int64) *ExtraServiceOrderUpse
 func (u *ExtraServiceOrderUpsertOne) UpdateSymbolID() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateSymbolID()
+	})
+}
+
+// SetUnitCep sets the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertOne) SetUnitCep(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetUnitCep(v)
+	})
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertOne) AddUnitCep(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddUnitCep(v)
+	})
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateUnitCep() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateUnitCep()
 	})
 }
 
@@ -1416,6 +1480,27 @@ func (u *ExtraServiceOrderUpsertBulk) SetSymbolID(v int64) *ExtraServiceOrderUps
 func (u *ExtraServiceOrderUpsertBulk) UpdateSymbolID() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateSymbolID()
+	})
+}
+
+// SetUnitCep sets the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertBulk) SetUnitCep(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetUnitCep(v)
+	})
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertBulk) AddUnitCep(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddUnitCep(v)
+	})
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateUnitCep() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateUnitCep()
 	})
 }
 

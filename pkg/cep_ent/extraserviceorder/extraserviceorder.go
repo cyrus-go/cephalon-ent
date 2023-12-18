@@ -34,6 +34,8 @@ const (
 	FieldAmount = "amount"
 	// FieldSymbolID holds the string denoting the symbol_id field in the database.
 	FieldSymbolID = "symbol_id"
+	// FieldUnitCep holds the string denoting the unit_cep field in the database.
+	FieldUnitCep = "unit_cep"
 	// FieldExtraServiceType holds the string denoting the extra_service_type field in the database.
 	FieldExtraServiceType = "extra_service_type"
 	// FieldBuyDuration holds the string denoting the buy_duration field in the database.
@@ -96,6 +98,7 @@ var Columns = []string{
 	FieldMissionOrderID,
 	FieldAmount,
 	FieldSymbolID,
+	FieldUnitCep,
 	FieldExtraServiceType,
 	FieldBuyDuration,
 	FieldPlanStartedAt,
@@ -134,6 +137,8 @@ var (
 	DefaultAmount int64
 	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
 	DefaultSymbolID int64
+	// DefaultUnitCep holds the default value on creation for the "unit_cep" field.
+	DefaultUnitCep int64
 	// DefaultBuyDuration holds the default value on creation for the "buy_duration" field.
 	DefaultBuyDuration int64
 	// DefaultPlanStartedAt holds the default value on creation for the "plan_started_at" field.
@@ -209,6 +214,11 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // BySymbolID orders the results by the symbol_id field.
 func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
+}
+
+// ByUnitCep orders the results by the unit_cep field.
+func ByUnitCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUnitCep, opts...).ToFunc()
 }
 
 // ByExtraServiceType orders the results by the extra_service_type field.

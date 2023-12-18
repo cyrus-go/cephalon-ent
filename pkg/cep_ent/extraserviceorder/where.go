@@ -101,6 +101,11 @@ func SymbolID(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldSymbolID, v))
 }
 
+// UnitCep applies equality check predicate on the "unit_cep" field. It's identical to UnitCepEQ.
+func UnitCep(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldUnitCep, v))
+}
+
 // BuyDuration applies equality check predicate on the "buy_duration" field. It's identical to BuyDurationEQ.
 func BuyDuration(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldBuyDuration, v))
@@ -419,6 +424,46 @@ func SymbolIDIn(vs ...int64) predicate.ExtraServiceOrder {
 // SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
 func SymbolIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// UnitCepEQ applies the EQ predicate on the "unit_cep" field.
+func UnitCepEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldUnitCep, v))
+}
+
+// UnitCepNEQ applies the NEQ predicate on the "unit_cep" field.
+func UnitCepNEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldUnitCep, v))
+}
+
+// UnitCepIn applies the In predicate on the "unit_cep" field.
+func UnitCepIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldUnitCep, vs...))
+}
+
+// UnitCepNotIn applies the NotIn predicate on the "unit_cep" field.
+func UnitCepNotIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldUnitCep, vs...))
+}
+
+// UnitCepGT applies the GT predicate on the "unit_cep" field.
+func UnitCepGT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldUnitCep, v))
+}
+
+// UnitCepGTE applies the GTE predicate on the "unit_cep" field.
+func UnitCepGTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldUnitCep, v))
+}
+
+// UnitCepLT applies the LT predicate on the "unit_cep" field.
+func UnitCepLT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldUnitCep, v))
+}
+
+// UnitCepLTE applies the LTE predicate on the "unit_cep" field.
+func UnitCepLTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldUnitCep, v))
 }
 
 // ExtraServiceTypeEQ applies the EQ predicate on the "extra_service_type" field.

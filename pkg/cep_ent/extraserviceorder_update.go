@@ -159,6 +159,27 @@ func (esou *ExtraServiceOrderUpdate) SetNillableSymbolID(i *int64) *ExtraService
 	return esou
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (esou *ExtraServiceOrderUpdate) SetUnitCep(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.ResetUnitCep()
+	esou.mutation.SetUnitCep(i)
+	return esou
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableUnitCep(i *int64) *ExtraServiceOrderUpdate {
+	if i != nil {
+		esou.SetUnitCep(*i)
+	}
+	return esou
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (esou *ExtraServiceOrderUpdate) AddUnitCep(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.AddUnitCep(i)
+	return esou
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (esou *ExtraServiceOrderUpdate) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServiceOrderUpdate {
 	esou.mutation.SetExtraServiceType(est)
@@ -396,6 +417,12 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if value, ok := esou.mutation.AddedAmount(); ok {
 		_spec.AddField(extraserviceorder.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.UnitCep(); ok {
+		_spec.SetField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.AddedUnitCep(); ok {
+		_spec.AddField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
 	}
 	if value, ok := esou.mutation.ExtraServiceType(); ok {
 		_spec.SetField(extraserviceorder.FieldExtraServiceType, field.TypeEnum, value)
@@ -681,6 +708,27 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableSymbolID(i *int64) *ExtraSer
 	return esouo
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetUnitCep(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ResetUnitCep()
+	esouo.mutation.SetUnitCep(i)
+	return esouo
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableUnitCep(i *int64) *ExtraServiceOrderUpdateOne {
+	if i != nil {
+		esouo.SetUnitCep(*i)
+	}
+	return esouo
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (esouo *ExtraServiceOrderUpdateOne) AddUnitCep(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.AddUnitCep(i)
+	return esouo
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (esouo *ExtraServiceOrderUpdateOne) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.SetExtraServiceType(est)
@@ -948,6 +996,12 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	}
 	if value, ok := esouo.mutation.AddedAmount(); ok {
 		_spec.AddField(extraserviceorder.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.UnitCep(); ok {
+		_spec.SetField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.AddedUnitCep(); ok {
+		_spec.AddField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
 	}
 	if value, ok := esouo.mutation.ExtraServiceType(); ok {
 		_spec.SetField(extraserviceorder.FieldExtraServiceType, field.TypeEnum, value)

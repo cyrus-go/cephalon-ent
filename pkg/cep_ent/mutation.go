@@ -15753,6 +15753,8 @@ type ExtraServiceOrderMutation struct {
 	deleted_at           *time.Time
 	amount               *int64
 	addamount            *int64
+	unit_cep             *int64
+	addunit_cep          *int64
 	extra_service_type   *enums.ExtraServiceType
 	buy_duration         *int64
 	addbuy_duration      *int64
@@ -16260,6 +16262,62 @@ func (m *ExtraServiceOrderMutation) ResetSymbolID() {
 	m.symbol = nil
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (m *ExtraServiceOrderMutation) SetUnitCep(i int64) {
+	m.unit_cep = &i
+	m.addunit_cep = nil
+}
+
+// UnitCep returns the value of the "unit_cep" field in the mutation.
+func (m *ExtraServiceOrderMutation) UnitCep() (r int64, exists bool) {
+	v := m.unit_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnitCep returns the old "unit_cep" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldUnitCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnitCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnitCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnitCep: %w", err)
+	}
+	return oldValue.UnitCep, nil
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (m *ExtraServiceOrderMutation) AddUnitCep(i int64) {
+	if m.addunit_cep != nil {
+		*m.addunit_cep += i
+	} else {
+		m.addunit_cep = &i
+	}
+}
+
+// AddedUnitCep returns the value that was added to the "unit_cep" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedUnitCep() (r int64, exists bool) {
+	v := m.addunit_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUnitCep resets all changes to the "unit_cep" field.
+func (m *ExtraServiceOrderMutation) ResetUnitCep() {
+	m.unit_cep = nil
+	m.addunit_cep = nil
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (m *ExtraServiceOrderMutation) SetExtraServiceType(est enums.ExtraServiceType) {
 	m.extra_service_type = &est
@@ -16628,7 +16686,7 @@ func (m *ExtraServiceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServiceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceorder.FieldCreatedBy)
 	}
@@ -16655,6 +16713,9 @@ func (m *ExtraServiceOrderMutation) Fields() []string {
 	}
 	if m.symbol != nil {
 		fields = append(fields, extraserviceorder.FieldSymbolID)
+	}
+	if m.unit_cep != nil {
+		fields = append(fields, extraserviceorder.FieldUnitCep)
 	}
 	if m.extra_service_type != nil {
 		fields = append(fields, extraserviceorder.FieldExtraServiceType)
@@ -16697,6 +16758,8 @@ func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case extraserviceorder.FieldSymbolID:
 		return m.SymbolID()
+	case extraserviceorder.FieldUnitCep:
+		return m.UnitCep()
 	case extraserviceorder.FieldExtraServiceType:
 		return m.ExtraServiceType()
 	case extraserviceorder.FieldBuyDuration:
@@ -16734,6 +16797,8 @@ func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (
 		return m.OldAmount(ctx)
 	case extraserviceorder.FieldSymbolID:
 		return m.OldSymbolID(ctx)
+	case extraserviceorder.FieldUnitCep:
+		return m.OldUnitCep(ctx)
 	case extraserviceorder.FieldExtraServiceType:
 		return m.OldExtraServiceType(ctx)
 	case extraserviceorder.FieldBuyDuration:
@@ -16816,6 +16881,13 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetSymbolID(v)
 		return nil
+	case extraserviceorder.FieldUnitCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnitCep(v)
+		return nil
 	case extraserviceorder.FieldExtraServiceType:
 		v, ok := value.(enums.ExtraServiceType)
 		if !ok {
@@ -16868,6 +16940,9 @@ func (m *ExtraServiceOrderMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, extraserviceorder.FieldAmount)
 	}
+	if m.addunit_cep != nil {
+		fields = append(fields, extraserviceorder.FieldUnitCep)
+	}
 	if m.addbuy_duration != nil {
 		fields = append(fields, extraserviceorder.FieldBuyDuration)
 	}
@@ -16885,6 +16960,8 @@ func (m *ExtraServiceOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case extraserviceorder.FieldAmount:
 		return m.AddedAmount()
+	case extraserviceorder.FieldUnitCep:
+		return m.AddedUnitCep()
 	case extraserviceorder.FieldBuyDuration:
 		return m.AddedBuyDuration()
 	}
@@ -16916,6 +16993,13 @@ func (m *ExtraServiceOrderMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case extraserviceorder.FieldUnitCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUnitCep(v)
 		return nil
 	case extraserviceorder.FieldBuyDuration:
 		v, ok := value.(int64)
@@ -16992,6 +17076,9 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 		return nil
 	case extraserviceorder.FieldSymbolID:
 		m.ResetSymbolID()
+		return nil
+	case extraserviceorder.FieldUnitCep:
+		m.ResetUnitCep()
 		return nil
 	case extraserviceorder.FieldExtraServiceType:
 		m.ResetExtraServiceType()
