@@ -11,6 +11,7 @@ const (
 	BillTypeActive         BillType = "active"
 	BillTypeMission        BillType = "mission"
 	BillTypeGas            BillType = "gas"
+	BillTypeExtraService   BillType = "extra_service"
 )
 
 func (BillType) Values() []string {
@@ -23,6 +24,7 @@ func (BillType) Values() []string {
 		string(BillTypeActive),
 		string(BillTypeMission),
 		string(BillTypeGas),
+		string(BillTypeExtraService),
 	}
 }
 
