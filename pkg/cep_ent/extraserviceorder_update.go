@@ -124,6 +124,20 @@ func (esou *ExtraServiceOrderUpdate) SetNillableMissionOrderID(i *int64) *ExtraS
 	return esou
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (esou *ExtraServiceOrderUpdate) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServiceOrderUpdate {
+	esou.mutation.SetExtraServiceBillingType(esbt)
+	return esou
+}
+
+// SetNillableExtraServiceBillingType sets the "extra_service_billing_type" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableExtraServiceBillingType(esbt *enums.ExtraServiceBillingType) *ExtraServiceOrderUpdate {
+	if esbt != nil {
+		esou.SetExtraServiceBillingType(*esbt)
+	}
+	return esou
+}
+
 // SetAmount sets the "amount" field.
 func (esou *ExtraServiceOrderUpdate) SetAmount(i int64) *ExtraServiceOrderUpdate {
 	esou.mutation.ResetAmount()
@@ -356,6 +370,11 @@ func (esou *ExtraServiceOrderUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (esou *ExtraServiceOrderUpdate) check() error {
+	if v, ok := esou.mutation.ExtraServiceBillingType(); ok {
+		if err := extraserviceorder.ExtraServiceBillingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_billing_type": %w`, err)}
+		}
+	}
 	if v, ok := esou.mutation.ExtraServiceType(); ok {
 		if err := extraserviceorder.ExtraServiceTypeValidator(v); err != nil {
 			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_type": %w`, err)}
@@ -411,6 +430,9 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if value, ok := esou.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := esou.mutation.ExtraServiceBillingType(); ok {
+		_spec.SetField(extraserviceorder.FieldExtraServiceBillingType, field.TypeEnum, value)
 	}
 	if value, ok := esou.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)
@@ -673,6 +695,20 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableMissionOrderID(i *int64) *Ex
 	return esouo
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.SetExtraServiceBillingType(esbt)
+	return esouo
+}
+
+// SetNillableExtraServiceBillingType sets the "extra_service_billing_type" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableExtraServiceBillingType(esbt *enums.ExtraServiceBillingType) *ExtraServiceOrderUpdateOne {
+	if esbt != nil {
+		esouo.SetExtraServiceBillingType(*esbt)
+	}
+	return esouo
+}
+
 // SetAmount sets the "amount" field.
 func (esouo *ExtraServiceOrderUpdateOne) SetAmount(i int64) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.ResetAmount()
@@ -918,6 +954,11 @@ func (esouo *ExtraServiceOrderUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (esouo *ExtraServiceOrderUpdateOne) check() error {
+	if v, ok := esouo.mutation.ExtraServiceBillingType(); ok {
+		if err := extraserviceorder.ExtraServiceBillingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_billing_type": %w`, err)}
+		}
+	}
 	if v, ok := esouo.mutation.ExtraServiceType(); ok {
 		if err := extraserviceorder.ExtraServiceTypeValidator(v); err != nil {
 			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_type": %w`, err)}
@@ -990,6 +1031,9 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	}
 	if value, ok := esouo.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := esouo.mutation.ExtraServiceBillingType(); ok {
+		_spec.SetField(extraserviceorder.FieldExtraServiceBillingType, field.TypeEnum, value)
 	}
 	if value, ok := esouo.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)

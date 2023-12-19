@@ -15741,37 +15741,38 @@ func (m *ExtraServiceMutation) ResetEdge(name string) error {
 // ExtraServiceOrderMutation represents an operation that mutates the ExtraServiceOrder nodes in the graph.
 type ExtraServiceOrderMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	created_by           *int64
-	addcreated_by        *int64
-	updated_by           *int64
-	addupdated_by        *int64
-	created_at           *time.Time
-	updated_at           *time.Time
-	deleted_at           *time.Time
-	amount               *int64
-	addamount            *int64
-	unit_cep             *int64
-	addunit_cep          *int64
-	extra_service_type   *enums.ExtraServiceType
-	buy_duration         *int64
-	addbuy_duration      *int64
-	plan_started_at      *time.Time
-	plan_finished_at     *time.Time
-	clearedFields        map[string]struct{}
-	mission              *int64
-	clearedmission       bool
-	mission_order        *int64
-	clearedmission_order bool
-	symbol               *int64
-	clearedsymbol        bool
-	mission_batch        *int64
-	clearedmission_batch bool
-	done                 bool
-	oldValue             func(context.Context) (*ExtraServiceOrder, error)
-	predicates           []predicate.ExtraServiceOrder
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	extra_service_billing_type *enums.ExtraServiceBillingType
+	amount                     *int64
+	addamount                  *int64
+	unit_cep                   *int64
+	addunit_cep                *int64
+	extra_service_type         *enums.ExtraServiceType
+	buy_duration               *int64
+	addbuy_duration            *int64
+	plan_started_at            *time.Time
+	plan_finished_at           *time.Time
+	clearedFields              map[string]struct{}
+	mission                    *int64
+	clearedmission             bool
+	mission_order              *int64
+	clearedmission_order       bool
+	symbol                     *int64
+	clearedsymbol              bool
+	mission_batch              *int64
+	clearedmission_batch       bool
+	done                       bool
+	oldValue                   func(context.Context) (*ExtraServiceOrder, error)
+	predicates                 []predicate.ExtraServiceOrder
 }
 
 var _ ent.Mutation = (*ExtraServiceOrderMutation)(nil)
@@ -16168,6 +16169,42 @@ func (m *ExtraServiceOrderMutation) OldMissionOrderID(ctx context.Context) (v in
 // ResetMissionOrderID resets all changes to the "mission_order_id" field.
 func (m *ExtraServiceOrderMutation) ResetMissionOrderID() {
 	m.mission_order = nil
+}
+
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (m *ExtraServiceOrderMutation) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) {
+	m.extra_service_billing_type = &esbt
+}
+
+// ExtraServiceBillingType returns the value of the "extra_service_billing_type" field in the mutation.
+func (m *ExtraServiceOrderMutation) ExtraServiceBillingType() (r enums.ExtraServiceBillingType, exists bool) {
+	v := m.extra_service_billing_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceBillingType returns the old "extra_service_billing_type" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldExtraServiceBillingType(ctx context.Context) (v enums.ExtraServiceBillingType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceBillingType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceBillingType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceBillingType: %w", err)
+	}
+	return oldValue.ExtraServiceBillingType, nil
+}
+
+// ResetExtraServiceBillingType resets all changes to the "extra_service_billing_type" field.
+func (m *ExtraServiceOrderMutation) ResetExtraServiceBillingType() {
+	m.extra_service_billing_type = nil
 }
 
 // SetAmount sets the "amount" field.
@@ -16686,7 +16723,7 @@ func (m *ExtraServiceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServiceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceorder.FieldCreatedBy)
 	}
@@ -16707,6 +16744,9 @@ func (m *ExtraServiceOrderMutation) Fields() []string {
 	}
 	if m.mission_order != nil {
 		fields = append(fields, extraserviceorder.FieldMissionOrderID)
+	}
+	if m.extra_service_billing_type != nil {
+		fields = append(fields, extraserviceorder.FieldExtraServiceBillingType)
 	}
 	if m.amount != nil {
 		fields = append(fields, extraserviceorder.FieldAmount)
@@ -16754,6 +16794,8 @@ func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionID()
 	case extraserviceorder.FieldMissionOrderID:
 		return m.MissionOrderID()
+	case extraserviceorder.FieldExtraServiceBillingType:
+		return m.ExtraServiceBillingType()
 	case extraserviceorder.FieldAmount:
 		return m.Amount()
 	case extraserviceorder.FieldSymbolID:
@@ -16793,6 +16835,8 @@ func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (
 		return m.OldMissionID(ctx)
 	case extraserviceorder.FieldMissionOrderID:
 		return m.OldMissionOrderID(ctx)
+	case extraserviceorder.FieldExtraServiceBillingType:
+		return m.OldExtraServiceBillingType(ctx)
 	case extraserviceorder.FieldAmount:
 		return m.OldAmount(ctx)
 	case extraserviceorder.FieldSymbolID:
@@ -16866,6 +16910,13 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionOrderID(v)
+		return nil
+	case extraserviceorder.FieldExtraServiceBillingType:
+		v, ok := value.(enums.ExtraServiceBillingType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceBillingType(v)
 		return nil
 	case extraserviceorder.FieldAmount:
 		v, ok := value.(int64)
@@ -17070,6 +17121,9 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 		return nil
 	case extraserviceorder.FieldMissionOrderID:
 		m.ResetMissionOrderID()
+		return nil
+	case extraserviceorder.FieldExtraServiceBillingType:
+		m.ResetExtraServiceBillingType()
 		return nil
 	case extraserviceorder.FieldAmount:
 		m.ResetAmount()

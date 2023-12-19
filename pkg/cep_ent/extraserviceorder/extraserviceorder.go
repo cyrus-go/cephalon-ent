@@ -30,6 +30,8 @@ const (
 	FieldMissionID = "mission_id"
 	// FieldMissionOrderID holds the string denoting the mission_order_id field in the database.
 	FieldMissionOrderID = "mission_order_id"
+	// FieldExtraServiceBillingType holds the string denoting the extra_service_billing_type field in the database.
+	FieldExtraServiceBillingType = "extra_service_billing_type"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldSymbolID holds the string denoting the symbol_id field in the database.
@@ -96,6 +98,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldMissionID,
 	FieldMissionOrderID,
+	FieldExtraServiceBillingType,
 	FieldAmount,
 	FieldSymbolID,
 	FieldUnitCep,
@@ -151,6 +154,18 @@ var (
 	DefaultID func() int64
 )
 
+const DefaultExtraServiceBillingType enums.ExtraServiceBillingType = "unknown"
+
+// ExtraServiceBillingTypeValidator is a validator for the "extra_service_billing_type" field enum values. It is called by the builders before save.
+func ExtraServiceBillingTypeValidator(esbt enums.ExtraServiceBillingType) error {
+	switch esbt {
+	case "unknown", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month", "time_plan_volume", "hold":
+		return nil
+	default:
+		return fmt.Errorf("extraserviceorder: invalid enum value for extra_service_billing_type field: %q", esbt)
+	}
+}
+
 const DefaultExtraServiceType enums.ExtraServiceType = "unknown"
 
 // ExtraServiceTypeValidator is a validator for the "extra_service_type" field enum values. It is called by the builders before save.
@@ -204,6 +219,11 @@ func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionOrderID orders the results by the mission_order_id field.
 func ByMissionOrderID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionOrderID, opts...).ToFunc()
+}
+
+// ByExtraServiceBillingType orders the results by the extra_service_billing_type field.
+func ByExtraServiceBillingType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExtraServiceBillingType, opts...).ToFunc()
 }
 
 // ByAmount orders the results by the amount field.

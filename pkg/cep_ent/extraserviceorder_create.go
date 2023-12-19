@@ -125,6 +125,20 @@ func (esoc *ExtraServiceOrderCreate) SetNillableMissionOrderID(i *int64) *ExtraS
 	return esoc
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (esoc *ExtraServiceOrderCreate) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServiceOrderCreate {
+	esoc.mutation.SetExtraServiceBillingType(esbt)
+	return esoc
+}
+
+// SetNillableExtraServiceBillingType sets the "extra_service_billing_type" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableExtraServiceBillingType(esbt *enums.ExtraServiceBillingType) *ExtraServiceOrderCreate {
+	if esbt != nil {
+		esoc.SetExtraServiceBillingType(*esbt)
+	}
+	return esoc
+}
+
 // SetAmount sets the "amount" field.
 func (esoc *ExtraServiceOrderCreate) SetAmount(i int64) *ExtraServiceOrderCreate {
 	esoc.mutation.SetAmount(i)
@@ -334,6 +348,10 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultMissionOrderID
 		esoc.mutation.SetMissionOrderID(v)
 	}
+	if _, ok := esoc.mutation.ExtraServiceBillingType(); !ok {
+		v := extraserviceorder.DefaultExtraServiceBillingType
+		esoc.mutation.SetExtraServiceBillingType(v)
+	}
 	if _, ok := esoc.mutation.Amount(); !ok {
 		v := extraserviceorder.DefaultAmount
 		esoc.mutation.SetAmount(v)
@@ -394,6 +412,14 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	}
 	if _, ok := esoc.mutation.MissionOrderID(); !ok {
 		return &ValidationError{Name: "mission_order_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.mission_order_id"`)}
+	}
+	if _, ok := esoc.mutation.ExtraServiceBillingType(); !ok {
+		return &ValidationError{Name: "extra_service_billing_type", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.extra_service_billing_type"`)}
+	}
+	if v, ok := esoc.mutation.ExtraServiceBillingType(); ok {
+		if err := extraserviceorder.ExtraServiceBillingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_billing_type": %w`, err)}
+		}
 	}
 	if _, ok := esoc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.amount"`)}
@@ -482,6 +508,10 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	if value, ok := esoc.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := esoc.mutation.ExtraServiceBillingType(); ok {
+		_spec.SetField(extraserviceorder.FieldExtraServiceBillingType, field.TypeEnum, value)
+		_node.ExtraServiceBillingType = value
 	}
 	if value, ok := esoc.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)
@@ -708,6 +738,18 @@ func (u *ExtraServiceOrderUpsert) SetMissionOrderID(v int64) *ExtraServiceOrderU
 // UpdateMissionOrderID sets the "mission_order_id" field to the value that was provided on create.
 func (u *ExtraServiceOrderUpsert) UpdateMissionOrderID() *ExtraServiceOrderUpsert {
 	u.SetExcluded(extraserviceorder.FieldMissionOrderID)
+	return u
+}
+
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (u *ExtraServiceOrderUpsert) SetExtraServiceBillingType(v enums.ExtraServiceBillingType) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldExtraServiceBillingType, v)
+	return u
+}
+
+// UpdateExtraServiceBillingType sets the "extra_service_billing_type" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateExtraServiceBillingType() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldExtraServiceBillingType)
 	return u
 }
 
@@ -983,6 +1025,20 @@ func (u *ExtraServiceOrderUpsertOne) SetMissionOrderID(v int64) *ExtraServiceOrd
 func (u *ExtraServiceOrderUpsertOne) UpdateMissionOrderID() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateMissionOrderID()
+	})
+}
+
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (u *ExtraServiceOrderUpsertOne) SetExtraServiceBillingType(v enums.ExtraServiceBillingType) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetExtraServiceBillingType(v)
+	})
+}
+
+// UpdateExtraServiceBillingType sets the "extra_service_billing_type" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateExtraServiceBillingType() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateExtraServiceBillingType()
 	})
 }
 
@@ -1445,6 +1501,20 @@ func (u *ExtraServiceOrderUpsertBulk) SetMissionOrderID(v int64) *ExtraServiceOr
 func (u *ExtraServiceOrderUpsertBulk) UpdateMissionOrderID() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateMissionOrderID()
+	})
+}
+
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (u *ExtraServiceOrderUpsertBulk) SetExtraServiceBillingType(v enums.ExtraServiceBillingType) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetExtraServiceBillingType(v)
+	})
+}
+
+// UpdateExtraServiceBillingType sets the "extra_service_billing_type" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateExtraServiceBillingType() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateExtraServiceBillingType()
 	})
 }
 

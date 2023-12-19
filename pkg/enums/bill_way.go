@@ -51,6 +51,12 @@ func (BillWay) Values() []string {
 		string(BillWayFirstInviteRecharge),
 		string(BillWayTransferWithdraw),
 		string(BillWaySpecialChannelRecharge),
+		string(BillWayExtraServiceTimePlanHour),
+		string(BillWayExtraServiceTimePlanDay),
+		string(BillWayExtraServiceTimePlanWeek),
+		string(BillWayExtraServiceTimePlanMonth),
+		string(BillWayExtraServiceHold),
+		string(BillWayExtraServiceVolume),
 	}
 }
 

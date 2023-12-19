@@ -37,6 +37,8 @@ type ExtraServiceOrder struct {
 	MissionID int64 `json:"mission_id,string"`
 	// 任务订单 id，外键关联任务订单
 	MissionOrderID int64 `json:"mission_order_id,string"`
+	// 是否为计时类型任务
+	ExtraServiceBillingType enums.ExtraServiceBillingType `json:"extra_service_billing_type"`
 	// 订单的货币消耗量
 	Amount int64 `json:"amount"`
 	// 币种 id
@@ -133,7 +135,7 @@ func (*ExtraServiceOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldUnitCep, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
-		case extraserviceorder.FieldExtraServiceType:
+		case extraserviceorder.FieldExtraServiceBillingType, extraserviceorder.FieldExtraServiceType:
 			values[i] = new(sql.NullString)
 		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -199,6 +201,12 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field mission_order_id", values[i])
 			} else if value.Valid {
 				eso.MissionOrderID = value.Int64
+			}
+		case extraserviceorder.FieldExtraServiceBillingType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field extra_service_billing_type", values[i])
+			} else if value.Valid {
+				eso.ExtraServiceBillingType = enums.ExtraServiceBillingType(value.String)
 			}
 		case extraserviceorder.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -326,6 +334,9 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_order_id=")
 	builder.WriteString(fmt.Sprintf("%v", eso.MissionOrderID))
+	builder.WriteString(", ")
+	builder.WriteString("extra_service_billing_type=")
+	builder.WriteString(fmt.Sprintf("%v", eso.ExtraServiceBillingType))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", eso.Amount))

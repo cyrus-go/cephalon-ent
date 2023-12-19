@@ -366,6 +366,36 @@ func MissionOrderIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldMissionOrderID, vs...))
 }
 
+// ExtraServiceBillingTypeEQ applies the EQ predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeEQ(v enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	vc := v
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldExtraServiceBillingType, vc))
+}
+
+// ExtraServiceBillingTypeNEQ applies the NEQ predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeNEQ(v enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	vc := v
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldExtraServiceBillingType, vc))
+}
+
+// ExtraServiceBillingTypeIn applies the In predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeIn(vs ...enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldExtraServiceBillingType, v...))
+}
+
+// ExtraServiceBillingTypeNotIn applies the NotIn predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeNotIn(vs ...enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldExtraServiceBillingType, v...))
+}
+
 // AmountEQ applies the EQ predicate on the "amount" field.
 func AmountEQ(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldAmount, v))
