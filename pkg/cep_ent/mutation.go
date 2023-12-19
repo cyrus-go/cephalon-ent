@@ -15759,6 +15759,8 @@ type ExtraServiceOrderMutation struct {
 	extra_service_type         *enums.ExtraServiceType
 	buy_duration               *int64
 	addbuy_duration            *int64
+	started_at                 *time.Time
+	finished_at                *time.Time
 	plan_started_at            *time.Time
 	plan_finished_at           *time.Time
 	clearedFields              map[string]struct{}
@@ -16447,6 +16449,104 @@ func (m *ExtraServiceOrderMutation) ResetBuyDuration() {
 	m.addbuy_duration = nil
 }
 
+// SetStartedAt sets the "started_at" field.
+func (m *ExtraServiceOrderMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *ExtraServiceOrderMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[extraserviceorder.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceorder.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *ExtraServiceOrderMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, extraserviceorder.FieldStartedAt)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *ExtraServiceOrderMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *ExtraServiceOrderMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[extraserviceorder.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceorder.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *ExtraServiceOrderMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, extraserviceorder.FieldFinishedAt)
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (m *ExtraServiceOrderMutation) SetPlanStartedAt(t time.Time) {
 	m.plan_started_at = &t
@@ -16723,7 +16823,7 @@ func (m *ExtraServiceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServiceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceorder.FieldCreatedBy)
 	}
@@ -16762,6 +16862,12 @@ func (m *ExtraServiceOrderMutation) Fields() []string {
 	}
 	if m.buy_duration != nil {
 		fields = append(fields, extraserviceorder.FieldBuyDuration)
+	}
+	if m.started_at != nil {
+		fields = append(fields, extraserviceorder.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, extraserviceorder.FieldFinishedAt)
 	}
 	if m.plan_started_at != nil {
 		fields = append(fields, extraserviceorder.FieldPlanStartedAt)
@@ -16806,6 +16912,10 @@ func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.ExtraServiceType()
 	case extraserviceorder.FieldBuyDuration:
 		return m.BuyDuration()
+	case extraserviceorder.FieldStartedAt:
+		return m.StartedAt()
+	case extraserviceorder.FieldFinishedAt:
+		return m.FinishedAt()
 	case extraserviceorder.FieldPlanStartedAt:
 		return m.PlanStartedAt()
 	case extraserviceorder.FieldPlanFinishedAt:
@@ -16847,6 +16957,10 @@ func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (
 		return m.OldExtraServiceType(ctx)
 	case extraserviceorder.FieldBuyDuration:
 		return m.OldBuyDuration(ctx)
+	case extraserviceorder.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case extraserviceorder.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
 	case extraserviceorder.FieldPlanStartedAt:
 		return m.OldPlanStartedAt(ctx)
 	case extraserviceorder.FieldPlanFinishedAt:
@@ -16952,6 +17066,20 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBuyDuration(v)
+		return nil
+	case extraserviceorder.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case extraserviceorder.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
 		return nil
 	case extraserviceorder.FieldPlanStartedAt:
 		v, ok := value.(time.Time)
@@ -17067,6 +17195,12 @@ func (m *ExtraServiceOrderMutation) AddField(name string, value ent.Value) error
 // mutation.
 func (m *ExtraServiceOrderMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(extraserviceorder.FieldStartedAt) {
+		fields = append(fields, extraserviceorder.FieldStartedAt)
+	}
+	if m.FieldCleared(extraserviceorder.FieldFinishedAt) {
+		fields = append(fields, extraserviceorder.FieldFinishedAt)
+	}
 	if m.FieldCleared(extraserviceorder.FieldPlanStartedAt) {
 		fields = append(fields, extraserviceorder.FieldPlanStartedAt)
 	}
@@ -17087,6 +17221,12 @@ func (m *ExtraServiceOrderMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ExtraServiceOrderMutation) ClearField(name string) error {
 	switch name {
+	case extraserviceorder.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case extraserviceorder.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
 	case extraserviceorder.FieldPlanStartedAt:
 		m.ClearPlanStartedAt()
 		return nil
@@ -17139,6 +17279,12 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 		return nil
 	case extraserviceorder.FieldBuyDuration:
 		m.ResetBuyDuration()
+		return nil
+	case extraserviceorder.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case extraserviceorder.FieldFinishedAt:
+		m.ResetFinishedAt()
 		return nil
 	case extraserviceorder.FieldPlanStartedAt:
 		m.ResetPlanStartedAt()

@@ -466,6 +466,8 @@ var (
 		{Name: "unit_cep", Type: field.TypeInt64, Comment: "任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟", Default: 0},
 		{Name: "extra_service_type", Type: field.TypeEnum, Comment: "附加服务类型", Enums: []string{"unknown", "vpn"}, Default: "unknown"},
 		{Name: "buy_duration", Type: field.TypeInt64, Comment: "包时任务订单购买的时长", Default: 0},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "附加服务开始执行时刻"},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "附加服务结束执行时刻"},
 		{Name: "plan_started_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划开始时间（包时）"},
 		{Name: "plan_finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务计划结束时间（包时）"},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 id，外键关联任务", Default: 0},
@@ -482,25 +484,25 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "extra_service_orders_missions_extra_service_orders",
-				Columns:    []*schema.Column{ExtraServiceOrdersColumns[13]},
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[15]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "extra_service_orders_mission_batches_extra_service_order",
-				Columns:    []*schema.Column{ExtraServiceOrdersColumns[14]},
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[16]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "extra_service_orders_mission_orders_extra_service_orders",
-				Columns:    []*schema.Column{ExtraServiceOrdersColumns[15]},
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[17]},
 				RefColumns: []*schema.Column{MissionOrdersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "extra_service_orders_symbols_extra_service_order",
-				Columns:    []*schema.Column{ExtraServiceOrdersColumns[16]},
+				Columns:    []*schema.Column{ExtraServiceOrdersColumns[18]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

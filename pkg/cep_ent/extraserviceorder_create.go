@@ -209,6 +209,34 @@ func (esoc *ExtraServiceOrderCreate) SetNillableBuyDuration(i *int64) *ExtraServ
 	return esoc
 }
 
+// SetStartedAt sets the "started_at" field.
+func (esoc *ExtraServiceOrderCreate) SetStartedAt(t time.Time) *ExtraServiceOrderCreate {
+	esoc.mutation.SetStartedAt(t)
+	return esoc
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableStartedAt(t *time.Time) *ExtraServiceOrderCreate {
+	if t != nil {
+		esoc.SetStartedAt(*t)
+	}
+	return esoc
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (esoc *ExtraServiceOrderCreate) SetFinishedAt(t time.Time) *ExtraServiceOrderCreate {
+	esoc.mutation.SetFinishedAt(t)
+	return esoc
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableFinishedAt(t *time.Time) *ExtraServiceOrderCreate {
+	if t != nil {
+		esoc.SetFinishedAt(*t)
+	}
+	return esoc
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (esoc *ExtraServiceOrderCreate) SetPlanStartedAt(t time.Time) *ExtraServiceOrderCreate {
 	esoc.mutation.SetPlanStartedAt(t)
@@ -372,6 +400,14 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultBuyDuration
 		esoc.mutation.SetBuyDuration(v)
 	}
+	if _, ok := esoc.mutation.StartedAt(); !ok {
+		v := extraserviceorder.DefaultStartedAt
+		esoc.mutation.SetStartedAt(v)
+	}
+	if _, ok := esoc.mutation.FinishedAt(); !ok {
+		v := extraserviceorder.DefaultFinishedAt
+		esoc.mutation.SetFinishedAt(v)
+	}
 	if _, ok := esoc.mutation.PlanStartedAt(); !ok {
 		v := extraserviceorder.DefaultPlanStartedAt
 		esoc.mutation.SetPlanStartedAt(v)
@@ -528,6 +564,14 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	if value, ok := esoc.mutation.BuyDuration(); ok {
 		_spec.SetField(extraserviceorder.FieldBuyDuration, field.TypeInt64, value)
 		_node.BuyDuration = value
+	}
+	if value, ok := esoc.mutation.StartedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
+		_node.StartedAt = &value
+	}
+	if value, ok := esoc.mutation.FinishedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
+		_node.FinishedAt = &value
 	}
 	if value, ok := esoc.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -831,6 +875,42 @@ func (u *ExtraServiceOrderUpsert) AddBuyDuration(v int64) *ExtraServiceOrderUpse
 	return u
 }
 
+// SetStartedAt sets the "started_at" field.
+func (u *ExtraServiceOrderUpsert) SetStartedAt(v time.Time) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateStartedAt() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldStartedAt)
+	return u
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *ExtraServiceOrderUpsert) ClearStartedAt() *ExtraServiceOrderUpsert {
+	u.SetNull(extraserviceorder.FieldStartedAt)
+	return u
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *ExtraServiceOrderUpsert) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldFinishedAt, v)
+	return u
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateFinishedAt() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldFinishedAt)
+	return u
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *ExtraServiceOrderUpsert) ClearFinishedAt() *ExtraServiceOrderUpsert {
+	u.SetNull(extraserviceorder.FieldFinishedAt)
+	return u
+}
+
 // SetPlanStartedAt sets the "plan_started_at" field.
 func (u *ExtraServiceOrderUpsert) SetPlanStartedAt(v time.Time) *ExtraServiceOrderUpsert {
 	u.Set(extraserviceorder.FieldPlanStartedAt, v)
@@ -1130,6 +1210,48 @@ func (u *ExtraServiceOrderUpsertOne) AddBuyDuration(v int64) *ExtraServiceOrderU
 func (u *ExtraServiceOrderUpsertOne) UpdateBuyDuration() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateBuyDuration()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *ExtraServiceOrderUpsertOne) SetStartedAt(v time.Time) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateStartedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *ExtraServiceOrderUpsertOne) ClearStartedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *ExtraServiceOrderUpsertOne) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateFinishedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *ExtraServiceOrderUpsertOne) ClearFinishedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 
@@ -1606,6 +1728,48 @@ func (u *ExtraServiceOrderUpsertBulk) AddBuyDuration(v int64) *ExtraServiceOrder
 func (u *ExtraServiceOrderUpsertBulk) UpdateBuyDuration() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateBuyDuration()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *ExtraServiceOrderUpsertBulk) SetStartedAt(v time.Time) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateStartedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *ExtraServiceOrderUpsertBulk) ClearStartedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *ExtraServiceOrderUpsertBulk) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateFinishedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *ExtraServiceOrderUpsertBulk) ClearFinishedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 

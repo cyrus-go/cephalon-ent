@@ -49,6 +49,10 @@ type ExtraServiceOrder struct {
 	ExtraServiceType enums.ExtraServiceType `json:"extra_service_type"`
 	// 包时任务订单购买的时长
 	BuyDuration int64 `json:"buy_duration"`
+	// 附加服务开始执行时刻
+	StartedAt *time.Time `json:"started_at"`
+	// 附加服务结束执行时刻
+	FinishedAt *time.Time `json:"finished_at"`
 	// 任务计划开始时间（包时）
 	PlanStartedAt *time.Time `json:"plan_started_at"`
 	// 任务计划结束时间（包时）
@@ -137,7 +141,7 @@ func (*ExtraServiceOrder) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case extraserviceorder.FieldExtraServiceBillingType, extraserviceorder.FieldExtraServiceType:
 			values[i] = new(sql.NullString)
-		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt:
+		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldStartedAt, extraserviceorder.FieldFinishedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -237,6 +241,20 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field buy_duration", values[i])
 			} else if value.Valid {
 				eso.BuyDuration = value.Int64
+			}
+		case extraserviceorder.FieldStartedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field started_at", values[i])
+			} else if value.Valid {
+				eso.StartedAt = new(time.Time)
+				*eso.StartedAt = value.Time
+			}
+		case extraserviceorder.FieldFinishedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
+			} else if value.Valid {
+				eso.FinishedAt = new(time.Time)
+				*eso.FinishedAt = value.Time
 			}
 		case extraserviceorder.FieldPlanStartedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -352,6 +370,16 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("buy_duration=")
 	builder.WriteString(fmt.Sprintf("%v", eso.BuyDuration))
+	builder.WriteString(", ")
+	if v := eso.StartedAt; v != nil {
+		builder.WriteString("started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := eso.FinishedAt; v != nil {
+		builder.WriteString("finished_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := eso.PlanStartedAt; v != nil {
 		builder.WriteString("plan_started_at=")

@@ -42,6 +42,10 @@ const (
 	FieldExtraServiceType = "extra_service_type"
 	// FieldBuyDuration holds the string denoting the buy_duration field in the database.
 	FieldBuyDuration = "buy_duration"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldFinishedAt holds the string denoting the finished_at field in the database.
+	FieldFinishedAt = "finished_at"
 	// FieldPlanStartedAt holds the string denoting the plan_started_at field in the database.
 	FieldPlanStartedAt = "plan_started_at"
 	// FieldPlanFinishedAt holds the string denoting the plan_finished_at field in the database.
@@ -104,6 +108,8 @@ var Columns = []string{
 	FieldUnitCep,
 	FieldExtraServiceType,
 	FieldBuyDuration,
+	FieldStartedAt,
+	FieldFinishedAt,
 	FieldPlanStartedAt,
 	FieldPlanFinishedAt,
 	FieldMissionBatchID,
@@ -144,6 +150,10 @@ var (
 	DefaultUnitCep int64
 	// DefaultBuyDuration holds the default value on creation for the "buy_duration" field.
 	DefaultBuyDuration int64
+	// DefaultStartedAt holds the default value on creation for the "started_at" field.
+	DefaultStartedAt time.Time
+	// DefaultFinishedAt holds the default value on creation for the "finished_at" field.
+	DefaultFinishedAt time.Time
 	// DefaultPlanStartedAt holds the default value on creation for the "plan_started_at" field.
 	DefaultPlanStartedAt time.Time
 	// DefaultPlanFinishedAt holds the default value on creation for the "plan_finished_at" field.
@@ -249,6 +259,16 @@ func ByExtraServiceType(opts ...sql.OrderTermOption) OrderOption {
 // ByBuyDuration orders the results by the buy_duration field.
 func ByBuyDuration(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBuyDuration, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByFinishedAt orders the results by the finished_at field.
+func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
 }
 
 // ByPlanStartedAt orders the results by the plan_started_at field.
