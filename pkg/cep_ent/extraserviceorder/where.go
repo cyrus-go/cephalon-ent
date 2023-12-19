@@ -101,9 +101,24 @@ func SymbolID(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldSymbolID, v))
 }
 
+// UnitCep applies equality check predicate on the "unit_cep" field. It's identical to UnitCepEQ.
+func UnitCep(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldUnitCep, v))
+}
+
 // BuyDuration applies equality check predicate on the "buy_duration" field. It's identical to BuyDurationEQ.
 func BuyDuration(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldBuyDuration, v))
+}
+
+// StartedAt applies equality check predicate on the "started_at" field. It's identical to StartedAtEQ.
+func StartedAt(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldStartedAt, v))
+}
+
+// FinishedAt applies equality check predicate on the "finished_at" field. It's identical to FinishedAtEQ.
+func FinishedAt(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldFinishedAt, v))
 }
 
 // PlanStartedAt applies equality check predicate on the "plan_started_at" field. It's identical to PlanStartedAtEQ.
@@ -361,6 +376,36 @@ func MissionOrderIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldMissionOrderID, vs...))
 }
 
+// ExtraServiceBillingTypeEQ applies the EQ predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeEQ(v enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	vc := v
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldExtraServiceBillingType, vc))
+}
+
+// ExtraServiceBillingTypeNEQ applies the NEQ predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeNEQ(v enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	vc := v
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldExtraServiceBillingType, vc))
+}
+
+// ExtraServiceBillingTypeIn applies the In predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeIn(vs ...enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldExtraServiceBillingType, v...))
+}
+
+// ExtraServiceBillingTypeNotIn applies the NotIn predicate on the "extra_service_billing_type" field.
+func ExtraServiceBillingTypeNotIn(vs ...enums.ExtraServiceBillingType) predicate.ExtraServiceOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldExtraServiceBillingType, v...))
+}
+
 // AmountEQ applies the EQ predicate on the "amount" field.
 func AmountEQ(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldAmount, v))
@@ -419,6 +464,46 @@ func SymbolIDIn(vs ...int64) predicate.ExtraServiceOrder {
 // SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
 func SymbolIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// UnitCepEQ applies the EQ predicate on the "unit_cep" field.
+func UnitCepEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldUnitCep, v))
+}
+
+// UnitCepNEQ applies the NEQ predicate on the "unit_cep" field.
+func UnitCepNEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldUnitCep, v))
+}
+
+// UnitCepIn applies the In predicate on the "unit_cep" field.
+func UnitCepIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldUnitCep, vs...))
+}
+
+// UnitCepNotIn applies the NotIn predicate on the "unit_cep" field.
+func UnitCepNotIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldUnitCep, vs...))
+}
+
+// UnitCepGT applies the GT predicate on the "unit_cep" field.
+func UnitCepGT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldUnitCep, v))
+}
+
+// UnitCepGTE applies the GTE predicate on the "unit_cep" field.
+func UnitCepGTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldUnitCep, v))
+}
+
+// UnitCepLT applies the LT predicate on the "unit_cep" field.
+func UnitCepLT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldUnitCep, v))
+}
+
+// UnitCepLTE applies the LTE predicate on the "unit_cep" field.
+func UnitCepLTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldUnitCep, v))
 }
 
 // ExtraServiceTypeEQ applies the EQ predicate on the "extra_service_type" field.
@@ -489,6 +574,106 @@ func BuyDurationLT(v int64) predicate.ExtraServiceOrder {
 // BuyDurationLTE applies the LTE predicate on the "buy_duration" field.
 func BuyDurationLTE(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldBuyDuration, v))
+}
+
+// StartedAtEQ applies the EQ predicate on the "started_at" field.
+func StartedAtEQ(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldStartedAt, v))
+}
+
+// StartedAtNEQ applies the NEQ predicate on the "started_at" field.
+func StartedAtNEQ(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldStartedAt, v))
+}
+
+// StartedAtIn applies the In predicate on the "started_at" field.
+func StartedAtIn(vs ...time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldStartedAt, vs...))
+}
+
+// StartedAtNotIn applies the NotIn predicate on the "started_at" field.
+func StartedAtNotIn(vs ...time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldStartedAt, vs...))
+}
+
+// StartedAtGT applies the GT predicate on the "started_at" field.
+func StartedAtGT(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldStartedAt, v))
+}
+
+// StartedAtGTE applies the GTE predicate on the "started_at" field.
+func StartedAtGTE(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldStartedAt, v))
+}
+
+// StartedAtLT applies the LT predicate on the "started_at" field.
+func StartedAtLT(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldStartedAt, v))
+}
+
+// StartedAtLTE applies the LTE predicate on the "started_at" field.
+func StartedAtLTE(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldStartedAt, v))
+}
+
+// StartedAtIsNil applies the IsNil predicate on the "started_at" field.
+func StartedAtIsNil() predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIsNull(FieldStartedAt))
+}
+
+// StartedAtNotNil applies the NotNil predicate on the "started_at" field.
+func StartedAtNotNil() predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotNull(FieldStartedAt))
+}
+
+// FinishedAtEQ applies the EQ predicate on the "finished_at" field.
+func FinishedAtEQ(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldFinishedAt, v))
+}
+
+// FinishedAtNEQ applies the NEQ predicate on the "finished_at" field.
+func FinishedAtNEQ(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldFinishedAt, v))
+}
+
+// FinishedAtIn applies the In predicate on the "finished_at" field.
+func FinishedAtIn(vs ...time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldFinishedAt, vs...))
+}
+
+// FinishedAtNotIn applies the NotIn predicate on the "finished_at" field.
+func FinishedAtNotIn(vs ...time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldFinishedAt, vs...))
+}
+
+// FinishedAtGT applies the GT predicate on the "finished_at" field.
+func FinishedAtGT(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldFinishedAt, v))
+}
+
+// FinishedAtGTE applies the GTE predicate on the "finished_at" field.
+func FinishedAtGTE(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldFinishedAt, v))
+}
+
+// FinishedAtLT applies the LT predicate on the "finished_at" field.
+func FinishedAtLT(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldFinishedAt, v))
+}
+
+// FinishedAtLTE applies the LTE predicate on the "finished_at" field.
+func FinishedAtLTE(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldFinishedAt, v))
+}
+
+// FinishedAtIsNil applies the IsNil predicate on the "finished_at" field.
+func FinishedAtIsNil() predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIsNull(FieldFinishedAt))
+}
+
+// FinishedAtNotNil applies the NotNil predicate on the "finished_at" field.
+func FinishedAtNotNil() predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotNull(FieldFinishedAt))
 }
 
 // PlanStartedAtEQ applies the EQ predicate on the "plan_started_at" field.

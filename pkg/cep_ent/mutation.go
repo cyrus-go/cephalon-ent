@@ -15741,35 +15741,40 @@ func (m *ExtraServiceMutation) ResetEdge(name string) error {
 // ExtraServiceOrderMutation represents an operation that mutates the ExtraServiceOrder nodes in the graph.
 type ExtraServiceOrderMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	created_by           *int64
-	addcreated_by        *int64
-	updated_by           *int64
-	addupdated_by        *int64
-	created_at           *time.Time
-	updated_at           *time.Time
-	deleted_at           *time.Time
-	amount               *int64
-	addamount            *int64
-	extra_service_type   *enums.ExtraServiceType
-	buy_duration         *int64
-	addbuy_duration      *int64
-	plan_started_at      *time.Time
-	plan_finished_at     *time.Time
-	clearedFields        map[string]struct{}
-	mission              *int64
-	clearedmission       bool
-	mission_order        *int64
-	clearedmission_order bool
-	symbol               *int64
-	clearedsymbol        bool
-	mission_batch        *int64
-	clearedmission_batch bool
-	done                 bool
-	oldValue             func(context.Context) (*ExtraServiceOrder, error)
-	predicates           []predicate.ExtraServiceOrder
+	op                         Op
+	typ                        string
+	id                         *int64
+	created_by                 *int64
+	addcreated_by              *int64
+	updated_by                 *int64
+	addupdated_by              *int64
+	created_at                 *time.Time
+	updated_at                 *time.Time
+	deleted_at                 *time.Time
+	extra_service_billing_type *enums.ExtraServiceBillingType
+	amount                     *int64
+	addamount                  *int64
+	unit_cep                   *int64
+	addunit_cep                *int64
+	extra_service_type         *enums.ExtraServiceType
+	buy_duration               *int64
+	addbuy_duration            *int64
+	started_at                 *time.Time
+	finished_at                *time.Time
+	plan_started_at            *time.Time
+	plan_finished_at           *time.Time
+	clearedFields              map[string]struct{}
+	mission                    *int64
+	clearedmission             bool
+	mission_order              *int64
+	clearedmission_order       bool
+	symbol                     *int64
+	clearedsymbol              bool
+	mission_batch              *int64
+	clearedmission_batch       bool
+	done                       bool
+	oldValue                   func(context.Context) (*ExtraServiceOrder, error)
+	predicates                 []predicate.ExtraServiceOrder
 }
 
 var _ ent.Mutation = (*ExtraServiceOrderMutation)(nil)
@@ -16168,6 +16173,42 @@ func (m *ExtraServiceOrderMutation) ResetMissionOrderID() {
 	m.mission_order = nil
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (m *ExtraServiceOrderMutation) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) {
+	m.extra_service_billing_type = &esbt
+}
+
+// ExtraServiceBillingType returns the value of the "extra_service_billing_type" field in the mutation.
+func (m *ExtraServiceOrderMutation) ExtraServiceBillingType() (r enums.ExtraServiceBillingType, exists bool) {
+	v := m.extra_service_billing_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtraServiceBillingType returns the old "extra_service_billing_type" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldExtraServiceBillingType(ctx context.Context) (v enums.ExtraServiceBillingType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtraServiceBillingType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtraServiceBillingType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtraServiceBillingType: %w", err)
+	}
+	return oldValue.ExtraServiceBillingType, nil
+}
+
+// ResetExtraServiceBillingType resets all changes to the "extra_service_billing_type" field.
+func (m *ExtraServiceOrderMutation) ResetExtraServiceBillingType() {
+	m.extra_service_billing_type = nil
+}
+
 // SetAmount sets the "amount" field.
 func (m *ExtraServiceOrderMutation) SetAmount(i int64) {
 	m.amount = &i
@@ -16260,6 +16301,62 @@ func (m *ExtraServiceOrderMutation) ResetSymbolID() {
 	m.symbol = nil
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (m *ExtraServiceOrderMutation) SetUnitCep(i int64) {
+	m.unit_cep = &i
+	m.addunit_cep = nil
+}
+
+// UnitCep returns the value of the "unit_cep" field in the mutation.
+func (m *ExtraServiceOrderMutation) UnitCep() (r int64, exists bool) {
+	v := m.unit_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnitCep returns the old "unit_cep" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldUnitCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnitCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnitCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnitCep: %w", err)
+	}
+	return oldValue.UnitCep, nil
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (m *ExtraServiceOrderMutation) AddUnitCep(i int64) {
+	if m.addunit_cep != nil {
+		*m.addunit_cep += i
+	} else {
+		m.addunit_cep = &i
+	}
+}
+
+// AddedUnitCep returns the value that was added to the "unit_cep" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedUnitCep() (r int64, exists bool) {
+	v := m.addunit_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUnitCep resets all changes to the "unit_cep" field.
+func (m *ExtraServiceOrderMutation) ResetUnitCep() {
+	m.unit_cep = nil
+	m.addunit_cep = nil
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (m *ExtraServiceOrderMutation) SetExtraServiceType(est enums.ExtraServiceType) {
 	m.extra_service_type = &est
@@ -16350,6 +16447,104 @@ func (m *ExtraServiceOrderMutation) AddedBuyDuration() (r int64, exists bool) {
 func (m *ExtraServiceOrderMutation) ResetBuyDuration() {
 	m.buy_duration = nil
 	m.addbuy_duration = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *ExtraServiceOrderMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *ExtraServiceOrderMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[extraserviceorder.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceorder.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *ExtraServiceOrderMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, extraserviceorder.FieldStartedAt)
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *ExtraServiceOrderMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldFinishedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (m *ExtraServiceOrderMutation) ClearFinishedAt() {
+	m.finished_at = nil
+	m.clearedFields[extraserviceorder.FieldFinishedAt] = struct{}{}
+}
+
+// FinishedAtCleared returns if the "finished_at" field was cleared in this mutation.
+func (m *ExtraServiceOrderMutation) FinishedAtCleared() bool {
+	_, ok := m.clearedFields[extraserviceorder.FieldFinishedAt]
+	return ok
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *ExtraServiceOrderMutation) ResetFinishedAt() {
+	m.finished_at = nil
+	delete(m.clearedFields, extraserviceorder.FieldFinishedAt)
 }
 
 // SetPlanStartedAt sets the "plan_started_at" field.
@@ -16628,7 +16823,7 @@ func (m *ExtraServiceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServiceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceorder.FieldCreatedBy)
 	}
@@ -16650,17 +16845,29 @@ func (m *ExtraServiceOrderMutation) Fields() []string {
 	if m.mission_order != nil {
 		fields = append(fields, extraserviceorder.FieldMissionOrderID)
 	}
+	if m.extra_service_billing_type != nil {
+		fields = append(fields, extraserviceorder.FieldExtraServiceBillingType)
+	}
 	if m.amount != nil {
 		fields = append(fields, extraserviceorder.FieldAmount)
 	}
 	if m.symbol != nil {
 		fields = append(fields, extraserviceorder.FieldSymbolID)
 	}
+	if m.unit_cep != nil {
+		fields = append(fields, extraserviceorder.FieldUnitCep)
+	}
 	if m.extra_service_type != nil {
 		fields = append(fields, extraserviceorder.FieldExtraServiceType)
 	}
 	if m.buy_duration != nil {
 		fields = append(fields, extraserviceorder.FieldBuyDuration)
+	}
+	if m.started_at != nil {
+		fields = append(fields, extraserviceorder.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, extraserviceorder.FieldFinishedAt)
 	}
 	if m.plan_started_at != nil {
 		fields = append(fields, extraserviceorder.FieldPlanStartedAt)
@@ -16693,14 +16900,22 @@ func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionID()
 	case extraserviceorder.FieldMissionOrderID:
 		return m.MissionOrderID()
+	case extraserviceorder.FieldExtraServiceBillingType:
+		return m.ExtraServiceBillingType()
 	case extraserviceorder.FieldAmount:
 		return m.Amount()
 	case extraserviceorder.FieldSymbolID:
 		return m.SymbolID()
+	case extraserviceorder.FieldUnitCep:
+		return m.UnitCep()
 	case extraserviceorder.FieldExtraServiceType:
 		return m.ExtraServiceType()
 	case extraserviceorder.FieldBuyDuration:
 		return m.BuyDuration()
+	case extraserviceorder.FieldStartedAt:
+		return m.StartedAt()
+	case extraserviceorder.FieldFinishedAt:
+		return m.FinishedAt()
 	case extraserviceorder.FieldPlanStartedAt:
 		return m.PlanStartedAt()
 	case extraserviceorder.FieldPlanFinishedAt:
@@ -16730,14 +16945,22 @@ func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (
 		return m.OldMissionID(ctx)
 	case extraserviceorder.FieldMissionOrderID:
 		return m.OldMissionOrderID(ctx)
+	case extraserviceorder.FieldExtraServiceBillingType:
+		return m.OldExtraServiceBillingType(ctx)
 	case extraserviceorder.FieldAmount:
 		return m.OldAmount(ctx)
 	case extraserviceorder.FieldSymbolID:
 		return m.OldSymbolID(ctx)
+	case extraserviceorder.FieldUnitCep:
+		return m.OldUnitCep(ctx)
 	case extraserviceorder.FieldExtraServiceType:
 		return m.OldExtraServiceType(ctx)
 	case extraserviceorder.FieldBuyDuration:
 		return m.OldBuyDuration(ctx)
+	case extraserviceorder.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case extraserviceorder.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
 	case extraserviceorder.FieldPlanStartedAt:
 		return m.OldPlanStartedAt(ctx)
 	case extraserviceorder.FieldPlanFinishedAt:
@@ -16802,6 +17025,13 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetMissionOrderID(v)
 		return nil
+	case extraserviceorder.FieldExtraServiceBillingType:
+		v, ok := value.(enums.ExtraServiceBillingType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtraServiceBillingType(v)
+		return nil
 	case extraserviceorder.FieldAmount:
 		v, ok := value.(int64)
 		if !ok {
@@ -16816,6 +17046,13 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetSymbolID(v)
 		return nil
+	case extraserviceorder.FieldUnitCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnitCep(v)
+		return nil
 	case extraserviceorder.FieldExtraServiceType:
 		v, ok := value.(enums.ExtraServiceType)
 		if !ok {
@@ -16829,6 +17066,20 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBuyDuration(v)
+		return nil
+	case extraserviceorder.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case extraserviceorder.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
 		return nil
 	case extraserviceorder.FieldPlanStartedAt:
 		v, ok := value.(time.Time)
@@ -16868,6 +17119,9 @@ func (m *ExtraServiceOrderMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, extraserviceorder.FieldAmount)
 	}
+	if m.addunit_cep != nil {
+		fields = append(fields, extraserviceorder.FieldUnitCep)
+	}
 	if m.addbuy_duration != nil {
 		fields = append(fields, extraserviceorder.FieldBuyDuration)
 	}
@@ -16885,6 +17139,8 @@ func (m *ExtraServiceOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case extraserviceorder.FieldAmount:
 		return m.AddedAmount()
+	case extraserviceorder.FieldUnitCep:
+		return m.AddedUnitCep()
 	case extraserviceorder.FieldBuyDuration:
 		return m.AddedBuyDuration()
 	}
@@ -16917,6 +17173,13 @@ func (m *ExtraServiceOrderMutation) AddField(name string, value ent.Value) error
 		}
 		m.AddAmount(v)
 		return nil
+	case extraserviceorder.FieldUnitCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUnitCep(v)
+		return nil
 	case extraserviceorder.FieldBuyDuration:
 		v, ok := value.(int64)
 		if !ok {
@@ -16932,6 +17195,12 @@ func (m *ExtraServiceOrderMutation) AddField(name string, value ent.Value) error
 // mutation.
 func (m *ExtraServiceOrderMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(extraserviceorder.FieldStartedAt) {
+		fields = append(fields, extraserviceorder.FieldStartedAt)
+	}
+	if m.FieldCleared(extraserviceorder.FieldFinishedAt) {
+		fields = append(fields, extraserviceorder.FieldFinishedAt)
+	}
 	if m.FieldCleared(extraserviceorder.FieldPlanStartedAt) {
 		fields = append(fields, extraserviceorder.FieldPlanStartedAt)
 	}
@@ -16952,6 +17221,12 @@ func (m *ExtraServiceOrderMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ExtraServiceOrderMutation) ClearField(name string) error {
 	switch name {
+	case extraserviceorder.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case extraserviceorder.FieldFinishedAt:
+		m.ClearFinishedAt()
+		return nil
 	case extraserviceorder.FieldPlanStartedAt:
 		m.ClearPlanStartedAt()
 		return nil
@@ -16987,17 +17262,29 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 	case extraserviceorder.FieldMissionOrderID:
 		m.ResetMissionOrderID()
 		return nil
+	case extraserviceorder.FieldExtraServiceBillingType:
+		m.ResetExtraServiceBillingType()
+		return nil
 	case extraserviceorder.FieldAmount:
 		m.ResetAmount()
 		return nil
 	case extraserviceorder.FieldSymbolID:
 		m.ResetSymbolID()
 		return nil
+	case extraserviceorder.FieldUnitCep:
+		m.ResetUnitCep()
+		return nil
 	case extraserviceorder.FieldExtraServiceType:
 		m.ResetExtraServiceType()
 		return nil
 	case extraserviceorder.FieldBuyDuration:
 		m.ResetBuyDuration()
+		return nil
+	case extraserviceorder.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case extraserviceorder.FieldFinishedAt:
+		m.ResetFinishedAt()
 		return nil
 	case extraserviceorder.FieldPlanStartedAt:
 		m.ResetPlanStartedAt()
@@ -53534,6 +53821,8 @@ type UserMutation struct {
 	is_recharge                    *bool
 	user_type                      *user.UserType
 	pop_version                    *string
+	area_code                      *string
+	email                          *string
 	clearedFields                  map[string]struct{}
 	vx_accounts                    map[int64]struct{}
 	removedvx_accounts             map[int64]struct{}
@@ -54381,6 +54670,78 @@ func (m *UserMutation) OldPopVersion(ctx context.Context) (v string, err error) 
 // ResetPopVersion resets all changes to the "pop_version" field.
 func (m *UserMutation) ResetPopVersion() {
 	m.pop_version = nil
+}
+
+// SetAreaCode sets the "area_code" field.
+func (m *UserMutation) SetAreaCode(s string) {
+	m.area_code = &s
+}
+
+// AreaCode returns the value of the "area_code" field in the mutation.
+func (m *UserMutation) AreaCode() (r string, exists bool) {
+	v := m.area_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAreaCode returns the old "area_code" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAreaCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAreaCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAreaCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAreaCode: %w", err)
+	}
+	return oldValue.AreaCode, nil
+}
+
+// ResetAreaCode resets all changes to the "area_code" field.
+func (m *UserMutation) ResetAreaCode() {
+	m.area_code = nil
+}
+
+// SetEmail sets the "email" field.
+func (m *UserMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the value of the "email" field in the mutation.
+func (m *UserMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old "email" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ResetEmail resets all changes to the "email" field.
+func (m *UserMutation) ResetEmail() {
+	m.email = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -55980,7 +56341,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 19)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -56032,6 +56393,12 @@ func (m *UserMutation) Fields() []string {
 	if m.pop_version != nil {
 		fields = append(fields, user.FieldPopVersion)
 	}
+	if m.area_code != nil {
+		fields = append(fields, user.FieldAreaCode)
+	}
+	if m.email != nil {
+		fields = append(fields, user.FieldEmail)
+	}
 	return fields
 }
 
@@ -56074,6 +56441,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.ParentID()
 	case user.FieldPopVersion:
 		return m.PopVersion()
+	case user.FieldAreaCode:
+		return m.AreaCode()
+	case user.FieldEmail:
+		return m.Email()
 	}
 	return nil, false
 }
@@ -56117,6 +56488,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldParentID(ctx)
 	case user.FieldPopVersion:
 		return m.OldPopVersion(ctx)
+	case user.FieldAreaCode:
+		return m.OldAreaCode(ctx)
+	case user.FieldEmail:
+		return m.OldEmail(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -56245,6 +56620,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPopVersion(v)
 		return nil
+	case user.FieldAreaCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAreaCode(v)
+		return nil
+	case user.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -56371,6 +56760,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPopVersion:
 		m.ResetPopVersion()
+		return nil
+	case user.FieldAreaCode:
+		m.ResetAreaCode()
+		return nil
+	case user.FieldEmail:
+		m.ResetEmail()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

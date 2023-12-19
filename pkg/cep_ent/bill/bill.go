@@ -192,7 +192,7 @@ const DefaultType enums.BillType = "unknown"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.BillType) error {
 	switch _type {
-	case "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas":
+	case "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service":
 		return nil
 	default:
 		return fmt.Errorf("bill: invalid enum value for type field: %q", _type)
@@ -204,7 +204,7 @@ const DefaultWay enums.BillWay = "unknown"
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
 func WayValidator(w enums.BillWay) error {
 	switch w {
-	case "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge":
+	case "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume":
 		return nil
 	default:
 		return fmt.Errorf("bill: invalid enum value for way field: %q", w)

@@ -124,6 +124,20 @@ func (esou *ExtraServiceOrderUpdate) SetNillableMissionOrderID(i *int64) *ExtraS
 	return esou
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (esou *ExtraServiceOrderUpdate) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServiceOrderUpdate {
+	esou.mutation.SetExtraServiceBillingType(esbt)
+	return esou
+}
+
+// SetNillableExtraServiceBillingType sets the "extra_service_billing_type" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableExtraServiceBillingType(esbt *enums.ExtraServiceBillingType) *ExtraServiceOrderUpdate {
+	if esbt != nil {
+		esou.SetExtraServiceBillingType(*esbt)
+	}
+	return esou
+}
+
 // SetAmount sets the "amount" field.
 func (esou *ExtraServiceOrderUpdate) SetAmount(i int64) *ExtraServiceOrderUpdate {
 	esou.mutation.ResetAmount()
@@ -159,6 +173,27 @@ func (esou *ExtraServiceOrderUpdate) SetNillableSymbolID(i *int64) *ExtraService
 	return esou
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (esou *ExtraServiceOrderUpdate) SetUnitCep(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.ResetUnitCep()
+	esou.mutation.SetUnitCep(i)
+	return esou
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableUnitCep(i *int64) *ExtraServiceOrderUpdate {
+	if i != nil {
+		esou.SetUnitCep(*i)
+	}
+	return esou
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (esou *ExtraServiceOrderUpdate) AddUnitCep(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.AddUnitCep(i)
+	return esou
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (esou *ExtraServiceOrderUpdate) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServiceOrderUpdate {
 	esou.mutation.SetExtraServiceType(est)
@@ -191,6 +226,46 @@ func (esou *ExtraServiceOrderUpdate) SetNillableBuyDuration(i *int64) *ExtraServ
 // AddBuyDuration adds i to the "buy_duration" field.
 func (esou *ExtraServiceOrderUpdate) AddBuyDuration(i int64) *ExtraServiceOrderUpdate {
 	esou.mutation.AddBuyDuration(i)
+	return esou
+}
+
+// SetStartedAt sets the "started_at" field.
+func (esou *ExtraServiceOrderUpdate) SetStartedAt(t time.Time) *ExtraServiceOrderUpdate {
+	esou.mutation.SetStartedAt(t)
+	return esou
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableStartedAt(t *time.Time) *ExtraServiceOrderUpdate {
+	if t != nil {
+		esou.SetStartedAt(*t)
+	}
+	return esou
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (esou *ExtraServiceOrderUpdate) ClearStartedAt() *ExtraServiceOrderUpdate {
+	esou.mutation.ClearStartedAt()
+	return esou
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (esou *ExtraServiceOrderUpdate) SetFinishedAt(t time.Time) *ExtraServiceOrderUpdate {
+	esou.mutation.SetFinishedAt(t)
+	return esou
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableFinishedAt(t *time.Time) *ExtraServiceOrderUpdate {
+	if t != nil {
+		esou.SetFinishedAt(*t)
+	}
+	return esou
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (esou *ExtraServiceOrderUpdate) ClearFinishedAt() *ExtraServiceOrderUpdate {
+	esou.mutation.ClearFinishedAt()
 	return esou
 }
 
@@ -335,6 +410,11 @@ func (esou *ExtraServiceOrderUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (esou *ExtraServiceOrderUpdate) check() error {
+	if v, ok := esou.mutation.ExtraServiceBillingType(); ok {
+		if err := extraserviceorder.ExtraServiceBillingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_billing_type": %w`, err)}
+		}
+	}
 	if v, ok := esou.mutation.ExtraServiceType(); ok {
 		if err := extraserviceorder.ExtraServiceTypeValidator(v); err != nil {
 			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_type": %w`, err)}
@@ -391,11 +471,20 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 	if value, ok := esou.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := esou.mutation.ExtraServiceBillingType(); ok {
+		_spec.SetField(extraserviceorder.FieldExtraServiceBillingType, field.TypeEnum, value)
+	}
 	if value, ok := esou.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)
 	}
 	if value, ok := esou.mutation.AddedAmount(); ok {
 		_spec.AddField(extraserviceorder.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.UnitCep(); ok {
+		_spec.SetField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.AddedUnitCep(); ok {
+		_spec.AddField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
 	}
 	if value, ok := esou.mutation.ExtraServiceType(); ok {
 		_spec.SetField(extraserviceorder.FieldExtraServiceType, field.TypeEnum, value)
@@ -405,6 +494,18 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if value, ok := esou.mutation.AddedBuyDuration(); ok {
 		_spec.AddField(extraserviceorder.FieldBuyDuration, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.StartedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
+	}
+	if esou.mutation.StartedAtCleared() {
+		_spec.ClearField(extraserviceorder.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := esou.mutation.FinishedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
+	}
+	if esou.mutation.FinishedAtCleared() {
+		_spec.ClearField(extraserviceorder.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := esou.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -646,6 +747,20 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableMissionOrderID(i *int64) *Ex
 	return esouo
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.SetExtraServiceBillingType(esbt)
+	return esouo
+}
+
+// SetNillableExtraServiceBillingType sets the "extra_service_billing_type" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableExtraServiceBillingType(esbt *enums.ExtraServiceBillingType) *ExtraServiceOrderUpdateOne {
+	if esbt != nil {
+		esouo.SetExtraServiceBillingType(*esbt)
+	}
+	return esouo
+}
+
 // SetAmount sets the "amount" field.
 func (esouo *ExtraServiceOrderUpdateOne) SetAmount(i int64) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.ResetAmount()
@@ -681,6 +796,27 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableSymbolID(i *int64) *ExtraSer
 	return esouo
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetUnitCep(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ResetUnitCep()
+	esouo.mutation.SetUnitCep(i)
+	return esouo
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableUnitCep(i *int64) *ExtraServiceOrderUpdateOne {
+	if i != nil {
+		esouo.SetUnitCep(*i)
+	}
+	return esouo
+}
+
+// AddUnitCep adds i to the "unit_cep" field.
+func (esouo *ExtraServiceOrderUpdateOne) AddUnitCep(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.AddUnitCep(i)
+	return esouo
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (esouo *ExtraServiceOrderUpdateOne) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.SetExtraServiceType(est)
@@ -713,6 +849,46 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableBuyDuration(i *int64) *Extra
 // AddBuyDuration adds i to the "buy_duration" field.
 func (esouo *ExtraServiceOrderUpdateOne) AddBuyDuration(i int64) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.AddBuyDuration(i)
+	return esouo
+}
+
+// SetStartedAt sets the "started_at" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetStartedAt(t time.Time) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.SetStartedAt(t)
+	return esouo
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableStartedAt(t *time.Time) *ExtraServiceOrderUpdateOne {
+	if t != nil {
+		esouo.SetStartedAt(*t)
+	}
+	return esouo
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (esouo *ExtraServiceOrderUpdateOne) ClearStartedAt() *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ClearStartedAt()
+	return esouo
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetFinishedAt(t time.Time) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.SetFinishedAt(t)
+	return esouo
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableFinishedAt(t *time.Time) *ExtraServiceOrderUpdateOne {
+	if t != nil {
+		esouo.SetFinishedAt(*t)
+	}
+	return esouo
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (esouo *ExtraServiceOrderUpdateOne) ClearFinishedAt() *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ClearFinishedAt()
 	return esouo
 }
 
@@ -870,6 +1046,11 @@ func (esouo *ExtraServiceOrderUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (esouo *ExtraServiceOrderUpdateOne) check() error {
+	if v, ok := esouo.mutation.ExtraServiceBillingType(); ok {
+		if err := extraserviceorder.ExtraServiceBillingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_billing_type": %w`, err)}
+		}
+	}
 	if v, ok := esouo.mutation.ExtraServiceType(); ok {
 		if err := extraserviceorder.ExtraServiceTypeValidator(v); err != nil {
 			return &ValidationError{Name: "extra_service_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_type": %w`, err)}
@@ -943,11 +1124,20 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	if value, ok := esouo.mutation.DeletedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := esouo.mutation.ExtraServiceBillingType(); ok {
+		_spec.SetField(extraserviceorder.FieldExtraServiceBillingType, field.TypeEnum, value)
+	}
 	if value, ok := esouo.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)
 	}
 	if value, ok := esouo.mutation.AddedAmount(); ok {
 		_spec.AddField(extraserviceorder.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.UnitCep(); ok {
+		_spec.SetField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.AddedUnitCep(); ok {
+		_spec.AddField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
 	}
 	if value, ok := esouo.mutation.ExtraServiceType(); ok {
 		_spec.SetField(extraserviceorder.FieldExtraServiceType, field.TypeEnum, value)
@@ -957,6 +1147,18 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	}
 	if value, ok := esouo.mutation.AddedBuyDuration(); ok {
 		_spec.AddField(extraserviceorder.FieldBuyDuration, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.StartedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
+	}
+	if esouo.mutation.StartedAtCleared() {
+		_spec.ClearField(extraserviceorder.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := esouo.mutation.FinishedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
+	}
+	if esouo.mutation.FinishedAtCleared() {
+		_spec.ClearField(extraserviceorder.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := esouo.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)

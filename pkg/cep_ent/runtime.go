@@ -764,27 +764,39 @@ func init() {
 	// extraserviceorder.DefaultMissionOrderID holds the default value on creation for the mission_order_id field.
 	extraserviceorder.DefaultMissionOrderID = extraserviceorderDescMissionOrderID.Default.(int64)
 	// extraserviceorderDescAmount is the schema descriptor for amount field.
-	extraserviceorderDescAmount := extraserviceorderFields[2].Descriptor()
+	extraserviceorderDescAmount := extraserviceorderFields[3].Descriptor()
 	// extraserviceorder.DefaultAmount holds the default value on creation for the amount field.
 	extraserviceorder.DefaultAmount = extraserviceorderDescAmount.Default.(int64)
 	// extraserviceorderDescSymbolID is the schema descriptor for symbol_id field.
-	extraserviceorderDescSymbolID := extraserviceorderFields[3].Descriptor()
+	extraserviceorderDescSymbolID := extraserviceorderFields[4].Descriptor()
 	// extraserviceorder.DefaultSymbolID holds the default value on creation for the symbol_id field.
 	extraserviceorder.DefaultSymbolID = extraserviceorderDescSymbolID.Default.(int64)
+	// extraserviceorderDescUnitCep is the schema descriptor for unit_cep field.
+	extraserviceorderDescUnitCep := extraserviceorderFields[5].Descriptor()
+	// extraserviceorder.DefaultUnitCep holds the default value on creation for the unit_cep field.
+	extraserviceorder.DefaultUnitCep = extraserviceorderDescUnitCep.Default.(int64)
 	// extraserviceorderDescBuyDuration is the schema descriptor for buy_duration field.
-	extraserviceorderDescBuyDuration := extraserviceorderFields[5].Descriptor()
+	extraserviceorderDescBuyDuration := extraserviceorderFields[7].Descriptor()
 	// extraserviceorder.DefaultBuyDuration holds the default value on creation for the buy_duration field.
 	extraserviceorder.DefaultBuyDuration = extraserviceorderDescBuyDuration.Default.(int64)
+	// extraserviceorderDescStartedAt is the schema descriptor for started_at field.
+	extraserviceorderDescStartedAt := extraserviceorderFields[8].Descriptor()
+	// extraserviceorder.DefaultStartedAt holds the default value on creation for the started_at field.
+	extraserviceorder.DefaultStartedAt = extraserviceorderDescStartedAt.Default.(time.Time)
+	// extraserviceorderDescFinishedAt is the schema descriptor for finished_at field.
+	extraserviceorderDescFinishedAt := extraserviceorderFields[9].Descriptor()
+	// extraserviceorder.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	extraserviceorder.DefaultFinishedAt = extraserviceorderDescFinishedAt.Default.(time.Time)
 	// extraserviceorderDescPlanStartedAt is the schema descriptor for plan_started_at field.
-	extraserviceorderDescPlanStartedAt := extraserviceorderFields[6].Descriptor()
+	extraserviceorderDescPlanStartedAt := extraserviceorderFields[10].Descriptor()
 	// extraserviceorder.DefaultPlanStartedAt holds the default value on creation for the plan_started_at field.
 	extraserviceorder.DefaultPlanStartedAt = extraserviceorderDescPlanStartedAt.Default.(time.Time)
 	// extraserviceorderDescPlanFinishedAt is the schema descriptor for plan_finished_at field.
-	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[7].Descriptor()
+	extraserviceorderDescPlanFinishedAt := extraserviceorderFields[11].Descriptor()
 	// extraserviceorder.DefaultPlanFinishedAt holds the default value on creation for the plan_finished_at field.
 	extraserviceorder.DefaultPlanFinishedAt = extraserviceorderDescPlanFinishedAt.Default.(time.Time)
 	// extraserviceorderDescMissionBatchID is the schema descriptor for mission_batch_id field.
-	extraserviceorderDescMissionBatchID := extraserviceorderFields[8].Descriptor()
+	extraserviceorderDescMissionBatchID := extraserviceorderFields[12].Descriptor()
 	// extraserviceorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	extraserviceorder.DefaultMissionBatchID = extraserviceorderDescMissionBatchID.Default.(int64)
 	// extraserviceorderDescID is the schema descriptor for id field.
@@ -2365,6 +2377,14 @@ func init() {
 	userDescPopVersion := userFields[11].Descriptor()
 	// user.DefaultPopVersion holds the default value on creation for the pop_version field.
 	user.DefaultPopVersion = userDescPopVersion.Default.(string)
+	// userDescAreaCode is the schema descriptor for area_code field.
+	userDescAreaCode := userFields[12].Descriptor()
+	// user.DefaultAreaCode holds the default value on creation for the area_code field.
+	user.DefaultAreaCode = userDescAreaCode.Default.(string)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[13].Descriptor()
+	// user.DefaultEmail holds the default value on creation for the email field.
+	user.DefaultEmail = userDescEmail.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

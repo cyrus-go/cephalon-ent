@@ -30,14 +30,22 @@ const (
 	FieldMissionID = "mission_id"
 	// FieldMissionOrderID holds the string denoting the mission_order_id field in the database.
 	FieldMissionOrderID = "mission_order_id"
+	// FieldExtraServiceBillingType holds the string denoting the extra_service_billing_type field in the database.
+	FieldExtraServiceBillingType = "extra_service_billing_type"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldSymbolID holds the string denoting the symbol_id field in the database.
 	FieldSymbolID = "symbol_id"
+	// FieldUnitCep holds the string denoting the unit_cep field in the database.
+	FieldUnitCep = "unit_cep"
 	// FieldExtraServiceType holds the string denoting the extra_service_type field in the database.
 	FieldExtraServiceType = "extra_service_type"
 	// FieldBuyDuration holds the string denoting the buy_duration field in the database.
 	FieldBuyDuration = "buy_duration"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldFinishedAt holds the string denoting the finished_at field in the database.
+	FieldFinishedAt = "finished_at"
 	// FieldPlanStartedAt holds the string denoting the plan_started_at field in the database.
 	FieldPlanStartedAt = "plan_started_at"
 	// FieldPlanFinishedAt holds the string denoting the plan_finished_at field in the database.
@@ -94,10 +102,14 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldMissionID,
 	FieldMissionOrderID,
+	FieldExtraServiceBillingType,
 	FieldAmount,
 	FieldSymbolID,
+	FieldUnitCep,
 	FieldExtraServiceType,
 	FieldBuyDuration,
+	FieldStartedAt,
+	FieldFinishedAt,
 	FieldPlanStartedAt,
 	FieldPlanFinishedAt,
 	FieldMissionBatchID,
@@ -134,8 +146,14 @@ var (
 	DefaultAmount int64
 	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
 	DefaultSymbolID int64
+	// DefaultUnitCep holds the default value on creation for the "unit_cep" field.
+	DefaultUnitCep int64
 	// DefaultBuyDuration holds the default value on creation for the "buy_duration" field.
 	DefaultBuyDuration int64
+	// DefaultStartedAt holds the default value on creation for the "started_at" field.
+	DefaultStartedAt time.Time
+	// DefaultFinishedAt holds the default value on creation for the "finished_at" field.
+	DefaultFinishedAt time.Time
 	// DefaultPlanStartedAt holds the default value on creation for the "plan_started_at" field.
 	DefaultPlanStartedAt time.Time
 	// DefaultPlanFinishedAt holds the default value on creation for the "plan_finished_at" field.
@@ -145,6 +163,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultExtraServiceBillingType enums.ExtraServiceBillingType = "unknown"
+
+// ExtraServiceBillingTypeValidator is a validator for the "extra_service_billing_type" field enum values. It is called by the builders before save.
+func ExtraServiceBillingTypeValidator(esbt enums.ExtraServiceBillingType) error {
+	switch esbt {
+	case "unknown", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month", "time_plan_volume", "hold":
+		return nil
+	default:
+		return fmt.Errorf("extraserviceorder: invalid enum value for extra_service_billing_type field: %q", esbt)
+	}
+}
 
 const DefaultExtraServiceType enums.ExtraServiceType = "unknown"
 
@@ -201,6 +231,11 @@ func ByMissionOrderID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionOrderID, opts...).ToFunc()
 }
 
+// ByExtraServiceBillingType orders the results by the extra_service_billing_type field.
+func ByExtraServiceBillingType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExtraServiceBillingType, opts...).ToFunc()
+}
+
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
@@ -211,6 +246,11 @@ func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
 }
 
+// ByUnitCep orders the results by the unit_cep field.
+func ByUnitCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUnitCep, opts...).ToFunc()
+}
+
 // ByExtraServiceType orders the results by the extra_service_type field.
 func ByExtraServiceType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExtraServiceType, opts...).ToFunc()
@@ -219,6 +259,16 @@ func ByExtraServiceType(opts ...sql.OrderTermOption) OrderOption {
 // ByBuyDuration orders the results by the buy_duration field.
 func ByBuyDuration(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBuyDuration, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByFinishedAt orders the results by the finished_at field.
+func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFinishedAt, opts...).ToFunc()
 }
 
 // ByPlanStartedAt orders the results by the plan_started_at field.

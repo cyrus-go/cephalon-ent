@@ -20,6 +20,10 @@ const (
 	MissionTypeFooocusTime        MissionType = "fooocus_time"
 	MissionTypeTabbyTime          MissionType = "tabby_time"
 	MissionTypeJpCondaTime        MissionType = "jp_conda_time"
+	MissionTypeJpMlTime           MissionType = "jp_ml_time"
+	MissionTypeSdCatTime          MissionType = "sd_cat_time"
+	MissionTypeSdFireTime         MissionType = "sd_fire_time"
+	MissionTypeComfyuiTime        MissionType = "comfyui_time"
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan         MissionType = "jp_time_plan"
@@ -31,6 +35,10 @@ const (
 	MissionTypeFooocusTimePlan    MissionType = "fooocus_time_plan"
 	MissionTypeTabbyTimePlan      MissionType = "tabby_time_plan"
 	MissionTypeJpCondaTimePlan    MissionType = "jp_conda_time_plan"
+	MissionTypeJpMlTimePlan       MissionType = "jp_ml_time_plan"
+	MissionTypeSdCatTimePlan      MissionType = "sd_cat_time_plan"
+	MissionTypeSdFireTimePlan     MissionType = "sd_fire_time_plan"
+	MissionTypeComfyuiTimePlan    MissionType = "comfyui_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -63,6 +71,14 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeTabbyTimePlan),
 		string(MissionTypeJpCondaTime),
 		string(MissionTypeJpCondaTimePlan),
+		string(MissionTypeJpMlTime),
+		string(MissionTypeJpMlTimePlan),
+		string(MissionTypeSdCatTime),
+		string(MissionTypeSdCatTimePlan),
+		string(MissionTypeSdFireTime),
+		string(MissionTypeSdFireTimePlan),
+		string(MissionTypeComfyuiTime),
+		string(MissionTypeComfyuiTimePlan),
 	}
 }
 

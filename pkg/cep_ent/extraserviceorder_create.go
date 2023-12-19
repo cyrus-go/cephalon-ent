@@ -125,6 +125,20 @@ func (esoc *ExtraServiceOrderCreate) SetNillableMissionOrderID(i *int64) *ExtraS
 	return esoc
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (esoc *ExtraServiceOrderCreate) SetExtraServiceBillingType(esbt enums.ExtraServiceBillingType) *ExtraServiceOrderCreate {
+	esoc.mutation.SetExtraServiceBillingType(esbt)
+	return esoc
+}
+
+// SetNillableExtraServiceBillingType sets the "extra_service_billing_type" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableExtraServiceBillingType(esbt *enums.ExtraServiceBillingType) *ExtraServiceOrderCreate {
+	if esbt != nil {
+		esoc.SetExtraServiceBillingType(*esbt)
+	}
+	return esoc
+}
+
 // SetAmount sets the "amount" field.
 func (esoc *ExtraServiceOrderCreate) SetAmount(i int64) *ExtraServiceOrderCreate {
 	esoc.mutation.SetAmount(i)
@@ -153,6 +167,20 @@ func (esoc *ExtraServiceOrderCreate) SetNillableSymbolID(i *int64) *ExtraService
 	return esoc
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (esoc *ExtraServiceOrderCreate) SetUnitCep(i int64) *ExtraServiceOrderCreate {
+	esoc.mutation.SetUnitCep(i)
+	return esoc
+}
+
+// SetNillableUnitCep sets the "unit_cep" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableUnitCep(i *int64) *ExtraServiceOrderCreate {
+	if i != nil {
+		esoc.SetUnitCep(*i)
+	}
+	return esoc
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (esoc *ExtraServiceOrderCreate) SetExtraServiceType(est enums.ExtraServiceType) *ExtraServiceOrderCreate {
 	esoc.mutation.SetExtraServiceType(est)
@@ -177,6 +205,34 @@ func (esoc *ExtraServiceOrderCreate) SetBuyDuration(i int64) *ExtraServiceOrderC
 func (esoc *ExtraServiceOrderCreate) SetNillableBuyDuration(i *int64) *ExtraServiceOrderCreate {
 	if i != nil {
 		esoc.SetBuyDuration(*i)
+	}
+	return esoc
+}
+
+// SetStartedAt sets the "started_at" field.
+func (esoc *ExtraServiceOrderCreate) SetStartedAt(t time.Time) *ExtraServiceOrderCreate {
+	esoc.mutation.SetStartedAt(t)
+	return esoc
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableStartedAt(t *time.Time) *ExtraServiceOrderCreate {
+	if t != nil {
+		esoc.SetStartedAt(*t)
+	}
+	return esoc
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (esoc *ExtraServiceOrderCreate) SetFinishedAt(t time.Time) *ExtraServiceOrderCreate {
+	esoc.mutation.SetFinishedAt(t)
+	return esoc
+}
+
+// SetNillableFinishedAt sets the "finished_at" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableFinishedAt(t *time.Time) *ExtraServiceOrderCreate {
+	if t != nil {
+		esoc.SetFinishedAt(*t)
 	}
 	return esoc
 }
@@ -320,6 +376,10 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultMissionOrderID
 		esoc.mutation.SetMissionOrderID(v)
 	}
+	if _, ok := esoc.mutation.ExtraServiceBillingType(); !ok {
+		v := extraserviceorder.DefaultExtraServiceBillingType
+		esoc.mutation.SetExtraServiceBillingType(v)
+	}
 	if _, ok := esoc.mutation.Amount(); !ok {
 		v := extraserviceorder.DefaultAmount
 		esoc.mutation.SetAmount(v)
@@ -328,6 +388,10 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultSymbolID
 		esoc.mutation.SetSymbolID(v)
 	}
+	if _, ok := esoc.mutation.UnitCep(); !ok {
+		v := extraserviceorder.DefaultUnitCep
+		esoc.mutation.SetUnitCep(v)
+	}
 	if _, ok := esoc.mutation.ExtraServiceType(); !ok {
 		v := extraserviceorder.DefaultExtraServiceType
 		esoc.mutation.SetExtraServiceType(v)
@@ -335,6 +399,14 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 	if _, ok := esoc.mutation.BuyDuration(); !ok {
 		v := extraserviceorder.DefaultBuyDuration
 		esoc.mutation.SetBuyDuration(v)
+	}
+	if _, ok := esoc.mutation.StartedAt(); !ok {
+		v := extraserviceorder.DefaultStartedAt
+		esoc.mutation.SetStartedAt(v)
+	}
+	if _, ok := esoc.mutation.FinishedAt(); !ok {
+		v := extraserviceorder.DefaultFinishedAt
+		esoc.mutation.SetFinishedAt(v)
 	}
 	if _, ok := esoc.mutation.PlanStartedAt(); !ok {
 		v := extraserviceorder.DefaultPlanStartedAt
@@ -377,11 +449,22 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	if _, ok := esoc.mutation.MissionOrderID(); !ok {
 		return &ValidationError{Name: "mission_order_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.mission_order_id"`)}
 	}
+	if _, ok := esoc.mutation.ExtraServiceBillingType(); !ok {
+		return &ValidationError{Name: "extra_service_billing_type", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.extra_service_billing_type"`)}
+	}
+	if v, ok := esoc.mutation.ExtraServiceBillingType(); ok {
+		if err := extraserviceorder.ExtraServiceBillingTypeValidator(v); err != nil {
+			return &ValidationError{Name: "extra_service_billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "ExtraServiceOrder.extra_service_billing_type": %w`, err)}
+		}
+	}
 	if _, ok := esoc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.amount"`)}
 	}
 	if _, ok := esoc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.symbol_id"`)}
+	}
+	if _, ok := esoc.mutation.UnitCep(); !ok {
+		return &ValidationError{Name: "unit_cep", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.unit_cep"`)}
 	}
 	if _, ok := esoc.mutation.ExtraServiceType(); !ok {
 		return &ValidationError{Name: "extra_service_type", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.extra_service_type"`)}
@@ -462,9 +545,17 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 		_spec.SetField(extraserviceorder.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
+	if value, ok := esoc.mutation.ExtraServiceBillingType(); ok {
+		_spec.SetField(extraserviceorder.FieldExtraServiceBillingType, field.TypeEnum, value)
+		_node.ExtraServiceBillingType = value
+	}
 	if value, ok := esoc.mutation.Amount(); ok {
 		_spec.SetField(extraserviceorder.FieldAmount, field.TypeInt64, value)
 		_node.Amount = value
+	}
+	if value, ok := esoc.mutation.UnitCep(); ok {
+		_spec.SetField(extraserviceorder.FieldUnitCep, field.TypeInt64, value)
+		_node.UnitCep = value
 	}
 	if value, ok := esoc.mutation.ExtraServiceType(); ok {
 		_spec.SetField(extraserviceorder.FieldExtraServiceType, field.TypeEnum, value)
@@ -473,6 +564,14 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	if value, ok := esoc.mutation.BuyDuration(); ok {
 		_spec.SetField(extraserviceorder.FieldBuyDuration, field.TypeInt64, value)
 		_node.BuyDuration = value
+	}
+	if value, ok := esoc.mutation.StartedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
+		_node.StartedAt = &value
+	}
+	if value, ok := esoc.mutation.FinishedAt(); ok {
+		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
+		_node.FinishedAt = &value
 	}
 	if value, ok := esoc.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -686,6 +785,18 @@ func (u *ExtraServiceOrderUpsert) UpdateMissionOrderID() *ExtraServiceOrderUpser
 	return u
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (u *ExtraServiceOrderUpsert) SetExtraServiceBillingType(v enums.ExtraServiceBillingType) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldExtraServiceBillingType, v)
+	return u
+}
+
+// UpdateExtraServiceBillingType sets the "extra_service_billing_type" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateExtraServiceBillingType() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldExtraServiceBillingType)
+	return u
+}
+
 // SetAmount sets the "amount" field.
 func (u *ExtraServiceOrderUpsert) SetAmount(v int64) *ExtraServiceOrderUpsert {
 	u.Set(extraserviceorder.FieldAmount, v)
@@ -716,6 +827,24 @@ func (u *ExtraServiceOrderUpsert) UpdateSymbolID() *ExtraServiceOrderUpsert {
 	return u
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (u *ExtraServiceOrderUpsert) SetUnitCep(v int64) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldUnitCep, v)
+	return u
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateUnitCep() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldUnitCep)
+	return u
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *ExtraServiceOrderUpsert) AddUnitCep(v int64) *ExtraServiceOrderUpsert {
+	u.Add(extraserviceorder.FieldUnitCep, v)
+	return u
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (u *ExtraServiceOrderUpsert) SetExtraServiceType(v enums.ExtraServiceType) *ExtraServiceOrderUpsert {
 	u.Set(extraserviceorder.FieldExtraServiceType, v)
@@ -743,6 +872,42 @@ func (u *ExtraServiceOrderUpsert) UpdateBuyDuration() *ExtraServiceOrderUpsert {
 // AddBuyDuration adds v to the "buy_duration" field.
 func (u *ExtraServiceOrderUpsert) AddBuyDuration(v int64) *ExtraServiceOrderUpsert {
 	u.Add(extraserviceorder.FieldBuyDuration, v)
+	return u
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *ExtraServiceOrderUpsert) SetStartedAt(v time.Time) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateStartedAt() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldStartedAt)
+	return u
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *ExtraServiceOrderUpsert) ClearStartedAt() *ExtraServiceOrderUpsert {
+	u.SetNull(extraserviceorder.FieldStartedAt)
+	return u
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *ExtraServiceOrderUpsert) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldFinishedAt, v)
+	return u
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateFinishedAt() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldFinishedAt)
+	return u
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *ExtraServiceOrderUpsert) ClearFinishedAt() *ExtraServiceOrderUpsert {
+	u.SetNull(extraserviceorder.FieldFinishedAt)
 	return u
 }
 
@@ -943,6 +1108,20 @@ func (u *ExtraServiceOrderUpsertOne) UpdateMissionOrderID() *ExtraServiceOrderUp
 	})
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (u *ExtraServiceOrderUpsertOne) SetExtraServiceBillingType(v enums.ExtraServiceBillingType) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetExtraServiceBillingType(v)
+	})
+}
+
+// UpdateExtraServiceBillingType sets the "extra_service_billing_type" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateExtraServiceBillingType() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateExtraServiceBillingType()
+	})
+}
+
 // SetAmount sets the "amount" field.
 func (u *ExtraServiceOrderUpsertOne) SetAmount(v int64) *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -978,6 +1157,27 @@ func (u *ExtraServiceOrderUpsertOne) UpdateSymbolID() *ExtraServiceOrderUpsertOn
 	})
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertOne) SetUnitCep(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetUnitCep(v)
+	})
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertOne) AddUnitCep(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddUnitCep(v)
+	})
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateUnitCep() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateUnitCep()
+	})
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (u *ExtraServiceOrderUpsertOne) SetExtraServiceType(v enums.ExtraServiceType) *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1010,6 +1210,48 @@ func (u *ExtraServiceOrderUpsertOne) AddBuyDuration(v int64) *ExtraServiceOrderU
 func (u *ExtraServiceOrderUpsertOne) UpdateBuyDuration() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateBuyDuration()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *ExtraServiceOrderUpsertOne) SetStartedAt(v time.Time) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateStartedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *ExtraServiceOrderUpsertOne) ClearStartedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *ExtraServiceOrderUpsertOne) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateFinishedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *ExtraServiceOrderUpsertOne) ClearFinishedAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 
@@ -1384,6 +1626,20 @@ func (u *ExtraServiceOrderUpsertBulk) UpdateMissionOrderID() *ExtraServiceOrderU
 	})
 }
 
+// SetExtraServiceBillingType sets the "extra_service_billing_type" field.
+func (u *ExtraServiceOrderUpsertBulk) SetExtraServiceBillingType(v enums.ExtraServiceBillingType) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetExtraServiceBillingType(v)
+	})
+}
+
+// UpdateExtraServiceBillingType sets the "extra_service_billing_type" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateExtraServiceBillingType() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateExtraServiceBillingType()
+	})
+}
+
 // SetAmount sets the "amount" field.
 func (u *ExtraServiceOrderUpsertBulk) SetAmount(v int64) *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1419,6 +1675,27 @@ func (u *ExtraServiceOrderUpsertBulk) UpdateSymbolID() *ExtraServiceOrderUpsertB
 	})
 }
 
+// SetUnitCep sets the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertBulk) SetUnitCep(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetUnitCep(v)
+	})
+}
+
+// AddUnitCep adds v to the "unit_cep" field.
+func (u *ExtraServiceOrderUpsertBulk) AddUnitCep(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddUnitCep(v)
+	})
+}
+
+// UpdateUnitCep sets the "unit_cep" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateUnitCep() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateUnitCep()
+	})
+}
+
 // SetExtraServiceType sets the "extra_service_type" field.
 func (u *ExtraServiceOrderUpsertBulk) SetExtraServiceType(v enums.ExtraServiceType) *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1451,6 +1728,48 @@ func (u *ExtraServiceOrderUpsertBulk) AddBuyDuration(v int64) *ExtraServiceOrder
 func (u *ExtraServiceOrderUpsertBulk) UpdateBuyDuration() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateBuyDuration()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *ExtraServiceOrderUpsertBulk) SetStartedAt(v time.Time) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateStartedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *ExtraServiceOrderUpsertBulk) ClearStartedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (u *ExtraServiceOrderUpsertBulk) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetFinishedAt(v)
+	})
+}
+
+// UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateFinishedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateFinishedAt()
+	})
+}
+
+// ClearFinishedAt clears the value of the "finished_at" field.
+func (u *ExtraServiceOrderUpsertBulk) ClearFinishedAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.ClearFinishedAt()
 	})
 }
 

@@ -37,14 +37,22 @@ type ExtraServiceOrder struct {
 	MissionID int64 `json:"mission_id,string"`
 	// 任务订单 id，外键关联任务订单
 	MissionOrderID int64 `json:"mission_order_id,string"`
+	// 是否为计时类型任务
+	ExtraServiceBillingType enums.ExtraServiceBillingType `json:"extra_service_billing_type"`
 	// 订单的货币消耗量
 	Amount int64 `json:"amount"`
 	// 币种 id
 	SymbolID int64 `json:"symbol_id,string"`
+	// 任务单价，按次(count)就是 unit_cep/次，按时(time)就是 unit_cep/分钟
+	UnitCep int64 `json:"unit_cep"`
 	// 附加服务类型
 	ExtraServiceType enums.ExtraServiceType `json:"extra_service_type"`
 	// 包时任务订单购买的时长
 	BuyDuration int64 `json:"buy_duration"`
+	// 附加服务开始执行时刻
+	StartedAt *time.Time `json:"started_at"`
+	// 附加服务结束执行时刻
+	FinishedAt *time.Time `json:"finished_at"`
 	// 任务计划开始时间（包时）
 	PlanStartedAt *time.Time `json:"plan_started_at"`
 	// 任务计划结束时间（包时）
@@ -129,11 +137,11 @@ func (*ExtraServiceOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
+		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldUnitCep, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
 			values[i] = new(sql.NullInt64)
-		case extraserviceorder.FieldExtraServiceType:
+		case extraserviceorder.FieldExtraServiceBillingType, extraserviceorder.FieldExtraServiceType:
 			values[i] = new(sql.NullString)
-		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt:
+		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldStartedAt, extraserviceorder.FieldFinishedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -198,6 +206,12 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				eso.MissionOrderID = value.Int64
 			}
+		case extraserviceorder.FieldExtraServiceBillingType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field extra_service_billing_type", values[i])
+			} else if value.Valid {
+				eso.ExtraServiceBillingType = enums.ExtraServiceBillingType(value.String)
+			}
 		case extraserviceorder.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
@@ -210,6 +224,12 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				eso.SymbolID = value.Int64
 			}
+		case extraserviceorder.FieldUnitCep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field unit_cep", values[i])
+			} else if value.Valid {
+				eso.UnitCep = value.Int64
+			}
 		case extraserviceorder.FieldExtraServiceType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field extra_service_type", values[i])
@@ -221,6 +241,20 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field buy_duration", values[i])
 			} else if value.Valid {
 				eso.BuyDuration = value.Int64
+			}
+		case extraserviceorder.FieldStartedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field started_at", values[i])
+			} else if value.Valid {
+				eso.StartedAt = new(time.Time)
+				*eso.StartedAt = value.Time
+			}
+		case extraserviceorder.FieldFinishedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
+			} else if value.Valid {
+				eso.FinishedAt = new(time.Time)
+				*eso.FinishedAt = value.Time
 			}
 		case extraserviceorder.FieldPlanStartedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -319,17 +353,33 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString("mission_order_id=")
 	builder.WriteString(fmt.Sprintf("%v", eso.MissionOrderID))
 	builder.WriteString(", ")
+	builder.WriteString("extra_service_billing_type=")
+	builder.WriteString(fmt.Sprintf("%v", eso.ExtraServiceBillingType))
+	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", eso.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("symbol_id=")
 	builder.WriteString(fmt.Sprintf("%v", eso.SymbolID))
 	builder.WriteString(", ")
+	builder.WriteString("unit_cep=")
+	builder.WriteString(fmt.Sprintf("%v", eso.UnitCep))
+	builder.WriteString(", ")
 	builder.WriteString("extra_service_type=")
 	builder.WriteString(fmt.Sprintf("%v", eso.ExtraServiceType))
 	builder.WriteString(", ")
 	builder.WriteString("buy_duration=")
 	builder.WriteString(fmt.Sprintf("%v", eso.BuyDuration))
+	builder.WriteString(", ")
+	if v := eso.StartedAt; v != nil {
+		builder.WriteString("started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := eso.FinishedAt; v != nil {
+		builder.WriteString("finished_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := eso.PlanStartedAt; v != nil {
 		builder.WriteString("plan_started_at=")
