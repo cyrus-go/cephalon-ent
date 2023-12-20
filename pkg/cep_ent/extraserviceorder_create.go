@@ -477,6 +477,12 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	if _, ok := esoc.mutation.BuyDuration(); !ok {
 		return &ValidationError{Name: "buy_duration", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.buy_duration"`)}
 	}
+	if _, ok := esoc.mutation.StartedAt(); !ok {
+		return &ValidationError{Name: "started_at", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.started_at"`)}
+	}
+	if _, ok := esoc.mutation.FinishedAt(); !ok {
+		return &ValidationError{Name: "finished_at", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.finished_at"`)}
+	}
 	if _, ok := esoc.mutation.MissionBatchID(); !ok {
 		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.mission_batch_id"`)}
 	}
@@ -567,11 +573,11 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	}
 	if value, ok := esoc.mutation.StartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
-		_node.StartedAt = &value
+		_node.StartedAt = value
 	}
 	if value, ok := esoc.mutation.FinishedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
-		_node.FinishedAt = &value
+		_node.FinishedAt = value
 	}
 	if value, ok := esoc.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -887,12 +893,6 @@ func (u *ExtraServiceOrderUpsert) UpdateStartedAt() *ExtraServiceOrderUpsert {
 	return u
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (u *ExtraServiceOrderUpsert) ClearStartedAt() *ExtraServiceOrderUpsert {
-	u.SetNull(extraserviceorder.FieldStartedAt)
-	return u
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (u *ExtraServiceOrderUpsert) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsert {
 	u.Set(extraserviceorder.FieldFinishedAt, v)
@@ -902,12 +902,6 @@ func (u *ExtraServiceOrderUpsert) SetFinishedAt(v time.Time) *ExtraServiceOrderU
 // UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
 func (u *ExtraServiceOrderUpsert) UpdateFinishedAt() *ExtraServiceOrderUpsert {
 	u.SetExcluded(extraserviceorder.FieldFinishedAt)
-	return u
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (u *ExtraServiceOrderUpsert) ClearFinishedAt() *ExtraServiceOrderUpsert {
-	u.SetNull(extraserviceorder.FieldFinishedAt)
 	return u
 }
 
@@ -1227,13 +1221,6 @@ func (u *ExtraServiceOrderUpsertOne) UpdateStartedAt() *ExtraServiceOrderUpsertO
 	})
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (u *ExtraServiceOrderUpsertOne) ClearStartedAt() *ExtraServiceOrderUpsertOne {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearStartedAt()
-	})
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (u *ExtraServiceOrderUpsertOne) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1245,13 +1232,6 @@ func (u *ExtraServiceOrderUpsertOne) SetFinishedAt(v time.Time) *ExtraServiceOrd
 func (u *ExtraServiceOrderUpsertOne) UpdateFinishedAt() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateFinishedAt()
-	})
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (u *ExtraServiceOrderUpsertOne) ClearFinishedAt() *ExtraServiceOrderUpsertOne {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearFinishedAt()
 	})
 }
 
@@ -1745,13 +1725,6 @@ func (u *ExtraServiceOrderUpsertBulk) UpdateStartedAt() *ExtraServiceOrderUpsert
 	})
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (u *ExtraServiceOrderUpsertBulk) ClearStartedAt() *ExtraServiceOrderUpsertBulk {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearStartedAt()
-	})
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (u *ExtraServiceOrderUpsertBulk) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1763,13 +1736,6 @@ func (u *ExtraServiceOrderUpsertBulk) SetFinishedAt(v time.Time) *ExtraServiceOr
 func (u *ExtraServiceOrderUpsertBulk) UpdateFinishedAt() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateFinishedAt()
-	})
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (u *ExtraServiceOrderUpsertBulk) ClearFinishedAt() *ExtraServiceOrderUpsertBulk {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearFinishedAt()
 	})
 }
 

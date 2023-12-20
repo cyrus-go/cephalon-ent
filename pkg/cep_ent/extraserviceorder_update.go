@@ -243,12 +243,6 @@ func (esou *ExtraServiceOrderUpdate) SetNillableStartedAt(t *time.Time) *ExtraSe
 	return esou
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (esou *ExtraServiceOrderUpdate) ClearStartedAt() *ExtraServiceOrderUpdate {
-	esou.mutation.ClearStartedAt()
-	return esou
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (esou *ExtraServiceOrderUpdate) SetFinishedAt(t time.Time) *ExtraServiceOrderUpdate {
 	esou.mutation.SetFinishedAt(t)
@@ -260,12 +254,6 @@ func (esou *ExtraServiceOrderUpdate) SetNillableFinishedAt(t *time.Time) *ExtraS
 	if t != nil {
 		esou.SetFinishedAt(*t)
 	}
-	return esou
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (esou *ExtraServiceOrderUpdate) ClearFinishedAt() *ExtraServiceOrderUpdate {
-	esou.mutation.ClearFinishedAt()
 	return esou
 }
 
@@ -498,14 +486,8 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 	if value, ok := esou.mutation.StartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
 	}
-	if esou.mutation.StartedAtCleared() {
-		_spec.ClearField(extraserviceorder.FieldStartedAt, field.TypeTime)
-	}
 	if value, ok := esou.mutation.FinishedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
-	}
-	if esou.mutation.FinishedAtCleared() {
-		_spec.ClearField(extraserviceorder.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := esou.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -866,12 +848,6 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableStartedAt(t *time.Time) *Ext
 	return esouo
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (esouo *ExtraServiceOrderUpdateOne) ClearStartedAt() *ExtraServiceOrderUpdateOne {
-	esouo.mutation.ClearStartedAt()
-	return esouo
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (esouo *ExtraServiceOrderUpdateOne) SetFinishedAt(t time.Time) *ExtraServiceOrderUpdateOne {
 	esouo.mutation.SetFinishedAt(t)
@@ -883,12 +859,6 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableFinishedAt(t *time.Time) *Ex
 	if t != nil {
 		esouo.SetFinishedAt(*t)
 	}
-	return esouo
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (esouo *ExtraServiceOrderUpdateOne) ClearFinishedAt() *ExtraServiceOrderUpdateOne {
-	esouo.mutation.ClearFinishedAt()
 	return esouo
 }
 
@@ -1151,14 +1121,8 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	if value, ok := esouo.mutation.StartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
 	}
-	if esouo.mutation.StartedAtCleared() {
-		_spec.ClearField(extraserviceorder.FieldStartedAt, field.TypeTime)
-	}
 	if value, ok := esouo.mutation.FinishedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
-	}
-	if esouo.mutation.FinishedAtCleared() {
-		_spec.ClearField(extraserviceorder.FieldFinishedAt, field.TypeTime)
 	}
 	if value, ok := esouo.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)

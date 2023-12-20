@@ -616,16 +616,6 @@ func StartedAtLTE(v time.Time) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldStartedAt, v))
 }
 
-// StartedAtIsNil applies the IsNil predicate on the "started_at" field.
-func StartedAtIsNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldIsNull(FieldStartedAt))
-}
-
-// StartedAtNotNil applies the NotNil predicate on the "started_at" field.
-func StartedAtNotNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldNotNull(FieldStartedAt))
-}
-
 // FinishedAtEQ applies the EQ predicate on the "finished_at" field.
 func FinishedAtEQ(v time.Time) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldFinishedAt, v))
@@ -664,16 +654,6 @@ func FinishedAtLT(v time.Time) predicate.ExtraServiceOrder {
 // FinishedAtLTE applies the LTE predicate on the "finished_at" field.
 func FinishedAtLTE(v time.Time) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldFinishedAt, v))
-}
-
-// FinishedAtIsNil applies the IsNil predicate on the "finished_at" field.
-func FinishedAtIsNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldIsNull(FieldFinishedAt))
-}
-
-// FinishedAtNotNil applies the NotNil predicate on the "finished_at" field.
-func FinishedAtNotNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldNotNull(FieldFinishedAt))
 }
 
 // PlanStartedAtEQ applies the EQ predicate on the "plan_started_at" field.
