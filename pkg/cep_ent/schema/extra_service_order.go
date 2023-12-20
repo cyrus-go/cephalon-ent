@@ -32,6 +32,10 @@ func (ExtraServiceOrder) Fields() []ent.Field {
 		field.Time("plan_started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_started_at"`).Comment("任务计划开始时间（包时）"),
 		field.Time("plan_finished_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"plan_finished_at"`).Comment("任务计划结束时间（包时）"),
 		field.Int64("mission_batch_id").Default(0).StructTag(`json:"mission_batch_id,string"`).Comment("任务批次外键"),
+		field.Int64("settled_amount").Default(0).StructTag(`json:"settled_amount"`).Comment("已结算金额"),
+		field.Int64("settled_count").Default(0).StructTag(`json:"settled_count"`).Comment("已结算次数"),
+		field.Int64("total_settle_count").Default(0).StructTag(`json:"total_settle_count"`).Comment("总结算次数"),
+		field.Time("lately_settled_at").Annotations(entsql.Annotation{Default: "CURRENT_TIMESTAMP"}).Default(common.ZeroTime).StructTag(`json:"lately_settled_at"`).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).Comment("上一次结算时间"),
 	}
 }
 

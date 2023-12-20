@@ -15763,6 +15763,13 @@ type ExtraServiceOrderMutation struct {
 	finished_at                *time.Time
 	plan_started_at            *time.Time
 	plan_finished_at           *time.Time
+	settled_amount             *int64
+	addsettled_amount          *int64
+	settled_count              *int64
+	addsettled_count           *int64
+	total_settle_count         *int64
+	addtotal_settle_count      *int64
+	lately_settled_at          *time.Time
 	clearedFields              map[string]struct{}
 	mission                    *int64
 	clearedmission             bool
@@ -16655,6 +16662,210 @@ func (m *ExtraServiceOrderMutation) ResetMissionBatchID() {
 	m.mission_batch = nil
 }
 
+// SetSettledAmount sets the "settled_amount" field.
+func (m *ExtraServiceOrderMutation) SetSettledAmount(i int64) {
+	m.settled_amount = &i
+	m.addsettled_amount = nil
+}
+
+// SettledAmount returns the value of the "settled_amount" field in the mutation.
+func (m *ExtraServiceOrderMutation) SettledAmount() (r int64, exists bool) {
+	v := m.settled_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettledAmount returns the old "settled_amount" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldSettledAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettledAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettledAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettledAmount: %w", err)
+	}
+	return oldValue.SettledAmount, nil
+}
+
+// AddSettledAmount adds i to the "settled_amount" field.
+func (m *ExtraServiceOrderMutation) AddSettledAmount(i int64) {
+	if m.addsettled_amount != nil {
+		*m.addsettled_amount += i
+	} else {
+		m.addsettled_amount = &i
+	}
+}
+
+// AddedSettledAmount returns the value that was added to the "settled_amount" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedSettledAmount() (r int64, exists bool) {
+	v := m.addsettled_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSettledAmount resets all changes to the "settled_amount" field.
+func (m *ExtraServiceOrderMutation) ResetSettledAmount() {
+	m.settled_amount = nil
+	m.addsettled_amount = nil
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (m *ExtraServiceOrderMutation) SetSettledCount(i int64) {
+	m.settled_count = &i
+	m.addsettled_count = nil
+}
+
+// SettledCount returns the value of the "settled_count" field in the mutation.
+func (m *ExtraServiceOrderMutation) SettledCount() (r int64, exists bool) {
+	v := m.settled_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettledCount returns the old "settled_count" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldSettledCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettledCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettledCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettledCount: %w", err)
+	}
+	return oldValue.SettledCount, nil
+}
+
+// AddSettledCount adds i to the "settled_count" field.
+func (m *ExtraServiceOrderMutation) AddSettledCount(i int64) {
+	if m.addsettled_count != nil {
+		*m.addsettled_count += i
+	} else {
+		m.addsettled_count = &i
+	}
+}
+
+// AddedSettledCount returns the value that was added to the "settled_count" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedSettledCount() (r int64, exists bool) {
+	v := m.addsettled_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSettledCount resets all changes to the "settled_count" field.
+func (m *ExtraServiceOrderMutation) ResetSettledCount() {
+	m.settled_count = nil
+	m.addsettled_count = nil
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (m *ExtraServiceOrderMutation) SetTotalSettleCount(i int64) {
+	m.total_settle_count = &i
+	m.addtotal_settle_count = nil
+}
+
+// TotalSettleCount returns the value of the "total_settle_count" field in the mutation.
+func (m *ExtraServiceOrderMutation) TotalSettleCount() (r int64, exists bool) {
+	v := m.total_settle_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalSettleCount returns the old "total_settle_count" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldTotalSettleCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalSettleCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalSettleCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalSettleCount: %w", err)
+	}
+	return oldValue.TotalSettleCount, nil
+}
+
+// AddTotalSettleCount adds i to the "total_settle_count" field.
+func (m *ExtraServiceOrderMutation) AddTotalSettleCount(i int64) {
+	if m.addtotal_settle_count != nil {
+		*m.addtotal_settle_count += i
+	} else {
+		m.addtotal_settle_count = &i
+	}
+}
+
+// AddedTotalSettleCount returns the value that was added to the "total_settle_count" field in this mutation.
+func (m *ExtraServiceOrderMutation) AddedTotalSettleCount() (r int64, exists bool) {
+	v := m.addtotal_settle_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalSettleCount resets all changes to the "total_settle_count" field.
+func (m *ExtraServiceOrderMutation) ResetTotalSettleCount() {
+	m.total_settle_count = nil
+	m.addtotal_settle_count = nil
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (m *ExtraServiceOrderMutation) SetLatelySettledAt(t time.Time) {
+	m.lately_settled_at = &t
+}
+
+// LatelySettledAt returns the value of the "lately_settled_at" field in the mutation.
+func (m *ExtraServiceOrderMutation) LatelySettledAt() (r time.Time, exists bool) {
+	v := m.lately_settled_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLatelySettledAt returns the old "lately_settled_at" field's value of the ExtraServiceOrder entity.
+// If the ExtraServiceOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExtraServiceOrderMutation) OldLatelySettledAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLatelySettledAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLatelySettledAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLatelySettledAt: %w", err)
+	}
+	return oldValue.LatelySettledAt, nil
+}
+
+// ResetLatelySettledAt resets all changes to the "lately_settled_at" field.
+func (m *ExtraServiceOrderMutation) ResetLatelySettledAt() {
+	m.lately_settled_at = nil
+}
+
 // ClearMission clears the "mission" edge to the Mission entity.
 func (m *ExtraServiceOrderMutation) ClearMission() {
 	m.clearedmission = true
@@ -16797,7 +17008,7 @@ func (m *ExtraServiceOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExtraServiceOrderMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 22)
 	if m.created_by != nil {
 		fields = append(fields, extraserviceorder.FieldCreatedBy)
 	}
@@ -16852,6 +17063,18 @@ func (m *ExtraServiceOrderMutation) Fields() []string {
 	if m.mission_batch != nil {
 		fields = append(fields, extraserviceorder.FieldMissionBatchID)
 	}
+	if m.settled_amount != nil {
+		fields = append(fields, extraserviceorder.FieldSettledAmount)
+	}
+	if m.settled_count != nil {
+		fields = append(fields, extraserviceorder.FieldSettledCount)
+	}
+	if m.total_settle_count != nil {
+		fields = append(fields, extraserviceorder.FieldTotalSettleCount)
+	}
+	if m.lately_settled_at != nil {
+		fields = append(fields, extraserviceorder.FieldLatelySettledAt)
+	}
 	return fields
 }
 
@@ -16896,6 +17119,14 @@ func (m *ExtraServiceOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.PlanFinishedAt()
 	case extraserviceorder.FieldMissionBatchID:
 		return m.MissionBatchID()
+	case extraserviceorder.FieldSettledAmount:
+		return m.SettledAmount()
+	case extraserviceorder.FieldSettledCount:
+		return m.SettledCount()
+	case extraserviceorder.FieldTotalSettleCount:
+		return m.TotalSettleCount()
+	case extraserviceorder.FieldLatelySettledAt:
+		return m.LatelySettledAt()
 	}
 	return nil, false
 }
@@ -16941,6 +17172,14 @@ func (m *ExtraServiceOrderMutation) OldField(ctx context.Context, name string) (
 		return m.OldPlanFinishedAt(ctx)
 	case extraserviceorder.FieldMissionBatchID:
 		return m.OldMissionBatchID(ctx)
+	case extraserviceorder.FieldSettledAmount:
+		return m.OldSettledAmount(ctx)
+	case extraserviceorder.FieldSettledCount:
+		return m.OldSettledCount(ctx)
+	case extraserviceorder.FieldTotalSettleCount:
+		return m.OldTotalSettleCount(ctx)
+	case extraserviceorder.FieldLatelySettledAt:
+		return m.OldLatelySettledAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExtraServiceOrder field %s", name)
 }
@@ -17076,6 +17315,34 @@ func (m *ExtraServiceOrderMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetMissionBatchID(v)
 		return nil
+	case extraserviceorder.FieldSettledAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettledAmount(v)
+		return nil
+	case extraserviceorder.FieldSettledCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettledCount(v)
+		return nil
+	case extraserviceorder.FieldTotalSettleCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalSettleCount(v)
+		return nil
+	case extraserviceorder.FieldLatelySettledAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLatelySettledAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExtraServiceOrder field %s", name)
 }
@@ -17099,6 +17366,15 @@ func (m *ExtraServiceOrderMutation) AddedFields() []string {
 	if m.addbuy_duration != nil {
 		fields = append(fields, extraserviceorder.FieldBuyDuration)
 	}
+	if m.addsettled_amount != nil {
+		fields = append(fields, extraserviceorder.FieldSettledAmount)
+	}
+	if m.addsettled_count != nil {
+		fields = append(fields, extraserviceorder.FieldSettledCount)
+	}
+	if m.addtotal_settle_count != nil {
+		fields = append(fields, extraserviceorder.FieldTotalSettleCount)
+	}
 	return fields
 }
 
@@ -17117,6 +17393,12 @@ func (m *ExtraServiceOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUnitCep()
 	case extraserviceorder.FieldBuyDuration:
 		return m.AddedBuyDuration()
+	case extraserviceorder.FieldSettledAmount:
+		return m.AddedSettledAmount()
+	case extraserviceorder.FieldSettledCount:
+		return m.AddedSettledCount()
+	case extraserviceorder.FieldTotalSettleCount:
+		return m.AddedTotalSettleCount()
 	}
 	return nil, false
 }
@@ -17160,6 +17442,27 @@ func (m *ExtraServiceOrderMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBuyDuration(v)
+		return nil
+	case extraserviceorder.FieldSettledAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSettledAmount(v)
+		return nil
+	case extraserviceorder.FieldSettledCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSettledCount(v)
+		return nil
+	case extraserviceorder.FieldTotalSettleCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalSettleCount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ExtraServiceOrder numeric field %s", name)
@@ -17256,6 +17559,18 @@ func (m *ExtraServiceOrderMutation) ResetField(name string) error {
 		return nil
 	case extraserviceorder.FieldMissionBatchID:
 		m.ResetMissionBatchID()
+		return nil
+	case extraserviceorder.FieldSettledAmount:
+		m.ResetSettledAmount()
+		return nil
+	case extraserviceorder.FieldSettledCount:
+		m.ResetSettledCount()
+		return nil
+	case extraserviceorder.FieldTotalSettleCount:
+		m.ResetTotalSettleCount()
+		return nil
+	case extraserviceorder.FieldLatelySettledAt:
+		m.ResetLatelySettledAt()
 		return nil
 	}
 	return fmt.Errorf("unknown ExtraServiceOrder field %s", name)

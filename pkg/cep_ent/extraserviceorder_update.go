@@ -311,6 +311,83 @@ func (esou *ExtraServiceOrderUpdate) SetNillableMissionBatchID(i *int64) *ExtraS
 	return esou
 }
 
+// SetSettledAmount sets the "settled_amount" field.
+func (esou *ExtraServiceOrderUpdate) SetSettledAmount(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.ResetSettledAmount()
+	esou.mutation.SetSettledAmount(i)
+	return esou
+}
+
+// SetNillableSettledAmount sets the "settled_amount" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableSettledAmount(i *int64) *ExtraServiceOrderUpdate {
+	if i != nil {
+		esou.SetSettledAmount(*i)
+	}
+	return esou
+}
+
+// AddSettledAmount adds i to the "settled_amount" field.
+func (esou *ExtraServiceOrderUpdate) AddSettledAmount(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.AddSettledAmount(i)
+	return esou
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (esou *ExtraServiceOrderUpdate) SetSettledCount(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.ResetSettledCount()
+	esou.mutation.SetSettledCount(i)
+	return esou
+}
+
+// SetNillableSettledCount sets the "settled_count" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableSettledCount(i *int64) *ExtraServiceOrderUpdate {
+	if i != nil {
+		esou.SetSettledCount(*i)
+	}
+	return esou
+}
+
+// AddSettledCount adds i to the "settled_count" field.
+func (esou *ExtraServiceOrderUpdate) AddSettledCount(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.AddSettledCount(i)
+	return esou
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (esou *ExtraServiceOrderUpdate) SetTotalSettleCount(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.ResetTotalSettleCount()
+	esou.mutation.SetTotalSettleCount(i)
+	return esou
+}
+
+// SetNillableTotalSettleCount sets the "total_settle_count" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableTotalSettleCount(i *int64) *ExtraServiceOrderUpdate {
+	if i != nil {
+		esou.SetTotalSettleCount(*i)
+	}
+	return esou
+}
+
+// AddTotalSettleCount adds i to the "total_settle_count" field.
+func (esou *ExtraServiceOrderUpdate) AddTotalSettleCount(i int64) *ExtraServiceOrderUpdate {
+	esou.mutation.AddTotalSettleCount(i)
+	return esou
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (esou *ExtraServiceOrderUpdate) SetLatelySettledAt(t time.Time) *ExtraServiceOrderUpdate {
+	esou.mutation.SetLatelySettledAt(t)
+	return esou
+}
+
+// SetNillableLatelySettledAt sets the "lately_settled_at" field if the given value is not nil.
+func (esou *ExtraServiceOrderUpdate) SetNillableLatelySettledAt(t *time.Time) *ExtraServiceOrderUpdate {
+	if t != nil {
+		esou.SetLatelySettledAt(*t)
+	}
+	return esou
+}
+
 // SetMission sets the "mission" edge to the Mission entity.
 func (esou *ExtraServiceOrderUpdate) SetMission(m *Mission) *ExtraServiceOrderUpdate {
 	return esou.SetMissionID(m.ID)
@@ -500,6 +577,27 @@ func (esou *ExtraServiceOrderUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if esou.mutation.PlanFinishedAtCleared() {
 		_spec.ClearField(extraserviceorder.FieldPlanFinishedAt, field.TypeTime)
+	}
+	if value, ok := esou.mutation.SettledAmount(); ok {
+		_spec.SetField(extraserviceorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.AddedSettledAmount(); ok {
+		_spec.AddField(extraserviceorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.SettledCount(); ok {
+		_spec.SetField(extraserviceorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.AddedSettledCount(); ok {
+		_spec.AddField(extraserviceorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.TotalSettleCount(); ok {
+		_spec.SetField(extraserviceorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.AddedTotalSettleCount(); ok {
+		_spec.AddField(extraserviceorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := esou.mutation.LatelySettledAt(); ok {
+		_spec.SetField(extraserviceorder.FieldLatelySettledAt, field.TypeTime, value)
 	}
 	if esou.mutation.MissionCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -916,6 +1014,83 @@ func (esouo *ExtraServiceOrderUpdateOne) SetNillableMissionBatchID(i *int64) *Ex
 	return esouo
 }
 
+// SetSettledAmount sets the "settled_amount" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetSettledAmount(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ResetSettledAmount()
+	esouo.mutation.SetSettledAmount(i)
+	return esouo
+}
+
+// SetNillableSettledAmount sets the "settled_amount" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableSettledAmount(i *int64) *ExtraServiceOrderUpdateOne {
+	if i != nil {
+		esouo.SetSettledAmount(*i)
+	}
+	return esouo
+}
+
+// AddSettledAmount adds i to the "settled_amount" field.
+func (esouo *ExtraServiceOrderUpdateOne) AddSettledAmount(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.AddSettledAmount(i)
+	return esouo
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetSettledCount(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ResetSettledCount()
+	esouo.mutation.SetSettledCount(i)
+	return esouo
+}
+
+// SetNillableSettledCount sets the "settled_count" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableSettledCount(i *int64) *ExtraServiceOrderUpdateOne {
+	if i != nil {
+		esouo.SetSettledCount(*i)
+	}
+	return esouo
+}
+
+// AddSettledCount adds i to the "settled_count" field.
+func (esouo *ExtraServiceOrderUpdateOne) AddSettledCount(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.AddSettledCount(i)
+	return esouo
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetTotalSettleCount(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.ResetTotalSettleCount()
+	esouo.mutation.SetTotalSettleCount(i)
+	return esouo
+}
+
+// SetNillableTotalSettleCount sets the "total_settle_count" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableTotalSettleCount(i *int64) *ExtraServiceOrderUpdateOne {
+	if i != nil {
+		esouo.SetTotalSettleCount(*i)
+	}
+	return esouo
+}
+
+// AddTotalSettleCount adds i to the "total_settle_count" field.
+func (esouo *ExtraServiceOrderUpdateOne) AddTotalSettleCount(i int64) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.AddTotalSettleCount(i)
+	return esouo
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (esouo *ExtraServiceOrderUpdateOne) SetLatelySettledAt(t time.Time) *ExtraServiceOrderUpdateOne {
+	esouo.mutation.SetLatelySettledAt(t)
+	return esouo
+}
+
+// SetNillableLatelySettledAt sets the "lately_settled_at" field if the given value is not nil.
+func (esouo *ExtraServiceOrderUpdateOne) SetNillableLatelySettledAt(t *time.Time) *ExtraServiceOrderUpdateOne {
+	if t != nil {
+		esouo.SetLatelySettledAt(*t)
+	}
+	return esouo
+}
+
 // SetMission sets the "mission" edge to the Mission entity.
 func (esouo *ExtraServiceOrderUpdateOne) SetMission(m *Mission) *ExtraServiceOrderUpdateOne {
 	return esouo.SetMissionID(m.ID)
@@ -1135,6 +1310,27 @@ func (esouo *ExtraServiceOrderUpdateOne) sqlSave(ctx context.Context) (_node *Ex
 	}
 	if esouo.mutation.PlanFinishedAtCleared() {
 		_spec.ClearField(extraserviceorder.FieldPlanFinishedAt, field.TypeTime)
+	}
+	if value, ok := esouo.mutation.SettledAmount(); ok {
+		_spec.SetField(extraserviceorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.AddedSettledAmount(); ok {
+		_spec.AddField(extraserviceorder.FieldSettledAmount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.SettledCount(); ok {
+		_spec.SetField(extraserviceorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.AddedSettledCount(); ok {
+		_spec.AddField(extraserviceorder.FieldSettledCount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.TotalSettleCount(); ok {
+		_spec.SetField(extraserviceorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.AddedTotalSettleCount(); ok {
+		_spec.AddField(extraserviceorder.FieldTotalSettleCount, field.TypeInt64, value)
+	}
+	if value, ok := esouo.mutation.LatelySettledAt(); ok {
+		_spec.SetField(extraserviceorder.FieldLatelySettledAt, field.TypeTime, value)
 	}
 	if esouo.mutation.MissionCleared() {
 		edge := &sqlgraph.EdgeSpec{
