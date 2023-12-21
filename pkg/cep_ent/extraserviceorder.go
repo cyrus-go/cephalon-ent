@@ -50,15 +50,23 @@ type ExtraServiceOrder struct {
 	// 包时任务订单购买的时长
 	BuyDuration int64 `json:"buy_duration"`
 	// 附加服务开始执行时刻
-	StartedAt *time.Time `json:"started_at"`
+	StartedAt time.Time `json:"started_at"`
 	// 附加服务结束执行时刻
-	FinishedAt *time.Time `json:"finished_at"`
+	FinishedAt time.Time `json:"finished_at"`
 	// 任务计划开始时间（包时）
 	PlanStartedAt *time.Time `json:"plan_started_at"`
 	// 任务计划结束时间（包时）
 	PlanFinishedAt *time.Time `json:"plan_finished_at"`
 	// 任务批次外键
 	MissionBatchID int64 `json:"mission_batch_id,string"`
+	// 已结算金额
+	SettledAmount int64 `json:"settled_amount"`
+	// 已结算次数
+	SettledCount int64 `json:"settled_count"`
+	// 总结算次数
+	TotalSettleCount int64 `json:"total_settle_count"`
+	// 上一次结算时间
+	LatelySettledAt time.Time `json:"lately_settled_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ExtraServiceOrderQuery when eager-loading is set.
 	Edges        ExtraServiceOrderEdges `json:"edges"`
@@ -137,11 +145,11 @@ func (*ExtraServiceOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldUnitCep, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID:
+		case extraserviceorder.FieldID, extraserviceorder.FieldCreatedBy, extraserviceorder.FieldUpdatedBy, extraserviceorder.FieldMissionID, extraserviceorder.FieldMissionOrderID, extraserviceorder.FieldAmount, extraserviceorder.FieldSymbolID, extraserviceorder.FieldUnitCep, extraserviceorder.FieldBuyDuration, extraserviceorder.FieldMissionBatchID, extraserviceorder.FieldSettledAmount, extraserviceorder.FieldSettledCount, extraserviceorder.FieldTotalSettleCount:
 			values[i] = new(sql.NullInt64)
 		case extraserviceorder.FieldExtraServiceBillingType, extraserviceorder.FieldExtraServiceType:
 			values[i] = new(sql.NullString)
-		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldStartedAt, extraserviceorder.FieldFinishedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt:
+		case extraserviceorder.FieldCreatedAt, extraserviceorder.FieldUpdatedAt, extraserviceorder.FieldDeletedAt, extraserviceorder.FieldStartedAt, extraserviceorder.FieldFinishedAt, extraserviceorder.FieldPlanStartedAt, extraserviceorder.FieldPlanFinishedAt, extraserviceorder.FieldLatelySettledAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -246,15 +254,13 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field started_at", values[i])
 			} else if value.Valid {
-				eso.StartedAt = new(time.Time)
-				*eso.StartedAt = value.Time
+				eso.StartedAt = value.Time
 			}
 		case extraserviceorder.FieldFinishedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field finished_at", values[i])
 			} else if value.Valid {
-				eso.FinishedAt = new(time.Time)
-				*eso.FinishedAt = value.Time
+				eso.FinishedAt = value.Time
 			}
 		case extraserviceorder.FieldPlanStartedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -275,6 +281,30 @@ func (eso *ExtraServiceOrder) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field mission_batch_id", values[i])
 			} else if value.Valid {
 				eso.MissionBatchID = value.Int64
+			}
+		case extraserviceorder.FieldSettledAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field settled_amount", values[i])
+			} else if value.Valid {
+				eso.SettledAmount = value.Int64
+			}
+		case extraserviceorder.FieldSettledCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field settled_count", values[i])
+			} else if value.Valid {
+				eso.SettledCount = value.Int64
+			}
+		case extraserviceorder.FieldTotalSettleCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_settle_count", values[i])
+			} else if value.Valid {
+				eso.TotalSettleCount = value.Int64
+			}
+		case extraserviceorder.FieldLatelySettledAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field lately_settled_at", values[i])
+			} else if value.Valid {
+				eso.LatelySettledAt = value.Time
 			}
 		default:
 			eso.selectValues.Set(columns[i], values[i])
@@ -371,15 +401,11 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString("buy_duration=")
 	builder.WriteString(fmt.Sprintf("%v", eso.BuyDuration))
 	builder.WriteString(", ")
-	if v := eso.StartedAt; v != nil {
-		builder.WriteString("started_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("started_at=")
+	builder.WriteString(eso.StartedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := eso.FinishedAt; v != nil {
-		builder.WriteString("finished_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("finished_at=")
+	builder.WriteString(eso.FinishedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	if v := eso.PlanStartedAt; v != nil {
 		builder.WriteString("plan_started_at=")
@@ -393,6 +419,18 @@ func (eso *ExtraServiceOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_batch_id=")
 	builder.WriteString(fmt.Sprintf("%v", eso.MissionBatchID))
+	builder.WriteString(", ")
+	builder.WriteString("settled_amount=")
+	builder.WriteString(fmt.Sprintf("%v", eso.SettledAmount))
+	builder.WriteString(", ")
+	builder.WriteString("settled_count=")
+	builder.WriteString(fmt.Sprintf("%v", eso.SettledCount))
+	builder.WriteString(", ")
+	builder.WriteString("total_settle_count=")
+	builder.WriteString(fmt.Sprintf("%v", eso.TotalSettleCount))
+	builder.WriteString(", ")
+	builder.WriteString("lately_settled_at=")
+	builder.WriteString(eso.LatelySettledAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

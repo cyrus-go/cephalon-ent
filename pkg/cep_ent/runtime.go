@@ -799,6 +799,22 @@ func init() {
 	extraserviceorderDescMissionBatchID := extraserviceorderFields[12].Descriptor()
 	// extraserviceorder.DefaultMissionBatchID holds the default value on creation for the mission_batch_id field.
 	extraserviceorder.DefaultMissionBatchID = extraserviceorderDescMissionBatchID.Default.(int64)
+	// extraserviceorderDescSettledAmount is the schema descriptor for settled_amount field.
+	extraserviceorderDescSettledAmount := extraserviceorderFields[13].Descriptor()
+	// extraserviceorder.DefaultSettledAmount holds the default value on creation for the settled_amount field.
+	extraserviceorder.DefaultSettledAmount = extraserviceorderDescSettledAmount.Default.(int64)
+	// extraserviceorderDescSettledCount is the schema descriptor for settled_count field.
+	extraserviceorderDescSettledCount := extraserviceorderFields[14].Descriptor()
+	// extraserviceorder.DefaultSettledCount holds the default value on creation for the settled_count field.
+	extraserviceorder.DefaultSettledCount = extraserviceorderDescSettledCount.Default.(int64)
+	// extraserviceorderDescTotalSettleCount is the schema descriptor for total_settle_count field.
+	extraserviceorderDescTotalSettleCount := extraserviceorderFields[15].Descriptor()
+	// extraserviceorder.DefaultTotalSettleCount holds the default value on creation for the total_settle_count field.
+	extraserviceorder.DefaultTotalSettleCount = extraserviceorderDescTotalSettleCount.Default.(int64)
+	// extraserviceorderDescLatelySettledAt is the schema descriptor for lately_settled_at field.
+	extraserviceorderDescLatelySettledAt := extraserviceorderFields[16].Descriptor()
+	// extraserviceorder.DefaultLatelySettledAt holds the default value on creation for the lately_settled_at field.
+	extraserviceorder.DefaultLatelySettledAt = extraserviceorderDescLatelySettledAt.Default.(time.Time)
 	// extraserviceorderDescID is the schema descriptor for id field.
 	extraserviceorderDescID := extraserviceorderMixinFields0[0].Descriptor()
 	// extraserviceorder.DefaultID holds the default value on creation for the id field.

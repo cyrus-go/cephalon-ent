@@ -24,6 +24,7 @@ const (
 	MissionTypeSdCatTime          MissionType = "sd_cat_time"
 	MissionTypeSdFireTime         MissionType = "sd_fire_time"
 	MissionTypeComfyuiTime        MissionType = "comfyui_time"
+	MissionTypeJpDk3Time          MissionType = "jp_dk_3_time"
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan         MissionType = "jp_time_plan"
@@ -39,6 +40,7 @@ const (
 	MissionTypeSdCatTimePlan      MissionType = "sd_cat_time_plan"
 	MissionTypeSdFireTimePlan     MissionType = "sd_fire_time_plan"
 	MissionTypeComfyuiTimePlan    MissionType = "comfyui_time_plan"
+	MissionTypeJpDk3TimePlan      MissionType = "jp_dk_3_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -79,6 +81,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdFireTimePlan),
 		string(MissionTypeComfyuiTime),
 		string(MissionTypeComfyuiTimePlan),
+		string(MissionTypeJpDk3Time),
+		string(MissionTypeJpDk3TimePlan),
 	}
 }
 

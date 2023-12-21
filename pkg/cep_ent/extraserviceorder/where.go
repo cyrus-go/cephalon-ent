@@ -136,6 +136,26 @@ func MissionBatchID(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldMissionBatchID, v))
 }
 
+// SettledAmount applies equality check predicate on the "settled_amount" field. It's identical to SettledAmountEQ.
+func SettledAmount(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldSettledAmount, v))
+}
+
+// SettledCount applies equality check predicate on the "settled_count" field. It's identical to SettledCountEQ.
+func SettledCount(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldSettledCount, v))
+}
+
+// TotalSettleCount applies equality check predicate on the "total_settle_count" field. It's identical to TotalSettleCountEQ.
+func TotalSettleCount(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldTotalSettleCount, v))
+}
+
+// LatelySettledAt applies equality check predicate on the "lately_settled_at" field. It's identical to LatelySettledAtEQ.
+func LatelySettledAt(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldLatelySettledAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -616,16 +636,6 @@ func StartedAtLTE(v time.Time) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldStartedAt, v))
 }
 
-// StartedAtIsNil applies the IsNil predicate on the "started_at" field.
-func StartedAtIsNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldIsNull(FieldStartedAt))
-}
-
-// StartedAtNotNil applies the NotNil predicate on the "started_at" field.
-func StartedAtNotNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldNotNull(FieldStartedAt))
-}
-
 // FinishedAtEQ applies the EQ predicate on the "finished_at" field.
 func FinishedAtEQ(v time.Time) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldFinishedAt, v))
@@ -664,16 +674,6 @@ func FinishedAtLT(v time.Time) predicate.ExtraServiceOrder {
 // FinishedAtLTE applies the LTE predicate on the "finished_at" field.
 func FinishedAtLTE(v time.Time) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldFinishedAt, v))
-}
-
-// FinishedAtIsNil applies the IsNil predicate on the "finished_at" field.
-func FinishedAtIsNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldIsNull(FieldFinishedAt))
-}
-
-// FinishedAtNotNil applies the NotNil predicate on the "finished_at" field.
-func FinishedAtNotNil() predicate.ExtraServiceOrder {
-	return predicate.ExtraServiceOrder(sql.FieldNotNull(FieldFinishedAt))
 }
 
 // PlanStartedAtEQ applies the EQ predicate on the "plan_started_at" field.
@@ -794,6 +794,166 @@ func MissionBatchIDIn(vs ...int64) predicate.ExtraServiceOrder {
 // MissionBatchIDNotIn applies the NotIn predicate on the "mission_batch_id" field.
 func MissionBatchIDNotIn(vs ...int64) predicate.ExtraServiceOrder {
 	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldMissionBatchID, vs...))
+}
+
+// SettledAmountEQ applies the EQ predicate on the "settled_amount" field.
+func SettledAmountEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldSettledAmount, v))
+}
+
+// SettledAmountNEQ applies the NEQ predicate on the "settled_amount" field.
+func SettledAmountNEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldSettledAmount, v))
+}
+
+// SettledAmountIn applies the In predicate on the "settled_amount" field.
+func SettledAmountIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldSettledAmount, vs...))
+}
+
+// SettledAmountNotIn applies the NotIn predicate on the "settled_amount" field.
+func SettledAmountNotIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldSettledAmount, vs...))
+}
+
+// SettledAmountGT applies the GT predicate on the "settled_amount" field.
+func SettledAmountGT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldSettledAmount, v))
+}
+
+// SettledAmountGTE applies the GTE predicate on the "settled_amount" field.
+func SettledAmountGTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldSettledAmount, v))
+}
+
+// SettledAmountLT applies the LT predicate on the "settled_amount" field.
+func SettledAmountLT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldSettledAmount, v))
+}
+
+// SettledAmountLTE applies the LTE predicate on the "settled_amount" field.
+func SettledAmountLTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldSettledAmount, v))
+}
+
+// SettledCountEQ applies the EQ predicate on the "settled_count" field.
+func SettledCountEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldSettledCount, v))
+}
+
+// SettledCountNEQ applies the NEQ predicate on the "settled_count" field.
+func SettledCountNEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldSettledCount, v))
+}
+
+// SettledCountIn applies the In predicate on the "settled_count" field.
+func SettledCountIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldSettledCount, vs...))
+}
+
+// SettledCountNotIn applies the NotIn predicate on the "settled_count" field.
+func SettledCountNotIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldSettledCount, vs...))
+}
+
+// SettledCountGT applies the GT predicate on the "settled_count" field.
+func SettledCountGT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldSettledCount, v))
+}
+
+// SettledCountGTE applies the GTE predicate on the "settled_count" field.
+func SettledCountGTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldSettledCount, v))
+}
+
+// SettledCountLT applies the LT predicate on the "settled_count" field.
+func SettledCountLT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldSettledCount, v))
+}
+
+// SettledCountLTE applies the LTE predicate on the "settled_count" field.
+func SettledCountLTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldSettledCount, v))
+}
+
+// TotalSettleCountEQ applies the EQ predicate on the "total_settle_count" field.
+func TotalSettleCountEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountNEQ applies the NEQ predicate on the "total_settle_count" field.
+func TotalSettleCountNEQ(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountIn applies the In predicate on the "total_settle_count" field.
+func TotalSettleCountIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldTotalSettleCount, vs...))
+}
+
+// TotalSettleCountNotIn applies the NotIn predicate on the "total_settle_count" field.
+func TotalSettleCountNotIn(vs ...int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldTotalSettleCount, vs...))
+}
+
+// TotalSettleCountGT applies the GT predicate on the "total_settle_count" field.
+func TotalSettleCountGT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountGTE applies the GTE predicate on the "total_settle_count" field.
+func TotalSettleCountGTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountLT applies the LT predicate on the "total_settle_count" field.
+func TotalSettleCountLT(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldTotalSettleCount, v))
+}
+
+// TotalSettleCountLTE applies the LTE predicate on the "total_settle_count" field.
+func TotalSettleCountLTE(v int64) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldTotalSettleCount, v))
+}
+
+// LatelySettledAtEQ applies the EQ predicate on the "lately_settled_at" field.
+func LatelySettledAtEQ(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldEQ(FieldLatelySettledAt, v))
+}
+
+// LatelySettledAtNEQ applies the NEQ predicate on the "lately_settled_at" field.
+func LatelySettledAtNEQ(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNEQ(FieldLatelySettledAt, v))
+}
+
+// LatelySettledAtIn applies the In predicate on the "lately_settled_at" field.
+func LatelySettledAtIn(vs ...time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldIn(FieldLatelySettledAt, vs...))
+}
+
+// LatelySettledAtNotIn applies the NotIn predicate on the "lately_settled_at" field.
+func LatelySettledAtNotIn(vs ...time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldNotIn(FieldLatelySettledAt, vs...))
+}
+
+// LatelySettledAtGT applies the GT predicate on the "lately_settled_at" field.
+func LatelySettledAtGT(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGT(FieldLatelySettledAt, v))
+}
+
+// LatelySettledAtGTE applies the GTE predicate on the "lately_settled_at" field.
+func LatelySettledAtGTE(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldGTE(FieldLatelySettledAt, v))
+}
+
+// LatelySettledAtLT applies the LT predicate on the "lately_settled_at" field.
+func LatelySettledAtLT(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLT(FieldLatelySettledAt, v))
+}
+
+// LatelySettledAtLTE applies the LTE predicate on the "lately_settled_at" field.
+func LatelySettledAtLTE(v time.Time) predicate.ExtraServiceOrder {
+	return predicate.ExtraServiceOrder(sql.FieldLTE(FieldLatelySettledAt, v))
 }
 
 // HasMission applies the HasEdge predicate on the "mission" edge.

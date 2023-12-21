@@ -279,6 +279,62 @@ func (esoc *ExtraServiceOrderCreate) SetNillableMissionBatchID(i *int64) *ExtraS
 	return esoc
 }
 
+// SetSettledAmount sets the "settled_amount" field.
+func (esoc *ExtraServiceOrderCreate) SetSettledAmount(i int64) *ExtraServiceOrderCreate {
+	esoc.mutation.SetSettledAmount(i)
+	return esoc
+}
+
+// SetNillableSettledAmount sets the "settled_amount" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableSettledAmount(i *int64) *ExtraServiceOrderCreate {
+	if i != nil {
+		esoc.SetSettledAmount(*i)
+	}
+	return esoc
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (esoc *ExtraServiceOrderCreate) SetSettledCount(i int64) *ExtraServiceOrderCreate {
+	esoc.mutation.SetSettledCount(i)
+	return esoc
+}
+
+// SetNillableSettledCount sets the "settled_count" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableSettledCount(i *int64) *ExtraServiceOrderCreate {
+	if i != nil {
+		esoc.SetSettledCount(*i)
+	}
+	return esoc
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (esoc *ExtraServiceOrderCreate) SetTotalSettleCount(i int64) *ExtraServiceOrderCreate {
+	esoc.mutation.SetTotalSettleCount(i)
+	return esoc
+}
+
+// SetNillableTotalSettleCount sets the "total_settle_count" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableTotalSettleCount(i *int64) *ExtraServiceOrderCreate {
+	if i != nil {
+		esoc.SetTotalSettleCount(*i)
+	}
+	return esoc
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (esoc *ExtraServiceOrderCreate) SetLatelySettledAt(t time.Time) *ExtraServiceOrderCreate {
+	esoc.mutation.SetLatelySettledAt(t)
+	return esoc
+}
+
+// SetNillableLatelySettledAt sets the "lately_settled_at" field if the given value is not nil.
+func (esoc *ExtraServiceOrderCreate) SetNillableLatelySettledAt(t *time.Time) *ExtraServiceOrderCreate {
+	if t != nil {
+		esoc.SetLatelySettledAt(*t)
+	}
+	return esoc
+}
+
 // SetID sets the "id" field.
 func (esoc *ExtraServiceOrderCreate) SetID(i int64) *ExtraServiceOrderCreate {
 	esoc.mutation.SetID(i)
@@ -420,6 +476,22 @@ func (esoc *ExtraServiceOrderCreate) defaults() {
 		v := extraserviceorder.DefaultMissionBatchID
 		esoc.mutation.SetMissionBatchID(v)
 	}
+	if _, ok := esoc.mutation.SettledAmount(); !ok {
+		v := extraserviceorder.DefaultSettledAmount
+		esoc.mutation.SetSettledAmount(v)
+	}
+	if _, ok := esoc.mutation.SettledCount(); !ok {
+		v := extraserviceorder.DefaultSettledCount
+		esoc.mutation.SetSettledCount(v)
+	}
+	if _, ok := esoc.mutation.TotalSettleCount(); !ok {
+		v := extraserviceorder.DefaultTotalSettleCount
+		esoc.mutation.SetTotalSettleCount(v)
+	}
+	if _, ok := esoc.mutation.LatelySettledAt(); !ok {
+		v := extraserviceorder.DefaultLatelySettledAt
+		esoc.mutation.SetLatelySettledAt(v)
+	}
 	if _, ok := esoc.mutation.ID(); !ok {
 		v := extraserviceorder.DefaultID()
 		esoc.mutation.SetID(v)
@@ -477,8 +549,26 @@ func (esoc *ExtraServiceOrderCreate) check() error {
 	if _, ok := esoc.mutation.BuyDuration(); !ok {
 		return &ValidationError{Name: "buy_duration", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.buy_duration"`)}
 	}
+	if _, ok := esoc.mutation.StartedAt(); !ok {
+		return &ValidationError{Name: "started_at", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.started_at"`)}
+	}
+	if _, ok := esoc.mutation.FinishedAt(); !ok {
+		return &ValidationError{Name: "finished_at", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.finished_at"`)}
+	}
 	if _, ok := esoc.mutation.MissionBatchID(); !ok {
 		return &ValidationError{Name: "mission_batch_id", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.mission_batch_id"`)}
+	}
+	if _, ok := esoc.mutation.SettledAmount(); !ok {
+		return &ValidationError{Name: "settled_amount", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.settled_amount"`)}
+	}
+	if _, ok := esoc.mutation.SettledCount(); !ok {
+		return &ValidationError{Name: "settled_count", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.settled_count"`)}
+	}
+	if _, ok := esoc.mutation.TotalSettleCount(); !ok {
+		return &ValidationError{Name: "total_settle_count", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.total_settle_count"`)}
+	}
+	if _, ok := esoc.mutation.LatelySettledAt(); !ok {
+		return &ValidationError{Name: "lately_settled_at", err: errors.New(`cep_ent: missing required field "ExtraServiceOrder.lately_settled_at"`)}
 	}
 	if _, ok := esoc.mutation.MissionID(); !ok {
 		return &ValidationError{Name: "mission", err: errors.New(`cep_ent: missing required edge "ExtraServiceOrder.mission"`)}
@@ -567,11 +657,11 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	}
 	if value, ok := esoc.mutation.StartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldStartedAt, field.TypeTime, value)
-		_node.StartedAt = &value
+		_node.StartedAt = value
 	}
 	if value, ok := esoc.mutation.FinishedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldFinishedAt, field.TypeTime, value)
-		_node.FinishedAt = &value
+		_node.FinishedAt = value
 	}
 	if value, ok := esoc.mutation.PlanStartedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanStartedAt, field.TypeTime, value)
@@ -580,6 +670,22 @@ func (esoc *ExtraServiceOrderCreate) createSpec() (*ExtraServiceOrder, *sqlgraph
 	if value, ok := esoc.mutation.PlanFinishedAt(); ok {
 		_spec.SetField(extraserviceorder.FieldPlanFinishedAt, field.TypeTime, value)
 		_node.PlanFinishedAt = &value
+	}
+	if value, ok := esoc.mutation.SettledAmount(); ok {
+		_spec.SetField(extraserviceorder.FieldSettledAmount, field.TypeInt64, value)
+		_node.SettledAmount = value
+	}
+	if value, ok := esoc.mutation.SettledCount(); ok {
+		_spec.SetField(extraserviceorder.FieldSettledCount, field.TypeInt64, value)
+		_node.SettledCount = value
+	}
+	if value, ok := esoc.mutation.TotalSettleCount(); ok {
+		_spec.SetField(extraserviceorder.FieldTotalSettleCount, field.TypeInt64, value)
+		_node.TotalSettleCount = value
+	}
+	if value, ok := esoc.mutation.LatelySettledAt(); ok {
+		_spec.SetField(extraserviceorder.FieldLatelySettledAt, field.TypeTime, value)
+		_node.LatelySettledAt = value
 	}
 	if nodes := esoc.mutation.MissionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -887,12 +993,6 @@ func (u *ExtraServiceOrderUpsert) UpdateStartedAt() *ExtraServiceOrderUpsert {
 	return u
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (u *ExtraServiceOrderUpsert) ClearStartedAt() *ExtraServiceOrderUpsert {
-	u.SetNull(extraserviceorder.FieldStartedAt)
-	return u
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (u *ExtraServiceOrderUpsert) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsert {
 	u.Set(extraserviceorder.FieldFinishedAt, v)
@@ -902,12 +1002,6 @@ func (u *ExtraServiceOrderUpsert) SetFinishedAt(v time.Time) *ExtraServiceOrderU
 // UpdateFinishedAt sets the "finished_at" field to the value that was provided on create.
 func (u *ExtraServiceOrderUpsert) UpdateFinishedAt() *ExtraServiceOrderUpsert {
 	u.SetExcluded(extraserviceorder.FieldFinishedAt)
-	return u
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (u *ExtraServiceOrderUpsert) ClearFinishedAt() *ExtraServiceOrderUpsert {
-	u.SetNull(extraserviceorder.FieldFinishedAt)
 	return u
 }
 
@@ -956,6 +1050,72 @@ func (u *ExtraServiceOrderUpsert) SetMissionBatchID(v int64) *ExtraServiceOrderU
 // UpdateMissionBatchID sets the "mission_batch_id" field to the value that was provided on create.
 func (u *ExtraServiceOrderUpsert) UpdateMissionBatchID() *ExtraServiceOrderUpsert {
 	u.SetExcluded(extraserviceorder.FieldMissionBatchID)
+	return u
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (u *ExtraServiceOrderUpsert) SetSettledAmount(v int64) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldSettledAmount, v)
+	return u
+}
+
+// UpdateSettledAmount sets the "settled_amount" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateSettledAmount() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldSettledAmount)
+	return u
+}
+
+// AddSettledAmount adds v to the "settled_amount" field.
+func (u *ExtraServiceOrderUpsert) AddSettledAmount(v int64) *ExtraServiceOrderUpsert {
+	u.Add(extraserviceorder.FieldSettledAmount, v)
+	return u
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (u *ExtraServiceOrderUpsert) SetSettledCount(v int64) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldSettledCount, v)
+	return u
+}
+
+// UpdateSettledCount sets the "settled_count" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateSettledCount() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldSettledCount)
+	return u
+}
+
+// AddSettledCount adds v to the "settled_count" field.
+func (u *ExtraServiceOrderUpsert) AddSettledCount(v int64) *ExtraServiceOrderUpsert {
+	u.Add(extraserviceorder.FieldSettledCount, v)
+	return u
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (u *ExtraServiceOrderUpsert) SetTotalSettleCount(v int64) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldTotalSettleCount, v)
+	return u
+}
+
+// UpdateTotalSettleCount sets the "total_settle_count" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateTotalSettleCount() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldTotalSettleCount)
+	return u
+}
+
+// AddTotalSettleCount adds v to the "total_settle_count" field.
+func (u *ExtraServiceOrderUpsert) AddTotalSettleCount(v int64) *ExtraServiceOrderUpsert {
+	u.Add(extraserviceorder.FieldTotalSettleCount, v)
+	return u
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (u *ExtraServiceOrderUpsert) SetLatelySettledAt(v time.Time) *ExtraServiceOrderUpsert {
+	u.Set(extraserviceorder.FieldLatelySettledAt, v)
+	return u
+}
+
+// UpdateLatelySettledAt sets the "lately_settled_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsert) UpdateLatelySettledAt() *ExtraServiceOrderUpsert {
+	u.SetExcluded(extraserviceorder.FieldLatelySettledAt)
 	return u
 }
 
@@ -1227,13 +1387,6 @@ func (u *ExtraServiceOrderUpsertOne) UpdateStartedAt() *ExtraServiceOrderUpsertO
 	})
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (u *ExtraServiceOrderUpsertOne) ClearStartedAt() *ExtraServiceOrderUpsertOne {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearStartedAt()
-	})
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (u *ExtraServiceOrderUpsertOne) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1245,13 +1398,6 @@ func (u *ExtraServiceOrderUpsertOne) SetFinishedAt(v time.Time) *ExtraServiceOrd
 func (u *ExtraServiceOrderUpsertOne) UpdateFinishedAt() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateFinishedAt()
-	})
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (u *ExtraServiceOrderUpsertOne) ClearFinishedAt() *ExtraServiceOrderUpsertOne {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearFinishedAt()
 	})
 }
 
@@ -1308,6 +1454,83 @@ func (u *ExtraServiceOrderUpsertOne) SetMissionBatchID(v int64) *ExtraServiceOrd
 func (u *ExtraServiceOrderUpsertOne) UpdateMissionBatchID() *ExtraServiceOrderUpsertOne {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateMissionBatchID()
+	})
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (u *ExtraServiceOrderUpsertOne) SetSettledAmount(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetSettledAmount(v)
+	})
+}
+
+// AddSettledAmount adds v to the "settled_amount" field.
+func (u *ExtraServiceOrderUpsertOne) AddSettledAmount(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddSettledAmount(v)
+	})
+}
+
+// UpdateSettledAmount sets the "settled_amount" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateSettledAmount() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateSettledAmount()
+	})
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (u *ExtraServiceOrderUpsertOne) SetSettledCount(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetSettledCount(v)
+	})
+}
+
+// AddSettledCount adds v to the "settled_count" field.
+func (u *ExtraServiceOrderUpsertOne) AddSettledCount(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddSettledCount(v)
+	})
+}
+
+// UpdateSettledCount sets the "settled_count" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateSettledCount() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateSettledCount()
+	})
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (u *ExtraServiceOrderUpsertOne) SetTotalSettleCount(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetTotalSettleCount(v)
+	})
+}
+
+// AddTotalSettleCount adds v to the "total_settle_count" field.
+func (u *ExtraServiceOrderUpsertOne) AddTotalSettleCount(v int64) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddTotalSettleCount(v)
+	})
+}
+
+// UpdateTotalSettleCount sets the "total_settle_count" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateTotalSettleCount() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateTotalSettleCount()
+	})
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (u *ExtraServiceOrderUpsertOne) SetLatelySettledAt(v time.Time) *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetLatelySettledAt(v)
+	})
+}
+
+// UpdateLatelySettledAt sets the "lately_settled_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertOne) UpdateLatelySettledAt() *ExtraServiceOrderUpsertOne {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateLatelySettledAt()
 	})
 }
 
@@ -1745,13 +1968,6 @@ func (u *ExtraServiceOrderUpsertBulk) UpdateStartedAt() *ExtraServiceOrderUpsert
 	})
 }
 
-// ClearStartedAt clears the value of the "started_at" field.
-func (u *ExtraServiceOrderUpsertBulk) ClearStartedAt() *ExtraServiceOrderUpsertBulk {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearStartedAt()
-	})
-}
-
 // SetFinishedAt sets the "finished_at" field.
 func (u *ExtraServiceOrderUpsertBulk) SetFinishedAt(v time.Time) *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
@@ -1763,13 +1979,6 @@ func (u *ExtraServiceOrderUpsertBulk) SetFinishedAt(v time.Time) *ExtraServiceOr
 func (u *ExtraServiceOrderUpsertBulk) UpdateFinishedAt() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateFinishedAt()
-	})
-}
-
-// ClearFinishedAt clears the value of the "finished_at" field.
-func (u *ExtraServiceOrderUpsertBulk) ClearFinishedAt() *ExtraServiceOrderUpsertBulk {
-	return u.Update(func(s *ExtraServiceOrderUpsert) {
-		s.ClearFinishedAt()
 	})
 }
 
@@ -1826,6 +2035,83 @@ func (u *ExtraServiceOrderUpsertBulk) SetMissionBatchID(v int64) *ExtraServiceOr
 func (u *ExtraServiceOrderUpsertBulk) UpdateMissionBatchID() *ExtraServiceOrderUpsertBulk {
 	return u.Update(func(s *ExtraServiceOrderUpsert) {
 		s.UpdateMissionBatchID()
+	})
+}
+
+// SetSettledAmount sets the "settled_amount" field.
+func (u *ExtraServiceOrderUpsertBulk) SetSettledAmount(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetSettledAmount(v)
+	})
+}
+
+// AddSettledAmount adds v to the "settled_amount" field.
+func (u *ExtraServiceOrderUpsertBulk) AddSettledAmount(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddSettledAmount(v)
+	})
+}
+
+// UpdateSettledAmount sets the "settled_amount" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateSettledAmount() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateSettledAmount()
+	})
+}
+
+// SetSettledCount sets the "settled_count" field.
+func (u *ExtraServiceOrderUpsertBulk) SetSettledCount(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetSettledCount(v)
+	})
+}
+
+// AddSettledCount adds v to the "settled_count" field.
+func (u *ExtraServiceOrderUpsertBulk) AddSettledCount(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddSettledCount(v)
+	})
+}
+
+// UpdateSettledCount sets the "settled_count" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateSettledCount() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateSettledCount()
+	})
+}
+
+// SetTotalSettleCount sets the "total_settle_count" field.
+func (u *ExtraServiceOrderUpsertBulk) SetTotalSettleCount(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetTotalSettleCount(v)
+	})
+}
+
+// AddTotalSettleCount adds v to the "total_settle_count" field.
+func (u *ExtraServiceOrderUpsertBulk) AddTotalSettleCount(v int64) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.AddTotalSettleCount(v)
+	})
+}
+
+// UpdateTotalSettleCount sets the "total_settle_count" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateTotalSettleCount() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateTotalSettleCount()
+	})
+}
+
+// SetLatelySettledAt sets the "lately_settled_at" field.
+func (u *ExtraServiceOrderUpsertBulk) SetLatelySettledAt(v time.Time) *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.SetLatelySettledAt(v)
+	})
+}
+
+// UpdateLatelySettledAt sets the "lately_settled_at" field to the value that was provided on create.
+func (u *ExtraServiceOrderUpsertBulk) UpdateLatelySettledAt() *ExtraServiceOrderUpsertBulk {
+	return u.Update(func(s *ExtraServiceOrderUpsert) {
+		s.UpdateLatelySettledAt()
 	})
 }
 

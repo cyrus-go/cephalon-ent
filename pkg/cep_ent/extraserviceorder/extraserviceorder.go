@@ -52,6 +52,14 @@ const (
 	FieldPlanFinishedAt = "plan_finished_at"
 	// FieldMissionBatchID holds the string denoting the mission_batch_id field in the database.
 	FieldMissionBatchID = "mission_batch_id"
+	// FieldSettledAmount holds the string denoting the settled_amount field in the database.
+	FieldSettledAmount = "settled_amount"
+	// FieldSettledCount holds the string denoting the settled_count field in the database.
+	FieldSettledCount = "settled_count"
+	// FieldTotalSettleCount holds the string denoting the total_settle_count field in the database.
+	FieldTotalSettleCount = "total_settle_count"
+	// FieldLatelySettledAt holds the string denoting the lately_settled_at field in the database.
+	FieldLatelySettledAt = "lately_settled_at"
 	// EdgeMission holds the string denoting the mission edge name in mutations.
 	EdgeMission = "mission"
 	// EdgeMissionOrder holds the string denoting the mission_order edge name in mutations.
@@ -113,6 +121,10 @@ var Columns = []string{
 	FieldPlanStartedAt,
 	FieldPlanFinishedAt,
 	FieldMissionBatchID,
+	FieldSettledAmount,
+	FieldSettledCount,
+	FieldTotalSettleCount,
+	FieldLatelySettledAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -160,6 +172,14 @@ var (
 	DefaultPlanFinishedAt time.Time
 	// DefaultMissionBatchID holds the default value on creation for the "mission_batch_id" field.
 	DefaultMissionBatchID int64
+	// DefaultSettledAmount holds the default value on creation for the "settled_amount" field.
+	DefaultSettledAmount int64
+	// DefaultSettledCount holds the default value on creation for the "settled_count" field.
+	DefaultSettledCount int64
+	// DefaultTotalSettleCount holds the default value on creation for the "total_settle_count" field.
+	DefaultTotalSettleCount int64
+	// DefaultLatelySettledAt holds the default value on creation for the "lately_settled_at" field.
+	DefaultLatelySettledAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -284,6 +304,26 @@ func ByPlanFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionBatchID orders the results by the mission_batch_id field.
 func ByMissionBatchID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionBatchID, opts...).ToFunc()
+}
+
+// BySettledAmount orders the results by the settled_amount field.
+func BySettledAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSettledAmount, opts...).ToFunc()
+}
+
+// BySettledCount orders the results by the settled_count field.
+func BySettledCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSettledCount, opts...).ToFunc()
+}
+
+// ByTotalSettleCount orders the results by the total_settle_count field.
+func ByTotalSettleCount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalSettleCount, opts...).ToFunc()
+}
+
+// ByLatelySettledAt orders the results by the lately_settled_at field.
+func ByLatelySettledAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLatelySettledAt, opts...).ToFunc()
 }
 
 // ByMissionField orders the results by mission field.
