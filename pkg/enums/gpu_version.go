@@ -3,30 +3,31 @@ package enums
 type GpuVersion string
 
 const (
-	GpuVersionUnknown GpuVersion = "unknown"
-	GpuVersion2060    GpuVersion = "RTX2060"
-	GpuVersion2060Ti  GpuVersion = "RTX2060Ti"
-	GpuVersion2070    GpuVersion = "RTX2070"
-	GpuVersion2070Ti  GpuVersion = "RTX2070Ti"
-	GpuVersion2080    GpuVersion = "RTX2080"
-	GpuVersion2080Ti  GpuVersion = "RTX2080Ti"
-	GpuVersion3060    GpuVersion = "RTX3060"
-	GpuVersion3060Ti  GpuVersion = "RTX3060Ti"
-	GpuVersion3070    GpuVersion = "RTX3070"
-	GpuVersion3070Ti  GpuVersion = "RTX3070Ti"
-	GpuVersion3080    GpuVersion = "RTX3080"
-	GpuVersion3080Ti  GpuVersion = "RTX3080Ti"
-	GpuVersion3090    GpuVersion = "RTX3090"
-	GpuVersion3090Ti  GpuVersion = "RTX3090Ti"
-	GpuVersion4060    GpuVersion = "RTX4060"
-	GpuVersion4060Ti  GpuVersion = "RTX4060Ti"
-	GpuVersion4070    GpuVersion = "RTX4070"
-	GpuVersion4070Ti  GpuVersion = "RTX4070Ti"
-	GpuVersion4080    GpuVersion = "RTX4080"
-	GpuVersion4090    GpuVersion = "RTX4090"
-	GpuVersionA800    GpuVersion = "A800"
-	GpuVersionA100    GpuVersion = "A100"
-	GpuVersionV100    GpuVersion = "V100"
+	GpuVersionUnknown          GpuVersion = "unknown"
+	GpuVersion2060             GpuVersion = "RTX2060"
+	GpuVersion2060Ti           GpuVersion = "RTX2060Ti"
+	GpuVersion2070             GpuVersion = "RTX2070"
+	GpuVersion2070Ti           GpuVersion = "RTX2070Ti"
+	GpuVersion2080             GpuVersion = "RTX2080"
+	GpuVersion2080Ti           GpuVersion = "RTX2080Ti"
+	GpuVersion3060             GpuVersion = "RTX3060"
+	GpuVersion3060Ti           GpuVersion = "RTX3060Ti"
+	GpuVersion3070             GpuVersion = "RTX3070"
+	GpuVersion3070Ti           GpuVersion = "RTX3070Ti"
+	GpuVersion3080             GpuVersion = "RTX3080"
+	GpuVersion3080Ti           GpuVersion = "RTX3080Ti"
+	GpuVersion3090             GpuVersion = "RTX3090"
+	GpuVersion3090Ti           GpuVersion = "RTX3090Ti"
+	GpuVersion4060             GpuVersion = "RTX4060"
+	GpuVersion4060Ti           GpuVersion = "RTX4060Ti"
+	GpuVersion4070             GpuVersion = "RTX4070"
+	GpuVersion4070Ti           GpuVersion = "RTX4070Ti"
+	GpuVersion4080             GpuVersion = "RTX4080"
+	GpuVersion4090             GpuVersion = "RTX4090"
+	GpuVersionA800             GpuVersion = "A800"
+	GpuVersionA100             GpuVersion = "A100"
+	GpuVersionV100             GpuVersion = "V100"
+	GpuVersionComputilityKingI GpuVersion = "ComputilityKing-I"
 )
 
 func (obj GpuVersion) Values() []string {
@@ -55,6 +56,7 @@ func (obj GpuVersion) Values() []string {
 		string(GpuVersionA800),
 		string(GpuVersionA100),
 		string(GpuVersionV100),
+		string(GpuVersionComputilityKingI),
 	}
 }
 

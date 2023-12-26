@@ -189,7 +189,7 @@ const DefaultExtraServiceBillingType enums.ExtraServiceBillingType = "unknown"
 // ExtraServiceBillingTypeValidator is a validator for the "extra_service_billing_type" field enum values. It is called by the builders before save.
 func ExtraServiceBillingTypeValidator(esbt enums.ExtraServiceBillingType) error {
 	switch esbt {
-	case "unknown", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month", "time_plan_volume", "hold":
+	case "unknown", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month", "time_plan_volume", "hold", "time":
 		return nil
 	default:
 		return fmt.Errorf("extraserviceorder: invalid enum value for extra_service_billing_type field: %q", esbt)

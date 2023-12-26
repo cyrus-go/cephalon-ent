@@ -29,6 +29,7 @@ const (
 	BillWayExtraServiceTimePlanMonth BillWay = "extra_service_time_plan_month"
 	BillWayExtraServiceHold          BillWay = "extra_service_hold"
 	BillWayExtraServiceVolume        BillWay = "extra_service_volume"
+	BillWayExtraServiceTime          BillWay = "extra_service_time"
 )
 
 func (BillWay) Values() []string {
@@ -59,6 +60,7 @@ func (BillWay) Values() []string {
 		string(BillWayExtraServiceHold),
 		string(BillWayExtraServiceVolume),
 		string(BillWayActiveInviteRecharge),
+		string(BillWayExtraServiceTime),
 	}
 }
 

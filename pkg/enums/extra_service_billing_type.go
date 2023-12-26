@@ -16,6 +16,8 @@ const (
 	ExtraServiceBillingTypeVolume ExtraServiceBillingType = "time_plan_volume"
 	// ExtraServiceBillingTypeHold 按位，特点是开启期间具备某些功能，结束后失去功能
 	ExtraServiceBillingTypeHold ExtraServiceBillingType = "hold"
+	// ExtraServiceBillingTypeTime 按时，时间 * 分钟单价，特点是有供应中状态 supplying
+	ExtraServiceBillingTypeTime ExtraServiceBillingType = "time"
 )
 
 func (obj ExtraServiceBillingType) Values() []string {
@@ -27,5 +29,6 @@ func (obj ExtraServiceBillingType) Values() []string {
 		string(ExtraServiceBillingTypeTimePlanMonth),
 		string(ExtraServiceBillingTypeVolume),
 		string(ExtraServiceBillingTypeHold),
+		string(ExtraServiceBillingTypeTime),
 	}
 }
