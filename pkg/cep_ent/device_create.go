@@ -274,15 +274,15 @@ func (dc *DeviceCreate) SetNillableMemory(i *int64) *DeviceCreate {
 }
 
 // SetDisk sets the "disk" field.
-func (dc *DeviceCreate) SetDisk(i int64) *DeviceCreate {
-	dc.mutation.SetDisk(i)
+func (dc *DeviceCreate) SetDisk(f float32) *DeviceCreate {
+	dc.mutation.SetDisk(f)
 	return dc
 }
 
 // SetNillableDisk sets the "disk" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableDisk(i *int64) *DeviceCreate {
-	if i != nil {
-		dc.SetDisk(*i)
+func (dc *DeviceCreate) SetNillableDisk(f *float32) *DeviceCreate {
+	if f != nil {
+		dc.SetDisk(*f)
 	}
 	return dc
 }
@@ -682,7 +682,7 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 		_node.Memory = value
 	}
 	if value, ok := dc.mutation.Disk(); ok {
-		_spec.SetField(device.FieldDisk, field.TypeInt64, value)
+		_spec.SetField(device.FieldDisk, field.TypeFloat32, value)
 		_node.Disk = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
@@ -1075,7 +1075,7 @@ func (u *DeviceUpsert) AddMemory(v int64) *DeviceUpsert {
 }
 
 // SetDisk sets the "disk" field.
-func (u *DeviceUpsert) SetDisk(v int64) *DeviceUpsert {
+func (u *DeviceUpsert) SetDisk(v float32) *DeviceUpsert {
 	u.Set(device.FieldDisk, v)
 	return u
 }
@@ -1087,7 +1087,7 @@ func (u *DeviceUpsert) UpdateDisk() *DeviceUpsert {
 }
 
 // AddDisk adds v to the "disk" field.
-func (u *DeviceUpsert) AddDisk(v int64) *DeviceUpsert {
+func (u *DeviceUpsert) AddDisk(v float32) *DeviceUpsert {
 	u.Add(device.FieldDisk, v)
 	return u
 }
@@ -1424,14 +1424,14 @@ func (u *DeviceUpsertOne) UpdateMemory() *DeviceUpsertOne {
 }
 
 // SetDisk sets the "disk" field.
-func (u *DeviceUpsertOne) SetDisk(v int64) *DeviceUpsertOne {
+func (u *DeviceUpsertOne) SetDisk(v float32) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.SetDisk(v)
 	})
 }
 
 // AddDisk adds v to the "disk" field.
-func (u *DeviceUpsertOne) AddDisk(v int64) *DeviceUpsertOne {
+func (u *DeviceUpsertOne) AddDisk(v float32) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.AddDisk(v)
 	})
@@ -1945,14 +1945,14 @@ func (u *DeviceUpsertBulk) UpdateMemory() *DeviceUpsertBulk {
 }
 
 // SetDisk sets the "disk" field.
-func (u *DeviceUpsertBulk) SetDisk(v int64) *DeviceUpsertBulk {
+func (u *DeviceUpsertBulk) SetDisk(v float32) *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.SetDisk(v)
 	})
 }
 
 // AddDisk adds v to the "disk" field.
-func (u *DeviceUpsertBulk) AddDisk(v int64) *DeviceUpsertBulk {
+func (u *DeviceUpsertBulk) AddDisk(v float32) *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.AddDisk(v)
 	})

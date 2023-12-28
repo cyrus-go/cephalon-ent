@@ -478,7 +478,7 @@ func init() {
 	// deviceDescDisk is the schema descriptor for disk field.
 	deviceDescDisk := deviceFields[13].Descriptor()
 	// device.DefaultDisk holds the default value on creation for the disk field.
-	device.DefaultDisk = deviceDescDisk.Default.(int64)
+	device.DefaultDisk = deviceDescDisk.Default.(float32)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.

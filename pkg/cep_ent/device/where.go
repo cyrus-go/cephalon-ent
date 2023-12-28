@@ -122,7 +122,7 @@ func Memory(v int64) predicate.Device {
 }
 
 // Disk applies equality check predicate on the "disk" field. It's identical to DiskEQ.
-func Disk(v int64) predicate.Device {
+func Disk(v float32) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldDisk, v))
 }
 
@@ -782,42 +782,42 @@ func MemoryLTE(v int64) predicate.Device {
 }
 
 // DiskEQ applies the EQ predicate on the "disk" field.
-func DiskEQ(v int64) predicate.Device {
+func DiskEQ(v float32) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldDisk, v))
 }
 
 // DiskNEQ applies the NEQ predicate on the "disk" field.
-func DiskNEQ(v int64) predicate.Device {
+func DiskNEQ(v float32) predicate.Device {
 	return predicate.Device(sql.FieldNEQ(FieldDisk, v))
 }
 
 // DiskIn applies the In predicate on the "disk" field.
-func DiskIn(vs ...int64) predicate.Device {
+func DiskIn(vs ...float32) predicate.Device {
 	return predicate.Device(sql.FieldIn(FieldDisk, vs...))
 }
 
 // DiskNotIn applies the NotIn predicate on the "disk" field.
-func DiskNotIn(vs ...int64) predicate.Device {
+func DiskNotIn(vs ...float32) predicate.Device {
 	return predicate.Device(sql.FieldNotIn(FieldDisk, vs...))
 }
 
 // DiskGT applies the GT predicate on the "disk" field.
-func DiskGT(v int64) predicate.Device {
+func DiskGT(v float32) predicate.Device {
 	return predicate.Device(sql.FieldGT(FieldDisk, v))
 }
 
 // DiskGTE applies the GTE predicate on the "disk" field.
-func DiskGTE(v int64) predicate.Device {
+func DiskGTE(v float32) predicate.Device {
 	return predicate.Device(sql.FieldGTE(FieldDisk, v))
 }
 
 // DiskLT applies the LT predicate on the "disk" field.
-func DiskLT(v int64) predicate.Device {
+func DiskLT(v float32) predicate.Device {
 	return predicate.Device(sql.FieldLT(FieldDisk, v))
 }
 
 // DiskLTE applies the LTE predicate on the "disk" field.
-func DiskLTE(v int64) predicate.Device {
+func DiskLTE(v float32) predicate.Device {
 	return predicate.Device(sql.FieldLTE(FieldDisk, v))
 }
 

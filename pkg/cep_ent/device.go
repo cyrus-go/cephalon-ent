@@ -57,7 +57,7 @@ type Device struct {
 	// 内存(单位:G)
 	Memory int64 `json:"memory"`
 	// 硬盘(单位:T)
-	Disk int64 `json:"disk,omitempty" json:disk`
+	Disk float32 `json:"disk,omitempty" json:disk`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -148,7 +148,9 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case device.FieldLinking:
 			values[i] = new(sql.NullBool)
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldDisk:
+		case device.FieldDisk:
+			values[i] = new(sql.NullFloat64)
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldType, device.FieldCPU:
 			values[i] = new(sql.NullString)
@@ -286,10 +288,10 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				d.Memory = value.Int64
 			}
 		case device.FieldDisk:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field disk", values[i])
 			} else if value.Valid {
-				d.Disk = value.Int64
+				d.Disk = float32(value.Float64)
 			}
 		default:
 			d.selectValues.Set(columns[i], values[i])

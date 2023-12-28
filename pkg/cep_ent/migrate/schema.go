@@ -278,7 +278,7 @@ var (
 		{Name: "cpu", Type: field.TypeString, Comment: "CPU型号", Default: ""},
 		{Name: "cpus", Type: field.TypeString, Nullable: true, Comment: "CPU型号", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "memory", Type: field.TypeInt64, Comment: "内存(单位:G)", Default: 0},
-		{Name: "disk", Type: field.TypeInt64, Comment: "硬盘(单位:T)", Default: 0},
+		{Name: "disk", Type: field.TypeFloat32, Comment: "硬盘(单位:T)", Default: 0, SchemaType: map[string]string{"postgres": "NUMERIC(10,4)"}},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
