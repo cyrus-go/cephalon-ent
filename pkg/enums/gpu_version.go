@@ -28,6 +28,7 @@ const (
 	GpuVersionA100             GpuVersion = "A100"
 	GpuVersionV100             GpuVersion = "V100"
 	GpuVersionComputilityKingI GpuVersion = "ComputilityKing-I"
+	GpuVersionAscend910ProB    GpuVersion = "Ascend910ProB"
 )
 
 func (obj GpuVersion) Values() []string {
@@ -57,6 +58,7 @@ func (obj GpuVersion) Values() []string {
 		string(GpuVersionA100),
 		string(GpuVersionV100),
 		string(GpuVersionComputilityKingI),
+		string(GpuVersionAscend910ProB),
 	}
 }
 
