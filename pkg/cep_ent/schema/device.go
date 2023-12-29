@@ -29,7 +29,7 @@ func (Device) Fields() []ent.Field {
 		field.String("cpu").StructTag(`json:cpu`).Default("").Comment("CPU型号"),
 		field.String("cpus").GoType([]string{}).Optional().ValueScanner(common.Bytes2StringSliceValueScanner{}).SchemaType(map[string]string{dialect.Postgres: "bytea"}).StructTag(`json:"cpus"`).Comment("CPU型号"),
 		field.Int64("memory").StructTag(`json:"memory"`).Default(0).Comment("内存(单位:G)"),
-		field.Int64("disk").StructTag(`json:disk`).Default(0).Comment("硬盘(单位:T)"),
+		field.Float32("disk").SchemaType(map[string]string{dialect.Postgres: "NUMERIC(10,4)"}).StructTag(`json:disk`).Default(0).Comment("硬盘(单位:T)"),
 	}
 }
 

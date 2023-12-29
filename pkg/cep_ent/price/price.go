@@ -124,7 +124,7 @@ const DefaultGpuVersion enums.GpuVersion = "RTX2060"
 // GpuVersionValidator is a validator for the "gpu_version" field enum values. It is called by the builders before save.
 func GpuVersionValidator(gv enums.GpuVersion) error {
 	switch gv {
-	case "unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I":
+	case "unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for gpu_version field: %q", gv)
@@ -136,7 +136,7 @@ const DefaultMissionType enums.MissionType = "txt2img"
 // MissionTypeValidator is a validator for the "mission_type" field enum values. It is called by the builders before save.
 func MissionTypeValidator(mt enums.MissionType) error {
 	switch mt {
-	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan", "jp_ml_time", "jp_ml_time_plan", "sd_cat_time", "sd_cat_time_plan", "sd_fire_time", "sd_fire_time_plan", "comfyui_time", "comfyui_time_plan", "jp_dk_3_time", "jp_dk_3_time_plan":
+	case "unknown", "sd_time", "txt2img", "img2img", "jp_time", "wt_time", "extra-single-image", "sd_api", "key_pair", "jp_dk_time", "ssh_time", "sd_time_plan", "wt_time_plan", "jp_time_plan", "jp_dk_time_plan", "ssh_time_plan", "sd_tomato_time", "sd_tomato_time_plan", "sd_cmd_time", "sd_cmd_time_plan", "sd_bingo_time", "sd_bingo_time_plan", "fooocus_time", "fooocus_time_plan", "tabby_time", "tabby_time_plan", "jp_conda_time", "jp_conda_time_plan", "jp_ml_time", "jp_ml_time_plan", "sd_cat_time", "sd_cat_time_plan", "sd_fire_time", "sd_fire_time_plan", "comfyui_time", "comfyui_time_plan", "jp_dk_3_time", "jp_dk_3_time_plan", "sd_xl_time", "sd_xl_time_plan", "sd_chick_time", "sd_chick_time_plan", "ascend_time", "ascend_time_plan":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_type field: %q", mt)
@@ -148,7 +148,7 @@ const DefaultMissionCategory enums.MissionCategory = "SD"
 // MissionCategoryValidator is a validator for the "mission_category" field enum values. It is called by the builders before save.
 func MissionCategoryValidator(mc enums.MissionCategory) error {
 	switch mc {
-	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO", "FOOOCUS", "TABBY", "JP_CONDA", "SD_CAT", "SD_FIRE", "COMFYUI":
+	case "unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO", "FOOOCUS", "TABBY", "JP_CONDA", "SD_CAT", "SD_FIRE", "COMFYUI", "SD_XL", "SD_CHICK", "ASCEND":
 		return nil
 	default:
 		return fmt.Errorf("price: invalid enum value for mission_category field: %q", mc)

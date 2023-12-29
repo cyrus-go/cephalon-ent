@@ -8305,8 +8305,8 @@ type DeviceMutation struct {
 	cpus                          *[]string
 	memory                        *int64
 	addmemory                     *int64
-	disk                          *int64
-	adddisk                       *int64
+	disk                          *float32
+	adddisk                       *float32
 	clearedFields                 map[string]struct{}
 	user                          *int64
 	cleareduser                   bool
@@ -9196,13 +9196,13 @@ func (m *DeviceMutation) ResetMemory() {
 }
 
 // SetDisk sets the "disk" field.
-func (m *DeviceMutation) SetDisk(i int64) {
-	m.disk = &i
+func (m *DeviceMutation) SetDisk(f float32) {
+	m.disk = &f
 	m.adddisk = nil
 }
 
 // Disk returns the value of the "disk" field in the mutation.
-func (m *DeviceMutation) Disk() (r int64, exists bool) {
+func (m *DeviceMutation) Disk() (r float32, exists bool) {
 	v := m.disk
 	if v == nil {
 		return
@@ -9213,7 +9213,7 @@ func (m *DeviceMutation) Disk() (r int64, exists bool) {
 // OldDisk returns the old "disk" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldDisk(ctx context.Context) (v int64, err error) {
+func (m *DeviceMutation) OldDisk(ctx context.Context) (v float32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDisk is only allowed on UpdateOne operations")
 	}
@@ -9227,17 +9227,17 @@ func (m *DeviceMutation) OldDisk(ctx context.Context) (v int64, err error) {
 	return oldValue.Disk, nil
 }
 
-// AddDisk adds i to the "disk" field.
-func (m *DeviceMutation) AddDisk(i int64) {
+// AddDisk adds f to the "disk" field.
+func (m *DeviceMutation) AddDisk(f float32) {
 	if m.adddisk != nil {
-		*m.adddisk += i
+		*m.adddisk += f
 	} else {
-		m.adddisk = &i
+		m.adddisk = &f
 	}
 }
 
 // AddedDisk returns the value that was added to the "disk" field in this mutation.
-func (m *DeviceMutation) AddedDisk() (r int64, exists bool) {
+func (m *DeviceMutation) AddedDisk() (r float32, exists bool) {
 	v := m.adddisk
 	if v == nil {
 		return
@@ -9869,7 +9869,7 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		m.SetMemory(v)
 		return nil
 	case device.FieldDisk:
-		v, ok := value.(int64)
+		v, ok := value.(float32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -9966,7 +9966,7 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 		m.AddMemory(v)
 		return nil
 	case device.FieldDisk:
-		v, ok := value.(int64)
+		v, ok := value.(float32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -177,7 +177,7 @@ var (
 	// DefaultMemory holds the default value on creation for the "memory" field.
 	DefaultMemory int64
 	// DefaultDisk holds the default value on creation for the "disk" field.
-	DefaultDisk int64
+	DefaultDisk float32
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.

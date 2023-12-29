@@ -300,23 +300,23 @@ func (du *DeviceUpdate) AddMemory(i int64) *DeviceUpdate {
 }
 
 // SetDisk sets the "disk" field.
-func (du *DeviceUpdate) SetDisk(i int64) *DeviceUpdate {
+func (du *DeviceUpdate) SetDisk(f float32) *DeviceUpdate {
 	du.mutation.ResetDisk()
-	du.mutation.SetDisk(i)
+	du.mutation.SetDisk(f)
 	return du
 }
 
 // SetNillableDisk sets the "disk" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableDisk(i *int64) *DeviceUpdate {
-	if i != nil {
-		du.SetDisk(*i)
+func (du *DeviceUpdate) SetNillableDisk(f *float32) *DeviceUpdate {
+	if f != nil {
+		du.SetDisk(*f)
 	}
 	return du
 }
 
-// AddDisk adds i to the "disk" field.
-func (du *DeviceUpdate) AddDisk(i int64) *DeviceUpdate {
-	du.mutation.AddDisk(i)
+// AddDisk adds f to the "disk" field.
+func (du *DeviceUpdate) AddDisk(f float32) *DeviceUpdate {
+	du.mutation.AddDisk(f)
 	return du
 }
 
@@ -669,10 +669,10 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(device.FieldMemory, field.TypeInt64, value)
 	}
 	if value, ok := du.mutation.Disk(); ok {
-		_spec.SetField(device.FieldDisk, field.TypeInt64, value)
+		_spec.SetField(device.FieldDisk, field.TypeFloat32, value)
 	}
 	if value, ok := du.mutation.AddedDisk(); ok {
-		_spec.AddField(device.FieldDisk, field.TypeInt64, value)
+		_spec.AddField(device.FieldDisk, field.TypeFloat32, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1214,23 +1214,23 @@ func (duo *DeviceUpdateOne) AddMemory(i int64) *DeviceUpdateOne {
 }
 
 // SetDisk sets the "disk" field.
-func (duo *DeviceUpdateOne) SetDisk(i int64) *DeviceUpdateOne {
+func (duo *DeviceUpdateOne) SetDisk(f float32) *DeviceUpdateOne {
 	duo.mutation.ResetDisk()
-	duo.mutation.SetDisk(i)
+	duo.mutation.SetDisk(f)
 	return duo
 }
 
 // SetNillableDisk sets the "disk" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableDisk(i *int64) *DeviceUpdateOne {
-	if i != nil {
-		duo.SetDisk(*i)
+func (duo *DeviceUpdateOne) SetNillableDisk(f *float32) *DeviceUpdateOne {
+	if f != nil {
+		duo.SetDisk(*f)
 	}
 	return duo
 }
 
-// AddDisk adds i to the "disk" field.
-func (duo *DeviceUpdateOne) AddDisk(i int64) *DeviceUpdateOne {
-	duo.mutation.AddDisk(i)
+// AddDisk adds f to the "disk" field.
+func (duo *DeviceUpdateOne) AddDisk(f float32) *DeviceUpdateOne {
+	duo.mutation.AddDisk(f)
 	return duo
 }
 
@@ -1613,10 +1613,10 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 		_spec.AddField(device.FieldMemory, field.TypeInt64, value)
 	}
 	if value, ok := duo.mutation.Disk(); ok {
-		_spec.SetField(device.FieldDisk, field.TypeInt64, value)
+		_spec.SetField(device.FieldDisk, field.TypeFloat32, value)
 	}
 	if value, ok := duo.mutation.AddedDisk(); ok {
-		_spec.AddField(device.FieldDisk, field.TypeInt64, value)
+		_spec.AddField(device.FieldDisk, field.TypeFloat32, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

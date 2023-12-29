@@ -18,6 +18,9 @@ const (
 	MissionCategorySDCat    MissionCategory = "SD_CAT"
 	MissionCategorySDFire   MissionCategory = "SD_FIRE"
 	MissionCategoryComfyui  MissionCategory = "COMFYUI"
+	MissionCategorySDXL     MissionCategory = "SD_XL"
+	MissionCategorySDChick  MissionCategory = "SD_CHICK"
+	MissionCategoryAscend   MissionCategory = "ASCEND"
 )
 
 func (obj MissionCategory) Values() []string {
@@ -37,6 +40,9 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategorySDCat),
 		string(MissionCategorySDFire),
 		string(MissionCategoryComfyui),
+		string(MissionCategorySDXL),
+		string(MissionCategorySDChick),
+		string(MissionCategoryAscend),
 	}
 }
 
