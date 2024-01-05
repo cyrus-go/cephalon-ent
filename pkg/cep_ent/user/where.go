@@ -1745,6 +1745,52 @@ func HasRenewalAgreementsWith(preds ...predicate.RenewalAgreement) predicate.Use
 	})
 }
 
+// HasArtworks applies the HasEdge predicate on the "artworks" edge.
+func HasArtworks() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ArtworksTable, ArtworksColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasArtworksWith applies the HasEdge predicate on the "artworks" edge with a given conditions (other predicates).
+func HasArtworksWith(preds ...predicate.Artwork) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newArtworksStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasArtworkLikes applies the HasEdge predicate on the "artwork_likes" edge.
+func HasArtworkLikes() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ArtworkLikesTable, ArtworkLikesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasArtworkLikesWith applies the HasEdge predicate on the "artwork_likes" edge with a given conditions (other predicates).
+func HasArtworkLikesWith(preds ...predicate.ArtworkLike) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newArtworkLikesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

@@ -6,6 +6,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Artwork is the predicate function for artwork builders.
+type Artwork func(*sql.Selector)
+
+// ArtworkLike is the predicate function for artworklike builders.
+type ArtworkLike func(*sql.Selector)
+
 // Bill is the predicate function for bill builders.
 type Bill func(*sql.Selector)
 

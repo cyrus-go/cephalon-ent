@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
@@ -59,6 +61,92 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	artworkMixin := schema.Artwork{}.Mixin()
+	artworkMixinFields0 := artworkMixin[0].Fields()
+	_ = artworkMixinFields0
+	artworkFields := schema.Artwork{}.Fields()
+	_ = artworkFields
+	// artworkDescCreatedBy is the schema descriptor for created_by field.
+	artworkDescCreatedBy := artworkMixinFields0[1].Descriptor()
+	// artwork.DefaultCreatedBy holds the default value on creation for the created_by field.
+	artwork.DefaultCreatedBy = artworkDescCreatedBy.Default.(int64)
+	// artworkDescUpdatedBy is the schema descriptor for updated_by field.
+	artworkDescUpdatedBy := artworkMixinFields0[2].Descriptor()
+	// artwork.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	artwork.DefaultUpdatedBy = artworkDescUpdatedBy.Default.(int64)
+	// artworkDescCreatedAt is the schema descriptor for created_at field.
+	artworkDescCreatedAt := artworkMixinFields0[3].Descriptor()
+	// artwork.DefaultCreatedAt holds the default value on creation for the created_at field.
+	artwork.DefaultCreatedAt = artworkDescCreatedAt.Default.(func() time.Time)
+	// artworkDescUpdatedAt is the schema descriptor for updated_at field.
+	artworkDescUpdatedAt := artworkMixinFields0[4].Descriptor()
+	// artwork.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	artwork.DefaultUpdatedAt = artworkDescUpdatedAt.Default.(func() time.Time)
+	// artwork.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	artwork.UpdateDefaultUpdatedAt = artworkDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// artworkDescDeletedAt is the schema descriptor for deleted_at field.
+	artworkDescDeletedAt := artworkMixinFields0[5].Descriptor()
+	// artwork.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	artwork.DefaultDeletedAt = artworkDescDeletedAt.Default.(time.Time)
+	// artworkDescName is the schema descriptor for name field.
+	artworkDescName := artworkFields[0].Descriptor()
+	// artwork.DefaultName holds the default value on creation for the name field.
+	artwork.DefaultName = artworkDescName.Default.(string)
+	// artworkDescURL is the schema descriptor for url field.
+	artworkDescURL := artworkFields[1].Descriptor()
+	// artwork.DefaultURL holds the default value on creation for the url field.
+	artwork.DefaultURL = artworkDescURL.Default.(string)
+	// artworkDescAuthorID is the schema descriptor for author_id field.
+	artworkDescAuthorID := artworkFields[2].Descriptor()
+	// artwork.DefaultAuthorID holds the default value on creation for the author_id field.
+	artwork.DefaultAuthorID = artworkDescAuthorID.Default.(int64)
+	// artworkDescID is the schema descriptor for id field.
+	artworkDescID := artworkMixinFields0[0].Descriptor()
+	// artwork.DefaultID holds the default value on creation for the id field.
+	artwork.DefaultID = artworkDescID.Default.(func() int64)
+	artworklikeMixin := schema.ArtworkLike{}.Mixin()
+	artworklikeMixinFields0 := artworklikeMixin[0].Fields()
+	_ = artworklikeMixinFields0
+	artworklikeFields := schema.ArtworkLike{}.Fields()
+	_ = artworklikeFields
+	// artworklikeDescCreatedBy is the schema descriptor for created_by field.
+	artworklikeDescCreatedBy := artworklikeMixinFields0[1].Descriptor()
+	// artworklike.DefaultCreatedBy holds the default value on creation for the created_by field.
+	artworklike.DefaultCreatedBy = artworklikeDescCreatedBy.Default.(int64)
+	// artworklikeDescUpdatedBy is the schema descriptor for updated_by field.
+	artworklikeDescUpdatedBy := artworklikeMixinFields0[2].Descriptor()
+	// artworklike.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	artworklike.DefaultUpdatedBy = artworklikeDescUpdatedBy.Default.(int64)
+	// artworklikeDescCreatedAt is the schema descriptor for created_at field.
+	artworklikeDescCreatedAt := artworklikeMixinFields0[3].Descriptor()
+	// artworklike.DefaultCreatedAt holds the default value on creation for the created_at field.
+	artworklike.DefaultCreatedAt = artworklikeDescCreatedAt.Default.(func() time.Time)
+	// artworklikeDescUpdatedAt is the schema descriptor for updated_at field.
+	artworklikeDescUpdatedAt := artworklikeMixinFields0[4].Descriptor()
+	// artworklike.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	artworklike.DefaultUpdatedAt = artworklikeDescUpdatedAt.Default.(func() time.Time)
+	// artworklike.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	artworklike.UpdateDefaultUpdatedAt = artworklikeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// artworklikeDescDeletedAt is the schema descriptor for deleted_at field.
+	artworklikeDescDeletedAt := artworklikeMixinFields0[5].Descriptor()
+	// artworklike.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	artworklike.DefaultDeletedAt = artworklikeDescDeletedAt.Default.(time.Time)
+	// artworklikeDescUserID is the schema descriptor for user_id field.
+	artworklikeDescUserID := artworklikeFields[0].Descriptor()
+	// artworklike.DefaultUserID holds the default value on creation for the user_id field.
+	artworklike.DefaultUserID = artworklikeDescUserID.Default.(int64)
+	// artworklikeDescArtworkID is the schema descriptor for artwork_id field.
+	artworklikeDescArtworkID := artworklikeFields[1].Descriptor()
+	// artworklike.DefaultArtworkID holds the default value on creation for the artwork_id field.
+	artworklike.DefaultArtworkID = artworklikeDescArtworkID.Default.(int64)
+	// artworklikeDescDate is the schema descriptor for date field.
+	artworklikeDescDate := artworklikeFields[2].Descriptor()
+	// artworklike.DefaultDate holds the default value on creation for the date field.
+	artworklike.DefaultDate = artworklikeDescDate.Default.(int32)
+	// artworklikeDescID is the schema descriptor for id field.
+	artworklikeDescID := artworklikeMixinFields0[0].Descriptor()
+	// artworklike.DefaultID holds the default value on creation for the id field.
+	artworklike.DefaultID = artworklikeDescID.Default.(func() int64)
 	billMixin := schema.Bill{}.Mixin()
 	billMixinFields0 := billMixin[0].Fields()
 	_ = billMixinFields0

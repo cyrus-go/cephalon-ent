@@ -11,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
@@ -773,6 +775,36 @@ func (uc *UserCreate) AddRenewalAgreements(r ...*RenewalAgreement) *UserCreate {
 		ids[i] = r[i].ID
 	}
 	return uc.AddRenewalAgreementIDs(ids...)
+}
+
+// AddArtworkIDs adds the "artworks" edge to the Artwork entity by IDs.
+func (uc *UserCreate) AddArtworkIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddArtworkIDs(ids...)
+	return uc
+}
+
+// AddArtworks adds the "artworks" edges to the Artwork entity.
+func (uc *UserCreate) AddArtworks(a ...*Artwork) *UserCreate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddArtworkIDs(ids...)
+}
+
+// AddArtworkLikeIDs adds the "artwork_likes" edge to the ArtworkLike entity by IDs.
+func (uc *UserCreate) AddArtworkLikeIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddArtworkLikeIDs(ids...)
+	return uc
+}
+
+// AddArtworkLikes adds the "artwork_likes" edges to the ArtworkLike entity.
+func (uc *UserCreate) AddArtworkLikes(a ...*ArtworkLike) *UserCreate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddArtworkLikeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1538,6 +1570,38 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ArtworksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ArtworkLikesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

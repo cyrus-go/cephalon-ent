@@ -126,9 +126,13 @@ type UserEdges struct {
 	LoginRecords []*LoginRecord `json:"login_records,omitempty"`
 	// RenewalAgreements holds the value of the renewal_agreements edge.
 	RenewalAgreements []*RenewalAgreement `json:"renewal_agreements,omitempty"`
+	// Artworks holds the value of the artworks edge.
+	Artworks []*Artwork `json:"artworks,omitempty"`
+	// ArtworkLikes holds the value of the artwork_likes edge.
+	ArtworkLikes []*ArtworkLike `json:"artwork_likes,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [30]bool
+	loadedTypes [32]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -411,6 +415,24 @@ func (e UserEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
 		return e.RenewalAgreements, nil
 	}
 	return nil, &NotLoadedError{edge: "renewal_agreements"}
+}
+
+// ArtworksOrErr returns the Artworks value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ArtworksOrErr() ([]*Artwork, error) {
+	if e.loadedTypes[30] {
+		return e.Artworks, nil
+	}
+	return nil, &NotLoadedError{edge: "artworks"}
+}
+
+// ArtworkLikesOrErr returns the ArtworkLikes value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ArtworkLikesOrErr() ([]*ArtworkLike, error) {
+	if e.loadedTypes[31] {
+		return e.ArtworkLikes, nil
+	}
+	return nil, &NotLoadedError{edge: "artwork_likes"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -722,6 +744,16 @@ func (u *User) QueryLoginRecords() *LoginRecordQuery {
 // QueryRenewalAgreements queries the "renewal_agreements" edge of the User entity.
 func (u *User) QueryRenewalAgreements() *RenewalAgreementQuery {
 	return NewUserClient(u.config).QueryRenewalAgreements(u)
+}
+
+// QueryArtworks queries the "artworks" edge of the User entity.
+func (u *User) QueryArtworks() *ArtworkQuery {
+	return NewUserClient(u.config).QueryArtworks(u)
+}
+
+// QueryArtworkLikes queries the "artwork_likes" edge of the User entity.
+func (u *User) QueryArtworkLikes() *ArtworkLikeQuery {
+	return NewUserClient(u.config).QueryArtworkLikes(u)
 }
 
 // Update returns a builder for updating this User.

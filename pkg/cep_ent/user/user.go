@@ -113,6 +113,10 @@ const (
 	EdgeLoginRecords = "login_records"
 	// EdgeRenewalAgreements holds the string denoting the renewal_agreements edge name in mutations.
 	EdgeRenewalAgreements = "renewal_agreements"
+	// EdgeArtworks holds the string denoting the artworks edge name in mutations.
+	EdgeArtworks = "artworks"
+	// EdgeArtworkLikes holds the string denoting the artwork_likes edge name in mutations.
+	EdgeArtworkLikes = "artwork_likes"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -319,6 +323,20 @@ const (
 	RenewalAgreementsInverseTable = "renewal_agreements"
 	// RenewalAgreementsColumn is the table column denoting the renewal_agreements relation/edge.
 	RenewalAgreementsColumn = "user_id"
+	// ArtworksTable is the table that holds the artworks relation/edge.
+	ArtworksTable = "artworks"
+	// ArtworksInverseTable is the table name for the Artwork entity.
+	// It exists in this package in order to avoid circular dependency with the "artwork" package.
+	ArtworksInverseTable = "artworks"
+	// ArtworksColumn is the table column denoting the artworks relation/edge.
+	ArtworksColumn = "author_id"
+	// ArtworkLikesTable is the table that holds the artwork_likes relation/edge.
+	ArtworkLikesTable = "artwork_likes"
+	// ArtworkLikesInverseTable is the table name for the ArtworkLike entity.
+	// It exists in this package in order to avoid circular dependency with the "artworklike" package.
+	ArtworkLikesInverseTable = "artwork_likes"
+	// ArtworkLikesColumn is the table column denoting the artwork_likes relation/edge.
+	ArtworkLikesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -925,6 +943,34 @@ func ByRenewalAgreements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newRenewalAgreementsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByArtworksCount orders the results by artworks count.
+func ByArtworksCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newArtworksStep(), opts...)
+	}
+}
+
+// ByArtworks orders the results by artworks terms.
+func ByArtworks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newArtworksStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByArtworkLikesCount orders the results by artwork_likes count.
+func ByArtworkLikesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newArtworkLikesStep(), opts...)
+	}
+}
+
+// ByArtworkLikes orders the results by artwork_likes terms.
+func ByArtworkLikes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newArtworkLikesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1133,5 +1179,19 @@ func newRenewalAgreementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RenewalAgreementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RenewalAgreementsTable, RenewalAgreementsColumn),
+	)
+}
+func newArtworksStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ArtworksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ArtworksTable, ArtworksColumn),
+	)
+}
+func newArtworkLikesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ArtworkLikesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ArtworkLikesTable, ArtworkLikesColumn),
 	)
 }

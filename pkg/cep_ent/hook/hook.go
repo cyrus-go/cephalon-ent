@@ -9,6 +9,30 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent"
 )
 
+// The ArtworkFunc type is an adapter to allow the use of ordinary
+// function as Artwork mutator.
+type ArtworkFunc func(context.Context, *cep_ent.ArtworkMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ArtworkFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ArtworkMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ArtworkMutation", m)
+}
+
+// The ArtworkLikeFunc type is an adapter to allow the use of ordinary
+// function as ArtworkLike mutator.
+type ArtworkLikeFunc func(context.Context, *cep_ent.ArtworkLikeMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ArtworkLikeFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ArtworkLikeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ArtworkLikeMutation", m)
+}
+
 // The BillFunc type is an adapter to allow the use of ordinary
 // function as Bill mutator.
 type BillFunc func(context.Context, *cep_ent.BillMutation) (cep_ent.Value, error)

@@ -11,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
@@ -760,6 +762,36 @@ func (uu *UserUpdate) AddRenewalAgreements(r ...*RenewalAgreement) *UserUpdate {
 	return uu.AddRenewalAgreementIDs(ids...)
 }
 
+// AddArtworkIDs adds the "artworks" edge to the Artwork entity by IDs.
+func (uu *UserUpdate) AddArtworkIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddArtworkIDs(ids...)
+	return uu
+}
+
+// AddArtworks adds the "artworks" edges to the Artwork entity.
+func (uu *UserUpdate) AddArtworks(a ...*Artwork) *UserUpdate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddArtworkIDs(ids...)
+}
+
+// AddArtworkLikeIDs adds the "artwork_likes" edge to the ArtworkLike entity by IDs.
+func (uu *UserUpdate) AddArtworkLikeIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddArtworkLikeIDs(ids...)
+	return uu
+}
+
+// AddArtworkLikes adds the "artwork_likes" edges to the ArtworkLike entity.
+func (uu *UserUpdate) AddArtworkLikes(a ...*ArtworkLike) *UserUpdate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddArtworkLikeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1348,6 +1380,48 @@ func (uu *UserUpdate) RemoveRenewalAgreements(r ...*RenewalAgreement) *UserUpdat
 		ids[i] = r[i].ID
 	}
 	return uu.RemoveRenewalAgreementIDs(ids...)
+}
+
+// ClearArtworks clears all "artworks" edges to the Artwork entity.
+func (uu *UserUpdate) ClearArtworks() *UserUpdate {
+	uu.mutation.ClearArtworks()
+	return uu
+}
+
+// RemoveArtworkIDs removes the "artworks" edge to Artwork entities by IDs.
+func (uu *UserUpdate) RemoveArtworkIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveArtworkIDs(ids...)
+	return uu
+}
+
+// RemoveArtworks removes "artworks" edges to Artwork entities.
+func (uu *UserUpdate) RemoveArtworks(a ...*Artwork) *UserUpdate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveArtworkIDs(ids...)
+}
+
+// ClearArtworkLikes clears all "artwork_likes" edges to the ArtworkLike entity.
+func (uu *UserUpdate) ClearArtworkLikes() *UserUpdate {
+	uu.mutation.ClearArtworkLikes()
+	return uu
+}
+
+// RemoveArtworkLikeIDs removes the "artwork_likes" edge to ArtworkLike entities by IDs.
+func (uu *UserUpdate) RemoveArtworkLikeIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveArtworkLikeIDs(ids...)
+	return uu
+}
+
+// RemoveArtworkLikes removes "artwork_likes" edges to ArtworkLike entities.
+func (uu *UserUpdate) RemoveArtworkLikes(a ...*ArtworkLike) *UserUpdate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveArtworkLikeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2776,6 +2850,96 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.ArtworksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedArtworksIDs(); len(nodes) > 0 && !uu.mutation.ArtworksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ArtworksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ArtworkLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedArtworkLikesIDs(); len(nodes) > 0 && !uu.mutation.ArtworkLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ArtworkLikesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -3504,6 +3668,36 @@ func (uuo *UserUpdateOne) AddRenewalAgreements(r ...*RenewalAgreement) *UserUpda
 	return uuo.AddRenewalAgreementIDs(ids...)
 }
 
+// AddArtworkIDs adds the "artworks" edge to the Artwork entity by IDs.
+func (uuo *UserUpdateOne) AddArtworkIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddArtworkIDs(ids...)
+	return uuo
+}
+
+// AddArtworks adds the "artworks" edges to the Artwork entity.
+func (uuo *UserUpdateOne) AddArtworks(a ...*Artwork) *UserUpdateOne {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddArtworkIDs(ids...)
+}
+
+// AddArtworkLikeIDs adds the "artwork_likes" edge to the ArtworkLike entity by IDs.
+func (uuo *UserUpdateOne) AddArtworkLikeIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddArtworkLikeIDs(ids...)
+	return uuo
+}
+
+// AddArtworkLikes adds the "artwork_likes" edges to the ArtworkLike entity.
+func (uuo *UserUpdateOne) AddArtworkLikes(a ...*ArtworkLike) *UserUpdateOne {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddArtworkLikeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -4092,6 +4286,48 @@ func (uuo *UserUpdateOne) RemoveRenewalAgreements(r ...*RenewalAgreement) *UserU
 		ids[i] = r[i].ID
 	}
 	return uuo.RemoveRenewalAgreementIDs(ids...)
+}
+
+// ClearArtworks clears all "artworks" edges to the Artwork entity.
+func (uuo *UserUpdateOne) ClearArtworks() *UserUpdateOne {
+	uuo.mutation.ClearArtworks()
+	return uuo
+}
+
+// RemoveArtworkIDs removes the "artworks" edge to Artwork entities by IDs.
+func (uuo *UserUpdateOne) RemoveArtworkIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveArtworkIDs(ids...)
+	return uuo
+}
+
+// RemoveArtworks removes "artworks" edges to Artwork entities.
+func (uuo *UserUpdateOne) RemoveArtworks(a ...*Artwork) *UserUpdateOne {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveArtworkIDs(ids...)
+}
+
+// ClearArtworkLikes clears all "artwork_likes" edges to the ArtworkLike entity.
+func (uuo *UserUpdateOne) ClearArtworkLikes() *UserUpdateOne {
+	uuo.mutation.ClearArtworkLikes()
+	return uuo
+}
+
+// RemoveArtworkLikeIDs removes the "artwork_likes" edge to ArtworkLike entities by IDs.
+func (uuo *UserUpdateOne) RemoveArtworkLikeIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveArtworkLikeIDs(ids...)
+	return uuo
+}
+
+// RemoveArtworkLikes removes "artwork_likes" edges to ArtworkLike entities.
+func (uuo *UserUpdateOne) RemoveArtworkLikes(a ...*ArtworkLike) *UserUpdateOne {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveArtworkLikeIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -5543,6 +5779,96 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(renewalagreement.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ArtworksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedArtworksIDs(); len(nodes) > 0 && !uuo.mutation.ArtworksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ArtworksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworksTable,
+			Columns: []string{user.ArtworksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artwork.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ArtworkLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedArtworkLikesIDs(); len(nodes) > 0 && !uuo.mutation.ArtworkLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ArtworkLikesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ArtworkLikesTable,
+			Columns: []string{user.ArtworkLikesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

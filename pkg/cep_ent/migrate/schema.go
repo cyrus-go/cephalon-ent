@@ -9,6 +9,66 @@ import (
 )
 
 var (
+	// ArtworksColumns holds the columns for the "artworks" table.
+	ArtworksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "作品名称", Default: ""},
+		{Name: "url", Type: field.TypeString, Comment: "作品链接", Default: ""},
+		{Name: "author_id", Type: field.TypeInt64, Comment: "作者的用户 id", Default: 0},
+	}
+	// ArtworksTable holds the schema information for the "artworks" table.
+	ArtworksTable = &schema.Table{
+		Name:       "artworks",
+		Comment:    "艺术作品，参与投票等逻辑；Artwork",
+		Columns:    ArtworksColumns,
+		PrimaryKey: []*schema.Column{ArtworksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "artworks_users_artworks",
+				Columns:    []*schema.Column{ArtworksColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// ArtworkLikesColumns holds the columns for the "artwork_likes" table.
+	ArtworkLikesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "date", Type: field.TypeInt32, Comment: "投票日期", Default: 0},
+		{Name: "artwork_id", Type: field.TypeInt64, Comment: "外键，作品 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键，用户 id", Default: 0},
+	}
+	// ArtworkLikesTable holds the schema information for the "artwork_likes" table.
+	ArtworkLikesTable = &schema.Table{
+		Name:       "artwork_likes",
+		Comment:    "用户投赞成票给艺术作品；ArtworkLike",
+		Columns:    ArtworkLikesColumns,
+		PrimaryKey: []*schema.Column{ArtworkLikesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "artwork_likes_artworks_artwork_likes",
+				Columns:    []*schema.Column{ArtworkLikesColumns[7]},
+				RefColumns: []*schema.Column{ArtworksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "artwork_likes_users_artwork_likes",
+				Columns:    []*schema.Column{ArtworkLikesColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// BillsColumns holds the columns for the "bills" table.
 	BillsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -1705,6 +1765,8 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		ArtworksTable,
+		ArtworkLikesTable,
 		BillsTable,
 		CampaignsTable,
 		CampaignOrdersTable,
@@ -1755,6 +1817,11 @@ var (
 )
 
 func init() {
+	ArtworksTable.ForeignKeys[0].RefTable = UsersTable
+	ArtworksTable.Annotation = &entsql.Annotation{}
+	ArtworkLikesTable.ForeignKeys[0].RefTable = ArtworksTable
+	ArtworkLikesTable.ForeignKeys[1].RefTable = UsersTable
+	ArtworkLikesTable.Annotation = &entsql.Annotation{}
 	BillsTable.ForeignKeys[0].RefTable = InvitesTable
 	BillsTable.ForeignKeys[1].RefTable = MissionOrdersTable
 	BillsTable.ForeignKeys[2].RefTable = SymbolsTable
