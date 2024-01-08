@@ -11,7 +11,7 @@ type EarnBill struct {
 	ent.Schema
 }
 
-// Fields of the StoreHouse.
+// Fields of the EarnBill.
 func (EarnBill) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").Values("mission", "withdraw").Default("mission").StructTag(`json:"type"`).Comment("分润账户变动类型"),
@@ -28,7 +28,7 @@ func (EarnBill) Fields() []ent.Field {
 	}
 }
 
-// Edges of the StoreHouse.
+// Edges of the EarnBill.
 func (EarnBill) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -39,7 +39,7 @@ func (EarnBill) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of StoreHouse
+// Mixin of EarnBill
 func (EarnBill) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

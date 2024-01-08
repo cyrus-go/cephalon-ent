@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -33,7 +34,7 @@ func (Device) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the Device.
 func (Device) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -43,10 +44,18 @@ func (Device) Edges() []ent.Edge {
 		edge.To("device_gpu_missions", DeviceGpuMission.Type),
 		edge.To("frpc_infos", FrpcInfo.Type),
 		edge.To("mission_orders", MissionOrder.Type),
+		edge.To("mission_productions", MissionProduction.Type),
 	}
 }
 
-// Mixin of ServerOrder
+// Indexes of Device
+func (Device) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+	}
+}
+
+// Mixin of Device
 func (Device) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

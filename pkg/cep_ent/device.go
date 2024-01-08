@@ -78,9 +78,11 @@ type DeviceEdges struct {
 	FrpcInfos []*FrpcInfo `json:"frpc_infos,omitempty"`
 	// MissionOrders holds the value of the mission_orders edge.
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
+	// MissionProductions holds the value of the mission_productions edge.
+	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -139,6 +141,15 @@ func (e DeviceEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
 		return e.MissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_orders"}
+}
+
+// MissionProductionsOrErr returns the MissionProductions value or an error if the edge
+// was not loaded in eager-loading.
+func (e DeviceEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
+	if e.loadedTypes[6] {
+		return e.MissionProductions, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_productions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -334,6 +345,11 @@ func (d *Device) QueryFrpcInfos() *FrpcInfoQuery {
 // QueryMissionOrders queries the "mission_orders" edge of the Device entity.
 func (d *Device) QueryMissionOrders() *MissionOrderQuery {
 	return NewDeviceClient(d.config).QueryMissionOrders(d)
+}
+
+// QueryMissionProductions queries the "mission_productions" edge of the Device entity.
+func (d *Device) QueryMissionProductions() *MissionProductionQuery {
+	return NewDeviceClient(d.config).QueryMissionProductions(d)
 }
 
 // Update returns a builder for updating this Device.

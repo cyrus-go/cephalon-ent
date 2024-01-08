@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // Artwork holds the schema definition for the Artwork entity.
@@ -38,7 +39,9 @@ func (Artwork) Mixin() []ent.Mixin {
 }
 
 func (Artwork) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("author_id"),
+	}
 }
 
 func (Artwork) Annotations() []schema.Annotation {

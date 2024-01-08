@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 type MissionExtraService struct {
@@ -27,7 +28,15 @@ func (MissionExtraService) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ServerOrder
+// Indexes of the MissionExtraService
+func (MissionExtraService) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("mission_id"),
+		index.Fields("extra_service_id"),
+	}
+}
+
+// Mixin of MissionExtraService
 func (MissionExtraService) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

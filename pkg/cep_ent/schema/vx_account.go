@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // VXAccount holds the schema definition for the VXAccount entity.
@@ -31,6 +32,13 @@ func (VXAccount) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the VXAccount
+func (VXAccount) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+	}
+}
+
 // Mixin of VXAccount
 func (VXAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
@@ -38,6 +46,7 @@ func (VXAccount) Mixin() []ent.Mixin {
 	}
 }
 
+// Annotations of VXAccount
 func (VXAccount) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("原微信身份源，被 vx_socials 取代"),

@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -66,11 +67,13 @@ type MissionProductionEdges struct {
 	Mission *Mission `json:"mission,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// Device holds the value of the device edge.
+	Device *Device `json:"device,omitempty"`
 	// MissionProduceOrder holds the value of the mission_produce_order edge.
 	MissionProduceOrder *MissionProduceOrder `json:"mission_produce_order,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // MissionOrErr returns the Mission value or an error if the edge
@@ -99,10 +102,23 @@ func (e MissionProductionEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
+// DeviceOrErr returns the Device value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionProductionEdges) DeviceOrErr() (*Device, error) {
+	if e.loadedTypes[2] {
+		if e.Device == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: device.Label}
+		}
+		return e.Device, nil
+	}
+	return nil, &NotLoadedError{edge: "device"}
+}
+
 // MissionProduceOrderOrErr returns the MissionProduceOrder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionProductionEdges) MissionProduceOrderOrErr() (*MissionProduceOrder, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		if e.MissionProduceOrder == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionproduceorder.Label}
@@ -261,6 +277,11 @@ func (mp *MissionProduction) QueryMission() *MissionQuery {
 // QueryUser queries the "user" edge of the MissionProduction entity.
 func (mp *MissionProduction) QueryUser() *UserQuery {
 	return NewMissionProductionClient(mp.config).QueryUser(mp)
+}
+
+// QueryDevice queries the "device" edge of the MissionProduction entity.
+func (mp *MissionProduction) QueryDevice() *DeviceQuery {
+	return NewMissionProductionClient(mp.config).QueryDevice(mp)
 }
 
 // QueryMissionProduceOrder queries the "mission_produce_order" edge of the MissionProduction entity.

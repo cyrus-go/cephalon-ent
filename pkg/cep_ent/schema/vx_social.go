@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // VXSocial holds the schema definition for the VXSocial entity.
@@ -36,6 +37,13 @@ func (VXSocial) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the VXSocial
+func (VXSocial) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+	}
+}
+
 // Mixin of VXSocial
 func (VXSocial) Mixin() []ent.Mixin {
 	return []ent.Mixin{
@@ -43,6 +51,7 @@ func (VXSocial) Mixin() []ent.Mixin {
 	}
 }
 
+// Annotations of VXSocial
 func (VXSocial) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("微信社会源信息，记录用户在微信方的身份信息"),

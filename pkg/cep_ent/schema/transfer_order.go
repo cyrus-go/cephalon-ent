@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -41,12 +42,24 @@ func (TransferOrder) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the TransferOrder
+func (TransferOrder) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("source_user_id"),
+		index.Fields("target_user_id"),
+		index.Fields("social_id"),
+		index.Fields("symbol_id"),
+	}
+}
+
 // Mixin of TransferOrder
 func (TransferOrder) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}
 }
+
+// Annotations of TransferOrder
 func (TransferOrder) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("转账订单，谁给谁转了多少什么货币"),

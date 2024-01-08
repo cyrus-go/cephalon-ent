@@ -69,6 +69,11 @@ func (User) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of User
+func (User) Indexes() []ent.Index {
+	return []ent.Index{}
+}
+
 // Mixin of User
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{

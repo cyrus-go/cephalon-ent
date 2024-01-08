@@ -12,7 +12,7 @@ type CostBill struct {
 	ent.Schema
 }
 
-// Fields of the StoreHouse.
+// Fields of the CostBill.
 func (CostBill) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").Values("unknow", "mission", "recharge", "active").Default("unknow").StructTag(`json:"type"`).Comment("额度账户流水的类型，充值或者任务消耗"),
@@ -31,7 +31,7 @@ func (CostBill) Fields() []ent.Field {
 	}
 }
 
-// Edges of the StoreHouse.
+// Edges of the CostBill.
 func (CostBill) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -44,7 +44,7 @@ func (CostBill) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of StoreHouse
+// Mixin of CostBill
 func (CostBill) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

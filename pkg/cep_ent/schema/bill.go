@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -32,7 +33,7 @@ func (Bill) Fields() []ent.Field {
 	}
 }
 
-// Edges of the StoreHouse.
+// Edges of the Bill.
 func (Bill) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -45,7 +46,18 @@ func (Bill) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of StoreHouse
+// Indexes of Bill
+func (Bill) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("source_user_id"),
+		index.Fields("target_user_id"),
+		index.Fields("order_id"),
+		index.Fields("invite_id"),
+		index.Fields("symbol_id"),
+	}
+}
+
+// Mixin of Bill
 func (Bill) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

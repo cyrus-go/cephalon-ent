@@ -38,12 +38,16 @@ func (Wallet) Mixin() []ent.Mixin {
 	}
 }
 
+// Indexes of Wallet
 func (Wallet) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("user_id", "symbol_id", "deleted_at").Unique(),
+		index.Fields("user_id"),
+		index.Fields("symbol_id"),
 	}
 }
 
+// Annotations of Wallet
 func (Wallet) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("钱包，作为用户和各币种的中间关系，记录各余额"),

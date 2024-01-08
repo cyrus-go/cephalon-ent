@@ -18,12 +18,12 @@ func (EnumCondition) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the EnumCondition.
 func (EnumCondition) Edges() []ent.Edge {
 	return []ent.Edge{}
 }
 
-// Mixin of ServerOrder
+// Mixin of EnumCondition
 func (EnumCondition) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

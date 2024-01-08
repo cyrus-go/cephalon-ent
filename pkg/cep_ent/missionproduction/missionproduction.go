@@ -52,6 +52,8 @@ const (
 	EdgeMission = "mission"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeDevice holds the string denoting the device edge name in mutations.
+	EdgeDevice = "device"
 	// EdgeMissionProduceOrder holds the string denoting the mission_produce_order edge name in mutations.
 	EdgeMissionProduceOrder = "mission_produce_order"
 	// Table holds the table name of the missionproduction in the database.
@@ -70,6 +72,13 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
+	// DeviceTable is the table that holds the device relation/edge.
+	DeviceTable = "mission_productions"
+	// DeviceInverseTable is the table name for the Device entity.
+	// It exists in this package in order to avoid circular dependency with the "device" package.
+	DeviceInverseTable = "devices"
+	// DeviceColumn is the table column denoting the device relation/edge.
+	DeviceColumn = "device_id"
 	// MissionProduceOrderTable is the table that holds the mission_produce_order relation/edge.
 	MissionProduceOrderTable = "mission_produce_orders"
 	// MissionProduceOrderInverseTable is the table name for the MissionProduceOrder entity.
@@ -267,6 +276,13 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByDeviceField orders the results by device field.
+func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByMissionProduceOrderField orders the results by mission_produce_order field.
 func ByMissionProduceOrderField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -285,6 +301,13 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newDeviceStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, DeviceTable, DeviceColumn),
 	)
 }
 func newMissionProduceOrderStep() *sqlgraph.Step {

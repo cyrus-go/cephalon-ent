@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // CampaignOrder holds the schema definition for the CampaignOrder entity.
@@ -35,6 +36,14 @@ func (CampaignOrder) Edges() []ent.Edge {
 func (CampaignOrder) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+// Indexes of CampaignOrder
+func (CampaignOrder) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+		index.Fields("campaign_id"),
 	}
 }
 

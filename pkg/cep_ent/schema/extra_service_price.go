@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -32,6 +33,13 @@ func (ExtraServicePrice) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.From("extra_service", ExtraService.Type).Ref("extra_service_prices").Field("extra_service_id").Unique().Required(),
+	}
+}
+
+// Indexes of the ExtraServicePrice
+func (ExtraServicePrice) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("extra_service_id"),
 	}
 }
 

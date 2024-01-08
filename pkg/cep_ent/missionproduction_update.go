@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -151,7 +152,6 @@ func (mpu *MissionProductionUpdate) SetNillableState(es *enums.MissionState) *Mi
 
 // SetDeviceID sets the "device_id" field.
 func (mpu *MissionProductionUpdate) SetDeviceID(i int64) *MissionProductionUpdate {
-	mpu.mutation.ResetDeviceID()
 	mpu.mutation.SetDeviceID(i)
 	return mpu
 }
@@ -161,12 +161,6 @@ func (mpu *MissionProductionUpdate) SetNillableDeviceID(i *int64) *MissionProduc
 	if i != nil {
 		mpu.SetDeviceID(*i)
 	}
-	return mpu
-}
-
-// AddDeviceID adds i to the "device_id" field.
-func (mpu *MissionProductionUpdate) AddDeviceID(i int64) *MissionProductionUpdate {
-	mpu.mutation.AddDeviceID(i)
 	return mpu
 }
 
@@ -264,6 +258,11 @@ func (mpu *MissionProductionUpdate) SetUser(u *User) *MissionProductionUpdate {
 	return mpu.SetUserID(u.ID)
 }
 
+// SetDevice sets the "device" edge to the Device entity.
+func (mpu *MissionProductionUpdate) SetDevice(d *Device) *MissionProductionUpdate {
+	return mpu.SetDeviceID(d.ID)
+}
+
 // SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID.
 func (mpu *MissionProductionUpdate) SetMissionProduceOrderID(id int64) *MissionProductionUpdate {
 	mpu.mutation.SetMissionProduceOrderID(id)
@@ -297,6 +296,12 @@ func (mpu *MissionProductionUpdate) ClearMission() *MissionProductionUpdate {
 // ClearUser clears the "user" edge to the User entity.
 func (mpu *MissionProductionUpdate) ClearUser() *MissionProductionUpdate {
 	mpu.mutation.ClearUser()
+	return mpu
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (mpu *MissionProductionUpdate) ClearDevice() *MissionProductionUpdate {
+	mpu.mutation.ClearDevice()
 	return mpu
 }
 
@@ -360,6 +365,9 @@ func (mpu *MissionProductionUpdate) check() error {
 	if _, ok := mpu.mutation.UserID(); mpu.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.user"`)
 	}
+	if _, ok := mpu.mutation.DeviceID(); mpu.mutation.DeviceCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.device"`)
+	}
 	return nil
 }
 
@@ -407,12 +415,6 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := mpu.mutation.State(); ok {
 		_spec.SetField(missionproduction.FieldState, field.TypeEnum, value)
-	}
-	if value, ok := mpu.mutation.DeviceID(); ok {
-		_spec.SetField(missionproduction.FieldDeviceID, field.TypeInt64, value)
-	}
-	if value, ok := mpu.mutation.AddedDeviceID(); ok {
-		_spec.AddField(missionproduction.FieldDeviceID, field.TypeInt64, value)
 	}
 	if value, ok := mpu.mutation.GpuVersion(); ok {
 		_spec.SetField(missionproduction.FieldGpuVersion, field.TypeEnum, value)
@@ -486,6 +488,35 @@ func (mpu *MissionProductionUpdate) sqlSave(ctx context.Context) (n int, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mpu.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mpu.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -662,7 +693,6 @@ func (mpuo *MissionProductionUpdateOne) SetNillableState(es *enums.MissionState)
 
 // SetDeviceID sets the "device_id" field.
 func (mpuo *MissionProductionUpdateOne) SetDeviceID(i int64) *MissionProductionUpdateOne {
-	mpuo.mutation.ResetDeviceID()
 	mpuo.mutation.SetDeviceID(i)
 	return mpuo
 }
@@ -672,12 +702,6 @@ func (mpuo *MissionProductionUpdateOne) SetNillableDeviceID(i *int64) *MissionPr
 	if i != nil {
 		mpuo.SetDeviceID(*i)
 	}
-	return mpuo
-}
-
-// AddDeviceID adds i to the "device_id" field.
-func (mpuo *MissionProductionUpdateOne) AddDeviceID(i int64) *MissionProductionUpdateOne {
-	mpuo.mutation.AddDeviceID(i)
 	return mpuo
 }
 
@@ -775,6 +799,11 @@ func (mpuo *MissionProductionUpdateOne) SetUser(u *User) *MissionProductionUpdat
 	return mpuo.SetUserID(u.ID)
 }
 
+// SetDevice sets the "device" edge to the Device entity.
+func (mpuo *MissionProductionUpdateOne) SetDevice(d *Device) *MissionProductionUpdateOne {
+	return mpuo.SetDeviceID(d.ID)
+}
+
 // SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID.
 func (mpuo *MissionProductionUpdateOne) SetMissionProduceOrderID(id int64) *MissionProductionUpdateOne {
 	mpuo.mutation.SetMissionProduceOrderID(id)
@@ -808,6 +837,12 @@ func (mpuo *MissionProductionUpdateOne) ClearMission() *MissionProductionUpdateO
 // ClearUser clears the "user" edge to the User entity.
 func (mpuo *MissionProductionUpdateOne) ClearUser() *MissionProductionUpdateOne {
 	mpuo.mutation.ClearUser()
+	return mpuo
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (mpuo *MissionProductionUpdateOne) ClearDevice() *MissionProductionUpdateOne {
+	mpuo.mutation.ClearDevice()
 	return mpuo
 }
 
@@ -884,6 +919,9 @@ func (mpuo *MissionProductionUpdateOne) check() error {
 	if _, ok := mpuo.mutation.UserID(); mpuo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.user"`)
 	}
+	if _, ok := mpuo.mutation.DeviceID(); mpuo.mutation.DeviceCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "MissionProduction.device"`)
+	}
 	return nil
 }
 
@@ -948,12 +986,6 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 	}
 	if value, ok := mpuo.mutation.State(); ok {
 		_spec.SetField(missionproduction.FieldState, field.TypeEnum, value)
-	}
-	if value, ok := mpuo.mutation.DeviceID(); ok {
-		_spec.SetField(missionproduction.FieldDeviceID, field.TypeInt64, value)
-	}
-	if value, ok := mpuo.mutation.AddedDeviceID(); ok {
-		_spec.AddField(missionproduction.FieldDeviceID, field.TypeInt64, value)
 	}
 	if value, ok := mpuo.mutation.GpuVersion(); ok {
 		_spec.SetField(missionproduction.FieldGpuVersion, field.TypeEnum, value)
@@ -1027,6 +1059,35 @@ func (mpuo *MissionProductionUpdateOne) sqlSave(ctx context.Context) (_node *Mis
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mpuo.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mpuo.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

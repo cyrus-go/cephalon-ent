@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // ArtworkLike holds the schema definition for the ArtworkLike entity.
@@ -38,7 +39,10 @@ func (ArtworkLike) Mixin() []ent.Mixin {
 }
 
 func (ArtworkLike) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("user_id"),
+		index.Fields("artwork_id"),
+	}
 }
 
 func (ArtworkLike) Annotations() []schema.Annotation {

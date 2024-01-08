@@ -10159,6 +10159,9 @@ type DeviceMutation struct {
 	mission_orders                map[int64]struct{}
 	removedmission_orders         map[int64]struct{}
 	clearedmission_orders         bool
+	mission_productions           map[int64]struct{}
+	removedmission_productions    map[int64]struct{}
+	clearedmission_productions    bool
 	done                          bool
 	oldValue                      func(context.Context) (*Device, error)
 	predicates                    []predicate.Device
@@ -11382,6 +11385,60 @@ func (m *DeviceMutation) ResetMissionOrders() {
 	m.removedmission_orders = nil
 }
 
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by ids.
+func (m *DeviceMutation) AddMissionProductionIDs(ids ...int64) {
+	if m.mission_productions == nil {
+		m.mission_productions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_productions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionProductions clears the "mission_productions" edge to the MissionProduction entity.
+func (m *DeviceMutation) ClearMissionProductions() {
+	m.clearedmission_productions = true
+}
+
+// MissionProductionsCleared reports if the "mission_productions" edge to the MissionProduction entity was cleared.
+func (m *DeviceMutation) MissionProductionsCleared() bool {
+	return m.clearedmission_productions
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to the MissionProduction entity by IDs.
+func (m *DeviceMutation) RemoveMissionProductionIDs(ids ...int64) {
+	if m.removedmission_productions == nil {
+		m.removedmission_productions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_productions, ids[i])
+		m.removedmission_productions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionProductions returns the removed IDs of the "mission_productions" edge to the MissionProduction entity.
+func (m *DeviceMutation) RemovedMissionProductionsIDs() (ids []int64) {
+	for id := range m.removedmission_productions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionProductionsIDs returns the "mission_productions" edge IDs in the mutation.
+func (m *DeviceMutation) MissionProductionsIDs() (ids []int64) {
+	for id := range m.mission_productions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionProductions resets all changes to the "mission_productions" edge.
+func (m *DeviceMutation) ResetMissionProductions() {
+	m.mission_productions = nil
+	m.clearedmission_productions = false
+	m.removedmission_productions = nil
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -11905,7 +11962,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -11923,6 +11980,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.mission_orders != nil {
 		edges = append(edges, device.EdgeMissionOrders)
+	}
+	if m.mission_productions != nil {
+		edges = append(edges, device.EdgeMissionProductions)
 	}
 	return edges
 }
@@ -11965,13 +12025,19 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeMissionProductions:
+		ids := make([]ent.Value, 0, len(m.mission_productions))
+		for id := range m.mission_productions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -11986,6 +12052,9 @@ func (m *DeviceMutation) RemovedEdges() []string {
 	}
 	if m.removedmission_orders != nil {
 		edges = append(edges, device.EdgeMissionOrders)
+	}
+	if m.removedmission_productions != nil {
+		edges = append(edges, device.EdgeMissionProductions)
 	}
 	return edges
 }
@@ -12024,13 +12093,19 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeMissionProductions:
+		ids := make([]ent.Value, 0, len(m.removedmission_productions))
+		for id := range m.removedmission_productions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -12048,6 +12123,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	}
 	if m.clearedmission_orders {
 		edges = append(edges, device.EdgeMissionOrders)
+	}
+	if m.clearedmission_productions {
+		edges = append(edges, device.EdgeMissionProductions)
 	}
 	return edges
 }
@@ -12068,6 +12146,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.clearedfrpc_infos
 	case device.EdgeMissionOrders:
 		return m.clearedmission_orders
+	case device.EdgeMissionProductions:
+		return m.clearedmission_productions
 	}
 	return false
 }
@@ -12104,6 +12184,9 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 		return nil
 	case device.EdgeMissionOrders:
 		m.ResetMissionOrders()
+		return nil
+	case device.EdgeMissionProductions:
+		m.ResetMissionProductions()
 		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
@@ -42294,8 +42377,6 @@ type MissionProductionMutation struct {
 	started_at                   *time.Time
 	finished_at                  *time.Time
 	state                        *enums.MissionState
-	device_id                    *int64
-	adddevice_id                 *int64
 	gpu_version                  *enums.GpuVersion
 	device_slot                  *int8
 	adddevice_slot               *int8
@@ -42308,6 +42389,8 @@ type MissionProductionMutation struct {
 	clearedmission               bool
 	user                         *int64
 	cleareduser                  bool
+	device                       *int64
+	cleareddevice                bool
 	mission_produce_order        *int64
 	clearedmission_produce_order bool
 	done                         bool
@@ -42821,13 +42904,12 @@ func (m *MissionProductionMutation) ResetState() {
 
 // SetDeviceID sets the "device_id" field.
 func (m *MissionProductionMutation) SetDeviceID(i int64) {
-	m.device_id = &i
-	m.adddevice_id = nil
+	m.device = &i
 }
 
 // DeviceID returns the value of the "device_id" field in the mutation.
 func (m *MissionProductionMutation) DeviceID() (r int64, exists bool) {
-	v := m.device_id
+	v := m.device
 	if v == nil {
 		return
 	}
@@ -42851,28 +42933,9 @@ func (m *MissionProductionMutation) OldDeviceID(ctx context.Context) (v int64, e
 	return oldValue.DeviceID, nil
 }
 
-// AddDeviceID adds i to the "device_id" field.
-func (m *MissionProductionMutation) AddDeviceID(i int64) {
-	if m.adddevice_id != nil {
-		*m.adddevice_id += i
-	} else {
-		m.adddevice_id = &i
-	}
-}
-
-// AddedDeviceID returns the value that was added to the "device_id" field in this mutation.
-func (m *MissionProductionMutation) AddedDeviceID() (r int64, exists bool) {
-	v := m.adddevice_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetDeviceID resets all changes to the "device_id" field.
 func (m *MissionProductionMutation) ResetDeviceID() {
-	m.device_id = nil
-	m.adddevice_id = nil
+	m.device = nil
 }
 
 // SetGpuVersion sets the "gpu_version" field.
@@ -43149,6 +43212,33 @@ func (m *MissionProductionMutation) ResetUser() {
 	m.cleareduser = false
 }
 
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *MissionProductionMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[missionproduction.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *MissionProductionMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *MissionProductionMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *MissionProductionMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
 // SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by id.
 func (m *MissionProductionMutation) SetMissionProduceOrderID(id int64) {
 	m.mission_produce_order = &id
@@ -43253,7 +43343,7 @@ func (m *MissionProductionMutation) Fields() []string {
 	if m.state != nil {
 		fields = append(fields, missionproduction.FieldState)
 	}
-	if m.device_id != nil {
+	if m.device != nil {
 		fields = append(fields, missionproduction.FieldDeviceID)
 	}
 	if m.gpu_version != nil {
@@ -43487,9 +43577,6 @@ func (m *MissionProductionMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, missionproduction.FieldUpdatedBy)
 	}
-	if m.adddevice_id != nil {
-		fields = append(fields, missionproduction.FieldDeviceID)
-	}
 	if m.adddevice_slot != nil {
 		fields = append(fields, missionproduction.FieldDeviceSlot)
 	}
@@ -43508,8 +43595,6 @@ func (m *MissionProductionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case missionproduction.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
-	case missionproduction.FieldDeviceID:
-		return m.AddedDeviceID()
 	case missionproduction.FieldDeviceSlot:
 		return m.AddedDeviceSlot()
 	case missionproduction.FieldRespStatusCode:
@@ -43536,13 +43621,6 @@ func (m *MissionProductionMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
-		return nil
-	case missionproduction.FieldDeviceID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDeviceID(v)
 		return nil
 	case missionproduction.FieldDeviceSlot:
 		v, ok := value.(int8)
@@ -43639,12 +43717,15 @@ func (m *MissionProductionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionProductionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.mission != nil {
 		edges = append(edges, missionproduction.EdgeMission)
 	}
 	if m.user != nil {
 		edges = append(edges, missionproduction.EdgeUser)
+	}
+	if m.device != nil {
+		edges = append(edges, missionproduction.EdgeDevice)
 	}
 	if m.mission_produce_order != nil {
 		edges = append(edges, missionproduction.EdgeMissionProduceOrder)
@@ -43664,6 +43745,10 @@ func (m *MissionProductionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case missionproduction.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
 	case missionproduction.EdgeMissionProduceOrder:
 		if id := m.mission_produce_order; id != nil {
 			return []ent.Value{*id}
@@ -43674,7 +43759,7 @@ func (m *MissionProductionMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionProductionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -43686,12 +43771,15 @@ func (m *MissionProductionMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionProductionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedmission {
 		edges = append(edges, missionproduction.EdgeMission)
 	}
 	if m.cleareduser {
 		edges = append(edges, missionproduction.EdgeUser)
+	}
+	if m.cleareddevice {
+		edges = append(edges, missionproduction.EdgeDevice)
 	}
 	if m.clearedmission_produce_order {
 		edges = append(edges, missionproduction.EdgeMissionProduceOrder)
@@ -43707,6 +43795,8 @@ func (m *MissionProductionMutation) EdgeCleared(name string) bool {
 		return m.clearedmission
 	case missionproduction.EdgeUser:
 		return m.cleareduser
+	case missionproduction.EdgeDevice:
+		return m.cleareddevice
 	case missionproduction.EdgeMissionProduceOrder:
 		return m.clearedmission_produce_order
 	}
@@ -43722,6 +43812,9 @@ func (m *MissionProductionMutation) ClearEdge(name string) error {
 		return nil
 	case missionproduction.EdgeUser:
 		m.ClearUser()
+		return nil
+	case missionproduction.EdgeDevice:
+		m.ClearDevice()
 		return nil
 	case missionproduction.EdgeMissionProduceOrder:
 		m.ClearMissionProduceOrder()
@@ -43739,6 +43832,9 @@ func (m *MissionProductionMutation) ResetEdge(name string) error {
 		return nil
 	case missionproduction.EdgeUser:
 		m.ResetUser()
+		return nil
+	case missionproduction.EdgeDevice:
+		m.ResetDevice()
 		return nil
 	case missionproduction.EdgeMissionProduceOrder:
 		m.ResetMissionProduceOrder()

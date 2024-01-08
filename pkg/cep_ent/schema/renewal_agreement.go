@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -41,6 +42,14 @@ func (RenewalAgreement) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the RenewalAgreement
+func (RenewalAgreement) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+		index.Fields("mission_id"),
+	}
+}
+
 // Mixin of RenewalAgreement
 func (RenewalAgreement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
@@ -48,6 +57,7 @@ func (RenewalAgreement) Mixin() []ent.Mixin {
 	}
 }
 
+// Annotations of RenewalAgreement
 func (RenewalAgreement) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("自动续费协议"),

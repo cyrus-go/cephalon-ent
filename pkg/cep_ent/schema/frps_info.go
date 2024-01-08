@@ -12,7 +12,7 @@ type FrpsInfo struct {
 	ent.Schema
 }
 
-// Fields of the VXSocial.
+// Fields of the FrpsInfo.
 func (FrpsInfo) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("tag").Default("").StructTag(`json:"tag"`).Comment("ini 文件服务端 tag"),
@@ -24,7 +24,7 @@ func (FrpsInfo) Fields() []ent.Field {
 	}
 }
 
-// Edges of the VXSocial.
+// Edges of the FrpsInfo.
 func (FrpsInfo) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -32,7 +32,7 @@ func (FrpsInfo) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of VXSocial
+// Mixin of FrpsInfo
 func (FrpsInfo) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

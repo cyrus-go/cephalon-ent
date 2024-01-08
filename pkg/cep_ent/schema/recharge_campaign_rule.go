@@ -27,13 +27,14 @@ func (RechargeCampaignRule) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of RechargeCampaignRule
+// Mixin of RechargeCampaignRule.
 func (RechargeCampaignRule) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}
 }
 
+// Annotations of RechargeCampaignRule.
 func (RechargeCampaignRule) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("充值活动的规则，死表，为特定充值赠送逻辑服务"),

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -36,7 +37,17 @@ func (MissionProduction) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("mission", Mission.Type).Ref("mission_productions").Field("mission_id").Unique().Required(),
 		edge.From("user", User.Type).Ref("mission_productions").Field("user_id").Unique().Required(),
+		edge.From("device", Device.Type).Ref("mission_productions").Field("device_id").Unique().Required(),
 		edge.To("mission_produce_order", MissionProduceOrder.Type).Unique(),
+	}
+}
+
+// Indexes of the MissionProduction
+func (MissionProduction) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("mission_id"),
+		index.Fields("user_id"),
+		index.Fields("device_id"),
 	}
 }
 

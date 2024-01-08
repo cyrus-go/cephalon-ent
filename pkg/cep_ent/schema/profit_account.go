@@ -30,13 +30,19 @@ func (ProfitAccount) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ProfitAccount
+// Indexes of ProfitAccount.
+func (ProfitAccount) Indexes() []ent.Index {
+	return []ent.Index{}
+}
+
+// Mixin of ProfitAccount.
 func (ProfitAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}
 }
 
+// Annotations of ProfitAccount.
 func (ProfitAccount) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("分润账户，被 wallets 和 symbols 取代"),

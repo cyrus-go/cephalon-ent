@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -73,6 +74,14 @@ func (Mission) Edges() []ent.Edge {
 	}
 }
 
+func (Mission) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("mission_kind_id"),
+		index.Fields("user_id"),
+		index.Fields("mission_batch_id"),
+	}
+}
+
 func (Mission) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
@@ -81,6 +90,6 @@ func (Mission) Mixin() []ent.Mixin {
 
 func (Mission) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		schema.Comment("任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_consume_orders 等订单侧"),
+		schema.Comment("任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_orders 等订单侧"),
 	}
 }

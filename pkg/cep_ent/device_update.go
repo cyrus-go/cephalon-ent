@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -400,6 +401,21 @@ func (du *DeviceUpdate) AddMissionOrders(m ...*MissionOrder) *DeviceUpdate {
 	return du.AddMissionOrderIDs(ids...)
 }
 
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (du *DeviceUpdate) AddMissionProductionIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddMissionProductionIDs(ids...)
+	return du
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (du *DeviceUpdate) AddMissionProductions(m ...*MissionProduction) *DeviceUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return du.AddMissionProductionIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -514,6 +530,27 @@ func (du *DeviceUpdate) RemoveMissionOrders(m ...*MissionOrder) *DeviceUpdate {
 		ids[i] = m[i].ID
 	}
 	return du.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
+func (du *DeviceUpdate) ClearMissionProductions() *DeviceUpdate {
+	du.mutation.ClearMissionProductions()
+	return du
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
+func (du *DeviceUpdate) RemoveMissionProductionIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveMissionProductionIDs(ids...)
+	return du
+}
+
+// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
+func (du *DeviceUpdate) RemoveMissionProductions(m ...*MissionProduction) *DeviceUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return du.RemoveMissionProductionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -928,6 +965,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionProductionsTable,
+			Columns: []string{device.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !du.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionProductionsTable,
+			Columns: []string{device.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionProductionsTable,
+			Columns: []string{device.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1314,6 +1396,21 @@ func (duo *DeviceUpdateOne) AddMissionOrders(m ...*MissionOrder) *DeviceUpdateOn
 	return duo.AddMissionOrderIDs(ids...)
 }
 
+// AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
+func (duo *DeviceUpdateOne) AddMissionProductionIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddMissionProductionIDs(ids...)
+	return duo
+}
+
+// AddMissionProductions adds the "mission_productions" edges to the MissionProduction entity.
+func (duo *DeviceUpdateOne) AddMissionProductions(m ...*MissionProduction) *DeviceUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return duo.AddMissionProductionIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -1428,6 +1525,27 @@ func (duo *DeviceUpdateOne) RemoveMissionOrders(m ...*MissionOrder) *DeviceUpdat
 		ids[i] = m[i].ID
 	}
 	return duo.RemoveMissionOrderIDs(ids...)
+}
+
+// ClearMissionProductions clears all "mission_productions" edges to the MissionProduction entity.
+func (duo *DeviceUpdateOne) ClearMissionProductions() *DeviceUpdateOne {
+	duo.mutation.ClearMissionProductions()
+	return duo
+}
+
+// RemoveMissionProductionIDs removes the "mission_productions" edge to MissionProduction entities by IDs.
+func (duo *DeviceUpdateOne) RemoveMissionProductionIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveMissionProductionIDs(ids...)
+	return duo
+}
+
+// RemoveMissionProductions removes "mission_productions" edges to MissionProduction entities.
+func (duo *DeviceUpdateOne) RemoveMissionProductions(m ...*MissionProduction) *DeviceUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return duo.RemoveMissionProductionIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -1865,6 +1983,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionProductionsTable,
+			Columns: []string{device.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedMissionProductionsIDs(); len(nodes) > 0 && !duo.mutation.MissionProductionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionProductionsTable,
+			Columns: []string{device.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.MissionProductionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionProductionsTable,
+			Columns: []string{device.MissionProductionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

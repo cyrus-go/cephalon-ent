@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // FrpcInfo holds the schema definition for the FrpcInfo entity.
@@ -12,7 +13,7 @@ type FrpcInfo struct {
 	ent.Schema
 }
 
-// Fields of the VXSocial.
+// Fields of the FrpcInfo.
 func (FrpcInfo) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("tag").Default("").StructTag(`json:"tag"`).Comment("ini 文件客户端 tag"),
@@ -27,7 +28,7 @@ func (FrpcInfo) Fields() []ent.Field {
 	}
 }
 
-// Edges of the VXSocial.
+// Edges of the FrpcInfo.
 func (FrpcInfo) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -36,7 +37,15 @@ func (FrpcInfo) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of VXSocial
+// Indexes of the FrpcInfo
+func (FrpcInfo) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("frps_id"),
+		index.Fields("device_id"),
+	}
+}
+
+// Mixin of FrpcInfo
 func (FrpcInfo) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
