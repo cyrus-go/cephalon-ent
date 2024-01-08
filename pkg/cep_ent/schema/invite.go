@@ -42,6 +42,8 @@ func (Invite) Indexes() []ent.Index {
 	return []ent.Index{
 		// 邀请码索引
 		index.Fields("invite_code"),
+		index.Fields("user_id"),
+		index.Fields("campaign_id"),
 	}
 }
 

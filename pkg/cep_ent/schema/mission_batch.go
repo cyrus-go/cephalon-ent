@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 type MissionBatch struct {
@@ -18,7 +19,7 @@ func (MissionBatch) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the MissionBatch.
 func (MissionBatch) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -30,7 +31,14 @@ func (MissionBatch) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ServerOrder
+// Indexes of the MissionBatch
+func (MissionBatch) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+	}
+}
+
+// Mixin of MissionBatch
 func (MissionBatch) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

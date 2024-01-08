@@ -18,12 +18,12 @@ func (EnumMissionStatus) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the EnumMissionStatus.
 func (EnumMissionStatus) Edges() []ent.Edge {
 	return []ent.Edge{}
 }
 
-// Mixin of ServerOrder
+// Mixin of EnumMissionStatus
 func (EnumMissionStatus) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

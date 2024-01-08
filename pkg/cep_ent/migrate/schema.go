@@ -9,6 +9,85 @@ import (
 )
 
 var (
+	// ArtworksColumns holds the columns for the "artworks" table.
+	ArtworksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "作品名称", Default: ""},
+		{Name: "url", Type: field.TypeString, Comment: "作品链接", Default: ""},
+		{Name: "author_id", Type: field.TypeInt64, Comment: "作者的用户 id", Default: 0},
+	}
+	// ArtworksTable holds the schema information for the "artworks" table.
+	ArtworksTable = &schema.Table{
+		Name:       "artworks",
+		Comment:    "艺术作品，参与投票等逻辑；Artwork",
+		Columns:    ArtworksColumns,
+		PrimaryKey: []*schema.Column{ArtworksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "artworks_users_artworks",
+				Columns:    []*schema.Column{ArtworksColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "artwork_author_id",
+				Unique:  false,
+				Columns: []*schema.Column{ArtworksColumns[8]},
+			},
+		},
+	}
+	// ArtworkLikesColumns holds the columns for the "artwork_likes" table.
+	ArtworkLikesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "date", Type: field.TypeInt32, Comment: "投票日期", Default: 0},
+		{Name: "artwork_id", Type: field.TypeInt64, Comment: "外键，作品 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键，用户 id", Default: 0},
+	}
+	// ArtworkLikesTable holds the schema information for the "artwork_likes" table.
+	ArtworkLikesTable = &schema.Table{
+		Name:       "artwork_likes",
+		Comment:    "用户投赞成票给艺术作品；ArtworkLike",
+		Columns:    ArtworkLikesColumns,
+		PrimaryKey: []*schema.Column{ArtworkLikesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "artwork_likes_artworks_artwork_likes",
+				Columns:    []*schema.Column{ArtworkLikesColumns[7]},
+				RefColumns: []*schema.Column{ArtworksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "artwork_likes_users_artwork_likes",
+				Columns:    []*schema.Column{ArtworkLikesColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "artworklike_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{ArtworkLikesColumns[8]},
+			},
+			{
+				Name:    "artworklike_artwork_id",
+				Unique:  false,
+				Columns: []*schema.Column{ArtworkLikesColumns[7]},
+			},
+		},
+	}
 	// BillsColumns holds the columns for the "bills" table.
 	BillsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -76,6 +155,33 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "bill_source_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{BillsColumns[19]},
+			},
+			{
+				Name:    "bill_target_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{BillsColumns[18]},
+			},
+			{
+				Name:    "bill_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{BillsColumns[16]},
+			},
+			{
+				Name:    "bill_invite_id",
+				Unique:  false,
+				Columns: []*schema.Column{BillsColumns[15]},
+			},
+			{
+				Name:    "bill_symbol_id",
+				Unique:  false,
+				Columns: []*schema.Column{BillsColumns[17]},
+			},
+		},
 	}
 	// CampaignsColumns holds the columns for the "campaigns" table.
 	CampaignsColumns = []*schema.Column{
@@ -130,6 +236,18 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "campaignorder_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{CampaignOrdersColumns[7]},
+			},
+			{
+				Name:    "campaignorder_campaign_id",
+				Unique:  false,
+				Columns: []*schema.Column{CampaignOrdersColumns[6]},
+			},
+		},
 	}
 	// CollectsColumns holds the columns for the "collects" table.
 	CollectsColumns = []*schema.Column{
@@ -155,6 +273,13 @@ var (
 				Columns:    []*schema.Column{CollectsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "collect_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{CollectsColumns[8]},
 			},
 		},
 	}
@@ -295,6 +420,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "device_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{DevicesColumns[19]},
+			},
+		},
 	}
 	// DeviceGpuMissionsColumns holds the columns for the "device_gpu_missions" table.
 	DeviceGpuMissionsColumns = []*schema.Column{
@@ -330,6 +462,18 @@ var (
 				Columns:    []*schema.Column{DeviceGpuMissionsColumns[12]},
 				RefColumns: []*schema.Column{GpusColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "devicegpumission_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{DeviceGpuMissionsColumns[11]},
+			},
+			{
+				Name:    "devicegpumission_gpu_id",
+				Unique:  false,
+				Columns: []*schema.Column{DeviceGpuMissionsColumns[12]},
 			},
 		},
 	}
@@ -511,6 +655,28 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "extraserviceorder_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExtraServiceOrdersColumns[19]},
+			},
+			{
+				Name:    "extraserviceorder_mission_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExtraServiceOrdersColumns[21]},
+			},
+			{
+				Name:    "extraserviceorder_symbol_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExtraServiceOrdersColumns[22]},
+			},
+			{
+				Name:    "extraserviceorder_mission_batch_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExtraServiceOrdersColumns[20]},
+			},
+		},
 	}
 	// ExtraServicePricesColumns holds the columns for the "extra_service_prices" table.
 	ExtraServicePricesColumns = []*schema.Column{
@@ -541,6 +707,13 @@ var (
 				Columns:    []*schema.Column{ExtraServicePricesColumns[13]},
 				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "extraserviceprice_extra_service_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExtraServicePricesColumns[13]},
 			},
 		},
 	}
@@ -579,6 +752,18 @@ var (
 				Columns:    []*schema.Column{FrpcInfosColumns[13]},
 				RefColumns: []*schema.Column{FrpsInfosColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "frpcinfo_frps_id",
+				Unique:  false,
+				Columns: []*schema.Column{FrpcInfosColumns[13]},
+			},
+			{
+				Name:    "frpcinfo_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{FrpcInfosColumns[12]},
 			},
 		},
 	}
@@ -718,6 +903,16 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{InvitesColumns[6]},
 			},
+			{
+				Name:    "invite_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{InvitesColumns[12]},
+			},
+			{
+				Name:    "invite_campaign_id",
+				Unique:  false,
+				Columns: []*schema.Column{InvitesColumns[11]},
+			},
 		},
 	}
 	// LoginRecordsColumns holds the columns for the "login_records" table.
@@ -745,6 +940,13 @@ var (
 				Columns:    []*schema.Column{LoginRecordsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "loginrecord_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{LoginRecordsColumns[9]},
 			},
 		},
 	}
@@ -793,7 +995,7 @@ var (
 	// MissionsTable holds the schema information for the "missions" table.
 	MissionsTable = &schema.Table{
 		Name:       "missions",
-		Comment:    "任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_consume_orders 等订单侧",
+		Comment:    "任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_orders 等订单侧",
 		Columns:    MissionsColumns,
 		PrimaryKey: []*schema.Column{MissionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -828,6 +1030,23 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "mission_mission_kind_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionsColumns[37]},
+			},
+			{
+				Name:    "mission_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionsColumns[38]},
+			},
+			{
+				Name:    "mission_mission_batch_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionsColumns[36]},
+			},
+		},
 	}
 	// MissionBatchesColumns holds the columns for the "mission_batches" table.
 	MissionBatchesColumns = []*schema.Column{
@@ -852,6 +1071,13 @@ var (
 				Columns:    []*schema.Column{MissionBatchesColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "missionbatch_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionBatchesColumns[7]},
 			},
 		},
 	}
@@ -933,6 +1159,18 @@ var (
 				Columns:    []*schema.Column{MissionExtraServicesColumns[7]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "missionextraservice_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionExtraServicesColumns[7]},
+			},
+			{
+				Name:    "missionextraservice_extra_service_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionExtraServicesColumns[6]},
 			},
 		},
 	}
@@ -1071,6 +1309,38 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "missionorder_consume_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionOrdersColumns[30]},
+			},
+			{
+				Name:    "missionorder_produce_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionOrdersColumns[31]},
+			},
+			{
+				Name:    "missionorder_symbol_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionOrdersColumns[29]},
+			},
+			{
+				Name:    "missionorder_mission_batch_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionOrdersColumns[28]},
+			},
+			{
+				Name:    "missionorder_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionOrdersColumns[27]},
+			},
+			{
+				Name:    "missionorder_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionOrdersColumns[26]},
+			},
+		},
 	}
 	// MissionProduceOrdersColumns holds the columns for the "mission_produce_orders" table.
 	MissionProduceOrdersColumns = []*schema.Column{
@@ -1145,12 +1415,12 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Comment: "任务开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "任务完成时刻"},
 		{Name: "state", Type: field.TypeEnum, Comment: "任务执行状态情况", Enums: []string{"unknown", "waiting", "canceled", "doing", "supplying", "closing", "succeed", "failed"}, Default: "unknown"},
-		{Name: "device_id", Type: field.TypeInt64, Comment: "领到任务的设备 ID", Default: 0},
 		{Name: "gpu_version", Type: field.TypeEnum, Comment: "任务使用什么显卡在执行", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB"}, Default: "unknown"},
 		{Name: "device_slot", Type: field.TypeInt8, Comment: "显卡占用设备的插槽", Default: 0},
 		{Name: "urls", Type: field.TypeString, Comment: "任务结果链接列表，json 序列化后存储", Default: ""},
 		{Name: "resp_status_code", Type: field.TypeInt32, Comment: "内部功能返回码", Default: 0},
 		{Name: "resp_body", Type: field.TypeString, Comment: "返回内容体 json 转 string", Default: ""},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "领到任务的设备 ID", Default: 0},
 		{Name: "mission_id", Type: field.TypeInt64, Comment: "任务 ID"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 ID"},
 	}
@@ -1162,6 +1432,12 @@ var (
 		PrimaryKey: []*schema.Column{MissionProductionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:     "mission_productions_devices_mission_productions",
+				Columns:    []*schema.Column{MissionProductionsColumns[14]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
 				Symbol:     "mission_productions_missions_mission_productions",
 				Columns:    []*schema.Column{MissionProductionsColumns[15]},
 				RefColumns: []*schema.Column{MissionsColumns[0]},
@@ -1172,6 +1448,23 @@ var (
 				Columns:    []*schema.Column{MissionProductionsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "missionproduction_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionProductionsColumns[15]},
+			},
+			{
+				Name:    "missionproduction_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionProductionsColumns[16]},
+			},
+			{
+				Name:    "missionproduction_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionProductionsColumns[14]},
 			},
 		},
 	}
@@ -1263,6 +1556,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "price_gpu_id",
+				Unique:  false,
+				Columns: []*schema.Column{PricesColumns[16]},
+			},
+		},
 	}
 	// ProfitAccountsColumns holds the columns for the "profit_accounts" table.
 	ProfitAccountsColumns = []*schema.Column{
@@ -1314,6 +1614,13 @@ var (
 				Columns:    []*schema.Column{ProfitSettingsColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "profitsetting_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{ProfitSettingsColumns[7]},
 			},
 		},
 	}
@@ -1382,6 +1689,23 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "rechargeorder_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{RechargeOrdersColumns[15]},
+			},
+			{
+				Name:    "rechargeorder_social_id",
+				Unique:  false,
+				Columns: []*schema.Column{RechargeOrdersColumns[16]},
+			},
+			{
+				Name:    "rechargeorder_campaign_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{RechargeOrdersColumns[14]},
+			},
+		},
 	}
 	// RenewalAgreementsColumns holds the columns for the "renewal_agreements" table.
 	RenewalAgreementsColumns = []*schema.Column{
@@ -1421,6 +1745,18 @@ var (
 				Columns:    []*schema.Column{RenewalAgreementsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "renewalagreement_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{RenewalAgreementsColumns[16]},
+			},
+			{
+				Name:    "renewalagreement_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{RenewalAgreementsColumns[15]},
 			},
 		},
 	}
@@ -1499,6 +1835,28 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "transferorder_source_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{TransferOrdersColumns[14]},
+			},
+			{
+				Name:    "transferorder_target_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{TransferOrdersColumns[13]},
+			},
+			{
+				Name:    "transferorder_social_id",
+				Unique:  false,
+				Columns: []*schema.Column{TransferOrdersColumns[15]},
+			},
+			{
+				Name:    "transferorder_symbol_id",
+				Unique:  false,
+				Columns: []*schema.Column{TransferOrdersColumns[12]},
+			},
+		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -1569,6 +1927,18 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userdevice_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{UserDevicesColumns[7]},
+			},
+			{
+				Name:    "userdevice_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{UserDevicesColumns[6]},
+			},
+		},
 	}
 	// VxAccountsColumns holds the columns for the "vx_accounts" table.
 	VxAccountsColumns = []*schema.Column{
@@ -1596,6 +1966,13 @@ var (
 				Columns:    []*schema.Column{VxAccountsColumns[10]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "vxaccount_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{VxAccountsColumns[10]},
 			},
 		},
 	}
@@ -1628,6 +2005,13 @@ var (
 				Columns:    []*schema.Column{VxSocialsColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "vxsocial_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{VxSocialsColumns[13]},
 			},
 		},
 	}
@@ -1669,6 +2053,16 @@ var (
 				Unique:  true,
 				Columns: []*schema.Column{WalletsColumns[8], WalletsColumns[7], WalletsColumns[5]},
 			},
+			{
+				Name:    "wallet_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{WalletsColumns[8]},
+			},
+			{
+				Name:    "wallet_symbol_id",
+				Unique:  false,
+				Columns: []*schema.Column{WalletsColumns[7]},
+			},
 		},
 	}
 	// WithdrawAccountsColumns holds the columns for the "withdraw_accounts" table.
@@ -1702,9 +2096,18 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "withdrawaccount_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{WithdrawAccountsColumns[13]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		ArtworksTable,
+		ArtworkLikesTable,
 		BillsTable,
 		CampaignsTable,
 		CampaignOrdersTable,
@@ -1755,6 +2158,11 @@ var (
 )
 
 func init() {
+	ArtworksTable.ForeignKeys[0].RefTable = UsersTable
+	ArtworksTable.Annotation = &entsql.Annotation{}
+	ArtworkLikesTable.ForeignKeys[0].RefTable = ArtworksTable
+	ArtworkLikesTable.ForeignKeys[1].RefTable = UsersTable
+	ArtworkLikesTable.Annotation = &entsql.Annotation{}
 	BillsTable.ForeignKeys[0].RefTable = InvitesTable
 	BillsTable.ForeignKeys[1].RefTable = MissionOrdersTable
 	BillsTable.ForeignKeys[2].RefTable = SymbolsTable
@@ -1842,8 +2250,9 @@ func init() {
 	MissionProduceOrdersTable.ForeignKeys[3].RefTable = MissionProductionsTable
 	MissionProduceOrdersTable.ForeignKeys[4].RefTable = UsersTable
 	MissionProduceOrdersTable.Annotation = &entsql.Annotation{}
-	MissionProductionsTable.ForeignKeys[0].RefTable = MissionsTable
-	MissionProductionsTable.ForeignKeys[1].RefTable = UsersTable
+	MissionProductionsTable.ForeignKeys[0].RefTable = DevicesTable
+	MissionProductionsTable.ForeignKeys[1].RefTable = MissionsTable
+	MissionProductionsTable.ForeignKeys[2].RefTable = UsersTable
 	MissionProductionsTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}

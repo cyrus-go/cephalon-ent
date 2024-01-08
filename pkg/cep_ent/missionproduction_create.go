@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -258,6 +259,11 @@ func (mpc *MissionProductionCreate) SetUser(u *User) *MissionProductionCreate {
 	return mpc.SetUserID(u.ID)
 }
 
+// SetDevice sets the "device" edge to the Device entity.
+func (mpc *MissionProductionCreate) SetDevice(d *Device) *MissionProductionCreate {
+	return mpc.SetDeviceID(d.ID)
+}
+
 // SetMissionProduceOrderID sets the "mission_produce_order" edge to the MissionProduceOrder entity by ID.
 func (mpc *MissionProductionCreate) SetMissionProduceOrderID(id int64) *MissionProductionCreate {
 	mpc.mutation.SetMissionProduceOrderID(id)
@@ -440,6 +446,9 @@ func (mpc *MissionProductionCreate) check() error {
 	if _, ok := mpc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "MissionProduction.user"`)}
 	}
+	if _, ok := mpc.mutation.DeviceID(); !ok {
+		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "MissionProduction.device"`)}
+	}
 	return nil
 }
 
@@ -505,10 +514,6 @@ func (mpc *MissionProductionCreate) createSpec() (*MissionProduction, *sqlgraph.
 		_spec.SetField(missionproduction.FieldState, field.TypeEnum, value)
 		_node.State = value
 	}
-	if value, ok := mpc.mutation.DeviceID(); ok {
-		_spec.SetField(missionproduction.FieldDeviceID, field.TypeInt64, value)
-		_node.DeviceID = value
-	}
 	if value, ok := mpc.mutation.GpuVersion(); ok {
 		_spec.SetField(missionproduction.FieldGpuVersion, field.TypeEnum, value)
 		_node.GpuVersion = value
@@ -561,6 +566,23 @@ func (mpc *MissionProductionCreate) createSpec() (*MissionProduction, *sqlgraph.
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mpc.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   missionproduction.DeviceTable,
+			Columns: []string{missionproduction.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(device.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.DeviceID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mpc.mutation.MissionProduceOrderIDs(); len(nodes) > 0 {
@@ -760,12 +782,6 @@ func (u *MissionProductionUpsert) SetDeviceID(v int64) *MissionProductionUpsert 
 // UpdateDeviceID sets the "device_id" field to the value that was provided on create.
 func (u *MissionProductionUpsert) UpdateDeviceID() *MissionProductionUpsert {
 	u.SetExcluded(missionproduction.FieldDeviceID)
-	return u
-}
-
-// AddDeviceID adds v to the "device_id" field.
-func (u *MissionProductionUpsert) AddDeviceID(v int64) *MissionProductionUpsert {
-	u.Add(missionproduction.FieldDeviceID, v)
 	return u
 }
 
@@ -1036,13 +1052,6 @@ func (u *MissionProductionUpsertOne) UpdateState() *MissionProductionUpsertOne {
 func (u *MissionProductionUpsertOne) SetDeviceID(v int64) *MissionProductionUpsertOne {
 	return u.Update(func(s *MissionProductionUpsert) {
 		s.SetDeviceID(v)
-	})
-}
-
-// AddDeviceID adds v to the "device_id" field.
-func (u *MissionProductionUpsertOne) AddDeviceID(v int64) *MissionProductionUpsertOne {
-	return u.Update(func(s *MissionProductionUpsert) {
-		s.AddDeviceID(v)
 	})
 }
 
@@ -1498,13 +1507,6 @@ func (u *MissionProductionUpsertBulk) UpdateState() *MissionProductionUpsertBulk
 func (u *MissionProductionUpsertBulk) SetDeviceID(v int64) *MissionProductionUpsertBulk {
 	return u.Update(func(s *MissionProductionUpsert) {
 		s.SetDeviceID(v)
-	})
-}
-
-// AddDeviceID adds v to the "device_id" field.
-func (u *MissionProductionUpsertBulk) AddDeviceID(v int64) *MissionProductionUpsertBulk {
-	return u.Update(func(s *MissionProductionUpsert) {
-		s.AddDeviceID(v)
 	})
 }
 

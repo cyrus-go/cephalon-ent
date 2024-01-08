@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -27,6 +28,7 @@ type MissionProductionQuery struct {
 	predicates              []predicate.MissionProduction
 	withMission             *MissionQuery
 	withUser                *UserQuery
+	withDevice              *DeviceQuery
 	withMissionProduceOrder *MissionProduceOrderQuery
 	modifiers               []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -102,6 +104,28 @@ func (mpq *MissionProductionQuery) QueryUser() *UserQuery {
 			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.UserTable, missionproduction.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mpq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDevice chains the current query on the "device" edge.
+func (mpq *MissionProductionQuery) QueryDevice() *DeviceQuery {
+	query := (&DeviceClient{config: mpq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mpq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mpq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, selector),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.DeviceTable, missionproduction.DeviceColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mpq.driver.Dialect(), step)
 		return fromU, nil
@@ -325,6 +349,7 @@ func (mpq *MissionProductionQuery) Clone() *MissionProductionQuery {
 		predicates:              append([]predicate.MissionProduction{}, mpq.predicates...),
 		withMission:             mpq.withMission.Clone(),
 		withUser:                mpq.withUser.Clone(),
+		withDevice:              mpq.withDevice.Clone(),
 		withMissionProduceOrder: mpq.withMissionProduceOrder.Clone(),
 		// clone intermediate query.
 		sql:  mpq.sql.Clone(),
@@ -351,6 +376,17 @@ func (mpq *MissionProductionQuery) WithUser(opts ...func(*UserQuery)) *MissionPr
 		opt(query)
 	}
 	mpq.withUser = query
+	return mpq
+}
+
+// WithDevice tells the query-builder to eager-load the nodes that are connected to
+// the "device" edge. The optional arguments are used to configure the query builder of the edge.
+func (mpq *MissionProductionQuery) WithDevice(opts ...func(*DeviceQuery)) *MissionProductionQuery {
+	query := (&DeviceClient{config: mpq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mpq.withDevice = query
 	return mpq
 }
 
@@ -443,9 +479,10 @@ func (mpq *MissionProductionQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	var (
 		nodes       = []*MissionProduction{}
 		_spec       = mpq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			mpq.withMission != nil,
 			mpq.withUser != nil,
+			mpq.withDevice != nil,
 			mpq.withMissionProduceOrder != nil,
 		}
 	)
@@ -479,6 +516,12 @@ func (mpq *MissionProductionQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	if query := mpq.withUser; query != nil {
 		if err := mpq.loadUser(ctx, query, nodes, nil,
 			func(n *MissionProduction, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mpq.withDevice; query != nil {
+		if err := mpq.loadDevice(ctx, query, nodes, nil,
+			func(n *MissionProduction, e *Device) { n.Edges.Device = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -542,6 +585,35 @@ func (mpq *MissionProductionQuery) loadUser(ctx context.Context, query *UserQuer
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (mpq *MissionProductionQuery) loadDevice(ctx context.Context, query *DeviceQuery, nodes []*MissionProduction, init func(*MissionProduction), assign func(*MissionProduction, *Device)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*MissionProduction)
+	for i := range nodes {
+		fk := nodes[i].DeviceID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(device.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "device_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -614,6 +686,9 @@ func (mpq *MissionProductionQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if mpq.withUser != nil {
 			_spec.Node.AddColumnOnce(missionproduction.FieldUserID)
+		}
+		if mpq.withDevice != nil {
+			_spec.Node.AddColumnOnce(missionproduction.FieldDeviceID)
 		}
 	}
 	if ps := mpq.predicates; len(ps) > 0 {

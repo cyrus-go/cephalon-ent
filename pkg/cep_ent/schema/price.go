@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -12,6 +13,7 @@ type Price struct {
 	ent.Schema
 }
 
+// Fields of Price.
 func (Price) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("gpu_id").Default(0).StructTag(`json:"gpu_id,string"`).Comment("外键 gpu id"),
@@ -29,7 +31,7 @@ func (Price) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the Price.
 func (Price) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -37,13 +39,21 @@ func (Price) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ServerOrder
+// Indexes of the Price.
+func (Price) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("gpu_id"),
+	}
+}
+
+// Mixin of Price.
 func (Price) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}
 }
 
+// Annotations of Price.
 func (Price) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("任务定价表，表里有数据，任务才有单价，才可以被创建"),

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // RechargeOrder holds the schema definition for the RechargeOrder entity.
@@ -41,6 +42,15 @@ func (RechargeOrder) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the RechargeOrder
+func (RechargeOrder) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+		index.Fields("social_id"),
+		index.Fields("campaign_order_id"),
+	}
+}
+
 // Mixin of RechargeOrder
 func (RechargeOrder) Mixin() []ent.Mixin {
 	return []ent.Mixin{
@@ -48,6 +58,7 @@ func (RechargeOrder) Mixin() []ent.Mixin {
 	}
 }
 
+// Annotations of RechargeOrder
 func (RechargeOrder) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("充值订单，被 transfer_orders 取代，充值定义为从上帝账户转账到用户"),

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -13,7 +14,7 @@ type WithdrawAccount struct {
 	ent.Schema
 }
 
-// Fields of the Wallet.
+// Fields of the WithdrawAccount.
 func (WithdrawAccount) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("外键用户 id"),
@@ -35,6 +36,13 @@ func (WithdrawAccount) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the WithdrawAccount
+func (WithdrawAccount) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+	}
+}
+
 // Mixin of WithdrawAccount
 func (WithdrawAccount) Mixin() []ent.Mixin {
 	return []ent.Mixin{
@@ -42,6 +50,7 @@ func (WithdrawAccount) Mixin() []ent.Mixin {
 	}
 }
 
+// Annotations of WithdrawAccount
 func (WithdrawAccount) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("提现账户，用来提供提现渠道"),

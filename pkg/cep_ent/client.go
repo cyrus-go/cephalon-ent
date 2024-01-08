@@ -15,6 +15,8 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
@@ -68,6 +70,10 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Artwork is the client for interacting with the Artwork builders.
+	Artwork *ArtworkClient
+	// ArtworkLike is the client for interacting with the ArtworkLike builders.
+	ArtworkLike *ArtworkLikeClient
 	// Bill is the client for interacting with the Bill builders.
 	Bill *BillClient
 	// Campaign is the client for interacting with the Campaign builders.
@@ -173,6 +179,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Artwork = NewArtworkClient(c.config)
+	c.ArtworkLike = NewArtworkLikeClient(c.config)
 	c.Bill = NewBillClient(c.config)
 	c.Campaign = NewCampaignClient(c.config)
 	c.CampaignOrder = NewCampaignOrderClient(c.config)
@@ -304,6 +312,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                  ctx,
 		config:               cfg,
+		Artwork:              NewArtworkClient(cfg),
+		ArtworkLike:          NewArtworkLikeClient(cfg),
 		Bill:                 NewBillClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
@@ -369,6 +379,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                  ctx,
 		config:               cfg,
+		Artwork:              NewArtworkClient(cfg),
+		ArtworkLike:          NewArtworkLikeClient(cfg),
 		Bill:                 NewBillClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
@@ -421,7 +433,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Bill.
+//		Artwork.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -444,16 +456,16 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Bill, c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill,
-		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
-		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.LoginRecord,
-		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionExtraService,
-		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
-		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
-		c.Wallet, c.WithdrawAccount,
+		c.Artwork, c.ArtworkLike, c.Bill, c.Campaign, c.CampaignOrder, c.Collect,
+		c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
+		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
+		c.Invite, c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
+		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder, c.User,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
 	} {
 		n.Use(hooks...)
 	}
@@ -463,16 +475,16 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Bill, c.Campaign, c.CampaignOrder, c.Collect, c.CostAccount, c.CostBill,
-		c.Device, c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
-		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
-		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.LoginRecord,
-		c.Mission, c.MissionBatch, c.MissionConsumeOrder, c.MissionExtraService,
-		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
-		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Symbol, c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial,
-		c.Wallet, c.WithdrawAccount,
+		c.Artwork, c.ArtworkLike, c.Bill, c.Campaign, c.CampaignOrder, c.Collect,
+		c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
+		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
+		c.Invite, c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
+		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder, c.User,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -481,6 +493,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *ArtworkMutation:
+		return c.Artwork.mutate(ctx, m)
+	case *ArtworkLikeMutation:
+		return c.ArtworkLike.mutate(ctx, m)
 	case *BillMutation:
 		return c.Bill.mutate(ctx, m)
 	case *CampaignMutation:
@@ -575,6 +591,336 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.WithdrawAccount.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown mutation type %T", m)
+	}
+}
+
+// ArtworkClient is a client for the Artwork schema.
+type ArtworkClient struct {
+	config
+}
+
+// NewArtworkClient returns a client for the Artwork from the given config.
+func NewArtworkClient(c config) *ArtworkClient {
+	return &ArtworkClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `artwork.Hooks(f(g(h())))`.
+func (c *ArtworkClient) Use(hooks ...Hook) {
+	c.hooks.Artwork = append(c.hooks.Artwork, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `artwork.Intercept(f(g(h())))`.
+func (c *ArtworkClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Artwork = append(c.inters.Artwork, interceptors...)
+}
+
+// Create returns a builder for creating a Artwork entity.
+func (c *ArtworkClient) Create() *ArtworkCreate {
+	mutation := newArtworkMutation(c.config, OpCreate)
+	return &ArtworkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Artwork entities.
+func (c *ArtworkClient) CreateBulk(builders ...*ArtworkCreate) *ArtworkCreateBulk {
+	return &ArtworkCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ArtworkClient) MapCreateBulk(slice any, setFunc func(*ArtworkCreate, int)) *ArtworkCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ArtworkCreateBulk{err: fmt.Errorf("calling to ArtworkClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ArtworkCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ArtworkCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Artwork.
+func (c *ArtworkClient) Update() *ArtworkUpdate {
+	mutation := newArtworkMutation(c.config, OpUpdate)
+	return &ArtworkUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ArtworkClient) UpdateOne(a *Artwork) *ArtworkUpdateOne {
+	mutation := newArtworkMutation(c.config, OpUpdateOne, withArtwork(a))
+	return &ArtworkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ArtworkClient) UpdateOneID(id int64) *ArtworkUpdateOne {
+	mutation := newArtworkMutation(c.config, OpUpdateOne, withArtworkID(id))
+	return &ArtworkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Artwork.
+func (c *ArtworkClient) Delete() *ArtworkDelete {
+	mutation := newArtworkMutation(c.config, OpDelete)
+	return &ArtworkDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ArtworkClient) DeleteOne(a *Artwork) *ArtworkDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ArtworkClient) DeleteOneID(id int64) *ArtworkDeleteOne {
+	builder := c.Delete().Where(artwork.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ArtworkDeleteOne{builder}
+}
+
+// Query returns a query builder for Artwork.
+func (c *ArtworkClient) Query() *ArtworkQuery {
+	return &ArtworkQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeArtwork},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Artwork entity by its id.
+func (c *ArtworkClient) Get(ctx context.Context, id int64) (*Artwork, error) {
+	return c.Query().Where(artwork.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ArtworkClient) GetX(ctx context.Context, id int64) *Artwork {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAuthor queries the author edge of a Artwork.
+func (c *ArtworkClient) QueryAuthor(a *Artwork) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(artwork.Table, artwork.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, artwork.AuthorTable, artwork.AuthorColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryArtworkLikes queries the artwork_likes edge of a Artwork.
+func (c *ArtworkClient) QueryArtworkLikes(a *Artwork) *ArtworkLikeQuery {
+	query := (&ArtworkLikeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(artwork.Table, artwork.FieldID, id),
+			sqlgraph.To(artworklike.Table, artworklike.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, artwork.ArtworkLikesTable, artwork.ArtworkLikesColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ArtworkClient) Hooks() []Hook {
+	return c.hooks.Artwork
+}
+
+// Interceptors returns the client interceptors.
+func (c *ArtworkClient) Interceptors() []Interceptor {
+	return c.inters.Artwork
+}
+
+func (c *ArtworkClient) mutate(ctx context.Context, m *ArtworkMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ArtworkCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ArtworkUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ArtworkUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ArtworkDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Artwork mutation op: %q", m.Op())
+	}
+}
+
+// ArtworkLikeClient is a client for the ArtworkLike schema.
+type ArtworkLikeClient struct {
+	config
+}
+
+// NewArtworkLikeClient returns a client for the ArtworkLike from the given config.
+func NewArtworkLikeClient(c config) *ArtworkLikeClient {
+	return &ArtworkLikeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `artworklike.Hooks(f(g(h())))`.
+func (c *ArtworkLikeClient) Use(hooks ...Hook) {
+	c.hooks.ArtworkLike = append(c.hooks.ArtworkLike, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `artworklike.Intercept(f(g(h())))`.
+func (c *ArtworkLikeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ArtworkLike = append(c.inters.ArtworkLike, interceptors...)
+}
+
+// Create returns a builder for creating a ArtworkLike entity.
+func (c *ArtworkLikeClient) Create() *ArtworkLikeCreate {
+	mutation := newArtworkLikeMutation(c.config, OpCreate)
+	return &ArtworkLikeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ArtworkLike entities.
+func (c *ArtworkLikeClient) CreateBulk(builders ...*ArtworkLikeCreate) *ArtworkLikeCreateBulk {
+	return &ArtworkLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ArtworkLikeClient) MapCreateBulk(slice any, setFunc func(*ArtworkLikeCreate, int)) *ArtworkLikeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ArtworkLikeCreateBulk{err: fmt.Errorf("calling to ArtworkLikeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ArtworkLikeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ArtworkLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ArtworkLike.
+func (c *ArtworkLikeClient) Update() *ArtworkLikeUpdate {
+	mutation := newArtworkLikeMutation(c.config, OpUpdate)
+	return &ArtworkLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ArtworkLikeClient) UpdateOne(al *ArtworkLike) *ArtworkLikeUpdateOne {
+	mutation := newArtworkLikeMutation(c.config, OpUpdateOne, withArtworkLike(al))
+	return &ArtworkLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ArtworkLikeClient) UpdateOneID(id int64) *ArtworkLikeUpdateOne {
+	mutation := newArtworkLikeMutation(c.config, OpUpdateOne, withArtworkLikeID(id))
+	return &ArtworkLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ArtworkLike.
+func (c *ArtworkLikeClient) Delete() *ArtworkLikeDelete {
+	mutation := newArtworkLikeMutation(c.config, OpDelete)
+	return &ArtworkLikeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ArtworkLikeClient) DeleteOne(al *ArtworkLike) *ArtworkLikeDeleteOne {
+	return c.DeleteOneID(al.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ArtworkLikeClient) DeleteOneID(id int64) *ArtworkLikeDeleteOne {
+	builder := c.Delete().Where(artworklike.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ArtworkLikeDeleteOne{builder}
+}
+
+// Query returns a query builder for ArtworkLike.
+func (c *ArtworkLikeClient) Query() *ArtworkLikeQuery {
+	return &ArtworkLikeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeArtworkLike},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ArtworkLike entity by its id.
+func (c *ArtworkLikeClient) Get(ctx context.Context, id int64) (*ArtworkLike, error) {
+	return c.Query().Where(artworklike.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ArtworkLikeClient) GetX(ctx context.Context, id int64) *ArtworkLike {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a ArtworkLike.
+func (c *ArtworkLikeClient) QueryUser(al *ArtworkLike) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := al.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(artworklike.Table, artworklike.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, artworklike.UserTable, artworklike.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(al.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryArtwork queries the artwork edge of a ArtworkLike.
+func (c *ArtworkLikeClient) QueryArtwork(al *ArtworkLike) *ArtworkQuery {
+	query := (&ArtworkClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := al.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(artworklike.Table, artworklike.FieldID, id),
+			sqlgraph.To(artwork.Table, artwork.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, artworklike.ArtworkTable, artworklike.ArtworkColumn),
+		)
+		fromV = sqlgraph.Neighbors(al.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ArtworkLikeClient) Hooks() []Hook {
+	return c.hooks.ArtworkLike
+}
+
+// Interceptors returns the client interceptors.
+func (c *ArtworkLikeClient) Interceptors() []Interceptor {
+	return c.inters.ArtworkLike
+}
+
+func (c *ArtworkLikeClient) mutate(ctx context.Context, m *ArtworkLikeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ArtworkLikeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ArtworkLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ArtworkLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ArtworkLikeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown ArtworkLike mutation op: %q", m.Op())
 	}
 }
 
@@ -1909,6 +2255,22 @@ func (c *DeviceClient) QueryMissionOrders(d *Device) *MissionOrderQuery {
 			sqlgraph.From(device.Table, device.FieldID, id),
 			sqlgraph.To(missionorder.Table, missionorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionOrdersTable, device.MissionOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionProductions queries the mission_productions edge of a Device.
+func (c *DeviceClient) QueryMissionProductions(d *Device) *MissionProductionQuery {
+	query := (&MissionProductionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionProductionsTable, device.MissionProductionsColumn),
 		)
 		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
 		return fromV, nil
@@ -6063,6 +6425,22 @@ func (c *MissionProductionClient) QueryUser(mp *MissionProduction) *UserQuery {
 	return query
 }
 
+// QueryDevice queries the device edge of a MissionProduction.
+func (c *MissionProductionClient) QueryDevice(mp *MissionProduction) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionproduction.Table, missionproduction.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionproduction.DeviceTable, missionproduction.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMissionProduceOrder queries the mission_produce_order edge of a MissionProduction.
 func (c *MissionProductionClient) QueryMissionProduceOrder(mp *MissionProduction) *MissionProduceOrderQuery {
 	query := (&MissionProduceOrderClient{config: c.config}).Query()
@@ -8374,6 +8752,38 @@ func (c *UserClient) QueryRenewalAgreements(u *User) *RenewalAgreementQuery {
 	return query
 }
 
+// QueryArtworks queries the artworks edge of a User.
+func (c *UserClient) QueryArtworks(u *User) *ArtworkQuery {
+	query := (&ArtworkClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(artwork.Table, artwork.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ArtworksTable, user.ArtworksColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryArtworkLikes queries the artwork_likes edge of a User.
+func (c *UserClient) QueryArtworkLikes(u *User) *ArtworkLikeQuery {
+	query := (&ArtworkLikeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(artworklike.Table, artworklike.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ArtworkLikesTable, user.ArtworkLikesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -9211,25 +9621,25 @@ func (c *WithdrawAccountClient) mutate(ctx context.Context, m *WithdrawAccountMu
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
-		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
-		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		InputLog, Invite, LoginRecord, Mission, MissionBatch, MissionConsumeOrder,
-		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
-		Wallet, WithdrawAccount []ent.Hook
+		Artwork, ArtworkLike, Bill, Campaign, CampaignOrder, Collect, CostAccount,
+		CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus,
+		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
+		HmacKeyPair, InputLog, Invite, LoginRecord, Mission, MissionBatch,
+		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
+		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
-		Bill, Campaign, CampaignOrder, Collect, CostAccount, CostBill, Device,
-		DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
-		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		InputLog, Invite, LoginRecord, Mission, MissionBatch, MissionConsumeOrder,
-		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
-		Wallet, WithdrawAccount []ent.Interceptor
+		Artwork, ArtworkLike, Bill, Campaign, CampaignOrder, Collect, CostAccount,
+		CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus,
+		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
+		HmacKeyPair, InputLog, Invite, LoginRecord, Mission, MissionBatch,
+		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
+		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
 	}
 )

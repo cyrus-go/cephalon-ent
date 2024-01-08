@@ -20,7 +20,7 @@ func (MissionKind) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the MissionKind.
 func (MissionKind) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -29,7 +29,7 @@ func (MissionKind) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ServerOrder
+// Mixin of MissionKind
 func (MissionKind) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -47,6 +48,16 @@ func (ExtraServiceOrder) Edges() []ent.Edge {
 		edge.From("mission_order", MissionOrder.Type).Ref("extra_service_orders").Field("mission_order_id").Unique().Required(),
 		edge.From("symbol", Symbol.Type).Ref("extra_service_order").Field("symbol_id").Unique().Required(),
 		edge.From("mission_batch", MissionBatch.Type).Ref("extra_service_order").Field("mission_batch_id").Unique().Required(),
+	}
+}
+
+// Indexes of ExtraServiceOrder
+func (ExtraServiceOrder) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("mission_id"),
+		index.Fields("mission_order_id"),
+		index.Fields("symbol_id"),
+		index.Fields("mission_batch_id"),
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // LoginRecord holds the schema definition for the LoginRecord entity.
@@ -28,6 +29,13 @@ func (LoginRecord) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.From("user", User.Type).Ref("login_records").Field("user_id").Unique().Required(),
+	}
+}
+
+// Indexes of the LoginRecord
+func (LoginRecord) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
 	}
 }
 

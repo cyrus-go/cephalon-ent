@@ -19,7 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// 任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_consume_orders 等订单侧
+// 任务，具备任务要求，记录完成情况和结果，金额相关信息在 mission_orders 等订单侧
 type Mission struct {
 	config `json:"-"`
 	// ID of the ent.

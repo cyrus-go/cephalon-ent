@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 type Collect struct {
@@ -19,7 +20,7 @@ func (Collect) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the Collect.
 func (Collect) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -27,13 +28,21 @@ func (Collect) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ServerOrder
+// Indexes of the Collect.
+func (Collect) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id"),
+	}
+}
+
+// Mixin of Collect.
 func (Collect) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}
 }
 
+// Annotations of Collect.
 func (Collect) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("用户的图片收藏"),

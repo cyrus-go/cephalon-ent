@@ -39,12 +39,14 @@ func (Symbol) Mixin() []ent.Mixin {
 	}
 }
 
+// Indexes of Symbol
 func (Symbol) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("name", "deleted_at").Unique(),
 	}
 }
 
+// Annotations of Symbol
 func (Symbol) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		schema.Comment("币种，与用户多对多，通过钱包 Wallet"),

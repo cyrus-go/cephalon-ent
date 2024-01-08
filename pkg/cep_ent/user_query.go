@@ -11,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
@@ -77,6 +79,8 @@ type UserQuery struct {
 	withProduceMissionOrders  *MissionOrderQuery
 	withLoginRecords          *LoginRecordQuery
 	withRenewalAgreements     *RenewalAgreementQuery
+	withArtworks              *ArtworkQuery
+	withArtworkLikes          *ArtworkLikeQuery
 	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -774,6 +778,50 @@ func (uq *UserQuery) QueryRenewalAgreements() *RenewalAgreementQuery {
 	return query
 }
 
+// QueryArtworks chains the current query on the "artworks" edge.
+func (uq *UserQuery) QueryArtworks() *ArtworkQuery {
+	query := (&ArtworkClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(artwork.Table, artwork.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ArtworksTable, user.ArtworksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryArtworkLikes chains the current query on the "artwork_likes" edge.
+func (uq *UserQuery) QueryArtworkLikes() *ArtworkLikeQuery {
+	query := (&ArtworkLikeClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(artworklike.Table, artworklike.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ArtworkLikesTable, user.ArtworkLikesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -996,6 +1044,8 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withProduceMissionOrders:  uq.withProduceMissionOrders.Clone(),
 		withLoginRecords:          uq.withLoginRecords.Clone(),
 		withRenewalAgreements:     uq.withRenewalAgreements.Clone(),
+		withArtworks:              uq.withArtworks.Clone(),
+		withArtworkLikes:          uq.withArtworkLikes.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1332,6 +1382,28 @@ func (uq *UserQuery) WithRenewalAgreements(opts ...func(*RenewalAgreementQuery))
 	return uq
 }
 
+// WithArtworks tells the query-builder to eager-load the nodes that are connected to
+// the "artworks" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithArtworks(opts ...func(*ArtworkQuery)) *UserQuery {
+	query := (&ArtworkClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withArtworks = query
+	return uq
+}
+
+// WithArtworkLikes tells the query-builder to eager-load the nodes that are connected to
+// the "artwork_likes" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithArtworkLikes(opts ...func(*ArtworkLikeQuery)) *UserQuery {
+	query := (&ArtworkLikeClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withArtworkLikes = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1410,7 +1482,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [30]bool{
+		loadedTypes = [32]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1441,6 +1513,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withProduceMissionOrders != nil,
 			uq.withLoginRecords != nil,
 			uq.withRenewalAgreements != nil,
+			uq.withArtworks != nil,
+			uq.withArtworkLikes != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1678,6 +1752,20 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadRenewalAgreements(ctx, query, nodes,
 			func(n *User) { n.Edges.RenewalAgreements = []*RenewalAgreement{} },
 			func(n *User, e *RenewalAgreement) { n.Edges.RenewalAgreements = append(n.Edges.RenewalAgreements, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withArtworks; query != nil {
+		if err := uq.loadArtworks(ctx, query, nodes,
+			func(n *User) { n.Edges.Artworks = []*Artwork{} },
+			func(n *User, e *Artwork) { n.Edges.Artworks = append(n.Edges.Artworks, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withArtworkLikes; query != nil {
+		if err := uq.loadArtworkLikes(ctx, query, nodes,
+			func(n *User) { n.Edges.ArtworkLikes = []*ArtworkLike{} },
+			func(n *User, e *ArtworkLike) { n.Edges.ArtworkLikes = append(n.Edges.ArtworkLikes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2564,6 +2652,66 @@ func (uq *UserQuery) loadRenewalAgreements(ctx context.Context, query *RenewalAg
 	}
 	query.Where(predicate.RenewalAgreement(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.RenewalAgreementsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadArtworks(ctx context.Context, query *ArtworkQuery, nodes []*User, init func(*User), assign func(*User, *Artwork)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(artwork.FieldAuthorID)
+	}
+	query.Where(predicate.Artwork(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ArtworksColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.AuthorID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "author_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadArtworkLikes(ctx context.Context, query *ArtworkLikeQuery, nodes []*User, init func(*User), assign func(*User, *ArtworkLike)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(artworklike.FieldUserID)
+	}
+	query.Where(predicate.ArtworkLike(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ArtworkLikesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

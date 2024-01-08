@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
@@ -34,6 +35,7 @@ type DeviceQuery struct {
 	withDeviceGpuMissions    *DeviceGpuMissionQuery
 	withFrpcInfos            *FrpcInfoQuery
 	withMissionOrders        *MissionOrderQuery
+	withMissionProductions   *MissionProductionQuery
 	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -196,6 +198,28 @@ func (dq *DeviceQuery) QueryMissionOrders() *MissionOrderQuery {
 			sqlgraph.From(device.Table, device.FieldID, selector),
 			sqlgraph.To(missionorder.Table, missionorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionOrdersTable, device.MissionOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMissionProductions chains the current query on the "mission_productions" edge.
+func (dq *DeviceQuery) QueryMissionProductions() *MissionProductionQuery {
+	query := (&MissionProductionClient{config: dq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, selector),
+			sqlgraph.To(missionproduction.Table, missionproduction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionProductionsTable, device.MissionProductionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
 		return fromU, nil
@@ -401,6 +425,7 @@ func (dq *DeviceQuery) Clone() *DeviceQuery {
 		withDeviceGpuMissions:    dq.withDeviceGpuMissions.Clone(),
 		withFrpcInfos:            dq.withFrpcInfos.Clone(),
 		withMissionOrders:        dq.withMissionOrders.Clone(),
+		withMissionProductions:   dq.withMissionProductions.Clone(),
 		// clone intermediate query.
 		sql:  dq.sql.Clone(),
 		path: dq.path,
@@ -470,6 +495,17 @@ func (dq *DeviceQuery) WithMissionOrders(opts ...func(*MissionOrderQuery)) *Devi
 		opt(query)
 	}
 	dq.withMissionOrders = query
+	return dq
+}
+
+// WithMissionProductions tells the query-builder to eager-load the nodes that are connected to
+// the "mission_productions" edge. The optional arguments are used to configure the query builder of the edge.
+func (dq *DeviceQuery) WithMissionProductions(opts ...func(*MissionProductionQuery)) *DeviceQuery {
+	query := (&MissionProductionClient{config: dq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	dq.withMissionProductions = query
 	return dq
 }
 
@@ -551,13 +587,14 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 	var (
 		nodes       = []*Device{}
 		_spec       = dq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			dq.withUser != nil,
 			dq.withMissionProduceOrders != nil,
 			dq.withUserDevices != nil,
 			dq.withDeviceGpuMissions != nil,
 			dq.withFrpcInfos != nil,
 			dq.withMissionOrders != nil,
+			dq.withMissionProductions != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -621,6 +658,15 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 		if err := dq.loadMissionOrders(ctx, query, nodes,
 			func(n *Device) { n.Edges.MissionOrders = []*MissionOrder{} },
 			func(n *Device, e *MissionOrder) { n.Edges.MissionOrders = append(n.Edges.MissionOrders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := dq.withMissionProductions; query != nil {
+		if err := dq.loadMissionProductions(ctx, query, nodes,
+			func(n *Device) { n.Edges.MissionProductions = []*MissionProduction{} },
+			func(n *Device, e *MissionProduction) {
+				n.Edges.MissionProductions = append(n.Edges.MissionProductions, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -792,6 +838,36 @@ func (dq *DeviceQuery) loadMissionOrders(ctx context.Context, query *MissionOrde
 	}
 	query.Where(predicate.MissionOrder(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(device.MissionOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.DeviceID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "device_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (dq *DeviceQuery) loadMissionProductions(ctx context.Context, query *MissionProductionQuery, nodes []*Device, init func(*Device), assign func(*Device, *MissionProduction)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Device)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionproduction.FieldDeviceID)
+	}
+	query.Where(predicate.MissionProduction(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(device.MissionProductionsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

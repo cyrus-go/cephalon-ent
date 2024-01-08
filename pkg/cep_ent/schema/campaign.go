@@ -13,7 +13,7 @@ type Campaign struct {
 	ent.Schema
 }
 
-// Fields of the Invite.
+// Fields of the Campaign.
 func (Campaign) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Default("").StructTag(`json:"name"`).Comment("活动名称"),

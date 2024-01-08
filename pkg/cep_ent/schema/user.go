@@ -64,7 +64,14 @@ func (User) Edges() []ent.Edge {
 		edge.To("produce_mission_orders", MissionOrder.Type),
 		edge.To("login_records", LoginRecord.Type),
 		edge.To("renewal_agreements", RenewalAgreement.Type),
+		edge.To("artworks", Artwork.Type),
+		edge.To("artwork_likes", ArtworkLike.Type),
 	}
+}
+
+// Indexes of User
+func (User) Indexes() []ent.Index {
+	return []ent.Index{}
 }
 
 // Mixin of User

@@ -22,7 +22,7 @@ func (Gpu) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ServerOrder.
+// Edges of the Gpu.
 func (Gpu) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
@@ -31,7 +31,7 @@ func (Gpu) Edges() []ent.Edge {
 	}
 }
 
-// Mixin of ServerOrder
+// Mixin of Gpu
 func (Gpu) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
