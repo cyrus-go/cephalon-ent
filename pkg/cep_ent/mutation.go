@@ -63921,9 +63921,10 @@ type WithdrawAccountMutation struct {
 	updated_at       *time.Time
 	deleted_at       *time.Time
 	business_name    *string
-	business_type    *enums.BusinessType
 	business_id      *int64
 	addbusiness_id   *int64
+	business_type    *enums.BusinessType
+	id_card          *string
 	personal_name    *string
 	phone            *string
 	bank_card_number *string
@@ -64332,42 +64333,6 @@ func (m *WithdrawAccountMutation) ResetBusinessName() {
 	m.business_name = nil
 }
 
-// SetBusinessType sets the "business_type" field.
-func (m *WithdrawAccountMutation) SetBusinessType(et enums.BusinessType) {
-	m.business_type = &et
-}
-
-// BusinessType returns the value of the "business_type" field in the mutation.
-func (m *WithdrawAccountMutation) BusinessType() (r enums.BusinessType, exists bool) {
-	v := m.business_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldBusinessType returns the old "business_type" field's value of the WithdrawAccount entity.
-// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v enums.BusinessType, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBusinessType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBusinessType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBusinessType: %w", err)
-	}
-	return oldValue.BusinessType, nil
-}
-
-// ResetBusinessType resets all changes to the "business_type" field.
-func (m *WithdrawAccountMutation) ResetBusinessType() {
-	m.business_type = nil
-}
-
 // SetBusinessID sets the "business_id" field.
 func (m *WithdrawAccountMutation) SetBusinessID(i int64) {
 	m.business_id = &i
@@ -64422,6 +64387,78 @@ func (m *WithdrawAccountMutation) AddedBusinessID() (r int64, exists bool) {
 func (m *WithdrawAccountMutation) ResetBusinessID() {
 	m.business_id = nil
 	m.addbusiness_id = nil
+}
+
+// SetBusinessType sets the "business_type" field.
+func (m *WithdrawAccountMutation) SetBusinessType(et enums.BusinessType) {
+	m.business_type = &et
+}
+
+// BusinessType returns the value of the "business_type" field in the mutation.
+func (m *WithdrawAccountMutation) BusinessType() (r enums.BusinessType, exists bool) {
+	v := m.business_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBusinessType returns the old "business_type" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v enums.BusinessType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBusinessType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBusinessType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBusinessType: %w", err)
+	}
+	return oldValue.BusinessType, nil
+}
+
+// ResetBusinessType resets all changes to the "business_type" field.
+func (m *WithdrawAccountMutation) ResetBusinessType() {
+	m.business_type = nil
+}
+
+// SetIDCard sets the "id_card" field.
+func (m *WithdrawAccountMutation) SetIDCard(s string) {
+	m.id_card = &s
+}
+
+// IDCard returns the value of the "id_card" field in the mutation.
+func (m *WithdrawAccountMutation) IDCard() (r string, exists bool) {
+	v := m.id_card
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIDCard returns the old "id_card" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldIDCard(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIDCard is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIDCard requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIDCard: %w", err)
+	}
+	return oldValue.IDCard, nil
+}
+
+// ResetIDCard resets all changes to the "id_card" field.
+func (m *WithdrawAccountMutation) ResetIDCard() {
+	m.id_card = nil
 }
 
 // SetPersonalName sets the "personal_name" field.
@@ -64629,7 +64666,7 @@ func (m *WithdrawAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawAccountMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, withdrawaccount.FieldCreatedBy)
 	}
@@ -64651,11 +64688,14 @@ func (m *WithdrawAccountMutation) Fields() []string {
 	if m.business_name != nil {
 		fields = append(fields, withdrawaccount.FieldBusinessName)
 	}
+	if m.business_id != nil {
+		fields = append(fields, withdrawaccount.FieldBusinessID)
+	}
 	if m.business_type != nil {
 		fields = append(fields, withdrawaccount.FieldBusinessType)
 	}
-	if m.business_id != nil {
-		fields = append(fields, withdrawaccount.FieldBusinessID)
+	if m.id_card != nil {
+		fields = append(fields, withdrawaccount.FieldIDCard)
 	}
 	if m.personal_name != nil {
 		fields = append(fields, withdrawaccount.FieldPersonalName)
@@ -64691,10 +64731,12 @@ func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case withdrawaccount.FieldBusinessName:
 		return m.BusinessName()
-	case withdrawaccount.FieldBusinessType:
-		return m.BusinessType()
 	case withdrawaccount.FieldBusinessID:
 		return m.BusinessID()
+	case withdrawaccount.FieldBusinessType:
+		return m.BusinessType()
+	case withdrawaccount.FieldIDCard:
+		return m.IDCard()
 	case withdrawaccount.FieldPersonalName:
 		return m.PersonalName()
 	case withdrawaccount.FieldPhone:
@@ -64726,10 +64768,12 @@ func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUserID(ctx)
 	case withdrawaccount.FieldBusinessName:
 		return m.OldBusinessName(ctx)
-	case withdrawaccount.FieldBusinessType:
-		return m.OldBusinessType(ctx)
 	case withdrawaccount.FieldBusinessID:
 		return m.OldBusinessID(ctx)
+	case withdrawaccount.FieldBusinessType:
+		return m.OldBusinessType(ctx)
+	case withdrawaccount.FieldIDCard:
+		return m.OldIDCard(ctx)
 	case withdrawaccount.FieldPersonalName:
 		return m.OldPersonalName(ctx)
 	case withdrawaccount.FieldPhone:
@@ -64796,6 +64840,13 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBusinessName(v)
 		return nil
+	case withdrawaccount.FieldBusinessID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBusinessID(v)
+		return nil
 	case withdrawaccount.FieldBusinessType:
 		v, ok := value.(enums.BusinessType)
 		if !ok {
@@ -64803,12 +64854,12 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBusinessType(v)
 		return nil
-	case withdrawaccount.FieldBusinessID:
-		v, ok := value.(int64)
+	case withdrawaccount.FieldIDCard:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetBusinessID(v)
+		m.SetIDCard(v)
 		return nil
 	case withdrawaccount.FieldPersonalName:
 		v, ok := value.(string)
@@ -64947,11 +64998,14 @@ func (m *WithdrawAccountMutation) ResetField(name string) error {
 	case withdrawaccount.FieldBusinessName:
 		m.ResetBusinessName()
 		return nil
+	case withdrawaccount.FieldBusinessID:
+		m.ResetBusinessID()
+		return nil
 	case withdrawaccount.FieldBusinessType:
 		m.ResetBusinessType()
 		return nil
-	case withdrawaccount.FieldBusinessID:
-		m.ResetBusinessID()
+	case withdrawaccount.FieldIDCard:
+		m.ResetIDCard()
 		return nil
 	case withdrawaccount.FieldPersonalName:
 		m.ResetPersonalName()

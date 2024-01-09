@@ -122,6 +122,20 @@ func (wac *WithdrawAccountCreate) SetNillableBusinessName(s *string) *WithdrawAc
 	return wac
 }
 
+// SetBusinessID sets the "business_id" field.
+func (wac *WithdrawAccountCreate) SetBusinessID(i int64) *WithdrawAccountCreate {
+	wac.mutation.SetBusinessID(i)
+	return wac
+}
+
+// SetNillableBusinessID sets the "business_id" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableBusinessID(i *int64) *WithdrawAccountCreate {
+	if i != nil {
+		wac.SetBusinessID(*i)
+	}
+	return wac
+}
+
 // SetBusinessType sets the "business_type" field.
 func (wac *WithdrawAccountCreate) SetBusinessType(et enums.BusinessType) *WithdrawAccountCreate {
 	wac.mutation.SetBusinessType(et)
@@ -136,16 +150,16 @@ func (wac *WithdrawAccountCreate) SetNillableBusinessType(et *enums.BusinessType
 	return wac
 }
 
-// SetBusinessID sets the "business_id" field.
-func (wac *WithdrawAccountCreate) SetBusinessID(i int64) *WithdrawAccountCreate {
-	wac.mutation.SetBusinessID(i)
+// SetIDCard sets the "id_card" field.
+func (wac *WithdrawAccountCreate) SetIDCard(s string) *WithdrawAccountCreate {
+	wac.mutation.SetIDCard(s)
 	return wac
 }
 
-// SetNillableBusinessID sets the "business_id" field if the given value is not nil.
-func (wac *WithdrawAccountCreate) SetNillableBusinessID(i *int64) *WithdrawAccountCreate {
-	if i != nil {
-		wac.SetBusinessID(*i)
+// SetNillableIDCard sets the "id_card" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableIDCard(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetIDCard(*s)
 	}
 	return wac
 }
@@ -288,13 +302,17 @@ func (wac *WithdrawAccountCreate) defaults() {
 		v := withdrawaccount.DefaultBusinessName
 		wac.mutation.SetBusinessName(v)
 	}
+	if _, ok := wac.mutation.BusinessID(); !ok {
+		v := withdrawaccount.DefaultBusinessID
+		wac.mutation.SetBusinessID(v)
+	}
 	if _, ok := wac.mutation.BusinessType(); !ok {
 		v := withdrawaccount.DefaultBusinessType
 		wac.mutation.SetBusinessType(v)
 	}
-	if _, ok := wac.mutation.BusinessID(); !ok {
-		v := withdrawaccount.DefaultBusinessID
-		wac.mutation.SetBusinessID(v)
+	if _, ok := wac.mutation.IDCard(); !ok {
+		v := withdrawaccount.DefaultIDCard
+		wac.mutation.SetIDCard(v)
 	}
 	if _, ok := wac.mutation.PersonalName(); !ok {
 		v := withdrawaccount.DefaultPersonalName
@@ -341,6 +359,9 @@ func (wac *WithdrawAccountCreate) check() error {
 	if _, ok := wac.mutation.BusinessName(); !ok {
 		return &ValidationError{Name: "business_name", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_name"`)}
 	}
+	if _, ok := wac.mutation.BusinessID(); !ok {
+		return &ValidationError{Name: "business_id", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_id"`)}
+	}
 	if _, ok := wac.mutation.BusinessType(); !ok {
 		return &ValidationError{Name: "business_type", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_type"`)}
 	}
@@ -349,8 +370,8 @@ func (wac *WithdrawAccountCreate) check() error {
 			return &ValidationError{Name: "business_type", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.business_type": %w`, err)}
 		}
 	}
-	if _, ok := wac.mutation.BusinessID(); !ok {
-		return &ValidationError{Name: "business_id", err: errors.New(`cep_ent: missing required field "WithdrawAccount.business_id"`)}
+	if _, ok := wac.mutation.IDCard(); !ok {
+		return &ValidationError{Name: "id_card", err: errors.New(`cep_ent: missing required field "WithdrawAccount.id_card"`)}
 	}
 	if _, ok := wac.mutation.PersonalName(); !ok {
 		return &ValidationError{Name: "personal_name", err: errors.New(`cep_ent: missing required field "WithdrawAccount.personal_name"`)}
@@ -424,13 +445,17 @@ func (wac *WithdrawAccountCreate) createSpec() (*WithdrawAccount, *sqlgraph.Crea
 		_spec.SetField(withdrawaccount.FieldBusinessName, field.TypeString, value)
 		_node.BusinessName = value
 	}
+	if value, ok := wac.mutation.BusinessID(); ok {
+		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
+		_node.BusinessID = value
+	}
 	if value, ok := wac.mutation.BusinessType(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
 		_node.BusinessType = value
 	}
-	if value, ok := wac.mutation.BusinessID(); ok {
-		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
-		_node.BusinessID = value
+	if value, ok := wac.mutation.IDCard(); ok {
+		_spec.SetField(withdrawaccount.FieldIDCard, field.TypeString, value)
+		_node.IDCard = value
 	}
 	if value, ok := wac.mutation.PersonalName(); ok {
 		_spec.SetField(withdrawaccount.FieldPersonalName, field.TypeString, value)
@@ -601,18 +626,6 @@ func (u *WithdrawAccountUpsert) UpdateBusinessName() *WithdrawAccountUpsert {
 	return u
 }
 
-// SetBusinessType sets the "business_type" field.
-func (u *WithdrawAccountUpsert) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsert {
-	u.Set(withdrawaccount.FieldBusinessType, v)
-	return u
-}
-
-// UpdateBusinessType sets the "business_type" field to the value that was provided on create.
-func (u *WithdrawAccountUpsert) UpdateBusinessType() *WithdrawAccountUpsert {
-	u.SetExcluded(withdrawaccount.FieldBusinessType)
-	return u
-}
-
 // SetBusinessID sets the "business_id" field.
 func (u *WithdrawAccountUpsert) SetBusinessID(v int64) *WithdrawAccountUpsert {
 	u.Set(withdrawaccount.FieldBusinessID, v)
@@ -628,6 +641,30 @@ func (u *WithdrawAccountUpsert) UpdateBusinessID() *WithdrawAccountUpsert {
 // AddBusinessID adds v to the "business_id" field.
 func (u *WithdrawAccountUpsert) AddBusinessID(v int64) *WithdrawAccountUpsert {
 	u.Add(withdrawaccount.FieldBusinessID, v)
+	return u
+}
+
+// SetBusinessType sets the "business_type" field.
+func (u *WithdrawAccountUpsert) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldBusinessType, v)
+	return u
+}
+
+// UpdateBusinessType sets the "business_type" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateBusinessType() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldBusinessType)
+	return u
+}
+
+// SetIDCard sets the "id_card" field.
+func (u *WithdrawAccountUpsert) SetIDCard(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldIDCard, v)
+	return u
+}
+
+// UpdateIDCard sets the "id_card" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateIDCard() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldIDCard)
 	return u
 }
 
@@ -828,20 +865,6 @@ func (u *WithdrawAccountUpsertOne) UpdateBusinessName() *WithdrawAccountUpsertOn
 	})
 }
 
-// SetBusinessType sets the "business_type" field.
-func (u *WithdrawAccountUpsertOne) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsertOne {
-	return u.Update(func(s *WithdrawAccountUpsert) {
-		s.SetBusinessType(v)
-	})
-}
-
-// UpdateBusinessType sets the "business_type" field to the value that was provided on create.
-func (u *WithdrawAccountUpsertOne) UpdateBusinessType() *WithdrawAccountUpsertOne {
-	return u.Update(func(s *WithdrawAccountUpsert) {
-		s.UpdateBusinessType()
-	})
-}
-
 // SetBusinessID sets the "business_id" field.
 func (u *WithdrawAccountUpsertOne) SetBusinessID(v int64) *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
@@ -860,6 +883,34 @@ func (u *WithdrawAccountUpsertOne) AddBusinessID(v int64) *WithdrawAccountUpsert
 func (u *WithdrawAccountUpsertOne) UpdateBusinessID() *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateBusinessID()
+	})
+}
+
+// SetBusinessType sets the "business_type" field.
+func (u *WithdrawAccountUpsertOne) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetBusinessType(v)
+	})
+}
+
+// UpdateBusinessType sets the "business_type" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateBusinessType() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateBusinessType()
+	})
+}
+
+// SetIDCard sets the "id_card" field.
+func (u *WithdrawAccountUpsertOne) SetIDCard(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetIDCard(v)
+	})
+}
+
+// UpdateIDCard sets the "id_card" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateIDCard() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateIDCard()
 	})
 }
 
@@ -1234,20 +1285,6 @@ func (u *WithdrawAccountUpsertBulk) UpdateBusinessName() *WithdrawAccountUpsertB
 	})
 }
 
-// SetBusinessType sets the "business_type" field.
-func (u *WithdrawAccountUpsertBulk) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsertBulk {
-	return u.Update(func(s *WithdrawAccountUpsert) {
-		s.SetBusinessType(v)
-	})
-}
-
-// UpdateBusinessType sets the "business_type" field to the value that was provided on create.
-func (u *WithdrawAccountUpsertBulk) UpdateBusinessType() *WithdrawAccountUpsertBulk {
-	return u.Update(func(s *WithdrawAccountUpsert) {
-		s.UpdateBusinessType()
-	})
-}
-
 // SetBusinessID sets the "business_id" field.
 func (u *WithdrawAccountUpsertBulk) SetBusinessID(v int64) *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
@@ -1266,6 +1303,34 @@ func (u *WithdrawAccountUpsertBulk) AddBusinessID(v int64) *WithdrawAccountUpser
 func (u *WithdrawAccountUpsertBulk) UpdateBusinessID() *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateBusinessID()
+	})
+}
+
+// SetBusinessType sets the "business_type" field.
+func (u *WithdrawAccountUpsertBulk) SetBusinessType(v enums.BusinessType) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetBusinessType(v)
+	})
+}
+
+// UpdateBusinessType sets the "business_type" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateBusinessType() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateBusinessType()
+	})
+}
+
+// SetIDCard sets the "id_card" field.
+func (u *WithdrawAccountUpsertBulk) SetIDCard(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetIDCard(v)
+	})
+}
+
+// UpdateIDCard sets the "id_card" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateIDCard() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateIDCard()
 	})
 }
 

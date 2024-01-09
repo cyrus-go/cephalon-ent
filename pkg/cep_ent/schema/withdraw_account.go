@@ -19,8 +19,9 @@ func (WithdrawAccount) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("外键用户 id"),
 		field.String("business_name").Default("").StructTag(`json:"business_name"`).Comment("威付通商户名称"),
-		field.Enum("business_type").GoType(enums.BusinessTypeYun).Default(string(enums.BusinessTypeYun)).StructTag(`json:"business_type"`).Comment("商户类型"),
 		field.Int64("business_id").Default(0).StructTag(`json:"business_id"`).Comment("商户 id"),
+		field.Enum("business_type").GoType(enums.BusinessTypeYun).Default(string(enums.BusinessTypeYun)).StructTag(`json:"business_type"`).Comment("商户类型"),
+		field.String("id_card").Default("").StructTag(`json:"id_card"`).Comment("身份证号码"),
 		field.String("personal_name").Default("未设置昵称").StructTag(`json:"personal_name"`).Comment("个人商户名称"),
 		field.String("phone").Default("").StructTag(`json:"phone"`).Comment("个人商户手机号"),
 		field.String("bank_card_number").Default("").StructTag(`json:"bank_card_number"`).Comment("银行卡号"),

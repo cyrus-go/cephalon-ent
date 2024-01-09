@@ -30,10 +30,12 @@ const (
 	FieldUserID = "user_id"
 	// FieldBusinessName holds the string denoting the business_name field in the database.
 	FieldBusinessName = "business_name"
-	// FieldBusinessType holds the string denoting the business_type field in the database.
-	FieldBusinessType = "business_type"
 	// FieldBusinessID holds the string denoting the business_id field in the database.
 	FieldBusinessID = "business_id"
+	// FieldBusinessType holds the string denoting the business_type field in the database.
+	FieldBusinessType = "business_type"
+	// FieldIDCard holds the string denoting the id_card field in the database.
+	FieldIDCard = "id_card"
 	// FieldPersonalName holds the string denoting the personal_name field in the database.
 	FieldPersonalName = "personal_name"
 	// FieldPhone holds the string denoting the phone field in the database.
@@ -65,8 +67,9 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldBusinessName,
-	FieldBusinessType,
 	FieldBusinessID,
+	FieldBusinessType,
+	FieldIDCard,
 	FieldPersonalName,
 	FieldPhone,
 	FieldBankCardNumber,
@@ -102,6 +105,8 @@ var (
 	DefaultBusinessName string
 	// DefaultBusinessID holds the default value on creation for the "business_id" field.
 	DefaultBusinessID int64
+	// DefaultIDCard holds the default value on creation for the "id_card" field.
+	DefaultIDCard string
 	// DefaultPersonalName holds the default value on creation for the "personal_name" field.
 	DefaultPersonalName string
 	// DefaultPhone holds the default value on creation for the "phone" field.
@@ -169,14 +174,19 @@ func ByBusinessName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBusinessName, opts...).ToFunc()
 }
 
+// ByBusinessID orders the results by the business_id field.
+func ByBusinessID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBusinessID, opts...).ToFunc()
+}
+
 // ByBusinessType orders the results by the business_type field.
 func ByBusinessType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBusinessType, opts...).ToFunc()
 }
 
-// ByBusinessID orders the results by the business_id field.
-func ByBusinessID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldBusinessID, opts...).ToFunc()
+// ByIDCard orders the results by the id_card field.
+func ByIDCard(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIDCard, opts...).ToFunc()
 }
 
 // ByPersonalName orders the results by the personal_name field.

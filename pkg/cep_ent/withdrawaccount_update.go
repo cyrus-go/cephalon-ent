@@ -121,20 +121,6 @@ func (wau *WithdrawAccountUpdate) SetNillableBusinessName(s *string) *WithdrawAc
 	return wau
 }
 
-// SetBusinessType sets the "business_type" field.
-func (wau *WithdrawAccountUpdate) SetBusinessType(et enums.BusinessType) *WithdrawAccountUpdate {
-	wau.mutation.SetBusinessType(et)
-	return wau
-}
-
-// SetNillableBusinessType sets the "business_type" field if the given value is not nil.
-func (wau *WithdrawAccountUpdate) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountUpdate {
-	if et != nil {
-		wau.SetBusinessType(*et)
-	}
-	return wau
-}
-
 // SetBusinessID sets the "business_id" field.
 func (wau *WithdrawAccountUpdate) SetBusinessID(i int64) *WithdrawAccountUpdate {
 	wau.mutation.ResetBusinessID()
@@ -153,6 +139,34 @@ func (wau *WithdrawAccountUpdate) SetNillableBusinessID(i *int64) *WithdrawAccou
 // AddBusinessID adds i to the "business_id" field.
 func (wau *WithdrawAccountUpdate) AddBusinessID(i int64) *WithdrawAccountUpdate {
 	wau.mutation.AddBusinessID(i)
+	return wau
+}
+
+// SetBusinessType sets the "business_type" field.
+func (wau *WithdrawAccountUpdate) SetBusinessType(et enums.BusinessType) *WithdrawAccountUpdate {
+	wau.mutation.SetBusinessType(et)
+	return wau
+}
+
+// SetNillableBusinessType sets the "business_type" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountUpdate {
+	if et != nil {
+		wau.SetBusinessType(*et)
+	}
+	return wau
+}
+
+// SetIDCard sets the "id_card" field.
+func (wau *WithdrawAccountUpdate) SetIDCard(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetIDCard(s)
+	return wau
+}
+
+// SetNillableIDCard sets the "id_card" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableIDCard(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetIDCard(*s)
+	}
 	return wau
 }
 
@@ -316,14 +330,17 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := wau.mutation.BusinessName(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessName, field.TypeString, value)
 	}
-	if value, ok := wau.mutation.BusinessType(); ok {
-		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
-	}
 	if value, ok := wau.mutation.BusinessID(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
 	}
 	if value, ok := wau.mutation.AddedBusinessID(); ok {
 		_spec.AddField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
+	}
+	if value, ok := wau.mutation.BusinessType(); ok {
+		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
+	}
+	if value, ok := wau.mutation.IDCard(); ok {
+		_spec.SetField(withdrawaccount.FieldIDCard, field.TypeString, value)
 	}
 	if value, ok := wau.mutation.PersonalName(); ok {
 		_spec.SetField(withdrawaccount.FieldPersonalName, field.TypeString, value)
@@ -478,20 +495,6 @@ func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessName(s *string) *Withdr
 	return wauo
 }
 
-// SetBusinessType sets the "business_type" field.
-func (wauo *WithdrawAccountUpdateOne) SetBusinessType(et enums.BusinessType) *WithdrawAccountUpdateOne {
-	wauo.mutation.SetBusinessType(et)
-	return wauo
-}
-
-// SetNillableBusinessType sets the "business_type" field if the given value is not nil.
-func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountUpdateOne {
-	if et != nil {
-		wauo.SetBusinessType(*et)
-	}
-	return wauo
-}
-
 // SetBusinessID sets the "business_id" field.
 func (wauo *WithdrawAccountUpdateOne) SetBusinessID(i int64) *WithdrawAccountUpdateOne {
 	wauo.mutation.ResetBusinessID()
@@ -510,6 +513,34 @@ func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessID(i *int64) *WithdrawA
 // AddBusinessID adds i to the "business_id" field.
 func (wauo *WithdrawAccountUpdateOne) AddBusinessID(i int64) *WithdrawAccountUpdateOne {
 	wauo.mutation.AddBusinessID(i)
+	return wauo
+}
+
+// SetBusinessType sets the "business_type" field.
+func (wauo *WithdrawAccountUpdateOne) SetBusinessType(et enums.BusinessType) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetBusinessType(et)
+	return wauo
+}
+
+// SetNillableBusinessType sets the "business_type" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableBusinessType(et *enums.BusinessType) *WithdrawAccountUpdateOne {
+	if et != nil {
+		wauo.SetBusinessType(*et)
+	}
+	return wauo
+}
+
+// SetIDCard sets the "id_card" field.
+func (wauo *WithdrawAccountUpdateOne) SetIDCard(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetIDCard(s)
+	return wauo
+}
+
+// SetNillableIDCard sets the "id_card" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableIDCard(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetIDCard(*s)
+	}
 	return wauo
 }
 
@@ -703,14 +734,17 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 	if value, ok := wauo.mutation.BusinessName(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessName, field.TypeString, value)
 	}
-	if value, ok := wauo.mutation.BusinessType(); ok {
-		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
-	}
 	if value, ok := wauo.mutation.BusinessID(); ok {
 		_spec.SetField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
 	}
 	if value, ok := wauo.mutation.AddedBusinessID(); ok {
 		_spec.AddField(withdrawaccount.FieldBusinessID, field.TypeInt64, value)
+	}
+	if value, ok := wauo.mutation.BusinessType(); ok {
+		_spec.SetField(withdrawaccount.FieldBusinessType, field.TypeEnum, value)
+	}
+	if value, ok := wauo.mutation.IDCard(); ok {
+		_spec.SetField(withdrawaccount.FieldIDCard, field.TypeString, value)
 	}
 	if value, ok := wauo.mutation.PersonalName(); ok {
 		_spec.SetField(withdrawaccount.FieldPersonalName, field.TypeString, value)
