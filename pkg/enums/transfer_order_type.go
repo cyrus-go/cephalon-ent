@@ -10,10 +10,16 @@ const (
 	TransferOrderTypeRechargeAlipay TransferOrderType = "recharge_alipay"
 	TransferOrderTypeManual         TransferOrderType = "manual"
 	TransferOrderTypeWithdraw       TransferOrderType = "withdraw"
+	TransferOrderTypeWithdrawWX     TransferOrderType = "withdraw_vx"
+	TransferOrderTypeWithdrawAlipay TransferOrderType = "withdraw_alipay"
+	TransferOrderTypeBankCard       TransferOrderType = "withdraw_bank_card"
 )
 
 func (TransferOrderType) Values() []string {
 	return []string{
+		string(TransferOrderTypeWithdrawWX),
+		string(TransferOrderTypeWithdrawAlipay),
+		string(TransferOrderTypeBankCard),
 		string(TransferOrderTypeUnknown),
 		string(TransferOrderTypeRecharge),
 		string(TransferOrderTypeRechargeVX),
