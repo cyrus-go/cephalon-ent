@@ -30,10 +30,16 @@ const (
 	BillWayExtraServiceHold          BillWay = "extra_service_hold"
 	BillWayExtraServiceVolume        BillWay = "extra_service_volume"
 	BillWayExtraServiceTime          BillWay = "extra_service_time"
+	BillWayWithdrawVX                BillWay = "withdraw_wechat"
+	BillWayWithdrawAlipay            BillWay = "withdraw_alipay"
+	BillWayBankCard                  BillWay = "withdraw_bank_card"
 )
 
 func (BillWay) Values() []string {
 	return []string{
+		string(BillWayBankCard),
+		string(BillWayWithdrawAlipay),
+		string(BillWayWithdrawVX),
 		string(BillWayUnknown),
 		string(BillWayRechargeWechat),
 		string(BillWayRechargeAlipay),
