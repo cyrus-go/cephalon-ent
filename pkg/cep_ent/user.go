@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 )
 
 // 用户表
@@ -104,8 +105,8 @@ type UserEdges struct {
 	CampaignOrders []*CampaignOrder `json:"campaign_orders,omitempty"`
 	// Wallets holds the value of the wallets edge.
 	Wallets []*Wallet `json:"wallets,omitempty"`
-	// WithdrawAccounts holds the value of the withdraw_accounts edge.
-	WithdrawAccounts []*WithdrawAccount `json:"withdraw_accounts,omitempty"`
+	// WithdrawAccount holds the value of the withdraw_account edge.
+	WithdrawAccount *WithdrawAccount `json:"withdraw_account,omitempty"`
 	// IncomeBills holds the value of the income_bills edge.
 	IncomeBills []*Bill `json:"income_bills,omitempty"`
 	// OutcomeBills holds the value of the outcome_bills edge.
@@ -318,13 +319,17 @@ func (e UserEdges) WalletsOrErr() ([]*Wallet, error) {
 	return nil, &NotLoadedError{edge: "wallets"}
 }
 
-// WithdrawAccountsOrErr returns the WithdrawAccounts value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) WithdrawAccountsOrErr() ([]*WithdrawAccount, error) {
+// WithdrawAccountOrErr returns the WithdrawAccount value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) WithdrawAccountOrErr() (*WithdrawAccount, error) {
 	if e.loadedTypes[19] {
-		return e.WithdrawAccounts, nil
+		if e.WithdrawAccount == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: withdrawaccount.Label}
+		}
+		return e.WithdrawAccount, nil
 	}
-	return nil, &NotLoadedError{edge: "withdraw_accounts"}
+	return nil, &NotLoadedError{edge: "withdraw_account"}
 }
 
 // IncomeBillsOrErr returns the IncomeBills value or an error if the edge
@@ -691,9 +696,9 @@ func (u *User) QueryWallets() *WalletQuery {
 	return NewUserClient(u.config).QueryWallets(u)
 }
 
-// QueryWithdrawAccounts queries the "withdraw_accounts" edge of the User entity.
-func (u *User) QueryWithdrawAccounts() *WithdrawAccountQuery {
-	return NewUserClient(u.config).QueryWithdrawAccounts(u)
+// QueryWithdrawAccount queries the "withdraw_account" edge of the User entity.
+func (u *User) QueryWithdrawAccount() *WithdrawAccountQuery {
+	return NewUserClient(u.config).QueryWithdrawAccount(u)
 }
 
 // QueryIncomeBills queries the "income_bills" edge of the User entity.

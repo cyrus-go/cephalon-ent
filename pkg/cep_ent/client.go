@@ -8576,15 +8576,15 @@ func (c *UserClient) QueryWallets(u *User) *WalletQuery {
 	return query
 }
 
-// QueryWithdrawAccounts queries the withdraw_accounts edge of a User.
-func (c *UserClient) QueryWithdrawAccounts(u *User) *WithdrawAccountQuery {
+// QueryWithdrawAccount queries the withdraw_account edge of a User.
+func (c *UserClient) QueryWithdrawAccount(u *User) *WithdrawAccountQuery {
 	query := (&WithdrawAccountClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(withdrawaccount.Table, withdrawaccount.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawAccountsTable, user.WithdrawAccountsColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.WithdrawAccountTable, user.WithdrawAccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -9585,7 +9585,7 @@ func (c *WithdrawAccountClient) QueryUser(wa *WithdrawAccount) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(withdrawaccount.Table, withdrawaccount.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, withdrawaccount.UserTable, withdrawaccount.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, withdrawaccount.UserTable, withdrawaccount.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(wa.driver.Dialect(), step)
 		return fromV, nil

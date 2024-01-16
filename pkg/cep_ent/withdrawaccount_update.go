@@ -356,7 +356,7 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if wau.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   withdrawaccount.UserTable,
 			Columns: []string{withdrawaccount.UserColumn},
@@ -369,7 +369,7 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if nodes := wau.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   withdrawaccount.UserTable,
 			Columns: []string{withdrawaccount.UserColumn},
@@ -760,7 +760,7 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 	}
 	if wauo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   withdrawaccount.UserTable,
 			Columns: []string{withdrawaccount.UserColumn},
@@ -773,7 +773,7 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 	}
 	if nodes := wauo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   withdrawaccount.UserTable,
 			Columns: []string{withdrawaccount.UserColumn},

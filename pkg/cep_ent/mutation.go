@@ -56085,9 +56085,8 @@ type UserMutation struct {
 	wallets                        map[int64]struct{}
 	removedwallets                 map[int64]struct{}
 	clearedwallets                 bool
-	withdraw_accounts              map[int64]struct{}
-	removedwithdraw_accounts       map[int64]struct{}
-	clearedwithdraw_accounts       bool
+	withdraw_account               *int64
+	clearedwithdraw_account        bool
 	income_bills                   map[int64]struct{}
 	removedincome_bills            map[int64]struct{}
 	clearedincome_bills            bool
@@ -57926,58 +57925,43 @@ func (m *UserMutation) ResetWallets() {
 	m.removedwallets = nil
 }
 
-// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by ids.
-func (m *UserMutation) AddWithdrawAccountIDs(ids ...int64) {
-	if m.withdraw_accounts == nil {
-		m.withdraw_accounts = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.withdraw_accounts[ids[i]] = struct{}{}
-	}
+// SetWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by id.
+func (m *UserMutation) SetWithdrawAccountID(id int64) {
+	m.withdraw_account = &id
 }
 
-// ClearWithdrawAccounts clears the "withdraw_accounts" edge to the WithdrawAccount entity.
-func (m *UserMutation) ClearWithdrawAccounts() {
-	m.clearedwithdraw_accounts = true
+// ClearWithdrawAccount clears the "withdraw_account" edge to the WithdrawAccount entity.
+func (m *UserMutation) ClearWithdrawAccount() {
+	m.clearedwithdraw_account = true
 }
 
-// WithdrawAccountsCleared reports if the "withdraw_accounts" edge to the WithdrawAccount entity was cleared.
-func (m *UserMutation) WithdrawAccountsCleared() bool {
-	return m.clearedwithdraw_accounts
+// WithdrawAccountCleared reports if the "withdraw_account" edge to the WithdrawAccount entity was cleared.
+func (m *UserMutation) WithdrawAccountCleared() bool {
+	return m.clearedwithdraw_account
 }
 
-// RemoveWithdrawAccountIDs removes the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
-func (m *UserMutation) RemoveWithdrawAccountIDs(ids ...int64) {
-	if m.removedwithdraw_accounts == nil {
-		m.removedwithdraw_accounts = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.withdraw_accounts, ids[i])
-		m.removedwithdraw_accounts[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedWithdrawAccounts returns the removed IDs of the "withdraw_accounts" edge to the WithdrawAccount entity.
-func (m *UserMutation) RemovedWithdrawAccountsIDs() (ids []int64) {
-	for id := range m.removedwithdraw_accounts {
-		ids = append(ids, id)
+// WithdrawAccountID returns the "withdraw_account" edge ID in the mutation.
+func (m *UserMutation) WithdrawAccountID() (id int64, exists bool) {
+	if m.withdraw_account != nil {
+		return *m.withdraw_account, true
 	}
 	return
 }
 
-// WithdrawAccountsIDs returns the "withdraw_accounts" edge IDs in the mutation.
-func (m *UserMutation) WithdrawAccountsIDs() (ids []int64) {
-	for id := range m.withdraw_accounts {
-		ids = append(ids, id)
+// WithdrawAccountIDs returns the "withdraw_account" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// WithdrawAccountID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) WithdrawAccountIDs() (ids []int64) {
+	if id := m.withdraw_account; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetWithdrawAccounts resets all changes to the "withdraw_accounts" edge.
-func (m *UserMutation) ResetWithdrawAccounts() {
-	m.withdraw_accounts = nil
-	m.clearedwithdraw_accounts = false
-	m.removedwithdraw_accounts = nil
+// ResetWithdrawAccount resets all changes to the "withdraw_account" edge.
+func (m *UserMutation) ResetWithdrawAccount() {
+	m.withdraw_account = nil
+	m.clearedwithdraw_account = false
 }
 
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by ids.
@@ -59152,8 +59136,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.wallets != nil {
 		edges = append(edges, user.EdgeWallets)
 	}
-	if m.withdraw_accounts != nil {
-		edges = append(edges, user.EdgeWithdrawAccounts)
+	if m.withdraw_account != nil {
+		edges = append(edges, user.EdgeWithdrawAccount)
 	}
 	if m.income_bills != nil {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -59306,12 +59290,10 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeWithdrawAccounts:
-		ids := make([]ent.Value, 0, len(m.withdraw_accounts))
-		for id := range m.withdraw_accounts {
-			ids = append(ids, id)
+	case user.EdgeWithdrawAccount:
+		if id := m.withdraw_account; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case user.EdgeIncomeBills:
 		ids := make([]ent.Value, 0, len(m.income_bills))
 		for id := range m.income_bills {
@@ -59438,9 +59420,6 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedwallets != nil {
 		edges = append(edges, user.EdgeWallets)
-	}
-	if m.removedwithdraw_accounts != nil {
-		edges = append(edges, user.EdgeWithdrawAccounts)
 	}
 	if m.removedincome_bills != nil {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -59581,12 +59560,6 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeWithdrawAccounts:
-		ids := make([]ent.Value, 0, len(m.removedwithdraw_accounts))
-		for id := range m.removedwithdraw_accounts {
-			ids = append(ids, id)
-		}
-		return ids
 	case user.EdgeIncomeBills:
 		ids := make([]ent.Value, 0, len(m.removedincome_bills))
 		for id := range m.removedincome_bills {
@@ -59723,8 +59696,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedwallets {
 		edges = append(edges, user.EdgeWallets)
 	}
-	if m.clearedwithdraw_accounts {
-		edges = append(edges, user.EdgeWithdrawAccounts)
+	if m.clearedwithdraw_account {
+		edges = append(edges, user.EdgeWithdrawAccount)
 	}
 	if m.clearedincome_bills {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -59807,8 +59780,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedcampaign_orders
 	case user.EdgeWallets:
 		return m.clearedwallets
-	case user.EdgeWithdrawAccounts:
-		return m.clearedwithdraw_accounts
+	case user.EdgeWithdrawAccount:
+		return m.clearedwithdraw_account
 	case user.EdgeIncomeBills:
 		return m.clearedincome_bills
 	case user.EdgeOutcomeBills:
@@ -59849,6 +59822,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 		return nil
 	case user.EdgeParent:
 		m.ClearParent()
+		return nil
+	case user.EdgeWithdrawAccount:
+		m.ClearWithdrawAccount()
 		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
@@ -59915,8 +59891,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeWallets:
 		m.ResetWallets()
 		return nil
-	case user.EdgeWithdrawAccounts:
-		m.ResetWithdrawAccounts()
+	case user.EdgeWithdrawAccount:
+		m.ResetWithdrawAccount()
 		return nil
 	case user.EdgeIncomeBills:
 		m.ResetIncomeBills()

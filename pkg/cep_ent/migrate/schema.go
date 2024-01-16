@@ -96,8 +96,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service"}, Default: "unknown"},
-		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time"}, Default: "unknown"},
 		{Name: "profit_symbol_id", Type: field.TypeInt64, Comment: "外键分润币种 id", Default: 3},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
 		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
@@ -1794,7 +1794,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "充值多少货币量", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund"}, Default: "unknown"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
 		{Name: "out_transaction_id", Type: field.TypeString, Comment: "平台方订单号", Default: ""},
@@ -2081,7 +2081,7 @@ var (
 		{Name: "phone", Type: field.TypeString, Comment: "个人商户手机号", Default: ""},
 		{Name: "bank_card_number", Type: field.TypeString, Comment: "银行卡号", Default: ""},
 		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
-		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Unique: true, Comment: "外键用户 id", Default: 0},
 	}
 	// WithdrawAccountsTable holds the schema information for the "withdraw_accounts" table.
 	WithdrawAccountsTable = &schema.Table{
@@ -2091,7 +2091,7 @@ var (
 		PrimaryKey: []*schema.Column{WithdrawAccountsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "withdraw_accounts_users_withdraw_accounts",
+				Symbol:     "withdraw_accounts_users_withdraw_account",
 				Columns:    []*schema.Column{WithdrawAccountsColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
