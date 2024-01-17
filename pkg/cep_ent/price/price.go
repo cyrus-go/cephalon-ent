@@ -38,6 +38,8 @@ const (
 	FieldMissionBillingType = "mission_billing_type"
 	// FieldCep holds the string denoting the cep field in the database.
 	FieldCep = "cep"
+	// FieldOriginalCep holds the string denoting the original_cep field in the database.
+	FieldOriginalCep = "original_cep"
 	// FieldStartedAt holds the string denoting the started_at field in the database.
 	FieldStartedAt = "started_at"
 	// FieldFinishedAt holds the string denoting the finished_at field in the database.
@@ -75,6 +77,7 @@ var Columns = []string{
 	FieldMissionCategory,
 	FieldMissionBillingType,
 	FieldCep,
+	FieldOriginalCep,
 	FieldStartedAt,
 	FieldFinishedAt,
 	FieldIsDeprecated,
@@ -109,6 +112,8 @@ var (
 	DefaultGpuID int64
 	// DefaultCep holds the default value on creation for the "cep" field.
 	DefaultCep int64
+	// DefaultOriginalCep holds the default value on creation for the "original_cep" field.
+	DefaultOriginalCep int64
 	// DefaultIsDeprecated holds the default value on creation for the "is_deprecated" field.
 	DefaultIsDeprecated bool
 	// DefaultIsSensitive holds the default value on creation for the "is_sensitive" field.
@@ -228,6 +233,11 @@ func ByMissionBillingType(opts ...sql.OrderTermOption) OrderOption {
 // ByCep orders the results by the cep field.
 func ByCep(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCep, opts...).ToFunc()
+}
+
+// ByOriginalCep orders the results by the original_cep field.
+func ByOriginalCep(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOriginalCep, opts...).ToFunc()
 }
 
 // ByStartedAt orders the results by the started_at field.

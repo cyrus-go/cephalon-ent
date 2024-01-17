@@ -46461,6 +46461,8 @@ type PriceMutation struct {
 	mission_billing_type *enums.MissionBillingType
 	cep                  *int64
 	addcep               *int64
+	original_cep         *int64
+	addoriginal_cep      *int64
 	started_at           *time.Time
 	finished_at          *time.Time
 	is_deprecated        *bool
@@ -47034,6 +47036,62 @@ func (m *PriceMutation) ResetCep() {
 	m.addcep = nil
 }
 
+// SetOriginalCep sets the "original_cep" field.
+func (m *PriceMutation) SetOriginalCep(i int64) {
+	m.original_cep = &i
+	m.addoriginal_cep = nil
+}
+
+// OriginalCep returns the value of the "original_cep" field in the mutation.
+func (m *PriceMutation) OriginalCep() (r int64, exists bool) {
+	v := m.original_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOriginalCep returns the old "original_cep" field's value of the Price entity.
+// If the Price object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PriceMutation) OldOriginalCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOriginalCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOriginalCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOriginalCep: %w", err)
+	}
+	return oldValue.OriginalCep, nil
+}
+
+// AddOriginalCep adds i to the "original_cep" field.
+func (m *PriceMutation) AddOriginalCep(i int64) {
+	if m.addoriginal_cep != nil {
+		*m.addoriginal_cep += i
+	} else {
+		m.addoriginal_cep = &i
+	}
+}
+
+// AddedOriginalCep returns the value that was added to the "original_cep" field in this mutation.
+func (m *PriceMutation) AddedOriginalCep() (r int64, exists bool) {
+	v := m.addoriginal_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOriginalCep resets all changes to the "original_cep" field.
+func (m *PriceMutation) ResetOriginalCep() {
+	m.original_cep = nil
+	m.addoriginal_cep = nil
+}
+
 // SetStartedAt sets the "started_at" field.
 func (m *PriceMutation) SetStartedAt(t time.Time) {
 	m.started_at = &t
@@ -47301,7 +47359,7 @@ func (m *PriceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PriceMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_by != nil {
 		fields = append(fields, price.FieldCreatedBy)
 	}
@@ -47334,6 +47392,9 @@ func (m *PriceMutation) Fields() []string {
 	}
 	if m.cep != nil {
 		fields = append(fields, price.FieldCep)
+	}
+	if m.original_cep != nil {
+		fields = append(fields, price.FieldOriginalCep)
 	}
 	if m.started_at != nil {
 		fields = append(fields, price.FieldStartedAt)
@@ -47380,6 +47441,8 @@ func (m *PriceMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionBillingType()
 	case price.FieldCep:
 		return m.Cep()
+	case price.FieldOriginalCep:
+		return m.OriginalCep()
 	case price.FieldStartedAt:
 		return m.StartedAt()
 	case price.FieldFinishedAt:
@@ -47421,6 +47484,8 @@ func (m *PriceMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldMissionBillingType(ctx)
 	case price.FieldCep:
 		return m.OldCep(ctx)
+	case price.FieldOriginalCep:
+		return m.OldOriginalCep(ctx)
 	case price.FieldStartedAt:
 		return m.OldStartedAt(ctx)
 	case price.FieldFinishedAt:
@@ -47517,6 +47582,13 @@ func (m *PriceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCep(v)
 		return nil
+	case price.FieldOriginalCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOriginalCep(v)
+		return nil
 	case price.FieldStartedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -47569,6 +47641,9 @@ func (m *PriceMutation) AddedFields() []string {
 	if m.addcep != nil {
 		fields = append(fields, price.FieldCep)
 	}
+	if m.addoriginal_cep != nil {
+		fields = append(fields, price.FieldOriginalCep)
+	}
 	return fields
 }
 
@@ -47583,6 +47658,8 @@ func (m *PriceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case price.FieldCep:
 		return m.AddedCep()
+	case price.FieldOriginalCep:
+		return m.AddedOriginalCep()
 	}
 	return nil, false
 }
@@ -47612,6 +47689,13 @@ func (m *PriceMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCep(v)
+		return nil
+	case price.FieldOriginalCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOriginalCep(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Price numeric field %s", name)
@@ -47687,6 +47771,9 @@ func (m *PriceMutation) ResetField(name string) error {
 		return nil
 	case price.FieldCep:
 		m.ResetCep()
+		return nil
+	case price.FieldOriginalCep:
+		m.ResetOriginalCep()
 		return nil
 	case price.FieldStartedAt:
 		m.ResetStartedAt()

@@ -184,6 +184,27 @@ func (pu *PriceUpdate) AddCep(i int64) *PriceUpdate {
 	return pu
 }
 
+// SetOriginalCep sets the "original_cep" field.
+func (pu *PriceUpdate) SetOriginalCep(i int64) *PriceUpdate {
+	pu.mutation.ResetOriginalCep()
+	pu.mutation.SetOriginalCep(i)
+	return pu
+}
+
+// SetNillableOriginalCep sets the "original_cep" field if the given value is not nil.
+func (pu *PriceUpdate) SetNillableOriginalCep(i *int64) *PriceUpdate {
+	if i != nil {
+		pu.SetOriginalCep(*i)
+	}
+	return pu
+}
+
+// AddOriginalCep adds i to the "original_cep" field.
+func (pu *PriceUpdate) AddOriginalCep(i int64) *PriceUpdate {
+	pu.mutation.AddOriginalCep(i)
+	return pu
+}
+
 // SetStartedAt sets the "started_at" field.
 func (pu *PriceUpdate) SetStartedAt(t time.Time) *PriceUpdate {
 	pu.mutation.SetStartedAt(t)
@@ -399,6 +420,12 @@ func (pu *PriceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.AddedCep(); ok {
 		_spec.AddField(price.FieldCep, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.OriginalCep(); ok {
+		_spec.SetField(price.FieldOriginalCep, field.TypeInt64, value)
+	}
+	if value, ok := pu.mutation.AddedOriginalCep(); ok {
+		_spec.AddField(price.FieldOriginalCep, field.TypeInt64, value)
 	}
 	if value, ok := pu.mutation.StartedAt(); ok {
 		_spec.SetField(price.FieldStartedAt, field.TypeTime, value)
@@ -622,6 +649,27 @@ func (puo *PriceUpdateOne) SetNillableCep(i *int64) *PriceUpdateOne {
 // AddCep adds i to the "cep" field.
 func (puo *PriceUpdateOne) AddCep(i int64) *PriceUpdateOne {
 	puo.mutation.AddCep(i)
+	return puo
+}
+
+// SetOriginalCep sets the "original_cep" field.
+func (puo *PriceUpdateOne) SetOriginalCep(i int64) *PriceUpdateOne {
+	puo.mutation.ResetOriginalCep()
+	puo.mutation.SetOriginalCep(i)
+	return puo
+}
+
+// SetNillableOriginalCep sets the "original_cep" field if the given value is not nil.
+func (puo *PriceUpdateOne) SetNillableOriginalCep(i *int64) *PriceUpdateOne {
+	if i != nil {
+		puo.SetOriginalCep(*i)
+	}
+	return puo
+}
+
+// AddOriginalCep adds i to the "original_cep" field.
+func (puo *PriceUpdateOne) AddOriginalCep(i int64) *PriceUpdateOne {
+	puo.mutation.AddOriginalCep(i)
 	return puo
 }
 
@@ -870,6 +918,12 @@ func (puo *PriceUpdateOne) sqlSave(ctx context.Context) (_node *Price, err error
 	}
 	if value, ok := puo.mutation.AddedCep(); ok {
 		_spec.AddField(price.FieldCep, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.OriginalCep(); ok {
+		_spec.SetField(price.FieldOriginalCep, field.TypeInt64, value)
+	}
+	if value, ok := puo.mutation.AddedOriginalCep(); ok {
+		_spec.AddField(price.FieldOriginalCep, field.TypeInt64, value)
 	}
 	if value, ok := puo.mutation.StartedAt(); ok {
 		_spec.SetField(price.FieldStartedAt, field.TypeTime, value)

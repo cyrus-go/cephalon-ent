@@ -1536,6 +1536,7 @@ var (
 		{Name: "mission_category", Type: field.TypeEnum, Comment: "任务大类", Enums: []string{"unknown", "SD", "JP", "WT", "JP_DK", "SSH", "SD_TOMATO", "SD_CMD", "SD_BINGO", "FOOOCUS", "TABBY", "JP_CONDA", "SD_CAT", "SD_FIRE", "COMFYUI", "SD_XL", "SD_CHICK", "ASCEND"}, Default: "SD"},
 		{Name: "mission_billing_type", Type: field.TypeEnum, Comment: "任务计费类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "count"},
 		{Name: "cep", Type: field.TypeInt64, Comment: "任务单价", Default: 0},
+		{Name: "original_cep", Type: field.TypeInt64, Comment: "任务原价", Default: 0},
 		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间开始，为空表示永久有效"},
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "价格有效时间结束，为空表示永久有效"},
 		{Name: "is_deprecated", Type: field.TypeBool, Comment: "价格是否屏蔽，前端置灰，硬选也可以", Default: false},
@@ -1552,7 +1553,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "prices_gpus_prices",
-				Columns:    []*schema.Column{PricesColumns[16]},
+				Columns:    []*schema.Column{PricesColumns[17]},
 				RefColumns: []*schema.Column{GpusColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1561,7 +1562,7 @@ var (
 			{
 				Name:    "price_gpu_id",
 				Unique:  false,
-				Columns: []*schema.Column{PricesColumns[16]},
+				Columns: []*schema.Column{PricesColumns[17]},
 			},
 		},
 	}

@@ -91,6 +91,11 @@ func Cep(v int64) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldCep, v))
 }
 
+// OriginalCep applies equality check predicate on the "original_cep" field. It's identical to OriginalCepEQ.
+func OriginalCep(v int64) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldOriginalCep, v))
+}
+
 // StartedAt applies equality check predicate on the "started_at" field. It's identical to StartedAtEQ.
 func StartedAt(v time.Time) predicate.Price {
 	return predicate.Price(sql.FieldEQ(FieldStartedAt, v))
@@ -494,6 +499,46 @@ func CepLT(v int64) predicate.Price {
 // CepLTE applies the LTE predicate on the "cep" field.
 func CepLTE(v int64) predicate.Price {
 	return predicate.Price(sql.FieldLTE(FieldCep, v))
+}
+
+// OriginalCepEQ applies the EQ predicate on the "original_cep" field.
+func OriginalCepEQ(v int64) predicate.Price {
+	return predicate.Price(sql.FieldEQ(FieldOriginalCep, v))
+}
+
+// OriginalCepNEQ applies the NEQ predicate on the "original_cep" field.
+func OriginalCepNEQ(v int64) predicate.Price {
+	return predicate.Price(sql.FieldNEQ(FieldOriginalCep, v))
+}
+
+// OriginalCepIn applies the In predicate on the "original_cep" field.
+func OriginalCepIn(vs ...int64) predicate.Price {
+	return predicate.Price(sql.FieldIn(FieldOriginalCep, vs...))
+}
+
+// OriginalCepNotIn applies the NotIn predicate on the "original_cep" field.
+func OriginalCepNotIn(vs ...int64) predicate.Price {
+	return predicate.Price(sql.FieldNotIn(FieldOriginalCep, vs...))
+}
+
+// OriginalCepGT applies the GT predicate on the "original_cep" field.
+func OriginalCepGT(v int64) predicate.Price {
+	return predicate.Price(sql.FieldGT(FieldOriginalCep, v))
+}
+
+// OriginalCepGTE applies the GTE predicate on the "original_cep" field.
+func OriginalCepGTE(v int64) predicate.Price {
+	return predicate.Price(sql.FieldGTE(FieldOriginalCep, v))
+}
+
+// OriginalCepLT applies the LT predicate on the "original_cep" field.
+func OriginalCepLT(v int64) predicate.Price {
+	return predicate.Price(sql.FieldLT(FieldOriginalCep, v))
+}
+
+// OriginalCepLTE applies the LTE predicate on the "original_cep" field.
+func OriginalCepLTE(v int64) predicate.Price {
+	return predicate.Price(sql.FieldLTE(FieldOriginalCep, v))
 }
 
 // StartedAtEQ applies the EQ predicate on the "started_at" field.
