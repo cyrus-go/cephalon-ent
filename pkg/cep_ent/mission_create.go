@@ -522,6 +522,20 @@ func (mc *MissionCreate) SetNillableFreeAt(t *time.Time) *MissionCreate {
 	return mc
 }
 
+// SetCloseWay sets the "close_way" field.
+func (mc *MissionCreate) SetCloseWay(ew enums.CloseWay) *MissionCreate {
+	mc.mutation.SetCloseWay(ew)
+	return mc
+}
+
+// SetNillableCloseWay sets the "close_way" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableCloseWay(ew *enums.CloseWay) *MissionCreate {
+	if ew != nil {
+		mc.SetCloseWay(*ew)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -858,6 +872,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultFreeAt
 		mc.mutation.SetFreeAt(v)
 	}
+	if _, ok := mc.mutation.CloseWay(); !ok {
+		v := mission.DefaultCloseWay
+		mc.mutation.SetCloseWay(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -982,6 +1000,14 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.FreeAt(); !ok {
 		return &ValidationError{Name: "free_at", err: errors.New(`cep_ent: missing required field "Mission.free_at"`)}
+	}
+	if _, ok := mc.mutation.CloseWay(); !ok {
+		return &ValidationError{Name: "close_way", err: errors.New(`cep_ent: missing required field "Mission.close_way"`)}
+	}
+	if v, ok := mc.mutation.CloseWay(); ok {
+		if err := mission.CloseWayValidator(v); err != nil {
+			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.close_way": %w`, err)}
+		}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1170,6 +1196,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.FreeAt(); ok {
 		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
 		_node.FreeAt = value
+	}
+	if value, ok := mc.mutation.CloseWay(); ok {
+		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
+		_node.CloseWay = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1939,6 +1969,18 @@ func (u *MissionUpsert) UpdateFreeAt() *MissionUpsert {
 	return u
 }
 
+// SetCloseWay sets the "close_way" field.
+func (u *MissionUpsert) SetCloseWay(v enums.CloseWay) *MissionUpsert {
+	u.Set(mission.FieldCloseWay, v)
+	return u
+}
+
+// UpdateCloseWay sets the "close_way" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateCloseWay() *MissionUpsert {
+	u.SetExcluded(mission.FieldCloseWay)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2575,6 +2617,20 @@ func (u *MissionUpsertOne) SetFreeAt(v time.Time) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateFreeAt() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateFreeAt()
+	})
+}
+
+// SetCloseWay sets the "close_way" field.
+func (u *MissionUpsertOne) SetCloseWay(v enums.CloseWay) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCloseWay(v)
+	})
+}
+
+// UpdateCloseWay sets the "close_way" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateCloseWay() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCloseWay()
 	})
 }
 
@@ -3383,6 +3439,20 @@ func (u *MissionUpsertBulk) SetFreeAt(v time.Time) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateFreeAt() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateFreeAt()
+	})
+}
+
+// SetCloseWay sets the "close_way" field.
+func (u *MissionUpsertBulk) SetCloseWay(v enums.CloseWay) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetCloseWay(v)
+	})
+}
+
+// UpdateCloseWay sets the "close_way" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateCloseWay() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateCloseWay()
 	})
 }
 

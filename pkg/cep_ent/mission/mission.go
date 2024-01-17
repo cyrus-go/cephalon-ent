@@ -91,6 +91,8 @@ const (
 	FieldExpiredAt = "expired_at"
 	// FieldFreeAt holds the string denoting the free_at field in the database.
 	FieldFreeAt = "free_at"
+	// FieldCloseWay holds the string denoting the close_way field in the database.
+	FieldCloseWay = "close_way"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -252,6 +254,7 @@ var Columns = []string{
 	FieldFinishedAt,
 	FieldExpiredAt,
 	FieldFreeAt,
+	FieldCloseWay,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
@@ -408,6 +411,18 @@ func InnerMethodValidator(im enums.InnerMethod) error {
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for inner_method field: %q", im)
+	}
+}
+
+const DefaultCloseWay enums.CloseWay = "unknown"
+
+// CloseWayValidator is a validator for the "close_way" field enum values. It is called by the builders before save.
+func CloseWayValidator(cw enums.CloseWay) error {
+	switch cw {
+	case "unknown", "user", "balance_not_enough":
+		return nil
+	default:
+		return fmt.Errorf("mission: invalid enum value for close_way field: %q", cw)
 	}
 }
 
@@ -592,6 +607,11 @@ func ByExpiredAt(opts ...sql.OrderTermOption) OrderOption {
 // ByFreeAt orders the results by the free_at field.
 func ByFreeAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFreeAt, opts...).ToFunc()
+}
+
+// ByCloseWay orders the results by the close_way field.
+func ByCloseWay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCloseWay, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

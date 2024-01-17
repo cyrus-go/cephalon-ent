@@ -99,6 +99,8 @@ type Mission struct {
 	ExpiredAt *time.Time `json:"expired_at"`
 	// 任务释放时刻
 	FreeAt time.Time `json:"free_at"`
+	// 任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭
+	CloseWay enums.CloseWay `json:"close_way"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges                  MissionEdges `json:"edges"`
@@ -285,7 +287,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt:
 			values[i] = new(sql.NullTime)
@@ -544,6 +546,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.FreeAt = value.Time
 			}
+		case mission.FieldCloseWay:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field close_way", values[i])
+			} else if value.Valid {
+				m.CloseWay = enums.CloseWay(value.String)
+			}
 		case mission.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
@@ -768,6 +776,9 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("free_at=")
 	builder.WriteString(m.FreeAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("close_way=")
+	builder.WriteString(fmt.Sprintf("%v", m.CloseWay))
 	builder.WriteByte(')')
 	return builder.String()
 }
