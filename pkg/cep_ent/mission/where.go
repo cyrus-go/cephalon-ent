@@ -1796,6 +1796,36 @@ func FreeAtLTE(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldLTE(FieldFreeAt, v))
 }
 
+// CloseWayEQ applies the EQ predicate on the "close_way" field.
+func CloseWayEQ(v enums.CloseWay) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldEQ(FieldCloseWay, vc))
+}
+
+// CloseWayNEQ applies the NEQ predicate on the "close_way" field.
+func CloseWayNEQ(v enums.CloseWay) predicate.Mission {
+	vc := v
+	return predicate.Mission(sql.FieldNEQ(FieldCloseWay, vc))
+}
+
+// CloseWayIn applies the In predicate on the "close_way" field.
+func CloseWayIn(vs ...enums.CloseWay) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldIn(FieldCloseWay, v...))
+}
+
+// CloseWayNotIn applies the NotIn predicate on the "close_way" field.
+func CloseWayNotIn(vs ...enums.CloseWay) predicate.Mission {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Mission(sql.FieldNotIn(FieldCloseWay, v...))
+}
+
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.
 func HasMissionKind() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {

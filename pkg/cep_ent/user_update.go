@@ -597,19 +597,23 @@ func (uu *UserUpdate) AddWallets(w ...*Wallet) *UserUpdate {
 	return uu.AddWalletIDs(ids...)
 }
 
-// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
-func (uu *UserUpdate) AddWithdrawAccountIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddWithdrawAccountIDs(ids...)
+// SetWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by ID.
+func (uu *UserUpdate) SetWithdrawAccountID(id int64) *UserUpdate {
+	uu.mutation.SetWithdrawAccountID(id)
 	return uu
 }
 
-// AddWithdrawAccounts adds the "withdraw_accounts" edges to the WithdrawAccount entity.
-func (uu *UserUpdate) AddWithdrawAccounts(w ...*WithdrawAccount) *UserUpdate {
-	ids := make([]int64, len(w))
-	for i := range w {
-		ids[i] = w[i].ID
+// SetNillableWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableWithdrawAccountID(id *int64) *UserUpdate {
+	if id != nil {
+		uu = uu.SetWithdrawAccountID(*id)
 	}
-	return uu.AddWithdrawAccountIDs(ids...)
+	return uu
+}
+
+// SetWithdrawAccount sets the "withdraw_account" edge to the WithdrawAccount entity.
+func (uu *UserUpdate) SetWithdrawAccount(w *WithdrawAccount) *UserUpdate {
+	return uu.SetWithdrawAccountID(w.ID)
 }
 
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
@@ -1151,25 +1155,10 @@ func (uu *UserUpdate) RemoveWallets(w ...*Wallet) *UserUpdate {
 	return uu.RemoveWalletIDs(ids...)
 }
 
-// ClearWithdrawAccounts clears all "withdraw_accounts" edges to the WithdrawAccount entity.
-func (uu *UserUpdate) ClearWithdrawAccounts() *UserUpdate {
-	uu.mutation.ClearWithdrawAccounts()
+// ClearWithdrawAccount clears the "withdraw_account" edge to the WithdrawAccount entity.
+func (uu *UserUpdate) ClearWithdrawAccount() *UserUpdate {
+	uu.mutation.ClearWithdrawAccount()
 	return uu
-}
-
-// RemoveWithdrawAccountIDs removes the "withdraw_accounts" edge to WithdrawAccount entities by IDs.
-func (uu *UserUpdate) RemoveWithdrawAccountIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveWithdrawAccountIDs(ids...)
-	return uu
-}
-
-// RemoveWithdrawAccounts removes "withdraw_accounts" edges to WithdrawAccount entities.
-func (uu *UserUpdate) RemoveWithdrawAccounts(w ...*WithdrawAccount) *UserUpdate {
-	ids := make([]int64, len(w))
-	for i := range w {
-		ids[i] = w[i].ID
-	}
-	return uu.RemoveWithdrawAccountIDs(ids...)
 }
 
 // ClearIncomeBills clears all "income_bills" edges to the Bill entity.
@@ -2355,12 +2344,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.WithdrawAccountsCleared() {
+	if uu.mutation.WithdrawAccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
+			Table:   user.WithdrawAccountTable,
+			Columns: []string{user.WithdrawAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),
@@ -2368,28 +2357,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedWithdrawAccountsIDs(); len(nodes) > 0 && !uu.mutation.WithdrawAccountsCleared() {
+	if nodes := uu.mutation.WithdrawAccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.WithdrawAccountsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
+			Table:   user.WithdrawAccountTable,
+			Columns: []string{user.WithdrawAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),
@@ -3503,19 +3476,23 @@ func (uuo *UserUpdateOne) AddWallets(w ...*Wallet) *UserUpdateOne {
 	return uuo.AddWalletIDs(ids...)
 }
 
-// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
-func (uuo *UserUpdateOne) AddWithdrawAccountIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddWithdrawAccountIDs(ids...)
+// SetWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by ID.
+func (uuo *UserUpdateOne) SetWithdrawAccountID(id int64) *UserUpdateOne {
+	uuo.mutation.SetWithdrawAccountID(id)
 	return uuo
 }
 
-// AddWithdrawAccounts adds the "withdraw_accounts" edges to the WithdrawAccount entity.
-func (uuo *UserUpdateOne) AddWithdrawAccounts(w ...*WithdrawAccount) *UserUpdateOne {
-	ids := make([]int64, len(w))
-	for i := range w {
-		ids[i] = w[i].ID
+// SetNillableWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableWithdrawAccountID(id *int64) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetWithdrawAccountID(*id)
 	}
-	return uuo.AddWithdrawAccountIDs(ids...)
+	return uuo
+}
+
+// SetWithdrawAccount sets the "withdraw_account" edge to the WithdrawAccount entity.
+func (uuo *UserUpdateOne) SetWithdrawAccount(w *WithdrawAccount) *UserUpdateOne {
+	return uuo.SetWithdrawAccountID(w.ID)
 }
 
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
@@ -4057,25 +4034,10 @@ func (uuo *UserUpdateOne) RemoveWallets(w ...*Wallet) *UserUpdateOne {
 	return uuo.RemoveWalletIDs(ids...)
 }
 
-// ClearWithdrawAccounts clears all "withdraw_accounts" edges to the WithdrawAccount entity.
-func (uuo *UserUpdateOne) ClearWithdrawAccounts() *UserUpdateOne {
-	uuo.mutation.ClearWithdrawAccounts()
+// ClearWithdrawAccount clears the "withdraw_account" edge to the WithdrawAccount entity.
+func (uuo *UserUpdateOne) ClearWithdrawAccount() *UserUpdateOne {
+	uuo.mutation.ClearWithdrawAccount()
 	return uuo
-}
-
-// RemoveWithdrawAccountIDs removes the "withdraw_accounts" edge to WithdrawAccount entities by IDs.
-func (uuo *UserUpdateOne) RemoveWithdrawAccountIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveWithdrawAccountIDs(ids...)
-	return uuo
-}
-
-// RemoveWithdrawAccounts removes "withdraw_accounts" edges to WithdrawAccount entities.
-func (uuo *UserUpdateOne) RemoveWithdrawAccounts(w ...*WithdrawAccount) *UserUpdateOne {
-	ids := make([]int64, len(w))
-	for i := range w {
-		ids[i] = w[i].ID
-	}
-	return uuo.RemoveWithdrawAccountIDs(ids...)
 }
 
 // ClearIncomeBills clears all "income_bills" edges to the Bill entity.
@@ -5291,12 +5253,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.WithdrawAccountsCleared() {
+	if uuo.mutation.WithdrawAccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
+			Table:   user.WithdrawAccountTable,
+			Columns: []string{user.WithdrawAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),
@@ -5304,28 +5266,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedWithdrawAccountsIDs(); len(nodes) > 0 && !uuo.mutation.WithdrawAccountsCleared() {
+	if nodes := uuo.mutation.WithdrawAccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.WithdrawAccountsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
+			Table:   user.WithdrawAccountTable,
+			Columns: []string{user.WithdrawAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),

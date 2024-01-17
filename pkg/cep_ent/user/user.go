@@ -91,8 +91,8 @@ const (
 	EdgeCampaignOrders = "campaign_orders"
 	// EdgeWallets holds the string denoting the wallets edge name in mutations.
 	EdgeWallets = "wallets"
-	// EdgeWithdrawAccounts holds the string denoting the withdraw_accounts edge name in mutations.
-	EdgeWithdrawAccounts = "withdraw_accounts"
+	// EdgeWithdrawAccount holds the string denoting the withdraw_account edge name in mutations.
+	EdgeWithdrawAccount = "withdraw_account"
 	// EdgeIncomeBills holds the string denoting the income_bills edge name in mutations.
 	EdgeIncomeBills = "income_bills"
 	// EdgeOutcomeBills holds the string denoting the outcome_bills edge name in mutations.
@@ -246,13 +246,13 @@ const (
 	WalletsInverseTable = "wallets"
 	// WalletsColumn is the table column denoting the wallets relation/edge.
 	WalletsColumn = "user_id"
-	// WithdrawAccountsTable is the table that holds the withdraw_accounts relation/edge.
-	WithdrawAccountsTable = "withdraw_accounts"
-	// WithdrawAccountsInverseTable is the table name for the WithdrawAccount entity.
+	// WithdrawAccountTable is the table that holds the withdraw_account relation/edge.
+	WithdrawAccountTable = "withdraw_accounts"
+	// WithdrawAccountInverseTable is the table name for the WithdrawAccount entity.
 	// It exists in this package in order to avoid circular dependency with the "withdrawaccount" package.
-	WithdrawAccountsInverseTable = "withdraw_accounts"
-	// WithdrawAccountsColumn is the table column denoting the withdraw_accounts relation/edge.
-	WithdrawAccountsColumn = "user_id"
+	WithdrawAccountInverseTable = "withdraw_accounts"
+	// WithdrawAccountColumn is the table column denoting the withdraw_account relation/edge.
+	WithdrawAccountColumn = "user_id"
 	// IncomeBillsTable is the table that holds the income_bills relation/edge.
 	IncomeBillsTable = "bills"
 	// IncomeBillsInverseTable is the table name for the Bill entity.
@@ -790,17 +790,10 @@ func ByWallets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByWithdrawAccountsCount orders the results by withdraw_accounts count.
-func ByWithdrawAccountsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByWithdrawAccountField orders the results by withdraw_account field.
+func ByWithdrawAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newWithdrawAccountsStep(), opts...)
-	}
-}
-
-// ByWithdrawAccounts orders the results by withdraw_accounts terms.
-func ByWithdrawAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newWithdrawAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newWithdrawAccountStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -1104,11 +1097,11 @@ func newWalletsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, WalletsTable, WalletsColumn),
 	)
 }
-func newWithdrawAccountsStep() *sqlgraph.Step {
+func newWithdrawAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(WithdrawAccountsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, WithdrawAccountsTable, WithdrawAccountsColumn),
+		sqlgraph.To(WithdrawAccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, WithdrawAccountTable, WithdrawAccountColumn),
 	)
 }
 func newIncomeBillsStep() *sqlgraph.Step {

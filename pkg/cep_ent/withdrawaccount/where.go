@@ -96,6 +96,11 @@ func BusinessID(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessID, v))
 }
 
+// IDCard applies equality check predicate on the "id_card" field. It's identical to IDCardEQ.
+func IDCard(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldIDCard, v))
+}
+
 // PersonalName applies equality check predicate on the "personal_name" field. It's identical to PersonalNameEQ.
 func PersonalName(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldPersonalName, v))
@@ -401,36 +406,6 @@ func BusinessNameContainsFold(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldBusinessName, v))
 }
 
-// BusinessTypeEQ applies the EQ predicate on the "business_type" field.
-func BusinessTypeEQ(v enums.BusinessType) predicate.WithdrawAccount {
-	vc := v
-	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessType, vc))
-}
-
-// BusinessTypeNEQ applies the NEQ predicate on the "business_type" field.
-func BusinessTypeNEQ(v enums.BusinessType) predicate.WithdrawAccount {
-	vc := v
-	return predicate.WithdrawAccount(sql.FieldNEQ(FieldBusinessType, vc))
-}
-
-// BusinessTypeIn applies the In predicate on the "business_type" field.
-func BusinessTypeIn(vs ...enums.BusinessType) predicate.WithdrawAccount {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.WithdrawAccount(sql.FieldIn(FieldBusinessType, v...))
-}
-
-// BusinessTypeNotIn applies the NotIn predicate on the "business_type" field.
-func BusinessTypeNotIn(vs ...enums.BusinessType) predicate.WithdrawAccount {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.WithdrawAccount(sql.FieldNotIn(FieldBusinessType, v...))
-}
-
 // BusinessIDEQ applies the EQ predicate on the "business_id" field.
 func BusinessIDEQ(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessID, v))
@@ -469,6 +444,101 @@ func BusinessIDLT(v int64) predicate.WithdrawAccount {
 // BusinessIDLTE applies the LTE predicate on the "business_id" field.
 func BusinessIDLTE(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldLTE(FieldBusinessID, v))
+}
+
+// BusinessTypeEQ applies the EQ predicate on the "business_type" field.
+func BusinessTypeEQ(v enums.BusinessType) predicate.WithdrawAccount {
+	vc := v
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldBusinessType, vc))
+}
+
+// BusinessTypeNEQ applies the NEQ predicate on the "business_type" field.
+func BusinessTypeNEQ(v enums.BusinessType) predicate.WithdrawAccount {
+	vc := v
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldBusinessType, vc))
+}
+
+// BusinessTypeIn applies the In predicate on the "business_type" field.
+func BusinessTypeIn(vs ...enums.BusinessType) predicate.WithdrawAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WithdrawAccount(sql.FieldIn(FieldBusinessType, v...))
+}
+
+// BusinessTypeNotIn applies the NotIn predicate on the "business_type" field.
+func BusinessTypeNotIn(vs ...enums.BusinessType) predicate.WithdrawAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldBusinessType, v...))
+}
+
+// IDCardEQ applies the EQ predicate on the "id_card" field.
+func IDCardEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldIDCard, v))
+}
+
+// IDCardNEQ applies the NEQ predicate on the "id_card" field.
+func IDCardNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldIDCard, v))
+}
+
+// IDCardIn applies the In predicate on the "id_card" field.
+func IDCardIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldIDCard, vs...))
+}
+
+// IDCardNotIn applies the NotIn predicate on the "id_card" field.
+func IDCardNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldIDCard, vs...))
+}
+
+// IDCardGT applies the GT predicate on the "id_card" field.
+func IDCardGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldIDCard, v))
+}
+
+// IDCardGTE applies the GTE predicate on the "id_card" field.
+func IDCardGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldIDCard, v))
+}
+
+// IDCardLT applies the LT predicate on the "id_card" field.
+func IDCardLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldIDCard, v))
+}
+
+// IDCardLTE applies the LTE predicate on the "id_card" field.
+func IDCardLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldIDCard, v))
+}
+
+// IDCardContains applies the Contains predicate on the "id_card" field.
+func IDCardContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldIDCard, v))
+}
+
+// IDCardHasPrefix applies the HasPrefix predicate on the "id_card" field.
+func IDCardHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldIDCard, v))
+}
+
+// IDCardHasSuffix applies the HasSuffix predicate on the "id_card" field.
+func IDCardHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldIDCard, v))
+}
+
+// IDCardEqualFold applies the EqualFold predicate on the "id_card" field.
+func IDCardEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldIDCard, v))
+}
+
+// IDCardContainsFold applies the ContainsFold predicate on the "id_card" field.
+func IDCardContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldIDCard, v))
 }
 
 // PersonalNameEQ applies the EQ predicate on the "personal_name" field.
@@ -736,7 +806,7 @@ func HasUser() predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

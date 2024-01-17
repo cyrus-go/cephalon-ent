@@ -28649,6 +28649,7 @@ type MissionMutation struct {
 	finished_at                   *time.Time
 	expired_at                    *time.Time
 	free_at                       *time.Time
+	close_way                     *enums.CloseWay
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -30325,6 +30326,42 @@ func (m *MissionMutation) ResetFreeAt() {
 	m.free_at = nil
 }
 
+// SetCloseWay sets the "close_way" field.
+func (m *MissionMutation) SetCloseWay(ew enums.CloseWay) {
+	m.close_way = &ew
+}
+
+// CloseWay returns the value of the "close_way" field in the mutation.
+func (m *MissionMutation) CloseWay() (r enums.CloseWay, exists bool) {
+	v := m.close_way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCloseWay returns the old "close_way" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldCloseWay(ctx context.Context) (v enums.CloseWay, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCloseWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCloseWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCloseWay: %w", err)
+	}
+	return oldValue.CloseWay, nil
+}
+
+// ResetCloseWay resets all changes to the "close_way" field.
+func (m *MissionMutation) ResetCloseWay() {
+	m.close_way = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -30938,7 +30975,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 37)
+	fields := make([]string, 0, 38)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -31050,6 +31087,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.free_at != nil {
 		fields = append(fields, mission.FieldFreeAt)
 	}
+	if m.close_way != nil {
+		fields = append(fields, mission.FieldCloseWay)
+	}
 	return fields
 }
 
@@ -31132,6 +31172,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiredAt()
 	case mission.FieldFreeAt:
 		return m.FreeAt()
+	case mission.FieldCloseWay:
+		return m.CloseWay()
 	}
 	return nil, false
 }
@@ -31215,6 +31257,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldExpiredAt(ctx)
 	case mission.FieldFreeAt:
 		return m.OldFreeAt(ctx)
+	case mission.FieldCloseWay:
+		return m.OldCloseWay(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -31483,6 +31527,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetFreeAt(v)
 		return nil
+	case mission.FieldCloseWay:
+		v, ok := value.(enums.CloseWay)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCloseWay(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -31744,6 +31795,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldFreeAt:
 		m.ResetFreeAt()
+		return nil
+	case mission.FieldCloseWay:
+		m.ResetCloseWay()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -56085,9 +56139,8 @@ type UserMutation struct {
 	wallets                        map[int64]struct{}
 	removedwallets                 map[int64]struct{}
 	clearedwallets                 bool
-	withdraw_accounts              map[int64]struct{}
-	removedwithdraw_accounts       map[int64]struct{}
-	clearedwithdraw_accounts       bool
+	withdraw_account               *int64
+	clearedwithdraw_account        bool
 	income_bills                   map[int64]struct{}
 	removedincome_bills            map[int64]struct{}
 	clearedincome_bills            bool
@@ -57926,58 +57979,43 @@ func (m *UserMutation) ResetWallets() {
 	m.removedwallets = nil
 }
 
-// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by ids.
-func (m *UserMutation) AddWithdrawAccountIDs(ids ...int64) {
-	if m.withdraw_accounts == nil {
-		m.withdraw_accounts = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.withdraw_accounts[ids[i]] = struct{}{}
-	}
+// SetWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by id.
+func (m *UserMutation) SetWithdrawAccountID(id int64) {
+	m.withdraw_account = &id
 }
 
-// ClearWithdrawAccounts clears the "withdraw_accounts" edge to the WithdrawAccount entity.
-func (m *UserMutation) ClearWithdrawAccounts() {
-	m.clearedwithdraw_accounts = true
+// ClearWithdrawAccount clears the "withdraw_account" edge to the WithdrawAccount entity.
+func (m *UserMutation) ClearWithdrawAccount() {
+	m.clearedwithdraw_account = true
 }
 
-// WithdrawAccountsCleared reports if the "withdraw_accounts" edge to the WithdrawAccount entity was cleared.
-func (m *UserMutation) WithdrawAccountsCleared() bool {
-	return m.clearedwithdraw_accounts
+// WithdrawAccountCleared reports if the "withdraw_account" edge to the WithdrawAccount entity was cleared.
+func (m *UserMutation) WithdrawAccountCleared() bool {
+	return m.clearedwithdraw_account
 }
 
-// RemoveWithdrawAccountIDs removes the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
-func (m *UserMutation) RemoveWithdrawAccountIDs(ids ...int64) {
-	if m.removedwithdraw_accounts == nil {
-		m.removedwithdraw_accounts = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.withdraw_accounts, ids[i])
-		m.removedwithdraw_accounts[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedWithdrawAccounts returns the removed IDs of the "withdraw_accounts" edge to the WithdrawAccount entity.
-func (m *UserMutation) RemovedWithdrawAccountsIDs() (ids []int64) {
-	for id := range m.removedwithdraw_accounts {
-		ids = append(ids, id)
+// WithdrawAccountID returns the "withdraw_account" edge ID in the mutation.
+func (m *UserMutation) WithdrawAccountID() (id int64, exists bool) {
+	if m.withdraw_account != nil {
+		return *m.withdraw_account, true
 	}
 	return
 }
 
-// WithdrawAccountsIDs returns the "withdraw_accounts" edge IDs in the mutation.
-func (m *UserMutation) WithdrawAccountsIDs() (ids []int64) {
-	for id := range m.withdraw_accounts {
-		ids = append(ids, id)
+// WithdrawAccountIDs returns the "withdraw_account" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// WithdrawAccountID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) WithdrawAccountIDs() (ids []int64) {
+	if id := m.withdraw_account; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetWithdrawAccounts resets all changes to the "withdraw_accounts" edge.
-func (m *UserMutation) ResetWithdrawAccounts() {
-	m.withdraw_accounts = nil
-	m.clearedwithdraw_accounts = false
-	m.removedwithdraw_accounts = nil
+// ResetWithdrawAccount resets all changes to the "withdraw_account" edge.
+func (m *UserMutation) ResetWithdrawAccount() {
+	m.withdraw_account = nil
+	m.clearedwithdraw_account = false
 }
 
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by ids.
@@ -59152,8 +59190,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.wallets != nil {
 		edges = append(edges, user.EdgeWallets)
 	}
-	if m.withdraw_accounts != nil {
-		edges = append(edges, user.EdgeWithdrawAccounts)
+	if m.withdraw_account != nil {
+		edges = append(edges, user.EdgeWithdrawAccount)
 	}
 	if m.income_bills != nil {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -59306,12 +59344,10 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeWithdrawAccounts:
-		ids := make([]ent.Value, 0, len(m.withdraw_accounts))
-		for id := range m.withdraw_accounts {
-			ids = append(ids, id)
+	case user.EdgeWithdrawAccount:
+		if id := m.withdraw_account; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case user.EdgeIncomeBills:
 		ids := make([]ent.Value, 0, len(m.income_bills))
 		for id := range m.income_bills {
@@ -59438,9 +59474,6 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedwallets != nil {
 		edges = append(edges, user.EdgeWallets)
-	}
-	if m.removedwithdraw_accounts != nil {
-		edges = append(edges, user.EdgeWithdrawAccounts)
 	}
 	if m.removedincome_bills != nil {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -59581,12 +59614,6 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeWithdrawAccounts:
-		ids := make([]ent.Value, 0, len(m.removedwithdraw_accounts))
-		for id := range m.removedwithdraw_accounts {
-			ids = append(ids, id)
-		}
-		return ids
 	case user.EdgeIncomeBills:
 		ids := make([]ent.Value, 0, len(m.removedincome_bills))
 		for id := range m.removedincome_bills {
@@ -59723,8 +59750,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedwallets {
 		edges = append(edges, user.EdgeWallets)
 	}
-	if m.clearedwithdraw_accounts {
-		edges = append(edges, user.EdgeWithdrawAccounts)
+	if m.clearedwithdraw_account {
+		edges = append(edges, user.EdgeWithdrawAccount)
 	}
 	if m.clearedincome_bills {
 		edges = append(edges, user.EdgeIncomeBills)
@@ -59807,8 +59834,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedcampaign_orders
 	case user.EdgeWallets:
 		return m.clearedwallets
-	case user.EdgeWithdrawAccounts:
-		return m.clearedwithdraw_accounts
+	case user.EdgeWithdrawAccount:
+		return m.clearedwithdraw_account
 	case user.EdgeIncomeBills:
 		return m.clearedincome_bills
 	case user.EdgeOutcomeBills:
@@ -59849,6 +59876,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 		return nil
 	case user.EdgeParent:
 		m.ClearParent()
+		return nil
+	case user.EdgeWithdrawAccount:
+		m.ClearWithdrawAccount()
 		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
@@ -59915,8 +59945,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeWallets:
 		m.ResetWallets()
 		return nil
-	case user.EdgeWithdrawAccounts:
-		m.ResetWithdrawAccounts()
+	case user.EdgeWithdrawAccount:
+		m.ResetWithdrawAccount()
 		return nil
 	case user.EdgeIncomeBills:
 		m.ResetIncomeBills()
@@ -63921,9 +63951,10 @@ type WithdrawAccountMutation struct {
 	updated_at       *time.Time
 	deleted_at       *time.Time
 	business_name    *string
-	business_type    *enums.BusinessType
 	business_id      *int64
 	addbusiness_id   *int64
+	business_type    *enums.BusinessType
+	id_card          *string
 	personal_name    *string
 	phone            *string
 	bank_card_number *string
@@ -64332,42 +64363,6 @@ func (m *WithdrawAccountMutation) ResetBusinessName() {
 	m.business_name = nil
 }
 
-// SetBusinessType sets the "business_type" field.
-func (m *WithdrawAccountMutation) SetBusinessType(et enums.BusinessType) {
-	m.business_type = &et
-}
-
-// BusinessType returns the value of the "business_type" field in the mutation.
-func (m *WithdrawAccountMutation) BusinessType() (r enums.BusinessType, exists bool) {
-	v := m.business_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldBusinessType returns the old "business_type" field's value of the WithdrawAccount entity.
-// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v enums.BusinessType, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBusinessType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBusinessType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBusinessType: %w", err)
-	}
-	return oldValue.BusinessType, nil
-}
-
-// ResetBusinessType resets all changes to the "business_type" field.
-func (m *WithdrawAccountMutation) ResetBusinessType() {
-	m.business_type = nil
-}
-
 // SetBusinessID sets the "business_id" field.
 func (m *WithdrawAccountMutation) SetBusinessID(i int64) {
 	m.business_id = &i
@@ -64422,6 +64417,78 @@ func (m *WithdrawAccountMutation) AddedBusinessID() (r int64, exists bool) {
 func (m *WithdrawAccountMutation) ResetBusinessID() {
 	m.business_id = nil
 	m.addbusiness_id = nil
+}
+
+// SetBusinessType sets the "business_type" field.
+func (m *WithdrawAccountMutation) SetBusinessType(et enums.BusinessType) {
+	m.business_type = &et
+}
+
+// BusinessType returns the value of the "business_type" field in the mutation.
+func (m *WithdrawAccountMutation) BusinessType() (r enums.BusinessType, exists bool) {
+	v := m.business_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBusinessType returns the old "business_type" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldBusinessType(ctx context.Context) (v enums.BusinessType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBusinessType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBusinessType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBusinessType: %w", err)
+	}
+	return oldValue.BusinessType, nil
+}
+
+// ResetBusinessType resets all changes to the "business_type" field.
+func (m *WithdrawAccountMutation) ResetBusinessType() {
+	m.business_type = nil
+}
+
+// SetIDCard sets the "id_card" field.
+func (m *WithdrawAccountMutation) SetIDCard(s string) {
+	m.id_card = &s
+}
+
+// IDCard returns the value of the "id_card" field in the mutation.
+func (m *WithdrawAccountMutation) IDCard() (r string, exists bool) {
+	v := m.id_card
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIDCard returns the old "id_card" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldIDCard(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIDCard is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIDCard requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIDCard: %w", err)
+	}
+	return oldValue.IDCard, nil
+}
+
+// ResetIDCard resets all changes to the "id_card" field.
+func (m *WithdrawAccountMutation) ResetIDCard() {
+	m.id_card = nil
 }
 
 // SetPersonalName sets the "personal_name" field.
@@ -64629,7 +64696,7 @@ func (m *WithdrawAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawAccountMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, withdrawaccount.FieldCreatedBy)
 	}
@@ -64651,11 +64718,14 @@ func (m *WithdrawAccountMutation) Fields() []string {
 	if m.business_name != nil {
 		fields = append(fields, withdrawaccount.FieldBusinessName)
 	}
+	if m.business_id != nil {
+		fields = append(fields, withdrawaccount.FieldBusinessID)
+	}
 	if m.business_type != nil {
 		fields = append(fields, withdrawaccount.FieldBusinessType)
 	}
-	if m.business_id != nil {
-		fields = append(fields, withdrawaccount.FieldBusinessID)
+	if m.id_card != nil {
+		fields = append(fields, withdrawaccount.FieldIDCard)
 	}
 	if m.personal_name != nil {
 		fields = append(fields, withdrawaccount.FieldPersonalName)
@@ -64691,10 +64761,12 @@ func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case withdrawaccount.FieldBusinessName:
 		return m.BusinessName()
-	case withdrawaccount.FieldBusinessType:
-		return m.BusinessType()
 	case withdrawaccount.FieldBusinessID:
 		return m.BusinessID()
+	case withdrawaccount.FieldBusinessType:
+		return m.BusinessType()
+	case withdrawaccount.FieldIDCard:
+		return m.IDCard()
 	case withdrawaccount.FieldPersonalName:
 		return m.PersonalName()
 	case withdrawaccount.FieldPhone:
@@ -64726,10 +64798,12 @@ func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUserID(ctx)
 	case withdrawaccount.FieldBusinessName:
 		return m.OldBusinessName(ctx)
-	case withdrawaccount.FieldBusinessType:
-		return m.OldBusinessType(ctx)
 	case withdrawaccount.FieldBusinessID:
 		return m.OldBusinessID(ctx)
+	case withdrawaccount.FieldBusinessType:
+		return m.OldBusinessType(ctx)
+	case withdrawaccount.FieldIDCard:
+		return m.OldIDCard(ctx)
 	case withdrawaccount.FieldPersonalName:
 		return m.OldPersonalName(ctx)
 	case withdrawaccount.FieldPhone:
@@ -64796,6 +64870,13 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBusinessName(v)
 		return nil
+	case withdrawaccount.FieldBusinessID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBusinessID(v)
+		return nil
 	case withdrawaccount.FieldBusinessType:
 		v, ok := value.(enums.BusinessType)
 		if !ok {
@@ -64803,12 +64884,12 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBusinessType(v)
 		return nil
-	case withdrawaccount.FieldBusinessID:
-		v, ok := value.(int64)
+	case withdrawaccount.FieldIDCard:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetBusinessID(v)
+		m.SetIDCard(v)
 		return nil
 	case withdrawaccount.FieldPersonalName:
 		v, ok := value.(string)
@@ -64947,11 +65028,14 @@ func (m *WithdrawAccountMutation) ResetField(name string) error {
 	case withdrawaccount.FieldBusinessName:
 		m.ResetBusinessName()
 		return nil
+	case withdrawaccount.FieldBusinessID:
+		m.ResetBusinessID()
+		return nil
 	case withdrawaccount.FieldBusinessType:
 		m.ResetBusinessType()
 		return nil
-	case withdrawaccount.FieldBusinessID:
-		m.ResetBusinessID()
+	case withdrawaccount.FieldIDCard:
+		m.ResetIDCard()
 		return nil
 	case withdrawaccount.FieldPersonalName:
 		m.ResetPersonalName()

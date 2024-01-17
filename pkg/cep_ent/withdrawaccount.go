@@ -34,10 +34,12 @@ type WithdrawAccount struct {
 	UserID int64 `json:"user_id,string"`
 	// 威付通商户名称
 	BusinessName string `json:"business_name"`
-	// 商户类型
-	BusinessType enums.BusinessType `json:"business_type"`
 	// 商户 id
 	BusinessID int64 `json:"business_id"`
+	// 商户类型
+	BusinessType enums.BusinessType `json:"business_type"`
+	// 身份证号码
+	IDCard string `json:"id_card"`
 	// 个人商户名称
 	PersonalName string `json:"personal_name"`
 	// 个人商户手机号
@@ -81,7 +83,7 @@ func (*WithdrawAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case withdrawaccount.FieldID, withdrawaccount.FieldCreatedBy, withdrawaccount.FieldUpdatedBy, withdrawaccount.FieldUserID, withdrawaccount.FieldBusinessID:
 			values[i] = new(sql.NullInt64)
-		case withdrawaccount.FieldBusinessName, withdrawaccount.FieldBusinessType, withdrawaccount.FieldPersonalName, withdrawaccount.FieldPhone, withdrawaccount.FieldBankCardNumber, withdrawaccount.FieldBank:
+		case withdrawaccount.FieldBusinessName, withdrawaccount.FieldBusinessType, withdrawaccount.FieldIDCard, withdrawaccount.FieldPersonalName, withdrawaccount.FieldPhone, withdrawaccount.FieldBankCardNumber, withdrawaccount.FieldBank:
 			values[i] = new(sql.NullString)
 		case withdrawaccount.FieldCreatedAt, withdrawaccount.FieldUpdatedAt, withdrawaccount.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -148,17 +150,23 @@ func (wa *WithdrawAccount) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				wa.BusinessName = value.String
 			}
+		case withdrawaccount.FieldBusinessID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field business_id", values[i])
+			} else if value.Valid {
+				wa.BusinessID = value.Int64
+			}
 		case withdrawaccount.FieldBusinessType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field business_type", values[i])
 			} else if value.Valid {
 				wa.BusinessType = enums.BusinessType(value.String)
 			}
-		case withdrawaccount.FieldBusinessID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field business_id", values[i])
+		case withdrawaccount.FieldIDCard:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field id_card", values[i])
 			} else if value.Valid {
-				wa.BusinessID = value.Int64
+				wa.IDCard = value.String
 			}
 		case withdrawaccount.FieldPersonalName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -246,11 +254,14 @@ func (wa *WithdrawAccount) String() string {
 	builder.WriteString("business_name=")
 	builder.WriteString(wa.BusinessName)
 	builder.WriteString(", ")
+	builder.WriteString("business_id=")
+	builder.WriteString(fmt.Sprintf("%v", wa.BusinessID))
+	builder.WriteString(", ")
 	builder.WriteString("business_type=")
 	builder.WriteString(fmt.Sprintf("%v", wa.BusinessType))
 	builder.WriteString(", ")
-	builder.WriteString("business_id=")
-	builder.WriteString(fmt.Sprintf("%v", wa.BusinessID))
+	builder.WriteString("id_card=")
+	builder.WriteString(wa.IDCard)
 	builder.WriteString(", ")
 	builder.WriteString("personal_name=")
 	builder.WriteString(wa.PersonalName)

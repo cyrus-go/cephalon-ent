@@ -74,7 +74,7 @@ func (waq *WithdrawAccountQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(withdrawaccount.Table, withdrawaccount.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, withdrawaccount.UserTable, withdrawaccount.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, withdrawaccount.UserTable, withdrawaccount.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(waq.driver.Dialect(), step)
 		return fromU, nil

@@ -590,6 +590,20 @@ func (mu *MissionUpdate) SetNillableFreeAt(t *time.Time) *MissionUpdate {
 	return mu
 }
 
+// SetCloseWay sets the "close_way" field.
+func (mu *MissionUpdate) SetCloseWay(ew enums.CloseWay) *MissionUpdate {
+	mu.mutation.SetCloseWay(ew)
+	return mu
+}
+
+// SetNillableCloseWay sets the "close_way" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableCloseWay(ew *enums.CloseWay) *MissionUpdate {
+	if ew != nil {
+		mu.SetCloseWay(*ew)
+	}
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -1020,6 +1034,11 @@ func (mu *MissionUpdate) check() error {
 			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
 		}
 	}
+	if v, ok := mu.mutation.CloseWay(); ok {
+		if err := mission.CloseWayValidator(v); err != nil {
+			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.close_way": %w`, err)}
+		}
+	}
 	if _, ok := mu.mutation.MissionKindID(); mu.mutation.MissionKindCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.mission_kind"`)
 	}
@@ -1197,6 +1216,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.FreeAt(); ok {
 		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
+	}
+	if value, ok := mu.mutation.CloseWay(); ok {
+		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2271,6 +2293,20 @@ func (muo *MissionUpdateOne) SetNillableFreeAt(t *time.Time) *MissionUpdateOne {
 	return muo
 }
 
+// SetCloseWay sets the "close_way" field.
+func (muo *MissionUpdateOne) SetCloseWay(ew enums.CloseWay) *MissionUpdateOne {
+	muo.mutation.SetCloseWay(ew)
+	return muo
+}
+
+// SetNillableCloseWay sets the "close_way" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableCloseWay(ew *enums.CloseWay) *MissionUpdateOne {
+	if ew != nil {
+		muo.SetCloseWay(*ew)
+	}
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -2714,6 +2750,11 @@ func (muo *MissionUpdateOne) check() error {
 			return &ValidationError{Name: "inner_method", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.inner_method": %w`, err)}
 		}
 	}
+	if v, ok := muo.mutation.CloseWay(); ok {
+		if err := mission.CloseWayValidator(v); err != nil {
+			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.close_way": %w`, err)}
+		}
+	}
 	if _, ok := muo.mutation.MissionKindID(); muo.mutation.MissionKindCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Mission.mission_kind"`)
 	}
@@ -2908,6 +2949,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.FreeAt(); ok {
 		_spec.SetField(mission.FieldFreeAt, field.TypeTime, value)
+	}
+	if value, ok := muo.mutation.CloseWay(); ok {
+		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

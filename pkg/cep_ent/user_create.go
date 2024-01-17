@@ -612,19 +612,23 @@ func (uc *UserCreate) AddWallets(w ...*Wallet) *UserCreate {
 	return uc.AddWalletIDs(ids...)
 }
 
-// AddWithdrawAccountIDs adds the "withdraw_accounts" edge to the WithdrawAccount entity by IDs.
-func (uc *UserCreate) AddWithdrawAccountIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddWithdrawAccountIDs(ids...)
+// SetWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by ID.
+func (uc *UserCreate) SetWithdrawAccountID(id int64) *UserCreate {
+	uc.mutation.SetWithdrawAccountID(id)
 	return uc
 }
 
-// AddWithdrawAccounts adds the "withdraw_accounts" edges to the WithdrawAccount entity.
-func (uc *UserCreate) AddWithdrawAccounts(w ...*WithdrawAccount) *UserCreate {
-	ids := make([]int64, len(w))
-	for i := range w {
-		ids[i] = w[i].ID
+// SetNillableWithdrawAccountID sets the "withdraw_account" edge to the WithdrawAccount entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableWithdrawAccountID(id *int64) *UserCreate {
+	if id != nil {
+		uc = uc.SetWithdrawAccountID(*id)
 	}
-	return uc.AddWithdrawAccountIDs(ids...)
+	return uc
+}
+
+// SetWithdrawAccount sets the "withdraw_account" edge to the WithdrawAccount entity.
+func (uc *UserCreate) SetWithdrawAccount(w *WithdrawAccount) *UserCreate {
+	return uc.SetWithdrawAccountID(w.ID)
 }
 
 // AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
@@ -1401,12 +1405,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.WithdrawAccountsIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.WithdrawAccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   user.WithdrawAccountsTable,
-			Columns: []string{user.WithdrawAccountsColumn},
+			Table:   user.WithdrawAccountTable,
+			Columns: []string{user.WithdrawAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawaccount.FieldID, field.TypeInt64),

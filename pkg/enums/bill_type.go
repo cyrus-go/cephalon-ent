@@ -12,10 +12,12 @@ const (
 	BillTypeMission        BillType = "mission"
 	BillTypeGas            BillType = "gas"
 	BillTypeExtraService   BillType = "extra_service"
+	BillTypeWithdraw       BillType = "withdraw"
 )
 
 func (BillType) Values() []string {
 	return []string{
+		string(BillTypeWithdraw),
 		string(BillTypeUnknown),
 		string(BillTypeRecharge),
 		string(BillTypeMissionConsume),

@@ -68,7 +68,7 @@ type UserQuery struct {
 	withInvites               *InviteQuery
 	withCampaignOrders        *CampaignOrderQuery
 	withWallets               *WalletQuery
-	withWithdrawAccounts      *WithdrawAccountQuery
+	withWithdrawAccount       *WithdrawAccountQuery
 	withIncomeBills           *BillQuery
 	withOutcomeBills          *BillQuery
 	withMissionProductions    *MissionProductionQuery
@@ -536,8 +536,8 @@ func (uq *UserQuery) QueryWallets() *WalletQuery {
 	return query
 }
 
-// QueryWithdrawAccounts chains the current query on the "withdraw_accounts" edge.
-func (uq *UserQuery) QueryWithdrawAccounts() *WithdrawAccountQuery {
+// QueryWithdrawAccount chains the current query on the "withdraw_account" edge.
+func (uq *UserQuery) QueryWithdrawAccount() *WithdrawAccountQuery {
 	query := (&WithdrawAccountClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -550,7 +550,7 @@ func (uq *UserQuery) QueryWithdrawAccounts() *WithdrawAccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(withdrawaccount.Table, withdrawaccount.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawAccountsTable, user.WithdrawAccountsColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.WithdrawAccountTable, user.WithdrawAccountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -1033,7 +1033,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withInvites:               uq.withInvites.Clone(),
 		withCampaignOrders:        uq.withCampaignOrders.Clone(),
 		withWallets:               uq.withWallets.Clone(),
-		withWithdrawAccounts:      uq.withWithdrawAccounts.Clone(),
+		withWithdrawAccount:       uq.withWithdrawAccount.Clone(),
 		withIncomeBills:           uq.withIncomeBills.Clone(),
 		withOutcomeBills:          uq.withOutcomeBills.Clone(),
 		withMissionProductions:    uq.withMissionProductions.Clone(),
@@ -1261,14 +1261,14 @@ func (uq *UserQuery) WithWallets(opts ...func(*WalletQuery)) *UserQuery {
 	return uq
 }
 
-// WithWithdrawAccounts tells the query-builder to eager-load the nodes that are connected to
-// the "withdraw_accounts" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithWithdrawAccounts(opts ...func(*WithdrawAccountQuery)) *UserQuery {
+// WithWithdrawAccount tells the query-builder to eager-load the nodes that are connected to
+// the "withdraw_account" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithWithdrawAccount(opts ...func(*WithdrawAccountQuery)) *UserQuery {
 	query := (&WithdrawAccountClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withWithdrawAccounts = query
+	uq.withWithdrawAccount = query
 	return uq
 }
 
@@ -1502,7 +1502,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withInvites != nil,
 			uq.withCampaignOrders != nil,
 			uq.withWallets != nil,
-			uq.withWithdrawAccounts != nil,
+			uq.withWithdrawAccount != nil,
 			uq.withIncomeBills != nil,
 			uq.withOutcomeBills != nil,
 			uq.withMissionProductions != nil,
@@ -1672,10 +1672,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withWithdrawAccounts; query != nil {
-		if err := uq.loadWithdrawAccounts(ctx, query, nodes,
-			func(n *User) { n.Edges.WithdrawAccounts = []*WithdrawAccount{} },
-			func(n *User, e *WithdrawAccount) { n.Edges.WithdrawAccounts = append(n.Edges.WithdrawAccounts, e) }); err != nil {
+	if query := uq.withWithdrawAccount; query != nil {
+		if err := uq.loadWithdrawAccount(ctx, query, nodes, nil,
+			func(n *User, e *WithdrawAccount) { n.Edges.WithdrawAccount = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -2336,21 +2335,18 @@ func (uq *UserQuery) loadWallets(ctx context.Context, query *WalletQuery, nodes 
 	}
 	return nil
 }
-func (uq *UserQuery) loadWithdrawAccounts(ctx context.Context, query *WithdrawAccountQuery, nodes []*User, init func(*User), assign func(*User, *WithdrawAccount)) error {
+func (uq *UserQuery) loadWithdrawAccount(ctx context.Context, query *WithdrawAccountQuery, nodes []*User, init func(*User), assign func(*User, *WithdrawAccount)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(withdrawaccount.FieldUserID)
 	}
 	query.Where(predicate.WithdrawAccount(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.WithdrawAccountsColumn), fks...))
+		s.Where(sql.InValues(s.C(user.WithdrawAccountColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -1492,21 +1492,21 @@ func HasWalletsWith(preds ...predicate.Wallet) predicate.User {
 	})
 }
 
-// HasWithdrawAccounts applies the HasEdge predicate on the "withdraw_accounts" edge.
-func HasWithdrawAccounts() predicate.User {
+// HasWithdrawAccount applies the HasEdge predicate on the "withdraw_account" edge.
+func HasWithdrawAccount() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, WithdrawAccountsTable, WithdrawAccountsColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, WithdrawAccountTable, WithdrawAccountColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasWithdrawAccountsWith applies the HasEdge predicate on the "withdraw_accounts" edge with a given conditions (other predicates).
-func HasWithdrawAccountsWith(preds ...predicate.WithdrawAccount) predicate.User {
+// HasWithdrawAccountWith applies the HasEdge predicate on the "withdraw_account" edge with a given conditions (other predicates).
+func HasWithdrawAccountWith(preds ...predicate.WithdrawAccount) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newWithdrawAccountsStep()
+		step := newWithdrawAccountStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
