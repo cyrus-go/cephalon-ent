@@ -42,6 +42,8 @@ type Price struct {
 	MissionBillingType enums.MissionBillingType `json:"mission_billing_type"`
 	// 任务单价
 	Cep int64 `json:"cep"`
+	// 任务原价
+	OriginalCep int64 `json:"original_cep"`
 	// 价格有效时间开始，为空表示永久有效
 	StartedAt *time.Time `json:"started_at"`
 	// 价格有效时间结束，为空表示永久有效
@@ -87,7 +89,7 @@ func (*Price) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case price.FieldIsDeprecated, price.FieldIsSensitive, price.FieldIsHotGpu:
 			values[i] = new(sql.NullBool)
-		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldGpuID, price.FieldCep:
+		case price.FieldID, price.FieldCreatedBy, price.FieldUpdatedBy, price.FieldGpuID, price.FieldCep, price.FieldOriginalCep:
 			values[i] = new(sql.NullInt64)
 		case price.FieldGpuVersion, price.FieldMissionType, price.FieldMissionCategory, price.FieldMissionBillingType:
 			values[i] = new(sql.NullString)
@@ -179,6 +181,12 @@ func (pr *Price) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field cep", values[i])
 			} else if value.Valid {
 				pr.Cep = value.Int64
+			}
+		case price.FieldOriginalCep:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field original_cep", values[i])
+			} else if value.Valid {
+				pr.OriginalCep = value.Int64
 			}
 		case price.FieldStartedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -285,6 +293,9 @@ func (pr *Price) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cep=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Cep))
+	builder.WriteString(", ")
+	builder.WriteString("original_cep=")
+	builder.WriteString(fmt.Sprintf("%v", pr.OriginalCep))
 	builder.WriteString(", ")
 	if v := pr.StartedAt; v != nil {
 		builder.WriteString("started_at=")

@@ -178,6 +178,20 @@ func (pc *PriceCreate) SetNillableCep(i *int64) *PriceCreate {
 	return pc
 }
 
+// SetOriginalCep sets the "original_cep" field.
+func (pc *PriceCreate) SetOriginalCep(i int64) *PriceCreate {
+	pc.mutation.SetOriginalCep(i)
+	return pc
+}
+
+// SetNillableOriginalCep sets the "original_cep" field if the given value is not nil.
+func (pc *PriceCreate) SetNillableOriginalCep(i *int64) *PriceCreate {
+	if i != nil {
+		pc.SetOriginalCep(*i)
+	}
+	return pc
+}
+
 // SetStartedAt sets the "started_at" field.
 func (pc *PriceCreate) SetStartedAt(t time.Time) *PriceCreate {
 	pc.mutation.SetStartedAt(t)
@@ -346,6 +360,10 @@ func (pc *PriceCreate) defaults() {
 		v := price.DefaultCep
 		pc.mutation.SetCep(v)
 	}
+	if _, ok := pc.mutation.OriginalCep(); !ok {
+		v := price.DefaultOriginalCep
+		pc.mutation.SetOriginalCep(v)
+	}
 	if _, ok := pc.mutation.IsDeprecated(); !ok {
 		v := price.DefaultIsDeprecated
 		pc.mutation.SetIsDeprecated(v)
@@ -418,6 +436,9 @@ func (pc *PriceCreate) check() error {
 	}
 	if _, ok := pc.mutation.Cep(); !ok {
 		return &ValidationError{Name: "cep", err: errors.New(`cep_ent: missing required field "Price.cep"`)}
+	}
+	if _, ok := pc.mutation.OriginalCep(); !ok {
+		return &ValidationError{Name: "original_cep", err: errors.New(`cep_ent: missing required field "Price.original_cep"`)}
 	}
 	if _, ok := pc.mutation.IsDeprecated(); !ok {
 		return &ValidationError{Name: "is_deprecated", err: errors.New(`cep_ent: missing required field "Price.is_deprecated"`)}
@@ -503,6 +524,10 @@ func (pc *PriceCreate) createSpec() (*Price, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.Cep(); ok {
 		_spec.SetField(price.FieldCep, field.TypeInt64, value)
 		_node.Cep = value
+	}
+	if value, ok := pc.mutation.OriginalCep(); ok {
+		_spec.SetField(price.FieldOriginalCep, field.TypeInt64, value)
+		_node.OriginalCep = value
 	}
 	if value, ok := pc.mutation.StartedAt(); ok {
 		_spec.SetField(price.FieldStartedAt, field.TypeTime, value)
@@ -728,6 +753,24 @@ func (u *PriceUpsert) UpdateCep() *PriceUpsert {
 // AddCep adds v to the "cep" field.
 func (u *PriceUpsert) AddCep(v int64) *PriceUpsert {
 	u.Add(price.FieldCep, v)
+	return u
+}
+
+// SetOriginalCep sets the "original_cep" field.
+func (u *PriceUpsert) SetOriginalCep(v int64) *PriceUpsert {
+	u.Set(price.FieldOriginalCep, v)
+	return u
+}
+
+// UpdateOriginalCep sets the "original_cep" field to the value that was provided on create.
+func (u *PriceUpsert) UpdateOriginalCep() *PriceUpsert {
+	u.SetExcluded(price.FieldOriginalCep)
+	return u
+}
+
+// AddOriginalCep adds v to the "original_cep" field.
+func (u *PriceUpsert) AddOriginalCep(v int64) *PriceUpsert {
+	u.Add(price.FieldOriginalCep, v)
 	return u
 }
 
@@ -1012,6 +1055,27 @@ func (u *PriceUpsertOne) AddCep(v int64) *PriceUpsertOne {
 func (u *PriceUpsertOne) UpdateCep() *PriceUpsertOne {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateCep()
+	})
+}
+
+// SetOriginalCep sets the "original_cep" field.
+func (u *PriceUpsertOne) SetOriginalCep(v int64) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetOriginalCep(v)
+	})
+}
+
+// AddOriginalCep adds v to the "original_cep" field.
+func (u *PriceUpsertOne) AddOriginalCep(v int64) *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.AddOriginalCep(v)
+	})
+}
+
+// UpdateOriginalCep sets the "original_cep" field to the value that was provided on create.
+func (u *PriceUpsertOne) UpdateOriginalCep() *PriceUpsertOne {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateOriginalCep()
 	})
 }
 
@@ -1474,6 +1538,27 @@ func (u *PriceUpsertBulk) AddCep(v int64) *PriceUpsertBulk {
 func (u *PriceUpsertBulk) UpdateCep() *PriceUpsertBulk {
 	return u.Update(func(s *PriceUpsert) {
 		s.UpdateCep()
+	})
+}
+
+// SetOriginalCep sets the "original_cep" field.
+func (u *PriceUpsertBulk) SetOriginalCep(v int64) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.SetOriginalCep(v)
+	})
+}
+
+// AddOriginalCep adds v to the "original_cep" field.
+func (u *PriceUpsertBulk) AddOriginalCep(v int64) *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.AddOriginalCep(v)
+	})
+}
+
+// UpdateOriginalCep sets the "original_cep" field to the value that was provided on create.
+func (u *PriceUpsertBulk) UpdateOriginalCep() *PriceUpsertBulk {
+	return u.Update(func(s *PriceUpsert) {
+		s.UpdateOriginalCep()
 	})
 }
 

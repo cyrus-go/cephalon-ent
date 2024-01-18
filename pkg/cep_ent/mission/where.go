@@ -196,6 +196,11 @@ func FreeAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldFreeAt, v))
 }
 
+// ClosedAt applies equality check predicate on the "closed_at" field. It's identical to ClosedAtEQ.
+func ClosedAt(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldClosedAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -1824,6 +1829,56 @@ func CloseWayNotIn(vs ...enums.CloseWay) predicate.Mission {
 		v[i] = vs[i]
 	}
 	return predicate.Mission(sql.FieldNotIn(FieldCloseWay, v...))
+}
+
+// ClosedAtEQ applies the EQ predicate on the "closed_at" field.
+func ClosedAtEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldClosedAt, v))
+}
+
+// ClosedAtNEQ applies the NEQ predicate on the "closed_at" field.
+func ClosedAtNEQ(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldClosedAt, v))
+}
+
+// ClosedAtIn applies the In predicate on the "closed_at" field.
+func ClosedAtIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldClosedAt, vs...))
+}
+
+// ClosedAtNotIn applies the NotIn predicate on the "closed_at" field.
+func ClosedAtNotIn(vs ...time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldClosedAt, vs...))
+}
+
+// ClosedAtGT applies the GT predicate on the "closed_at" field.
+func ClosedAtGT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldClosedAt, v))
+}
+
+// ClosedAtGTE applies the GTE predicate on the "closed_at" field.
+func ClosedAtGTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldClosedAt, v))
+}
+
+// ClosedAtLT applies the LT predicate on the "closed_at" field.
+func ClosedAtLT(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldClosedAt, v))
+}
+
+// ClosedAtLTE applies the LTE predicate on the "closed_at" field.
+func ClosedAtLTE(v time.Time) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldClosedAt, v))
+}
+
+// ClosedAtIsNil applies the IsNil predicate on the "closed_at" field.
+func ClosedAtIsNil() predicate.Mission {
+	return predicate.Mission(sql.FieldIsNull(FieldClosedAt))
+}
+
+// ClosedAtNotNil applies the NotNil predicate on the "closed_at" field.
+func ClosedAtNotNil() predicate.Mission {
+	return predicate.Mission(sql.FieldNotNull(FieldClosedAt))
 }
 
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.

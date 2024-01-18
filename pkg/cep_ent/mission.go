@@ -101,6 +101,8 @@ type Mission struct {
 	FreeAt time.Time `json:"free_at"`
 	// 任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭
 	CloseWay enums.CloseWay `json:"close_way"`
+	// 用戶关闭任务时间
+	ClosedAt *time.Time `json:"closed_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges                  MissionEdges `json:"edges"`
@@ -289,7 +291,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay:
 			values[i] = new(sql.NullString)
-		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt:
+		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt, mission.FieldClosedAt:
 			values[i] = new(sql.NullTime)
 		case mission.FieldWhiteDeviceIds:
 			values[i] = mission.ValueScanner.WhiteDeviceIds.ScanValue()
@@ -552,6 +554,13 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.CloseWay = enums.CloseWay(value.String)
 			}
+		case mission.FieldClosedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field closed_at", values[i])
+			} else if value.Valid {
+				m.ClosedAt = new(time.Time)
+				*m.ClosedAt = value.Time
+			}
 		case mission.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
@@ -779,6 +788,11 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("close_way=")
 	builder.WriteString(fmt.Sprintf("%v", m.CloseWay))
+	builder.WriteString(", ")
+	if v := m.ClosedAt; v != nil {
+		builder.WriteString("closed_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

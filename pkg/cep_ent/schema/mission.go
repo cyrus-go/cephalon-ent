@@ -53,6 +53,7 @@ func (Mission) Fields() []ent.Field {
 		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("任务到期时间（包时任务才有）"),
 		field.Time("free_at").Default(common.ZeroTime).Annotations(entsql.Annotation{Default: "CURRENT_TIMESTAMP"}).SchemaType(map[string]string{dialect.Postgres: "timestamptz"}).StructTag(`json:"free_at"`).Comment("任务释放时刻"),
 		field.Enum("close_way").GoType(enums.CloseWayUser).Default(string(enums.CloseWayUnknown)).StructTag(`json:"close_way"`).Comment("任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭"),
+		field.Time("closed_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"closed_at"`).Comment("用戶关闭任务时间"),
 	}
 }
 

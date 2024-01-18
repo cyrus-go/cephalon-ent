@@ -604,6 +604,26 @@ func (mu *MissionUpdate) SetNillableCloseWay(ew *enums.CloseWay) *MissionUpdate 
 	return mu
 }
 
+// SetClosedAt sets the "closed_at" field.
+func (mu *MissionUpdate) SetClosedAt(t time.Time) *MissionUpdate {
+	mu.mutation.SetClosedAt(t)
+	return mu
+}
+
+// SetNillableClosedAt sets the "closed_at" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableClosedAt(t *time.Time) *MissionUpdate {
+	if t != nil {
+		mu.SetClosedAt(*t)
+	}
+	return mu
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (mu *MissionUpdate) ClearClosedAt() *MissionUpdate {
+	mu.mutation.ClearClosedAt()
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -1219,6 +1239,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.CloseWay(); ok {
 		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
+	}
+	if value, ok := mu.mutation.ClosedAt(); ok {
+		_spec.SetField(mission.FieldClosedAt, field.TypeTime, value)
+	}
+	if mu.mutation.ClosedAtCleared() {
+		_spec.ClearField(mission.FieldClosedAt, field.TypeTime)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2307,6 +2333,26 @@ func (muo *MissionUpdateOne) SetNillableCloseWay(ew *enums.CloseWay) *MissionUpd
 	return muo
 }
 
+// SetClosedAt sets the "closed_at" field.
+func (muo *MissionUpdateOne) SetClosedAt(t time.Time) *MissionUpdateOne {
+	muo.mutation.SetClosedAt(t)
+	return muo
+}
+
+// SetNillableClosedAt sets the "closed_at" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableClosedAt(t *time.Time) *MissionUpdateOne {
+	if t != nil {
+		muo.SetClosedAt(*t)
+	}
+	return muo
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (muo *MissionUpdateOne) ClearClosedAt() *MissionUpdateOne {
+	muo.mutation.ClearClosedAt()
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -2952,6 +2998,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.CloseWay(); ok {
 		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
+	}
+	if value, ok := muo.mutation.ClosedAt(); ok {
+		_spec.SetField(mission.FieldClosedAt, field.TypeTime, value)
+	}
+	if muo.mutation.ClosedAtCleared() {
+		_spec.ClearField(mission.FieldClosedAt, field.TypeTime)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

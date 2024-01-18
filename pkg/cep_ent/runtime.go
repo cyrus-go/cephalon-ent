@@ -1428,6 +1428,10 @@ func init() {
 	missionDescFreeAt := missionFields[31].Descriptor()
 	// mission.DefaultFreeAt holds the default value on creation for the free_at field.
 	mission.DefaultFreeAt = missionDescFreeAt.Default.(time.Time)
+	// missionDescClosedAt is the schema descriptor for closed_at field.
+	missionDescClosedAt := missionFields[33].Descriptor()
+	// mission.DefaultClosedAt holds the default value on creation for the closed_at field.
+	mission.DefaultClosedAt = missionDescClosedAt.Default.(time.Time)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.
@@ -2045,16 +2049,20 @@ func init() {
 	priceDescCep := priceFields[5].Descriptor()
 	// price.DefaultCep holds the default value on creation for the cep field.
 	price.DefaultCep = priceDescCep.Default.(int64)
+	// priceDescOriginalCep is the schema descriptor for original_cep field.
+	priceDescOriginalCep := priceFields[6].Descriptor()
+	// price.DefaultOriginalCep holds the default value on creation for the original_cep field.
+	price.DefaultOriginalCep = priceDescOriginalCep.Default.(int64)
 	// priceDescIsDeprecated is the schema descriptor for is_deprecated field.
-	priceDescIsDeprecated := priceFields[8].Descriptor()
+	priceDescIsDeprecated := priceFields[9].Descriptor()
 	// price.DefaultIsDeprecated holds the default value on creation for the is_deprecated field.
 	price.DefaultIsDeprecated = priceDescIsDeprecated.Default.(bool)
 	// priceDescIsSensitive is the schema descriptor for is_sensitive field.
-	priceDescIsSensitive := priceFields[9].Descriptor()
+	priceDescIsSensitive := priceFields[10].Descriptor()
 	// price.DefaultIsSensitive holds the default value on creation for the is_sensitive field.
 	price.DefaultIsSensitive = priceDescIsSensitive.Default.(bool)
 	// priceDescIsHotGpu is the schema descriptor for is_hot_gpu field.
-	priceDescIsHotGpu := priceFields[10].Descriptor()
+	priceDescIsHotGpu := priceFields[11].Descriptor()
 	// price.DefaultIsHotGpu holds the default value on creation for the is_hot_gpu field.
 	price.DefaultIsHotGpu = priceDescIsHotGpu.Default.(bool)
 	// priceDescID is the schema descriptor for id field.

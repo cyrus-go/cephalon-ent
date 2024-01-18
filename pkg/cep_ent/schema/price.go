@@ -23,6 +23,7 @@ func (Price) Fields() []ent.Field {
 		field.Enum("mission_billing_type").GoType(enums.MissionBillingTypeCount).Default(string(enums.MissionBillingTypeCount)).StructTag(`json:"mission_billing_type"`).Comment("任务计费类型"),
 		//field.Enum("renewal_type").GoType(enums.RenewalTypeHour).Default(string(enums.RenewalTypeUnknow)).StructTag("renewal_type").Comment("包时类型，只有包时任务才有"),
 		field.Int64("cep").Default(0).StructTag(`json:"cep"`).Comment("任务单价"),
+		field.Int64("original_cep").Default(0).StructTag(`json:"original_cep"`).Comment("任务原价"),
 		field.Time("started_at").Optional().Nillable().StructTag(`json:"started_at"`).Comment("价格有效时间开始，为空表示永久有效"),
 		field.Time("finished_at").Optional().Nillable().StructTag(`json:"finished_at"`).Comment("价格有效时间结束，为空表示永久有效"),
 		field.Bool("is_deprecated").Default(false).StructTag(`json:"is_deprecated"`).Comment("价格是否屏蔽，前端置灰，硬选也可以"),
