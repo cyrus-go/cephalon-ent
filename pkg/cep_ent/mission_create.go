@@ -536,6 +536,20 @@ func (mc *MissionCreate) SetNillableCloseWay(ew *enums.CloseWay) *MissionCreate 
 	return mc
 }
 
+// SetClosedAt sets the "closed_at" field.
+func (mc *MissionCreate) SetClosedAt(t time.Time) *MissionCreate {
+	mc.mutation.SetClosedAt(t)
+	return mc
+}
+
+// SetNillableClosedAt sets the "closed_at" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableClosedAt(t *time.Time) *MissionCreate {
+	if t != nil {
+		mc.SetClosedAt(*t)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -876,6 +890,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultCloseWay
 		mc.mutation.SetCloseWay(v)
 	}
+	if _, ok := mc.mutation.ClosedAt(); !ok {
+		v := mission.DefaultClosedAt
+		mc.mutation.SetClosedAt(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -1200,6 +1218,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.CloseWay(); ok {
 		_spec.SetField(mission.FieldCloseWay, field.TypeEnum, value)
 		_node.CloseWay = value
+	}
+	if value, ok := mc.mutation.ClosedAt(); ok {
+		_spec.SetField(mission.FieldClosedAt, field.TypeTime, value)
+		_node.ClosedAt = &value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1981,6 +2003,24 @@ func (u *MissionUpsert) UpdateCloseWay() *MissionUpsert {
 	return u
 }
 
+// SetClosedAt sets the "closed_at" field.
+func (u *MissionUpsert) SetClosedAt(v time.Time) *MissionUpsert {
+	u.Set(mission.FieldClosedAt, v)
+	return u
+}
+
+// UpdateClosedAt sets the "closed_at" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateClosedAt() *MissionUpsert {
+	u.SetExcluded(mission.FieldClosedAt)
+	return u
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (u *MissionUpsert) ClearClosedAt() *MissionUpsert {
+	u.SetNull(mission.FieldClosedAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2631,6 +2671,27 @@ func (u *MissionUpsertOne) SetCloseWay(v enums.CloseWay) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateCloseWay() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateCloseWay()
+	})
+}
+
+// SetClosedAt sets the "closed_at" field.
+func (u *MissionUpsertOne) SetClosedAt(v time.Time) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetClosedAt(v)
+	})
+}
+
+// UpdateClosedAt sets the "closed_at" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateClosedAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateClosedAt()
+	})
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (u *MissionUpsertOne) ClearClosedAt() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearClosedAt()
 	})
 }
 
@@ -3453,6 +3514,27 @@ func (u *MissionUpsertBulk) SetCloseWay(v enums.CloseWay) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateCloseWay() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateCloseWay()
+	})
+}
+
+// SetClosedAt sets the "closed_at" field.
+func (u *MissionUpsertBulk) SetClosedAt(v time.Time) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetClosedAt(v)
+	})
+}
+
+// UpdateClosedAt sets the "closed_at" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateClosedAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateClosedAt()
+	})
+}
+
+// ClearClosedAt clears the value of the "closed_at" field.
+func (u *MissionUpsertBulk) ClearClosedAt() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.ClearClosedAt()
 	})
 }
 
