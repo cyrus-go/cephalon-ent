@@ -1118,7 +1118,7 @@ func init() {
 	// gpuDescLowestEarnMonth is the schema descriptor for lowest_earn_month field.
 	gpuDescLowestEarnMonth := gpuFields[5].Descriptor()
 	// gpu.DefaultLowestEarnMonth holds the default value on creation for the lowest_earn_month field.
-	gpu.DefaultLowestEarnMonth = gpuDescLowestEarnMonth.Default.(int)
+	gpu.DefaultLowestEarnMonth = gpuDescLowestEarnMonth.Default.(int64)
 	// gpuDescID is the schema descriptor for id field.
 	gpuDescID := gpuMixinFields0[0].Descriptor()
 	// gpu.DefaultID holds the default value on creation for the id field.

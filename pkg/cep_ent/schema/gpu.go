@@ -19,7 +19,7 @@ func (Gpu) Fields() []ent.Field {
 		field.Int("video_memory").Default(40).StructTag(`json:"video_memory"`).Comment("显存"),
 		field.Int("cpu").Default(12).StructTag(`json:"cpu"`).Comment("CPU"),
 		field.Int("memory").Default(128).StructTag(`json:"memory"`).Comment("内存"),
-		field.Int("lowest_earn_month").Default(0).StructTag(`json:"lowest_earn_month"`).Comment("保底最低月收益"),
+		field.Int64("lowest_earn_month").Default(0).StructTag(`json:"lowest_earn_month"`).Comment("保底最低月收益"),
 	}
 }
 

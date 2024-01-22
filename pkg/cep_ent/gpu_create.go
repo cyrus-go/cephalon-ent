@@ -166,13 +166,13 @@ func (gc *GpuCreate) SetNillableMemory(i *int) *GpuCreate {
 }
 
 // SetLowestEarnMonth sets the "lowest_earn_month" field.
-func (gc *GpuCreate) SetLowestEarnMonth(i int) *GpuCreate {
+func (gc *GpuCreate) SetLowestEarnMonth(i int64) *GpuCreate {
 	gc.mutation.SetLowestEarnMonth(i)
 	return gc
 }
 
 // SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
-func (gc *GpuCreate) SetNillableLowestEarnMonth(i *int) *GpuCreate {
+func (gc *GpuCreate) SetNillableLowestEarnMonth(i *int64) *GpuCreate {
 	if i != nil {
 		gc.SetLowestEarnMonth(*i)
 	}
@@ -422,7 +422,7 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 		_node.Memory = value
 	}
 	if value, ok := gc.mutation.LowestEarnMonth(); ok {
-		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
 		_node.LowestEarnMonth = value
 	}
 	if nodes := gc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
@@ -654,7 +654,7 @@ func (u *GpuUpsert) AddMemory(v int) *GpuUpsert {
 }
 
 // SetLowestEarnMonth sets the "lowest_earn_month" field.
-func (u *GpuUpsert) SetLowestEarnMonth(v int) *GpuUpsert {
+func (u *GpuUpsert) SetLowestEarnMonth(v int64) *GpuUpsert {
 	u.Set(gpu.FieldLowestEarnMonth, v)
 	return u
 }
@@ -666,7 +666,7 @@ func (u *GpuUpsert) UpdateLowestEarnMonth() *GpuUpsert {
 }
 
 // AddLowestEarnMonth adds v to the "lowest_earn_month" field.
-func (u *GpuUpsert) AddLowestEarnMonth(v int) *GpuUpsert {
+func (u *GpuUpsert) AddLowestEarnMonth(v int64) *GpuUpsert {
 	u.Add(gpu.FieldLowestEarnMonth, v)
 	return u
 }
@@ -891,14 +891,14 @@ func (u *GpuUpsertOne) UpdateMemory() *GpuUpsertOne {
 }
 
 // SetLowestEarnMonth sets the "lowest_earn_month" field.
-func (u *GpuUpsertOne) SetLowestEarnMonth(v int) *GpuUpsertOne {
+func (u *GpuUpsertOne) SetLowestEarnMonth(v int64) *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.SetLowestEarnMonth(v)
 	})
 }
 
 // AddLowestEarnMonth adds v to the "lowest_earn_month" field.
-func (u *GpuUpsertOne) AddLowestEarnMonth(v int) *GpuUpsertOne {
+func (u *GpuUpsertOne) AddLowestEarnMonth(v int64) *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.AddLowestEarnMonth(v)
 	})
@@ -1297,14 +1297,14 @@ func (u *GpuUpsertBulk) UpdateMemory() *GpuUpsertBulk {
 }
 
 // SetLowestEarnMonth sets the "lowest_earn_month" field.
-func (u *GpuUpsertBulk) SetLowestEarnMonth(v int) *GpuUpsertBulk {
+func (u *GpuUpsertBulk) SetLowestEarnMonth(v int64) *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.SetLowestEarnMonth(v)
 	})
 }
 
 // AddLowestEarnMonth adds v to the "lowest_earn_month" field.
-func (u *GpuUpsertBulk) AddLowestEarnMonth(v int) *GpuUpsertBulk {
+func (u *GpuUpsertBulk) AddLowestEarnMonth(v int64) *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.AddLowestEarnMonth(v)
 	})

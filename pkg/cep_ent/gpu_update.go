@@ -193,14 +193,14 @@ func (gu *GpuUpdate) AddMemory(i int) *GpuUpdate {
 }
 
 // SetLowestEarnMonth sets the "lowest_earn_month" field.
-func (gu *GpuUpdate) SetLowestEarnMonth(i int) *GpuUpdate {
+func (gu *GpuUpdate) SetLowestEarnMonth(i int64) *GpuUpdate {
 	gu.mutation.ResetLowestEarnMonth()
 	gu.mutation.SetLowestEarnMonth(i)
 	return gu
 }
 
 // SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
-func (gu *GpuUpdate) SetNillableLowestEarnMonth(i *int) *GpuUpdate {
+func (gu *GpuUpdate) SetNillableLowestEarnMonth(i *int64) *GpuUpdate {
 	if i != nil {
 		gu.SetLowestEarnMonth(*i)
 	}
@@ -208,7 +208,7 @@ func (gu *GpuUpdate) SetNillableLowestEarnMonth(i *int) *GpuUpdate {
 }
 
 // AddLowestEarnMonth adds i to the "lowest_earn_month" field.
-func (gu *GpuUpdate) AddLowestEarnMonth(i int) *GpuUpdate {
+func (gu *GpuUpdate) AddLowestEarnMonth(i int64) *GpuUpdate {
 	gu.mutation.AddLowestEarnMonth(i)
 	return gu
 }
@@ -400,10 +400,10 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
 	}
 	if value, ok := gu.mutation.LowestEarnMonth(); ok {
-		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
 	}
 	if value, ok := gu.mutation.AddedLowestEarnMonth(); ok {
-		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
 	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -678,14 +678,14 @@ func (guo *GpuUpdateOne) AddMemory(i int) *GpuUpdateOne {
 }
 
 // SetLowestEarnMonth sets the "lowest_earn_month" field.
-func (guo *GpuUpdateOne) SetLowestEarnMonth(i int) *GpuUpdateOne {
+func (guo *GpuUpdateOne) SetLowestEarnMonth(i int64) *GpuUpdateOne {
 	guo.mutation.ResetLowestEarnMonth()
 	guo.mutation.SetLowestEarnMonth(i)
 	return guo
 }
 
 // SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
-func (guo *GpuUpdateOne) SetNillableLowestEarnMonth(i *int) *GpuUpdateOne {
+func (guo *GpuUpdateOne) SetNillableLowestEarnMonth(i *int64) *GpuUpdateOne {
 	if i != nil {
 		guo.SetLowestEarnMonth(*i)
 	}
@@ -693,7 +693,7 @@ func (guo *GpuUpdateOne) SetNillableLowestEarnMonth(i *int) *GpuUpdateOne {
 }
 
 // AddLowestEarnMonth adds i to the "lowest_earn_month" field.
-func (guo *GpuUpdateOne) AddLowestEarnMonth(i int) *GpuUpdateOne {
+func (guo *GpuUpdateOne) AddLowestEarnMonth(i int64) *GpuUpdateOne {
 	guo.mutation.AddLowestEarnMonth(i)
 	return guo
 }
@@ -915,10 +915,10 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
 	}
 	if value, ok := guo.mutation.LowestEarnMonth(); ok {
-		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
 	}
 	if value, ok := guo.mutation.AddedLowestEarnMonth(); ok {
-		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
 	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

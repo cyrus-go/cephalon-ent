@@ -108,7 +108,7 @@ var (
 	// DefaultMemory holds the default value on creation for the "memory" field.
 	DefaultMemory int
 	// DefaultLowestEarnMonth holds the default value on creation for the "lowest_earn_month" field.
-	DefaultLowestEarnMonth int
+	DefaultLowestEarnMonth int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
