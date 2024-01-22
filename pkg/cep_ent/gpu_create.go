@@ -179,6 +179,20 @@ func (gc *GpuCreate) SetNillableLowestEarnMonth(i *int64) *GpuCreate {
 	return gc
 }
 
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (gc *GpuCreate) SetHighestEarnMonth(i int64) *GpuCreate {
+	gc.mutation.SetHighestEarnMonth(i)
+	return gc
+}
+
+// SetNillableHighestEarnMonth sets the "highest_earn_month" field if the given value is not nil.
+func (gc *GpuCreate) SetNillableHighestEarnMonth(i *int64) *GpuCreate {
+	if i != nil {
+		gc.SetHighestEarnMonth(*i)
+	}
+	return gc
+}
+
 // SetID sets the "id" field.
 func (gc *GpuCreate) SetID(i int64) *GpuCreate {
 	gc.mutation.SetID(i)
@@ -302,6 +316,10 @@ func (gc *GpuCreate) defaults() {
 		v := gpu.DefaultLowestEarnMonth
 		gc.mutation.SetLowestEarnMonth(v)
 	}
+	if _, ok := gc.mutation.HighestEarnMonth(); !ok {
+		v := gpu.DefaultHighestEarnMonth
+		gc.mutation.SetHighestEarnMonth(v)
+	}
 	if _, ok := gc.mutation.ID(); !ok {
 		v := gpu.DefaultID()
 		gc.mutation.SetID(v)
@@ -347,6 +365,9 @@ func (gc *GpuCreate) check() error {
 	}
 	if _, ok := gc.mutation.LowestEarnMonth(); !ok {
 		return &ValidationError{Name: "lowest_earn_month", err: errors.New(`cep_ent: missing required field "Gpu.lowest_earn_month"`)}
+	}
+	if _, ok := gc.mutation.HighestEarnMonth(); !ok {
+		return &ValidationError{Name: "highest_earn_month", err: errors.New(`cep_ent: missing required field "Gpu.highest_earn_month"`)}
 	}
 	return nil
 }
@@ -424,6 +445,10 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.LowestEarnMonth(); ok {
 		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
 		_node.LowestEarnMonth = value
+	}
+	if value, ok := gc.mutation.HighestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
+		_node.HighestEarnMonth = value
 	}
 	if nodes := gc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -671,6 +696,24 @@ func (u *GpuUpsert) AddLowestEarnMonth(v int64) *GpuUpsert {
 	return u
 }
 
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (u *GpuUpsert) SetHighestEarnMonth(v int64) *GpuUpsert {
+	u.Set(gpu.FieldHighestEarnMonth, v)
+	return u
+}
+
+// UpdateHighestEarnMonth sets the "highest_earn_month" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateHighestEarnMonth() *GpuUpsert {
+	u.SetExcluded(gpu.FieldHighestEarnMonth)
+	return u
+}
+
+// AddHighestEarnMonth adds v to the "highest_earn_month" field.
+func (u *GpuUpsert) AddHighestEarnMonth(v int64) *GpuUpsert {
+	u.Add(gpu.FieldHighestEarnMonth, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -908,6 +951,27 @@ func (u *GpuUpsertOne) AddLowestEarnMonth(v int64) *GpuUpsertOne {
 func (u *GpuUpsertOne) UpdateLowestEarnMonth() *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateLowestEarnMonth()
+	})
+}
+
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (u *GpuUpsertOne) SetHighestEarnMonth(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetHighestEarnMonth(v)
+	})
+}
+
+// AddHighestEarnMonth adds v to the "highest_earn_month" field.
+func (u *GpuUpsertOne) AddHighestEarnMonth(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddHighestEarnMonth(v)
+	})
+}
+
+// UpdateHighestEarnMonth sets the "highest_earn_month" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateHighestEarnMonth() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateHighestEarnMonth()
 	})
 }
 
@@ -1314,6 +1378,27 @@ func (u *GpuUpsertBulk) AddLowestEarnMonth(v int64) *GpuUpsertBulk {
 func (u *GpuUpsertBulk) UpdateLowestEarnMonth() *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateLowestEarnMonth()
+	})
+}
+
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (u *GpuUpsertBulk) SetHighestEarnMonth(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetHighestEarnMonth(v)
+	})
+}
+
+// AddHighestEarnMonth adds v to the "highest_earn_month" field.
+func (u *GpuUpsertBulk) AddHighestEarnMonth(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddHighestEarnMonth(v)
+	})
+}
+
+// UpdateHighestEarnMonth sets the "highest_earn_month" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateHighestEarnMonth() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateHighestEarnMonth()
 	})
 }
 

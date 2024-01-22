@@ -23117,6 +23117,8 @@ type GpuMutation struct {
 	addmemory                  *int
 	lowest_earn_month          *int64
 	addlowest_earn_month       *int64
+	highest_earn_month         *int64
+	addhighest_earn_month      *int64
 	clearedFields              map[string]struct{}
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
@@ -23769,6 +23771,62 @@ func (m *GpuMutation) ResetLowestEarnMonth() {
 	m.addlowest_earn_month = nil
 }
 
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (m *GpuMutation) SetHighestEarnMonth(i int64) {
+	m.highest_earn_month = &i
+	m.addhighest_earn_month = nil
+}
+
+// HighestEarnMonth returns the value of the "highest_earn_month" field in the mutation.
+func (m *GpuMutation) HighestEarnMonth() (r int64, exists bool) {
+	v := m.highest_earn_month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHighestEarnMonth returns the old "highest_earn_month" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldHighestEarnMonth(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHighestEarnMonth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHighestEarnMonth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHighestEarnMonth: %w", err)
+	}
+	return oldValue.HighestEarnMonth, nil
+}
+
+// AddHighestEarnMonth adds i to the "highest_earn_month" field.
+func (m *GpuMutation) AddHighestEarnMonth(i int64) {
+	if m.addhighest_earn_month != nil {
+		*m.addhighest_earn_month += i
+	} else {
+		m.addhighest_earn_month = &i
+	}
+}
+
+// AddedHighestEarnMonth returns the value that was added to the "highest_earn_month" field in this mutation.
+func (m *GpuMutation) AddedHighestEarnMonth() (r int64, exists bool) {
+	v := m.addhighest_earn_month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetHighestEarnMonth resets all changes to the "highest_earn_month" field.
+func (m *GpuMutation) ResetHighestEarnMonth() {
+	m.highest_earn_month = nil
+	m.addhighest_earn_month = nil
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
 func (m *GpuMutation) AddDeviceGpuMissionIDs(ids ...int64) {
 	if m.device_gpu_missions == nil {
@@ -23911,7 +23969,7 @@ func (m *GpuMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GpuMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, gpu.FieldCreatedBy)
 	}
@@ -23945,6 +24003,9 @@ func (m *GpuMutation) Fields() []string {
 	if m.lowest_earn_month != nil {
 		fields = append(fields, gpu.FieldLowestEarnMonth)
 	}
+	if m.highest_earn_month != nil {
+		fields = append(fields, gpu.FieldHighestEarnMonth)
+	}
 	return fields
 }
 
@@ -23975,6 +24036,8 @@ func (m *GpuMutation) Field(name string) (ent.Value, bool) {
 		return m.Memory()
 	case gpu.FieldLowestEarnMonth:
 		return m.LowestEarnMonth()
+	case gpu.FieldHighestEarnMonth:
+		return m.HighestEarnMonth()
 	}
 	return nil, false
 }
@@ -24006,6 +24069,8 @@ func (m *GpuMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldMemory(ctx)
 	case gpu.FieldLowestEarnMonth:
 		return m.OldLowestEarnMonth(ctx)
+	case gpu.FieldHighestEarnMonth:
+		return m.OldHighestEarnMonth(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -24092,6 +24157,13 @@ func (m *GpuMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLowestEarnMonth(v)
 		return nil
+	case gpu.FieldHighestEarnMonth:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHighestEarnMonth(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -24121,6 +24193,9 @@ func (m *GpuMutation) AddedFields() []string {
 	if m.addlowest_earn_month != nil {
 		fields = append(fields, gpu.FieldLowestEarnMonth)
 	}
+	if m.addhighest_earn_month != nil {
+		fields = append(fields, gpu.FieldHighestEarnMonth)
+	}
 	return fields
 }
 
@@ -24143,6 +24218,8 @@ func (m *GpuMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedMemory()
 	case gpu.FieldLowestEarnMonth:
 		return m.AddedLowestEarnMonth()
+	case gpu.FieldHighestEarnMonth:
+		return m.AddedHighestEarnMonth()
 	}
 	return nil, false
 }
@@ -24200,6 +24277,13 @@ func (m *GpuMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddLowestEarnMonth(v)
+		return nil
+	case gpu.FieldHighestEarnMonth:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHighestEarnMonth(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu numeric field %s", name)
@@ -24260,6 +24344,9 @@ func (m *GpuMutation) ResetField(name string) error {
 		return nil
 	case gpu.FieldLowestEarnMonth:
 		m.ResetLowestEarnMonth()
+		return nil
+	case gpu.FieldHighestEarnMonth:
+		m.ResetHighestEarnMonth()
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)

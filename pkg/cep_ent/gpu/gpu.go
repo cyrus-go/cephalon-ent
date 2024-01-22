@@ -38,6 +38,8 @@ const (
 	FieldMemory = "memory"
 	// FieldLowestEarnMonth holds the string denoting the lowest_earn_month field in the database.
 	FieldLowestEarnMonth = "lowest_earn_month"
+	// FieldHighestEarnMonth holds the string denoting the highest_earn_month field in the database.
+	FieldHighestEarnMonth = "highest_earn_month"
 	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
 	EdgeDeviceGpuMissions = "device_gpu_missions"
 	// EdgePrices holds the string denoting the prices edge name in mutations.
@@ -74,6 +76,7 @@ var Columns = []string{
 	FieldCPU,
 	FieldMemory,
 	FieldLowestEarnMonth,
+	FieldHighestEarnMonth,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -109,6 +112,8 @@ var (
 	DefaultMemory int
 	// DefaultLowestEarnMonth holds the default value on creation for the "lowest_earn_month" field.
 	DefaultLowestEarnMonth int64
+	// DefaultHighestEarnMonth holds the default value on creation for the "highest_earn_month" field.
+	DefaultHighestEarnMonth int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -186,6 +191,11 @@ func ByMemory(opts ...sql.OrderTermOption) OrderOption {
 // ByLowestEarnMonth orders the results by the lowest_earn_month field.
 func ByLowestEarnMonth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLowestEarnMonth, opts...).ToFunc()
+}
+
+// ByHighestEarnMonth orders the results by the highest_earn_month field.
+func ByHighestEarnMonth(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHighestEarnMonth, opts...).ToFunc()
 }
 
 // ByDeviceGpuMissionsCount orders the results by device_gpu_missions count.

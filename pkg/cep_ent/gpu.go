@@ -41,6 +41,8 @@ type Gpu struct {
 	Memory int `json:"memory"`
 	// 保底最低月收益
 	LowestEarnMonth int64 `json:"lowest_earn_month"`
+	// 保底最高月收益
+	HighestEarnMonth int64 `json:"highest_earn_month"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GpuQuery when eager-loading is set.
 	Edges        GpuEdges `json:"edges"`
@@ -81,7 +83,7 @@ func (*Gpu) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower, gpu.FieldVideoMemory, gpu.FieldCPU, gpu.FieldMemory, gpu.FieldLowestEarnMonth:
+		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower, gpu.FieldVideoMemory, gpu.FieldCPU, gpu.FieldMemory, gpu.FieldLowestEarnMonth, gpu.FieldHighestEarnMonth:
 			values[i] = new(sql.NullInt64)
 		case gpu.FieldVersion:
 			values[i] = new(sql.NullString)
@@ -174,6 +176,12 @@ func (gp *Gpu) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gp.LowestEarnMonth = value.Int64
 			}
+		case gpu.FieldHighestEarnMonth:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field highest_earn_month", values[i])
+			} else if value.Valid {
+				gp.HighestEarnMonth = value.Int64
+			}
 		default:
 			gp.selectValues.Set(columns[i], values[i])
 		}
@@ -252,6 +260,9 @@ func (gp *Gpu) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("lowest_earn_month=")
 	builder.WriteString(fmt.Sprintf("%v", gp.LowestEarnMonth))
+	builder.WriteString(", ")
+	builder.WriteString("highest_earn_month=")
+	builder.WriteString(fmt.Sprintf("%v", gp.HighestEarnMonth))
 	builder.WriteByte(')')
 	return builder.String()
 }
