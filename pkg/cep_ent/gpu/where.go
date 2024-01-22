@@ -101,6 +101,11 @@ func Memory(v int) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldMemory, v))
 }
 
+// LowestEarnMonth applies equality check predicate on the "lowest_earn_month" field. It's identical to LowestEarnMonthEQ.
+func LowestEarnMonth(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldLowestEarnMonth, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldCreatedBy, v))
@@ -489,6 +494,46 @@ func MemoryLT(v int) predicate.Gpu {
 // MemoryLTE applies the LTE predicate on the "memory" field.
 func MemoryLTE(v int) predicate.Gpu {
 	return predicate.Gpu(sql.FieldLTE(FieldMemory, v))
+}
+
+// LowestEarnMonthEQ applies the EQ predicate on the "lowest_earn_month" field.
+func LowestEarnMonthEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldLowestEarnMonth, v))
+}
+
+// LowestEarnMonthNEQ applies the NEQ predicate on the "lowest_earn_month" field.
+func LowestEarnMonthNEQ(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldLowestEarnMonth, v))
+}
+
+// LowestEarnMonthIn applies the In predicate on the "lowest_earn_month" field.
+func LowestEarnMonthIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldLowestEarnMonth, vs...))
+}
+
+// LowestEarnMonthNotIn applies the NotIn predicate on the "lowest_earn_month" field.
+func LowestEarnMonthNotIn(vs ...int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldLowestEarnMonth, vs...))
+}
+
+// LowestEarnMonthGT applies the GT predicate on the "lowest_earn_month" field.
+func LowestEarnMonthGT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldLowestEarnMonth, v))
+}
+
+// LowestEarnMonthGTE applies the GTE predicate on the "lowest_earn_month" field.
+func LowestEarnMonthGTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldLowestEarnMonth, v))
+}
+
+// LowestEarnMonthLT applies the LT predicate on the "lowest_earn_month" field.
+func LowestEarnMonthLT(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldLowestEarnMonth, v))
+}
+
+// LowestEarnMonthLTE applies the LTE predicate on the "lowest_earn_month" field.
+func LowestEarnMonthLTE(v int) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldLowestEarnMonth, v))
 }
 
 // HasDeviceGpuMissions applies the HasEdge predicate on the "device_gpu_missions" edge.

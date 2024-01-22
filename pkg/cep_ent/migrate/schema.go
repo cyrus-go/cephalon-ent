@@ -802,6 +802,7 @@ var (
 		{Name: "video_memory", Type: field.TypeInt, Comment: "显存", Default: 40},
 		{Name: "cpu", Type: field.TypeInt, Comment: "CPU", Default: 12},
 		{Name: "memory", Type: field.TypeInt, Comment: "内存", Default: 128},
+		{Name: "lowest_earn_month", Type: field.TypeInt, Comment: "保底最低月收益", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{

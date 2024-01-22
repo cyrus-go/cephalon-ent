@@ -192,6 +192,27 @@ func (gu *GpuUpdate) AddMemory(i int) *GpuUpdate {
 	return gu
 }
 
+// SetLowestEarnMonth sets the "lowest_earn_month" field.
+func (gu *GpuUpdate) SetLowestEarnMonth(i int) *GpuUpdate {
+	gu.mutation.ResetLowestEarnMonth()
+	gu.mutation.SetLowestEarnMonth(i)
+	return gu
+}
+
+// SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableLowestEarnMonth(i *int) *GpuUpdate {
+	if i != nil {
+		gu.SetLowestEarnMonth(*i)
+	}
+	return gu
+}
+
+// AddLowestEarnMonth adds i to the "lowest_earn_month" field.
+func (gu *GpuUpdate) AddLowestEarnMonth(i int) *GpuUpdate {
+	gu.mutation.AddLowestEarnMonth(i)
+	return gu
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (gu *GpuUpdate) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdate {
 	gu.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -377,6 +398,12 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.AddedMemory(); ok {
 		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.LowestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedLowestEarnMonth(); ok {
+		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
 	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -650,6 +677,27 @@ func (guo *GpuUpdateOne) AddMemory(i int) *GpuUpdateOne {
 	return guo
 }
 
+// SetLowestEarnMonth sets the "lowest_earn_month" field.
+func (guo *GpuUpdateOne) SetLowestEarnMonth(i int) *GpuUpdateOne {
+	guo.mutation.ResetLowestEarnMonth()
+	guo.mutation.SetLowestEarnMonth(i)
+	return guo
+}
+
+// SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableLowestEarnMonth(i *int) *GpuUpdateOne {
+	if i != nil {
+		guo.SetLowestEarnMonth(*i)
+	}
+	return guo
+}
+
+// AddLowestEarnMonth adds i to the "lowest_earn_month" field.
+func (guo *GpuUpdateOne) AddLowestEarnMonth(i int) *GpuUpdateOne {
+	guo.mutation.AddLowestEarnMonth(i)
+	return guo
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (guo *GpuUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdateOne {
 	guo.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -865,6 +913,12 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	}
 	if value, ok := guo.mutation.AddedMemory(); ok {
 		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.LowestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedLowestEarnMonth(); ok {
+		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt, value)
 	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
