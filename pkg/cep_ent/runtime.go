@@ -1496,6 +1496,10 @@ func init() {
 	missionDescClosedAt := missionFields[33].Descriptor()
 	// mission.DefaultClosedAt holds the default value on creation for the closed_at field.
 	mission.DefaultClosedAt = missionDescClosedAt.Default.(time.Time)
+	// missionDescWarningTimes is the schema descriptor for warning_times field.
+	missionDescWarningTimes := missionFields[34].Descriptor()
+	// mission.DefaultWarningTimes holds the default value on creation for the warning_times field.
+	mission.DefaultWarningTimes = missionDescWarningTimes.Default.(int64)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

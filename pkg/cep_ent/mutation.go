@@ -30051,6 +30051,8 @@ type MissionMutation struct {
 	free_at                       *time.Time
 	close_way                     *enums.CloseWay
 	closed_at                     *time.Time
+	warning_times                 *int64
+	addwarning_times              *int64
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -31812,6 +31814,62 @@ func (m *MissionMutation) ResetClosedAt() {
 	delete(m.clearedFields, mission.FieldClosedAt)
 }
 
+// SetWarningTimes sets the "warning_times" field.
+func (m *MissionMutation) SetWarningTimes(i int64) {
+	m.warning_times = &i
+	m.addwarning_times = nil
+}
+
+// WarningTimes returns the value of the "warning_times" field in the mutation.
+func (m *MissionMutation) WarningTimes() (r int64, exists bool) {
+	v := m.warning_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWarningTimes returns the old "warning_times" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldWarningTimes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWarningTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWarningTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWarningTimes: %w", err)
+	}
+	return oldValue.WarningTimes, nil
+}
+
+// AddWarningTimes adds i to the "warning_times" field.
+func (m *MissionMutation) AddWarningTimes(i int64) {
+	if m.addwarning_times != nil {
+		*m.addwarning_times += i
+	} else {
+		m.addwarning_times = &i
+	}
+}
+
+// AddedWarningTimes returns the value that was added to the "warning_times" field in this mutation.
+func (m *MissionMutation) AddedWarningTimes() (r int64, exists bool) {
+	v := m.addwarning_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWarningTimes resets all changes to the "warning_times" field.
+func (m *MissionMutation) ResetWarningTimes() {
+	m.warning_times = nil
+	m.addwarning_times = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -32425,7 +32483,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 39)
+	fields := make([]string, 0, 40)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -32543,6 +32601,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.closed_at != nil {
 		fields = append(fields, mission.FieldClosedAt)
 	}
+	if m.warning_times != nil {
+		fields = append(fields, mission.FieldWarningTimes)
+	}
 	return fields
 }
 
@@ -32629,6 +32690,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.CloseWay()
 	case mission.FieldClosedAt:
 		return m.ClosedAt()
+	case mission.FieldWarningTimes:
+		return m.WarningTimes()
 	}
 	return nil, false
 }
@@ -32716,6 +32779,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCloseWay(ctx)
 	case mission.FieldClosedAt:
 		return m.OldClosedAt(ctx)
+	case mission.FieldWarningTimes:
+		return m.OldWarningTimes(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -32998,6 +33063,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetClosedAt(v)
 		return nil
+	case mission.FieldWarningTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWarningTimes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -33018,6 +33090,9 @@ func (m *MissionMutation) AddedFields() []string {
 	if m.addresp_status_code != nil {
 		fields = append(fields, mission.FieldRespStatusCode)
 	}
+	if m.addwarning_times != nil {
+		fields = append(fields, mission.FieldWarningTimes)
+	}
 	return fields
 }
 
@@ -33034,6 +33109,8 @@ func (m *MissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUnitCep()
 	case mission.FieldRespStatusCode:
 		return m.AddedRespStatusCode()
+	case mission.FieldWarningTimes:
+		return m.AddedWarningTimes()
 	}
 	return nil, false
 }
@@ -33070,6 +33147,13 @@ func (m *MissionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRespStatusCode(v)
+		return nil
+	case mission.FieldWarningTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWarningTimes(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission numeric field %s", name)
@@ -33271,6 +33355,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldClosedAt:
 		m.ResetClosedAt()
+		return nil
+	case mission.FieldWarningTimes:
+		m.ResetWarningTimes()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

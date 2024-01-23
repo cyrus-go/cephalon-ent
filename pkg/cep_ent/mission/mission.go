@@ -95,6 +95,8 @@ const (
 	FieldCloseWay = "close_way"
 	// FieldClosedAt holds the string denoting the closed_at field in the database.
 	FieldClosedAt = "closed_at"
+	// FieldWarningTimes holds the string denoting the warning_times field in the database.
+	FieldWarningTimes = "warning_times"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -258,6 +260,7 @@ var Columns = []string{
 	FieldFreeAt,
 	FieldCloseWay,
 	FieldClosedAt,
+	FieldWarningTimes,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
@@ -338,6 +341,8 @@ var (
 	DefaultFreeAt time.Time
 	// DefaultClosedAt holds the default value on creation for the "closed_at" field.
 	DefaultClosedAt time.Time
+	// DefaultWarningTimes holds the default value on creation for the "warning_times" field.
+	DefaultWarningTimes int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -622,6 +627,11 @@ func ByCloseWay(opts ...sql.OrderTermOption) OrderOption {
 // ByClosedAt orders the results by the closed_at field.
 func ByClosedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClosedAt, opts...).ToFunc()
+}
+
+// ByWarningTimes orders the results by the warning_times field.
+func ByWarningTimes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWarningTimes, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

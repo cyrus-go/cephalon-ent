@@ -624,6 +624,27 @@ func (mu *MissionUpdate) ClearClosedAt() *MissionUpdate {
 	return mu
 }
 
+// SetWarningTimes sets the "warning_times" field.
+func (mu *MissionUpdate) SetWarningTimes(i int64) *MissionUpdate {
+	mu.mutation.ResetWarningTimes()
+	mu.mutation.SetWarningTimes(i)
+	return mu
+}
+
+// SetNillableWarningTimes sets the "warning_times" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableWarningTimes(i *int64) *MissionUpdate {
+	if i != nil {
+		mu.SetWarningTimes(*i)
+	}
+	return mu
+}
+
+// AddWarningTimes adds i to the "warning_times" field.
+func (mu *MissionUpdate) AddWarningTimes(i int64) *MissionUpdate {
+	mu.mutation.AddWarningTimes(i)
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -1245,6 +1266,12 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.ClosedAtCleared() {
 		_spec.ClearField(mission.FieldClosedAt, field.TypeTime)
+	}
+	if value, ok := mu.mutation.WarningTimes(); ok {
+		_spec.SetField(mission.FieldWarningTimes, field.TypeInt64, value)
+	}
+	if value, ok := mu.mutation.AddedWarningTimes(); ok {
+		_spec.AddField(mission.FieldWarningTimes, field.TypeInt64, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2353,6 +2380,27 @@ func (muo *MissionUpdateOne) ClearClosedAt() *MissionUpdateOne {
 	return muo
 }
 
+// SetWarningTimes sets the "warning_times" field.
+func (muo *MissionUpdateOne) SetWarningTimes(i int64) *MissionUpdateOne {
+	muo.mutation.ResetWarningTimes()
+	muo.mutation.SetWarningTimes(i)
+	return muo
+}
+
+// SetNillableWarningTimes sets the "warning_times" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableWarningTimes(i *int64) *MissionUpdateOne {
+	if i != nil {
+		muo.SetWarningTimes(*i)
+	}
+	return muo
+}
+
+// AddWarningTimes adds i to the "warning_times" field.
+func (muo *MissionUpdateOne) AddWarningTimes(i int64) *MissionUpdateOne {
+	muo.mutation.AddWarningTimes(i)
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -3004,6 +3052,12 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if muo.mutation.ClosedAtCleared() {
 		_spec.ClearField(mission.FieldClosedAt, field.TypeTime)
+	}
+	if value, ok := muo.mutation.WarningTimes(); ok {
+		_spec.SetField(mission.FieldWarningTimes, field.TypeInt64, value)
+	}
+	if value, ok := muo.mutation.AddedWarningTimes(); ok {
+		_spec.AddField(mission.FieldWarningTimes, field.TypeInt64, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
