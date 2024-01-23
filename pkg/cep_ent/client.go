@@ -20,6 +20,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -76,6 +77,8 @@ type Client struct {
 	ArtworkLike *ArtworkLikeClient
 	// Bill is the client for interacting with the Bill builders.
 	Bill *BillClient
+	// CDKInfo is the client for interacting with the CDKInfo builders.
+	CDKInfo *CDKInfoClient
 	// Campaign is the client for interacting with the Campaign builders.
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
@@ -182,6 +185,7 @@ func (c *Client) init() {
 	c.Artwork = NewArtworkClient(c.config)
 	c.ArtworkLike = NewArtworkLikeClient(c.config)
 	c.Bill = NewBillClient(c.config)
+	c.CDKInfo = NewCDKInfoClient(c.config)
 	c.Campaign = NewCampaignClient(c.config)
 	c.CampaignOrder = NewCampaignOrderClient(c.config)
 	c.Collect = NewCollectClient(c.config)
@@ -315,6 +319,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Artwork:              NewArtworkClient(cfg),
 		ArtworkLike:          NewArtworkLikeClient(cfg),
 		Bill:                 NewBillClient(cfg),
+		CDKInfo:              NewCDKInfoClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
 		Collect:              NewCollectClient(cfg),
@@ -382,6 +387,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Artwork:              NewArtworkClient(cfg),
 		ArtworkLike:          NewArtworkLikeClient(cfg),
 		Bill:                 NewBillClient(cfg),
+		CDKInfo:              NewCDKInfoClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
 		Collect:              NewCollectClient(cfg),
@@ -456,8 +462,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Artwork, c.ArtworkLike, c.Bill, c.Campaign, c.CampaignOrder, c.Collect,
-		c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
+		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
 		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
 		c.Invite, c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
@@ -475,8 +481,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Artwork, c.ArtworkLike, c.Bill, c.Campaign, c.CampaignOrder, c.Collect,
-		c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
+		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
 		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
 		c.Invite, c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
@@ -499,6 +505,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ArtworkLike.mutate(ctx, m)
 	case *BillMutation:
 		return c.Bill.mutate(ctx, m)
+	case *CDKInfoMutation:
+		return c.CDKInfo.mutate(ctx, m)
 	case *CampaignMutation:
 		return c.Campaign.mutate(ctx, m)
 	case *CampaignOrderMutation:
@@ -1150,6 +1158,155 @@ func (c *BillClient) mutate(ctx context.Context, m *BillMutation) (Value, error)
 		return (&BillDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Bill mutation op: %q", m.Op())
+	}
+}
+
+// CDKInfoClient is a client for the CDKInfo schema.
+type CDKInfoClient struct {
+	config
+}
+
+// NewCDKInfoClient returns a client for the CDKInfo from the given config.
+func NewCDKInfoClient(c config) *CDKInfoClient {
+	return &CDKInfoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cdkinfo.Hooks(f(g(h())))`.
+func (c *CDKInfoClient) Use(hooks ...Hook) {
+	c.hooks.CDKInfo = append(c.hooks.CDKInfo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cdkinfo.Intercept(f(g(h())))`.
+func (c *CDKInfoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CDKInfo = append(c.inters.CDKInfo, interceptors...)
+}
+
+// Create returns a builder for creating a CDKInfo entity.
+func (c *CDKInfoClient) Create() *CDKInfoCreate {
+	mutation := newCDKInfoMutation(c.config, OpCreate)
+	return &CDKInfoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CDKInfo entities.
+func (c *CDKInfoClient) CreateBulk(builders ...*CDKInfoCreate) *CDKInfoCreateBulk {
+	return &CDKInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CDKInfoClient) MapCreateBulk(slice any, setFunc func(*CDKInfoCreate, int)) *CDKInfoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CDKInfoCreateBulk{err: fmt.Errorf("calling to CDKInfoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CDKInfoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CDKInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CDKInfo.
+func (c *CDKInfoClient) Update() *CDKInfoUpdate {
+	mutation := newCDKInfoMutation(c.config, OpUpdate)
+	return &CDKInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CDKInfoClient) UpdateOne(ci *CDKInfo) *CDKInfoUpdateOne {
+	mutation := newCDKInfoMutation(c.config, OpUpdateOne, withCDKInfo(ci))
+	return &CDKInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CDKInfoClient) UpdateOneID(id int64) *CDKInfoUpdateOne {
+	mutation := newCDKInfoMutation(c.config, OpUpdateOne, withCDKInfoID(id))
+	return &CDKInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CDKInfo.
+func (c *CDKInfoClient) Delete() *CDKInfoDelete {
+	mutation := newCDKInfoMutation(c.config, OpDelete)
+	return &CDKInfoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CDKInfoClient) DeleteOne(ci *CDKInfo) *CDKInfoDeleteOne {
+	return c.DeleteOneID(ci.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CDKInfoClient) DeleteOneID(id int64) *CDKInfoDeleteOne {
+	builder := c.Delete().Where(cdkinfo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CDKInfoDeleteOne{builder}
+}
+
+// Query returns a query builder for CDKInfo.
+func (c *CDKInfoClient) Query() *CDKInfoQuery {
+	return &CDKInfoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCDKInfo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CDKInfo entity by its id.
+func (c *CDKInfoClient) Get(ctx context.Context, id int64) (*CDKInfo, error) {
+	return c.Query().Where(cdkinfo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CDKInfoClient) GetX(ctx context.Context, id int64) *CDKInfo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryIssueUser queries the issue_user edge of a CDKInfo.
+func (c *CDKInfoClient) QueryIssueUser(ci *CDKInfo) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cdkinfo.Table, cdkinfo.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, cdkinfo.IssueUserTable, cdkinfo.IssueUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CDKInfoClient) Hooks() []Hook {
+	return c.hooks.CDKInfo
+}
+
+// Interceptors returns the client interceptors.
+func (c *CDKInfoClient) Interceptors() []Interceptor {
+	return c.inters.CDKInfo
+}
+
+func (c *CDKInfoClient) mutate(ctx context.Context, m *CDKInfoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CDKInfoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CDKInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CDKInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CDKInfoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown CDKInfo mutation op: %q", m.Op())
 	}
 }
 
@@ -8784,6 +8941,22 @@ func (c *UserClient) QueryArtworkLikes(u *User) *ArtworkLikeQuery {
 	return query
 }
 
+// QueryCdkInfos queries the cdk_infos edge of a User.
+func (c *UserClient) QueryCdkInfos(u *User) *CDKInfoQuery {
+	query := (&CDKInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(cdkinfo.Table, cdkinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CdkInfosTable, user.CdkInfosColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -9621,23 +9794,23 @@ func (c *WithdrawAccountClient) mutate(ctx context.Context, m *WithdrawAccountMu
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Artwork, ArtworkLike, Bill, Campaign, CampaignOrder, Collect, CostAccount,
-		CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus,
-		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
-		HmacKeyPair, InputLog, Invite, LoginRecord, Mission, MissionBatch,
-		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
-		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
+		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
+		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
+		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
+		MissionBatch, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
+		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
 		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
-		Artwork, ArtworkLike, Bill, Campaign, CampaignOrder, Collect, CostAccount,
-		CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus,
-		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
-		HmacKeyPair, InputLog, Invite, LoginRecord, Mission, MissionBatch,
-		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
-		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
+		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
+		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
+		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Mission,
+		MissionBatch, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
+		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
 		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor

@@ -15,6 +15,9 @@ type ArtworkLike func(*sql.Selector)
 // Bill is the predicate function for bill builders.
 type Bill func(*sql.Selector)
 
+// CDKInfo is the predicate function for cdkinfo builders.
+type CDKInfo func(*sql.Selector)
+
 // Campaign is the predicate function for campaign builders.
 type Campaign func(*sql.Selector)
 

@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -809,6 +810,21 @@ func (uc *UserCreate) AddArtworkLikes(a ...*ArtworkLike) *UserCreate {
 		ids[i] = a[i].ID
 	}
 	return uc.AddArtworkLikeIDs(ids...)
+}
+
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (uc *UserCreate) AddCdkInfoIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCdkInfoIDs(ids...)
+	return uc
+}
+
+// AddCdkInfos adds the "cdk_infos" edges to the CDKInfo entity.
+func (uc *UserCreate) AddCdkInfos(c ...*CDKInfo) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCdkInfoIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1606,6 +1622,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -75,6 +76,7 @@ const (
 	TypeArtwork              = "Artwork"
 	TypeArtworkLike          = "ArtworkLike"
 	TypeBill                 = "Bill"
+	TypeCDKInfo              = "CDKInfo"
 	TypeCampaign             = "Campaign"
 	TypeCampaignOrder        = "CampaignOrder"
 	TypeCollect              = "Collect"
@@ -3854,6 +3856,1230 @@ func (m *BillMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Bill edge %s", name)
+}
+
+// CDKInfoMutation represents an operation that mutates the CDKInfo nodes in the graph.
+type CDKInfoMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	created_by        *int64
+	addcreated_by     *int64
+	updated_by        *int64
+	addupdated_by     *int64
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	cdk_number        *string
+	_type             *enums.CDKType
+	get_cep           *int64
+	addget_cep        *int64
+	get_time          *int64
+	addget_time       *int64
+	billing_type      *enums.MissionBillingType
+	expired_at        *time.Time
+	use_times         *int64
+	adduse_times      *int64
+	clearedFields     map[string]struct{}
+	issue_user        *int64
+	clearedissue_user bool
+	done              bool
+	oldValue          func(context.Context) (*CDKInfo, error)
+	predicates        []predicate.CDKInfo
+}
+
+var _ ent.Mutation = (*CDKInfoMutation)(nil)
+
+// cdkinfoOption allows management of the mutation configuration using functional options.
+type cdkinfoOption func(*CDKInfoMutation)
+
+// newCDKInfoMutation creates new mutation for the CDKInfo entity.
+func newCDKInfoMutation(c config, op Op, opts ...cdkinfoOption) *CDKInfoMutation {
+	m := &CDKInfoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCDKInfo,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCDKInfoID sets the ID field of the mutation.
+func withCDKInfoID(id int64) cdkinfoOption {
+	return func(m *CDKInfoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CDKInfo
+		)
+		m.oldValue = func(ctx context.Context) (*CDKInfo, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CDKInfo.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCDKInfo sets the old CDKInfo of the mutation.
+func withCDKInfo(node *CDKInfo) cdkinfoOption {
+	return func(m *CDKInfoMutation) {
+		m.oldValue = func(context.Context) (*CDKInfo, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CDKInfoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CDKInfoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CDKInfo entities.
+func (m *CDKInfoMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CDKInfoMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CDKInfoMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CDKInfo.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CDKInfoMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CDKInfoMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *CDKInfoMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CDKInfoMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CDKInfoMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CDKInfoMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CDKInfoMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *CDKInfoMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CDKInfoMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CDKInfoMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CDKInfoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CDKInfoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CDKInfoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CDKInfoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CDKInfoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CDKInfoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CDKInfoMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CDKInfoMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CDKInfoMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetIssueUserID sets the "issue_user_id" field.
+func (m *CDKInfoMutation) SetIssueUserID(i int64) {
+	m.issue_user = &i
+}
+
+// IssueUserID returns the value of the "issue_user_id" field in the mutation.
+func (m *CDKInfoMutation) IssueUserID() (r int64, exists bool) {
+	v := m.issue_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIssueUserID returns the old "issue_user_id" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldIssueUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIssueUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIssueUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIssueUserID: %w", err)
+	}
+	return oldValue.IssueUserID, nil
+}
+
+// ResetIssueUserID resets all changes to the "issue_user_id" field.
+func (m *CDKInfoMutation) ResetIssueUserID() {
+	m.issue_user = nil
+}
+
+// SetCdkNumber sets the "cdk_number" field.
+func (m *CDKInfoMutation) SetCdkNumber(s string) {
+	m.cdk_number = &s
+}
+
+// CdkNumber returns the value of the "cdk_number" field in the mutation.
+func (m *CDKInfoMutation) CdkNumber() (r string, exists bool) {
+	v := m.cdk_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCdkNumber returns the old "cdk_number" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldCdkNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCdkNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCdkNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCdkNumber: %w", err)
+	}
+	return oldValue.CdkNumber, nil
+}
+
+// ResetCdkNumber resets all changes to the "cdk_number" field.
+func (m *CDKInfoMutation) ResetCdkNumber() {
+	m.cdk_number = nil
+}
+
+// SetType sets the "type" field.
+func (m *CDKInfoMutation) SetType(et enums.CDKType) {
+	m._type = &et
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *CDKInfoMutation) GetType() (r enums.CDKType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldType(ctx context.Context) (v enums.CDKType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *CDKInfoMutation) ResetType() {
+	m._type = nil
+}
+
+// SetGetCep sets the "get_cep" field.
+func (m *CDKInfoMutation) SetGetCep(i int64) {
+	m.get_cep = &i
+	m.addget_cep = nil
+}
+
+// GetCep returns the value of the "get_cep" field in the mutation.
+func (m *CDKInfoMutation) GetCep() (r int64, exists bool) {
+	v := m.get_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetCep returns the old "get_cep" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldGetCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGetCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGetCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetCep: %w", err)
+	}
+	return oldValue.GetCep, nil
+}
+
+// AddGetCep adds i to the "get_cep" field.
+func (m *CDKInfoMutation) AddGetCep(i int64) {
+	if m.addget_cep != nil {
+		*m.addget_cep += i
+	} else {
+		m.addget_cep = &i
+	}
+}
+
+// AddedGetCep returns the value that was added to the "get_cep" field in this mutation.
+func (m *CDKInfoMutation) AddedGetCep() (r int64, exists bool) {
+	v := m.addget_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGetCep resets all changes to the "get_cep" field.
+func (m *CDKInfoMutation) ResetGetCep() {
+	m.get_cep = nil
+	m.addget_cep = nil
+}
+
+// SetGetTime sets the "get_time" field.
+func (m *CDKInfoMutation) SetGetTime(i int64) {
+	m.get_time = &i
+	m.addget_time = nil
+}
+
+// GetTime returns the value of the "get_time" field in the mutation.
+func (m *CDKInfoMutation) GetTime() (r int64, exists bool) {
+	v := m.get_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetTime returns the old "get_time" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldGetTime(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGetTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGetTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetTime: %w", err)
+	}
+	return oldValue.GetTime, nil
+}
+
+// AddGetTime adds i to the "get_time" field.
+func (m *CDKInfoMutation) AddGetTime(i int64) {
+	if m.addget_time != nil {
+		*m.addget_time += i
+	} else {
+		m.addget_time = &i
+	}
+}
+
+// AddedGetTime returns the value that was added to the "get_time" field in this mutation.
+func (m *CDKInfoMutation) AddedGetTime() (r int64, exists bool) {
+	v := m.addget_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGetTime resets all changes to the "get_time" field.
+func (m *CDKInfoMutation) ResetGetTime() {
+	m.get_time = nil
+	m.addget_time = nil
+}
+
+// SetBillingType sets the "billing_type" field.
+func (m *CDKInfoMutation) SetBillingType(ebt enums.MissionBillingType) {
+	m.billing_type = &ebt
+}
+
+// BillingType returns the value of the "billing_type" field in the mutation.
+func (m *CDKInfoMutation) BillingType() (r enums.MissionBillingType, exists bool) {
+	v := m.billing_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBillingType returns the old "billing_type" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldBillingType(ctx context.Context) (v enums.MissionBillingType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBillingType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBillingType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBillingType: %w", err)
+	}
+	return oldValue.BillingType, nil
+}
+
+// ResetBillingType resets all changes to the "billing_type" field.
+func (m *CDKInfoMutation) ResetBillingType() {
+	m.billing_type = nil
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (m *CDKInfoMutation) SetExpiredAt(t time.Time) {
+	m.expired_at = &t
+}
+
+// ExpiredAt returns the value of the "expired_at" field in the mutation.
+func (m *CDKInfoMutation) ExpiredAt() (r time.Time, exists bool) {
+	v := m.expired_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiredAt returns the old "expired_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldExpiredAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiredAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiredAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiredAt: %w", err)
+	}
+	return oldValue.ExpiredAt, nil
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (m *CDKInfoMutation) ClearExpiredAt() {
+	m.expired_at = nil
+	m.clearedFields[cdkinfo.FieldExpiredAt] = struct{}{}
+}
+
+// ExpiredAtCleared returns if the "expired_at" field was cleared in this mutation.
+func (m *CDKInfoMutation) ExpiredAtCleared() bool {
+	_, ok := m.clearedFields[cdkinfo.FieldExpiredAt]
+	return ok
+}
+
+// ResetExpiredAt resets all changes to the "expired_at" field.
+func (m *CDKInfoMutation) ResetExpiredAt() {
+	m.expired_at = nil
+	delete(m.clearedFields, cdkinfo.FieldExpiredAt)
+}
+
+// SetUseTimes sets the "use_times" field.
+func (m *CDKInfoMutation) SetUseTimes(i int64) {
+	m.use_times = &i
+	m.adduse_times = nil
+}
+
+// UseTimes returns the value of the "use_times" field in the mutation.
+func (m *CDKInfoMutation) UseTimes() (r int64, exists bool) {
+	v := m.use_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUseTimes returns the old "use_times" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUseTimes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUseTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUseTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUseTimes: %w", err)
+	}
+	return oldValue.UseTimes, nil
+}
+
+// AddUseTimes adds i to the "use_times" field.
+func (m *CDKInfoMutation) AddUseTimes(i int64) {
+	if m.adduse_times != nil {
+		*m.adduse_times += i
+	} else {
+		m.adduse_times = &i
+	}
+}
+
+// AddedUseTimes returns the value that was added to the "use_times" field in this mutation.
+func (m *CDKInfoMutation) AddedUseTimes() (r int64, exists bool) {
+	v := m.adduse_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUseTimes resets all changes to the "use_times" field.
+func (m *CDKInfoMutation) ResetUseTimes() {
+	m.use_times = nil
+	m.adduse_times = nil
+}
+
+// ClearIssueUser clears the "issue_user" edge to the User entity.
+func (m *CDKInfoMutation) ClearIssueUser() {
+	m.clearedissue_user = true
+	m.clearedFields[cdkinfo.FieldIssueUserID] = struct{}{}
+}
+
+// IssueUserCleared reports if the "issue_user" edge to the User entity was cleared.
+func (m *CDKInfoMutation) IssueUserCleared() bool {
+	return m.clearedissue_user
+}
+
+// IssueUserIDs returns the "issue_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// IssueUserID instead. It exists only for internal usage by the builders.
+func (m *CDKInfoMutation) IssueUserIDs() (ids []int64) {
+	if id := m.issue_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetIssueUser resets all changes to the "issue_user" edge.
+func (m *CDKInfoMutation) ResetIssueUser() {
+	m.issue_user = nil
+	m.clearedissue_user = false
+}
+
+// Where appends a list predicates to the CDKInfoMutation builder.
+func (m *CDKInfoMutation) Where(ps ...predicate.CDKInfo) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CDKInfoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CDKInfoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CDKInfo, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CDKInfoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CDKInfoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CDKInfo).
+func (m *CDKInfoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CDKInfoMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_by != nil {
+		fields = append(fields, cdkinfo.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, cdkinfo.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, cdkinfo.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, cdkinfo.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, cdkinfo.FieldDeletedAt)
+	}
+	if m.issue_user != nil {
+		fields = append(fields, cdkinfo.FieldIssueUserID)
+	}
+	if m.cdk_number != nil {
+		fields = append(fields, cdkinfo.FieldCdkNumber)
+	}
+	if m._type != nil {
+		fields = append(fields, cdkinfo.FieldType)
+	}
+	if m.get_cep != nil {
+		fields = append(fields, cdkinfo.FieldGetCep)
+	}
+	if m.get_time != nil {
+		fields = append(fields, cdkinfo.FieldGetTime)
+	}
+	if m.billing_type != nil {
+		fields = append(fields, cdkinfo.FieldBillingType)
+	}
+	if m.expired_at != nil {
+		fields = append(fields, cdkinfo.FieldExpiredAt)
+	}
+	if m.use_times != nil {
+		fields = append(fields, cdkinfo.FieldUseTimes)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CDKInfoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		return m.CreatedBy()
+	case cdkinfo.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case cdkinfo.FieldCreatedAt:
+		return m.CreatedAt()
+	case cdkinfo.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case cdkinfo.FieldDeletedAt:
+		return m.DeletedAt()
+	case cdkinfo.FieldIssueUserID:
+		return m.IssueUserID()
+	case cdkinfo.FieldCdkNumber:
+		return m.CdkNumber()
+	case cdkinfo.FieldType:
+		return m.GetType()
+	case cdkinfo.FieldGetCep:
+		return m.GetCep()
+	case cdkinfo.FieldGetTime:
+		return m.GetTime()
+	case cdkinfo.FieldBillingType:
+		return m.BillingType()
+	case cdkinfo.FieldExpiredAt:
+		return m.ExpiredAt()
+	case cdkinfo.FieldUseTimes:
+		return m.UseTimes()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CDKInfoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case cdkinfo.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case cdkinfo.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case cdkinfo.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case cdkinfo.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case cdkinfo.FieldIssueUserID:
+		return m.OldIssueUserID(ctx)
+	case cdkinfo.FieldCdkNumber:
+		return m.OldCdkNumber(ctx)
+	case cdkinfo.FieldType:
+		return m.OldType(ctx)
+	case cdkinfo.FieldGetCep:
+		return m.OldGetCep(ctx)
+	case cdkinfo.FieldGetTime:
+		return m.OldGetTime(ctx)
+	case cdkinfo.FieldBillingType:
+		return m.OldBillingType(ctx)
+	case cdkinfo.FieldExpiredAt:
+		return m.OldExpiredAt(ctx)
+	case cdkinfo.FieldUseTimes:
+		return m.OldUseTimes(ctx)
+	}
+	return nil, fmt.Errorf("unknown CDKInfo field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CDKInfoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case cdkinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case cdkinfo.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case cdkinfo.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case cdkinfo.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case cdkinfo.FieldIssueUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIssueUserID(v)
+		return nil
+	case cdkinfo.FieldCdkNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCdkNumber(v)
+		return nil
+	case cdkinfo.FieldType:
+		v, ok := value.(enums.CDKType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case cdkinfo.FieldGetCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetCep(v)
+		return nil
+	case cdkinfo.FieldGetTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetTime(v)
+		return nil
+	case cdkinfo.FieldBillingType:
+		v, ok := value.(enums.MissionBillingType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBillingType(v)
+		return nil
+	case cdkinfo.FieldExpiredAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiredAt(v)
+		return nil
+	case cdkinfo.FieldUseTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUseTimes(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CDKInfoMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, cdkinfo.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, cdkinfo.FieldUpdatedBy)
+	}
+	if m.addget_cep != nil {
+		fields = append(fields, cdkinfo.FieldGetCep)
+	}
+	if m.addget_time != nil {
+		fields = append(fields, cdkinfo.FieldGetTime)
+	}
+	if m.adduse_times != nil {
+		fields = append(fields, cdkinfo.FieldUseTimes)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CDKInfoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case cdkinfo.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case cdkinfo.FieldGetCep:
+		return m.AddedGetCep()
+	case cdkinfo.FieldGetTime:
+		return m.AddedGetTime()
+	case cdkinfo.FieldUseTimes:
+		return m.AddedUseTimes()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CDKInfoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case cdkinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case cdkinfo.FieldGetCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGetCep(v)
+		return nil
+	case cdkinfo.FieldGetTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGetTime(v)
+		return nil
+	case cdkinfo.FieldUseTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUseTimes(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CDKInfoMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(cdkinfo.FieldExpiredAt) {
+		fields = append(fields, cdkinfo.FieldExpiredAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CDKInfoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CDKInfoMutation) ClearField(name string) error {
+	switch name {
+	case cdkinfo.FieldExpiredAt:
+		m.ClearExpiredAt()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CDKInfoMutation) ResetField(name string) error {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case cdkinfo.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case cdkinfo.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case cdkinfo.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case cdkinfo.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case cdkinfo.FieldIssueUserID:
+		m.ResetIssueUserID()
+		return nil
+	case cdkinfo.FieldCdkNumber:
+		m.ResetCdkNumber()
+		return nil
+	case cdkinfo.FieldType:
+		m.ResetType()
+		return nil
+	case cdkinfo.FieldGetCep:
+		m.ResetGetCep()
+		return nil
+	case cdkinfo.FieldGetTime:
+		m.ResetGetTime()
+		return nil
+	case cdkinfo.FieldBillingType:
+		m.ResetBillingType()
+		return nil
+	case cdkinfo.FieldExpiredAt:
+		m.ResetExpiredAt()
+		return nil
+	case cdkinfo.FieldUseTimes:
+		m.ResetUseTimes()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CDKInfoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.issue_user != nil {
+		edges = append(edges, cdkinfo.EdgeIssueUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CDKInfoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		if id := m.issue_user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CDKInfoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CDKInfoMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CDKInfoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedissue_user {
+		edges = append(edges, cdkinfo.EdgeIssueUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CDKInfoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		return m.clearedissue_user
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CDKInfoMutation) ClearEdge(name string) error {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		m.ClearIssueUser()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CDKInfoMutation) ResetEdge(name string) error {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		m.ResetIssueUser()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo edge %s", name)
 }
 
 // CampaignMutation represents an operation that mutates the Campaign nodes in the graph.
@@ -56511,6 +57737,9 @@ type UserMutation struct {
 	artwork_likes                  map[int64]struct{}
 	removedartwork_likes           map[int64]struct{}
 	clearedartwork_likes           bool
+	cdk_infos                      map[int64]struct{}
+	removedcdk_infos               map[int64]struct{}
+	clearedcdk_infos               bool
 	done                           bool
 	oldValue                       func(context.Context) (*User, error)
 	predicates                     []predicate.User
@@ -59000,6 +60229,60 @@ func (m *UserMutation) ResetArtworkLikes() {
 	m.removedartwork_likes = nil
 }
 
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by ids.
+func (m *UserMutation) AddCdkInfoIDs(ids ...int64) {
+	if m.cdk_infos == nil {
+		m.cdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.cdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCdkInfos clears the "cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) ClearCdkInfos() {
+	m.clearedcdk_infos = true
+}
+
+// CdkInfosCleared reports if the "cdk_infos" edge to the CDKInfo entity was cleared.
+func (m *UserMutation) CdkInfosCleared() bool {
+	return m.clearedcdk_infos
+}
+
+// RemoveCdkInfoIDs removes the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (m *UserMutation) RemoveCdkInfoIDs(ids ...int64) {
+	if m.removedcdk_infos == nil {
+		m.removedcdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.cdk_infos, ids[i])
+		m.removedcdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCdkInfos returns the removed IDs of the "cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) RemovedCdkInfosIDs() (ids []int64) {
+	for id := range m.removedcdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CdkInfosIDs returns the "cdk_infos" edge IDs in the mutation.
+func (m *UserMutation) CdkInfosIDs() (ids []int64) {
+	for id := range m.cdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCdkInfos resets all changes to the "cdk_infos" edge.
+func (m *UserMutation) ResetCdkInfos() {
+	m.cdk_infos = nil
+	m.clearedcdk_infos = false
+	m.removedcdk_infos = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -59466,7 +60749,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 32)
+	edges := make([]string, 0, 33)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -59562,6 +60845,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.artwork_likes != nil {
 		edges = append(edges, user.EdgeArtworkLikes)
+	}
+	if m.cdk_infos != nil {
+		edges = append(edges, user.EdgeCdkInfos)
 	}
 	return edges
 }
@@ -59754,13 +61040,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCdkInfos:
+		ids := make([]ent.Value, 0, len(m.cdk_infos))
+		for id := range m.cdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 32)
+	edges := make([]string, 0, 33)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -59844,6 +61136,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedartwork_likes != nil {
 		edges = append(edges, user.EdgeArtworkLikes)
+	}
+	if m.removedcdk_infos != nil {
+		edges = append(edges, user.EdgeCdkInfos)
 	}
 	return edges
 }
@@ -60020,13 +61315,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCdkInfos:
+		ids := make([]ent.Value, 0, len(m.removedcdk_infos))
+		for id := range m.removedcdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 32)
+	edges := make([]string, 0, 33)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -60123,6 +61424,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedartwork_likes {
 		edges = append(edges, user.EdgeArtworkLikes)
 	}
+	if m.clearedcdk_infos {
+		edges = append(edges, user.EdgeCdkInfos)
+	}
 	return edges
 }
 
@@ -60194,6 +61498,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedartworks
 	case user.EdgeArtworkLikes:
 		return m.clearedartwork_likes
+	case user.EdgeCdkInfos:
+		return m.clearedcdk_infos
 	}
 	return false
 }
@@ -60317,6 +61623,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeArtworkLikes:
 		m.ResetArtworkLikes()
+		return nil
+	case user.EdgeCdkInfos:
+		m.ResetCdkInfos()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

@@ -183,6 +183,45 @@ var (
 			},
 		},
 	}
+	// CdkInfosColumns holds the columns for the "cdk_infos" table.
+	CdkInfosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "cdk_number", Type: field.TypeString, Comment: "cdk 序列号", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "cdk 类型", Enums: []string{"unknown", "get_cep", "get_gpu_use"}, Default: "unknown"},
+		{Name: "get_cep", Type: field.TypeInt64, Comment: "cdk 能兑换的 cep 数量", Default: 0},
+		{Name: "get_time", Type: field.TypeInt64, Comment: "cdk 能兑换的 gpu 使用时长", Default: 0},
+		{Name: "billing_type", Type: field.TypeEnum, Comment: "兑换 gpu 使用时长的类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
+		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间"},
+		{Name: "use_times", Type: field.TypeInt64, Comment: "cdk 能使用的次数", Default: 0},
+		{Name: "issue_user_id", Type: field.TypeInt64, Comment: "外键：发行用户 id", Default: 0},
+	}
+	// CdkInfosTable holds the schema information for the "cdk_infos" table.
+	CdkInfosTable = &schema.Table{
+		Name:       "cdk_infos",
+		Comment:    "兑换码，可以兑换脑力值、gpu 使用权等",
+		Columns:    CdkInfosColumns,
+		PrimaryKey: []*schema.Column{CdkInfosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "cdk_infos_users_cdk_infos",
+				Columns:    []*schema.Column{CdkInfosColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "cdkinfo_cdk_number",
+				Unique:  false,
+				Columns: []*schema.Column{CdkInfosColumns[6]},
+			},
+		},
+	}
 	// CampaignsColumns holds the columns for the "campaigns" table.
 	CampaignsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2115,6 +2154,7 @@ var (
 		ArtworksTable,
 		ArtworkLikesTable,
 		BillsTable,
+		CdkInfosTable,
 		CampaignsTable,
 		CampaignOrdersTable,
 		CollectsTable,
@@ -2176,6 +2216,10 @@ func init() {
 	BillsTable.ForeignKeys[4].RefTable = UsersTable
 	BillsTable.ForeignKeys[5].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
+	CdkInfosTable.ForeignKeys[0].RefTable = UsersTable
+	CdkInfosTable.Annotation = &entsql.Annotation{
+		Table: "cdk_infos",
+	}
 	CampaignsTable.Annotation = &entsql.Annotation{}
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
 	CampaignOrdersTable.ForeignKeys[1].RefTable = UsersTable

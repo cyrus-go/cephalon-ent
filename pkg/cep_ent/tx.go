@@ -18,6 +18,8 @@ type Tx struct {
 	ArtworkLike *ArtworkLikeClient
 	// Bill is the client for interacting with the Bill builders.
 	Bill *BillClient
+	// CDKInfo is the client for interacting with the CDKInfo builders.
+	CDKInfo *CDKInfoClient
 	// Campaign is the client for interacting with the Campaign builders.
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
@@ -242,6 +244,7 @@ func (tx *Tx) init() {
 	tx.Artwork = NewArtworkClient(tx.config)
 	tx.ArtworkLike = NewArtworkLikeClient(tx.config)
 	tx.Bill = NewBillClient(tx.config)
+	tx.CDKInfo = NewCDKInfoClient(tx.config)
 	tx.Campaign = NewCampaignClient(tx.config)
 	tx.CampaignOrder = NewCampaignOrderClient(tx.config)
 	tx.Collect = NewCollectClient(tx.config)

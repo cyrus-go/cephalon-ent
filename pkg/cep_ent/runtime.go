@@ -11,6 +11,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -226,6 +227,61 @@ func init() {
 	billDescID := billMixinFields0[0].Descriptor()
 	// bill.DefaultID holds the default value on creation for the id field.
 	bill.DefaultID = billDescID.Default.(func() int64)
+	cdkinfoMixin := schema.CDKInfo{}.Mixin()
+	cdkinfoMixinFields0 := cdkinfoMixin[0].Fields()
+	_ = cdkinfoMixinFields0
+	cdkinfoFields := schema.CDKInfo{}.Fields()
+	_ = cdkinfoFields
+	// cdkinfoDescCreatedBy is the schema descriptor for created_by field.
+	cdkinfoDescCreatedBy := cdkinfoMixinFields0[1].Descriptor()
+	// cdkinfo.DefaultCreatedBy holds the default value on creation for the created_by field.
+	cdkinfo.DefaultCreatedBy = cdkinfoDescCreatedBy.Default.(int64)
+	// cdkinfoDescUpdatedBy is the schema descriptor for updated_by field.
+	cdkinfoDescUpdatedBy := cdkinfoMixinFields0[2].Descriptor()
+	// cdkinfo.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	cdkinfo.DefaultUpdatedBy = cdkinfoDescUpdatedBy.Default.(int64)
+	// cdkinfoDescCreatedAt is the schema descriptor for created_at field.
+	cdkinfoDescCreatedAt := cdkinfoMixinFields0[3].Descriptor()
+	// cdkinfo.DefaultCreatedAt holds the default value on creation for the created_at field.
+	cdkinfo.DefaultCreatedAt = cdkinfoDescCreatedAt.Default.(func() time.Time)
+	// cdkinfoDescUpdatedAt is the schema descriptor for updated_at field.
+	cdkinfoDescUpdatedAt := cdkinfoMixinFields0[4].Descriptor()
+	// cdkinfo.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	cdkinfo.DefaultUpdatedAt = cdkinfoDescUpdatedAt.Default.(func() time.Time)
+	// cdkinfo.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	cdkinfo.UpdateDefaultUpdatedAt = cdkinfoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// cdkinfoDescDeletedAt is the schema descriptor for deleted_at field.
+	cdkinfoDescDeletedAt := cdkinfoMixinFields0[5].Descriptor()
+	// cdkinfo.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	cdkinfo.DefaultDeletedAt = cdkinfoDescDeletedAt.Default.(time.Time)
+	// cdkinfoDescIssueUserID is the schema descriptor for issue_user_id field.
+	cdkinfoDescIssueUserID := cdkinfoFields[0].Descriptor()
+	// cdkinfo.DefaultIssueUserID holds the default value on creation for the issue_user_id field.
+	cdkinfo.DefaultIssueUserID = cdkinfoDescIssueUserID.Default.(int64)
+	// cdkinfoDescCdkNumber is the schema descriptor for cdk_number field.
+	cdkinfoDescCdkNumber := cdkinfoFields[1].Descriptor()
+	// cdkinfo.DefaultCdkNumber holds the default value on creation for the cdk_number field.
+	cdkinfo.DefaultCdkNumber = cdkinfoDescCdkNumber.Default.(string)
+	// cdkinfoDescGetCep is the schema descriptor for get_cep field.
+	cdkinfoDescGetCep := cdkinfoFields[3].Descriptor()
+	// cdkinfo.DefaultGetCep holds the default value on creation for the get_cep field.
+	cdkinfo.DefaultGetCep = cdkinfoDescGetCep.Default.(int64)
+	// cdkinfoDescGetTime is the schema descriptor for get_time field.
+	cdkinfoDescGetTime := cdkinfoFields[4].Descriptor()
+	// cdkinfo.DefaultGetTime holds the default value on creation for the get_time field.
+	cdkinfo.DefaultGetTime = cdkinfoDescGetTime.Default.(int64)
+	// cdkinfoDescExpiredAt is the schema descriptor for expired_at field.
+	cdkinfoDescExpiredAt := cdkinfoFields[6].Descriptor()
+	// cdkinfo.DefaultExpiredAt holds the default value on creation for the expired_at field.
+	cdkinfo.DefaultExpiredAt = cdkinfoDescExpiredAt.Default.(time.Time)
+	// cdkinfoDescUseTimes is the schema descriptor for use_times field.
+	cdkinfoDescUseTimes := cdkinfoFields[7].Descriptor()
+	// cdkinfo.DefaultUseTimes holds the default value on creation for the use_times field.
+	cdkinfo.DefaultUseTimes = cdkinfoDescUseTimes.Default.(int64)
+	// cdkinfoDescID is the schema descriptor for id field.
+	cdkinfoDescID := cdkinfoMixinFields0[0].Descriptor()
+	// cdkinfo.DefaultID holds the default value on creation for the id field.
+	cdkinfo.DefaultID = cdkinfoDescID.Default.(func() int64)
 	campaignMixin := schema.Campaign{}.Mixin()
 	campaignMixinFields0 := campaignMixin[0].Fields()
 	_ = campaignMixinFields0

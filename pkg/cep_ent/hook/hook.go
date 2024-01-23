@@ -45,6 +45,18 @@ func (f BillFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.BillMutation", m)
 }
 
+// The CDKInfoFunc type is an adapter to allow the use of ordinary
+// function as CDKInfo mutator.
+type CDKInfoFunc func(context.Context, *cep_ent.CDKInfoMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CDKInfoFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.CDKInfoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.CDKInfoMutation", m)
+}
+
 // The CampaignFunc type is an adapter to allow the use of ordinary
 // function as Campaign mutator.
 type CampaignFunc func(context.Context, *cep_ent.CampaignMutation) (cep_ent.Value, error)

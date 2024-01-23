@@ -117,6 +117,8 @@ const (
 	EdgeArtworks = "artworks"
 	// EdgeArtworkLikes holds the string denoting the artwork_likes edge name in mutations.
 	EdgeArtworkLikes = "artwork_likes"
+	// EdgeCdkInfos holds the string denoting the cdk_infos edge name in mutations.
+	EdgeCdkInfos = "cdk_infos"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -337,6 +339,13 @@ const (
 	ArtworkLikesInverseTable = "artwork_likes"
 	// ArtworkLikesColumn is the table column denoting the artwork_likes relation/edge.
 	ArtworkLikesColumn = "user_id"
+	// CdkInfosTable is the table that holds the cdk_infos relation/edge.
+	CdkInfosTable = "cdk_infos"
+	// CdkInfosInverseTable is the table name for the CDKInfo entity.
+	// It exists in this package in order to avoid circular dependency with the "cdkinfo" package.
+	CdkInfosInverseTable = "cdk_infos"
+	// CdkInfosColumn is the table column denoting the cdk_infos relation/edge.
+	CdkInfosColumn = "issue_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -964,6 +973,20 @@ func ByArtworkLikes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newArtworkLikesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByCdkInfosCount orders the results by cdk_infos count.
+func ByCdkInfosCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCdkInfosStep(), opts...)
+	}
+}
+
+// ByCdkInfos orders the results by cdk_infos terms.
+func ByCdkInfos(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCdkInfosStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1186,5 +1209,12 @@ func newArtworkLikesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ArtworkLikesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ArtworkLikesTable, ArtworkLikesColumn),
+	)
+}
+func newCdkInfosStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CdkInfosInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CdkInfosTable, CdkInfosColumn),
 	)
 }

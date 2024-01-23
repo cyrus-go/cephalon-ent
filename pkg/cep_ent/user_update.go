@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -796,6 +797,21 @@ func (uu *UserUpdate) AddArtworkLikes(a ...*ArtworkLike) *UserUpdate {
 	return uu.AddArtworkLikeIDs(ids...)
 }
 
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (uu *UserUpdate) AddCdkInfoIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddCdkInfoIDs(ids...)
+	return uu
+}
+
+// AddCdkInfos adds the "cdk_infos" edges to the CDKInfo entity.
+func (uu *UserUpdate) AddCdkInfos(c ...*CDKInfo) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.AddCdkInfoIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1411,6 +1427,27 @@ func (uu *UserUpdate) RemoveArtworkLikes(a ...*ArtworkLike) *UserUpdate {
 		ids[i] = a[i].ID
 	}
 	return uu.RemoveArtworkLikeIDs(ids...)
+}
+
+// ClearCdkInfos clears all "cdk_infos" edges to the CDKInfo entity.
+func (uu *UserUpdate) ClearCdkInfos() *UserUpdate {
+	uu.mutation.ClearCdkInfos()
+	return uu
+}
+
+// RemoveCdkInfoIDs removes the "cdk_infos" edge to CDKInfo entities by IDs.
+func (uu *UserUpdate) RemoveCdkInfoIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveCdkInfoIDs(ids...)
+	return uu
+}
+
+// RemoveCdkInfos removes "cdk_infos" edges to CDKInfo entities.
+func (uu *UserUpdate) RemoveCdkInfos(c ...*CDKInfo) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.RemoveCdkInfoIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2913,6 +2950,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedCdkInfosIDs(); len(nodes) > 0 && !uu.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.CdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -3675,6 +3757,21 @@ func (uuo *UserUpdateOne) AddArtworkLikes(a ...*ArtworkLike) *UserUpdateOne {
 	return uuo.AddArtworkLikeIDs(ids...)
 }
 
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (uuo *UserUpdateOne) AddCdkInfoIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddCdkInfoIDs(ids...)
+	return uuo
+}
+
+// AddCdkInfos adds the "cdk_infos" edges to the CDKInfo entity.
+func (uuo *UserUpdateOne) AddCdkInfos(c ...*CDKInfo) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.AddCdkInfoIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -4290,6 +4387,27 @@ func (uuo *UserUpdateOne) RemoveArtworkLikes(a ...*ArtworkLike) *UserUpdateOne {
 		ids[i] = a[i].ID
 	}
 	return uuo.RemoveArtworkLikeIDs(ids...)
+}
+
+// ClearCdkInfos clears all "cdk_infos" edges to the CDKInfo entity.
+func (uuo *UserUpdateOne) ClearCdkInfos() *UserUpdateOne {
+	uuo.mutation.ClearCdkInfos()
+	return uuo
+}
+
+// RemoveCdkInfoIDs removes the "cdk_infos" edge to CDKInfo entities by IDs.
+func (uuo *UserUpdateOne) RemoveCdkInfoIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveCdkInfoIDs(ids...)
+	return uuo
+}
+
+// RemoveCdkInfos removes "cdk_infos" edges to CDKInfo entities.
+func (uuo *UserUpdateOne) RemoveCdkInfos(c ...*CDKInfo) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.RemoveCdkInfoIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -5815,6 +5933,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedCdkInfosIDs(); len(nodes) > 0 && !uuo.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.CdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

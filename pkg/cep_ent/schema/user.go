@@ -66,6 +66,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("renewal_agreements", RenewalAgreement.Type),
 		edge.To("artworks", Artwork.Type),
 		edge.To("artwork_likes", ArtworkLike.Type),
+		edge.To("cdk_infos", CDKInfo.Type),
 	}
 }
 
