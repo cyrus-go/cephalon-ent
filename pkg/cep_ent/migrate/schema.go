@@ -218,7 +218,7 @@ var (
 		Indexes: []*schema.Index{
 			{
 				Name:    "cdkinfo_cdk_number",
-				Unique:  false,
+				Unique:  true,
 				Columns: []*schema.Column{CdkInfosColumns[6]},
 			},
 		},

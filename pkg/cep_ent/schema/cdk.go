@@ -40,7 +40,7 @@ func (CDKInfo) Edges() []ent.Edge {
 // Indexes of CDKInfo
 func (CDKInfo) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("cdk_number"),
+		index.Fields("cdk_number").Unique(),
 	}
 }
 
