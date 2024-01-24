@@ -232,6 +232,20 @@ func (ciu *CDKInfoUpdate) AddUseTimes(i int64) *CDKInfoUpdate {
 	return ciu
 }
 
+// SetStatus sets the "status" field.
+func (ciu *CDKInfoUpdate) SetStatus(es enums.CDKStatus) *CDKInfoUpdate {
+	ciu.mutation.SetStatus(es)
+	return ciu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ciu *CDKInfoUpdate) SetNillableStatus(es *enums.CDKStatus) *CDKInfoUpdate {
+	if es != nil {
+		ciu.SetStatus(*es)
+	}
+	return ciu
+}
+
 // SetIssueUser sets the "issue_user" edge to the User entity.
 func (ciu *CDKInfoUpdate) SetIssueUser(u *User) *CDKInfoUpdate {
 	return ciu.SetIssueUserID(u.ID)
@@ -294,6 +308,11 @@ func (ciu *CDKInfoUpdate) check() error {
 	if v, ok := ciu.mutation.BillingType(); ok {
 		if err := cdkinfo.BillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "CDKInfo.billing_type": %w`, err)}
+		}
+	}
+	if v, ok := ciu.mutation.Status(); ok {
+		if err := cdkinfo.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CDKInfo.status": %w`, err)}
 		}
 	}
 	if _, ok := ciu.mutation.IssueUserID(); ciu.mutation.IssueUserCleared() && !ok {
@@ -370,6 +389,9 @@ func (ciu *CDKInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := ciu.mutation.AddedUseTimes(); ok {
 		_spec.AddField(cdkinfo.FieldUseTimes, field.TypeInt64, value)
+	}
+	if value, ok := ciu.mutation.Status(); ok {
+		_spec.SetField(cdkinfo.FieldStatus, field.TypeEnum, value)
 	}
 	if ciu.mutation.IssueUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -623,6 +645,20 @@ func (ciuo *CDKInfoUpdateOne) AddUseTimes(i int64) *CDKInfoUpdateOne {
 	return ciuo
 }
 
+// SetStatus sets the "status" field.
+func (ciuo *CDKInfoUpdateOne) SetStatus(es enums.CDKStatus) *CDKInfoUpdateOne {
+	ciuo.mutation.SetStatus(es)
+	return ciuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ciuo *CDKInfoUpdateOne) SetNillableStatus(es *enums.CDKStatus) *CDKInfoUpdateOne {
+	if es != nil {
+		ciuo.SetStatus(*es)
+	}
+	return ciuo
+}
+
 // SetIssueUser sets the "issue_user" edge to the User entity.
 func (ciuo *CDKInfoUpdateOne) SetIssueUser(u *User) *CDKInfoUpdateOne {
 	return ciuo.SetIssueUserID(u.ID)
@@ -698,6 +734,11 @@ func (ciuo *CDKInfoUpdateOne) check() error {
 	if v, ok := ciuo.mutation.BillingType(); ok {
 		if err := cdkinfo.BillingTypeValidator(v); err != nil {
 			return &ValidationError{Name: "billing_type", err: fmt.Errorf(`cep_ent: validator failed for field "CDKInfo.billing_type": %w`, err)}
+		}
+	}
+	if v, ok := ciuo.mutation.Status(); ok {
+		if err := cdkinfo.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CDKInfo.status": %w`, err)}
 		}
 	}
 	if _, ok := ciuo.mutation.IssueUserID(); ciuo.mutation.IssueUserCleared() && !ok {
@@ -791,6 +832,9 @@ func (ciuo *CDKInfoUpdateOne) sqlSave(ctx context.Context) (_node *CDKInfo, err 
 	}
 	if value, ok := ciuo.mutation.AddedUseTimes(); ok {
 		_spec.AddField(cdkinfo.FieldUseTimes, field.TypeInt64, value)
+	}
+	if value, ok := ciuo.mutation.Status(); ok {
+		_spec.SetField(cdkinfo.FieldStatus, field.TypeEnum, value)
 	}
 	if ciuo.mutation.IssueUserCleared() {
 		edge := &sqlgraph.EdgeSpec{

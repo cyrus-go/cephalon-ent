@@ -25,6 +25,7 @@ func (CDKInfo) Fields() []ent.Field {
 		field.Enum("billing_type").GoType(enums.MissionBillingTypeTimePlanHour).Default(string(enums.MissionBillingTypeUnknown)).StructTag(`json:"billing_type"`).Comment("兑换 gpu 使用时长的类型"),
 		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("过期时间"),
 		field.Int64("use_times").StructTag(`json:"use_times"`).Default(0).Comment("cdk 能使用的次数"),
+		field.Enum("status").GoType(enums.CDKStatusNormal).Default(string(enums.CDKStatusUnknown)).StructTag(`json:"status"`).Comment("cdk 状态"),
 	}
 }
 

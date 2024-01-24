@@ -198,6 +198,7 @@ var (
 		{Name: "billing_type", Type: field.TypeEnum, Comment: "兑换 gpu 使用时长的类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
 		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间"},
 		{Name: "use_times", Type: field.TypeInt64, Comment: "cdk 能使用的次数", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "cdk 状态", Enums: []string{"unknown", "normal", "freeze", "canceled"}, Default: "unknown"},
 		{Name: "issue_user_id", Type: field.TypeInt64, Comment: "外键：发行用户 id", Default: 0},
 	}
 	// CdkInfosTable holds the schema information for the "cdk_infos" table.
@@ -209,7 +210,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "cdk_infos_users_cdk_infos",
-				Columns:    []*schema.Column{CdkInfosColumns[13]},
+				Columns:    []*schema.Column{CdkInfosColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

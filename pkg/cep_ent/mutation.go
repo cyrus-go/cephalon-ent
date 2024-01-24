@@ -3881,6 +3881,7 @@ type CDKInfoMutation struct {
 	expired_at        *time.Time
 	use_times         *int64
 	adduse_times      *int64
+	status            *enums.CDKStatus
 	clearedFields     map[string]struct{}
 	issue_user        *int64
 	clearedissue_user bool
@@ -4574,6 +4575,42 @@ func (m *CDKInfoMutation) ResetUseTimes() {
 	m.adduse_times = nil
 }
 
+// SetStatus sets the "status" field.
+func (m *CDKInfoMutation) SetStatus(es enums.CDKStatus) {
+	m.status = &es
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *CDKInfoMutation) Status() (r enums.CDKStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldStatus(ctx context.Context) (v enums.CDKStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *CDKInfoMutation) ResetStatus() {
+	m.status = nil
+}
+
 // ClearIssueUser clears the "issue_user" edge to the User entity.
 func (m *CDKInfoMutation) ClearIssueUser() {
 	m.clearedissue_user = true
@@ -4635,7 +4672,7 @@ func (m *CDKInfoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CDKInfoMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, cdkinfo.FieldCreatedBy)
 	}
@@ -4675,6 +4712,9 @@ func (m *CDKInfoMutation) Fields() []string {
 	if m.use_times != nil {
 		fields = append(fields, cdkinfo.FieldUseTimes)
 	}
+	if m.status != nil {
+		fields = append(fields, cdkinfo.FieldStatus)
+	}
 	return fields
 }
 
@@ -4709,6 +4749,8 @@ func (m *CDKInfoMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiredAt()
 	case cdkinfo.FieldUseTimes:
 		return m.UseTimes()
+	case cdkinfo.FieldStatus:
+		return m.Status()
 	}
 	return nil, false
 }
@@ -4744,6 +4786,8 @@ func (m *CDKInfoMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldExpiredAt(ctx)
 	case cdkinfo.FieldUseTimes:
 		return m.OldUseTimes(ctx)
+	case cdkinfo.FieldStatus:
+		return m.OldStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown CDKInfo field %s", name)
 }
@@ -4843,6 +4887,13 @@ func (m *CDKInfoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUseTimes(v)
+		return nil
+	case cdkinfo.FieldStatus:
+		v, ok := value.(enums.CDKStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo field %s", name)
@@ -5003,6 +5054,9 @@ func (m *CDKInfoMutation) ResetField(name string) error {
 		return nil
 	case cdkinfo.FieldUseTimes:
 		m.ResetUseTimes()
+		return nil
+	case cdkinfo.FieldStatus:
+		m.ResetStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo field %s", name)

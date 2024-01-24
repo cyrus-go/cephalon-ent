@@ -42,6 +42,8 @@ const (
 	FieldExpiredAt = "expired_at"
 	// FieldUseTimes holds the string denoting the use_times field in the database.
 	FieldUseTimes = "use_times"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// EdgeIssueUser holds the string denoting the issue_user edge name in mutations.
 	EdgeIssueUser = "issue_user"
 	// Table holds the table name of the cdkinfo in the database.
@@ -71,6 +73,7 @@ var Columns = []string{
 	FieldBillingType,
 	FieldExpiredAt,
 	FieldUseTimes,
+	FieldStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -133,6 +136,18 @@ func BillingTypeValidator(bt enums.MissionBillingType) error {
 		return nil
 	default:
 		return fmt.Errorf("cdkinfo: invalid enum value for billing_type field: %q", bt)
+	}
+}
+
+const DefaultStatus enums.CDKStatus = "unknown"
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s enums.CDKStatus) error {
+	switch s {
+	case "unknown", "normal", "freeze", "canceled":
+		return nil
+	default:
+		return fmt.Errorf("cdkinfo: invalid enum value for status field: %q", s)
 	}
 }
 
@@ -207,6 +222,11 @@ func ByExpiredAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUseTimes orders the results by the use_times field.
 func ByUseTimes(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUseTimes, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // ByIssueUserField orders the results by issue_user field.

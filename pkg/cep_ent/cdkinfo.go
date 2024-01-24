@@ -46,6 +46,8 @@ type CDKInfo struct {
 	ExpiredAt *time.Time `json:"expired_at"`
 	// cdk 能使用的次数
 	UseTimes int64 `json:"use_times"`
+	// cdk 状态
+	Status enums.CDKStatus `json:"status"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CDKInfoQuery when eager-loading is set.
 	Edges        CDKInfoEdges `json:"edges"`
@@ -81,7 +83,7 @@ func (*CDKInfo) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case cdkinfo.FieldID, cdkinfo.FieldCreatedBy, cdkinfo.FieldUpdatedBy, cdkinfo.FieldIssueUserID, cdkinfo.FieldGetCep, cdkinfo.FieldGetTime, cdkinfo.FieldUseTimes:
 			values[i] = new(sql.NullInt64)
-		case cdkinfo.FieldCdkNumber, cdkinfo.FieldType, cdkinfo.FieldBillingType:
+		case cdkinfo.FieldCdkNumber, cdkinfo.FieldType, cdkinfo.FieldBillingType, cdkinfo.FieldStatus:
 			values[i] = new(sql.NullString)
 		case cdkinfo.FieldCreatedAt, cdkinfo.FieldUpdatedAt, cdkinfo.FieldDeletedAt, cdkinfo.FieldExpiredAt:
 			values[i] = new(sql.NullTime)
@@ -185,6 +187,12 @@ func (ci *CDKInfo) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ci.UseTimes = value.Int64
 			}
+		case cdkinfo.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				ci.Status = enums.CDKStatus(value.String)
+			}
 		default:
 			ci.selectValues.Set(columns[i], values[i])
 		}
@@ -266,6 +274,9 @@ func (ci *CDKInfo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("use_times=")
 	builder.WriteString(fmt.Sprintf("%v", ci.UseTimes))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", ci.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }

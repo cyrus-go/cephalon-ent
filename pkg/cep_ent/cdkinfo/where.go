@@ -626,6 +626,36 @@ func UseTimesLTE(v int64) predicate.CDKInfo {
 	return predicate.CDKInfo(sql.FieldLTE(FieldUseTimes, v))
 }
 
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v enums.CDKStatus) predicate.CDKInfo {
+	vc := v
+	return predicate.CDKInfo(sql.FieldEQ(FieldStatus, vc))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v enums.CDKStatus) predicate.CDKInfo {
+	vc := v
+	return predicate.CDKInfo(sql.FieldNEQ(FieldStatus, vc))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...enums.CDKStatus) predicate.CDKInfo {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CDKInfo(sql.FieldIn(FieldStatus, v...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...enums.CDKStatus) predicate.CDKInfo {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CDKInfo(sql.FieldNotIn(FieldStatus, v...))
+}
+
 // HasIssueUser applies the HasEdge predicate on the "issue_user" edge.
 func HasIssueUser() predicate.CDKInfo {
 	return predicate.CDKInfo(func(s *sql.Selector) {

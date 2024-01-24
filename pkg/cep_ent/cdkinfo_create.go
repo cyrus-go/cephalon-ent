@@ -206,6 +206,20 @@ func (cic *CDKInfoCreate) SetNillableUseTimes(i *int64) *CDKInfoCreate {
 	return cic
 }
 
+// SetStatus sets the "status" field.
+func (cic *CDKInfoCreate) SetStatus(es enums.CDKStatus) *CDKInfoCreate {
+	cic.mutation.SetStatus(es)
+	return cic
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (cic *CDKInfoCreate) SetNillableStatus(es *enums.CDKStatus) *CDKInfoCreate {
+	if es != nil {
+		cic.SetStatus(*es)
+	}
+	return cic
+}
+
 // SetID sets the "id" field.
 func (cic *CDKInfoCreate) SetID(i int64) *CDKInfoCreate {
 	cic.mutation.SetID(i)
@@ -312,6 +326,10 @@ func (cic *CDKInfoCreate) defaults() {
 		v := cdkinfo.DefaultUseTimes
 		cic.mutation.SetUseTimes(v)
 	}
+	if _, ok := cic.mutation.Status(); !ok {
+		v := cdkinfo.DefaultStatus
+		cic.mutation.SetStatus(v)
+	}
 	if _, ok := cic.mutation.ID(); !ok {
 		v := cdkinfo.DefaultID()
 		cic.mutation.SetID(v)
@@ -365,6 +383,14 @@ func (cic *CDKInfoCreate) check() error {
 	}
 	if _, ok := cic.mutation.UseTimes(); !ok {
 		return &ValidationError{Name: "use_times", err: errors.New(`cep_ent: missing required field "CDKInfo.use_times"`)}
+	}
+	if _, ok := cic.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "CDKInfo.status"`)}
+	}
+	if v, ok := cic.mutation.Status(); ok {
+		if err := cdkinfo.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CDKInfo.status": %w`, err)}
+		}
 	}
 	if _, ok := cic.mutation.IssueUserID(); !ok {
 		return &ValidationError{Name: "issue_user", err: errors.New(`cep_ent: missing required edge "CDKInfo.issue_user"`)}
@@ -449,6 +475,10 @@ func (cic *CDKInfoCreate) createSpec() (*CDKInfo, *sqlgraph.CreateSpec) {
 	if value, ok := cic.mutation.UseTimes(); ok {
 		_spec.SetField(cdkinfo.FieldUseTimes, field.TypeInt64, value)
 		_node.UseTimes = value
+	}
+	if value, ok := cic.mutation.Status(); ok {
+		_spec.SetField(cdkinfo.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if nodes := cic.mutation.IssueUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -696,6 +726,18 @@ func (u *CDKInfoUpsert) UpdateUseTimes() *CDKInfoUpsert {
 // AddUseTimes adds v to the "use_times" field.
 func (u *CDKInfoUpsert) AddUseTimes(v int64) *CDKInfoUpsert {
 	u.Add(cdkinfo.FieldUseTimes, v)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *CDKInfoUpsert) SetStatus(v enums.CDKStatus) *CDKInfoUpsert {
+	u.Set(cdkinfo.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CDKInfoUpsert) UpdateStatus() *CDKInfoUpsert {
+	u.SetExcluded(cdkinfo.FieldStatus)
 	return u
 }
 
@@ -957,6 +999,20 @@ func (u *CDKInfoUpsertOne) AddUseTimes(v int64) *CDKInfoUpsertOne {
 func (u *CDKInfoUpsertOne) UpdateUseTimes() *CDKInfoUpsertOne {
 	return u.Update(func(s *CDKInfoUpsert) {
 		s.UpdateUseTimes()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *CDKInfoUpsertOne) SetStatus(v enums.CDKStatus) *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CDKInfoUpsertOne) UpdateStatus() *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.UpdateStatus()
 	})
 }
 
@@ -1384,6 +1440,20 @@ func (u *CDKInfoUpsertBulk) AddUseTimes(v int64) *CDKInfoUpsertBulk {
 func (u *CDKInfoUpsertBulk) UpdateUseTimes() *CDKInfoUpsertBulk {
 	return u.Update(func(s *CDKInfoUpsert) {
 		s.UpdateUseTimes()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *CDKInfoUpsertBulk) SetStatus(v enums.CDKStatus) *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *CDKInfoUpsertBulk) UpdateStatus() *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.UpdateStatus()
 	})
 }
 
