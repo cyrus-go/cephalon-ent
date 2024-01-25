@@ -6,6 +6,7 @@ const (
 	CDKStatusUnknown  CDKStatus = "unknown"
 	CDKStatusNormal   CDKStatus = "normal"
 	CDKStatusFreeze   CDKStatus = "freeze"
+	CDKStatusUsed     CDKStatus = "used"
 	CDKStatusCanceled CDKStatus = "canceled"
 )
 
@@ -14,6 +15,7 @@ func (CDKStatus) Values() []string {
 		string(CDKStatusUnknown),
 		string(CDKStatusNormal),
 		string(CDKStatusFreeze),
+		string(CDKStatusUsed),
 		string(CDKStatusCanceled),
 	}
 }

@@ -144,7 +144,7 @@ const DefaultStatus enums.CDKStatus = "unknown"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.CDKStatus) error {
 	switch s {
-	case "unknown", "normal", "freeze", "canceled":
+	case "unknown", "normal", "freeze", "used", "canceled":
 		return nil
 	default:
 		return fmt.Errorf("cdkinfo: invalid enum value for status field: %q", s)
