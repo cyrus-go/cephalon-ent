@@ -48,6 +48,10 @@ type CDKInfo struct {
 	UseTimes int64 `json:"use_times"`
 	// cdk 状态
 	Status enums.CDKStatus `json:"status"`
+	// 外键：使用 cdk 用户 id
+	UseUserID int64 `json:"use_user_id,omitempty,string"`
+	// 使用时间
+	UsedAt *time.Time `json:"used_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CDKInfoQuery when eager-loading is set.
 	Edges        CDKInfoEdges `json:"edges"`
@@ -58,9 +62,11 @@ type CDKInfo struct {
 type CDKInfoEdges struct {
 	// IssueUser holds the value of the issue_user edge.
 	IssueUser *User `json:"issue_user,omitempty"`
+	// UseUser holds the value of the use_user edge.
+	UseUser *User `json:"use_user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // IssueUserOrErr returns the IssueUser value or an error if the edge
@@ -76,16 +82,29 @@ func (e CDKInfoEdges) IssueUserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "issue_user"}
 }
 
+// UseUserOrErr returns the UseUser value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CDKInfoEdges) UseUserOrErr() (*User, error) {
+	if e.loadedTypes[1] {
+		if e.UseUser == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.UseUser, nil
+	}
+	return nil, &NotLoadedError{edge: "use_user"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*CDKInfo) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case cdkinfo.FieldID, cdkinfo.FieldCreatedBy, cdkinfo.FieldUpdatedBy, cdkinfo.FieldIssueUserID, cdkinfo.FieldGetCep, cdkinfo.FieldGetTime, cdkinfo.FieldUseTimes:
+		case cdkinfo.FieldID, cdkinfo.FieldCreatedBy, cdkinfo.FieldUpdatedBy, cdkinfo.FieldIssueUserID, cdkinfo.FieldGetCep, cdkinfo.FieldGetTime, cdkinfo.FieldUseTimes, cdkinfo.FieldUseUserID:
 			values[i] = new(sql.NullInt64)
 		case cdkinfo.FieldCdkNumber, cdkinfo.FieldType, cdkinfo.FieldBillingType, cdkinfo.FieldStatus:
 			values[i] = new(sql.NullString)
-		case cdkinfo.FieldCreatedAt, cdkinfo.FieldUpdatedAt, cdkinfo.FieldDeletedAt, cdkinfo.FieldExpiredAt:
+		case cdkinfo.FieldCreatedAt, cdkinfo.FieldUpdatedAt, cdkinfo.FieldDeletedAt, cdkinfo.FieldExpiredAt, cdkinfo.FieldUsedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -193,6 +212,19 @@ func (ci *CDKInfo) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ci.Status = enums.CDKStatus(value.String)
 			}
+		case cdkinfo.FieldUseUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field use_user_id", values[i])
+			} else if value.Valid {
+				ci.UseUserID = value.Int64
+			}
+		case cdkinfo.FieldUsedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field used_at", values[i])
+			} else if value.Valid {
+				ci.UsedAt = new(time.Time)
+				*ci.UsedAt = value.Time
+			}
 		default:
 			ci.selectValues.Set(columns[i], values[i])
 		}
@@ -209,6 +241,11 @@ func (ci *CDKInfo) Value(name string) (ent.Value, error) {
 // QueryIssueUser queries the "issue_user" edge of the CDKInfo entity.
 func (ci *CDKInfo) QueryIssueUser() *UserQuery {
 	return NewCDKInfoClient(ci.config).QueryIssueUser(ci)
+}
+
+// QueryUseUser queries the "use_user" edge of the CDKInfo entity.
+func (ci *CDKInfo) QueryUseUser() *UserQuery {
+	return NewCDKInfoClient(ci.config).QueryUseUser(ci)
 }
 
 // Update returns a builder for updating this CDKInfo.
@@ -277,6 +314,14 @@ func (ci *CDKInfo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", ci.Status))
+	builder.WriteString(", ")
+	builder.WriteString("use_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", ci.UseUserID))
+	builder.WriteString(", ")
+	if v := ci.UsedAt; v != nil {
+		builder.WriteString("used_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

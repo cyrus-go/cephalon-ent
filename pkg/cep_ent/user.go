@@ -133,9 +133,11 @@ type UserEdges struct {
 	ArtworkLikes []*ArtworkLike `json:"artwork_likes,omitempty"`
 	// CdkInfos holds the value of the cdk_infos edge.
 	CdkInfos []*CDKInfo `json:"cdk_infos,omitempty"`
+	// UseCdkInfos holds the value of the use_cdk_infos edge.
+	UseCdkInfos []*CDKInfo `json:"use_cdk_infos,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [33]bool
+	loadedTypes [34]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -449,6 +451,15 @@ func (e UserEdges) CdkInfosOrErr() ([]*CDKInfo, error) {
 		return e.CdkInfos, nil
 	}
 	return nil, &NotLoadedError{edge: "cdk_infos"}
+}
+
+// UseCdkInfosOrErr returns the UseCdkInfos value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UseCdkInfosOrErr() ([]*CDKInfo, error) {
+	if e.loadedTypes[33] {
+		return e.UseCdkInfos, nil
+	}
+	return nil, &NotLoadedError{edge: "use_cdk_infos"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -775,6 +786,11 @@ func (u *User) QueryArtworkLikes() *ArtworkLikeQuery {
 // QueryCdkInfos queries the "cdk_infos" edge of the User entity.
 func (u *User) QueryCdkInfos() *CDKInfoQuery {
 	return NewUserClient(u.config).QueryCdkInfos(u)
+}
+
+// QueryUseCdkInfos queries the "use_cdk_infos" edge of the User entity.
+func (u *User) QueryUseCdkInfos() *CDKInfoQuery {
+	return NewUserClient(u.config).QueryUseCdkInfos(u)
 }
 
 // Update returns a builder for updating this User.

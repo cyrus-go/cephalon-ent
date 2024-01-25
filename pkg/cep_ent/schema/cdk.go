@@ -26,6 +26,8 @@ func (CDKInfo) Fields() []ent.Field {
 		field.Time("expired_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"expired_at"`).Comment("过期时间"),
 		field.Int64("use_times").StructTag(`json:"use_times"`).Default(0).Comment("cdk 能使用的次数"),
 		field.Enum("status").GoType(enums.CDKStatusNormal).Default(string(enums.CDKStatusUnknown)).StructTag(`json:"status"`).Comment("cdk 状态"),
+		field.Int64("use_user_id").StructTag(`json:"use_user_id,omitempty,string"`).Default(0).Comment("外键：使用 cdk 用户 id"),
+		field.Time("used_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"used_at"`).Comment("使用时间"),
 	}
 }
 
@@ -34,6 +36,7 @@ func (CDKInfo) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
 		edge.From("issue_user", User.Type).Ref("cdk_infos").Field("issue_user_id").Unique().Required(),
+		edge.From("use_user", User.Type).Ref("use_cdk_infos").Field("use_user_id").Unique().Required(),
 	}
 }
 

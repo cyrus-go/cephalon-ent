@@ -199,7 +199,9 @@ var (
 		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间"},
 		{Name: "use_times", Type: field.TypeInt64, Comment: "cdk 能使用的次数", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "cdk 状态", Enums: []string{"unknown", "normal", "freeze", "used", "canceled"}, Default: "unknown"},
+		{Name: "used_at", Type: field.TypeTime, Nullable: true, Comment: "使用时间"},
 		{Name: "issue_user_id", Type: field.TypeInt64, Comment: "外键：发行用户 id", Default: 0},
+		{Name: "use_user_id", Type: field.TypeInt64, Comment: "外键：使用 cdk 用户 id", Default: 0},
 	}
 	// CdkInfosTable holds the schema information for the "cdk_infos" table.
 	CdkInfosTable = &schema.Table{
@@ -210,7 +212,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "cdk_infos_users_cdk_infos",
-				Columns:    []*schema.Column{CdkInfosColumns[14]},
+				Columns:    []*schema.Column{CdkInfosColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "cdk_infos_users_use_cdk_infos",
+				Columns:    []*schema.Column{CdkInfosColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2219,6 +2227,7 @@ func init() {
 	BillsTable.ForeignKeys[5].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
 	CdkInfosTable.ForeignKeys[0].RefTable = UsersTable
+	CdkInfosTable.ForeignKeys[1].RefTable = UsersTable
 	CdkInfosTable.Annotation = &entsql.Annotation{
 		Table: "cdk_infos",
 	}

@@ -827,6 +827,21 @@ func (uc *UserCreate) AddCdkInfos(c ...*CDKInfo) *UserCreate {
 	return uc.AddCdkInfoIDs(ids...)
 }
 
+// AddUseCdkInfoIDs adds the "use_cdk_infos" edge to the CDKInfo entity by IDs.
+func (uc *UserCreate) AddUseCdkInfoIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddUseCdkInfoIDs(ids...)
+	return uc
+}
+
+// AddUseCdkInfos adds the "use_cdk_infos" edges to the CDKInfo entity.
+func (uc *UserCreate) AddUseCdkInfos(c ...*CDKInfo) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddUseCdkInfoIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -1635,6 +1650,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Inverse: false,
 			Table:   user.CdkInfosTable,
 			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UseCdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),

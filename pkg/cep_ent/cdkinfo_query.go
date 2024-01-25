@@ -23,6 +23,7 @@ type CDKInfoQuery struct {
 	inters        []Interceptor
 	predicates    []predicate.CDKInfo
 	withIssueUser *UserQuery
+	withUseUser   *UserQuery
 	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -75,6 +76,28 @@ func (ciq *CDKInfoQuery) QueryIssueUser() *UserQuery {
 			sqlgraph.From(cdkinfo.Table, cdkinfo.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, cdkinfo.IssueUserTable, cdkinfo.IssueUserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ciq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUseUser chains the current query on the "use_user" edge.
+func (ciq *CDKInfoQuery) QueryUseUser() *UserQuery {
+	query := (&UserClient{config: ciq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ciq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ciq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cdkinfo.Table, cdkinfo.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, cdkinfo.UseUserTable, cdkinfo.UseUserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ciq.driver.Dialect(), step)
 		return fromU, nil
@@ -275,6 +298,7 @@ func (ciq *CDKInfoQuery) Clone() *CDKInfoQuery {
 		inters:        append([]Interceptor{}, ciq.inters...),
 		predicates:    append([]predicate.CDKInfo{}, ciq.predicates...),
 		withIssueUser: ciq.withIssueUser.Clone(),
+		withUseUser:   ciq.withUseUser.Clone(),
 		// clone intermediate query.
 		sql:  ciq.sql.Clone(),
 		path: ciq.path,
@@ -289,6 +313,17 @@ func (ciq *CDKInfoQuery) WithIssueUser(opts ...func(*UserQuery)) *CDKInfoQuery {
 		opt(query)
 	}
 	ciq.withIssueUser = query
+	return ciq
+}
+
+// WithUseUser tells the query-builder to eager-load the nodes that are connected to
+// the "use_user" edge. The optional arguments are used to configure the query builder of the edge.
+func (ciq *CDKInfoQuery) WithUseUser(opts ...func(*UserQuery)) *CDKInfoQuery {
+	query := (&UserClient{config: ciq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ciq.withUseUser = query
 	return ciq
 }
 
@@ -370,8 +405,9 @@ func (ciq *CDKInfoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*CDK
 	var (
 		nodes       = []*CDKInfo{}
 		_spec       = ciq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			ciq.withIssueUser != nil,
+			ciq.withUseUser != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -401,6 +437,12 @@ func (ciq *CDKInfoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*CDK
 			return nil, err
 		}
 	}
+	if query := ciq.withUseUser; query != nil {
+		if err := ciq.loadUseUser(ctx, query, nodes, nil,
+			func(n *CDKInfo, e *User) { n.Edges.UseUser = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -426,6 +468,35 @@ func (ciq *CDKInfoQuery) loadIssueUser(ctx context.Context, query *UserQuery, no
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "issue_user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (ciq *CDKInfoQuery) loadUseUser(ctx context.Context, query *UserQuery, nodes []*CDKInfo, init func(*CDKInfo), assign func(*CDKInfo, *User)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*CDKInfo)
+	for i := range nodes {
+		fk := nodes[i].UseUserID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "use_user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -464,6 +535,9 @@ func (ciq *CDKInfoQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if ciq.withIssueUser != nil {
 			_spec.Node.AddColumnOnce(cdkinfo.FieldIssueUserID)
+		}
+		if ciq.withUseUser != nil {
+			_spec.Node.AddColumnOnce(cdkinfo.FieldUseUserID)
 		}
 	}
 	if ps := ciq.predicates; len(ps) > 0 {

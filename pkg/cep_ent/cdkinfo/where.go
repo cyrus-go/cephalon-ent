@@ -111,6 +111,16 @@ func UseTimes(v int64) predicate.CDKInfo {
 	return predicate.CDKInfo(sql.FieldEQ(FieldUseTimes, v))
 }
 
+// UseUserID applies equality check predicate on the "use_user_id" field. It's identical to UseUserIDEQ.
+func UseUserID(v int64) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldEQ(FieldUseUserID, v))
+}
+
+// UsedAt applies equality check predicate on the "used_at" field. It's identical to UsedAtEQ.
+func UsedAt(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldEQ(FieldUsedAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.CDKInfo {
 	return predicate.CDKInfo(sql.FieldEQ(FieldCreatedBy, v))
@@ -656,6 +666,76 @@ func StatusNotIn(vs ...enums.CDKStatus) predicate.CDKInfo {
 	return predicate.CDKInfo(sql.FieldNotIn(FieldStatus, v...))
 }
 
+// UseUserIDEQ applies the EQ predicate on the "use_user_id" field.
+func UseUserIDEQ(v int64) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldEQ(FieldUseUserID, v))
+}
+
+// UseUserIDNEQ applies the NEQ predicate on the "use_user_id" field.
+func UseUserIDNEQ(v int64) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldNEQ(FieldUseUserID, v))
+}
+
+// UseUserIDIn applies the In predicate on the "use_user_id" field.
+func UseUserIDIn(vs ...int64) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldIn(FieldUseUserID, vs...))
+}
+
+// UseUserIDNotIn applies the NotIn predicate on the "use_user_id" field.
+func UseUserIDNotIn(vs ...int64) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldNotIn(FieldUseUserID, vs...))
+}
+
+// UsedAtEQ applies the EQ predicate on the "used_at" field.
+func UsedAtEQ(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldEQ(FieldUsedAt, v))
+}
+
+// UsedAtNEQ applies the NEQ predicate on the "used_at" field.
+func UsedAtNEQ(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldNEQ(FieldUsedAt, v))
+}
+
+// UsedAtIn applies the In predicate on the "used_at" field.
+func UsedAtIn(vs ...time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldIn(FieldUsedAt, vs...))
+}
+
+// UsedAtNotIn applies the NotIn predicate on the "used_at" field.
+func UsedAtNotIn(vs ...time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldNotIn(FieldUsedAt, vs...))
+}
+
+// UsedAtGT applies the GT predicate on the "used_at" field.
+func UsedAtGT(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldGT(FieldUsedAt, v))
+}
+
+// UsedAtGTE applies the GTE predicate on the "used_at" field.
+func UsedAtGTE(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldGTE(FieldUsedAt, v))
+}
+
+// UsedAtLT applies the LT predicate on the "used_at" field.
+func UsedAtLT(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldLT(FieldUsedAt, v))
+}
+
+// UsedAtLTE applies the LTE predicate on the "used_at" field.
+func UsedAtLTE(v time.Time) predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldLTE(FieldUsedAt, v))
+}
+
+// UsedAtIsNil applies the IsNil predicate on the "used_at" field.
+func UsedAtIsNil() predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldIsNull(FieldUsedAt))
+}
+
+// UsedAtNotNil applies the NotNil predicate on the "used_at" field.
+func UsedAtNotNil() predicate.CDKInfo {
+	return predicate.CDKInfo(sql.FieldNotNull(FieldUsedAt))
+}
+
 // HasIssueUser applies the HasEdge predicate on the "issue_user" edge.
 func HasIssueUser() predicate.CDKInfo {
 	return predicate.CDKInfo(func(s *sql.Selector) {
@@ -671,6 +751,29 @@ func HasIssueUser() predicate.CDKInfo {
 func HasIssueUserWith(preds ...predicate.User) predicate.CDKInfo {
 	return predicate.CDKInfo(func(s *sql.Selector) {
 		step := newIssueUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUseUser applies the HasEdge predicate on the "use_user" edge.
+func HasUseUser() predicate.CDKInfo {
+	return predicate.CDKInfo(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, UseUserTable, UseUserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUseUserWith applies the HasEdge predicate on the "use_user" edge with a given conditions (other predicates).
+func HasUseUserWith(preds ...predicate.User) predicate.CDKInfo {
+	return predicate.CDKInfo(func(s *sql.Selector) {
+		step := newUseUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

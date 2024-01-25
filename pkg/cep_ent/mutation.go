@@ -3882,9 +3882,12 @@ type CDKInfoMutation struct {
 	use_times         *int64
 	adduse_times      *int64
 	status            *enums.CDKStatus
+	used_at           *time.Time
 	clearedFields     map[string]struct{}
 	issue_user        *int64
 	clearedissue_user bool
+	use_user          *int64
+	cleareduse_user   bool
 	done              bool
 	oldValue          func(context.Context) (*CDKInfo, error)
 	predicates        []predicate.CDKInfo
@@ -4611,6 +4614,91 @@ func (m *CDKInfoMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetUseUserID sets the "use_user_id" field.
+func (m *CDKInfoMutation) SetUseUserID(i int64) {
+	m.use_user = &i
+}
+
+// UseUserID returns the value of the "use_user_id" field in the mutation.
+func (m *CDKInfoMutation) UseUserID() (r int64, exists bool) {
+	v := m.use_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUseUserID returns the old "use_user_id" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUseUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUseUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUseUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUseUserID: %w", err)
+	}
+	return oldValue.UseUserID, nil
+}
+
+// ResetUseUserID resets all changes to the "use_user_id" field.
+func (m *CDKInfoMutation) ResetUseUserID() {
+	m.use_user = nil
+}
+
+// SetUsedAt sets the "used_at" field.
+func (m *CDKInfoMutation) SetUsedAt(t time.Time) {
+	m.used_at = &t
+}
+
+// UsedAt returns the value of the "used_at" field in the mutation.
+func (m *CDKInfoMutation) UsedAt() (r time.Time, exists bool) {
+	v := m.used_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsedAt returns the old "used_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUsedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUsedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUsedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsedAt: %w", err)
+	}
+	return oldValue.UsedAt, nil
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (m *CDKInfoMutation) ClearUsedAt() {
+	m.used_at = nil
+	m.clearedFields[cdkinfo.FieldUsedAt] = struct{}{}
+}
+
+// UsedAtCleared returns if the "used_at" field was cleared in this mutation.
+func (m *CDKInfoMutation) UsedAtCleared() bool {
+	_, ok := m.clearedFields[cdkinfo.FieldUsedAt]
+	return ok
+}
+
+// ResetUsedAt resets all changes to the "used_at" field.
+func (m *CDKInfoMutation) ResetUsedAt() {
+	m.used_at = nil
+	delete(m.clearedFields, cdkinfo.FieldUsedAt)
+}
+
 // ClearIssueUser clears the "issue_user" edge to the User entity.
 func (m *CDKInfoMutation) ClearIssueUser() {
 	m.clearedissue_user = true
@@ -4636,6 +4724,33 @@ func (m *CDKInfoMutation) IssueUserIDs() (ids []int64) {
 func (m *CDKInfoMutation) ResetIssueUser() {
 	m.issue_user = nil
 	m.clearedissue_user = false
+}
+
+// ClearUseUser clears the "use_user" edge to the User entity.
+func (m *CDKInfoMutation) ClearUseUser() {
+	m.cleareduse_user = true
+	m.clearedFields[cdkinfo.FieldUseUserID] = struct{}{}
+}
+
+// UseUserCleared reports if the "use_user" edge to the User entity was cleared.
+func (m *CDKInfoMutation) UseUserCleared() bool {
+	return m.cleareduse_user
+}
+
+// UseUserIDs returns the "use_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UseUserID instead. It exists only for internal usage by the builders.
+func (m *CDKInfoMutation) UseUserIDs() (ids []int64) {
+	if id := m.use_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUseUser resets all changes to the "use_user" edge.
+func (m *CDKInfoMutation) ResetUseUser() {
+	m.use_user = nil
+	m.cleareduse_user = false
 }
 
 // Where appends a list predicates to the CDKInfoMutation builder.
@@ -4672,7 +4787,7 @@ func (m *CDKInfoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CDKInfoMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, cdkinfo.FieldCreatedBy)
 	}
@@ -4715,6 +4830,12 @@ func (m *CDKInfoMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, cdkinfo.FieldStatus)
 	}
+	if m.use_user != nil {
+		fields = append(fields, cdkinfo.FieldUseUserID)
+	}
+	if m.used_at != nil {
+		fields = append(fields, cdkinfo.FieldUsedAt)
+	}
 	return fields
 }
 
@@ -4751,6 +4872,10 @@ func (m *CDKInfoMutation) Field(name string) (ent.Value, bool) {
 		return m.UseTimes()
 	case cdkinfo.FieldStatus:
 		return m.Status()
+	case cdkinfo.FieldUseUserID:
+		return m.UseUserID()
+	case cdkinfo.FieldUsedAt:
+		return m.UsedAt()
 	}
 	return nil, false
 }
@@ -4788,6 +4913,10 @@ func (m *CDKInfoMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldUseTimes(ctx)
 	case cdkinfo.FieldStatus:
 		return m.OldStatus(ctx)
+	case cdkinfo.FieldUseUserID:
+		return m.OldUseUserID(ctx)
+	case cdkinfo.FieldUsedAt:
+		return m.OldUsedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown CDKInfo field %s", name)
 }
@@ -4895,6 +5024,20 @@ func (m *CDKInfoMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case cdkinfo.FieldUseUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUseUserID(v)
+		return nil
+	case cdkinfo.FieldUsedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo field %s", name)
 }
@@ -4991,6 +5134,9 @@ func (m *CDKInfoMutation) ClearedFields() []string {
 	if m.FieldCleared(cdkinfo.FieldExpiredAt) {
 		fields = append(fields, cdkinfo.FieldExpiredAt)
 	}
+	if m.FieldCleared(cdkinfo.FieldUsedAt) {
+		fields = append(fields, cdkinfo.FieldUsedAt)
+	}
 	return fields
 }
 
@@ -5007,6 +5153,9 @@ func (m *CDKInfoMutation) ClearField(name string) error {
 	switch name {
 	case cdkinfo.FieldExpiredAt:
 		m.ClearExpiredAt()
+		return nil
+	case cdkinfo.FieldUsedAt:
+		m.ClearUsedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo nullable field %s", name)
@@ -5058,15 +5207,24 @@ func (m *CDKInfoMutation) ResetField(name string) error {
 	case cdkinfo.FieldStatus:
 		m.ResetStatus()
 		return nil
+	case cdkinfo.FieldUseUserID:
+		m.ResetUseUserID()
+		return nil
+	case cdkinfo.FieldUsedAt:
+		m.ResetUsedAt()
+		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CDKInfoMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.issue_user != nil {
 		edges = append(edges, cdkinfo.EdgeIssueUser)
+	}
+	if m.use_user != nil {
+		edges = append(edges, cdkinfo.EdgeUseUser)
 	}
 	return edges
 }
@@ -5079,13 +5237,17 @@ func (m *CDKInfoMutation) AddedIDs(name string) []ent.Value {
 		if id := m.issue_user; id != nil {
 			return []ent.Value{*id}
 		}
+	case cdkinfo.EdgeUseUser:
+		if id := m.use_user; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CDKInfoMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -5097,9 +5259,12 @@ func (m *CDKInfoMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CDKInfoMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedissue_user {
 		edges = append(edges, cdkinfo.EdgeIssueUser)
+	}
+	if m.cleareduse_user {
+		edges = append(edges, cdkinfo.EdgeUseUser)
 	}
 	return edges
 }
@@ -5110,6 +5275,8 @@ func (m *CDKInfoMutation) EdgeCleared(name string) bool {
 	switch name {
 	case cdkinfo.EdgeIssueUser:
 		return m.clearedissue_user
+	case cdkinfo.EdgeUseUser:
+		return m.cleareduse_user
 	}
 	return false
 }
@@ -5121,6 +5288,9 @@ func (m *CDKInfoMutation) ClearEdge(name string) error {
 	case cdkinfo.EdgeIssueUser:
 		m.ClearIssueUser()
 		return nil
+	case cdkinfo.EdgeUseUser:
+		m.ClearUseUser()
+		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo unique edge %s", name)
 }
@@ -5131,6 +5301,9 @@ func (m *CDKInfoMutation) ResetEdge(name string) error {
 	switch name {
 	case cdkinfo.EdgeIssueUser:
 		m.ResetIssueUser()
+		return nil
+	case cdkinfo.EdgeUseUser:
+		m.ResetUseUser()
 		return nil
 	}
 	return fmt.Errorf("unknown CDKInfo edge %s", name)
@@ -57881,6 +58054,9 @@ type UserMutation struct {
 	cdk_infos                      map[int64]struct{}
 	removedcdk_infos               map[int64]struct{}
 	clearedcdk_infos               bool
+	use_cdk_infos                  map[int64]struct{}
+	removeduse_cdk_infos           map[int64]struct{}
+	cleareduse_cdk_infos           bool
 	done                           bool
 	oldValue                       func(context.Context) (*User, error)
 	predicates                     []predicate.User
@@ -60424,6 +60600,60 @@ func (m *UserMutation) ResetCdkInfos() {
 	m.removedcdk_infos = nil
 }
 
+// AddUseCdkInfoIDs adds the "use_cdk_infos" edge to the CDKInfo entity by ids.
+func (m *UserMutation) AddUseCdkInfoIDs(ids ...int64) {
+	if m.use_cdk_infos == nil {
+		m.use_cdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.use_cdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUseCdkInfos clears the "use_cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) ClearUseCdkInfos() {
+	m.cleareduse_cdk_infos = true
+}
+
+// UseCdkInfosCleared reports if the "use_cdk_infos" edge to the CDKInfo entity was cleared.
+func (m *UserMutation) UseCdkInfosCleared() bool {
+	return m.cleareduse_cdk_infos
+}
+
+// RemoveUseCdkInfoIDs removes the "use_cdk_infos" edge to the CDKInfo entity by IDs.
+func (m *UserMutation) RemoveUseCdkInfoIDs(ids ...int64) {
+	if m.removeduse_cdk_infos == nil {
+		m.removeduse_cdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.use_cdk_infos, ids[i])
+		m.removeduse_cdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUseCdkInfos returns the removed IDs of the "use_cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) RemovedUseCdkInfosIDs() (ids []int64) {
+	for id := range m.removeduse_cdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UseCdkInfosIDs returns the "use_cdk_infos" edge IDs in the mutation.
+func (m *UserMutation) UseCdkInfosIDs() (ids []int64) {
+	for id := range m.use_cdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUseCdkInfos resets all changes to the "use_cdk_infos" edge.
+func (m *UserMutation) ResetUseCdkInfos() {
+	m.use_cdk_infos = nil
+	m.cleareduse_cdk_infos = false
+	m.removeduse_cdk_infos = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -60890,7 +61120,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 33)
+	edges := make([]string, 0, 34)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -60989,6 +61219,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.cdk_infos != nil {
 		edges = append(edges, user.EdgeCdkInfos)
+	}
+	if m.use_cdk_infos != nil {
+		edges = append(edges, user.EdgeUseCdkInfos)
 	}
 	return edges
 }
@@ -61187,13 +61420,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeUseCdkInfos:
+		ids := make([]ent.Value, 0, len(m.use_cdk_infos))
+		for id := range m.use_cdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 33)
+	edges := make([]string, 0, 34)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -61280,6 +61519,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedcdk_infos != nil {
 		edges = append(edges, user.EdgeCdkInfos)
+	}
+	if m.removeduse_cdk_infos != nil {
+		edges = append(edges, user.EdgeUseCdkInfos)
 	}
 	return edges
 }
@@ -61462,13 +61704,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeUseCdkInfos:
+		ids := make([]ent.Value, 0, len(m.removeduse_cdk_infos))
+		for id := range m.removeduse_cdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 33)
+	edges := make([]string, 0, 34)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -61568,6 +61816,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedcdk_infos {
 		edges = append(edges, user.EdgeCdkInfos)
 	}
+	if m.cleareduse_cdk_infos {
+		edges = append(edges, user.EdgeUseCdkInfos)
+	}
 	return edges
 }
 
@@ -61641,6 +61892,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedartwork_likes
 	case user.EdgeCdkInfos:
 		return m.clearedcdk_infos
+	case user.EdgeUseCdkInfos:
+		return m.cleareduse_cdk_infos
 	}
 	return false
 }
@@ -61767,6 +62020,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeCdkInfos:
 		m.ResetCdkInfos()
+		return nil
+	case user.EdgeUseCdkInfos:
+		m.ResetUseCdkInfos()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

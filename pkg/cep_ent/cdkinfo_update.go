@@ -246,9 +246,48 @@ func (ciu *CDKInfoUpdate) SetNillableStatus(es *enums.CDKStatus) *CDKInfoUpdate 
 	return ciu
 }
 
+// SetUseUserID sets the "use_user_id" field.
+func (ciu *CDKInfoUpdate) SetUseUserID(i int64) *CDKInfoUpdate {
+	ciu.mutation.SetUseUserID(i)
+	return ciu
+}
+
+// SetNillableUseUserID sets the "use_user_id" field if the given value is not nil.
+func (ciu *CDKInfoUpdate) SetNillableUseUserID(i *int64) *CDKInfoUpdate {
+	if i != nil {
+		ciu.SetUseUserID(*i)
+	}
+	return ciu
+}
+
+// SetUsedAt sets the "used_at" field.
+func (ciu *CDKInfoUpdate) SetUsedAt(t time.Time) *CDKInfoUpdate {
+	ciu.mutation.SetUsedAt(t)
+	return ciu
+}
+
+// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
+func (ciu *CDKInfoUpdate) SetNillableUsedAt(t *time.Time) *CDKInfoUpdate {
+	if t != nil {
+		ciu.SetUsedAt(*t)
+	}
+	return ciu
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (ciu *CDKInfoUpdate) ClearUsedAt() *CDKInfoUpdate {
+	ciu.mutation.ClearUsedAt()
+	return ciu
+}
+
 // SetIssueUser sets the "issue_user" edge to the User entity.
 func (ciu *CDKInfoUpdate) SetIssueUser(u *User) *CDKInfoUpdate {
 	return ciu.SetIssueUserID(u.ID)
+}
+
+// SetUseUser sets the "use_user" edge to the User entity.
+func (ciu *CDKInfoUpdate) SetUseUser(u *User) *CDKInfoUpdate {
+	return ciu.SetUseUserID(u.ID)
 }
 
 // Mutation returns the CDKInfoMutation object of the builder.
@@ -259,6 +298,12 @@ func (ciu *CDKInfoUpdate) Mutation() *CDKInfoMutation {
 // ClearIssueUser clears the "issue_user" edge to the User entity.
 func (ciu *CDKInfoUpdate) ClearIssueUser() *CDKInfoUpdate {
 	ciu.mutation.ClearIssueUser()
+	return ciu
+}
+
+// ClearUseUser clears the "use_user" edge to the User entity.
+func (ciu *CDKInfoUpdate) ClearUseUser() *CDKInfoUpdate {
+	ciu.mutation.ClearUseUser()
 	return ciu
 }
 
@@ -317,6 +362,9 @@ func (ciu *CDKInfoUpdate) check() error {
 	}
 	if _, ok := ciu.mutation.IssueUserID(); ciu.mutation.IssueUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "CDKInfo.issue_user"`)
+	}
+	if _, ok := ciu.mutation.UseUserID(); ciu.mutation.UseUserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "CDKInfo.use_user"`)
 	}
 	return nil
 }
@@ -393,6 +441,12 @@ func (ciu *CDKInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ciu.mutation.Status(); ok {
 		_spec.SetField(cdkinfo.FieldStatus, field.TypeEnum, value)
 	}
+	if value, ok := ciu.mutation.UsedAt(); ok {
+		_spec.SetField(cdkinfo.FieldUsedAt, field.TypeTime, value)
+	}
+	if ciu.mutation.UsedAtCleared() {
+		_spec.ClearField(cdkinfo.FieldUsedAt, field.TypeTime)
+	}
 	if ciu.mutation.IssueUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -412,6 +466,35 @@ func (ciu *CDKInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Inverse: true,
 			Table:   cdkinfo.IssueUserTable,
 			Columns: []string{cdkinfo.IssueUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ciu.mutation.UseUserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   cdkinfo.UseUserTable,
+			Columns: []string{cdkinfo.UseUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ciu.mutation.UseUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   cdkinfo.UseUserTable,
+			Columns: []string{cdkinfo.UseUserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -659,9 +742,48 @@ func (ciuo *CDKInfoUpdateOne) SetNillableStatus(es *enums.CDKStatus) *CDKInfoUpd
 	return ciuo
 }
 
+// SetUseUserID sets the "use_user_id" field.
+func (ciuo *CDKInfoUpdateOne) SetUseUserID(i int64) *CDKInfoUpdateOne {
+	ciuo.mutation.SetUseUserID(i)
+	return ciuo
+}
+
+// SetNillableUseUserID sets the "use_user_id" field if the given value is not nil.
+func (ciuo *CDKInfoUpdateOne) SetNillableUseUserID(i *int64) *CDKInfoUpdateOne {
+	if i != nil {
+		ciuo.SetUseUserID(*i)
+	}
+	return ciuo
+}
+
+// SetUsedAt sets the "used_at" field.
+func (ciuo *CDKInfoUpdateOne) SetUsedAt(t time.Time) *CDKInfoUpdateOne {
+	ciuo.mutation.SetUsedAt(t)
+	return ciuo
+}
+
+// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
+func (ciuo *CDKInfoUpdateOne) SetNillableUsedAt(t *time.Time) *CDKInfoUpdateOne {
+	if t != nil {
+		ciuo.SetUsedAt(*t)
+	}
+	return ciuo
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (ciuo *CDKInfoUpdateOne) ClearUsedAt() *CDKInfoUpdateOne {
+	ciuo.mutation.ClearUsedAt()
+	return ciuo
+}
+
 // SetIssueUser sets the "issue_user" edge to the User entity.
 func (ciuo *CDKInfoUpdateOne) SetIssueUser(u *User) *CDKInfoUpdateOne {
 	return ciuo.SetIssueUserID(u.ID)
+}
+
+// SetUseUser sets the "use_user" edge to the User entity.
+func (ciuo *CDKInfoUpdateOne) SetUseUser(u *User) *CDKInfoUpdateOne {
+	return ciuo.SetUseUserID(u.ID)
 }
 
 // Mutation returns the CDKInfoMutation object of the builder.
@@ -672,6 +794,12 @@ func (ciuo *CDKInfoUpdateOne) Mutation() *CDKInfoMutation {
 // ClearIssueUser clears the "issue_user" edge to the User entity.
 func (ciuo *CDKInfoUpdateOne) ClearIssueUser() *CDKInfoUpdateOne {
 	ciuo.mutation.ClearIssueUser()
+	return ciuo
+}
+
+// ClearUseUser clears the "use_user" edge to the User entity.
+func (ciuo *CDKInfoUpdateOne) ClearUseUser() *CDKInfoUpdateOne {
+	ciuo.mutation.ClearUseUser()
 	return ciuo
 }
 
@@ -743,6 +871,9 @@ func (ciuo *CDKInfoUpdateOne) check() error {
 	}
 	if _, ok := ciuo.mutation.IssueUserID(); ciuo.mutation.IssueUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "CDKInfo.issue_user"`)
+	}
+	if _, ok := ciuo.mutation.UseUserID(); ciuo.mutation.UseUserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "CDKInfo.use_user"`)
 	}
 	return nil
 }
@@ -836,6 +967,12 @@ func (ciuo *CDKInfoUpdateOne) sqlSave(ctx context.Context) (_node *CDKInfo, err 
 	if value, ok := ciuo.mutation.Status(); ok {
 		_spec.SetField(cdkinfo.FieldStatus, field.TypeEnum, value)
 	}
+	if value, ok := ciuo.mutation.UsedAt(); ok {
+		_spec.SetField(cdkinfo.FieldUsedAt, field.TypeTime, value)
+	}
+	if ciuo.mutation.UsedAtCleared() {
+		_spec.ClearField(cdkinfo.FieldUsedAt, field.TypeTime)
+	}
 	if ciuo.mutation.IssueUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -855,6 +992,35 @@ func (ciuo *CDKInfoUpdateOne) sqlSave(ctx context.Context) (_node *CDKInfo, err 
 			Inverse: true,
 			Table:   cdkinfo.IssueUserTable,
 			Columns: []string{cdkinfo.IssueUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ciuo.mutation.UseUserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   cdkinfo.UseUserTable,
+			Columns: []string{cdkinfo.UseUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ciuo.mutation.UseUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   cdkinfo.UseUserTable,
+			Columns: []string{cdkinfo.UseUserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),

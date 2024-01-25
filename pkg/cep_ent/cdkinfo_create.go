@@ -220,6 +220,34 @@ func (cic *CDKInfoCreate) SetNillableStatus(es *enums.CDKStatus) *CDKInfoCreate 
 	return cic
 }
 
+// SetUseUserID sets the "use_user_id" field.
+func (cic *CDKInfoCreate) SetUseUserID(i int64) *CDKInfoCreate {
+	cic.mutation.SetUseUserID(i)
+	return cic
+}
+
+// SetNillableUseUserID sets the "use_user_id" field if the given value is not nil.
+func (cic *CDKInfoCreate) SetNillableUseUserID(i *int64) *CDKInfoCreate {
+	if i != nil {
+		cic.SetUseUserID(*i)
+	}
+	return cic
+}
+
+// SetUsedAt sets the "used_at" field.
+func (cic *CDKInfoCreate) SetUsedAt(t time.Time) *CDKInfoCreate {
+	cic.mutation.SetUsedAt(t)
+	return cic
+}
+
+// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
+func (cic *CDKInfoCreate) SetNillableUsedAt(t *time.Time) *CDKInfoCreate {
+	if t != nil {
+		cic.SetUsedAt(*t)
+	}
+	return cic
+}
+
 // SetID sets the "id" field.
 func (cic *CDKInfoCreate) SetID(i int64) *CDKInfoCreate {
 	cic.mutation.SetID(i)
@@ -237,6 +265,11 @@ func (cic *CDKInfoCreate) SetNillableID(i *int64) *CDKInfoCreate {
 // SetIssueUser sets the "issue_user" edge to the User entity.
 func (cic *CDKInfoCreate) SetIssueUser(u *User) *CDKInfoCreate {
 	return cic.SetIssueUserID(u.ID)
+}
+
+// SetUseUser sets the "use_user" edge to the User entity.
+func (cic *CDKInfoCreate) SetUseUser(u *User) *CDKInfoCreate {
+	return cic.SetUseUserID(u.ID)
 }
 
 // Mutation returns the CDKInfoMutation object of the builder.
@@ -330,6 +363,14 @@ func (cic *CDKInfoCreate) defaults() {
 		v := cdkinfo.DefaultStatus
 		cic.mutation.SetStatus(v)
 	}
+	if _, ok := cic.mutation.UseUserID(); !ok {
+		v := cdkinfo.DefaultUseUserID
+		cic.mutation.SetUseUserID(v)
+	}
+	if _, ok := cic.mutation.UsedAt(); !ok {
+		v := cdkinfo.DefaultUsedAt
+		cic.mutation.SetUsedAt(v)
+	}
 	if _, ok := cic.mutation.ID(); !ok {
 		v := cdkinfo.DefaultID()
 		cic.mutation.SetID(v)
@@ -392,8 +433,14 @@ func (cic *CDKInfoCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "CDKInfo.status": %w`, err)}
 		}
 	}
+	if _, ok := cic.mutation.UseUserID(); !ok {
+		return &ValidationError{Name: "use_user_id", err: errors.New(`cep_ent: missing required field "CDKInfo.use_user_id"`)}
+	}
 	if _, ok := cic.mutation.IssueUserID(); !ok {
 		return &ValidationError{Name: "issue_user", err: errors.New(`cep_ent: missing required edge "CDKInfo.issue_user"`)}
+	}
+	if _, ok := cic.mutation.UseUserID(); !ok {
+		return &ValidationError{Name: "use_user", err: errors.New(`cep_ent: missing required edge "CDKInfo.use_user"`)}
 	}
 	return nil
 }
@@ -480,6 +527,10 @@ func (cic *CDKInfoCreate) createSpec() (*CDKInfo, *sqlgraph.CreateSpec) {
 		_spec.SetField(cdkinfo.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
+	if value, ok := cic.mutation.UsedAt(); ok {
+		_spec.SetField(cdkinfo.FieldUsedAt, field.TypeTime, value)
+		_node.UsedAt = &value
+	}
 	if nodes := cic.mutation.IssueUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -495,6 +546,23 @@ func (cic *CDKInfoCreate) createSpec() (*CDKInfo, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.IssueUserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cic.mutation.UseUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   cdkinfo.UseUserTable,
+			Columns: []string{cdkinfo.UseUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UseUserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -738,6 +806,36 @@ func (u *CDKInfoUpsert) SetStatus(v enums.CDKStatus) *CDKInfoUpsert {
 // UpdateStatus sets the "status" field to the value that was provided on create.
 func (u *CDKInfoUpsert) UpdateStatus() *CDKInfoUpsert {
 	u.SetExcluded(cdkinfo.FieldStatus)
+	return u
+}
+
+// SetUseUserID sets the "use_user_id" field.
+func (u *CDKInfoUpsert) SetUseUserID(v int64) *CDKInfoUpsert {
+	u.Set(cdkinfo.FieldUseUserID, v)
+	return u
+}
+
+// UpdateUseUserID sets the "use_user_id" field to the value that was provided on create.
+func (u *CDKInfoUpsert) UpdateUseUserID() *CDKInfoUpsert {
+	u.SetExcluded(cdkinfo.FieldUseUserID)
+	return u
+}
+
+// SetUsedAt sets the "used_at" field.
+func (u *CDKInfoUpsert) SetUsedAt(v time.Time) *CDKInfoUpsert {
+	u.Set(cdkinfo.FieldUsedAt, v)
+	return u
+}
+
+// UpdateUsedAt sets the "used_at" field to the value that was provided on create.
+func (u *CDKInfoUpsert) UpdateUsedAt() *CDKInfoUpsert {
+	u.SetExcluded(cdkinfo.FieldUsedAt)
+	return u
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (u *CDKInfoUpsert) ClearUsedAt() *CDKInfoUpsert {
+	u.SetNull(cdkinfo.FieldUsedAt)
 	return u
 }
 
@@ -1013,6 +1111,41 @@ func (u *CDKInfoUpsertOne) SetStatus(v enums.CDKStatus) *CDKInfoUpsertOne {
 func (u *CDKInfoUpsertOne) UpdateStatus() *CDKInfoUpsertOne {
 	return u.Update(func(s *CDKInfoUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetUseUserID sets the "use_user_id" field.
+func (u *CDKInfoUpsertOne) SetUseUserID(v int64) *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.SetUseUserID(v)
+	})
+}
+
+// UpdateUseUserID sets the "use_user_id" field to the value that was provided on create.
+func (u *CDKInfoUpsertOne) UpdateUseUserID() *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.UpdateUseUserID()
+	})
+}
+
+// SetUsedAt sets the "used_at" field.
+func (u *CDKInfoUpsertOne) SetUsedAt(v time.Time) *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.SetUsedAt(v)
+	})
+}
+
+// UpdateUsedAt sets the "used_at" field to the value that was provided on create.
+func (u *CDKInfoUpsertOne) UpdateUsedAt() *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.UpdateUsedAt()
+	})
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (u *CDKInfoUpsertOne) ClearUsedAt() *CDKInfoUpsertOne {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.ClearUsedAt()
 	})
 }
 
@@ -1454,6 +1587,41 @@ func (u *CDKInfoUpsertBulk) SetStatus(v enums.CDKStatus) *CDKInfoUpsertBulk {
 func (u *CDKInfoUpsertBulk) UpdateStatus() *CDKInfoUpsertBulk {
 	return u.Update(func(s *CDKInfoUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetUseUserID sets the "use_user_id" field.
+func (u *CDKInfoUpsertBulk) SetUseUserID(v int64) *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.SetUseUserID(v)
+	})
+}
+
+// UpdateUseUserID sets the "use_user_id" field to the value that was provided on create.
+func (u *CDKInfoUpsertBulk) UpdateUseUserID() *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.UpdateUseUserID()
+	})
+}
+
+// SetUsedAt sets the "used_at" field.
+func (u *CDKInfoUpsertBulk) SetUsedAt(v time.Time) *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.SetUsedAt(v)
+	})
+}
+
+// UpdateUsedAt sets the "used_at" field to the value that was provided on create.
+func (u *CDKInfoUpsertBulk) UpdateUsedAt() *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.UpdateUsedAt()
+	})
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (u *CDKInfoUpsertBulk) ClearUsedAt() *CDKInfoUpsertBulk {
+	return u.Update(func(s *CDKInfoUpsert) {
+		s.ClearUsedAt()
 	})
 }
 

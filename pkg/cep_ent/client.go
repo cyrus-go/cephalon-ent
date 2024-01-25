@@ -1285,6 +1285,22 @@ func (c *CDKInfoClient) QueryIssueUser(ci *CDKInfo) *UserQuery {
 	return query
 }
 
+// QueryUseUser queries the use_user edge of a CDKInfo.
+func (c *CDKInfoClient) QueryUseUser(ci *CDKInfo) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cdkinfo.Table, cdkinfo.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, cdkinfo.UseUserTable, cdkinfo.UseUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CDKInfoClient) Hooks() []Hook {
 	return c.hooks.CDKInfo
@@ -8950,6 +8966,22 @@ func (c *UserClient) QueryCdkInfos(u *User) *CDKInfoQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(cdkinfo.Table, cdkinfo.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.CdkInfosTable, user.CdkInfosColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUseCdkInfos queries the use_cdk_infos edge of a User.
+func (c *UserClient) QueryUseCdkInfos(u *User) *CDKInfoQuery {
+	query := (&CDKInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(cdkinfo.Table, cdkinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UseCdkInfosTable, user.UseCdkInfosColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

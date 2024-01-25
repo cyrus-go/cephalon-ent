@@ -83,6 +83,7 @@ type UserQuery struct {
 	withArtworks              *ArtworkQuery
 	withArtworkLikes          *ArtworkLikeQuery
 	withCdkInfos              *CDKInfoQuery
+	withUseCdkInfos           *CDKInfoQuery
 	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -846,6 +847,28 @@ func (uq *UserQuery) QueryCdkInfos() *CDKInfoQuery {
 	return query
 }
 
+// QueryUseCdkInfos chains the current query on the "use_cdk_infos" edge.
+func (uq *UserQuery) QueryUseCdkInfos() *CDKInfoQuery {
+	query := (&CDKInfoClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(cdkinfo.Table, cdkinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UseCdkInfosTable, user.UseCdkInfosColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1071,6 +1094,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withArtworks:              uq.withArtworks.Clone(),
 		withArtworkLikes:          uq.withArtworkLikes.Clone(),
 		withCdkInfos:              uq.withCdkInfos.Clone(),
+		withUseCdkInfos:           uq.withUseCdkInfos.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1440,6 +1464,17 @@ func (uq *UserQuery) WithCdkInfos(opts ...func(*CDKInfoQuery)) *UserQuery {
 	return uq
 }
 
+// WithUseCdkInfos tells the query-builder to eager-load the nodes that are connected to
+// the "use_cdk_infos" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithUseCdkInfos(opts ...func(*CDKInfoQuery)) *UserQuery {
+	query := (&CDKInfoClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUseCdkInfos = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1518,7 +1553,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [33]bool{
+		loadedTypes = [34]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1552,6 +1587,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withArtworks != nil,
 			uq.withArtworkLikes != nil,
 			uq.withCdkInfos != nil,
+			uq.withUseCdkInfos != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1809,6 +1845,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadCdkInfos(ctx, query, nodes,
 			func(n *User) { n.Edges.CdkInfos = []*CDKInfo{} },
 			func(n *User, e *CDKInfo) { n.Edges.CdkInfos = append(n.Edges.CdkInfos, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withUseCdkInfos; query != nil {
+		if err := uq.loadUseCdkInfos(ctx, query, nodes,
+			func(n *User) { n.Edges.UseCdkInfos = []*CDKInfo{} },
+			func(n *User, e *CDKInfo) { n.Edges.UseCdkInfos = append(n.Edges.UseCdkInfos, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2792,6 +2835,36 @@ func (uq *UserQuery) loadCdkInfos(ctx context.Context, query *CDKInfoQuery, node
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "issue_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadUseCdkInfos(ctx context.Context, query *CDKInfoQuery, nodes []*User, init func(*User), assign func(*User, *CDKInfo)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(cdkinfo.FieldUseUserID)
+	}
+	query.Where(predicate.CDKInfo(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.UseCdkInfosColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UseUserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "use_user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

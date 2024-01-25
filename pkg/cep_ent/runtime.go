@@ -278,6 +278,14 @@ func init() {
 	cdkinfoDescUseTimes := cdkinfoFields[7].Descriptor()
 	// cdkinfo.DefaultUseTimes holds the default value on creation for the use_times field.
 	cdkinfo.DefaultUseTimes = cdkinfoDescUseTimes.Default.(int64)
+	// cdkinfoDescUseUserID is the schema descriptor for use_user_id field.
+	cdkinfoDescUseUserID := cdkinfoFields[9].Descriptor()
+	// cdkinfo.DefaultUseUserID holds the default value on creation for the use_user_id field.
+	cdkinfo.DefaultUseUserID = cdkinfoDescUseUserID.Default.(int64)
+	// cdkinfoDescUsedAt is the schema descriptor for used_at field.
+	cdkinfoDescUsedAt := cdkinfoFields[10].Descriptor()
+	// cdkinfo.DefaultUsedAt holds the default value on creation for the used_at field.
+	cdkinfo.DefaultUsedAt = cdkinfoDescUsedAt.Default.(time.Time)
 	// cdkinfoDescID is the schema descriptor for id field.
 	cdkinfoDescID := cdkinfoMixinFields0[0].Descriptor()
 	// cdkinfo.DefaultID holds the default value on creation for the id field.

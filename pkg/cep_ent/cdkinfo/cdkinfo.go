@@ -44,8 +44,14 @@ const (
 	FieldUseTimes = "use_times"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldUseUserID holds the string denoting the use_user_id field in the database.
+	FieldUseUserID = "use_user_id"
+	// FieldUsedAt holds the string denoting the used_at field in the database.
+	FieldUsedAt = "used_at"
 	// EdgeIssueUser holds the string denoting the issue_user edge name in mutations.
 	EdgeIssueUser = "issue_user"
+	// EdgeUseUser holds the string denoting the use_user edge name in mutations.
+	EdgeUseUser = "use_user"
 	// Table holds the table name of the cdkinfo in the database.
 	Table = "cdk_infos"
 	// IssueUserTable is the table that holds the issue_user relation/edge.
@@ -55,6 +61,13 @@ const (
 	IssueUserInverseTable = "users"
 	// IssueUserColumn is the table column denoting the issue_user relation/edge.
 	IssueUserColumn = "issue_user_id"
+	// UseUserTable is the table that holds the use_user relation/edge.
+	UseUserTable = "cdk_infos"
+	// UseUserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UseUserInverseTable = "users"
+	// UseUserColumn is the table column denoting the use_user relation/edge.
+	UseUserColumn = "use_user_id"
 )
 
 // Columns holds all SQL columns for cdkinfo fields.
@@ -74,6 +87,8 @@ var Columns = []string{
 	FieldExpiredAt,
 	FieldUseTimes,
 	FieldStatus,
+	FieldUseUserID,
+	FieldUsedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -111,6 +126,10 @@ var (
 	DefaultExpiredAt time.Time
 	// DefaultUseTimes holds the default value on creation for the "use_times" field.
 	DefaultUseTimes int64
+	// DefaultUseUserID holds the default value on creation for the "use_user_id" field.
+	DefaultUseUserID int64
+	// DefaultUsedAt holds the default value on creation for the "used_at" field.
+	DefaultUsedAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -229,10 +248,27 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
+// ByUseUserID orders the results by the use_user_id field.
+func ByUseUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUseUserID, opts...).ToFunc()
+}
+
+// ByUsedAt orders the results by the used_at field.
+func ByUsedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUsedAt, opts...).ToFunc()
+}
+
 // ByIssueUserField orders the results by issue_user field.
 func ByIssueUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newIssueUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByUseUserField orders the results by use_user field.
+func ByUseUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUseUserStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newIssueUserStep() *sqlgraph.Step {
@@ -240,5 +276,12 @@ func newIssueUserStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(IssueUserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, IssueUserTable, IssueUserColumn),
+	)
+}
+func newUseUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UseUserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UseUserTable, UseUserColumn),
 	)
 }
