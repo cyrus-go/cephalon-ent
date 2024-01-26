@@ -801,6 +801,36 @@ func BankContainsFold(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldBank, v))
 }
 
+// WayEQ applies the EQ predicate on the "way" field.
+func WayEQ(v enums.TransferOrderType) predicate.WithdrawAccount {
+	vc := v
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldWay, vc))
+}
+
+// WayNEQ applies the NEQ predicate on the "way" field.
+func WayNEQ(v enums.TransferOrderType) predicate.WithdrawAccount {
+	vc := v
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldWay, vc))
+}
+
+// WayIn applies the In predicate on the "way" field.
+func WayIn(vs ...enums.TransferOrderType) predicate.WithdrawAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WithdrawAccount(sql.FieldIn(FieldWay, v...))
+}
+
+// WayNotIn applies the NotIn predicate on the "way" field.
+func WayNotIn(vs ...enums.TransferOrderType) predicate.WithdrawAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldWay, v...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(func(s *sql.Selector) {

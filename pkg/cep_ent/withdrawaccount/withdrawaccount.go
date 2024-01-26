@@ -44,6 +44,8 @@ const (
 	FieldBankCardNumber = "bank_card_number"
 	// FieldBank holds the string denoting the bank field in the database.
 	FieldBank = "bank"
+	// FieldWay holds the string denoting the way field in the database.
+	FieldWay = "way"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the withdrawaccount in the database.
@@ -74,6 +76,7 @@ var Columns = []string{
 	FieldPhone,
 	FieldBankCardNumber,
 	FieldBank,
+	FieldWay,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -128,6 +131,18 @@ func BusinessTypeValidator(bt enums.BusinessType) error {
 		return nil
 	default:
 		return fmt.Errorf("withdrawaccount: invalid enum value for business_type field: %q", bt)
+	}
+}
+
+const DefaultWay enums.TransferOrderType = "withdraw_bank_card"
+
+// WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
+func WayValidator(w enums.TransferOrderType) error {
+	switch w {
+	case "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund":
+		return nil
+	default:
+		return fmt.Errorf("withdrawaccount: invalid enum value for way field: %q", w)
 	}
 }
 
@@ -207,6 +222,11 @@ func ByBankCardNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByBank orders the results by the bank field.
 func ByBank(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBank, opts...).ToFunc()
+}
+
+// ByWay orders the results by the way field.
+func ByWay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWay, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

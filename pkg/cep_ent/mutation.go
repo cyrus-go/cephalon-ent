@@ -65999,6 +65999,7 @@ type WithdrawAccountMutation struct {
 	phone            *string
 	bank_card_number *string
 	bank             *string
+	way              *enums.TransferOrderType
 	clearedFields    map[string]struct{}
 	user             *int64
 	cleareduser      bool
@@ -66675,6 +66676,42 @@ func (m *WithdrawAccountMutation) ResetBank() {
 	m.bank = nil
 }
 
+// SetWay sets the "way" field.
+func (m *WithdrawAccountMutation) SetWay(eot enums.TransferOrderType) {
+	m.way = &eot
+}
+
+// Way returns the value of the "way" field in the mutation.
+func (m *WithdrawAccountMutation) Way() (r enums.TransferOrderType, exists bool) {
+	v := m.way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWay returns the old "way" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldWay(ctx context.Context) (v enums.TransferOrderType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWay: %w", err)
+	}
+	return oldValue.Way, nil
+}
+
+// ResetWay resets all changes to the "way" field.
+func (m *WithdrawAccountMutation) ResetWay() {
+	m.way = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *WithdrawAccountMutation) ClearUser() {
 	m.cleareduser = true
@@ -66736,7 +66773,7 @@ func (m *WithdrawAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawAccountMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, withdrawaccount.FieldCreatedBy)
 	}
@@ -66779,6 +66816,9 @@ func (m *WithdrawAccountMutation) Fields() []string {
 	if m.bank != nil {
 		fields = append(fields, withdrawaccount.FieldBank)
 	}
+	if m.way != nil {
+		fields = append(fields, withdrawaccount.FieldWay)
+	}
 	return fields
 }
 
@@ -66815,6 +66855,8 @@ func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.BankCardNumber()
 	case withdrawaccount.FieldBank:
 		return m.Bank()
+	case withdrawaccount.FieldWay:
+		return m.Way()
 	}
 	return nil, false
 }
@@ -66852,6 +66894,8 @@ func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (en
 		return m.OldBankCardNumber(ctx)
 	case withdrawaccount.FieldBank:
 		return m.OldBank(ctx)
+	case withdrawaccount.FieldWay:
+		return m.OldWay(ctx)
 	}
 	return nil, fmt.Errorf("unknown WithdrawAccount field %s", name)
 }
@@ -66958,6 +67002,13 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBank(v)
+		return nil
+	case withdrawaccount.FieldWay:
+		v, ok := value.(enums.TransferOrderType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWay(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)
@@ -67088,6 +67139,9 @@ func (m *WithdrawAccountMutation) ResetField(name string) error {
 		return nil
 	case withdrawaccount.FieldBank:
 		m.ResetBank()
+		return nil
+	case withdrawaccount.FieldWay:
+		m.ResetWay()
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)
