@@ -240,6 +240,20 @@ func (wau *WithdrawAccountUpdate) SetNillableWay(eot *enums.TransferOrderType) *
 	return wau
 }
 
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (wau *WithdrawAccountUpdate) SetAlipayCardNo(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetAlipayCardNo(s)
+	return wau
+}
+
+// SetNillableAlipayCardNo sets the "alipay_card_no" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableAlipayCardNo(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetAlipayCardNo(*s)
+	}
+	return wau
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wau *WithdrawAccountUpdate) SetUser(u *User) *WithdrawAccountUpdate {
 	return wau.SetUserID(u.ID)
@@ -375,6 +389,9 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := wau.mutation.Way(); ok {
 		_spec.SetField(withdrawaccount.FieldWay, field.TypeEnum, value)
+	}
+	if value, ok := wau.mutation.AlipayCardNo(); ok {
+		_spec.SetField(withdrawaccount.FieldAlipayCardNo, field.TypeString, value)
 	}
 	if wau.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -636,6 +653,20 @@ func (wauo *WithdrawAccountUpdateOne) SetNillableWay(eot *enums.TransferOrderTyp
 	return wauo
 }
 
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (wauo *WithdrawAccountUpdateOne) SetAlipayCardNo(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetAlipayCardNo(s)
+	return wauo
+}
+
+// SetNillableAlipayCardNo sets the "alipay_card_no" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableAlipayCardNo(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetAlipayCardNo(*s)
+	}
+	return wauo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wauo *WithdrawAccountUpdateOne) SetUser(u *User) *WithdrawAccountUpdateOne {
 	return wauo.SetUserID(u.ID)
@@ -801,6 +832,9 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 	}
 	if value, ok := wauo.mutation.Way(); ok {
 		_spec.SetField(withdrawaccount.FieldWay, field.TypeEnum, value)
+	}
+	if value, ok := wauo.mutation.AlipayCardNo(); ok {
+		_spec.SetField(withdrawaccount.FieldAlipayCardNo, field.TypeString, value)
 	}
 	if wauo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

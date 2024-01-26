@@ -121,6 +121,11 @@ func Bank(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldBank, v))
 }
 
+// AlipayCardNo applies equality check predicate on the "alipay_card_no" field. It's identical to AlipayCardNoEQ.
+func AlipayCardNo(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldAlipayCardNo, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldCreatedBy, v))
@@ -829,6 +834,71 @@ func WayNotIn(vs ...enums.TransferOrderType) predicate.WithdrawAccount {
 		v[i] = vs[i]
 	}
 	return predicate.WithdrawAccount(sql.FieldNotIn(FieldWay, v...))
+}
+
+// AlipayCardNoEQ applies the EQ predicate on the "alipay_card_no" field.
+func AlipayCardNoEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoNEQ applies the NEQ predicate on the "alipay_card_no" field.
+func AlipayCardNoNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoIn applies the In predicate on the "alipay_card_no" field.
+func AlipayCardNoIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldAlipayCardNo, vs...))
+}
+
+// AlipayCardNoNotIn applies the NotIn predicate on the "alipay_card_no" field.
+func AlipayCardNoNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldAlipayCardNo, vs...))
+}
+
+// AlipayCardNoGT applies the GT predicate on the "alipay_card_no" field.
+func AlipayCardNoGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoGTE applies the GTE predicate on the "alipay_card_no" field.
+func AlipayCardNoGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoLT applies the LT predicate on the "alipay_card_no" field.
+func AlipayCardNoLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoLTE applies the LTE predicate on the "alipay_card_no" field.
+func AlipayCardNoLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoContains applies the Contains predicate on the "alipay_card_no" field.
+func AlipayCardNoContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoHasPrefix applies the HasPrefix predicate on the "alipay_card_no" field.
+func AlipayCardNoHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoHasSuffix applies the HasSuffix predicate on the "alipay_card_no" field.
+func AlipayCardNoHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoEqualFold applies the EqualFold predicate on the "alipay_card_no" field.
+func AlipayCardNoEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldAlipayCardNo, v))
+}
+
+// AlipayCardNoContainsFold applies the ContainsFold predicate on the "alipay_card_no" field.
+func AlipayCardNoContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldAlipayCardNo, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

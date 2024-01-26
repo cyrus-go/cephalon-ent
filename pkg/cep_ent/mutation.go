@@ -66000,6 +66000,7 @@ type WithdrawAccountMutation struct {
 	bank_card_number *string
 	bank             *string
 	way              *enums.TransferOrderType
+	alipay_card_no   *string
 	clearedFields    map[string]struct{}
 	user             *int64
 	cleareduser      bool
@@ -66712,6 +66713,42 @@ func (m *WithdrawAccountMutation) ResetWay() {
 	m.way = nil
 }
 
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (m *WithdrawAccountMutation) SetAlipayCardNo(s string) {
+	m.alipay_card_no = &s
+}
+
+// AlipayCardNo returns the value of the "alipay_card_no" field in the mutation.
+func (m *WithdrawAccountMutation) AlipayCardNo() (r string, exists bool) {
+	v := m.alipay_card_no
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlipayCardNo returns the old "alipay_card_no" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldAlipayCardNo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAlipayCardNo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAlipayCardNo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlipayCardNo: %w", err)
+	}
+	return oldValue.AlipayCardNo, nil
+}
+
+// ResetAlipayCardNo resets all changes to the "alipay_card_no" field.
+func (m *WithdrawAccountMutation) ResetAlipayCardNo() {
+	m.alipay_card_no = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *WithdrawAccountMutation) ClearUser() {
 	m.cleareduser = true
@@ -66773,7 +66810,7 @@ func (m *WithdrawAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawAccountMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, withdrawaccount.FieldCreatedBy)
 	}
@@ -66819,6 +66856,9 @@ func (m *WithdrawAccountMutation) Fields() []string {
 	if m.way != nil {
 		fields = append(fields, withdrawaccount.FieldWay)
 	}
+	if m.alipay_card_no != nil {
+		fields = append(fields, withdrawaccount.FieldAlipayCardNo)
+	}
 	return fields
 }
 
@@ -66857,6 +66897,8 @@ func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Bank()
 	case withdrawaccount.FieldWay:
 		return m.Way()
+	case withdrawaccount.FieldAlipayCardNo:
+		return m.AlipayCardNo()
 	}
 	return nil, false
 }
@@ -66896,6 +66938,8 @@ func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (en
 		return m.OldBank(ctx)
 	case withdrawaccount.FieldWay:
 		return m.OldWay(ctx)
+	case withdrawaccount.FieldAlipayCardNo:
+		return m.OldAlipayCardNo(ctx)
 	}
 	return nil, fmt.Errorf("unknown WithdrawAccount field %s", name)
 }
@@ -67009,6 +67053,13 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWay(v)
+		return nil
+	case withdrawaccount.FieldAlipayCardNo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlipayCardNo(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)
@@ -67142,6 +67193,9 @@ func (m *WithdrawAccountMutation) ResetField(name string) error {
 		return nil
 	case withdrawaccount.FieldWay:
 		m.ResetWay()
+		return nil
+	case withdrawaccount.FieldAlipayCardNo:
+		m.ResetAlipayCardNo()
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)

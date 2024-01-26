@@ -46,6 +46,8 @@ const (
 	FieldBank = "bank"
 	// FieldWay holds the string denoting the way field in the database.
 	FieldWay = "way"
+	// FieldAlipayCardNo holds the string denoting the alipay_card_no field in the database.
+	FieldAlipayCardNo = "alipay_card_no"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the withdrawaccount in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldBankCardNumber,
 	FieldBank,
 	FieldWay,
+	FieldAlipayCardNo,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -118,6 +121,8 @@ var (
 	DefaultBankCardNumber string
 	// DefaultBank holds the default value on creation for the "bank" field.
 	DefaultBank string
+	// DefaultAlipayCardNo holds the default value on creation for the "alipay_card_no" field.
+	DefaultAlipayCardNo string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -227,6 +232,11 @@ func ByBank(opts ...sql.OrderTermOption) OrderOption {
 // ByWay orders the results by the way field.
 func ByWay(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWay, opts...).ToFunc()
+}
+
+// ByAlipayCardNo orders the results by the alipay_card_no field.
+func ByAlipayCardNo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAlipayCardNo, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.
