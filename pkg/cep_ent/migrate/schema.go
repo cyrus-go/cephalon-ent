@@ -2135,7 +2135,7 @@ var (
 		{Name: "phone", Type: field.TypeString, Comment: "个人商户手机号", Default: ""},
 		{Name: "bank_card_number", Type: field.TypeString, Comment: "银行卡号", Default: ""},
 		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
-		{Name: "way", Type: field.TypeEnum, Comment: "提现方式", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund"}, Default: "withdraw_bank_card"},
+		{Name: "way", Type: field.TypeEnum, Comment: "提现方式", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund"}, Default: "unknown"},
 		{Name: "alipay_card_no", Type: field.TypeString, Comment: "支付宝账户", Default: ""},
 		{Name: "user_id", Type: field.TypeInt64, Unique: true, Comment: "外键用户 id", Default: 0},
 	}

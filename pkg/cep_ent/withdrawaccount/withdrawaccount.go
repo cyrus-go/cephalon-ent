@@ -139,7 +139,7 @@ func BusinessTypeValidator(bt enums.BusinessType) error {
 	}
 }
 
-const DefaultWay enums.TransferOrderType = "withdraw_bank_card"
+const DefaultWay enums.TransferOrderType = "unknown"
 
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
 func WayValidator(w enums.TransferOrderType) error {
