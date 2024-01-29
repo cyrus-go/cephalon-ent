@@ -121,6 +121,12 @@ const (
 	EdgeCdkInfos = "cdk_infos"
 	// EdgeUseCdkInfos holds the string denoting the use_cdk_infos edge name in mutations.
 	EdgeUseCdkInfos = "use_cdk_infos"
+	// EdgeLottoRecords holds the string denoting the lotto_records edge name in mutations.
+	EdgeLottoRecords = "lotto_records"
+	// EdgeLottoUserCounts holds the string denoting the lotto_user_counts edge name in mutations.
+	EdgeLottoUserCounts = "lotto_user_counts"
+	// EdgeLottoGetCountRecords holds the string denoting the lotto_get_count_records edge name in mutations.
+	EdgeLottoGetCountRecords = "lotto_get_count_records"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -355,6 +361,27 @@ const (
 	UseCdkInfosInverseTable = "cdk_infos"
 	// UseCdkInfosColumn is the table column denoting the use_cdk_infos relation/edge.
 	UseCdkInfosColumn = "use_user_id"
+	// LottoRecordsTable is the table that holds the lotto_records relation/edge.
+	LottoRecordsTable = "lotto_records"
+	// LottoRecordsInverseTable is the table name for the LottoRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "lottorecord" package.
+	LottoRecordsInverseTable = "lotto_records"
+	// LottoRecordsColumn is the table column denoting the lotto_records relation/edge.
+	LottoRecordsColumn = "user_id"
+	// LottoUserCountsTable is the table that holds the lotto_user_counts relation/edge.
+	LottoUserCountsTable = "lotto_user_counts"
+	// LottoUserCountsInverseTable is the table name for the LottoUserCount entity.
+	// It exists in this package in order to avoid circular dependency with the "lottousercount" package.
+	LottoUserCountsInverseTable = "lotto_user_counts"
+	// LottoUserCountsColumn is the table column denoting the lotto_user_counts relation/edge.
+	LottoUserCountsColumn = "user_id"
+	// LottoGetCountRecordsTable is the table that holds the lotto_get_count_records relation/edge.
+	LottoGetCountRecordsTable = "lotto_get_count_records"
+	// LottoGetCountRecordsInverseTable is the table name for the LottoGetCountRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "lottogetcountrecord" package.
+	LottoGetCountRecordsInverseTable = "lotto_get_count_records"
+	// LottoGetCountRecordsColumn is the table column denoting the lotto_get_count_records relation/edge.
+	LottoGetCountRecordsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1010,6 +1037,48 @@ func ByUseCdkInfos(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUseCdkInfosStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLottoRecordsCount orders the results by lotto_records count.
+func ByLottoRecordsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLottoRecordsStep(), opts...)
+	}
+}
+
+// ByLottoRecords orders the results by lotto_records terms.
+func ByLottoRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLottoRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByLottoUserCountsCount orders the results by lotto_user_counts count.
+func ByLottoUserCountsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLottoUserCountsStep(), opts...)
+	}
+}
+
+// ByLottoUserCounts orders the results by lotto_user_counts terms.
+func ByLottoUserCounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLottoUserCountsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByLottoGetCountRecordsCount orders the results by lotto_get_count_records count.
+func ByLottoGetCountRecordsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLottoGetCountRecordsStep(), opts...)
+	}
+}
+
+// ByLottoGetCountRecords orders the results by lotto_get_count_records terms.
+func ByLottoGetCountRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLottoGetCountRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1246,5 +1315,26 @@ func newUseCdkInfosStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UseCdkInfosInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, UseCdkInfosTable, UseCdkInfosColumn),
+	)
+}
+func newLottoRecordsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LottoRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LottoRecordsTable, LottoRecordsColumn),
+	)
+}
+func newLottoUserCountsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LottoUserCountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LottoUserCountsTable, LottoUserCountsColumn),
+	)
+}
+func newLottoGetCountRecordsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LottoGetCountRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LottoGetCountRecordsTable, LottoGetCountRecordsColumn),
 	)
 }

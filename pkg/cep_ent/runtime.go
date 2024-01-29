@@ -30,6 +30,11 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -1383,6 +1388,237 @@ func init() {
 	loginrecordDescID := loginrecordMixinFields0[0].Descriptor()
 	// loginrecord.DefaultID holds the default value on creation for the id field.
 	loginrecord.DefaultID = loginrecordDescID.Default.(func() int64)
+	lottoMixin := schema.Lotto{}.Mixin()
+	lottoMixinFields0 := lottoMixin[0].Fields()
+	_ = lottoMixinFields0
+	lottoFields := schema.Lotto{}.Fields()
+	_ = lottoFields
+	// lottoDescCreatedBy is the schema descriptor for created_by field.
+	lottoDescCreatedBy := lottoMixinFields0[1].Descriptor()
+	// lotto.DefaultCreatedBy holds the default value on creation for the created_by field.
+	lotto.DefaultCreatedBy = lottoDescCreatedBy.Default.(int64)
+	// lottoDescUpdatedBy is the schema descriptor for updated_by field.
+	lottoDescUpdatedBy := lottoMixinFields0[2].Descriptor()
+	// lotto.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	lotto.DefaultUpdatedBy = lottoDescUpdatedBy.Default.(int64)
+	// lottoDescCreatedAt is the schema descriptor for created_at field.
+	lottoDescCreatedAt := lottoMixinFields0[3].Descriptor()
+	// lotto.DefaultCreatedAt holds the default value on creation for the created_at field.
+	lotto.DefaultCreatedAt = lottoDescCreatedAt.Default.(func() time.Time)
+	// lottoDescUpdatedAt is the schema descriptor for updated_at field.
+	lottoDescUpdatedAt := lottoMixinFields0[4].Descriptor()
+	// lotto.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	lotto.DefaultUpdatedAt = lottoDescUpdatedAt.Default.(func() time.Time)
+	// lotto.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	lotto.UpdateDefaultUpdatedAt = lottoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// lottoDescDeletedAt is the schema descriptor for deleted_at field.
+	lottoDescDeletedAt := lottoMixinFields0[5].Descriptor()
+	// lotto.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	lotto.DefaultDeletedAt = lottoDescDeletedAt.Default.(time.Time)
+	// lottoDescName is the schema descriptor for name field.
+	lottoDescName := lottoFields[0].Descriptor()
+	// lotto.DefaultName holds the default value on creation for the name field.
+	lotto.DefaultName = lottoDescName.Default.(string)
+	// lottoDescTotalWeight is the schema descriptor for total_weight field.
+	lottoDescTotalWeight := lottoFields[1].Descriptor()
+	// lotto.DefaultTotalWeight holds the default value on creation for the total_weight field.
+	lotto.DefaultTotalWeight = lottoDescTotalWeight.Default.(int64)
+	// lottoDescStartedAt is the schema descriptor for started_at field.
+	lottoDescStartedAt := lottoFields[2].Descriptor()
+	// lotto.DefaultStartedAt holds the default value on creation for the started_at field.
+	lotto.DefaultStartedAt = lottoDescStartedAt.Default.(time.Time)
+	// lottoDescEndedAt is the schema descriptor for ended_at field.
+	lottoDescEndedAt := lottoFields[3].Descriptor()
+	// lotto.DefaultEndedAt holds the default value on creation for the ended_at field.
+	lotto.DefaultEndedAt = lottoDescEndedAt.Default.(time.Time)
+	// lottoDescID is the schema descriptor for id field.
+	lottoDescID := lottoMixinFields0[0].Descriptor()
+	// lotto.DefaultID holds the default value on creation for the id field.
+	lotto.DefaultID = lottoDescID.Default.(func() int64)
+	lottogetcountrecordMixin := schema.LottoGetCountRecord{}.Mixin()
+	lottogetcountrecordMixinFields0 := lottogetcountrecordMixin[0].Fields()
+	_ = lottogetcountrecordMixinFields0
+	lottogetcountrecordFields := schema.LottoGetCountRecord{}.Fields()
+	_ = lottogetcountrecordFields
+	// lottogetcountrecordDescCreatedBy is the schema descriptor for created_by field.
+	lottogetcountrecordDescCreatedBy := lottogetcountrecordMixinFields0[1].Descriptor()
+	// lottogetcountrecord.DefaultCreatedBy holds the default value on creation for the created_by field.
+	lottogetcountrecord.DefaultCreatedBy = lottogetcountrecordDescCreatedBy.Default.(int64)
+	// lottogetcountrecordDescUpdatedBy is the schema descriptor for updated_by field.
+	lottogetcountrecordDescUpdatedBy := lottogetcountrecordMixinFields0[2].Descriptor()
+	// lottogetcountrecord.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	lottogetcountrecord.DefaultUpdatedBy = lottogetcountrecordDescUpdatedBy.Default.(int64)
+	// lottogetcountrecordDescCreatedAt is the schema descriptor for created_at field.
+	lottogetcountrecordDescCreatedAt := lottogetcountrecordMixinFields0[3].Descriptor()
+	// lottogetcountrecord.DefaultCreatedAt holds the default value on creation for the created_at field.
+	lottogetcountrecord.DefaultCreatedAt = lottogetcountrecordDescCreatedAt.Default.(func() time.Time)
+	// lottogetcountrecordDescUpdatedAt is the schema descriptor for updated_at field.
+	lottogetcountrecordDescUpdatedAt := lottogetcountrecordMixinFields0[4].Descriptor()
+	// lottogetcountrecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	lottogetcountrecord.DefaultUpdatedAt = lottogetcountrecordDescUpdatedAt.Default.(func() time.Time)
+	// lottogetcountrecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	lottogetcountrecord.UpdateDefaultUpdatedAt = lottogetcountrecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// lottogetcountrecordDescDeletedAt is the schema descriptor for deleted_at field.
+	lottogetcountrecordDescDeletedAt := lottogetcountrecordMixinFields0[5].Descriptor()
+	// lottogetcountrecord.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	lottogetcountrecord.DefaultDeletedAt = lottogetcountrecordDescDeletedAt.Default.(time.Time)
+	// lottogetcountrecordDescUserID is the schema descriptor for user_id field.
+	lottogetcountrecordDescUserID := lottogetcountrecordFields[0].Descriptor()
+	// lottogetcountrecord.DefaultUserID holds the default value on creation for the user_id field.
+	lottogetcountrecord.DefaultUserID = lottogetcountrecordDescUserID.Default.(int64)
+	// lottogetcountrecordDescLottoID is the schema descriptor for lotto_id field.
+	lottogetcountrecordDescLottoID := lottogetcountrecordFields[1].Descriptor()
+	// lottogetcountrecord.DefaultLottoID holds the default value on creation for the lotto_id field.
+	lottogetcountrecord.DefaultLottoID = lottogetcountrecordDescLottoID.Default.(int64)
+	// lottogetcountrecordDescCount is the schema descriptor for count field.
+	lottogetcountrecordDescCount := lottogetcountrecordFields[2].Descriptor()
+	// lottogetcountrecord.DefaultCount holds the default value on creation for the count field.
+	lottogetcountrecord.DefaultCount = lottogetcountrecordDescCount.Default.(int64)
+	// lottogetcountrecordDescRechargeAmount is the schema descriptor for recharge_amount field.
+	lottogetcountrecordDescRechargeAmount := lottogetcountrecordFields[4].Descriptor()
+	// lottogetcountrecord.DefaultRechargeAmount holds the default value on creation for the recharge_amount field.
+	lottogetcountrecord.DefaultRechargeAmount = lottogetcountrecordDescRechargeAmount.Default.(int64)
+	// lottogetcountrecordDescID is the schema descriptor for id field.
+	lottogetcountrecordDescID := lottogetcountrecordMixinFields0[0].Descriptor()
+	// lottogetcountrecord.DefaultID holds the default value on creation for the id field.
+	lottogetcountrecord.DefaultID = lottogetcountrecordDescID.Default.(func() int64)
+	lottoprizeMixin := schema.LottoPrize{}.Mixin()
+	lottoprizeMixinFields0 := lottoprizeMixin[0].Fields()
+	_ = lottoprizeMixinFields0
+	lottoprizeFields := schema.LottoPrize{}.Fields()
+	_ = lottoprizeFields
+	// lottoprizeDescCreatedBy is the schema descriptor for created_by field.
+	lottoprizeDescCreatedBy := lottoprizeMixinFields0[1].Descriptor()
+	// lottoprize.DefaultCreatedBy holds the default value on creation for the created_by field.
+	lottoprize.DefaultCreatedBy = lottoprizeDescCreatedBy.Default.(int64)
+	// lottoprizeDescUpdatedBy is the schema descriptor for updated_by field.
+	lottoprizeDescUpdatedBy := lottoprizeMixinFields0[2].Descriptor()
+	// lottoprize.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	lottoprize.DefaultUpdatedBy = lottoprizeDescUpdatedBy.Default.(int64)
+	// lottoprizeDescCreatedAt is the schema descriptor for created_at field.
+	lottoprizeDescCreatedAt := lottoprizeMixinFields0[3].Descriptor()
+	// lottoprize.DefaultCreatedAt holds the default value on creation for the created_at field.
+	lottoprize.DefaultCreatedAt = lottoprizeDescCreatedAt.Default.(func() time.Time)
+	// lottoprizeDescUpdatedAt is the schema descriptor for updated_at field.
+	lottoprizeDescUpdatedAt := lottoprizeMixinFields0[4].Descriptor()
+	// lottoprize.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	lottoprize.DefaultUpdatedAt = lottoprizeDescUpdatedAt.Default.(func() time.Time)
+	// lottoprize.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	lottoprize.UpdateDefaultUpdatedAt = lottoprizeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// lottoprizeDescDeletedAt is the schema descriptor for deleted_at field.
+	lottoprizeDescDeletedAt := lottoprizeMixinFields0[5].Descriptor()
+	// lottoprize.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	lottoprize.DefaultDeletedAt = lottoprizeDescDeletedAt.Default.(time.Time)
+	// lottoprizeDescLottoID is the schema descriptor for lotto_id field.
+	lottoprizeDescLottoID := lottoprizeFields[0].Descriptor()
+	// lottoprize.DefaultLottoID holds the default value on creation for the lotto_id field.
+	lottoprize.DefaultLottoID = lottoprizeDescLottoID.Default.(int64)
+	// lottoprizeDescLevelName is the schema descriptor for level_name field.
+	lottoprizeDescLevelName := lottoprizeFields[1].Descriptor()
+	// lottoprize.DefaultLevelName holds the default value on creation for the level_name field.
+	lottoprize.DefaultLevelName = lottoprizeDescLevelName.Default.(string)
+	// lottoprizeDescWeight is the schema descriptor for weight field.
+	lottoprizeDescWeight := lottoprizeFields[2].Descriptor()
+	// lottoprize.DefaultWeight holds the default value on creation for the weight field.
+	lottoprize.DefaultWeight = lottoprizeDescWeight.Default.(int64)
+	// lottoprizeDescName is the schema descriptor for name field.
+	lottoprizeDescName := lottoprizeFields[3].Descriptor()
+	// lottoprize.DefaultName holds the default value on creation for the name field.
+	lottoprize.DefaultName = lottoprizeDescName.Default.(string)
+	// lottoprizeDescID is the schema descriptor for id field.
+	lottoprizeDescID := lottoprizeMixinFields0[0].Descriptor()
+	// lottoprize.DefaultID holds the default value on creation for the id field.
+	lottoprize.DefaultID = lottoprizeDescID.Default.(func() int64)
+	lottorecordMixin := schema.LottoRecord{}.Mixin()
+	lottorecordMixinFields0 := lottorecordMixin[0].Fields()
+	_ = lottorecordMixinFields0
+	lottorecordFields := schema.LottoRecord{}.Fields()
+	_ = lottorecordFields
+	// lottorecordDescCreatedBy is the schema descriptor for created_by field.
+	lottorecordDescCreatedBy := lottorecordMixinFields0[1].Descriptor()
+	// lottorecord.DefaultCreatedBy holds the default value on creation for the created_by field.
+	lottorecord.DefaultCreatedBy = lottorecordDescCreatedBy.Default.(int64)
+	// lottorecordDescUpdatedBy is the schema descriptor for updated_by field.
+	lottorecordDescUpdatedBy := lottorecordMixinFields0[2].Descriptor()
+	// lottorecord.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	lottorecord.DefaultUpdatedBy = lottorecordDescUpdatedBy.Default.(int64)
+	// lottorecordDescCreatedAt is the schema descriptor for created_at field.
+	lottorecordDescCreatedAt := lottorecordMixinFields0[3].Descriptor()
+	// lottorecord.DefaultCreatedAt holds the default value on creation for the created_at field.
+	lottorecord.DefaultCreatedAt = lottorecordDescCreatedAt.Default.(func() time.Time)
+	// lottorecordDescUpdatedAt is the schema descriptor for updated_at field.
+	lottorecordDescUpdatedAt := lottorecordMixinFields0[4].Descriptor()
+	// lottorecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	lottorecord.DefaultUpdatedAt = lottorecordDescUpdatedAt.Default.(func() time.Time)
+	// lottorecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	lottorecord.UpdateDefaultUpdatedAt = lottorecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// lottorecordDescDeletedAt is the schema descriptor for deleted_at field.
+	lottorecordDescDeletedAt := lottorecordMixinFields0[5].Descriptor()
+	// lottorecord.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	lottorecord.DefaultDeletedAt = lottorecordDescDeletedAt.Default.(time.Time)
+	// lottorecordDescUserID is the schema descriptor for user_id field.
+	lottorecordDescUserID := lottorecordFields[0].Descriptor()
+	// lottorecord.DefaultUserID holds the default value on creation for the user_id field.
+	lottorecord.DefaultUserID = lottorecordDescUserID.Default.(int64)
+	// lottorecordDescLottoID is the schema descriptor for lotto_id field.
+	lottorecordDescLottoID := lottorecordFields[1].Descriptor()
+	// lottorecord.DefaultLottoID holds the default value on creation for the lotto_id field.
+	lottorecord.DefaultLottoID = lottorecordDescLottoID.Default.(int64)
+	// lottorecordDescLottoPrizeID is the schema descriptor for lotto_prize_id field.
+	lottorecordDescLottoPrizeID := lottorecordFields[3].Descriptor()
+	// lottorecord.DefaultLottoPrizeID holds the default value on creation for the lotto_prize_id field.
+	lottorecord.DefaultLottoPrizeID = lottorecordDescLottoPrizeID.Default.(int64)
+	// lottorecordDescRemainLottoCount is the schema descriptor for remain_lotto_count field.
+	lottorecordDescRemainLottoCount := lottorecordFields[5].Descriptor()
+	// lottorecord.DefaultRemainLottoCount holds the default value on creation for the remain_lotto_count field.
+	lottorecord.DefaultRemainLottoCount = lottorecordDescRemainLottoCount.Default.(int64)
+	// lottorecordDescID is the schema descriptor for id field.
+	lottorecordDescID := lottorecordMixinFields0[0].Descriptor()
+	// lottorecord.DefaultID holds the default value on creation for the id field.
+	lottorecord.DefaultID = lottorecordDescID.Default.(func() int64)
+	lottousercountMixin := schema.LottoUserCount{}.Mixin()
+	lottousercountMixinFields0 := lottousercountMixin[0].Fields()
+	_ = lottousercountMixinFields0
+	lottousercountFields := schema.LottoUserCount{}.Fields()
+	_ = lottousercountFields
+	// lottousercountDescCreatedBy is the schema descriptor for created_by field.
+	lottousercountDescCreatedBy := lottousercountMixinFields0[1].Descriptor()
+	// lottousercount.DefaultCreatedBy holds the default value on creation for the created_by field.
+	lottousercount.DefaultCreatedBy = lottousercountDescCreatedBy.Default.(int64)
+	// lottousercountDescUpdatedBy is the schema descriptor for updated_by field.
+	lottousercountDescUpdatedBy := lottousercountMixinFields0[2].Descriptor()
+	// lottousercount.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	lottousercount.DefaultUpdatedBy = lottousercountDescUpdatedBy.Default.(int64)
+	// lottousercountDescCreatedAt is the schema descriptor for created_at field.
+	lottousercountDescCreatedAt := lottousercountMixinFields0[3].Descriptor()
+	// lottousercount.DefaultCreatedAt holds the default value on creation for the created_at field.
+	lottousercount.DefaultCreatedAt = lottousercountDescCreatedAt.Default.(func() time.Time)
+	// lottousercountDescUpdatedAt is the schema descriptor for updated_at field.
+	lottousercountDescUpdatedAt := lottousercountMixinFields0[4].Descriptor()
+	// lottousercount.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	lottousercount.DefaultUpdatedAt = lottousercountDescUpdatedAt.Default.(func() time.Time)
+	// lottousercount.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	lottousercount.UpdateDefaultUpdatedAt = lottousercountDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// lottousercountDescDeletedAt is the schema descriptor for deleted_at field.
+	lottousercountDescDeletedAt := lottousercountMixinFields0[5].Descriptor()
+	// lottousercount.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	lottousercount.DefaultDeletedAt = lottousercountDescDeletedAt.Default.(time.Time)
+	// lottousercountDescUserID is the schema descriptor for user_id field.
+	lottousercountDescUserID := lottousercountFields[0].Descriptor()
+	// lottousercount.DefaultUserID holds the default value on creation for the user_id field.
+	lottousercount.DefaultUserID = lottousercountDescUserID.Default.(int64)
+	// lottousercountDescLottoID is the schema descriptor for lotto_id field.
+	lottousercountDescLottoID := lottousercountFields[1].Descriptor()
+	// lottousercount.DefaultLottoID holds the default value on creation for the lotto_id field.
+	lottousercount.DefaultLottoID = lottousercountDescLottoID.Default.(int64)
+	// lottousercountDescRemainLottoCount is the schema descriptor for remain_lotto_count field.
+	lottousercountDescRemainLottoCount := lottousercountFields[2].Descriptor()
+	// lottousercount.DefaultRemainLottoCount holds the default value on creation for the remain_lotto_count field.
+	lottousercount.DefaultRemainLottoCount = lottousercountDescRemainLottoCount.Default.(int64)
+	// lottousercountDescID is the schema descriptor for id field.
+	lottousercountDescID := lottousercountMixinFields0[0].Descriptor()
+	// lottousercount.DefaultID holds the default value on creation for the id field.
+	lottousercount.DefaultID = lottousercountDescID.Default.(func() int64)
 	missionMixin := schema.Mission{}.Mixin()
 	missionMixinFields0 := missionMixin[0].Fields()
 	_ = missionMixinFields0

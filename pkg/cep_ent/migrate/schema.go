@@ -1000,6 +1000,180 @@ var (
 			},
 		},
 	}
+	// LottosColumns holds the columns for the "lottos" table.
+	LottosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "抽奖活动名称", Default: ""},
+		{Name: "total_weight", Type: field.TypeInt64, Comment: "活动总权重", Default: 0},
+		{Name: "started_at", Type: field.TypeTime, Comment: "活动开始时间"},
+		{Name: "ended_at", Type: field.TypeTime, Comment: "活动结束时间"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknown", "normal", "canceled"}, Default: "unknown"},
+	}
+	// LottosTable holds the schema information for the "lottos" table.
+	LottosTable = &schema.Table{
+		Name:       "lottos",
+		Comment:    "抽奖活动表",
+		Columns:    LottosColumns,
+		PrimaryKey: []*schema.Column{LottosColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "lotto_name",
+				Unique:  true,
+				Columns: []*schema.Column{LottosColumns[6]},
+			},
+		},
+	}
+	// LottoGetCountRecordsColumns holds the columns for the "lotto_get_count_records" table.
+	LottoGetCountRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "count", Type: field.TypeInt64, Comment: "此次奖励的抽奖次数", Default: 0},
+		{Name: "type", Type: field.TypeEnum, Comment: "抽奖结果", Enums: []string{"unknow", "register", "invite_register", "recharge"}, Default: "unknow"},
+		{Name: "recharge_amount", Type: field.TypeInt64, Comment: "充值金额，类型为充值时才有数据", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
+	}
+	// LottoGetCountRecordsTable holds the schema information for the "lotto_get_count_records" table.
+	LottoGetCountRecordsTable = &schema.Table{
+		Name:       "lotto_get_count_records",
+		Comment:    "用户获得抽奖次数记录表",
+		Columns:    LottoGetCountRecordsColumns,
+		PrimaryKey: []*schema.Column{LottoGetCountRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_get_count_records_lottos_lotto_get_count_records",
+				Columns:    []*schema.Column{LottoGetCountRecordsColumns[9]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_get_count_records_users_lotto_get_count_records",
+				Columns:    []*schema.Column{LottoGetCountRecordsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// PrizesColumns holds the columns for the "prizes" table.
+	PrizesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "level_name", Type: field.TypeString, Comment: "奖品等级名称", Default: ""},
+		{Name: "weight", Type: field.TypeInt64, Comment: "奖品等级权重", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "奖品名称", Default: ""},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknow", "normal", "canceled"}, Default: "unknow"},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+	}
+	// PrizesTable holds the schema information for the "prizes" table.
+	PrizesTable = &schema.Table{
+		Name:       "prizes",
+		Comment:    "抽奖活动奖品表",
+		Columns:    PrizesColumns,
+		PrimaryKey: []*schema.Column{PrizesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "prizes_lottos_lotto_prizes",
+				Columns:    []*schema.Column{PrizesColumns[10]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "lottoprize_name",
+				Unique:  false,
+				Columns: []*schema.Column{PrizesColumns[8]},
+			},
+		},
+	}
+	// LottoRecordsColumns holds the columns for the "lotto_records" table.
+	LottoRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "result", Type: field.TypeEnum, Comment: "抽奖结果", Enums: []string{"unknow", "winning", "losing", "failed"}, Default: "unknow"},
+		{Name: "status", Type: field.TypeEnum, Comment: "抽奖状态", Enums: []string{"waiting", "granted", "not_grant", "invalid"}, Default: "waiting"},
+		{Name: "remain_lotto_count", Type: field.TypeInt64, Comment: "剩余抽奖次数", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+		{Name: "lotto_prize_id", Type: field.TypeInt64, Comment: "外键：奖品 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
+	}
+	// LottoRecordsTable holds the schema information for the "lotto_records" table.
+	LottoRecordsTable = &schema.Table{
+		Name:       "lotto_records",
+		Comment:    "用户抽奖记录表",
+		Columns:    LottoRecordsColumns,
+		PrimaryKey: []*schema.Column{LottoRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_records_lottos_lotto_records",
+				Columns:    []*schema.Column{LottoRecordsColumns[9]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_records_prizes_lotto_records",
+				Columns:    []*schema.Column{LottoRecordsColumns[10]},
+				RefColumns: []*schema.Column{PrizesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_records_users_lotto_records",
+				Columns:    []*schema.Column{LottoRecordsColumns[11]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// LottoUserCountsColumns holds the columns for the "lotto_user_counts" table.
+	LottoUserCountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "remain_lotto_count", Type: field.TypeInt64, Comment: "剩余抽奖次数", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
+	}
+	// LottoUserCountsTable holds the schema information for the "lotto_user_counts" table.
+	LottoUserCountsTable = &schema.Table{
+		Name:       "lotto_user_counts",
+		Comment:    "用户可用抽奖次数表",
+		Columns:    LottoUserCountsColumns,
+		PrimaryKey: []*schema.Column{LottoUserCountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_user_counts_lottos_lotto_user_counts",
+				Columns:    []*schema.Column{LottoUserCountsColumns[7]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_user_counts_users_lotto_user_counts",
+				Columns:    []*schema.Column{LottoUserCountsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// MissionsColumns holds the columns for the "missions" table.
 	MissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2187,6 +2361,11 @@ var (
 		InputLogsTable,
 		InvitesTable,
 		LoginRecordsTable,
+		LottosTable,
+		LottoGetCountRecordsTable,
+		PrizesTable,
+		LottoRecordsTable,
+		LottoUserCountsTable,
 		MissionsTable,
 		MissionBatchesTable,
 		MissionConsumeOrdersTable,
@@ -2281,6 +2460,21 @@ func init() {
 	InvitesTable.Annotation = &entsql.Annotation{}
 	LoginRecordsTable.ForeignKeys[0].RefTable = UsersTable
 	LoginRecordsTable.Annotation = &entsql.Annotation{}
+	LottosTable.Annotation = &entsql.Annotation{}
+	LottoGetCountRecordsTable.ForeignKeys[0].RefTable = LottosTable
+	LottoGetCountRecordsTable.ForeignKeys[1].RefTable = UsersTable
+	LottoGetCountRecordsTable.Annotation = &entsql.Annotation{}
+	PrizesTable.ForeignKeys[0].RefTable = LottosTable
+	PrizesTable.Annotation = &entsql.Annotation{
+		Table: "prizes",
+	}
+	LottoRecordsTable.ForeignKeys[0].RefTable = LottosTable
+	LottoRecordsTable.ForeignKeys[1].RefTable = PrizesTable
+	LottoRecordsTable.ForeignKeys[2].RefTable = UsersTable
+	LottoRecordsTable.Annotation = &entsql.Annotation{}
+	LottoUserCountsTable.ForeignKeys[0].RefTable = LottosTable
+	LottoUserCountsTable.ForeignKeys[1].RefTable = UsersTable
+	LottoUserCountsTable.Annotation = &entsql.Annotation{}
 	MissionsTable.ForeignKeys[0].RefTable = ExtraServicesTable
 	MissionsTable.ForeignKeys[1].RefTable = HmacKeyPairsTable
 	MissionsTable.ForeignKeys[2].RefTable = MissionBatchesTable

@@ -100,6 +100,21 @@ type Invite func(*sql.Selector)
 // LoginRecord is the predicate function for loginrecord builders.
 type LoginRecord func(*sql.Selector)
 
+// Lotto is the predicate function for lotto builders.
+type Lotto func(*sql.Selector)
+
+// LottoGetCountRecord is the predicate function for lottogetcountrecord builders.
+type LottoGetCountRecord func(*sql.Selector)
+
+// LottoPrize is the predicate function for lottoprize builders.
+type LottoPrize func(*sql.Selector)
+
+// LottoRecord is the predicate function for lottorecord builders.
+type LottoRecord func(*sql.Selector)
+
+// LottoUserCount is the predicate function for lottousercount builders.
+type LottoUserCount func(*sql.Selector)
+
 // Mission is the predicate function for mission builders.
 type Mission func(*sql.Selector)
 

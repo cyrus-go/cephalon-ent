@@ -36,6 +36,11 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -145,6 +150,11 @@ func checkColumn(table, column string) error {
 			inputlog.Table:             inputlog.ValidColumn,
 			invite.Table:               invite.ValidColumn,
 			loginrecord.Table:          loginrecord.ValidColumn,
+			lotto.Table:                lotto.ValidColumn,
+			lottogetcountrecord.Table:  lottogetcountrecord.ValidColumn,
+			lottoprize.Table:           lottoprize.ValidColumn,
+			lottorecord.Table:          lottorecord.ValidColumn,
+			lottousercount.Table:       lottousercount.ValidColumn,
 			mission.Table:              mission.ValidColumn,
 			missionbatch.Table:         missionbatch.ValidColumn,
 			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,

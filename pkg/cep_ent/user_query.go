@@ -23,6 +23,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -84,6 +87,9 @@ type UserQuery struct {
 	withArtworkLikes          *ArtworkLikeQuery
 	withCdkInfos              *CDKInfoQuery
 	withUseCdkInfos           *CDKInfoQuery
+	withLottoRecords          *LottoRecordQuery
+	withLottoUserCounts       *LottoUserCountQuery
+	withLottoGetCountRecords  *LottoGetCountRecordQuery
 	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -869,6 +875,72 @@ func (uq *UserQuery) QueryUseCdkInfos() *CDKInfoQuery {
 	return query
 }
 
+// QueryLottoRecords chains the current query on the "lotto_records" edge.
+func (uq *UserQuery) QueryLottoRecords() *LottoRecordQuery {
+	query := (&LottoRecordClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(lottorecord.Table, lottorecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LottoRecordsTable, user.LottoRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLottoUserCounts chains the current query on the "lotto_user_counts" edge.
+func (uq *UserQuery) QueryLottoUserCounts() *LottoUserCountQuery {
+	query := (&LottoUserCountClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(lottousercount.Table, lottousercount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LottoUserCountsTable, user.LottoUserCountsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLottoGetCountRecords chains the current query on the "lotto_get_count_records" edge.
+func (uq *UserQuery) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
+	query := (&LottoGetCountRecordClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(lottogetcountrecord.Table, lottogetcountrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LottoGetCountRecordsTable, user.LottoGetCountRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1095,6 +1167,9 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withArtworkLikes:          uq.withArtworkLikes.Clone(),
 		withCdkInfos:              uq.withCdkInfos.Clone(),
 		withUseCdkInfos:           uq.withUseCdkInfos.Clone(),
+		withLottoRecords:          uq.withLottoRecords.Clone(),
+		withLottoUserCounts:       uq.withLottoUserCounts.Clone(),
+		withLottoGetCountRecords:  uq.withLottoGetCountRecords.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1475,6 +1550,39 @@ func (uq *UserQuery) WithUseCdkInfos(opts ...func(*CDKInfoQuery)) *UserQuery {
 	return uq
 }
 
+// WithLottoRecords tells the query-builder to eager-load the nodes that are connected to
+// the "lotto_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithLottoRecords(opts ...func(*LottoRecordQuery)) *UserQuery {
+	query := (&LottoRecordClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withLottoRecords = query
+	return uq
+}
+
+// WithLottoUserCounts tells the query-builder to eager-load the nodes that are connected to
+// the "lotto_user_counts" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithLottoUserCounts(opts ...func(*LottoUserCountQuery)) *UserQuery {
+	query := (&LottoUserCountClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withLottoUserCounts = query
+	return uq
+}
+
+// WithLottoGetCountRecords tells the query-builder to eager-load the nodes that are connected to
+// the "lotto_get_count_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithLottoGetCountRecords(opts ...func(*LottoGetCountRecordQuery)) *UserQuery {
+	query := (&LottoGetCountRecordClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withLottoGetCountRecords = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1553,7 +1661,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [34]bool{
+		loadedTypes = [37]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1588,6 +1696,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withArtworkLikes != nil,
 			uq.withCdkInfos != nil,
 			uq.withUseCdkInfos != nil,
+			uq.withLottoRecords != nil,
+			uq.withLottoUserCounts != nil,
+			uq.withLottoGetCountRecords != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1852,6 +1963,29 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadUseCdkInfos(ctx, query, nodes,
 			func(n *User) { n.Edges.UseCdkInfos = []*CDKInfo{} },
 			func(n *User, e *CDKInfo) { n.Edges.UseCdkInfos = append(n.Edges.UseCdkInfos, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withLottoRecords; query != nil {
+		if err := uq.loadLottoRecords(ctx, query, nodes,
+			func(n *User) { n.Edges.LottoRecords = []*LottoRecord{} },
+			func(n *User, e *LottoRecord) { n.Edges.LottoRecords = append(n.Edges.LottoRecords, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withLottoUserCounts; query != nil {
+		if err := uq.loadLottoUserCounts(ctx, query, nodes,
+			func(n *User) { n.Edges.LottoUserCounts = []*LottoUserCount{} },
+			func(n *User, e *LottoUserCount) { n.Edges.LottoUserCounts = append(n.Edges.LottoUserCounts, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withLottoGetCountRecords; query != nil {
+		if err := uq.loadLottoGetCountRecords(ctx, query, nodes,
+			func(n *User) { n.Edges.LottoGetCountRecords = []*LottoGetCountRecord{} },
+			func(n *User, e *LottoGetCountRecord) {
+				n.Edges.LottoGetCountRecords = append(n.Edges.LottoGetCountRecords, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -2865,6 +2999,96 @@ func (uq *UserQuery) loadUseCdkInfos(ctx context.Context, query *CDKInfoQuery, n
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "use_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadLottoRecords(ctx context.Context, query *LottoRecordQuery, nodes []*User, init func(*User), assign func(*User, *LottoRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(lottorecord.FieldUserID)
+	}
+	query.Where(predicate.LottoRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.LottoRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadLottoUserCounts(ctx context.Context, query *LottoUserCountQuery, nodes []*User, init func(*User), assign func(*User, *LottoUserCount)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(lottousercount.FieldUserID)
+	}
+	query.Where(predicate.LottoUserCount(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.LottoUserCountsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadLottoGetCountRecords(ctx context.Context, query *LottoGetCountRecordQuery, nodes []*User, init func(*User), assign func(*User, *LottoGetCountRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(lottogetcountrecord.FieldUserID)
+	}
+	query.Where(predicate.LottoGetCountRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.LottoGetCountRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -60,6 +60,16 @@ type Tx struct {
 	Invite *InviteClient
 	// LoginRecord is the client for interacting with the LoginRecord builders.
 	LoginRecord *LoginRecordClient
+	// Lotto is the client for interacting with the Lotto builders.
+	Lotto *LottoClient
+	// LottoGetCountRecord is the client for interacting with the LottoGetCountRecord builders.
+	LottoGetCountRecord *LottoGetCountRecordClient
+	// LottoPrize is the client for interacting with the LottoPrize builders.
+	LottoPrize *LottoPrizeClient
+	// LottoRecord is the client for interacting with the LottoRecord builders.
+	LottoRecord *LottoRecordClient
+	// LottoUserCount is the client for interacting with the LottoUserCount builders.
+	LottoUserCount *LottoUserCountClient
 	// Mission is the client for interacting with the Mission builders.
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
@@ -265,6 +275,11 @@ func (tx *Tx) init() {
 	tx.InputLog = NewInputLogClient(tx.config)
 	tx.Invite = NewInviteClient(tx.config)
 	tx.LoginRecord = NewLoginRecordClient(tx.config)
+	tx.Lotto = NewLottoClient(tx.config)
+	tx.LottoGetCountRecord = NewLottoGetCountRecordClient(tx.config)
+	tx.LottoPrize = NewLottoPrizeClient(tx.config)
+	tx.LottoRecord = NewLottoRecordClient(tx.config)
+	tx.LottoUserCount = NewLottoUserCountClient(tx.config)
 	tx.Mission = NewMissionClient(tx.config)
 	tx.MissionBatch = NewMissionBatchClient(tx.config)
 	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)

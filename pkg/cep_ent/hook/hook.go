@@ -297,6 +297,66 @@ func (f LoginRecordFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.LoginRecordMutation", m)
 }
 
+// The LottoFunc type is an adapter to allow the use of ordinary
+// function as Lotto mutator.
+type LottoFunc func(context.Context, *cep_ent.LottoMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LottoFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.LottoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.LottoMutation", m)
+}
+
+// The LottoGetCountRecordFunc type is an adapter to allow the use of ordinary
+// function as LottoGetCountRecord mutator.
+type LottoGetCountRecordFunc func(context.Context, *cep_ent.LottoGetCountRecordMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LottoGetCountRecordFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.LottoGetCountRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.LottoGetCountRecordMutation", m)
+}
+
+// The LottoPrizeFunc type is an adapter to allow the use of ordinary
+// function as LottoPrize mutator.
+type LottoPrizeFunc func(context.Context, *cep_ent.LottoPrizeMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LottoPrizeFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.LottoPrizeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.LottoPrizeMutation", m)
+}
+
+// The LottoRecordFunc type is an adapter to allow the use of ordinary
+// function as LottoRecord mutator.
+type LottoRecordFunc func(context.Context, *cep_ent.LottoRecordMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LottoRecordFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.LottoRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.LottoRecordMutation", m)
+}
+
+// The LottoUserCountFunc type is an adapter to allow the use of ordinary
+// function as LottoUserCount mutator.
+type LottoUserCountFunc func(context.Context, *cep_ent.LottoUserCountMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LottoUserCountFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.LottoUserCountMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.LottoUserCountMutation", m)
+}
+
 // The MissionFunc type is an adapter to allow the use of ordinary
 // function as Mission mutator.
 type MissionFunc func(context.Context, *cep_ent.MissionMutation) (cep_ent.Value, error)

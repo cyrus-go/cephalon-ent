@@ -68,6 +68,9 @@ func (User) Edges() []ent.Edge {
 		edge.To("artwork_likes", ArtworkLike.Type),
 		edge.To("cdk_infos", CDKInfo.Type),
 		edge.To("use_cdk_infos", CDKInfo.Type),
+		edge.To("lotto_records", LottoRecord.Type),
+		edge.To("lotto_user_counts", LottoUserCount.Type),
+		edge.To("lotto_get_count_records", LottoGetCountRecord.Type),
 	}
 }
 
