@@ -15,6 +15,9 @@ type ArtworkLike func(*sql.Selector)
 // Bill is the predicate function for bill builders.
 type Bill func(*sql.Selector)
 
+// CDKInfo is the predicate function for cdkinfo builders.
+type CDKInfo func(*sql.Selector)
+
 // Campaign is the predicate function for campaign builders.
 type Campaign func(*sql.Selector)
 
@@ -96,6 +99,21 @@ type Invite func(*sql.Selector)
 
 // LoginRecord is the predicate function for loginrecord builders.
 type LoginRecord func(*sql.Selector)
+
+// Lotto is the predicate function for lotto builders.
+type Lotto func(*sql.Selector)
+
+// LottoGetCountRecord is the predicate function for lottogetcountrecord builders.
+type LottoGetCountRecord func(*sql.Selector)
+
+// LottoPrize is the predicate function for lottoprize builders.
+type LottoPrize func(*sql.Selector)
+
+// LottoRecord is the predicate function for lottorecord builders.
+type LottoRecord func(*sql.Selector)
+
+// LottoUserCount is the predicate function for lottousercount builders.
+type LottoUserCount func(*sql.Selector)
 
 // Mission is the predicate function for mission builders.
 type Mission func(*sql.Selector)

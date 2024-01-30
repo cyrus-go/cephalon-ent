@@ -44,6 +44,10 @@ const (
 	FieldBankCardNumber = "bank_card_number"
 	// FieldBank holds the string denoting the bank field in the database.
 	FieldBank = "bank"
+	// FieldWay holds the string denoting the way field in the database.
+	FieldWay = "way"
+	// FieldAlipayCardNo holds the string denoting the alipay_card_no field in the database.
+	FieldAlipayCardNo = "alipay_card_no"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the withdrawaccount in the database.
@@ -74,6 +78,8 @@ var Columns = []string{
 	FieldPhone,
 	FieldBankCardNumber,
 	FieldBank,
+	FieldWay,
+	FieldAlipayCardNo,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,6 +121,8 @@ var (
 	DefaultBankCardNumber string
 	// DefaultBank holds the default value on creation for the "bank" field.
 	DefaultBank string
+	// DefaultAlipayCardNo holds the default value on creation for the "alipay_card_no" field.
+	DefaultAlipayCardNo string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -128,6 +136,18 @@ func BusinessTypeValidator(bt enums.BusinessType) error {
 		return nil
 	default:
 		return fmt.Errorf("withdrawaccount: invalid enum value for business_type field: %q", bt)
+	}
+}
+
+const DefaultWay enums.TransferOrderType = "unknown"
+
+// WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
+func WayValidator(w enums.TransferOrderType) error {
+	switch w {
+	case "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund":
+		return nil
+	default:
+		return fmt.Errorf("withdrawaccount: invalid enum value for way field: %q", w)
 	}
 }
 
@@ -207,6 +227,16 @@ func ByBankCardNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByBank orders the results by the bank field.
 func ByBank(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBank, opts...).ToFunc()
+}
+
+// ByWay orders the results by the way field.
+func ByWay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWay, opts...).ToFunc()
+}
+
+// ByAlipayCardNo orders the results by the alipay_card_no field.
+func ByAlipayCardNo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAlipayCardNo, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

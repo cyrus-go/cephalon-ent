@@ -550,6 +550,20 @@ func (mc *MissionCreate) SetNillableClosedAt(t *time.Time) *MissionCreate {
 	return mc
 }
 
+// SetWarningTimes sets the "warning_times" field.
+func (mc *MissionCreate) SetWarningTimes(i int64) *MissionCreate {
+	mc.mutation.SetWarningTimes(i)
+	return mc
+}
+
+// SetNillableWarningTimes sets the "warning_times" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableWarningTimes(i *int64) *MissionCreate {
+	if i != nil {
+		mc.SetWarningTimes(*i)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -894,6 +908,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultClosedAt
 		mc.mutation.SetClosedAt(v)
 	}
+	if _, ok := mc.mutation.WarningTimes(); !ok {
+		v := mission.DefaultWarningTimes
+		mc.mutation.SetWarningTimes(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -1026,6 +1044,9 @@ func (mc *MissionCreate) check() error {
 		if err := mission.CloseWayValidator(v); err != nil {
 			return &ValidationError{Name: "close_way", err: fmt.Errorf(`cep_ent: validator failed for field "Mission.close_way": %w`, err)}
 		}
+	}
+	if _, ok := mc.mutation.WarningTimes(); !ok {
+		return &ValidationError{Name: "warning_times", err: errors.New(`cep_ent: missing required field "Mission.warning_times"`)}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1222,6 +1243,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.ClosedAt(); ok {
 		_spec.SetField(mission.FieldClosedAt, field.TypeTime, value)
 		_node.ClosedAt = &value
+	}
+	if value, ok := mc.mutation.WarningTimes(); ok {
+		_spec.SetField(mission.FieldWarningTimes, field.TypeInt64, value)
+		_node.WarningTimes = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2021,6 +2046,24 @@ func (u *MissionUpsert) ClearClosedAt() *MissionUpsert {
 	return u
 }
 
+// SetWarningTimes sets the "warning_times" field.
+func (u *MissionUpsert) SetWarningTimes(v int64) *MissionUpsert {
+	u.Set(mission.FieldWarningTimes, v)
+	return u
+}
+
+// UpdateWarningTimes sets the "warning_times" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateWarningTimes() *MissionUpsert {
+	u.SetExcluded(mission.FieldWarningTimes)
+	return u
+}
+
+// AddWarningTimes adds v to the "warning_times" field.
+func (u *MissionUpsert) AddWarningTimes(v int64) *MissionUpsert {
+	u.Add(mission.FieldWarningTimes, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2692,6 +2735,27 @@ func (u *MissionUpsertOne) UpdateClosedAt() *MissionUpsertOne {
 func (u *MissionUpsertOne) ClearClosedAt() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearClosedAt()
+	})
+}
+
+// SetWarningTimes sets the "warning_times" field.
+func (u *MissionUpsertOne) SetWarningTimes(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetWarningTimes(v)
+	})
+}
+
+// AddWarningTimes adds v to the "warning_times" field.
+func (u *MissionUpsertOne) AddWarningTimes(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddWarningTimes(v)
+	})
+}
+
+// UpdateWarningTimes sets the "warning_times" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateWarningTimes() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateWarningTimes()
 	})
 }
 
@@ -3535,6 +3599,27 @@ func (u *MissionUpsertBulk) UpdateClosedAt() *MissionUpsertBulk {
 func (u *MissionUpsertBulk) ClearClosedAt() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.ClearClosedAt()
+	})
+}
+
+// SetWarningTimes sets the "warning_times" field.
+func (u *MissionUpsertBulk) SetWarningTimes(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetWarningTimes(v)
+	})
+}
+
+// AddWarningTimes adds v to the "warning_times" field.
+func (u *MissionUpsertBulk) AddWarningTimes(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.AddWarningTimes(v)
+	})
+}
+
+// UpdateWarningTimes sets the "warning_times" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateWarningTimes() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateWarningTimes()
 	})
 }
 

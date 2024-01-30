@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -34,6 +35,11 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -75,6 +81,7 @@ const (
 	TypeArtwork              = "Artwork"
 	TypeArtworkLike          = "ArtworkLike"
 	TypeBill                 = "Bill"
+	TypeCDKInfo              = "CDKInfo"
 	TypeCampaign             = "Campaign"
 	TypeCampaignOrder        = "CampaignOrder"
 	TypeCollect              = "Collect"
@@ -95,6 +102,11 @@ const (
 	TypeInputLog             = "InputLog"
 	TypeInvite               = "Invite"
 	TypeLoginRecord          = "LoginRecord"
+	TypeLotto                = "Lotto"
+	TypeLottoGetCountRecord  = "LottoGetCountRecord"
+	TypeLottoPrize           = "LottoPrize"
+	TypeLottoRecord          = "LottoRecord"
+	TypeLottoUserCount       = "LottoUserCount"
 	TypeMission              = "Mission"
 	TypeMissionBatch         = "MissionBatch"
 	TypeMissionConsumeOrder  = "MissionConsumeOrder"
@@ -3854,6 +3866,1457 @@ func (m *BillMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Bill edge %s", name)
+}
+
+// CDKInfoMutation represents an operation that mutates the CDKInfo nodes in the graph.
+type CDKInfoMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	created_by        *int64
+	addcreated_by     *int64
+	updated_by        *int64
+	addupdated_by     *int64
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	cdk_number        *string
+	_type             *enums.CDKType
+	get_cep           *int64
+	addget_cep        *int64
+	get_time          *int64
+	addget_time       *int64
+	billing_type      *enums.MissionBillingType
+	expired_at        *time.Time
+	use_times         *int64
+	adduse_times      *int64
+	status            *enums.CDKStatus
+	used_at           *time.Time
+	clearedFields     map[string]struct{}
+	issue_user        *int64
+	clearedissue_user bool
+	use_user          *int64
+	cleareduse_user   bool
+	done              bool
+	oldValue          func(context.Context) (*CDKInfo, error)
+	predicates        []predicate.CDKInfo
+}
+
+var _ ent.Mutation = (*CDKInfoMutation)(nil)
+
+// cdkinfoOption allows management of the mutation configuration using functional options.
+type cdkinfoOption func(*CDKInfoMutation)
+
+// newCDKInfoMutation creates new mutation for the CDKInfo entity.
+func newCDKInfoMutation(c config, op Op, opts ...cdkinfoOption) *CDKInfoMutation {
+	m := &CDKInfoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCDKInfo,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCDKInfoID sets the ID field of the mutation.
+func withCDKInfoID(id int64) cdkinfoOption {
+	return func(m *CDKInfoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CDKInfo
+		)
+		m.oldValue = func(ctx context.Context) (*CDKInfo, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CDKInfo.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCDKInfo sets the old CDKInfo of the mutation.
+func withCDKInfo(node *CDKInfo) cdkinfoOption {
+	return func(m *CDKInfoMutation) {
+		m.oldValue = func(context.Context) (*CDKInfo, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CDKInfoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CDKInfoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CDKInfo entities.
+func (m *CDKInfoMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CDKInfoMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CDKInfoMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CDKInfo.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CDKInfoMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CDKInfoMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *CDKInfoMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CDKInfoMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CDKInfoMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CDKInfoMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CDKInfoMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *CDKInfoMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CDKInfoMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CDKInfoMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CDKInfoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CDKInfoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CDKInfoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CDKInfoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CDKInfoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CDKInfoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CDKInfoMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CDKInfoMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CDKInfoMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetIssueUserID sets the "issue_user_id" field.
+func (m *CDKInfoMutation) SetIssueUserID(i int64) {
+	m.issue_user = &i
+}
+
+// IssueUserID returns the value of the "issue_user_id" field in the mutation.
+func (m *CDKInfoMutation) IssueUserID() (r int64, exists bool) {
+	v := m.issue_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIssueUserID returns the old "issue_user_id" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldIssueUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIssueUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIssueUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIssueUserID: %w", err)
+	}
+	return oldValue.IssueUserID, nil
+}
+
+// ResetIssueUserID resets all changes to the "issue_user_id" field.
+func (m *CDKInfoMutation) ResetIssueUserID() {
+	m.issue_user = nil
+}
+
+// SetCdkNumber sets the "cdk_number" field.
+func (m *CDKInfoMutation) SetCdkNumber(s string) {
+	m.cdk_number = &s
+}
+
+// CdkNumber returns the value of the "cdk_number" field in the mutation.
+func (m *CDKInfoMutation) CdkNumber() (r string, exists bool) {
+	v := m.cdk_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCdkNumber returns the old "cdk_number" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldCdkNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCdkNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCdkNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCdkNumber: %w", err)
+	}
+	return oldValue.CdkNumber, nil
+}
+
+// ResetCdkNumber resets all changes to the "cdk_number" field.
+func (m *CDKInfoMutation) ResetCdkNumber() {
+	m.cdk_number = nil
+}
+
+// SetType sets the "type" field.
+func (m *CDKInfoMutation) SetType(et enums.CDKType) {
+	m._type = &et
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *CDKInfoMutation) GetType() (r enums.CDKType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldType(ctx context.Context) (v enums.CDKType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *CDKInfoMutation) ResetType() {
+	m._type = nil
+}
+
+// SetGetCep sets the "get_cep" field.
+func (m *CDKInfoMutation) SetGetCep(i int64) {
+	m.get_cep = &i
+	m.addget_cep = nil
+}
+
+// GetCep returns the value of the "get_cep" field in the mutation.
+func (m *CDKInfoMutation) GetCep() (r int64, exists bool) {
+	v := m.get_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetCep returns the old "get_cep" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldGetCep(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGetCep is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGetCep requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetCep: %w", err)
+	}
+	return oldValue.GetCep, nil
+}
+
+// AddGetCep adds i to the "get_cep" field.
+func (m *CDKInfoMutation) AddGetCep(i int64) {
+	if m.addget_cep != nil {
+		*m.addget_cep += i
+	} else {
+		m.addget_cep = &i
+	}
+}
+
+// AddedGetCep returns the value that was added to the "get_cep" field in this mutation.
+func (m *CDKInfoMutation) AddedGetCep() (r int64, exists bool) {
+	v := m.addget_cep
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGetCep resets all changes to the "get_cep" field.
+func (m *CDKInfoMutation) ResetGetCep() {
+	m.get_cep = nil
+	m.addget_cep = nil
+}
+
+// SetGetTime sets the "get_time" field.
+func (m *CDKInfoMutation) SetGetTime(i int64) {
+	m.get_time = &i
+	m.addget_time = nil
+}
+
+// GetTime returns the value of the "get_time" field in the mutation.
+func (m *CDKInfoMutation) GetTime() (r int64, exists bool) {
+	v := m.get_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGetTime returns the old "get_time" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldGetTime(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGetTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGetTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGetTime: %w", err)
+	}
+	return oldValue.GetTime, nil
+}
+
+// AddGetTime adds i to the "get_time" field.
+func (m *CDKInfoMutation) AddGetTime(i int64) {
+	if m.addget_time != nil {
+		*m.addget_time += i
+	} else {
+		m.addget_time = &i
+	}
+}
+
+// AddedGetTime returns the value that was added to the "get_time" field in this mutation.
+func (m *CDKInfoMutation) AddedGetTime() (r int64, exists bool) {
+	v := m.addget_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGetTime resets all changes to the "get_time" field.
+func (m *CDKInfoMutation) ResetGetTime() {
+	m.get_time = nil
+	m.addget_time = nil
+}
+
+// SetBillingType sets the "billing_type" field.
+func (m *CDKInfoMutation) SetBillingType(ebt enums.MissionBillingType) {
+	m.billing_type = &ebt
+}
+
+// BillingType returns the value of the "billing_type" field in the mutation.
+func (m *CDKInfoMutation) BillingType() (r enums.MissionBillingType, exists bool) {
+	v := m.billing_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBillingType returns the old "billing_type" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldBillingType(ctx context.Context) (v enums.MissionBillingType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBillingType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBillingType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBillingType: %w", err)
+	}
+	return oldValue.BillingType, nil
+}
+
+// ResetBillingType resets all changes to the "billing_type" field.
+func (m *CDKInfoMutation) ResetBillingType() {
+	m.billing_type = nil
+}
+
+// SetExpiredAt sets the "expired_at" field.
+func (m *CDKInfoMutation) SetExpiredAt(t time.Time) {
+	m.expired_at = &t
+}
+
+// ExpiredAt returns the value of the "expired_at" field in the mutation.
+func (m *CDKInfoMutation) ExpiredAt() (r time.Time, exists bool) {
+	v := m.expired_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiredAt returns the old "expired_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldExpiredAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiredAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiredAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiredAt: %w", err)
+	}
+	return oldValue.ExpiredAt, nil
+}
+
+// ClearExpiredAt clears the value of the "expired_at" field.
+func (m *CDKInfoMutation) ClearExpiredAt() {
+	m.expired_at = nil
+	m.clearedFields[cdkinfo.FieldExpiredAt] = struct{}{}
+}
+
+// ExpiredAtCleared returns if the "expired_at" field was cleared in this mutation.
+func (m *CDKInfoMutation) ExpiredAtCleared() bool {
+	_, ok := m.clearedFields[cdkinfo.FieldExpiredAt]
+	return ok
+}
+
+// ResetExpiredAt resets all changes to the "expired_at" field.
+func (m *CDKInfoMutation) ResetExpiredAt() {
+	m.expired_at = nil
+	delete(m.clearedFields, cdkinfo.FieldExpiredAt)
+}
+
+// SetUseTimes sets the "use_times" field.
+func (m *CDKInfoMutation) SetUseTimes(i int64) {
+	m.use_times = &i
+	m.adduse_times = nil
+}
+
+// UseTimes returns the value of the "use_times" field in the mutation.
+func (m *CDKInfoMutation) UseTimes() (r int64, exists bool) {
+	v := m.use_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUseTimes returns the old "use_times" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUseTimes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUseTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUseTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUseTimes: %w", err)
+	}
+	return oldValue.UseTimes, nil
+}
+
+// AddUseTimes adds i to the "use_times" field.
+func (m *CDKInfoMutation) AddUseTimes(i int64) {
+	if m.adduse_times != nil {
+		*m.adduse_times += i
+	} else {
+		m.adduse_times = &i
+	}
+}
+
+// AddedUseTimes returns the value that was added to the "use_times" field in this mutation.
+func (m *CDKInfoMutation) AddedUseTimes() (r int64, exists bool) {
+	v := m.adduse_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUseTimes resets all changes to the "use_times" field.
+func (m *CDKInfoMutation) ResetUseTimes() {
+	m.use_times = nil
+	m.adduse_times = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *CDKInfoMutation) SetStatus(es enums.CDKStatus) {
+	m.status = &es
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *CDKInfoMutation) Status() (r enums.CDKStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldStatus(ctx context.Context) (v enums.CDKStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *CDKInfoMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetUseUserID sets the "use_user_id" field.
+func (m *CDKInfoMutation) SetUseUserID(i int64) {
+	m.use_user = &i
+}
+
+// UseUserID returns the value of the "use_user_id" field in the mutation.
+func (m *CDKInfoMutation) UseUserID() (r int64, exists bool) {
+	v := m.use_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUseUserID returns the old "use_user_id" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUseUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUseUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUseUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUseUserID: %w", err)
+	}
+	return oldValue.UseUserID, nil
+}
+
+// ResetUseUserID resets all changes to the "use_user_id" field.
+func (m *CDKInfoMutation) ResetUseUserID() {
+	m.use_user = nil
+}
+
+// SetUsedAt sets the "used_at" field.
+func (m *CDKInfoMutation) SetUsedAt(t time.Time) {
+	m.used_at = &t
+}
+
+// UsedAt returns the value of the "used_at" field in the mutation.
+func (m *CDKInfoMutation) UsedAt() (r time.Time, exists bool) {
+	v := m.used_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsedAt returns the old "used_at" field's value of the CDKInfo entity.
+// If the CDKInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CDKInfoMutation) OldUsedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUsedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUsedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsedAt: %w", err)
+	}
+	return oldValue.UsedAt, nil
+}
+
+// ClearUsedAt clears the value of the "used_at" field.
+func (m *CDKInfoMutation) ClearUsedAt() {
+	m.used_at = nil
+	m.clearedFields[cdkinfo.FieldUsedAt] = struct{}{}
+}
+
+// UsedAtCleared returns if the "used_at" field was cleared in this mutation.
+func (m *CDKInfoMutation) UsedAtCleared() bool {
+	_, ok := m.clearedFields[cdkinfo.FieldUsedAt]
+	return ok
+}
+
+// ResetUsedAt resets all changes to the "used_at" field.
+func (m *CDKInfoMutation) ResetUsedAt() {
+	m.used_at = nil
+	delete(m.clearedFields, cdkinfo.FieldUsedAt)
+}
+
+// ClearIssueUser clears the "issue_user" edge to the User entity.
+func (m *CDKInfoMutation) ClearIssueUser() {
+	m.clearedissue_user = true
+	m.clearedFields[cdkinfo.FieldIssueUserID] = struct{}{}
+}
+
+// IssueUserCleared reports if the "issue_user" edge to the User entity was cleared.
+func (m *CDKInfoMutation) IssueUserCleared() bool {
+	return m.clearedissue_user
+}
+
+// IssueUserIDs returns the "issue_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// IssueUserID instead. It exists only for internal usage by the builders.
+func (m *CDKInfoMutation) IssueUserIDs() (ids []int64) {
+	if id := m.issue_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetIssueUser resets all changes to the "issue_user" edge.
+func (m *CDKInfoMutation) ResetIssueUser() {
+	m.issue_user = nil
+	m.clearedissue_user = false
+}
+
+// ClearUseUser clears the "use_user" edge to the User entity.
+func (m *CDKInfoMutation) ClearUseUser() {
+	m.cleareduse_user = true
+	m.clearedFields[cdkinfo.FieldUseUserID] = struct{}{}
+}
+
+// UseUserCleared reports if the "use_user" edge to the User entity was cleared.
+func (m *CDKInfoMutation) UseUserCleared() bool {
+	return m.cleareduse_user
+}
+
+// UseUserIDs returns the "use_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UseUserID instead. It exists only for internal usage by the builders.
+func (m *CDKInfoMutation) UseUserIDs() (ids []int64) {
+	if id := m.use_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUseUser resets all changes to the "use_user" edge.
+func (m *CDKInfoMutation) ResetUseUser() {
+	m.use_user = nil
+	m.cleareduse_user = false
+}
+
+// Where appends a list predicates to the CDKInfoMutation builder.
+func (m *CDKInfoMutation) Where(ps ...predicate.CDKInfo) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CDKInfoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CDKInfoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CDKInfo, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CDKInfoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CDKInfoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CDKInfo).
+func (m *CDKInfoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CDKInfoMutation) Fields() []string {
+	fields := make([]string, 0, 16)
+	if m.created_by != nil {
+		fields = append(fields, cdkinfo.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, cdkinfo.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, cdkinfo.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, cdkinfo.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, cdkinfo.FieldDeletedAt)
+	}
+	if m.issue_user != nil {
+		fields = append(fields, cdkinfo.FieldIssueUserID)
+	}
+	if m.cdk_number != nil {
+		fields = append(fields, cdkinfo.FieldCdkNumber)
+	}
+	if m._type != nil {
+		fields = append(fields, cdkinfo.FieldType)
+	}
+	if m.get_cep != nil {
+		fields = append(fields, cdkinfo.FieldGetCep)
+	}
+	if m.get_time != nil {
+		fields = append(fields, cdkinfo.FieldGetTime)
+	}
+	if m.billing_type != nil {
+		fields = append(fields, cdkinfo.FieldBillingType)
+	}
+	if m.expired_at != nil {
+		fields = append(fields, cdkinfo.FieldExpiredAt)
+	}
+	if m.use_times != nil {
+		fields = append(fields, cdkinfo.FieldUseTimes)
+	}
+	if m.status != nil {
+		fields = append(fields, cdkinfo.FieldStatus)
+	}
+	if m.use_user != nil {
+		fields = append(fields, cdkinfo.FieldUseUserID)
+	}
+	if m.used_at != nil {
+		fields = append(fields, cdkinfo.FieldUsedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CDKInfoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		return m.CreatedBy()
+	case cdkinfo.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case cdkinfo.FieldCreatedAt:
+		return m.CreatedAt()
+	case cdkinfo.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case cdkinfo.FieldDeletedAt:
+		return m.DeletedAt()
+	case cdkinfo.FieldIssueUserID:
+		return m.IssueUserID()
+	case cdkinfo.FieldCdkNumber:
+		return m.CdkNumber()
+	case cdkinfo.FieldType:
+		return m.GetType()
+	case cdkinfo.FieldGetCep:
+		return m.GetCep()
+	case cdkinfo.FieldGetTime:
+		return m.GetTime()
+	case cdkinfo.FieldBillingType:
+		return m.BillingType()
+	case cdkinfo.FieldExpiredAt:
+		return m.ExpiredAt()
+	case cdkinfo.FieldUseTimes:
+		return m.UseTimes()
+	case cdkinfo.FieldStatus:
+		return m.Status()
+	case cdkinfo.FieldUseUserID:
+		return m.UseUserID()
+	case cdkinfo.FieldUsedAt:
+		return m.UsedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CDKInfoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case cdkinfo.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case cdkinfo.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case cdkinfo.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case cdkinfo.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case cdkinfo.FieldIssueUserID:
+		return m.OldIssueUserID(ctx)
+	case cdkinfo.FieldCdkNumber:
+		return m.OldCdkNumber(ctx)
+	case cdkinfo.FieldType:
+		return m.OldType(ctx)
+	case cdkinfo.FieldGetCep:
+		return m.OldGetCep(ctx)
+	case cdkinfo.FieldGetTime:
+		return m.OldGetTime(ctx)
+	case cdkinfo.FieldBillingType:
+		return m.OldBillingType(ctx)
+	case cdkinfo.FieldExpiredAt:
+		return m.OldExpiredAt(ctx)
+	case cdkinfo.FieldUseTimes:
+		return m.OldUseTimes(ctx)
+	case cdkinfo.FieldStatus:
+		return m.OldStatus(ctx)
+	case cdkinfo.FieldUseUserID:
+		return m.OldUseUserID(ctx)
+	case cdkinfo.FieldUsedAt:
+		return m.OldUsedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown CDKInfo field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CDKInfoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case cdkinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case cdkinfo.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case cdkinfo.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case cdkinfo.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case cdkinfo.FieldIssueUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIssueUserID(v)
+		return nil
+	case cdkinfo.FieldCdkNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCdkNumber(v)
+		return nil
+	case cdkinfo.FieldType:
+		v, ok := value.(enums.CDKType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case cdkinfo.FieldGetCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetCep(v)
+		return nil
+	case cdkinfo.FieldGetTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGetTime(v)
+		return nil
+	case cdkinfo.FieldBillingType:
+		v, ok := value.(enums.MissionBillingType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBillingType(v)
+		return nil
+	case cdkinfo.FieldExpiredAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiredAt(v)
+		return nil
+	case cdkinfo.FieldUseTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUseTimes(v)
+		return nil
+	case cdkinfo.FieldStatus:
+		v, ok := value.(enums.CDKStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case cdkinfo.FieldUseUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUseUserID(v)
+		return nil
+	case cdkinfo.FieldUsedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CDKInfoMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, cdkinfo.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, cdkinfo.FieldUpdatedBy)
+	}
+	if m.addget_cep != nil {
+		fields = append(fields, cdkinfo.FieldGetCep)
+	}
+	if m.addget_time != nil {
+		fields = append(fields, cdkinfo.FieldGetTime)
+	}
+	if m.adduse_times != nil {
+		fields = append(fields, cdkinfo.FieldUseTimes)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CDKInfoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case cdkinfo.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case cdkinfo.FieldGetCep:
+		return m.AddedGetCep()
+	case cdkinfo.FieldGetTime:
+		return m.AddedGetTime()
+	case cdkinfo.FieldUseTimes:
+		return m.AddedUseTimes()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CDKInfoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case cdkinfo.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case cdkinfo.FieldGetCep:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGetCep(v)
+		return nil
+	case cdkinfo.FieldGetTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGetTime(v)
+		return nil
+	case cdkinfo.FieldUseTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUseTimes(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CDKInfoMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(cdkinfo.FieldExpiredAt) {
+		fields = append(fields, cdkinfo.FieldExpiredAt)
+	}
+	if m.FieldCleared(cdkinfo.FieldUsedAt) {
+		fields = append(fields, cdkinfo.FieldUsedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CDKInfoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CDKInfoMutation) ClearField(name string) error {
+	switch name {
+	case cdkinfo.FieldExpiredAt:
+		m.ClearExpiredAt()
+		return nil
+	case cdkinfo.FieldUsedAt:
+		m.ClearUsedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CDKInfoMutation) ResetField(name string) error {
+	switch name {
+	case cdkinfo.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case cdkinfo.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case cdkinfo.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case cdkinfo.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case cdkinfo.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case cdkinfo.FieldIssueUserID:
+		m.ResetIssueUserID()
+		return nil
+	case cdkinfo.FieldCdkNumber:
+		m.ResetCdkNumber()
+		return nil
+	case cdkinfo.FieldType:
+		m.ResetType()
+		return nil
+	case cdkinfo.FieldGetCep:
+		m.ResetGetCep()
+		return nil
+	case cdkinfo.FieldGetTime:
+		m.ResetGetTime()
+		return nil
+	case cdkinfo.FieldBillingType:
+		m.ResetBillingType()
+		return nil
+	case cdkinfo.FieldExpiredAt:
+		m.ResetExpiredAt()
+		return nil
+	case cdkinfo.FieldUseTimes:
+		m.ResetUseTimes()
+		return nil
+	case cdkinfo.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case cdkinfo.FieldUseUserID:
+		m.ResetUseUserID()
+		return nil
+	case cdkinfo.FieldUsedAt:
+		m.ResetUsedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CDKInfoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.issue_user != nil {
+		edges = append(edges, cdkinfo.EdgeIssueUser)
+	}
+	if m.use_user != nil {
+		edges = append(edges, cdkinfo.EdgeUseUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CDKInfoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		if id := m.issue_user; id != nil {
+			return []ent.Value{*id}
+		}
+	case cdkinfo.EdgeUseUser:
+		if id := m.use_user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CDKInfoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CDKInfoMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CDKInfoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedissue_user {
+		edges = append(edges, cdkinfo.EdgeIssueUser)
+	}
+	if m.cleareduse_user {
+		edges = append(edges, cdkinfo.EdgeUseUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CDKInfoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		return m.clearedissue_user
+	case cdkinfo.EdgeUseUser:
+		return m.cleareduse_user
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CDKInfoMutation) ClearEdge(name string) error {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		m.ClearIssueUser()
+		return nil
+	case cdkinfo.EdgeUseUser:
+		m.ClearUseUser()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CDKInfoMutation) ResetEdge(name string) error {
+	switch name {
+	case cdkinfo.EdgeIssueUser:
+		m.ResetIssueUser()
+		return nil
+	case cdkinfo.EdgeUseUser:
+		m.ResetUseUser()
+		return nil
+	}
+	return fmt.Errorf("unknown CDKInfo edge %s", name)
 }
 
 // CampaignMutation represents an operation that mutates the Campaign nodes in the graph.
@@ -23115,6 +24578,10 @@ type GpuMutation struct {
 	addcpu                     *int
 	memory                     *int
 	addmemory                  *int
+	lowest_earn_month          *int64
+	addlowest_earn_month       *int64
+	highest_earn_month         *int64
+	addhighest_earn_month      *int64
 	clearedFields              map[string]struct{}
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
@@ -23711,6 +25178,118 @@ func (m *GpuMutation) ResetMemory() {
 	m.addmemory = nil
 }
 
+// SetLowestEarnMonth sets the "lowest_earn_month" field.
+func (m *GpuMutation) SetLowestEarnMonth(i int64) {
+	m.lowest_earn_month = &i
+	m.addlowest_earn_month = nil
+}
+
+// LowestEarnMonth returns the value of the "lowest_earn_month" field in the mutation.
+func (m *GpuMutation) LowestEarnMonth() (r int64, exists bool) {
+	v := m.lowest_earn_month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLowestEarnMonth returns the old "lowest_earn_month" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldLowestEarnMonth(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLowestEarnMonth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLowestEarnMonth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLowestEarnMonth: %w", err)
+	}
+	return oldValue.LowestEarnMonth, nil
+}
+
+// AddLowestEarnMonth adds i to the "lowest_earn_month" field.
+func (m *GpuMutation) AddLowestEarnMonth(i int64) {
+	if m.addlowest_earn_month != nil {
+		*m.addlowest_earn_month += i
+	} else {
+		m.addlowest_earn_month = &i
+	}
+}
+
+// AddedLowestEarnMonth returns the value that was added to the "lowest_earn_month" field in this mutation.
+func (m *GpuMutation) AddedLowestEarnMonth() (r int64, exists bool) {
+	v := m.addlowest_earn_month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLowestEarnMonth resets all changes to the "lowest_earn_month" field.
+func (m *GpuMutation) ResetLowestEarnMonth() {
+	m.lowest_earn_month = nil
+	m.addlowest_earn_month = nil
+}
+
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (m *GpuMutation) SetHighestEarnMonth(i int64) {
+	m.highest_earn_month = &i
+	m.addhighest_earn_month = nil
+}
+
+// HighestEarnMonth returns the value of the "highest_earn_month" field in the mutation.
+func (m *GpuMutation) HighestEarnMonth() (r int64, exists bool) {
+	v := m.highest_earn_month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHighestEarnMonth returns the old "highest_earn_month" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldHighestEarnMonth(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHighestEarnMonth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHighestEarnMonth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHighestEarnMonth: %w", err)
+	}
+	return oldValue.HighestEarnMonth, nil
+}
+
+// AddHighestEarnMonth adds i to the "highest_earn_month" field.
+func (m *GpuMutation) AddHighestEarnMonth(i int64) {
+	if m.addhighest_earn_month != nil {
+		*m.addhighest_earn_month += i
+	} else {
+		m.addhighest_earn_month = &i
+	}
+}
+
+// AddedHighestEarnMonth returns the value that was added to the "highest_earn_month" field in this mutation.
+func (m *GpuMutation) AddedHighestEarnMonth() (r int64, exists bool) {
+	v := m.addhighest_earn_month
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetHighestEarnMonth resets all changes to the "highest_earn_month" field.
+func (m *GpuMutation) ResetHighestEarnMonth() {
+	m.highest_earn_month = nil
+	m.addhighest_earn_month = nil
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
 func (m *GpuMutation) AddDeviceGpuMissionIDs(ids ...int64) {
 	if m.device_gpu_missions == nil {
@@ -23853,7 +25432,7 @@ func (m *GpuMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GpuMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, gpu.FieldCreatedBy)
 	}
@@ -23884,6 +25463,12 @@ func (m *GpuMutation) Fields() []string {
 	if m.memory != nil {
 		fields = append(fields, gpu.FieldMemory)
 	}
+	if m.lowest_earn_month != nil {
+		fields = append(fields, gpu.FieldLowestEarnMonth)
+	}
+	if m.highest_earn_month != nil {
+		fields = append(fields, gpu.FieldHighestEarnMonth)
+	}
 	return fields
 }
 
@@ -23912,6 +25497,10 @@ func (m *GpuMutation) Field(name string) (ent.Value, bool) {
 		return m.CPU()
 	case gpu.FieldMemory:
 		return m.Memory()
+	case gpu.FieldLowestEarnMonth:
+		return m.LowestEarnMonth()
+	case gpu.FieldHighestEarnMonth:
+		return m.HighestEarnMonth()
 	}
 	return nil, false
 }
@@ -23941,6 +25530,10 @@ func (m *GpuMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldCPU(ctx)
 	case gpu.FieldMemory:
 		return m.OldMemory(ctx)
+	case gpu.FieldLowestEarnMonth:
+		return m.OldLowestEarnMonth(ctx)
+	case gpu.FieldHighestEarnMonth:
+		return m.OldHighestEarnMonth(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -24020,6 +25613,20 @@ func (m *GpuMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMemory(v)
 		return nil
+	case gpu.FieldLowestEarnMonth:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLowestEarnMonth(v)
+		return nil
+	case gpu.FieldHighestEarnMonth:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHighestEarnMonth(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -24046,6 +25653,12 @@ func (m *GpuMutation) AddedFields() []string {
 	if m.addmemory != nil {
 		fields = append(fields, gpu.FieldMemory)
 	}
+	if m.addlowest_earn_month != nil {
+		fields = append(fields, gpu.FieldLowestEarnMonth)
+	}
+	if m.addhighest_earn_month != nil {
+		fields = append(fields, gpu.FieldHighestEarnMonth)
+	}
 	return fields
 }
 
@@ -24066,6 +25679,10 @@ func (m *GpuMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCPU()
 	case gpu.FieldMemory:
 		return m.AddedMemory()
+	case gpu.FieldLowestEarnMonth:
+		return m.AddedLowestEarnMonth()
+	case gpu.FieldHighestEarnMonth:
+		return m.AddedHighestEarnMonth()
 	}
 	return nil, false
 }
@@ -24116,6 +25733,20 @@ func (m *GpuMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddMemory(v)
+		return nil
+	case gpu.FieldLowestEarnMonth:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLowestEarnMonth(v)
+		return nil
+	case gpu.FieldHighestEarnMonth:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHighestEarnMonth(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu numeric field %s", name)
@@ -24173,6 +25804,12 @@ func (m *GpuMutation) ResetField(name string) error {
 		return nil
 	case gpu.FieldMemory:
 		m.ResetMemory()
+		return nil
+	case gpu.FieldLowestEarnMonth:
+		m.ResetLowestEarnMonth()
+		return nil
+	case gpu.FieldHighestEarnMonth:
+		m.ResetHighestEarnMonth()
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
@@ -28605,6 +30242,5412 @@ func (m *LoginRecordMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown LoginRecord edge %s", name)
 }
 
+// LottoMutation represents an operation that mutates the Lotto nodes in the graph.
+type LottoMutation struct {
+	config
+	op                             Op
+	typ                            string
+	id                             *int64
+	created_by                     *int64
+	addcreated_by                  *int64
+	updated_by                     *int64
+	addupdated_by                  *int64
+	created_at                     *time.Time
+	updated_at                     *time.Time
+	deleted_at                     *time.Time
+	name                           *string
+	total_weight                   *int64
+	addtotal_weight                *int64
+	started_at                     *time.Time
+	ended_at                       *time.Time
+	status                         *enums.LottoStatus
+	clearedFields                  map[string]struct{}
+	lotto_prizes                   map[int64]struct{}
+	removedlotto_prizes            map[int64]struct{}
+	clearedlotto_prizes            bool
+	lotto_records                  map[int64]struct{}
+	removedlotto_records           map[int64]struct{}
+	clearedlotto_records           bool
+	lotto_user_counts              map[int64]struct{}
+	removedlotto_user_counts       map[int64]struct{}
+	clearedlotto_user_counts       bool
+	lotto_get_count_records        map[int64]struct{}
+	removedlotto_get_count_records map[int64]struct{}
+	clearedlotto_get_count_records bool
+	done                           bool
+	oldValue                       func(context.Context) (*Lotto, error)
+	predicates                     []predicate.Lotto
+}
+
+var _ ent.Mutation = (*LottoMutation)(nil)
+
+// lottoOption allows management of the mutation configuration using functional options.
+type lottoOption func(*LottoMutation)
+
+// newLottoMutation creates new mutation for the Lotto entity.
+func newLottoMutation(c config, op Op, opts ...lottoOption) *LottoMutation {
+	m := &LottoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLotto,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLottoID sets the ID field of the mutation.
+func withLottoID(id int64) lottoOption {
+	return func(m *LottoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Lotto
+		)
+		m.oldValue = func(ctx context.Context) (*Lotto, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Lotto.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLotto sets the old Lotto of the mutation.
+func withLotto(node *Lotto) lottoOption {
+	return func(m *LottoMutation) {
+		m.oldValue = func(context.Context) (*Lotto, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LottoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LottoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Lotto entities.
+func (m *LottoMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LottoMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LottoMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Lotto.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *LottoMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *LottoMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *LottoMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *LottoMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *LottoMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *LottoMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *LottoMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *LottoMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *LottoMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *LottoMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LottoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LottoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LottoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LottoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LottoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LottoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LottoMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LottoMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LottoMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetName sets the "name" field.
+func (m *LottoMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *LottoMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *LottoMutation) ResetName() {
+	m.name = nil
+}
+
+// SetTotalWeight sets the "total_weight" field.
+func (m *LottoMutation) SetTotalWeight(i int64) {
+	m.total_weight = &i
+	m.addtotal_weight = nil
+}
+
+// TotalWeight returns the value of the "total_weight" field in the mutation.
+func (m *LottoMutation) TotalWeight() (r int64, exists bool) {
+	v := m.total_weight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalWeight returns the old "total_weight" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldTotalWeight(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalWeight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalWeight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalWeight: %w", err)
+	}
+	return oldValue.TotalWeight, nil
+}
+
+// AddTotalWeight adds i to the "total_weight" field.
+func (m *LottoMutation) AddTotalWeight(i int64) {
+	if m.addtotal_weight != nil {
+		*m.addtotal_weight += i
+	} else {
+		m.addtotal_weight = &i
+	}
+}
+
+// AddedTotalWeight returns the value that was added to the "total_weight" field in this mutation.
+func (m *LottoMutation) AddedTotalWeight() (r int64, exists bool) {
+	v := m.addtotal_weight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalWeight resets all changes to the "total_weight" field.
+func (m *LottoMutation) ResetTotalWeight() {
+	m.total_weight = nil
+	m.addtotal_weight = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *LottoMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *LottoMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldStartedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *LottoMutation) ResetStartedAt() {
+	m.started_at = nil
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (m *LottoMutation) SetEndedAt(t time.Time) {
+	m.ended_at = &t
+}
+
+// EndedAt returns the value of the "ended_at" field in the mutation.
+func (m *LottoMutation) EndedAt() (r time.Time, exists bool) {
+	v := m.ended_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndedAt returns the old "ended_at" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldEndedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndedAt: %w", err)
+	}
+	return oldValue.EndedAt, nil
+}
+
+// ResetEndedAt resets all changes to the "ended_at" field.
+func (m *LottoMutation) ResetEndedAt() {
+	m.ended_at = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *LottoMutation) SetStatus(es enums.LottoStatus) {
+	m.status = &es
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *LottoMutation) Status() (r enums.LottoStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Lotto entity.
+// If the Lotto object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoMutation) OldStatus(ctx context.Context) (v enums.LottoStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *LottoMutation) ResetStatus() {
+	m.status = nil
+}
+
+// AddLottoPrizeIDs adds the "lotto_prizes" edge to the LottoPrize entity by ids.
+func (m *LottoMutation) AddLottoPrizeIDs(ids ...int64) {
+	if m.lotto_prizes == nil {
+		m.lotto_prizes = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_prizes[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoPrizes clears the "lotto_prizes" edge to the LottoPrize entity.
+func (m *LottoMutation) ClearLottoPrizes() {
+	m.clearedlotto_prizes = true
+}
+
+// LottoPrizesCleared reports if the "lotto_prizes" edge to the LottoPrize entity was cleared.
+func (m *LottoMutation) LottoPrizesCleared() bool {
+	return m.clearedlotto_prizes
+}
+
+// RemoveLottoPrizeIDs removes the "lotto_prizes" edge to the LottoPrize entity by IDs.
+func (m *LottoMutation) RemoveLottoPrizeIDs(ids ...int64) {
+	if m.removedlotto_prizes == nil {
+		m.removedlotto_prizes = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_prizes, ids[i])
+		m.removedlotto_prizes[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoPrizes returns the removed IDs of the "lotto_prizes" edge to the LottoPrize entity.
+func (m *LottoMutation) RemovedLottoPrizesIDs() (ids []int64) {
+	for id := range m.removedlotto_prizes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoPrizesIDs returns the "lotto_prizes" edge IDs in the mutation.
+func (m *LottoMutation) LottoPrizesIDs() (ids []int64) {
+	for id := range m.lotto_prizes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoPrizes resets all changes to the "lotto_prizes" edge.
+func (m *LottoMutation) ResetLottoPrizes() {
+	m.lotto_prizes = nil
+	m.clearedlotto_prizes = false
+	m.removedlotto_prizes = nil
+}
+
+// AddLottoRecordIDs adds the "lotto_records" edge to the LottoRecord entity by ids.
+func (m *LottoMutation) AddLottoRecordIDs(ids ...int64) {
+	if m.lotto_records == nil {
+		m.lotto_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoRecords clears the "lotto_records" edge to the LottoRecord entity.
+func (m *LottoMutation) ClearLottoRecords() {
+	m.clearedlotto_records = true
+}
+
+// LottoRecordsCleared reports if the "lotto_records" edge to the LottoRecord entity was cleared.
+func (m *LottoMutation) LottoRecordsCleared() bool {
+	return m.clearedlotto_records
+}
+
+// RemoveLottoRecordIDs removes the "lotto_records" edge to the LottoRecord entity by IDs.
+func (m *LottoMutation) RemoveLottoRecordIDs(ids ...int64) {
+	if m.removedlotto_records == nil {
+		m.removedlotto_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_records, ids[i])
+		m.removedlotto_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoRecords returns the removed IDs of the "lotto_records" edge to the LottoRecord entity.
+func (m *LottoMutation) RemovedLottoRecordsIDs() (ids []int64) {
+	for id := range m.removedlotto_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoRecordsIDs returns the "lotto_records" edge IDs in the mutation.
+func (m *LottoMutation) LottoRecordsIDs() (ids []int64) {
+	for id := range m.lotto_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoRecords resets all changes to the "lotto_records" edge.
+func (m *LottoMutation) ResetLottoRecords() {
+	m.lotto_records = nil
+	m.clearedlotto_records = false
+	m.removedlotto_records = nil
+}
+
+// AddLottoUserCountIDs adds the "lotto_user_counts" edge to the LottoUserCount entity by ids.
+func (m *LottoMutation) AddLottoUserCountIDs(ids ...int64) {
+	if m.lotto_user_counts == nil {
+		m.lotto_user_counts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_user_counts[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoUserCounts clears the "lotto_user_counts" edge to the LottoUserCount entity.
+func (m *LottoMutation) ClearLottoUserCounts() {
+	m.clearedlotto_user_counts = true
+}
+
+// LottoUserCountsCleared reports if the "lotto_user_counts" edge to the LottoUserCount entity was cleared.
+func (m *LottoMutation) LottoUserCountsCleared() bool {
+	return m.clearedlotto_user_counts
+}
+
+// RemoveLottoUserCountIDs removes the "lotto_user_counts" edge to the LottoUserCount entity by IDs.
+func (m *LottoMutation) RemoveLottoUserCountIDs(ids ...int64) {
+	if m.removedlotto_user_counts == nil {
+		m.removedlotto_user_counts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_user_counts, ids[i])
+		m.removedlotto_user_counts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoUserCounts returns the removed IDs of the "lotto_user_counts" edge to the LottoUserCount entity.
+func (m *LottoMutation) RemovedLottoUserCountsIDs() (ids []int64) {
+	for id := range m.removedlotto_user_counts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoUserCountsIDs returns the "lotto_user_counts" edge IDs in the mutation.
+func (m *LottoMutation) LottoUserCountsIDs() (ids []int64) {
+	for id := range m.lotto_user_counts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoUserCounts resets all changes to the "lotto_user_counts" edge.
+func (m *LottoMutation) ResetLottoUserCounts() {
+	m.lotto_user_counts = nil
+	m.clearedlotto_user_counts = false
+	m.removedlotto_user_counts = nil
+}
+
+// AddLottoGetCountRecordIDs adds the "lotto_get_count_records" edge to the LottoGetCountRecord entity by ids.
+func (m *LottoMutation) AddLottoGetCountRecordIDs(ids ...int64) {
+	if m.lotto_get_count_records == nil {
+		m.lotto_get_count_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_get_count_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoGetCountRecords clears the "lotto_get_count_records" edge to the LottoGetCountRecord entity.
+func (m *LottoMutation) ClearLottoGetCountRecords() {
+	m.clearedlotto_get_count_records = true
+}
+
+// LottoGetCountRecordsCleared reports if the "lotto_get_count_records" edge to the LottoGetCountRecord entity was cleared.
+func (m *LottoMutation) LottoGetCountRecordsCleared() bool {
+	return m.clearedlotto_get_count_records
+}
+
+// RemoveLottoGetCountRecordIDs removes the "lotto_get_count_records" edge to the LottoGetCountRecord entity by IDs.
+func (m *LottoMutation) RemoveLottoGetCountRecordIDs(ids ...int64) {
+	if m.removedlotto_get_count_records == nil {
+		m.removedlotto_get_count_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_get_count_records, ids[i])
+		m.removedlotto_get_count_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoGetCountRecords returns the removed IDs of the "lotto_get_count_records" edge to the LottoGetCountRecord entity.
+func (m *LottoMutation) RemovedLottoGetCountRecordsIDs() (ids []int64) {
+	for id := range m.removedlotto_get_count_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoGetCountRecordsIDs returns the "lotto_get_count_records" edge IDs in the mutation.
+func (m *LottoMutation) LottoGetCountRecordsIDs() (ids []int64) {
+	for id := range m.lotto_get_count_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoGetCountRecords resets all changes to the "lotto_get_count_records" edge.
+func (m *LottoMutation) ResetLottoGetCountRecords() {
+	m.lotto_get_count_records = nil
+	m.clearedlotto_get_count_records = false
+	m.removedlotto_get_count_records = nil
+}
+
+// Where appends a list predicates to the LottoMutation builder.
+func (m *LottoMutation) Where(ps ...predicate.Lotto) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LottoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LottoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Lotto, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LottoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LottoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Lotto).
+func (m *LottoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LottoMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_by != nil {
+		fields = append(fields, lotto.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, lotto.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, lotto.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, lotto.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, lotto.FieldDeletedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, lotto.FieldName)
+	}
+	if m.total_weight != nil {
+		fields = append(fields, lotto.FieldTotalWeight)
+	}
+	if m.started_at != nil {
+		fields = append(fields, lotto.FieldStartedAt)
+	}
+	if m.ended_at != nil {
+		fields = append(fields, lotto.FieldEndedAt)
+	}
+	if m.status != nil {
+		fields = append(fields, lotto.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LottoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case lotto.FieldCreatedBy:
+		return m.CreatedBy()
+	case lotto.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case lotto.FieldCreatedAt:
+		return m.CreatedAt()
+	case lotto.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case lotto.FieldDeletedAt:
+		return m.DeletedAt()
+	case lotto.FieldName:
+		return m.Name()
+	case lotto.FieldTotalWeight:
+		return m.TotalWeight()
+	case lotto.FieldStartedAt:
+		return m.StartedAt()
+	case lotto.FieldEndedAt:
+		return m.EndedAt()
+	case lotto.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LottoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case lotto.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case lotto.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case lotto.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case lotto.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case lotto.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case lotto.FieldName:
+		return m.OldName(ctx)
+	case lotto.FieldTotalWeight:
+		return m.OldTotalWeight(ctx)
+	case lotto.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case lotto.FieldEndedAt:
+		return m.OldEndedAt(ctx)
+	case lotto.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown Lotto field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case lotto.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case lotto.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case lotto.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case lotto.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case lotto.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case lotto.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case lotto.FieldTotalWeight:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalWeight(v)
+		return nil
+	case lotto.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case lotto.FieldEndedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndedAt(v)
+		return nil
+	case lotto.FieldStatus:
+		v, ok := value.(enums.LottoStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Lotto field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LottoMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, lotto.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, lotto.FieldUpdatedBy)
+	}
+	if m.addtotal_weight != nil {
+		fields = append(fields, lotto.FieldTotalWeight)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LottoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case lotto.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case lotto.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case lotto.FieldTotalWeight:
+		return m.AddedTotalWeight()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case lotto.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case lotto.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case lotto.FieldTotalWeight:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalWeight(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Lotto numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LottoMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LottoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LottoMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Lotto nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LottoMutation) ResetField(name string) error {
+	switch name {
+	case lotto.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case lotto.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case lotto.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case lotto.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case lotto.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case lotto.FieldName:
+		m.ResetName()
+		return nil
+	case lotto.FieldTotalWeight:
+		m.ResetTotalWeight()
+		return nil
+	case lotto.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case lotto.FieldEndedAt:
+		m.ResetEndedAt()
+		return nil
+	case lotto.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Lotto field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LottoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.lotto_prizes != nil {
+		edges = append(edges, lotto.EdgeLottoPrizes)
+	}
+	if m.lotto_records != nil {
+		edges = append(edges, lotto.EdgeLottoRecords)
+	}
+	if m.lotto_user_counts != nil {
+		edges = append(edges, lotto.EdgeLottoUserCounts)
+	}
+	if m.lotto_get_count_records != nil {
+		edges = append(edges, lotto.EdgeLottoGetCountRecords)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LottoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case lotto.EdgeLottoPrizes:
+		ids := make([]ent.Value, 0, len(m.lotto_prizes))
+		for id := range m.lotto_prizes {
+			ids = append(ids, id)
+		}
+		return ids
+	case lotto.EdgeLottoRecords:
+		ids := make([]ent.Value, 0, len(m.lotto_records))
+		for id := range m.lotto_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case lotto.EdgeLottoUserCounts:
+		ids := make([]ent.Value, 0, len(m.lotto_user_counts))
+		for id := range m.lotto_user_counts {
+			ids = append(ids, id)
+		}
+		return ids
+	case lotto.EdgeLottoGetCountRecords:
+		ids := make([]ent.Value, 0, len(m.lotto_get_count_records))
+		for id := range m.lotto_get_count_records {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LottoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.removedlotto_prizes != nil {
+		edges = append(edges, lotto.EdgeLottoPrizes)
+	}
+	if m.removedlotto_records != nil {
+		edges = append(edges, lotto.EdgeLottoRecords)
+	}
+	if m.removedlotto_user_counts != nil {
+		edges = append(edges, lotto.EdgeLottoUserCounts)
+	}
+	if m.removedlotto_get_count_records != nil {
+		edges = append(edges, lotto.EdgeLottoGetCountRecords)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LottoMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case lotto.EdgeLottoPrizes:
+		ids := make([]ent.Value, 0, len(m.removedlotto_prizes))
+		for id := range m.removedlotto_prizes {
+			ids = append(ids, id)
+		}
+		return ids
+	case lotto.EdgeLottoRecords:
+		ids := make([]ent.Value, 0, len(m.removedlotto_records))
+		for id := range m.removedlotto_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case lotto.EdgeLottoUserCounts:
+		ids := make([]ent.Value, 0, len(m.removedlotto_user_counts))
+		for id := range m.removedlotto_user_counts {
+			ids = append(ids, id)
+		}
+		return ids
+	case lotto.EdgeLottoGetCountRecords:
+		ids := make([]ent.Value, 0, len(m.removedlotto_get_count_records))
+		for id := range m.removedlotto_get_count_records {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LottoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedlotto_prizes {
+		edges = append(edges, lotto.EdgeLottoPrizes)
+	}
+	if m.clearedlotto_records {
+		edges = append(edges, lotto.EdgeLottoRecords)
+	}
+	if m.clearedlotto_user_counts {
+		edges = append(edges, lotto.EdgeLottoUserCounts)
+	}
+	if m.clearedlotto_get_count_records {
+		edges = append(edges, lotto.EdgeLottoGetCountRecords)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LottoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case lotto.EdgeLottoPrizes:
+		return m.clearedlotto_prizes
+	case lotto.EdgeLottoRecords:
+		return m.clearedlotto_records
+	case lotto.EdgeLottoUserCounts:
+		return m.clearedlotto_user_counts
+	case lotto.EdgeLottoGetCountRecords:
+		return m.clearedlotto_get_count_records
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LottoMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Lotto unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LottoMutation) ResetEdge(name string) error {
+	switch name {
+	case lotto.EdgeLottoPrizes:
+		m.ResetLottoPrizes()
+		return nil
+	case lotto.EdgeLottoRecords:
+		m.ResetLottoRecords()
+		return nil
+	case lotto.EdgeLottoUserCounts:
+		m.ResetLottoUserCounts()
+		return nil
+	case lotto.EdgeLottoGetCountRecords:
+		m.ResetLottoGetCountRecords()
+		return nil
+	}
+	return fmt.Errorf("unknown Lotto edge %s", name)
+}
+
+// LottoGetCountRecordMutation represents an operation that mutates the LottoGetCountRecord nodes in the graph.
+type LottoGetCountRecordMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *int64
+	created_by         *int64
+	addcreated_by      *int64
+	updated_by         *int64
+	addupdated_by      *int64
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
+	count              *int64
+	addcount           *int64
+	_type              *lottogetcountrecord.Type
+	recharge_amount    *int64
+	addrecharge_amount *int64
+	clearedFields      map[string]struct{}
+	user               *int64
+	cleareduser        bool
+	lotto              *int64
+	clearedlotto       bool
+	done               bool
+	oldValue           func(context.Context) (*LottoGetCountRecord, error)
+	predicates         []predicate.LottoGetCountRecord
+}
+
+var _ ent.Mutation = (*LottoGetCountRecordMutation)(nil)
+
+// lottogetcountrecordOption allows management of the mutation configuration using functional options.
+type lottogetcountrecordOption func(*LottoGetCountRecordMutation)
+
+// newLottoGetCountRecordMutation creates new mutation for the LottoGetCountRecord entity.
+func newLottoGetCountRecordMutation(c config, op Op, opts ...lottogetcountrecordOption) *LottoGetCountRecordMutation {
+	m := &LottoGetCountRecordMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLottoGetCountRecord,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLottoGetCountRecordID sets the ID field of the mutation.
+func withLottoGetCountRecordID(id int64) lottogetcountrecordOption {
+	return func(m *LottoGetCountRecordMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *LottoGetCountRecord
+		)
+		m.oldValue = func(ctx context.Context) (*LottoGetCountRecord, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().LottoGetCountRecord.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLottoGetCountRecord sets the old LottoGetCountRecord of the mutation.
+func withLottoGetCountRecord(node *LottoGetCountRecord) lottogetcountrecordOption {
+	return func(m *LottoGetCountRecordMutation) {
+		m.oldValue = func(context.Context) (*LottoGetCountRecord, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LottoGetCountRecordMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LottoGetCountRecordMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of LottoGetCountRecord entities.
+func (m *LottoGetCountRecordMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LottoGetCountRecordMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LottoGetCountRecordMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().LottoGetCountRecord.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *LottoGetCountRecordMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *LottoGetCountRecordMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *LottoGetCountRecordMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *LottoGetCountRecordMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *LottoGetCountRecordMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *LottoGetCountRecordMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *LottoGetCountRecordMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *LottoGetCountRecordMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *LottoGetCountRecordMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *LottoGetCountRecordMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LottoGetCountRecordMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LottoGetCountRecordMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LottoGetCountRecordMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LottoGetCountRecordMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LottoGetCountRecordMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LottoGetCountRecordMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LottoGetCountRecordMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LottoGetCountRecordMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LottoGetCountRecordMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *LottoGetCountRecordMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *LottoGetCountRecordMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *LottoGetCountRecordMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetLottoID sets the "lotto_id" field.
+func (m *LottoGetCountRecordMutation) SetLottoID(i int64) {
+	m.lotto = &i
+}
+
+// LottoID returns the value of the "lotto_id" field in the mutation.
+func (m *LottoGetCountRecordMutation) LottoID() (r int64, exists bool) {
+	v := m.lotto
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLottoID returns the old "lotto_id" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldLottoID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLottoID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLottoID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLottoID: %w", err)
+	}
+	return oldValue.LottoID, nil
+}
+
+// ResetLottoID resets all changes to the "lotto_id" field.
+func (m *LottoGetCountRecordMutation) ResetLottoID() {
+	m.lotto = nil
+}
+
+// SetCount sets the "count" field.
+func (m *LottoGetCountRecordMutation) SetCount(i int64) {
+	m.count = &i
+	m.addcount = nil
+}
+
+// Count returns the value of the "count" field in the mutation.
+func (m *LottoGetCountRecordMutation) Count() (r int64, exists bool) {
+	v := m.count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCount returns the old "count" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCount: %w", err)
+	}
+	return oldValue.Count, nil
+}
+
+// AddCount adds i to the "count" field.
+func (m *LottoGetCountRecordMutation) AddCount(i int64) {
+	if m.addcount != nil {
+		*m.addcount += i
+	} else {
+		m.addcount = &i
+	}
+}
+
+// AddedCount returns the value that was added to the "count" field in this mutation.
+func (m *LottoGetCountRecordMutation) AddedCount() (r int64, exists bool) {
+	v := m.addcount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCount resets all changes to the "count" field.
+func (m *LottoGetCountRecordMutation) ResetCount() {
+	m.count = nil
+	m.addcount = nil
+}
+
+// SetType sets the "type" field.
+func (m *LottoGetCountRecordMutation) SetType(l lottogetcountrecord.Type) {
+	m._type = &l
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *LottoGetCountRecordMutation) GetType() (r lottogetcountrecord.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldType(ctx context.Context) (v lottogetcountrecord.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *LottoGetCountRecordMutation) ResetType() {
+	m._type = nil
+}
+
+// SetRechargeAmount sets the "recharge_amount" field.
+func (m *LottoGetCountRecordMutation) SetRechargeAmount(i int64) {
+	m.recharge_amount = &i
+	m.addrecharge_amount = nil
+}
+
+// RechargeAmount returns the value of the "recharge_amount" field in the mutation.
+func (m *LottoGetCountRecordMutation) RechargeAmount() (r int64, exists bool) {
+	v := m.recharge_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRechargeAmount returns the old "recharge_amount" field's value of the LottoGetCountRecord entity.
+// If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoGetCountRecordMutation) OldRechargeAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRechargeAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRechargeAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRechargeAmount: %w", err)
+	}
+	return oldValue.RechargeAmount, nil
+}
+
+// AddRechargeAmount adds i to the "recharge_amount" field.
+func (m *LottoGetCountRecordMutation) AddRechargeAmount(i int64) {
+	if m.addrecharge_amount != nil {
+		*m.addrecharge_amount += i
+	} else {
+		m.addrecharge_amount = &i
+	}
+}
+
+// AddedRechargeAmount returns the value that was added to the "recharge_amount" field in this mutation.
+func (m *LottoGetCountRecordMutation) AddedRechargeAmount() (r int64, exists bool) {
+	v := m.addrecharge_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRechargeAmount resets all changes to the "recharge_amount" field.
+func (m *LottoGetCountRecordMutation) ResetRechargeAmount() {
+	m.recharge_amount = nil
+	m.addrecharge_amount = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *LottoGetCountRecordMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[lottogetcountrecord.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *LottoGetCountRecordMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *LottoGetCountRecordMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *LottoGetCountRecordMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearLotto clears the "lotto" edge to the Lotto entity.
+func (m *LottoGetCountRecordMutation) ClearLotto() {
+	m.clearedlotto = true
+	m.clearedFields[lottogetcountrecord.FieldLottoID] = struct{}{}
+}
+
+// LottoCleared reports if the "lotto" edge to the Lotto entity was cleared.
+func (m *LottoGetCountRecordMutation) LottoCleared() bool {
+	return m.clearedlotto
+}
+
+// LottoIDs returns the "lotto" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LottoID instead. It exists only for internal usage by the builders.
+func (m *LottoGetCountRecordMutation) LottoIDs() (ids []int64) {
+	if id := m.lotto; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLotto resets all changes to the "lotto" edge.
+func (m *LottoGetCountRecordMutation) ResetLotto() {
+	m.lotto = nil
+	m.clearedlotto = false
+}
+
+// Where appends a list predicates to the LottoGetCountRecordMutation builder.
+func (m *LottoGetCountRecordMutation) Where(ps ...predicate.LottoGetCountRecord) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LottoGetCountRecordMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LottoGetCountRecordMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.LottoGetCountRecord, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LottoGetCountRecordMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LottoGetCountRecordMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (LottoGetCountRecord).
+func (m *LottoGetCountRecordMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LottoGetCountRecordMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_by != nil {
+		fields = append(fields, lottogetcountrecord.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, lottogetcountrecord.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, lottogetcountrecord.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, lottogetcountrecord.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, lottogetcountrecord.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, lottogetcountrecord.FieldUserID)
+	}
+	if m.lotto != nil {
+		fields = append(fields, lottogetcountrecord.FieldLottoID)
+	}
+	if m.count != nil {
+		fields = append(fields, lottogetcountrecord.FieldCount)
+	}
+	if m._type != nil {
+		fields = append(fields, lottogetcountrecord.FieldType)
+	}
+	if m.recharge_amount != nil {
+		fields = append(fields, lottogetcountrecord.FieldRechargeAmount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LottoGetCountRecordMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case lottogetcountrecord.FieldCreatedBy:
+		return m.CreatedBy()
+	case lottogetcountrecord.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case lottogetcountrecord.FieldCreatedAt:
+		return m.CreatedAt()
+	case lottogetcountrecord.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case lottogetcountrecord.FieldDeletedAt:
+		return m.DeletedAt()
+	case lottogetcountrecord.FieldUserID:
+		return m.UserID()
+	case lottogetcountrecord.FieldLottoID:
+		return m.LottoID()
+	case lottogetcountrecord.FieldCount:
+		return m.Count()
+	case lottogetcountrecord.FieldType:
+		return m.GetType()
+	case lottogetcountrecord.FieldRechargeAmount:
+		return m.RechargeAmount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LottoGetCountRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case lottogetcountrecord.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case lottogetcountrecord.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case lottogetcountrecord.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case lottogetcountrecord.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case lottogetcountrecord.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case lottogetcountrecord.FieldUserID:
+		return m.OldUserID(ctx)
+	case lottogetcountrecord.FieldLottoID:
+		return m.OldLottoID(ctx)
+	case lottogetcountrecord.FieldCount:
+		return m.OldCount(ctx)
+	case lottogetcountrecord.FieldType:
+		return m.OldType(ctx)
+	case lottogetcountrecord.FieldRechargeAmount:
+		return m.OldRechargeAmount(ctx)
+	}
+	return nil, fmt.Errorf("unknown LottoGetCountRecord field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoGetCountRecordMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case lottogetcountrecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case lottogetcountrecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case lottogetcountrecord.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case lottogetcountrecord.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case lottogetcountrecord.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case lottogetcountrecord.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case lottogetcountrecord.FieldLottoID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLottoID(v)
+		return nil
+	case lottogetcountrecord.FieldCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCount(v)
+		return nil
+	case lottogetcountrecord.FieldType:
+		v, ok := value.(lottogetcountrecord.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case lottogetcountrecord.FieldRechargeAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRechargeAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoGetCountRecord field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LottoGetCountRecordMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, lottogetcountrecord.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, lottogetcountrecord.FieldUpdatedBy)
+	}
+	if m.addcount != nil {
+		fields = append(fields, lottogetcountrecord.FieldCount)
+	}
+	if m.addrecharge_amount != nil {
+		fields = append(fields, lottogetcountrecord.FieldRechargeAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LottoGetCountRecordMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case lottogetcountrecord.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case lottogetcountrecord.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case lottogetcountrecord.FieldCount:
+		return m.AddedCount()
+	case lottogetcountrecord.FieldRechargeAmount:
+		return m.AddedRechargeAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoGetCountRecordMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case lottogetcountrecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case lottogetcountrecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case lottogetcountrecord.FieldCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCount(v)
+		return nil
+	case lottogetcountrecord.FieldRechargeAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRechargeAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoGetCountRecord numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LottoGetCountRecordMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LottoGetCountRecordMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LottoGetCountRecordMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown LottoGetCountRecord nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LottoGetCountRecordMutation) ResetField(name string) error {
+	switch name {
+	case lottogetcountrecord.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case lottogetcountrecord.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case lottogetcountrecord.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case lottogetcountrecord.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case lottogetcountrecord.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case lottogetcountrecord.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case lottogetcountrecord.FieldLottoID:
+		m.ResetLottoID()
+		return nil
+	case lottogetcountrecord.FieldCount:
+		m.ResetCount()
+		return nil
+	case lottogetcountrecord.FieldType:
+		m.ResetType()
+		return nil
+	case lottogetcountrecord.FieldRechargeAmount:
+		m.ResetRechargeAmount()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoGetCountRecord field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LottoGetCountRecordMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, lottogetcountrecord.EdgeUser)
+	}
+	if m.lotto != nil {
+		edges = append(edges, lottogetcountrecord.EdgeLotto)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LottoGetCountRecordMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case lottogetcountrecord.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case lottogetcountrecord.EdgeLotto:
+		if id := m.lotto; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LottoGetCountRecordMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LottoGetCountRecordMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LottoGetCountRecordMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, lottogetcountrecord.EdgeUser)
+	}
+	if m.clearedlotto {
+		edges = append(edges, lottogetcountrecord.EdgeLotto)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LottoGetCountRecordMutation) EdgeCleared(name string) bool {
+	switch name {
+	case lottogetcountrecord.EdgeUser:
+		return m.cleareduser
+	case lottogetcountrecord.EdgeLotto:
+		return m.clearedlotto
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LottoGetCountRecordMutation) ClearEdge(name string) error {
+	switch name {
+	case lottogetcountrecord.EdgeUser:
+		m.ClearUser()
+		return nil
+	case lottogetcountrecord.EdgeLotto:
+		m.ClearLotto()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoGetCountRecord unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LottoGetCountRecordMutation) ResetEdge(name string) error {
+	switch name {
+	case lottogetcountrecord.EdgeUser:
+		m.ResetUser()
+		return nil
+	case lottogetcountrecord.EdgeLotto:
+		m.ResetLotto()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoGetCountRecord edge %s", name)
+}
+
+// LottoPrizeMutation represents an operation that mutates the LottoPrize nodes in the graph.
+type LottoPrizeMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int64
+	created_by           *int64
+	addcreated_by        *int64
+	updated_by           *int64
+	addupdated_by        *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	level_name           *string
+	weight               *int64
+	addweight            *int64
+	name                 *string
+	status               *lottoprize.Status
+	clearedFields        map[string]struct{}
+	lotto                *int64
+	clearedlotto         bool
+	lotto_records        map[int64]struct{}
+	removedlotto_records map[int64]struct{}
+	clearedlotto_records bool
+	done                 bool
+	oldValue             func(context.Context) (*LottoPrize, error)
+	predicates           []predicate.LottoPrize
+}
+
+var _ ent.Mutation = (*LottoPrizeMutation)(nil)
+
+// lottoprizeOption allows management of the mutation configuration using functional options.
+type lottoprizeOption func(*LottoPrizeMutation)
+
+// newLottoPrizeMutation creates new mutation for the LottoPrize entity.
+func newLottoPrizeMutation(c config, op Op, opts ...lottoprizeOption) *LottoPrizeMutation {
+	m := &LottoPrizeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLottoPrize,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLottoPrizeID sets the ID field of the mutation.
+func withLottoPrizeID(id int64) lottoprizeOption {
+	return func(m *LottoPrizeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *LottoPrize
+		)
+		m.oldValue = func(ctx context.Context) (*LottoPrize, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().LottoPrize.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLottoPrize sets the old LottoPrize of the mutation.
+func withLottoPrize(node *LottoPrize) lottoprizeOption {
+	return func(m *LottoPrizeMutation) {
+		m.oldValue = func(context.Context) (*LottoPrize, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LottoPrizeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LottoPrizeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of LottoPrize entities.
+func (m *LottoPrizeMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LottoPrizeMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LottoPrizeMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().LottoPrize.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *LottoPrizeMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *LottoPrizeMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *LottoPrizeMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *LottoPrizeMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *LottoPrizeMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *LottoPrizeMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *LottoPrizeMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *LottoPrizeMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *LottoPrizeMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *LottoPrizeMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LottoPrizeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LottoPrizeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LottoPrizeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LottoPrizeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LottoPrizeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LottoPrizeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LottoPrizeMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LottoPrizeMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LottoPrizeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetLottoID sets the "lotto_id" field.
+func (m *LottoPrizeMutation) SetLottoID(i int64) {
+	m.lotto = &i
+}
+
+// LottoID returns the value of the "lotto_id" field in the mutation.
+func (m *LottoPrizeMutation) LottoID() (r int64, exists bool) {
+	v := m.lotto
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLottoID returns the old "lotto_id" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldLottoID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLottoID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLottoID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLottoID: %w", err)
+	}
+	return oldValue.LottoID, nil
+}
+
+// ResetLottoID resets all changes to the "lotto_id" field.
+func (m *LottoPrizeMutation) ResetLottoID() {
+	m.lotto = nil
+}
+
+// SetLevelName sets the "level_name" field.
+func (m *LottoPrizeMutation) SetLevelName(s string) {
+	m.level_name = &s
+}
+
+// LevelName returns the value of the "level_name" field in the mutation.
+func (m *LottoPrizeMutation) LevelName() (r string, exists bool) {
+	v := m.level_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevelName returns the old "level_name" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldLevelName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevelName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevelName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevelName: %w", err)
+	}
+	return oldValue.LevelName, nil
+}
+
+// ResetLevelName resets all changes to the "level_name" field.
+func (m *LottoPrizeMutation) ResetLevelName() {
+	m.level_name = nil
+}
+
+// SetWeight sets the "weight" field.
+func (m *LottoPrizeMutation) SetWeight(i int64) {
+	m.weight = &i
+	m.addweight = nil
+}
+
+// Weight returns the value of the "weight" field in the mutation.
+func (m *LottoPrizeMutation) Weight() (r int64, exists bool) {
+	v := m.weight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWeight returns the old "weight" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldWeight(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWeight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWeight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWeight: %w", err)
+	}
+	return oldValue.Weight, nil
+}
+
+// AddWeight adds i to the "weight" field.
+func (m *LottoPrizeMutation) AddWeight(i int64) {
+	if m.addweight != nil {
+		*m.addweight += i
+	} else {
+		m.addweight = &i
+	}
+}
+
+// AddedWeight returns the value that was added to the "weight" field in this mutation.
+func (m *LottoPrizeMutation) AddedWeight() (r int64, exists bool) {
+	v := m.addweight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWeight resets all changes to the "weight" field.
+func (m *LottoPrizeMutation) ResetWeight() {
+	m.weight = nil
+	m.addweight = nil
+}
+
+// SetName sets the "name" field.
+func (m *LottoPrizeMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *LottoPrizeMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *LottoPrizeMutation) ResetName() {
+	m.name = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *LottoPrizeMutation) SetStatus(l lottoprize.Status) {
+	m.status = &l
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *LottoPrizeMutation) Status() (r lottoprize.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldStatus(ctx context.Context) (v lottoprize.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *LottoPrizeMutation) ResetStatus() {
+	m.status = nil
+}
+
+// ClearLotto clears the "lotto" edge to the Lotto entity.
+func (m *LottoPrizeMutation) ClearLotto() {
+	m.clearedlotto = true
+	m.clearedFields[lottoprize.FieldLottoID] = struct{}{}
+}
+
+// LottoCleared reports if the "lotto" edge to the Lotto entity was cleared.
+func (m *LottoPrizeMutation) LottoCleared() bool {
+	return m.clearedlotto
+}
+
+// LottoIDs returns the "lotto" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LottoID instead. It exists only for internal usage by the builders.
+func (m *LottoPrizeMutation) LottoIDs() (ids []int64) {
+	if id := m.lotto; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLotto resets all changes to the "lotto" edge.
+func (m *LottoPrizeMutation) ResetLotto() {
+	m.lotto = nil
+	m.clearedlotto = false
+}
+
+// AddLottoRecordIDs adds the "lotto_records" edge to the LottoRecord entity by ids.
+func (m *LottoPrizeMutation) AddLottoRecordIDs(ids ...int64) {
+	if m.lotto_records == nil {
+		m.lotto_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoRecords clears the "lotto_records" edge to the LottoRecord entity.
+func (m *LottoPrizeMutation) ClearLottoRecords() {
+	m.clearedlotto_records = true
+}
+
+// LottoRecordsCleared reports if the "lotto_records" edge to the LottoRecord entity was cleared.
+func (m *LottoPrizeMutation) LottoRecordsCleared() bool {
+	return m.clearedlotto_records
+}
+
+// RemoveLottoRecordIDs removes the "lotto_records" edge to the LottoRecord entity by IDs.
+func (m *LottoPrizeMutation) RemoveLottoRecordIDs(ids ...int64) {
+	if m.removedlotto_records == nil {
+		m.removedlotto_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_records, ids[i])
+		m.removedlotto_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoRecords returns the removed IDs of the "lotto_records" edge to the LottoRecord entity.
+func (m *LottoPrizeMutation) RemovedLottoRecordsIDs() (ids []int64) {
+	for id := range m.removedlotto_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoRecordsIDs returns the "lotto_records" edge IDs in the mutation.
+func (m *LottoPrizeMutation) LottoRecordsIDs() (ids []int64) {
+	for id := range m.lotto_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoRecords resets all changes to the "lotto_records" edge.
+func (m *LottoPrizeMutation) ResetLottoRecords() {
+	m.lotto_records = nil
+	m.clearedlotto_records = false
+	m.removedlotto_records = nil
+}
+
+// Where appends a list predicates to the LottoPrizeMutation builder.
+func (m *LottoPrizeMutation) Where(ps ...predicate.LottoPrize) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LottoPrizeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LottoPrizeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.LottoPrize, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LottoPrizeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LottoPrizeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (LottoPrize).
+func (m *LottoPrizeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LottoPrizeMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_by != nil {
+		fields = append(fields, lottoprize.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, lottoprize.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, lottoprize.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, lottoprize.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, lottoprize.FieldDeletedAt)
+	}
+	if m.lotto != nil {
+		fields = append(fields, lottoprize.FieldLottoID)
+	}
+	if m.level_name != nil {
+		fields = append(fields, lottoprize.FieldLevelName)
+	}
+	if m.weight != nil {
+		fields = append(fields, lottoprize.FieldWeight)
+	}
+	if m.name != nil {
+		fields = append(fields, lottoprize.FieldName)
+	}
+	if m.status != nil {
+		fields = append(fields, lottoprize.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LottoPrizeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case lottoprize.FieldCreatedBy:
+		return m.CreatedBy()
+	case lottoprize.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case lottoprize.FieldCreatedAt:
+		return m.CreatedAt()
+	case lottoprize.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case lottoprize.FieldDeletedAt:
+		return m.DeletedAt()
+	case lottoprize.FieldLottoID:
+		return m.LottoID()
+	case lottoprize.FieldLevelName:
+		return m.LevelName()
+	case lottoprize.FieldWeight:
+		return m.Weight()
+	case lottoprize.FieldName:
+		return m.Name()
+	case lottoprize.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LottoPrizeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case lottoprize.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case lottoprize.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case lottoprize.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case lottoprize.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case lottoprize.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case lottoprize.FieldLottoID:
+		return m.OldLottoID(ctx)
+	case lottoprize.FieldLevelName:
+		return m.OldLevelName(ctx)
+	case lottoprize.FieldWeight:
+		return m.OldWeight(ctx)
+	case lottoprize.FieldName:
+		return m.OldName(ctx)
+	case lottoprize.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown LottoPrize field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoPrizeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case lottoprize.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case lottoprize.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case lottoprize.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case lottoprize.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case lottoprize.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case lottoprize.FieldLottoID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLottoID(v)
+		return nil
+	case lottoprize.FieldLevelName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevelName(v)
+		return nil
+	case lottoprize.FieldWeight:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWeight(v)
+		return nil
+	case lottoprize.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case lottoprize.FieldStatus:
+		v, ok := value.(lottoprize.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoPrize field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LottoPrizeMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, lottoprize.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, lottoprize.FieldUpdatedBy)
+	}
+	if m.addweight != nil {
+		fields = append(fields, lottoprize.FieldWeight)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LottoPrizeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case lottoprize.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case lottoprize.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case lottoprize.FieldWeight:
+		return m.AddedWeight()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoPrizeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case lottoprize.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case lottoprize.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case lottoprize.FieldWeight:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWeight(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoPrize numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LottoPrizeMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LottoPrizeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LottoPrizeMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown LottoPrize nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LottoPrizeMutation) ResetField(name string) error {
+	switch name {
+	case lottoprize.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case lottoprize.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case lottoprize.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case lottoprize.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case lottoprize.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case lottoprize.FieldLottoID:
+		m.ResetLottoID()
+		return nil
+	case lottoprize.FieldLevelName:
+		m.ResetLevelName()
+		return nil
+	case lottoprize.FieldWeight:
+		m.ResetWeight()
+		return nil
+	case lottoprize.FieldName:
+		m.ResetName()
+		return nil
+	case lottoprize.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoPrize field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LottoPrizeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.lotto != nil {
+		edges = append(edges, lottoprize.EdgeLotto)
+	}
+	if m.lotto_records != nil {
+		edges = append(edges, lottoprize.EdgeLottoRecords)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LottoPrizeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case lottoprize.EdgeLotto:
+		if id := m.lotto; id != nil {
+			return []ent.Value{*id}
+		}
+	case lottoprize.EdgeLottoRecords:
+		ids := make([]ent.Value, 0, len(m.lotto_records))
+		for id := range m.lotto_records {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LottoPrizeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedlotto_records != nil {
+		edges = append(edges, lottoprize.EdgeLottoRecords)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LottoPrizeMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case lottoprize.EdgeLottoRecords:
+		ids := make([]ent.Value, 0, len(m.removedlotto_records))
+		for id := range m.removedlotto_records {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LottoPrizeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedlotto {
+		edges = append(edges, lottoprize.EdgeLotto)
+	}
+	if m.clearedlotto_records {
+		edges = append(edges, lottoprize.EdgeLottoRecords)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LottoPrizeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case lottoprize.EdgeLotto:
+		return m.clearedlotto
+	case lottoprize.EdgeLottoRecords:
+		return m.clearedlotto_records
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LottoPrizeMutation) ClearEdge(name string) error {
+	switch name {
+	case lottoprize.EdgeLotto:
+		m.ClearLotto()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoPrize unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LottoPrizeMutation) ResetEdge(name string) error {
+	switch name {
+	case lottoprize.EdgeLotto:
+		m.ResetLotto()
+		return nil
+	case lottoprize.EdgeLottoRecords:
+		m.ResetLottoRecords()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoPrize edge %s", name)
+}
+
+// LottoRecordMutation represents an operation that mutates the LottoRecord nodes in the graph.
+type LottoRecordMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	result                *lottorecord.Result
+	status                *lottorecord.Status
+	remain_lotto_count    *int64
+	addremain_lotto_count *int64
+	clearedFields         map[string]struct{}
+	user                  *int64
+	cleareduser           bool
+	lotto                 *int64
+	clearedlotto          bool
+	lotto_prize           *int64
+	clearedlotto_prize    bool
+	done                  bool
+	oldValue              func(context.Context) (*LottoRecord, error)
+	predicates            []predicate.LottoRecord
+}
+
+var _ ent.Mutation = (*LottoRecordMutation)(nil)
+
+// lottorecordOption allows management of the mutation configuration using functional options.
+type lottorecordOption func(*LottoRecordMutation)
+
+// newLottoRecordMutation creates new mutation for the LottoRecord entity.
+func newLottoRecordMutation(c config, op Op, opts ...lottorecordOption) *LottoRecordMutation {
+	m := &LottoRecordMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLottoRecord,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLottoRecordID sets the ID field of the mutation.
+func withLottoRecordID(id int64) lottorecordOption {
+	return func(m *LottoRecordMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *LottoRecord
+		)
+		m.oldValue = func(ctx context.Context) (*LottoRecord, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().LottoRecord.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLottoRecord sets the old LottoRecord of the mutation.
+func withLottoRecord(node *LottoRecord) lottorecordOption {
+	return func(m *LottoRecordMutation) {
+		m.oldValue = func(context.Context) (*LottoRecord, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LottoRecordMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LottoRecordMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of LottoRecord entities.
+func (m *LottoRecordMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LottoRecordMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LottoRecordMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().LottoRecord.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *LottoRecordMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *LottoRecordMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *LottoRecordMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *LottoRecordMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *LottoRecordMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *LottoRecordMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *LottoRecordMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *LottoRecordMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *LottoRecordMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *LottoRecordMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LottoRecordMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LottoRecordMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LottoRecordMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LottoRecordMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LottoRecordMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LottoRecordMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LottoRecordMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LottoRecordMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LottoRecordMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *LottoRecordMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *LottoRecordMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *LottoRecordMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetLottoID sets the "lotto_id" field.
+func (m *LottoRecordMutation) SetLottoID(i int64) {
+	m.lotto = &i
+}
+
+// LottoID returns the value of the "lotto_id" field in the mutation.
+func (m *LottoRecordMutation) LottoID() (r int64, exists bool) {
+	v := m.lotto
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLottoID returns the old "lotto_id" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldLottoID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLottoID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLottoID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLottoID: %w", err)
+	}
+	return oldValue.LottoID, nil
+}
+
+// ResetLottoID resets all changes to the "lotto_id" field.
+func (m *LottoRecordMutation) ResetLottoID() {
+	m.lotto = nil
+}
+
+// SetResult sets the "result" field.
+func (m *LottoRecordMutation) SetResult(l lottorecord.Result) {
+	m.result = &l
+}
+
+// Result returns the value of the "result" field in the mutation.
+func (m *LottoRecordMutation) Result() (r lottorecord.Result, exists bool) {
+	v := m.result
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResult returns the old "result" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldResult(ctx context.Context) (v lottorecord.Result, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldResult is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldResult requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResult: %w", err)
+	}
+	return oldValue.Result, nil
+}
+
+// ResetResult resets all changes to the "result" field.
+func (m *LottoRecordMutation) ResetResult() {
+	m.result = nil
+}
+
+// SetLottoPrizeID sets the "lotto_prize_id" field.
+func (m *LottoRecordMutation) SetLottoPrizeID(i int64) {
+	m.lotto_prize = &i
+}
+
+// LottoPrizeID returns the value of the "lotto_prize_id" field in the mutation.
+func (m *LottoRecordMutation) LottoPrizeID() (r int64, exists bool) {
+	v := m.lotto_prize
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLottoPrizeID returns the old "lotto_prize_id" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldLottoPrizeID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLottoPrizeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLottoPrizeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLottoPrizeID: %w", err)
+	}
+	return oldValue.LottoPrizeID, nil
+}
+
+// ResetLottoPrizeID resets all changes to the "lotto_prize_id" field.
+func (m *LottoRecordMutation) ResetLottoPrizeID() {
+	m.lotto_prize = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *LottoRecordMutation) SetStatus(l lottorecord.Status) {
+	m.status = &l
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *LottoRecordMutation) Status() (r lottorecord.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldStatus(ctx context.Context) (v lottorecord.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *LottoRecordMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetRemainLottoCount sets the "remain_lotto_count" field.
+func (m *LottoRecordMutation) SetRemainLottoCount(i int64) {
+	m.remain_lotto_count = &i
+	m.addremain_lotto_count = nil
+}
+
+// RemainLottoCount returns the value of the "remain_lotto_count" field in the mutation.
+func (m *LottoRecordMutation) RemainLottoCount() (r int64, exists bool) {
+	v := m.remain_lotto_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemainLottoCount returns the old "remain_lotto_count" field's value of the LottoRecord entity.
+// If the LottoRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoRecordMutation) OldRemainLottoCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemainLottoCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemainLottoCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemainLottoCount: %w", err)
+	}
+	return oldValue.RemainLottoCount, nil
+}
+
+// AddRemainLottoCount adds i to the "remain_lotto_count" field.
+func (m *LottoRecordMutation) AddRemainLottoCount(i int64) {
+	if m.addremain_lotto_count != nil {
+		*m.addremain_lotto_count += i
+	} else {
+		m.addremain_lotto_count = &i
+	}
+}
+
+// AddedRemainLottoCount returns the value that was added to the "remain_lotto_count" field in this mutation.
+func (m *LottoRecordMutation) AddedRemainLottoCount() (r int64, exists bool) {
+	v := m.addremain_lotto_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRemainLottoCount resets all changes to the "remain_lotto_count" field.
+func (m *LottoRecordMutation) ResetRemainLottoCount() {
+	m.remain_lotto_count = nil
+	m.addremain_lotto_count = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *LottoRecordMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[lottorecord.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *LottoRecordMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *LottoRecordMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *LottoRecordMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearLotto clears the "lotto" edge to the Lotto entity.
+func (m *LottoRecordMutation) ClearLotto() {
+	m.clearedlotto = true
+	m.clearedFields[lottorecord.FieldLottoID] = struct{}{}
+}
+
+// LottoCleared reports if the "lotto" edge to the Lotto entity was cleared.
+func (m *LottoRecordMutation) LottoCleared() bool {
+	return m.clearedlotto
+}
+
+// LottoIDs returns the "lotto" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LottoID instead. It exists only for internal usage by the builders.
+func (m *LottoRecordMutation) LottoIDs() (ids []int64) {
+	if id := m.lotto; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLotto resets all changes to the "lotto" edge.
+func (m *LottoRecordMutation) ResetLotto() {
+	m.lotto = nil
+	m.clearedlotto = false
+}
+
+// ClearLottoPrize clears the "lotto_prize" edge to the LottoPrize entity.
+func (m *LottoRecordMutation) ClearLottoPrize() {
+	m.clearedlotto_prize = true
+	m.clearedFields[lottorecord.FieldLottoPrizeID] = struct{}{}
+}
+
+// LottoPrizeCleared reports if the "lotto_prize" edge to the LottoPrize entity was cleared.
+func (m *LottoRecordMutation) LottoPrizeCleared() bool {
+	return m.clearedlotto_prize
+}
+
+// LottoPrizeIDs returns the "lotto_prize" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LottoPrizeID instead. It exists only for internal usage by the builders.
+func (m *LottoRecordMutation) LottoPrizeIDs() (ids []int64) {
+	if id := m.lotto_prize; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLottoPrize resets all changes to the "lotto_prize" edge.
+func (m *LottoRecordMutation) ResetLottoPrize() {
+	m.lotto_prize = nil
+	m.clearedlotto_prize = false
+}
+
+// Where appends a list predicates to the LottoRecordMutation builder.
+func (m *LottoRecordMutation) Where(ps ...predicate.LottoRecord) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LottoRecordMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LottoRecordMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.LottoRecord, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LottoRecordMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LottoRecordMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (LottoRecord).
+func (m *LottoRecordMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LottoRecordMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_by != nil {
+		fields = append(fields, lottorecord.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, lottorecord.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, lottorecord.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, lottorecord.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, lottorecord.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, lottorecord.FieldUserID)
+	}
+	if m.lotto != nil {
+		fields = append(fields, lottorecord.FieldLottoID)
+	}
+	if m.result != nil {
+		fields = append(fields, lottorecord.FieldResult)
+	}
+	if m.lotto_prize != nil {
+		fields = append(fields, lottorecord.FieldLottoPrizeID)
+	}
+	if m.status != nil {
+		fields = append(fields, lottorecord.FieldStatus)
+	}
+	if m.remain_lotto_count != nil {
+		fields = append(fields, lottorecord.FieldRemainLottoCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LottoRecordMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case lottorecord.FieldCreatedBy:
+		return m.CreatedBy()
+	case lottorecord.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case lottorecord.FieldCreatedAt:
+		return m.CreatedAt()
+	case lottorecord.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case lottorecord.FieldDeletedAt:
+		return m.DeletedAt()
+	case lottorecord.FieldUserID:
+		return m.UserID()
+	case lottorecord.FieldLottoID:
+		return m.LottoID()
+	case lottorecord.FieldResult:
+		return m.Result()
+	case lottorecord.FieldLottoPrizeID:
+		return m.LottoPrizeID()
+	case lottorecord.FieldStatus:
+		return m.Status()
+	case lottorecord.FieldRemainLottoCount:
+		return m.RemainLottoCount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LottoRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case lottorecord.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case lottorecord.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case lottorecord.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case lottorecord.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case lottorecord.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case lottorecord.FieldUserID:
+		return m.OldUserID(ctx)
+	case lottorecord.FieldLottoID:
+		return m.OldLottoID(ctx)
+	case lottorecord.FieldResult:
+		return m.OldResult(ctx)
+	case lottorecord.FieldLottoPrizeID:
+		return m.OldLottoPrizeID(ctx)
+	case lottorecord.FieldStatus:
+		return m.OldStatus(ctx)
+	case lottorecord.FieldRemainLottoCount:
+		return m.OldRemainLottoCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown LottoRecord field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoRecordMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case lottorecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case lottorecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case lottorecord.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case lottorecord.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case lottorecord.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case lottorecord.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case lottorecord.FieldLottoID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLottoID(v)
+		return nil
+	case lottorecord.FieldResult:
+		v, ok := value.(lottorecord.Result)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResult(v)
+		return nil
+	case lottorecord.FieldLottoPrizeID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLottoPrizeID(v)
+		return nil
+	case lottorecord.FieldStatus:
+		v, ok := value.(lottorecord.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case lottorecord.FieldRemainLottoCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemainLottoCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoRecord field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LottoRecordMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, lottorecord.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, lottorecord.FieldUpdatedBy)
+	}
+	if m.addremain_lotto_count != nil {
+		fields = append(fields, lottorecord.FieldRemainLottoCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LottoRecordMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case lottorecord.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case lottorecord.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case lottorecord.FieldRemainLottoCount:
+		return m.AddedRemainLottoCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoRecordMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case lottorecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case lottorecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case lottorecord.FieldRemainLottoCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRemainLottoCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoRecord numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LottoRecordMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LottoRecordMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LottoRecordMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown LottoRecord nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LottoRecordMutation) ResetField(name string) error {
+	switch name {
+	case lottorecord.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case lottorecord.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case lottorecord.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case lottorecord.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case lottorecord.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case lottorecord.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case lottorecord.FieldLottoID:
+		m.ResetLottoID()
+		return nil
+	case lottorecord.FieldResult:
+		m.ResetResult()
+		return nil
+	case lottorecord.FieldLottoPrizeID:
+		m.ResetLottoPrizeID()
+		return nil
+	case lottorecord.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case lottorecord.FieldRemainLottoCount:
+		m.ResetRemainLottoCount()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoRecord field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LottoRecordMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.user != nil {
+		edges = append(edges, lottorecord.EdgeUser)
+	}
+	if m.lotto != nil {
+		edges = append(edges, lottorecord.EdgeLotto)
+	}
+	if m.lotto_prize != nil {
+		edges = append(edges, lottorecord.EdgeLottoPrize)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LottoRecordMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case lottorecord.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case lottorecord.EdgeLotto:
+		if id := m.lotto; id != nil {
+			return []ent.Value{*id}
+		}
+	case lottorecord.EdgeLottoPrize:
+		if id := m.lotto_prize; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LottoRecordMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LottoRecordMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LottoRecordMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.cleareduser {
+		edges = append(edges, lottorecord.EdgeUser)
+	}
+	if m.clearedlotto {
+		edges = append(edges, lottorecord.EdgeLotto)
+	}
+	if m.clearedlotto_prize {
+		edges = append(edges, lottorecord.EdgeLottoPrize)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LottoRecordMutation) EdgeCleared(name string) bool {
+	switch name {
+	case lottorecord.EdgeUser:
+		return m.cleareduser
+	case lottorecord.EdgeLotto:
+		return m.clearedlotto
+	case lottorecord.EdgeLottoPrize:
+		return m.clearedlotto_prize
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LottoRecordMutation) ClearEdge(name string) error {
+	switch name {
+	case lottorecord.EdgeUser:
+		m.ClearUser()
+		return nil
+	case lottorecord.EdgeLotto:
+		m.ClearLotto()
+		return nil
+	case lottorecord.EdgeLottoPrize:
+		m.ClearLottoPrize()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoRecord unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LottoRecordMutation) ResetEdge(name string) error {
+	switch name {
+	case lottorecord.EdgeUser:
+		m.ResetUser()
+		return nil
+	case lottorecord.EdgeLotto:
+		m.ResetLotto()
+		return nil
+	case lottorecord.EdgeLottoPrize:
+		m.ResetLottoPrize()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoRecord edge %s", name)
+}
+
+// LottoUserCountMutation represents an operation that mutates the LottoUserCount nodes in the graph.
+type LottoUserCountMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *int64
+	created_by            *int64
+	addcreated_by         *int64
+	updated_by            *int64
+	addupdated_by         *int64
+	created_at            *time.Time
+	updated_at            *time.Time
+	deleted_at            *time.Time
+	remain_lotto_count    *int64
+	addremain_lotto_count *int64
+	clearedFields         map[string]struct{}
+	user                  *int64
+	cleareduser           bool
+	lotto                 *int64
+	clearedlotto          bool
+	done                  bool
+	oldValue              func(context.Context) (*LottoUserCount, error)
+	predicates            []predicate.LottoUserCount
+}
+
+var _ ent.Mutation = (*LottoUserCountMutation)(nil)
+
+// lottousercountOption allows management of the mutation configuration using functional options.
+type lottousercountOption func(*LottoUserCountMutation)
+
+// newLottoUserCountMutation creates new mutation for the LottoUserCount entity.
+func newLottoUserCountMutation(c config, op Op, opts ...lottousercountOption) *LottoUserCountMutation {
+	m := &LottoUserCountMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLottoUserCount,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLottoUserCountID sets the ID field of the mutation.
+func withLottoUserCountID(id int64) lottousercountOption {
+	return func(m *LottoUserCountMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *LottoUserCount
+		)
+		m.oldValue = func(ctx context.Context) (*LottoUserCount, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().LottoUserCount.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLottoUserCount sets the old LottoUserCount of the mutation.
+func withLottoUserCount(node *LottoUserCount) lottousercountOption {
+	return func(m *LottoUserCountMutation) {
+		m.oldValue = func(context.Context) (*LottoUserCount, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LottoUserCountMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LottoUserCountMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of LottoUserCount entities.
+func (m *LottoUserCountMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LottoUserCountMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LottoUserCountMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().LottoUserCount.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *LottoUserCountMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *LottoUserCountMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *LottoUserCountMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *LottoUserCountMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *LottoUserCountMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *LottoUserCountMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *LottoUserCountMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *LottoUserCountMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *LottoUserCountMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *LottoUserCountMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *LottoUserCountMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *LottoUserCountMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *LottoUserCountMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *LottoUserCountMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *LottoUserCountMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *LottoUserCountMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *LottoUserCountMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *LottoUserCountMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *LottoUserCountMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *LottoUserCountMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *LottoUserCountMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *LottoUserCountMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetLottoID sets the "lotto_id" field.
+func (m *LottoUserCountMutation) SetLottoID(i int64) {
+	m.lotto = &i
+}
+
+// LottoID returns the value of the "lotto_id" field in the mutation.
+func (m *LottoUserCountMutation) LottoID() (r int64, exists bool) {
+	v := m.lotto
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLottoID returns the old "lotto_id" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldLottoID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLottoID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLottoID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLottoID: %w", err)
+	}
+	return oldValue.LottoID, nil
+}
+
+// ResetLottoID resets all changes to the "lotto_id" field.
+func (m *LottoUserCountMutation) ResetLottoID() {
+	m.lotto = nil
+}
+
+// SetRemainLottoCount sets the "remain_lotto_count" field.
+func (m *LottoUserCountMutation) SetRemainLottoCount(i int64) {
+	m.remain_lotto_count = &i
+	m.addremain_lotto_count = nil
+}
+
+// RemainLottoCount returns the value of the "remain_lotto_count" field in the mutation.
+func (m *LottoUserCountMutation) RemainLottoCount() (r int64, exists bool) {
+	v := m.remain_lotto_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemainLottoCount returns the old "remain_lotto_count" field's value of the LottoUserCount entity.
+// If the LottoUserCount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoUserCountMutation) OldRemainLottoCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemainLottoCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemainLottoCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemainLottoCount: %w", err)
+	}
+	return oldValue.RemainLottoCount, nil
+}
+
+// AddRemainLottoCount adds i to the "remain_lotto_count" field.
+func (m *LottoUserCountMutation) AddRemainLottoCount(i int64) {
+	if m.addremain_lotto_count != nil {
+		*m.addremain_lotto_count += i
+	} else {
+		m.addremain_lotto_count = &i
+	}
+}
+
+// AddedRemainLottoCount returns the value that was added to the "remain_lotto_count" field in this mutation.
+func (m *LottoUserCountMutation) AddedRemainLottoCount() (r int64, exists bool) {
+	v := m.addremain_lotto_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRemainLottoCount resets all changes to the "remain_lotto_count" field.
+func (m *LottoUserCountMutation) ResetRemainLottoCount() {
+	m.remain_lotto_count = nil
+	m.addremain_lotto_count = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *LottoUserCountMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[lottousercount.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *LottoUserCountMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *LottoUserCountMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *LottoUserCountMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearLotto clears the "lotto" edge to the Lotto entity.
+func (m *LottoUserCountMutation) ClearLotto() {
+	m.clearedlotto = true
+	m.clearedFields[lottousercount.FieldLottoID] = struct{}{}
+}
+
+// LottoCleared reports if the "lotto" edge to the Lotto entity was cleared.
+func (m *LottoUserCountMutation) LottoCleared() bool {
+	return m.clearedlotto
+}
+
+// LottoIDs returns the "lotto" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LottoID instead. It exists only for internal usage by the builders.
+func (m *LottoUserCountMutation) LottoIDs() (ids []int64) {
+	if id := m.lotto; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLotto resets all changes to the "lotto" edge.
+func (m *LottoUserCountMutation) ResetLotto() {
+	m.lotto = nil
+	m.clearedlotto = false
+}
+
+// Where appends a list predicates to the LottoUserCountMutation builder.
+func (m *LottoUserCountMutation) Where(ps ...predicate.LottoUserCount) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LottoUserCountMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LottoUserCountMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.LottoUserCount, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LottoUserCountMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LottoUserCountMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (LottoUserCount).
+func (m *LottoUserCountMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LottoUserCountMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_by != nil {
+		fields = append(fields, lottousercount.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, lottousercount.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, lottousercount.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, lottousercount.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, lottousercount.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, lottousercount.FieldUserID)
+	}
+	if m.lotto != nil {
+		fields = append(fields, lottousercount.FieldLottoID)
+	}
+	if m.remain_lotto_count != nil {
+		fields = append(fields, lottousercount.FieldRemainLottoCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LottoUserCountMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case lottousercount.FieldCreatedBy:
+		return m.CreatedBy()
+	case lottousercount.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case lottousercount.FieldCreatedAt:
+		return m.CreatedAt()
+	case lottousercount.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case lottousercount.FieldDeletedAt:
+		return m.DeletedAt()
+	case lottousercount.FieldUserID:
+		return m.UserID()
+	case lottousercount.FieldLottoID:
+		return m.LottoID()
+	case lottousercount.FieldRemainLottoCount:
+		return m.RemainLottoCount()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LottoUserCountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case lottousercount.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case lottousercount.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case lottousercount.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case lottousercount.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case lottousercount.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case lottousercount.FieldUserID:
+		return m.OldUserID(ctx)
+	case lottousercount.FieldLottoID:
+		return m.OldLottoID(ctx)
+	case lottousercount.FieldRemainLottoCount:
+		return m.OldRemainLottoCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown LottoUserCount field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoUserCountMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case lottousercount.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case lottousercount.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case lottousercount.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case lottousercount.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case lottousercount.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case lottousercount.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case lottousercount.FieldLottoID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLottoID(v)
+		return nil
+	case lottousercount.FieldRemainLottoCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemainLottoCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoUserCount field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LottoUserCountMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, lottousercount.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, lottousercount.FieldUpdatedBy)
+	}
+	if m.addremain_lotto_count != nil {
+		fields = append(fields, lottousercount.FieldRemainLottoCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LottoUserCountMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case lottousercount.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case lottousercount.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case lottousercount.FieldRemainLottoCount:
+		return m.AddedRemainLottoCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LottoUserCountMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case lottousercount.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case lottousercount.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case lottousercount.FieldRemainLottoCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRemainLottoCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown LottoUserCount numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LottoUserCountMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LottoUserCountMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LottoUserCountMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown LottoUserCount nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LottoUserCountMutation) ResetField(name string) error {
+	switch name {
+	case lottousercount.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case lottousercount.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case lottousercount.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case lottousercount.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case lottousercount.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case lottousercount.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case lottousercount.FieldLottoID:
+		m.ResetLottoID()
+		return nil
+	case lottousercount.FieldRemainLottoCount:
+		m.ResetRemainLottoCount()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoUserCount field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LottoUserCountMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, lottousercount.EdgeUser)
+	}
+	if m.lotto != nil {
+		edges = append(edges, lottousercount.EdgeLotto)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LottoUserCountMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case lottousercount.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case lottousercount.EdgeLotto:
+		if id := m.lotto; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LottoUserCountMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LottoUserCountMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LottoUserCountMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, lottousercount.EdgeUser)
+	}
+	if m.clearedlotto {
+		edges = append(edges, lottousercount.EdgeLotto)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LottoUserCountMutation) EdgeCleared(name string) bool {
+	switch name {
+	case lottousercount.EdgeUser:
+		return m.cleareduser
+	case lottousercount.EdgeLotto:
+		return m.clearedlotto
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LottoUserCountMutation) ClearEdge(name string) error {
+	switch name {
+	case lottousercount.EdgeUser:
+		m.ClearUser()
+		return nil
+	case lottousercount.EdgeLotto:
+		m.ClearLotto()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoUserCount unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LottoUserCountMutation) ResetEdge(name string) error {
+	switch name {
+	case lottousercount.EdgeUser:
+		m.ResetUser()
+		return nil
+	case lottousercount.EdgeLotto:
+		m.ResetLotto()
+		return nil
+	}
+	return fmt.Errorf("unknown LottoUserCount edge %s", name)
+}
+
 // MissionMutation represents an operation that mutates the Mission nodes in the graph.
 type MissionMutation struct {
 	config
@@ -28651,6 +35694,8 @@ type MissionMutation struct {
 	free_at                       *time.Time
 	close_way                     *enums.CloseWay
 	closed_at                     *time.Time
+	warning_times                 *int64
+	addwarning_times              *int64
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -30412,6 +37457,62 @@ func (m *MissionMutation) ResetClosedAt() {
 	delete(m.clearedFields, mission.FieldClosedAt)
 }
 
+// SetWarningTimes sets the "warning_times" field.
+func (m *MissionMutation) SetWarningTimes(i int64) {
+	m.warning_times = &i
+	m.addwarning_times = nil
+}
+
+// WarningTimes returns the value of the "warning_times" field in the mutation.
+func (m *MissionMutation) WarningTimes() (r int64, exists bool) {
+	v := m.warning_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWarningTimes returns the old "warning_times" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldWarningTimes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWarningTimes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWarningTimes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWarningTimes: %w", err)
+	}
+	return oldValue.WarningTimes, nil
+}
+
+// AddWarningTimes adds i to the "warning_times" field.
+func (m *MissionMutation) AddWarningTimes(i int64) {
+	if m.addwarning_times != nil {
+		*m.addwarning_times += i
+	} else {
+		m.addwarning_times = &i
+	}
+}
+
+// AddedWarningTimes returns the value that was added to the "warning_times" field in this mutation.
+func (m *MissionMutation) AddedWarningTimes() (r int64, exists bool) {
+	v := m.addwarning_times
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWarningTimes resets all changes to the "warning_times" field.
+func (m *MissionMutation) ResetWarningTimes() {
+	m.warning_times = nil
+	m.addwarning_times = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -31025,7 +38126,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 39)
+	fields := make([]string, 0, 40)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -31143,6 +38244,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.closed_at != nil {
 		fields = append(fields, mission.FieldClosedAt)
 	}
+	if m.warning_times != nil {
+		fields = append(fields, mission.FieldWarningTimes)
+	}
 	return fields
 }
 
@@ -31229,6 +38333,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.CloseWay()
 	case mission.FieldClosedAt:
 		return m.ClosedAt()
+	case mission.FieldWarningTimes:
+		return m.WarningTimes()
 	}
 	return nil, false
 }
@@ -31316,6 +38422,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCloseWay(ctx)
 	case mission.FieldClosedAt:
 		return m.OldClosedAt(ctx)
+	case mission.FieldWarningTimes:
+		return m.OldWarningTimes(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -31598,6 +38706,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetClosedAt(v)
 		return nil
+	case mission.FieldWarningTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWarningTimes(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -31618,6 +38733,9 @@ func (m *MissionMutation) AddedFields() []string {
 	if m.addresp_status_code != nil {
 		fields = append(fields, mission.FieldRespStatusCode)
 	}
+	if m.addwarning_times != nil {
+		fields = append(fields, mission.FieldWarningTimes)
+	}
 	return fields
 }
 
@@ -31634,6 +38752,8 @@ func (m *MissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUnitCep()
 	case mission.FieldRespStatusCode:
 		return m.AddedRespStatusCode()
+	case mission.FieldWarningTimes:
+		return m.AddedWarningTimes()
 	}
 	return nil, false
 }
@@ -31670,6 +38790,13 @@ func (m *MissionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRespStatusCode(v)
+		return nil
+	case mission.FieldWarningTimes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWarningTimes(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mission numeric field %s", name)
@@ -31871,6 +38998,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldClosedAt:
 		m.ResetClosedAt()
+		return nil
+	case mission.FieldWarningTimes:
+		m.ResetWarningTimes()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
@@ -56337,6 +63467,21 @@ type UserMutation struct {
 	artwork_likes                  map[int64]struct{}
 	removedartwork_likes           map[int64]struct{}
 	clearedartwork_likes           bool
+	cdk_infos                      map[int64]struct{}
+	removedcdk_infos               map[int64]struct{}
+	clearedcdk_infos               bool
+	use_cdk_infos                  map[int64]struct{}
+	removeduse_cdk_infos           map[int64]struct{}
+	cleareduse_cdk_infos           bool
+	lotto_records                  map[int64]struct{}
+	removedlotto_records           map[int64]struct{}
+	clearedlotto_records           bool
+	lotto_user_counts              map[int64]struct{}
+	removedlotto_user_counts       map[int64]struct{}
+	clearedlotto_user_counts       bool
+	lotto_get_count_records        map[int64]struct{}
+	removedlotto_get_count_records map[int64]struct{}
+	clearedlotto_get_count_records bool
 	done                           bool
 	oldValue                       func(context.Context) (*User, error)
 	predicates                     []predicate.User
@@ -58826,6 +65971,276 @@ func (m *UserMutation) ResetArtworkLikes() {
 	m.removedartwork_likes = nil
 }
 
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by ids.
+func (m *UserMutation) AddCdkInfoIDs(ids ...int64) {
+	if m.cdk_infos == nil {
+		m.cdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.cdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCdkInfos clears the "cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) ClearCdkInfos() {
+	m.clearedcdk_infos = true
+}
+
+// CdkInfosCleared reports if the "cdk_infos" edge to the CDKInfo entity was cleared.
+func (m *UserMutation) CdkInfosCleared() bool {
+	return m.clearedcdk_infos
+}
+
+// RemoveCdkInfoIDs removes the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (m *UserMutation) RemoveCdkInfoIDs(ids ...int64) {
+	if m.removedcdk_infos == nil {
+		m.removedcdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.cdk_infos, ids[i])
+		m.removedcdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCdkInfos returns the removed IDs of the "cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) RemovedCdkInfosIDs() (ids []int64) {
+	for id := range m.removedcdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CdkInfosIDs returns the "cdk_infos" edge IDs in the mutation.
+func (m *UserMutation) CdkInfosIDs() (ids []int64) {
+	for id := range m.cdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCdkInfos resets all changes to the "cdk_infos" edge.
+func (m *UserMutation) ResetCdkInfos() {
+	m.cdk_infos = nil
+	m.clearedcdk_infos = false
+	m.removedcdk_infos = nil
+}
+
+// AddUseCdkInfoIDs adds the "use_cdk_infos" edge to the CDKInfo entity by ids.
+func (m *UserMutation) AddUseCdkInfoIDs(ids ...int64) {
+	if m.use_cdk_infos == nil {
+		m.use_cdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.use_cdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUseCdkInfos clears the "use_cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) ClearUseCdkInfos() {
+	m.cleareduse_cdk_infos = true
+}
+
+// UseCdkInfosCleared reports if the "use_cdk_infos" edge to the CDKInfo entity was cleared.
+func (m *UserMutation) UseCdkInfosCleared() bool {
+	return m.cleareduse_cdk_infos
+}
+
+// RemoveUseCdkInfoIDs removes the "use_cdk_infos" edge to the CDKInfo entity by IDs.
+func (m *UserMutation) RemoveUseCdkInfoIDs(ids ...int64) {
+	if m.removeduse_cdk_infos == nil {
+		m.removeduse_cdk_infos = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.use_cdk_infos, ids[i])
+		m.removeduse_cdk_infos[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUseCdkInfos returns the removed IDs of the "use_cdk_infos" edge to the CDKInfo entity.
+func (m *UserMutation) RemovedUseCdkInfosIDs() (ids []int64) {
+	for id := range m.removeduse_cdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UseCdkInfosIDs returns the "use_cdk_infos" edge IDs in the mutation.
+func (m *UserMutation) UseCdkInfosIDs() (ids []int64) {
+	for id := range m.use_cdk_infos {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUseCdkInfos resets all changes to the "use_cdk_infos" edge.
+func (m *UserMutation) ResetUseCdkInfos() {
+	m.use_cdk_infos = nil
+	m.cleareduse_cdk_infos = false
+	m.removeduse_cdk_infos = nil
+}
+
+// AddLottoRecordIDs adds the "lotto_records" edge to the LottoRecord entity by ids.
+func (m *UserMutation) AddLottoRecordIDs(ids ...int64) {
+	if m.lotto_records == nil {
+		m.lotto_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoRecords clears the "lotto_records" edge to the LottoRecord entity.
+func (m *UserMutation) ClearLottoRecords() {
+	m.clearedlotto_records = true
+}
+
+// LottoRecordsCleared reports if the "lotto_records" edge to the LottoRecord entity was cleared.
+func (m *UserMutation) LottoRecordsCleared() bool {
+	return m.clearedlotto_records
+}
+
+// RemoveLottoRecordIDs removes the "lotto_records" edge to the LottoRecord entity by IDs.
+func (m *UserMutation) RemoveLottoRecordIDs(ids ...int64) {
+	if m.removedlotto_records == nil {
+		m.removedlotto_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_records, ids[i])
+		m.removedlotto_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoRecords returns the removed IDs of the "lotto_records" edge to the LottoRecord entity.
+func (m *UserMutation) RemovedLottoRecordsIDs() (ids []int64) {
+	for id := range m.removedlotto_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoRecordsIDs returns the "lotto_records" edge IDs in the mutation.
+func (m *UserMutation) LottoRecordsIDs() (ids []int64) {
+	for id := range m.lotto_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoRecords resets all changes to the "lotto_records" edge.
+func (m *UserMutation) ResetLottoRecords() {
+	m.lotto_records = nil
+	m.clearedlotto_records = false
+	m.removedlotto_records = nil
+}
+
+// AddLottoUserCountIDs adds the "lotto_user_counts" edge to the LottoUserCount entity by ids.
+func (m *UserMutation) AddLottoUserCountIDs(ids ...int64) {
+	if m.lotto_user_counts == nil {
+		m.lotto_user_counts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_user_counts[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoUserCounts clears the "lotto_user_counts" edge to the LottoUserCount entity.
+func (m *UserMutation) ClearLottoUserCounts() {
+	m.clearedlotto_user_counts = true
+}
+
+// LottoUserCountsCleared reports if the "lotto_user_counts" edge to the LottoUserCount entity was cleared.
+func (m *UserMutation) LottoUserCountsCleared() bool {
+	return m.clearedlotto_user_counts
+}
+
+// RemoveLottoUserCountIDs removes the "lotto_user_counts" edge to the LottoUserCount entity by IDs.
+func (m *UserMutation) RemoveLottoUserCountIDs(ids ...int64) {
+	if m.removedlotto_user_counts == nil {
+		m.removedlotto_user_counts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_user_counts, ids[i])
+		m.removedlotto_user_counts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoUserCounts returns the removed IDs of the "lotto_user_counts" edge to the LottoUserCount entity.
+func (m *UserMutation) RemovedLottoUserCountsIDs() (ids []int64) {
+	for id := range m.removedlotto_user_counts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoUserCountsIDs returns the "lotto_user_counts" edge IDs in the mutation.
+func (m *UserMutation) LottoUserCountsIDs() (ids []int64) {
+	for id := range m.lotto_user_counts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoUserCounts resets all changes to the "lotto_user_counts" edge.
+func (m *UserMutation) ResetLottoUserCounts() {
+	m.lotto_user_counts = nil
+	m.clearedlotto_user_counts = false
+	m.removedlotto_user_counts = nil
+}
+
+// AddLottoGetCountRecordIDs adds the "lotto_get_count_records" edge to the LottoGetCountRecord entity by ids.
+func (m *UserMutation) AddLottoGetCountRecordIDs(ids ...int64) {
+	if m.lotto_get_count_records == nil {
+		m.lotto_get_count_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.lotto_get_count_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLottoGetCountRecords clears the "lotto_get_count_records" edge to the LottoGetCountRecord entity.
+func (m *UserMutation) ClearLottoGetCountRecords() {
+	m.clearedlotto_get_count_records = true
+}
+
+// LottoGetCountRecordsCleared reports if the "lotto_get_count_records" edge to the LottoGetCountRecord entity was cleared.
+func (m *UserMutation) LottoGetCountRecordsCleared() bool {
+	return m.clearedlotto_get_count_records
+}
+
+// RemoveLottoGetCountRecordIDs removes the "lotto_get_count_records" edge to the LottoGetCountRecord entity by IDs.
+func (m *UserMutation) RemoveLottoGetCountRecordIDs(ids ...int64) {
+	if m.removedlotto_get_count_records == nil {
+		m.removedlotto_get_count_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.lotto_get_count_records, ids[i])
+		m.removedlotto_get_count_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLottoGetCountRecords returns the removed IDs of the "lotto_get_count_records" edge to the LottoGetCountRecord entity.
+func (m *UserMutation) RemovedLottoGetCountRecordsIDs() (ids []int64) {
+	for id := range m.removedlotto_get_count_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LottoGetCountRecordsIDs returns the "lotto_get_count_records" edge IDs in the mutation.
+func (m *UserMutation) LottoGetCountRecordsIDs() (ids []int64) {
+	for id := range m.lotto_get_count_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLottoGetCountRecords resets all changes to the "lotto_get_count_records" edge.
+func (m *UserMutation) ResetLottoGetCountRecords() {
+	m.lotto_get_count_records = nil
+	m.clearedlotto_get_count_records = false
+	m.removedlotto_get_count_records = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -59292,7 +66707,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 32)
+	edges := make([]string, 0, 37)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -59388,6 +66803,21 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.artwork_likes != nil {
 		edges = append(edges, user.EdgeArtworkLikes)
+	}
+	if m.cdk_infos != nil {
+		edges = append(edges, user.EdgeCdkInfos)
+	}
+	if m.use_cdk_infos != nil {
+		edges = append(edges, user.EdgeUseCdkInfos)
+	}
+	if m.lotto_records != nil {
+		edges = append(edges, user.EdgeLottoRecords)
+	}
+	if m.lotto_user_counts != nil {
+		edges = append(edges, user.EdgeLottoUserCounts)
+	}
+	if m.lotto_get_count_records != nil {
+		edges = append(edges, user.EdgeLottoGetCountRecords)
 	}
 	return edges
 }
@@ -59580,13 +67010,43 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCdkInfos:
+		ids := make([]ent.Value, 0, len(m.cdk_infos))
+		for id := range m.cdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeUseCdkInfos:
+		ids := make([]ent.Value, 0, len(m.use_cdk_infos))
+		for id := range m.use_cdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeLottoRecords:
+		ids := make([]ent.Value, 0, len(m.lotto_records))
+		for id := range m.lotto_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeLottoUserCounts:
+		ids := make([]ent.Value, 0, len(m.lotto_user_counts))
+		for id := range m.lotto_user_counts {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeLottoGetCountRecords:
+		ids := make([]ent.Value, 0, len(m.lotto_get_count_records))
+		for id := range m.lotto_get_count_records {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 32)
+	edges := make([]string, 0, 37)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -59670,6 +67130,21 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedartwork_likes != nil {
 		edges = append(edges, user.EdgeArtworkLikes)
+	}
+	if m.removedcdk_infos != nil {
+		edges = append(edges, user.EdgeCdkInfos)
+	}
+	if m.removeduse_cdk_infos != nil {
+		edges = append(edges, user.EdgeUseCdkInfos)
+	}
+	if m.removedlotto_records != nil {
+		edges = append(edges, user.EdgeLottoRecords)
+	}
+	if m.removedlotto_user_counts != nil {
+		edges = append(edges, user.EdgeLottoUserCounts)
+	}
+	if m.removedlotto_get_count_records != nil {
+		edges = append(edges, user.EdgeLottoGetCountRecords)
 	}
 	return edges
 }
@@ -59846,13 +67321,43 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCdkInfos:
+		ids := make([]ent.Value, 0, len(m.removedcdk_infos))
+		for id := range m.removedcdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeUseCdkInfos:
+		ids := make([]ent.Value, 0, len(m.removeduse_cdk_infos))
+		for id := range m.removeduse_cdk_infos {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeLottoRecords:
+		ids := make([]ent.Value, 0, len(m.removedlotto_records))
+		for id := range m.removedlotto_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeLottoUserCounts:
+		ids := make([]ent.Value, 0, len(m.removedlotto_user_counts))
+		for id := range m.removedlotto_user_counts {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeLottoGetCountRecords:
+		ids := make([]ent.Value, 0, len(m.removedlotto_get_count_records))
+		for id := range m.removedlotto_get_count_records {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 32)
+	edges := make([]string, 0, 37)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -59949,6 +67454,21 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedartwork_likes {
 		edges = append(edges, user.EdgeArtworkLikes)
 	}
+	if m.clearedcdk_infos {
+		edges = append(edges, user.EdgeCdkInfos)
+	}
+	if m.cleareduse_cdk_infos {
+		edges = append(edges, user.EdgeUseCdkInfos)
+	}
+	if m.clearedlotto_records {
+		edges = append(edges, user.EdgeLottoRecords)
+	}
+	if m.clearedlotto_user_counts {
+		edges = append(edges, user.EdgeLottoUserCounts)
+	}
+	if m.clearedlotto_get_count_records {
+		edges = append(edges, user.EdgeLottoGetCountRecords)
+	}
 	return edges
 }
 
@@ -60020,6 +67540,16 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedartworks
 	case user.EdgeArtworkLikes:
 		return m.clearedartwork_likes
+	case user.EdgeCdkInfos:
+		return m.clearedcdk_infos
+	case user.EdgeUseCdkInfos:
+		return m.cleareduse_cdk_infos
+	case user.EdgeLottoRecords:
+		return m.clearedlotto_records
+	case user.EdgeLottoUserCounts:
+		return m.clearedlotto_user_counts
+	case user.EdgeLottoGetCountRecords:
+		return m.clearedlotto_get_count_records
 	}
 	return false
 }
@@ -60143,6 +67673,21 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeArtworkLikes:
 		m.ResetArtworkLikes()
+		return nil
+	case user.EdgeCdkInfos:
+		m.ResetCdkInfos()
+		return nil
+	case user.EdgeUseCdkInfos:
+		m.ResetUseCdkInfos()
+		return nil
+	case user.EdgeLottoRecords:
+		m.ResetLottoRecords()
+		return nil
+	case user.EdgeLottoUserCounts:
+		m.ResetLottoUserCounts()
+		return nil
+	case user.EdgeLottoGetCountRecords:
+		m.ResetLottoGetCountRecords()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
@@ -64119,6 +71664,8 @@ type WithdrawAccountMutation struct {
 	phone            *string
 	bank_card_number *string
 	bank             *string
+	way              *enums.TransferOrderType
+	alipay_card_no   *string
 	clearedFields    map[string]struct{}
 	user             *int64
 	cleareduser      bool
@@ -64795,6 +72342,78 @@ func (m *WithdrawAccountMutation) ResetBank() {
 	m.bank = nil
 }
 
+// SetWay sets the "way" field.
+func (m *WithdrawAccountMutation) SetWay(eot enums.TransferOrderType) {
+	m.way = &eot
+}
+
+// Way returns the value of the "way" field in the mutation.
+func (m *WithdrawAccountMutation) Way() (r enums.TransferOrderType, exists bool) {
+	v := m.way
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWay returns the old "way" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldWay(ctx context.Context) (v enums.TransferOrderType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWay: %w", err)
+	}
+	return oldValue.Way, nil
+}
+
+// ResetWay resets all changes to the "way" field.
+func (m *WithdrawAccountMutation) ResetWay() {
+	m.way = nil
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (m *WithdrawAccountMutation) SetAlipayCardNo(s string) {
+	m.alipay_card_no = &s
+}
+
+// AlipayCardNo returns the value of the "alipay_card_no" field in the mutation.
+func (m *WithdrawAccountMutation) AlipayCardNo() (r string, exists bool) {
+	v := m.alipay_card_no
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlipayCardNo returns the old "alipay_card_no" field's value of the WithdrawAccount entity.
+// If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawAccountMutation) OldAlipayCardNo(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAlipayCardNo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAlipayCardNo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlipayCardNo: %w", err)
+	}
+	return oldValue.AlipayCardNo, nil
+}
+
+// ResetAlipayCardNo resets all changes to the "alipay_card_no" field.
+func (m *WithdrawAccountMutation) ResetAlipayCardNo() {
+	m.alipay_card_no = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *WithdrawAccountMutation) ClearUser() {
 	m.cleareduser = true
@@ -64856,7 +72475,7 @@ func (m *WithdrawAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawAccountMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, withdrawaccount.FieldCreatedBy)
 	}
@@ -64899,6 +72518,12 @@ func (m *WithdrawAccountMutation) Fields() []string {
 	if m.bank != nil {
 		fields = append(fields, withdrawaccount.FieldBank)
 	}
+	if m.way != nil {
+		fields = append(fields, withdrawaccount.FieldWay)
+	}
+	if m.alipay_card_no != nil {
+		fields = append(fields, withdrawaccount.FieldAlipayCardNo)
+	}
 	return fields
 }
 
@@ -64935,6 +72560,10 @@ func (m *WithdrawAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.BankCardNumber()
 	case withdrawaccount.FieldBank:
 		return m.Bank()
+	case withdrawaccount.FieldWay:
+		return m.Way()
+	case withdrawaccount.FieldAlipayCardNo:
+		return m.AlipayCardNo()
 	}
 	return nil, false
 }
@@ -64972,6 +72601,10 @@ func (m *WithdrawAccountMutation) OldField(ctx context.Context, name string) (en
 		return m.OldBankCardNumber(ctx)
 	case withdrawaccount.FieldBank:
 		return m.OldBank(ctx)
+	case withdrawaccount.FieldWay:
+		return m.OldWay(ctx)
+	case withdrawaccount.FieldAlipayCardNo:
+		return m.OldAlipayCardNo(ctx)
 	}
 	return nil, fmt.Errorf("unknown WithdrawAccount field %s", name)
 }
@@ -65078,6 +72711,20 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBank(v)
+		return nil
+	case withdrawaccount.FieldWay:
+		v, ok := value.(enums.TransferOrderType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWay(v)
+		return nil
+	case withdrawaccount.FieldAlipayCardNo:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlipayCardNo(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)
@@ -65208,6 +72855,12 @@ func (m *WithdrawAccountMutation) ResetField(name string) error {
 		return nil
 	case withdrawaccount.FieldBank:
 		m.ResetBank()
+		return nil
+	case withdrawaccount.FieldWay:
+		m.ResetWay()
+		return nil
+	case withdrawaccount.FieldAlipayCardNo:
+		m.ResetAlipayCardNo()
 		return nil
 	}
 	return fmt.Errorf("unknown WithdrawAccount field %s", name)

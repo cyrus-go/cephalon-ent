@@ -192,6 +192,48 @@ func (gu *GpuUpdate) AddMemory(i int) *GpuUpdate {
 	return gu
 }
 
+// SetLowestEarnMonth sets the "lowest_earn_month" field.
+func (gu *GpuUpdate) SetLowestEarnMonth(i int64) *GpuUpdate {
+	gu.mutation.ResetLowestEarnMonth()
+	gu.mutation.SetLowestEarnMonth(i)
+	return gu
+}
+
+// SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableLowestEarnMonth(i *int64) *GpuUpdate {
+	if i != nil {
+		gu.SetLowestEarnMonth(*i)
+	}
+	return gu
+}
+
+// AddLowestEarnMonth adds i to the "lowest_earn_month" field.
+func (gu *GpuUpdate) AddLowestEarnMonth(i int64) *GpuUpdate {
+	gu.mutation.AddLowestEarnMonth(i)
+	return gu
+}
+
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (gu *GpuUpdate) SetHighestEarnMonth(i int64) *GpuUpdate {
+	gu.mutation.ResetHighestEarnMonth()
+	gu.mutation.SetHighestEarnMonth(i)
+	return gu
+}
+
+// SetNillableHighestEarnMonth sets the "highest_earn_month" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableHighestEarnMonth(i *int64) *GpuUpdate {
+	if i != nil {
+		gu.SetHighestEarnMonth(*i)
+	}
+	return gu
+}
+
+// AddHighestEarnMonth adds i to the "highest_earn_month" field.
+func (gu *GpuUpdate) AddHighestEarnMonth(i int64) *GpuUpdate {
+	gu.mutation.AddHighestEarnMonth(i)
+	return gu
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (gu *GpuUpdate) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdate {
 	gu.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -377,6 +419,18 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.AddedMemory(); ok {
 		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.LowestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.AddedLowestEarnMonth(); ok {
+		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.HighestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.AddedHighestEarnMonth(); ok {
+		_spec.AddField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
 	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -650,6 +704,48 @@ func (guo *GpuUpdateOne) AddMemory(i int) *GpuUpdateOne {
 	return guo
 }
 
+// SetLowestEarnMonth sets the "lowest_earn_month" field.
+func (guo *GpuUpdateOne) SetLowestEarnMonth(i int64) *GpuUpdateOne {
+	guo.mutation.ResetLowestEarnMonth()
+	guo.mutation.SetLowestEarnMonth(i)
+	return guo
+}
+
+// SetNillableLowestEarnMonth sets the "lowest_earn_month" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableLowestEarnMonth(i *int64) *GpuUpdateOne {
+	if i != nil {
+		guo.SetLowestEarnMonth(*i)
+	}
+	return guo
+}
+
+// AddLowestEarnMonth adds i to the "lowest_earn_month" field.
+func (guo *GpuUpdateOne) AddLowestEarnMonth(i int64) *GpuUpdateOne {
+	guo.mutation.AddLowestEarnMonth(i)
+	return guo
+}
+
+// SetHighestEarnMonth sets the "highest_earn_month" field.
+func (guo *GpuUpdateOne) SetHighestEarnMonth(i int64) *GpuUpdateOne {
+	guo.mutation.ResetHighestEarnMonth()
+	guo.mutation.SetHighestEarnMonth(i)
+	return guo
+}
+
+// SetNillableHighestEarnMonth sets the "highest_earn_month" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableHighestEarnMonth(i *int64) *GpuUpdateOne {
+	if i != nil {
+		guo.SetHighestEarnMonth(*i)
+	}
+	return guo
+}
+
+// AddHighestEarnMonth adds i to the "highest_earn_month" field.
+func (guo *GpuUpdateOne) AddHighestEarnMonth(i int64) *GpuUpdateOne {
+	guo.mutation.AddHighestEarnMonth(i)
+	return guo
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (guo *GpuUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdateOne {
 	guo.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -865,6 +961,18 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	}
 	if value, ok := guo.mutation.AddedMemory(); ok {
 		_spec.AddField(gpu.FieldMemory, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.LowestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.AddedLowestEarnMonth(); ok {
+		_spec.AddField(gpu.FieldLowestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.HighestEarnMonth(); ok {
+		_spec.SetField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.AddedHighestEarnMonth(); ok {
+		_spec.AddField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
 	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

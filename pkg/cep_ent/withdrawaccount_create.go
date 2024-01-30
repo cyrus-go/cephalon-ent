@@ -220,6 +220,34 @@ func (wac *WithdrawAccountCreate) SetNillableBank(s *string) *WithdrawAccountCre
 	return wac
 }
 
+// SetWay sets the "way" field.
+func (wac *WithdrawAccountCreate) SetWay(eot enums.TransferOrderType) *WithdrawAccountCreate {
+	wac.mutation.SetWay(eot)
+	return wac
+}
+
+// SetNillableWay sets the "way" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableWay(eot *enums.TransferOrderType) *WithdrawAccountCreate {
+	if eot != nil {
+		wac.SetWay(*eot)
+	}
+	return wac
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (wac *WithdrawAccountCreate) SetAlipayCardNo(s string) *WithdrawAccountCreate {
+	wac.mutation.SetAlipayCardNo(s)
+	return wac
+}
+
+// SetNillableAlipayCardNo sets the "alipay_card_no" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableAlipayCardNo(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetAlipayCardNo(*s)
+	}
+	return wac
+}
+
 // SetID sets the "id" field.
 func (wac *WithdrawAccountCreate) SetID(i int64) *WithdrawAccountCreate {
 	wac.mutation.SetID(i)
@@ -330,6 +358,14 @@ func (wac *WithdrawAccountCreate) defaults() {
 		v := withdrawaccount.DefaultBank
 		wac.mutation.SetBank(v)
 	}
+	if _, ok := wac.mutation.Way(); !ok {
+		v := withdrawaccount.DefaultWay
+		wac.mutation.SetWay(v)
+	}
+	if _, ok := wac.mutation.AlipayCardNo(); !ok {
+		v := withdrawaccount.DefaultAlipayCardNo
+		wac.mutation.SetAlipayCardNo(v)
+	}
 	if _, ok := wac.mutation.ID(); !ok {
 		v := withdrawaccount.DefaultID()
 		wac.mutation.SetID(v)
@@ -384,6 +420,17 @@ func (wac *WithdrawAccountCreate) check() error {
 	}
 	if _, ok := wac.mutation.Bank(); !ok {
 		return &ValidationError{Name: "bank", err: errors.New(`cep_ent: missing required field "WithdrawAccount.bank"`)}
+	}
+	if _, ok := wac.mutation.Way(); !ok {
+		return &ValidationError{Name: "way", err: errors.New(`cep_ent: missing required field "WithdrawAccount.way"`)}
+	}
+	if v, ok := wac.mutation.Way(); ok {
+		if err := withdrawaccount.WayValidator(v); err != nil {
+			return &ValidationError{Name: "way", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.way": %w`, err)}
+		}
+	}
+	if _, ok := wac.mutation.AlipayCardNo(); !ok {
+		return &ValidationError{Name: "alipay_card_no", err: errors.New(`cep_ent: missing required field "WithdrawAccount.alipay_card_no"`)}
 	}
 	if _, ok := wac.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "WithdrawAccount.user"`)}
@@ -472,6 +519,14 @@ func (wac *WithdrawAccountCreate) createSpec() (*WithdrawAccount, *sqlgraph.Crea
 	if value, ok := wac.mutation.Bank(); ok {
 		_spec.SetField(withdrawaccount.FieldBank, field.TypeString, value)
 		_node.Bank = value
+	}
+	if value, ok := wac.mutation.Way(); ok {
+		_spec.SetField(withdrawaccount.FieldWay, field.TypeEnum, value)
+		_node.Way = value
+	}
+	if value, ok := wac.mutation.AlipayCardNo(); ok {
+		_spec.SetField(withdrawaccount.FieldAlipayCardNo, field.TypeString, value)
+		_node.AlipayCardNo = value
 	}
 	if nodes := wac.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -713,6 +768,30 @@ func (u *WithdrawAccountUpsert) SetBank(v string) *WithdrawAccountUpsert {
 // UpdateBank sets the "bank" field to the value that was provided on create.
 func (u *WithdrawAccountUpsert) UpdateBank() *WithdrawAccountUpsert {
 	u.SetExcluded(withdrawaccount.FieldBank)
+	return u
+}
+
+// SetWay sets the "way" field.
+func (u *WithdrawAccountUpsert) SetWay(v enums.TransferOrderType) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldWay, v)
+	return u
+}
+
+// UpdateWay sets the "way" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateWay() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldWay)
+	return u
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (u *WithdrawAccountUpsert) SetAlipayCardNo(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldAlipayCardNo, v)
+	return u
+}
+
+// UpdateAlipayCardNo sets the "alipay_card_no" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateAlipayCardNo() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldAlipayCardNo)
 	return u
 }
 
@@ -967,6 +1046,34 @@ func (u *WithdrawAccountUpsertOne) SetBank(v string) *WithdrawAccountUpsertOne {
 func (u *WithdrawAccountUpsertOne) UpdateBank() *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateBank()
+	})
+}
+
+// SetWay sets the "way" field.
+func (u *WithdrawAccountUpsertOne) SetWay(v enums.TransferOrderType) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetWay(v)
+	})
+}
+
+// UpdateWay sets the "way" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateWay() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateWay()
+	})
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (u *WithdrawAccountUpsertOne) SetAlipayCardNo(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetAlipayCardNo(v)
+	})
+}
+
+// UpdateAlipayCardNo sets the "alipay_card_no" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateAlipayCardNo() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateAlipayCardNo()
 	})
 }
 
@@ -1387,6 +1494,34 @@ func (u *WithdrawAccountUpsertBulk) SetBank(v string) *WithdrawAccountUpsertBulk
 func (u *WithdrawAccountUpsertBulk) UpdateBank() *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateBank()
+	})
+}
+
+// SetWay sets the "way" field.
+func (u *WithdrawAccountUpsertBulk) SetWay(v enums.TransferOrderType) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetWay(v)
+	})
+}
+
+// UpdateWay sets the "way" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateWay() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateWay()
+	})
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (u *WithdrawAccountUpsertBulk) SetAlipayCardNo(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetAlipayCardNo(v)
+	})
+}
+
+// UpdateAlipayCardNo sets the "alipay_card_no" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateAlipayCardNo() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateAlipayCardNo()
 	})
 }
 

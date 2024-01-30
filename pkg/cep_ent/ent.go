@@ -17,6 +17,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -35,6 +36,11 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -123,6 +129,7 @@ func checkColumn(table, column string) error {
 			artwork.Table:              artwork.ValidColumn,
 			artworklike.Table:          artworklike.ValidColumn,
 			bill.Table:                 bill.ValidColumn,
+			cdkinfo.Table:              cdkinfo.ValidColumn,
 			campaign.Table:             campaign.ValidColumn,
 			campaignorder.Table:        campaignorder.ValidColumn,
 			collect.Table:              collect.ValidColumn,
@@ -143,6 +150,11 @@ func checkColumn(table, column string) error {
 			inputlog.Table:             inputlog.ValidColumn,
 			invite.Table:               invite.ValidColumn,
 			loginrecord.Table:          loginrecord.ValidColumn,
+			lotto.Table:                lotto.ValidColumn,
+			lottogetcountrecord.Table:  lottogetcountrecord.ValidColumn,
+			lottoprize.Table:           lottoprize.ValidColumn,
+			lottorecord.Table:          lottorecord.ValidColumn,
+			lottousercount.Table:       lottousercount.ValidColumn,
 			mission.Table:              mission.ValidColumn,
 			missionbatch.Table:         missionbatch.ValidColumn,
 			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,

@@ -96,8 +96,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service"}, Default: "unknown"},
-		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service", "cdk"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time", "cdk_exchange"}, Default: "unknown"},
 		{Name: "profit_symbol_id", Type: field.TypeInt64, Comment: "外键分润币种 id", Default: 3},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
 		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
@@ -180,6 +180,54 @@ var (
 				Name:    "bill_symbol_id",
 				Unique:  false,
 				Columns: []*schema.Column{BillsColumns[17]},
+			},
+		},
+	}
+	// CdkInfosColumns holds the columns for the "cdk_infos" table.
+	CdkInfosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "cdk_number", Type: field.TypeString, Comment: "cdk 序列号", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "cdk 类型", Enums: []string{"unknown", "get_cep", "get_gpu_use"}, Default: "unknown"},
+		{Name: "get_cep", Type: field.TypeInt64, Comment: "cdk 能兑换的 cep 数量", Default: 0},
+		{Name: "get_time", Type: field.TypeInt64, Comment: "cdk 能兑换的 gpu 使用时长", Default: 0},
+		{Name: "billing_type", Type: field.TypeEnum, Comment: "兑换 gpu 使用时长的类型", Enums: []string{"unknown", "time", "count", "hold", "volume", "time_plan_hour", "time_plan_day", "time_plan_week", "time_plan_month"}, Default: "unknown"},
+		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间"},
+		{Name: "use_times", Type: field.TypeInt64, Comment: "cdk 能使用的次数", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "cdk 状态", Enums: []string{"unknown", "normal", "freeze", "used", "canceled"}, Default: "unknown"},
+		{Name: "used_at", Type: field.TypeTime, Nullable: true, Comment: "使用时间"},
+		{Name: "issue_user_id", Type: field.TypeInt64, Comment: "外键：发行用户 id", Default: 0},
+		{Name: "use_user_id", Type: field.TypeInt64, Comment: "外键：使用 cdk 用户 id", Default: 0},
+	}
+	// CdkInfosTable holds the schema information for the "cdk_infos" table.
+	CdkInfosTable = &schema.Table{
+		Name:       "cdk_infos",
+		Comment:    "兑换码，可以兑换脑力值、gpu 使用权等",
+		Columns:    CdkInfosColumns,
+		PrimaryKey: []*schema.Column{CdkInfosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "cdk_infos_users_cdk_infos",
+				Columns:    []*schema.Column{CdkInfosColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "cdk_infos_users_use_cdk_infos",
+				Columns:    []*schema.Column{CdkInfosColumns[16]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "cdkinfo_cdk_number",
+				Unique:  true,
+				Columns: []*schema.Column{CdkInfosColumns[6]},
 			},
 		},
 	}
@@ -802,6 +850,8 @@ var (
 		{Name: "video_memory", Type: field.TypeInt, Comment: "显存", Default: 40},
 		{Name: "cpu", Type: field.TypeInt, Comment: "CPU", Default: 12},
 		{Name: "memory", Type: field.TypeInt, Comment: "内存", Default: 128},
+		{Name: "lowest_earn_month", Type: field.TypeInt64, Comment: "保底最低月收益", Default: 0},
+		{Name: "highest_earn_month", Type: field.TypeInt64, Comment: "保底最高月收益", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{
@@ -950,6 +1000,180 @@ var (
 			},
 		},
 	}
+	// LottosColumns holds the columns for the "lottos" table.
+	LottosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "抽奖活动名称", Default: ""},
+		{Name: "total_weight", Type: field.TypeInt64, Comment: "活动总权重", Default: 0},
+		{Name: "started_at", Type: field.TypeTime, Comment: "活动开始时间"},
+		{Name: "ended_at", Type: field.TypeTime, Comment: "活动结束时间"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknown", "normal", "canceled"}, Default: "unknown"},
+	}
+	// LottosTable holds the schema information for the "lottos" table.
+	LottosTable = &schema.Table{
+		Name:       "lottos",
+		Comment:    "抽奖活动表",
+		Columns:    LottosColumns,
+		PrimaryKey: []*schema.Column{LottosColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "lotto_name",
+				Unique:  true,
+				Columns: []*schema.Column{LottosColumns[6]},
+			},
+		},
+	}
+	// LottoGetCountRecordsColumns holds the columns for the "lotto_get_count_records" table.
+	LottoGetCountRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "count", Type: field.TypeInt64, Comment: "此次奖励的抽奖次数", Default: 0},
+		{Name: "type", Type: field.TypeEnum, Comment: "抽奖结果", Enums: []string{"unknow", "register", "invite_register", "recharge"}, Default: "unknow"},
+		{Name: "recharge_amount", Type: field.TypeInt64, Comment: "充值金额，类型为充值时才有数据", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
+	}
+	// LottoGetCountRecordsTable holds the schema information for the "lotto_get_count_records" table.
+	LottoGetCountRecordsTable = &schema.Table{
+		Name:       "lotto_get_count_records",
+		Comment:    "用户获得抽奖次数记录表",
+		Columns:    LottoGetCountRecordsColumns,
+		PrimaryKey: []*schema.Column{LottoGetCountRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_get_count_records_lottos_lotto_get_count_records",
+				Columns:    []*schema.Column{LottoGetCountRecordsColumns[9]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_get_count_records_users_lotto_get_count_records",
+				Columns:    []*schema.Column{LottoGetCountRecordsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// PrizesColumns holds the columns for the "prizes" table.
+	PrizesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "level_name", Type: field.TypeString, Comment: "奖品等级名称", Default: ""},
+		{Name: "weight", Type: field.TypeInt64, Comment: "奖品等级权重", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "奖品名称", Default: ""},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknow", "normal", "canceled"}, Default: "unknow"},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+	}
+	// PrizesTable holds the schema information for the "prizes" table.
+	PrizesTable = &schema.Table{
+		Name:       "prizes",
+		Comment:    "抽奖活动奖品表",
+		Columns:    PrizesColumns,
+		PrimaryKey: []*schema.Column{PrizesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "prizes_lottos_lotto_prizes",
+				Columns:    []*schema.Column{PrizesColumns[10]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "lottoprize_name",
+				Unique:  false,
+				Columns: []*schema.Column{PrizesColumns[8]},
+			},
+		},
+	}
+	// LottoRecordsColumns holds the columns for the "lotto_records" table.
+	LottoRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "result", Type: field.TypeEnum, Comment: "抽奖结果", Enums: []string{"unknow", "winning", "losing", "failed"}, Default: "unknow"},
+		{Name: "status", Type: field.TypeEnum, Comment: "抽奖状态", Enums: []string{"waiting", "granted", "not_grant", "invalid"}, Default: "waiting"},
+		{Name: "remain_lotto_count", Type: field.TypeInt64, Comment: "剩余抽奖次数", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+		{Name: "lotto_prize_id", Type: field.TypeInt64, Comment: "外键：奖品 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
+	}
+	// LottoRecordsTable holds the schema information for the "lotto_records" table.
+	LottoRecordsTable = &schema.Table{
+		Name:       "lotto_records",
+		Comment:    "用户抽奖记录表",
+		Columns:    LottoRecordsColumns,
+		PrimaryKey: []*schema.Column{LottoRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_records_lottos_lotto_records",
+				Columns:    []*schema.Column{LottoRecordsColumns[9]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_records_prizes_lotto_records",
+				Columns:    []*schema.Column{LottoRecordsColumns[10]},
+				RefColumns: []*schema.Column{PrizesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_records_users_lotto_records",
+				Columns:    []*schema.Column{LottoRecordsColumns[11]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// LottoUserCountsColumns holds the columns for the "lotto_user_counts" table.
+	LottoUserCountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "remain_lotto_count", Type: field.TypeInt64, Comment: "剩余抽奖次数", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
+	}
+	// LottoUserCountsTable holds the schema information for the "lotto_user_counts" table.
+	LottoUserCountsTable = &schema.Table{
+		Name:       "lotto_user_counts",
+		Comment:    "用户可用抽奖次数表",
+		Columns:    LottoUserCountsColumns,
+		PrimaryKey: []*schema.Column{LottoUserCountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_user_counts_lottos_lotto_user_counts",
+				Columns:    []*schema.Column{LottoUserCountsColumns[7]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lotto_user_counts_users_lotto_user_counts",
+				Columns:    []*schema.Column{LottoUserCountsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// MissionsColumns holds the columns for the "missions" table.
 	MissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -988,6 +1212,7 @@ var (
 		{Name: "free_at", Type: field.TypeTime, Comment: "任务释放时刻", Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "close_way", Type: field.TypeEnum, Comment: "任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭", Enums: []string{"unknown", "user", "balance_not_enough", "expired"}, Default: "unknown"},
 		{Name: "closed_at", Type: field.TypeTime, Nullable: true, Comment: "用戶关闭任务时间"},
+		{Name: "warning_times", Type: field.TypeInt64, Comment: "预警次数，任务运行时间超过一定时间会发送预警消息", Default: 0},
 		{Name: "extra_service_missions", Type: field.TypeInt64, Nullable: true},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键关联任务批次", Default: 0},
@@ -1003,31 +1228,31 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_extra_services_missions",
-				Columns:    []*schema.Column{MissionsColumns[36]},
+				Columns:    []*schema.Column{MissionsColumns[37]},
 				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[37]},
+				Columns:    []*schema.Column{MissionsColumns[38]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_batches_missions",
-				Columns:    []*schema.Column{MissionsColumns[38]},
+				Columns:    []*schema.Column{MissionsColumns[39]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_kinds_missions",
-				Columns:    []*schema.Column{MissionsColumns[39]},
+				Columns:    []*schema.Column{MissionsColumns[40]},
 				RefColumns: []*schema.Column{MissionKindsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_users_missions",
-				Columns:    []*schema.Column{MissionsColumns[40]},
+				Columns:    []*schema.Column{MissionsColumns[41]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1036,17 +1261,17 @@ var (
 			{
 				Name:    "mission_mission_kind_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[39]},
+				Columns: []*schema.Column{MissionsColumns[40]},
 			},
 			{
 				Name:    "mission_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[40]},
+				Columns: []*schema.Column{MissionsColumns[41]},
 			},
 			{
 				Name:    "mission_mission_batch_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[38]},
+				Columns: []*schema.Column{MissionsColumns[39]},
 			},
 		},
 	}
@@ -2084,6 +2309,8 @@ var (
 		{Name: "phone", Type: field.TypeString, Comment: "个人商户手机号", Default: ""},
 		{Name: "bank_card_number", Type: field.TypeString, Comment: "银行卡号", Default: ""},
 		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
+		{Name: "way", Type: field.TypeEnum, Comment: "提现方式", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund"}, Default: "unknown"},
+		{Name: "alipay_card_no", Type: field.TypeString, Comment: "支付宝账户", Default: ""},
 		{Name: "user_id", Type: field.TypeInt64, Unique: true, Comment: "外键用户 id", Default: 0},
 	}
 	// WithdrawAccountsTable holds the schema information for the "withdraw_accounts" table.
@@ -2095,7 +2322,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "withdraw_accounts_users_withdraw_account",
-				Columns:    []*schema.Column{WithdrawAccountsColumns[14]},
+				Columns:    []*schema.Column{WithdrawAccountsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2104,7 +2331,7 @@ var (
 			{
 				Name:    "withdrawaccount_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{WithdrawAccountsColumns[14]},
+				Columns: []*schema.Column{WithdrawAccountsColumns[16]},
 			},
 		},
 	}
@@ -2113,6 +2340,7 @@ var (
 		ArtworksTable,
 		ArtworkLikesTable,
 		BillsTable,
+		CdkInfosTable,
 		CampaignsTable,
 		CampaignOrdersTable,
 		CollectsTable,
@@ -2133,6 +2361,11 @@ var (
 		InputLogsTable,
 		InvitesTable,
 		LoginRecordsTable,
+		LottosTable,
+		LottoGetCountRecordsTable,
+		PrizesTable,
+		LottoRecordsTable,
+		LottoUserCountsTable,
 		MissionsTable,
 		MissionBatchesTable,
 		MissionConsumeOrdersTable,
@@ -2174,6 +2407,11 @@ func init() {
 	BillsTable.ForeignKeys[4].RefTable = UsersTable
 	BillsTable.ForeignKeys[5].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
+	CdkInfosTable.ForeignKeys[0].RefTable = UsersTable
+	CdkInfosTable.ForeignKeys[1].RefTable = UsersTable
+	CdkInfosTable.Annotation = &entsql.Annotation{
+		Table: "cdk_infos",
+	}
 	CampaignsTable.Annotation = &entsql.Annotation{}
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
 	CampaignOrdersTable.ForeignKeys[1].RefTable = UsersTable
@@ -2222,6 +2460,21 @@ func init() {
 	InvitesTable.Annotation = &entsql.Annotation{}
 	LoginRecordsTable.ForeignKeys[0].RefTable = UsersTable
 	LoginRecordsTable.Annotation = &entsql.Annotation{}
+	LottosTable.Annotation = &entsql.Annotation{}
+	LottoGetCountRecordsTable.ForeignKeys[0].RefTable = LottosTable
+	LottoGetCountRecordsTable.ForeignKeys[1].RefTable = UsersTable
+	LottoGetCountRecordsTable.Annotation = &entsql.Annotation{}
+	PrizesTable.ForeignKeys[0].RefTable = LottosTable
+	PrizesTable.Annotation = &entsql.Annotation{
+		Table: "prizes",
+	}
+	LottoRecordsTable.ForeignKeys[0].RefTable = LottosTable
+	LottoRecordsTable.ForeignKeys[1].RefTable = PrizesTable
+	LottoRecordsTable.ForeignKeys[2].RefTable = UsersTable
+	LottoRecordsTable.Annotation = &entsql.Annotation{}
+	LottoUserCountsTable.ForeignKeys[0].RefTable = LottosTable
+	LottoUserCountsTable.ForeignKeys[1].RefTable = UsersTable
+	LottoUserCountsTable.Annotation = &entsql.Annotation{}
 	MissionsTable.ForeignKeys[0].RefTable = ExtraServicesTable
 	MissionsTable.ForeignKeys[1].RefTable = HmacKeyPairsTable
 	MissionsTable.ForeignKeys[2].RefTable = MissionBatchesTable

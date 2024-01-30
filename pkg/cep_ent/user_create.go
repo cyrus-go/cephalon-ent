@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -22,6 +23,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -809,6 +813,81 @@ func (uc *UserCreate) AddArtworkLikes(a ...*ArtworkLike) *UserCreate {
 		ids[i] = a[i].ID
 	}
 	return uc.AddArtworkLikeIDs(ids...)
+}
+
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (uc *UserCreate) AddCdkInfoIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCdkInfoIDs(ids...)
+	return uc
+}
+
+// AddCdkInfos adds the "cdk_infos" edges to the CDKInfo entity.
+func (uc *UserCreate) AddCdkInfos(c ...*CDKInfo) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCdkInfoIDs(ids...)
+}
+
+// AddUseCdkInfoIDs adds the "use_cdk_infos" edge to the CDKInfo entity by IDs.
+func (uc *UserCreate) AddUseCdkInfoIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddUseCdkInfoIDs(ids...)
+	return uc
+}
+
+// AddUseCdkInfos adds the "use_cdk_infos" edges to the CDKInfo entity.
+func (uc *UserCreate) AddUseCdkInfos(c ...*CDKInfo) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddUseCdkInfoIDs(ids...)
+}
+
+// AddLottoRecordIDs adds the "lotto_records" edge to the LottoRecord entity by IDs.
+func (uc *UserCreate) AddLottoRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddLottoRecordIDs(ids...)
+	return uc
+}
+
+// AddLottoRecords adds the "lotto_records" edges to the LottoRecord entity.
+func (uc *UserCreate) AddLottoRecords(l ...*LottoRecord) *UserCreate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uc.AddLottoRecordIDs(ids...)
+}
+
+// AddLottoUserCountIDs adds the "lotto_user_counts" edge to the LottoUserCount entity by IDs.
+func (uc *UserCreate) AddLottoUserCountIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddLottoUserCountIDs(ids...)
+	return uc
+}
+
+// AddLottoUserCounts adds the "lotto_user_counts" edges to the LottoUserCount entity.
+func (uc *UserCreate) AddLottoUserCounts(l ...*LottoUserCount) *UserCreate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uc.AddLottoUserCountIDs(ids...)
+}
+
+// AddLottoGetCountRecordIDs adds the "lotto_get_count_records" edge to the LottoGetCountRecord entity by IDs.
+func (uc *UserCreate) AddLottoGetCountRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddLottoGetCountRecordIDs(ids...)
+	return uc
+}
+
+// AddLottoGetCountRecords adds the "lotto_get_count_records" edges to the LottoGetCountRecord entity.
+func (uc *UserCreate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *UserCreate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uc.AddLottoGetCountRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1606,6 +1685,86 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UseCdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.LottoRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.LottoUserCountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.LottoGetCountRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

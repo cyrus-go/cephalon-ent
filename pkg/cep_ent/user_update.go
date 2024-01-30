@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -22,6 +23,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -796,6 +800,81 @@ func (uu *UserUpdate) AddArtworkLikes(a ...*ArtworkLike) *UserUpdate {
 	return uu.AddArtworkLikeIDs(ids...)
 }
 
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (uu *UserUpdate) AddCdkInfoIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddCdkInfoIDs(ids...)
+	return uu
+}
+
+// AddCdkInfos adds the "cdk_infos" edges to the CDKInfo entity.
+func (uu *UserUpdate) AddCdkInfos(c ...*CDKInfo) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.AddCdkInfoIDs(ids...)
+}
+
+// AddUseCdkInfoIDs adds the "use_cdk_infos" edge to the CDKInfo entity by IDs.
+func (uu *UserUpdate) AddUseCdkInfoIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddUseCdkInfoIDs(ids...)
+	return uu
+}
+
+// AddUseCdkInfos adds the "use_cdk_infos" edges to the CDKInfo entity.
+func (uu *UserUpdate) AddUseCdkInfos(c ...*CDKInfo) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.AddUseCdkInfoIDs(ids...)
+}
+
+// AddLottoRecordIDs adds the "lotto_records" edge to the LottoRecord entity by IDs.
+func (uu *UserUpdate) AddLottoRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddLottoRecordIDs(ids...)
+	return uu
+}
+
+// AddLottoRecords adds the "lotto_records" edges to the LottoRecord entity.
+func (uu *UserUpdate) AddLottoRecords(l ...*LottoRecord) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.AddLottoRecordIDs(ids...)
+}
+
+// AddLottoUserCountIDs adds the "lotto_user_counts" edge to the LottoUserCount entity by IDs.
+func (uu *UserUpdate) AddLottoUserCountIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddLottoUserCountIDs(ids...)
+	return uu
+}
+
+// AddLottoUserCounts adds the "lotto_user_counts" edges to the LottoUserCount entity.
+func (uu *UserUpdate) AddLottoUserCounts(l ...*LottoUserCount) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.AddLottoUserCountIDs(ids...)
+}
+
+// AddLottoGetCountRecordIDs adds the "lotto_get_count_records" edge to the LottoGetCountRecord entity by IDs.
+func (uu *UserUpdate) AddLottoGetCountRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddLottoGetCountRecordIDs(ids...)
+	return uu
+}
+
+// AddLottoGetCountRecords adds the "lotto_get_count_records" edges to the LottoGetCountRecord entity.
+func (uu *UserUpdate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.AddLottoGetCountRecordIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1411,6 +1490,111 @@ func (uu *UserUpdate) RemoveArtworkLikes(a ...*ArtworkLike) *UserUpdate {
 		ids[i] = a[i].ID
 	}
 	return uu.RemoveArtworkLikeIDs(ids...)
+}
+
+// ClearCdkInfos clears all "cdk_infos" edges to the CDKInfo entity.
+func (uu *UserUpdate) ClearCdkInfos() *UserUpdate {
+	uu.mutation.ClearCdkInfos()
+	return uu
+}
+
+// RemoveCdkInfoIDs removes the "cdk_infos" edge to CDKInfo entities by IDs.
+func (uu *UserUpdate) RemoveCdkInfoIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveCdkInfoIDs(ids...)
+	return uu
+}
+
+// RemoveCdkInfos removes "cdk_infos" edges to CDKInfo entities.
+func (uu *UserUpdate) RemoveCdkInfos(c ...*CDKInfo) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.RemoveCdkInfoIDs(ids...)
+}
+
+// ClearUseCdkInfos clears all "use_cdk_infos" edges to the CDKInfo entity.
+func (uu *UserUpdate) ClearUseCdkInfos() *UserUpdate {
+	uu.mutation.ClearUseCdkInfos()
+	return uu
+}
+
+// RemoveUseCdkInfoIDs removes the "use_cdk_infos" edge to CDKInfo entities by IDs.
+func (uu *UserUpdate) RemoveUseCdkInfoIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveUseCdkInfoIDs(ids...)
+	return uu
+}
+
+// RemoveUseCdkInfos removes "use_cdk_infos" edges to CDKInfo entities.
+func (uu *UserUpdate) RemoveUseCdkInfos(c ...*CDKInfo) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.RemoveUseCdkInfoIDs(ids...)
+}
+
+// ClearLottoRecords clears all "lotto_records" edges to the LottoRecord entity.
+func (uu *UserUpdate) ClearLottoRecords() *UserUpdate {
+	uu.mutation.ClearLottoRecords()
+	return uu
+}
+
+// RemoveLottoRecordIDs removes the "lotto_records" edge to LottoRecord entities by IDs.
+func (uu *UserUpdate) RemoveLottoRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveLottoRecordIDs(ids...)
+	return uu
+}
+
+// RemoveLottoRecords removes "lotto_records" edges to LottoRecord entities.
+func (uu *UserUpdate) RemoveLottoRecords(l ...*LottoRecord) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.RemoveLottoRecordIDs(ids...)
+}
+
+// ClearLottoUserCounts clears all "lotto_user_counts" edges to the LottoUserCount entity.
+func (uu *UserUpdate) ClearLottoUserCounts() *UserUpdate {
+	uu.mutation.ClearLottoUserCounts()
+	return uu
+}
+
+// RemoveLottoUserCountIDs removes the "lotto_user_counts" edge to LottoUserCount entities by IDs.
+func (uu *UserUpdate) RemoveLottoUserCountIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveLottoUserCountIDs(ids...)
+	return uu
+}
+
+// RemoveLottoUserCounts removes "lotto_user_counts" edges to LottoUserCount entities.
+func (uu *UserUpdate) RemoveLottoUserCounts(l ...*LottoUserCount) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.RemoveLottoUserCountIDs(ids...)
+}
+
+// ClearLottoGetCountRecords clears all "lotto_get_count_records" edges to the LottoGetCountRecord entity.
+func (uu *UserUpdate) ClearLottoGetCountRecords() *UserUpdate {
+	uu.mutation.ClearLottoGetCountRecords()
+	return uu
+}
+
+// RemoveLottoGetCountRecordIDs removes the "lotto_get_count_records" edge to LottoGetCountRecord entities by IDs.
+func (uu *UserUpdate) RemoveLottoGetCountRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveLottoGetCountRecordIDs(ids...)
+	return uu
+}
+
+// RemoveLottoGetCountRecords removes "lotto_get_count_records" edges to LottoGetCountRecord entities.
+func (uu *UserUpdate) RemoveLottoGetCountRecords(l ...*LottoGetCountRecord) *UserUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uu.RemoveLottoGetCountRecordIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2913,6 +3097,231 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedCdkInfosIDs(); len(nodes) > 0 && !uu.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.CdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.UseCdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUseCdkInfosIDs(); len(nodes) > 0 && !uu.mutation.UseCdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UseCdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.LottoRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedLottoRecordsIDs(); len(nodes) > 0 && !uu.mutation.LottoRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.LottoRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.LottoUserCountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedLottoUserCountsIDs(); len(nodes) > 0 && !uu.mutation.LottoUserCountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.LottoUserCountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.LottoGetCountRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedLottoGetCountRecordsIDs(); len(nodes) > 0 && !uu.mutation.LottoGetCountRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.LottoGetCountRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -3675,6 +4084,81 @@ func (uuo *UserUpdateOne) AddArtworkLikes(a ...*ArtworkLike) *UserUpdateOne {
 	return uuo.AddArtworkLikeIDs(ids...)
 }
 
+// AddCdkInfoIDs adds the "cdk_infos" edge to the CDKInfo entity by IDs.
+func (uuo *UserUpdateOne) AddCdkInfoIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddCdkInfoIDs(ids...)
+	return uuo
+}
+
+// AddCdkInfos adds the "cdk_infos" edges to the CDKInfo entity.
+func (uuo *UserUpdateOne) AddCdkInfos(c ...*CDKInfo) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.AddCdkInfoIDs(ids...)
+}
+
+// AddUseCdkInfoIDs adds the "use_cdk_infos" edge to the CDKInfo entity by IDs.
+func (uuo *UserUpdateOne) AddUseCdkInfoIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddUseCdkInfoIDs(ids...)
+	return uuo
+}
+
+// AddUseCdkInfos adds the "use_cdk_infos" edges to the CDKInfo entity.
+func (uuo *UserUpdateOne) AddUseCdkInfos(c ...*CDKInfo) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.AddUseCdkInfoIDs(ids...)
+}
+
+// AddLottoRecordIDs adds the "lotto_records" edge to the LottoRecord entity by IDs.
+func (uuo *UserUpdateOne) AddLottoRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddLottoRecordIDs(ids...)
+	return uuo
+}
+
+// AddLottoRecords adds the "lotto_records" edges to the LottoRecord entity.
+func (uuo *UserUpdateOne) AddLottoRecords(l ...*LottoRecord) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.AddLottoRecordIDs(ids...)
+}
+
+// AddLottoUserCountIDs adds the "lotto_user_counts" edge to the LottoUserCount entity by IDs.
+func (uuo *UserUpdateOne) AddLottoUserCountIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddLottoUserCountIDs(ids...)
+	return uuo
+}
+
+// AddLottoUserCounts adds the "lotto_user_counts" edges to the LottoUserCount entity.
+func (uuo *UserUpdateOne) AddLottoUserCounts(l ...*LottoUserCount) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.AddLottoUserCountIDs(ids...)
+}
+
+// AddLottoGetCountRecordIDs adds the "lotto_get_count_records" edge to the LottoGetCountRecord entity by IDs.
+func (uuo *UserUpdateOne) AddLottoGetCountRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddLottoGetCountRecordIDs(ids...)
+	return uuo
+}
+
+// AddLottoGetCountRecords adds the "lotto_get_count_records" edges to the LottoGetCountRecord entity.
+func (uuo *UserUpdateOne) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.AddLottoGetCountRecordIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -4290,6 +4774,111 @@ func (uuo *UserUpdateOne) RemoveArtworkLikes(a ...*ArtworkLike) *UserUpdateOne {
 		ids[i] = a[i].ID
 	}
 	return uuo.RemoveArtworkLikeIDs(ids...)
+}
+
+// ClearCdkInfos clears all "cdk_infos" edges to the CDKInfo entity.
+func (uuo *UserUpdateOne) ClearCdkInfos() *UserUpdateOne {
+	uuo.mutation.ClearCdkInfos()
+	return uuo
+}
+
+// RemoveCdkInfoIDs removes the "cdk_infos" edge to CDKInfo entities by IDs.
+func (uuo *UserUpdateOne) RemoveCdkInfoIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveCdkInfoIDs(ids...)
+	return uuo
+}
+
+// RemoveCdkInfos removes "cdk_infos" edges to CDKInfo entities.
+func (uuo *UserUpdateOne) RemoveCdkInfos(c ...*CDKInfo) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.RemoveCdkInfoIDs(ids...)
+}
+
+// ClearUseCdkInfos clears all "use_cdk_infos" edges to the CDKInfo entity.
+func (uuo *UserUpdateOne) ClearUseCdkInfos() *UserUpdateOne {
+	uuo.mutation.ClearUseCdkInfos()
+	return uuo
+}
+
+// RemoveUseCdkInfoIDs removes the "use_cdk_infos" edge to CDKInfo entities by IDs.
+func (uuo *UserUpdateOne) RemoveUseCdkInfoIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveUseCdkInfoIDs(ids...)
+	return uuo
+}
+
+// RemoveUseCdkInfos removes "use_cdk_infos" edges to CDKInfo entities.
+func (uuo *UserUpdateOne) RemoveUseCdkInfos(c ...*CDKInfo) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.RemoveUseCdkInfoIDs(ids...)
+}
+
+// ClearLottoRecords clears all "lotto_records" edges to the LottoRecord entity.
+func (uuo *UserUpdateOne) ClearLottoRecords() *UserUpdateOne {
+	uuo.mutation.ClearLottoRecords()
+	return uuo
+}
+
+// RemoveLottoRecordIDs removes the "lotto_records" edge to LottoRecord entities by IDs.
+func (uuo *UserUpdateOne) RemoveLottoRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveLottoRecordIDs(ids...)
+	return uuo
+}
+
+// RemoveLottoRecords removes "lotto_records" edges to LottoRecord entities.
+func (uuo *UserUpdateOne) RemoveLottoRecords(l ...*LottoRecord) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.RemoveLottoRecordIDs(ids...)
+}
+
+// ClearLottoUserCounts clears all "lotto_user_counts" edges to the LottoUserCount entity.
+func (uuo *UserUpdateOne) ClearLottoUserCounts() *UserUpdateOne {
+	uuo.mutation.ClearLottoUserCounts()
+	return uuo
+}
+
+// RemoveLottoUserCountIDs removes the "lotto_user_counts" edge to LottoUserCount entities by IDs.
+func (uuo *UserUpdateOne) RemoveLottoUserCountIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveLottoUserCountIDs(ids...)
+	return uuo
+}
+
+// RemoveLottoUserCounts removes "lotto_user_counts" edges to LottoUserCount entities.
+func (uuo *UserUpdateOne) RemoveLottoUserCounts(l ...*LottoUserCount) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.RemoveLottoUserCountIDs(ids...)
+}
+
+// ClearLottoGetCountRecords clears all "lotto_get_count_records" edges to the LottoGetCountRecord entity.
+func (uuo *UserUpdateOne) ClearLottoGetCountRecords() *UserUpdateOne {
+	uuo.mutation.ClearLottoGetCountRecords()
+	return uuo
+}
+
+// RemoveLottoGetCountRecordIDs removes the "lotto_get_count_records" edge to LottoGetCountRecord entities by IDs.
+func (uuo *UserUpdateOne) RemoveLottoGetCountRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveLottoGetCountRecordIDs(ids...)
+	return uuo
+}
+
+// RemoveLottoGetCountRecords removes "lotto_get_count_records" edges to LottoGetCountRecord entities.
+func (uuo *UserUpdateOne) RemoveLottoGetCountRecords(l ...*LottoGetCountRecord) *UserUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return uuo.RemoveLottoGetCountRecordIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -5815,6 +6404,231 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(artworklike.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedCdkInfosIDs(); len(nodes) > 0 && !uuo.mutation.CdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.CdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CdkInfosTable,
+			Columns: []string{user.CdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UseCdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUseCdkInfosIDs(); len(nodes) > 0 && !uuo.mutation.UseCdkInfosCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UseCdkInfosIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UseCdkInfosTable,
+			Columns: []string{user.UseCdkInfosColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cdkinfo.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.LottoRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedLottoRecordsIDs(); len(nodes) > 0 && !uuo.mutation.LottoRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.LottoRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoRecordsTable,
+			Columns: []string{user.LottoRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottorecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.LottoUserCountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedLottoUserCountsIDs(); len(nodes) > 0 && !uuo.mutation.LottoUserCountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.LottoUserCountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoUserCountsTable,
+			Columns: []string{user.LottoUserCountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottousercount.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.LottoGetCountRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedLottoGetCountRecordsIDs(); len(nodes) > 0 && !uuo.mutation.LottoGetCountRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.LottoGetCountRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LottoGetCountRecordsTable,
+			Columns: []string{user.LottoGetCountRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

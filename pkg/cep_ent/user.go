@@ -131,9 +131,19 @@ type UserEdges struct {
 	Artworks []*Artwork `json:"artworks,omitempty"`
 	// ArtworkLikes holds the value of the artwork_likes edge.
 	ArtworkLikes []*ArtworkLike `json:"artwork_likes,omitempty"`
+	// CdkInfos holds the value of the cdk_infos edge.
+	CdkInfos []*CDKInfo `json:"cdk_infos,omitempty"`
+	// UseCdkInfos holds the value of the use_cdk_infos edge.
+	UseCdkInfos []*CDKInfo `json:"use_cdk_infos,omitempty"`
+	// LottoRecords holds the value of the lotto_records edge.
+	LottoRecords []*LottoRecord `json:"lotto_records,omitempty"`
+	// LottoUserCounts holds the value of the lotto_user_counts edge.
+	LottoUserCounts []*LottoUserCount `json:"lotto_user_counts,omitempty"`
+	// LottoGetCountRecords holds the value of the lotto_get_count_records edge.
+	LottoGetCountRecords []*LottoGetCountRecord `json:"lotto_get_count_records,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [32]bool
+	loadedTypes [37]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -438,6 +448,51 @@ func (e UserEdges) ArtworkLikesOrErr() ([]*ArtworkLike, error) {
 		return e.ArtworkLikes, nil
 	}
 	return nil, &NotLoadedError{edge: "artwork_likes"}
+}
+
+// CdkInfosOrErr returns the CdkInfos value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CdkInfosOrErr() ([]*CDKInfo, error) {
+	if e.loadedTypes[32] {
+		return e.CdkInfos, nil
+	}
+	return nil, &NotLoadedError{edge: "cdk_infos"}
+}
+
+// UseCdkInfosOrErr returns the UseCdkInfos value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UseCdkInfosOrErr() ([]*CDKInfo, error) {
+	if e.loadedTypes[33] {
+		return e.UseCdkInfos, nil
+	}
+	return nil, &NotLoadedError{edge: "use_cdk_infos"}
+}
+
+// LottoRecordsOrErr returns the LottoRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) LottoRecordsOrErr() ([]*LottoRecord, error) {
+	if e.loadedTypes[34] {
+		return e.LottoRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "lotto_records"}
+}
+
+// LottoUserCountsOrErr returns the LottoUserCounts value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) LottoUserCountsOrErr() ([]*LottoUserCount, error) {
+	if e.loadedTypes[35] {
+		return e.LottoUserCounts, nil
+	}
+	return nil, &NotLoadedError{edge: "lotto_user_counts"}
+}
+
+// LottoGetCountRecordsOrErr returns the LottoGetCountRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) LottoGetCountRecordsOrErr() ([]*LottoGetCountRecord, error) {
+	if e.loadedTypes[36] {
+		return e.LottoGetCountRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "lotto_get_count_records"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -759,6 +814,31 @@ func (u *User) QueryArtworks() *ArtworkQuery {
 // QueryArtworkLikes queries the "artwork_likes" edge of the User entity.
 func (u *User) QueryArtworkLikes() *ArtworkLikeQuery {
 	return NewUserClient(u.config).QueryArtworkLikes(u)
+}
+
+// QueryCdkInfos queries the "cdk_infos" edge of the User entity.
+func (u *User) QueryCdkInfos() *CDKInfoQuery {
+	return NewUserClient(u.config).QueryCdkInfos(u)
+}
+
+// QueryUseCdkInfos queries the "use_cdk_infos" edge of the User entity.
+func (u *User) QueryUseCdkInfos() *CDKInfoQuery {
+	return NewUserClient(u.config).QueryUseCdkInfos(u)
+}
+
+// QueryLottoRecords queries the "lotto_records" edge of the User entity.
+func (u *User) QueryLottoRecords() *LottoRecordQuery {
+	return NewUserClient(u.config).QueryLottoRecords(u)
+}
+
+// QueryLottoUserCounts queries the "lotto_user_counts" edge of the User entity.
+func (u *User) QueryLottoUserCounts() *LottoUserCountQuery {
+	return NewUserClient(u.config).QueryLottoUserCounts(u)
+}
+
+// QueryLottoGetCountRecords queries the "lotto_get_count_records" edge of the User entity.
+func (u *User) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
+	return NewUserClient(u.config).QueryLottoGetCountRecords(u)
 }
 
 // Update returns a builder for updating this User.

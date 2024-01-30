@@ -226,6 +226,34 @@ func (wau *WithdrawAccountUpdate) SetNillableBank(s *string) *WithdrawAccountUpd
 	return wau
 }
 
+// SetWay sets the "way" field.
+func (wau *WithdrawAccountUpdate) SetWay(eot enums.TransferOrderType) *WithdrawAccountUpdate {
+	wau.mutation.SetWay(eot)
+	return wau
+}
+
+// SetNillableWay sets the "way" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableWay(eot *enums.TransferOrderType) *WithdrawAccountUpdate {
+	if eot != nil {
+		wau.SetWay(*eot)
+	}
+	return wau
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (wau *WithdrawAccountUpdate) SetAlipayCardNo(s string) *WithdrawAccountUpdate {
+	wau.mutation.SetAlipayCardNo(s)
+	return wau
+}
+
+// SetNillableAlipayCardNo sets the "alipay_card_no" field if the given value is not nil.
+func (wau *WithdrawAccountUpdate) SetNillableAlipayCardNo(s *string) *WithdrawAccountUpdate {
+	if s != nil {
+		wau.SetAlipayCardNo(*s)
+	}
+	return wau
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wau *WithdrawAccountUpdate) SetUser(u *User) *WithdrawAccountUpdate {
 	return wau.SetUserID(u.ID)
@@ -283,6 +311,11 @@ func (wau *WithdrawAccountUpdate) check() error {
 	if v, ok := wau.mutation.BusinessType(); ok {
 		if err := withdrawaccount.BusinessTypeValidator(v); err != nil {
 			return &ValidationError{Name: "business_type", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.business_type": %w`, err)}
+		}
+	}
+	if v, ok := wau.mutation.Way(); ok {
+		if err := withdrawaccount.WayValidator(v); err != nil {
+			return &ValidationError{Name: "way", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.way": %w`, err)}
 		}
 	}
 	if _, ok := wau.mutation.UserID(); wau.mutation.UserCleared() && !ok {
@@ -353,6 +386,12 @@ func (wau *WithdrawAccountUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := wau.mutation.Bank(); ok {
 		_spec.SetField(withdrawaccount.FieldBank, field.TypeString, value)
+	}
+	if value, ok := wau.mutation.Way(); ok {
+		_spec.SetField(withdrawaccount.FieldWay, field.TypeEnum, value)
+	}
+	if value, ok := wau.mutation.AlipayCardNo(); ok {
+		_spec.SetField(withdrawaccount.FieldAlipayCardNo, field.TypeString, value)
 	}
 	if wau.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -600,6 +639,34 @@ func (wauo *WithdrawAccountUpdateOne) SetNillableBank(s *string) *WithdrawAccoun
 	return wauo
 }
 
+// SetWay sets the "way" field.
+func (wauo *WithdrawAccountUpdateOne) SetWay(eot enums.TransferOrderType) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetWay(eot)
+	return wauo
+}
+
+// SetNillableWay sets the "way" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableWay(eot *enums.TransferOrderType) *WithdrawAccountUpdateOne {
+	if eot != nil {
+		wauo.SetWay(*eot)
+	}
+	return wauo
+}
+
+// SetAlipayCardNo sets the "alipay_card_no" field.
+func (wauo *WithdrawAccountUpdateOne) SetAlipayCardNo(s string) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetAlipayCardNo(s)
+	return wauo
+}
+
+// SetNillableAlipayCardNo sets the "alipay_card_no" field if the given value is not nil.
+func (wauo *WithdrawAccountUpdateOne) SetNillableAlipayCardNo(s *string) *WithdrawAccountUpdateOne {
+	if s != nil {
+		wauo.SetAlipayCardNo(*s)
+	}
+	return wauo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wauo *WithdrawAccountUpdateOne) SetUser(u *User) *WithdrawAccountUpdateOne {
 	return wauo.SetUserID(u.ID)
@@ -670,6 +737,11 @@ func (wauo *WithdrawAccountUpdateOne) check() error {
 	if v, ok := wauo.mutation.BusinessType(); ok {
 		if err := withdrawaccount.BusinessTypeValidator(v); err != nil {
 			return &ValidationError{Name: "business_type", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.business_type": %w`, err)}
+		}
+	}
+	if v, ok := wauo.mutation.Way(); ok {
+		if err := withdrawaccount.WayValidator(v); err != nil {
+			return &ValidationError{Name: "way", err: fmt.Errorf(`cep_ent: validator failed for field "WithdrawAccount.way": %w`, err)}
 		}
 	}
 	if _, ok := wauo.mutation.UserID(); wauo.mutation.UserCleared() && !ok {
@@ -757,6 +829,12 @@ func (wauo *WithdrawAccountUpdateOne) sqlSave(ctx context.Context) (_node *Withd
 	}
 	if value, ok := wauo.mutation.Bank(); ok {
 		_spec.SetField(withdrawaccount.FieldBank, field.TypeString, value)
+	}
+	if value, ok := wauo.mutation.Way(); ok {
+		_spec.SetField(withdrawaccount.FieldWay, field.TypeEnum, value)
+	}
+	if value, ok := wauo.mutation.AlipayCardNo(); ok {
+		_spec.SetField(withdrawaccount.FieldAlipayCardNo, field.TypeString, value)
 	}
 	if wauo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

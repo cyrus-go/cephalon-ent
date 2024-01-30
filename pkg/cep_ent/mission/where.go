@@ -201,6 +201,11 @@ func ClosedAt(v time.Time) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldClosedAt, v))
 }
 
+// WarningTimes applies equality check predicate on the "warning_times" field. It's identical to WarningTimesEQ.
+func WarningTimes(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldWarningTimes, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -1879,6 +1884,46 @@ func ClosedAtIsNil() predicate.Mission {
 // ClosedAtNotNil applies the NotNil predicate on the "closed_at" field.
 func ClosedAtNotNil() predicate.Mission {
 	return predicate.Mission(sql.FieldNotNull(FieldClosedAt))
+}
+
+// WarningTimesEQ applies the EQ predicate on the "warning_times" field.
+func WarningTimesEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldWarningTimes, v))
+}
+
+// WarningTimesNEQ applies the NEQ predicate on the "warning_times" field.
+func WarningTimesNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldWarningTimes, v))
+}
+
+// WarningTimesIn applies the In predicate on the "warning_times" field.
+func WarningTimesIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldWarningTimes, vs...))
+}
+
+// WarningTimesNotIn applies the NotIn predicate on the "warning_times" field.
+func WarningTimesNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldWarningTimes, vs...))
+}
+
+// WarningTimesGT applies the GT predicate on the "warning_times" field.
+func WarningTimesGT(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldGT(FieldWarningTimes, v))
+}
+
+// WarningTimesGTE applies the GTE predicate on the "warning_times" field.
+func WarningTimesGTE(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldGTE(FieldWarningTimes, v))
+}
+
+// WarningTimesLT applies the LT predicate on the "warning_times" field.
+func WarningTimesLT(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldLT(FieldWarningTimes, v))
+}
+
+// WarningTimesLTE applies the LTE predicate on the "warning_times" field.
+func WarningTimesLTE(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldLTE(FieldWarningTimes, v))
 }
 
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.

@@ -1791,6 +1791,121 @@ func HasArtworkLikesWith(preds ...predicate.ArtworkLike) predicate.User {
 	})
 }
 
+// HasCdkInfos applies the HasEdge predicate on the "cdk_infos" edge.
+func HasCdkInfos() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CdkInfosTable, CdkInfosColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCdkInfosWith applies the HasEdge predicate on the "cdk_infos" edge with a given conditions (other predicates).
+func HasCdkInfosWith(preds ...predicate.CDKInfo) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newCdkInfosStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUseCdkInfos applies the HasEdge predicate on the "use_cdk_infos" edge.
+func HasUseCdkInfos() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UseCdkInfosTable, UseCdkInfosColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUseCdkInfosWith applies the HasEdge predicate on the "use_cdk_infos" edge with a given conditions (other predicates).
+func HasUseCdkInfosWith(preds ...predicate.CDKInfo) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newUseCdkInfosStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLottoRecords applies the HasEdge predicate on the "lotto_records" edge.
+func HasLottoRecords() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LottoRecordsTable, LottoRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLottoRecordsWith applies the HasEdge predicate on the "lotto_records" edge with a given conditions (other predicates).
+func HasLottoRecordsWith(preds ...predicate.LottoRecord) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newLottoRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLottoUserCounts applies the HasEdge predicate on the "lotto_user_counts" edge.
+func HasLottoUserCounts() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LottoUserCountsTable, LottoUserCountsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLottoUserCountsWith applies the HasEdge predicate on the "lotto_user_counts" edge with a given conditions (other predicates).
+func HasLottoUserCountsWith(preds ...predicate.LottoUserCount) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newLottoUserCountsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLottoGetCountRecords applies the HasEdge predicate on the "lotto_get_count_records" edge.
+func HasLottoGetCountRecords() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LottoGetCountRecordsTable, LottoGetCountRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLottoGetCountRecordsWith applies the HasEdge predicate on the "lotto_get_count_records" edge with a given conditions (other predicates).
+func HasLottoGetCountRecordsWith(preds ...predicate.LottoGetCountRecord) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newLottoGetCountRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

@@ -20,6 +20,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -38,6 +39,11 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
@@ -76,6 +82,8 @@ type Client struct {
 	ArtworkLike *ArtworkLikeClient
 	// Bill is the client for interacting with the Bill builders.
 	Bill *BillClient
+	// CDKInfo is the client for interacting with the CDKInfo builders.
+	CDKInfo *CDKInfoClient
 	// Campaign is the client for interacting with the Campaign builders.
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
@@ -116,6 +124,16 @@ type Client struct {
 	Invite *InviteClient
 	// LoginRecord is the client for interacting with the LoginRecord builders.
 	LoginRecord *LoginRecordClient
+	// Lotto is the client for interacting with the Lotto builders.
+	Lotto *LottoClient
+	// LottoGetCountRecord is the client for interacting with the LottoGetCountRecord builders.
+	LottoGetCountRecord *LottoGetCountRecordClient
+	// LottoPrize is the client for interacting with the LottoPrize builders.
+	LottoPrize *LottoPrizeClient
+	// LottoRecord is the client for interacting with the LottoRecord builders.
+	LottoRecord *LottoRecordClient
+	// LottoUserCount is the client for interacting with the LottoUserCount builders.
+	LottoUserCount *LottoUserCountClient
 	// Mission is the client for interacting with the Mission builders.
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
@@ -182,6 +200,7 @@ func (c *Client) init() {
 	c.Artwork = NewArtworkClient(c.config)
 	c.ArtworkLike = NewArtworkLikeClient(c.config)
 	c.Bill = NewBillClient(c.config)
+	c.CDKInfo = NewCDKInfoClient(c.config)
 	c.Campaign = NewCampaignClient(c.config)
 	c.CampaignOrder = NewCampaignOrderClient(c.config)
 	c.Collect = NewCollectClient(c.config)
@@ -202,6 +221,11 @@ func (c *Client) init() {
 	c.InputLog = NewInputLogClient(c.config)
 	c.Invite = NewInviteClient(c.config)
 	c.LoginRecord = NewLoginRecordClient(c.config)
+	c.Lotto = NewLottoClient(c.config)
+	c.LottoGetCountRecord = NewLottoGetCountRecordClient(c.config)
+	c.LottoPrize = NewLottoPrizeClient(c.config)
+	c.LottoRecord = NewLottoRecordClient(c.config)
+	c.LottoUserCount = NewLottoUserCountClient(c.config)
 	c.Mission = NewMissionClient(c.config)
 	c.MissionBatch = NewMissionBatchClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
@@ -315,6 +339,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Artwork:              NewArtworkClient(cfg),
 		ArtworkLike:          NewArtworkLikeClient(cfg),
 		Bill:                 NewBillClient(cfg),
+		CDKInfo:              NewCDKInfoClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
 		Collect:              NewCollectClient(cfg),
@@ -335,6 +360,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		InputLog:             NewInputLogClient(cfg),
 		Invite:               NewInviteClient(cfg),
 		LoginRecord:          NewLoginRecordClient(cfg),
+		Lotto:                NewLottoClient(cfg),
+		LottoGetCountRecord:  NewLottoGetCountRecordClient(cfg),
+		LottoPrize:           NewLottoPrizeClient(cfg),
+		LottoRecord:          NewLottoRecordClient(cfg),
+		LottoUserCount:       NewLottoUserCountClient(cfg),
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
@@ -382,6 +412,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Artwork:              NewArtworkClient(cfg),
 		ArtworkLike:          NewArtworkLikeClient(cfg),
 		Bill:                 NewBillClient(cfg),
+		CDKInfo:              NewCDKInfoClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
 		Collect:              NewCollectClient(cfg),
@@ -402,6 +433,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		InputLog:             NewInputLogClient(cfg),
 		Invite:               NewInviteClient(cfg),
 		LoginRecord:          NewLoginRecordClient(cfg),
+		Lotto:                NewLottoClient(cfg),
+		LottoGetCountRecord:  NewLottoGetCountRecordClient(cfg),
+		LottoPrize:           NewLottoPrizeClient(cfg),
+		LottoRecord:          NewLottoRecordClient(cfg),
+		LottoUserCount:       NewLottoUserCountClient(cfg),
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
@@ -456,16 +492,18 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Artwork, c.ArtworkLike, c.Bill, c.Campaign, c.CampaignOrder, c.Collect,
-		c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
+		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
 		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Invite, c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
-		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
-		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
-		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
-		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder, c.User,
-		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
+		c.Invite, c.LoginRecord, c.Lotto, c.LottoGetCountRecord, c.LottoPrize,
+		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
+		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
+		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.WithdrawAccount,
 	} {
 		n.Use(hooks...)
 	}
@@ -475,16 +513,18 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Artwork, c.ArtworkLike, c.Bill, c.Campaign, c.CampaignOrder, c.Collect,
-		c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
+		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
+		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
 		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Invite, c.LoginRecord, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
-		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
-		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
-		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
-		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder, c.User,
-		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
+		c.Invite, c.LoginRecord, c.Lotto, c.LottoGetCountRecord, c.LottoPrize,
+		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
+		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
+		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.WithdrawAccount,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -499,6 +539,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ArtworkLike.mutate(ctx, m)
 	case *BillMutation:
 		return c.Bill.mutate(ctx, m)
+	case *CDKInfoMutation:
+		return c.CDKInfo.mutate(ctx, m)
 	case *CampaignMutation:
 		return c.Campaign.mutate(ctx, m)
 	case *CampaignOrderMutation:
@@ -539,6 +581,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Invite.mutate(ctx, m)
 	case *LoginRecordMutation:
 		return c.LoginRecord.mutate(ctx, m)
+	case *LottoMutation:
+		return c.Lotto.mutate(ctx, m)
+	case *LottoGetCountRecordMutation:
+		return c.LottoGetCountRecord.mutate(ctx, m)
+	case *LottoPrizeMutation:
+		return c.LottoPrize.mutate(ctx, m)
+	case *LottoRecordMutation:
+		return c.LottoRecord.mutate(ctx, m)
+	case *LottoUserCountMutation:
+		return c.LottoUserCount.mutate(ctx, m)
 	case *MissionMutation:
 		return c.Mission.mutate(ctx, m)
 	case *MissionBatchMutation:
@@ -1150,6 +1202,171 @@ func (c *BillClient) mutate(ctx context.Context, m *BillMutation) (Value, error)
 		return (&BillDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Bill mutation op: %q", m.Op())
+	}
+}
+
+// CDKInfoClient is a client for the CDKInfo schema.
+type CDKInfoClient struct {
+	config
+}
+
+// NewCDKInfoClient returns a client for the CDKInfo from the given config.
+func NewCDKInfoClient(c config) *CDKInfoClient {
+	return &CDKInfoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cdkinfo.Hooks(f(g(h())))`.
+func (c *CDKInfoClient) Use(hooks ...Hook) {
+	c.hooks.CDKInfo = append(c.hooks.CDKInfo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cdkinfo.Intercept(f(g(h())))`.
+func (c *CDKInfoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CDKInfo = append(c.inters.CDKInfo, interceptors...)
+}
+
+// Create returns a builder for creating a CDKInfo entity.
+func (c *CDKInfoClient) Create() *CDKInfoCreate {
+	mutation := newCDKInfoMutation(c.config, OpCreate)
+	return &CDKInfoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CDKInfo entities.
+func (c *CDKInfoClient) CreateBulk(builders ...*CDKInfoCreate) *CDKInfoCreateBulk {
+	return &CDKInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CDKInfoClient) MapCreateBulk(slice any, setFunc func(*CDKInfoCreate, int)) *CDKInfoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CDKInfoCreateBulk{err: fmt.Errorf("calling to CDKInfoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CDKInfoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CDKInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CDKInfo.
+func (c *CDKInfoClient) Update() *CDKInfoUpdate {
+	mutation := newCDKInfoMutation(c.config, OpUpdate)
+	return &CDKInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CDKInfoClient) UpdateOne(ci *CDKInfo) *CDKInfoUpdateOne {
+	mutation := newCDKInfoMutation(c.config, OpUpdateOne, withCDKInfo(ci))
+	return &CDKInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CDKInfoClient) UpdateOneID(id int64) *CDKInfoUpdateOne {
+	mutation := newCDKInfoMutation(c.config, OpUpdateOne, withCDKInfoID(id))
+	return &CDKInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CDKInfo.
+func (c *CDKInfoClient) Delete() *CDKInfoDelete {
+	mutation := newCDKInfoMutation(c.config, OpDelete)
+	return &CDKInfoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CDKInfoClient) DeleteOne(ci *CDKInfo) *CDKInfoDeleteOne {
+	return c.DeleteOneID(ci.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CDKInfoClient) DeleteOneID(id int64) *CDKInfoDeleteOne {
+	builder := c.Delete().Where(cdkinfo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CDKInfoDeleteOne{builder}
+}
+
+// Query returns a query builder for CDKInfo.
+func (c *CDKInfoClient) Query() *CDKInfoQuery {
+	return &CDKInfoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCDKInfo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CDKInfo entity by its id.
+func (c *CDKInfoClient) Get(ctx context.Context, id int64) (*CDKInfo, error) {
+	return c.Query().Where(cdkinfo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CDKInfoClient) GetX(ctx context.Context, id int64) *CDKInfo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryIssueUser queries the issue_user edge of a CDKInfo.
+func (c *CDKInfoClient) QueryIssueUser(ci *CDKInfo) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cdkinfo.Table, cdkinfo.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, cdkinfo.IssueUserTable, cdkinfo.IssueUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUseUser queries the use_user edge of a CDKInfo.
+func (c *CDKInfoClient) QueryUseUser(ci *CDKInfo) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cdkinfo.Table, cdkinfo.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, cdkinfo.UseUserTable, cdkinfo.UseUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CDKInfoClient) Hooks() []Hook {
+	return c.hooks.CDKInfo
+}
+
+// Interceptors returns the client interceptors.
+func (c *CDKInfoClient) Interceptors() []Interceptor {
+	return c.inters.CDKInfo
+}
+
+func (c *CDKInfoClient) mutate(ctx context.Context, m *CDKInfoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CDKInfoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CDKInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CDKInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CDKInfoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown CDKInfo mutation op: %q", m.Op())
 	}
 }
 
@@ -4562,6 +4779,879 @@ func (c *LoginRecordClient) mutate(ctx context.Context, m *LoginRecordMutation) 
 		return (&LoginRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown LoginRecord mutation op: %q", m.Op())
+	}
+}
+
+// LottoClient is a client for the Lotto schema.
+type LottoClient struct {
+	config
+}
+
+// NewLottoClient returns a client for the Lotto from the given config.
+func NewLottoClient(c config) *LottoClient {
+	return &LottoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lotto.Hooks(f(g(h())))`.
+func (c *LottoClient) Use(hooks ...Hook) {
+	c.hooks.Lotto = append(c.hooks.Lotto, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lotto.Intercept(f(g(h())))`.
+func (c *LottoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Lotto = append(c.inters.Lotto, interceptors...)
+}
+
+// Create returns a builder for creating a Lotto entity.
+func (c *LottoClient) Create() *LottoCreate {
+	mutation := newLottoMutation(c.config, OpCreate)
+	return &LottoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Lotto entities.
+func (c *LottoClient) CreateBulk(builders ...*LottoCreate) *LottoCreateBulk {
+	return &LottoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LottoClient) MapCreateBulk(slice any, setFunc func(*LottoCreate, int)) *LottoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LottoCreateBulk{err: fmt.Errorf("calling to LottoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LottoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LottoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Lotto.
+func (c *LottoClient) Update() *LottoUpdate {
+	mutation := newLottoMutation(c.config, OpUpdate)
+	return &LottoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LottoClient) UpdateOne(l *Lotto) *LottoUpdateOne {
+	mutation := newLottoMutation(c.config, OpUpdateOne, withLotto(l))
+	return &LottoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LottoClient) UpdateOneID(id int64) *LottoUpdateOne {
+	mutation := newLottoMutation(c.config, OpUpdateOne, withLottoID(id))
+	return &LottoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Lotto.
+func (c *LottoClient) Delete() *LottoDelete {
+	mutation := newLottoMutation(c.config, OpDelete)
+	return &LottoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LottoClient) DeleteOne(l *Lotto) *LottoDeleteOne {
+	return c.DeleteOneID(l.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LottoClient) DeleteOneID(id int64) *LottoDeleteOne {
+	builder := c.Delete().Where(lotto.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LottoDeleteOne{builder}
+}
+
+// Query returns a query builder for Lotto.
+func (c *LottoClient) Query() *LottoQuery {
+	return &LottoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLotto},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Lotto entity by its id.
+func (c *LottoClient) Get(ctx context.Context, id int64) (*Lotto, error) {
+	return c.Query().Where(lotto.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LottoClient) GetX(ctx context.Context, id int64) *Lotto {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLottoPrizes queries the lotto_prizes edge of a Lotto.
+func (c *LottoClient) QueryLottoPrizes(l *Lotto) *LottoPrizeQuery {
+	query := (&LottoPrizeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lotto.Table, lotto.FieldID, id),
+			sqlgraph.To(lottoprize.Table, lottoprize.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoPrizesTable, lotto.LottoPrizesColumn),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoRecords queries the lotto_records edge of a Lotto.
+func (c *LottoClient) QueryLottoRecords(l *Lotto) *LottoRecordQuery {
+	query := (&LottoRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lotto.Table, lotto.FieldID, id),
+			sqlgraph.To(lottorecord.Table, lottorecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoRecordsTable, lotto.LottoRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoUserCounts queries the lotto_user_counts edge of a Lotto.
+func (c *LottoClient) QueryLottoUserCounts(l *Lotto) *LottoUserCountQuery {
+	query := (&LottoUserCountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lotto.Table, lotto.FieldID, id),
+			sqlgraph.To(lottousercount.Table, lottousercount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoUserCountsTable, lotto.LottoUserCountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoGetCountRecords queries the lotto_get_count_records edge of a Lotto.
+func (c *LottoClient) QueryLottoGetCountRecords(l *Lotto) *LottoGetCountRecordQuery {
+	query := (&LottoGetCountRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lotto.Table, lotto.FieldID, id),
+			sqlgraph.To(lottogetcountrecord.Table, lottogetcountrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoGetCountRecordsTable, lotto.LottoGetCountRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LottoClient) Hooks() []Hook {
+	return c.hooks.Lotto
+}
+
+// Interceptors returns the client interceptors.
+func (c *LottoClient) Interceptors() []Interceptor {
+	return c.inters.Lotto
+}
+
+func (c *LottoClient) mutate(ctx context.Context, m *LottoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LottoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LottoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LottoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LottoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Lotto mutation op: %q", m.Op())
+	}
+}
+
+// LottoGetCountRecordClient is a client for the LottoGetCountRecord schema.
+type LottoGetCountRecordClient struct {
+	config
+}
+
+// NewLottoGetCountRecordClient returns a client for the LottoGetCountRecord from the given config.
+func NewLottoGetCountRecordClient(c config) *LottoGetCountRecordClient {
+	return &LottoGetCountRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lottogetcountrecord.Hooks(f(g(h())))`.
+func (c *LottoGetCountRecordClient) Use(hooks ...Hook) {
+	c.hooks.LottoGetCountRecord = append(c.hooks.LottoGetCountRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lottogetcountrecord.Intercept(f(g(h())))`.
+func (c *LottoGetCountRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LottoGetCountRecord = append(c.inters.LottoGetCountRecord, interceptors...)
+}
+
+// Create returns a builder for creating a LottoGetCountRecord entity.
+func (c *LottoGetCountRecordClient) Create() *LottoGetCountRecordCreate {
+	mutation := newLottoGetCountRecordMutation(c.config, OpCreate)
+	return &LottoGetCountRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LottoGetCountRecord entities.
+func (c *LottoGetCountRecordClient) CreateBulk(builders ...*LottoGetCountRecordCreate) *LottoGetCountRecordCreateBulk {
+	return &LottoGetCountRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LottoGetCountRecordClient) MapCreateBulk(slice any, setFunc func(*LottoGetCountRecordCreate, int)) *LottoGetCountRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LottoGetCountRecordCreateBulk{err: fmt.Errorf("calling to LottoGetCountRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LottoGetCountRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LottoGetCountRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LottoGetCountRecord.
+func (c *LottoGetCountRecordClient) Update() *LottoGetCountRecordUpdate {
+	mutation := newLottoGetCountRecordMutation(c.config, OpUpdate)
+	return &LottoGetCountRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LottoGetCountRecordClient) UpdateOne(lgcr *LottoGetCountRecord) *LottoGetCountRecordUpdateOne {
+	mutation := newLottoGetCountRecordMutation(c.config, OpUpdateOne, withLottoGetCountRecord(lgcr))
+	return &LottoGetCountRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LottoGetCountRecordClient) UpdateOneID(id int64) *LottoGetCountRecordUpdateOne {
+	mutation := newLottoGetCountRecordMutation(c.config, OpUpdateOne, withLottoGetCountRecordID(id))
+	return &LottoGetCountRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LottoGetCountRecord.
+func (c *LottoGetCountRecordClient) Delete() *LottoGetCountRecordDelete {
+	mutation := newLottoGetCountRecordMutation(c.config, OpDelete)
+	return &LottoGetCountRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LottoGetCountRecordClient) DeleteOne(lgcr *LottoGetCountRecord) *LottoGetCountRecordDeleteOne {
+	return c.DeleteOneID(lgcr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LottoGetCountRecordClient) DeleteOneID(id int64) *LottoGetCountRecordDeleteOne {
+	builder := c.Delete().Where(lottogetcountrecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LottoGetCountRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for LottoGetCountRecord.
+func (c *LottoGetCountRecordClient) Query() *LottoGetCountRecordQuery {
+	return &LottoGetCountRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLottoGetCountRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LottoGetCountRecord entity by its id.
+func (c *LottoGetCountRecordClient) Get(ctx context.Context, id int64) (*LottoGetCountRecord, error) {
+	return c.Query().Where(lottogetcountrecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LottoGetCountRecordClient) GetX(ctx context.Context, id int64) *LottoGetCountRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a LottoGetCountRecord.
+func (c *LottoGetCountRecordClient) QueryUser(lgcr *LottoGetCountRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lgcr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottogetcountrecord.Table, lottogetcountrecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottogetcountrecord.UserTable, lottogetcountrecord.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(lgcr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLotto queries the lotto edge of a LottoGetCountRecord.
+func (c *LottoGetCountRecordClient) QueryLotto(lgcr *LottoGetCountRecord) *LottoQuery {
+	query := (&LottoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lgcr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottogetcountrecord.Table, lottogetcountrecord.FieldID, id),
+			sqlgraph.To(lotto.Table, lotto.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottogetcountrecord.LottoTable, lottogetcountrecord.LottoColumn),
+		)
+		fromV = sqlgraph.Neighbors(lgcr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LottoGetCountRecordClient) Hooks() []Hook {
+	return c.hooks.LottoGetCountRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *LottoGetCountRecordClient) Interceptors() []Interceptor {
+	return c.inters.LottoGetCountRecord
+}
+
+func (c *LottoGetCountRecordClient) mutate(ctx context.Context, m *LottoGetCountRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LottoGetCountRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LottoGetCountRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LottoGetCountRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LottoGetCountRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown LottoGetCountRecord mutation op: %q", m.Op())
+	}
+}
+
+// LottoPrizeClient is a client for the LottoPrize schema.
+type LottoPrizeClient struct {
+	config
+}
+
+// NewLottoPrizeClient returns a client for the LottoPrize from the given config.
+func NewLottoPrizeClient(c config) *LottoPrizeClient {
+	return &LottoPrizeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lottoprize.Hooks(f(g(h())))`.
+func (c *LottoPrizeClient) Use(hooks ...Hook) {
+	c.hooks.LottoPrize = append(c.hooks.LottoPrize, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lottoprize.Intercept(f(g(h())))`.
+func (c *LottoPrizeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LottoPrize = append(c.inters.LottoPrize, interceptors...)
+}
+
+// Create returns a builder for creating a LottoPrize entity.
+func (c *LottoPrizeClient) Create() *LottoPrizeCreate {
+	mutation := newLottoPrizeMutation(c.config, OpCreate)
+	return &LottoPrizeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LottoPrize entities.
+func (c *LottoPrizeClient) CreateBulk(builders ...*LottoPrizeCreate) *LottoPrizeCreateBulk {
+	return &LottoPrizeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LottoPrizeClient) MapCreateBulk(slice any, setFunc func(*LottoPrizeCreate, int)) *LottoPrizeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LottoPrizeCreateBulk{err: fmt.Errorf("calling to LottoPrizeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LottoPrizeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LottoPrizeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LottoPrize.
+func (c *LottoPrizeClient) Update() *LottoPrizeUpdate {
+	mutation := newLottoPrizeMutation(c.config, OpUpdate)
+	return &LottoPrizeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LottoPrizeClient) UpdateOne(lp *LottoPrize) *LottoPrizeUpdateOne {
+	mutation := newLottoPrizeMutation(c.config, OpUpdateOne, withLottoPrize(lp))
+	return &LottoPrizeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LottoPrizeClient) UpdateOneID(id int64) *LottoPrizeUpdateOne {
+	mutation := newLottoPrizeMutation(c.config, OpUpdateOne, withLottoPrizeID(id))
+	return &LottoPrizeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LottoPrize.
+func (c *LottoPrizeClient) Delete() *LottoPrizeDelete {
+	mutation := newLottoPrizeMutation(c.config, OpDelete)
+	return &LottoPrizeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LottoPrizeClient) DeleteOne(lp *LottoPrize) *LottoPrizeDeleteOne {
+	return c.DeleteOneID(lp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LottoPrizeClient) DeleteOneID(id int64) *LottoPrizeDeleteOne {
+	builder := c.Delete().Where(lottoprize.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LottoPrizeDeleteOne{builder}
+}
+
+// Query returns a query builder for LottoPrize.
+func (c *LottoPrizeClient) Query() *LottoPrizeQuery {
+	return &LottoPrizeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLottoPrize},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LottoPrize entity by its id.
+func (c *LottoPrizeClient) Get(ctx context.Context, id int64) (*LottoPrize, error) {
+	return c.Query().Where(lottoprize.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LottoPrizeClient) GetX(ctx context.Context, id int64) *LottoPrize {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLotto queries the lotto edge of a LottoPrize.
+func (c *LottoPrizeClient) QueryLotto(lp *LottoPrize) *LottoQuery {
+	query := (&LottoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottoprize.Table, lottoprize.FieldID, id),
+			sqlgraph.To(lotto.Table, lotto.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottoprize.LottoTable, lottoprize.LottoColumn),
+		)
+		fromV = sqlgraph.Neighbors(lp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoRecords queries the lotto_records edge of a LottoPrize.
+func (c *LottoPrizeClient) QueryLottoRecords(lp *LottoPrize) *LottoRecordQuery {
+	query := (&LottoRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottoprize.Table, lottoprize.FieldID, id),
+			sqlgraph.To(lottorecord.Table, lottorecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lottoprize.LottoRecordsTable, lottoprize.LottoRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(lp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LottoPrizeClient) Hooks() []Hook {
+	return c.hooks.LottoPrize
+}
+
+// Interceptors returns the client interceptors.
+func (c *LottoPrizeClient) Interceptors() []Interceptor {
+	return c.inters.LottoPrize
+}
+
+func (c *LottoPrizeClient) mutate(ctx context.Context, m *LottoPrizeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LottoPrizeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LottoPrizeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LottoPrizeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LottoPrizeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown LottoPrize mutation op: %q", m.Op())
+	}
+}
+
+// LottoRecordClient is a client for the LottoRecord schema.
+type LottoRecordClient struct {
+	config
+}
+
+// NewLottoRecordClient returns a client for the LottoRecord from the given config.
+func NewLottoRecordClient(c config) *LottoRecordClient {
+	return &LottoRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lottorecord.Hooks(f(g(h())))`.
+func (c *LottoRecordClient) Use(hooks ...Hook) {
+	c.hooks.LottoRecord = append(c.hooks.LottoRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lottorecord.Intercept(f(g(h())))`.
+func (c *LottoRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LottoRecord = append(c.inters.LottoRecord, interceptors...)
+}
+
+// Create returns a builder for creating a LottoRecord entity.
+func (c *LottoRecordClient) Create() *LottoRecordCreate {
+	mutation := newLottoRecordMutation(c.config, OpCreate)
+	return &LottoRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LottoRecord entities.
+func (c *LottoRecordClient) CreateBulk(builders ...*LottoRecordCreate) *LottoRecordCreateBulk {
+	return &LottoRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LottoRecordClient) MapCreateBulk(slice any, setFunc func(*LottoRecordCreate, int)) *LottoRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LottoRecordCreateBulk{err: fmt.Errorf("calling to LottoRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LottoRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LottoRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LottoRecord.
+func (c *LottoRecordClient) Update() *LottoRecordUpdate {
+	mutation := newLottoRecordMutation(c.config, OpUpdate)
+	return &LottoRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LottoRecordClient) UpdateOne(lr *LottoRecord) *LottoRecordUpdateOne {
+	mutation := newLottoRecordMutation(c.config, OpUpdateOne, withLottoRecord(lr))
+	return &LottoRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LottoRecordClient) UpdateOneID(id int64) *LottoRecordUpdateOne {
+	mutation := newLottoRecordMutation(c.config, OpUpdateOne, withLottoRecordID(id))
+	return &LottoRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LottoRecord.
+func (c *LottoRecordClient) Delete() *LottoRecordDelete {
+	mutation := newLottoRecordMutation(c.config, OpDelete)
+	return &LottoRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LottoRecordClient) DeleteOne(lr *LottoRecord) *LottoRecordDeleteOne {
+	return c.DeleteOneID(lr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LottoRecordClient) DeleteOneID(id int64) *LottoRecordDeleteOne {
+	builder := c.Delete().Where(lottorecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LottoRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for LottoRecord.
+func (c *LottoRecordClient) Query() *LottoRecordQuery {
+	return &LottoRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLottoRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LottoRecord entity by its id.
+func (c *LottoRecordClient) Get(ctx context.Context, id int64) (*LottoRecord, error) {
+	return c.Query().Where(lottorecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LottoRecordClient) GetX(ctx context.Context, id int64) *LottoRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a LottoRecord.
+func (c *LottoRecordClient) QueryUser(lr *LottoRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottorecord.Table, lottorecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottorecord.UserTable, lottorecord.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(lr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLotto queries the lotto edge of a LottoRecord.
+func (c *LottoRecordClient) QueryLotto(lr *LottoRecord) *LottoQuery {
+	query := (&LottoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottorecord.Table, lottorecord.FieldID, id),
+			sqlgraph.To(lotto.Table, lotto.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottorecord.LottoTable, lottorecord.LottoColumn),
+		)
+		fromV = sqlgraph.Neighbors(lr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoPrize queries the lotto_prize edge of a LottoRecord.
+func (c *LottoRecordClient) QueryLottoPrize(lr *LottoRecord) *LottoPrizeQuery {
+	query := (&LottoPrizeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottorecord.Table, lottorecord.FieldID, id),
+			sqlgraph.To(lottoprize.Table, lottoprize.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottorecord.LottoPrizeTable, lottorecord.LottoPrizeColumn),
+		)
+		fromV = sqlgraph.Neighbors(lr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LottoRecordClient) Hooks() []Hook {
+	return c.hooks.LottoRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *LottoRecordClient) Interceptors() []Interceptor {
+	return c.inters.LottoRecord
+}
+
+func (c *LottoRecordClient) mutate(ctx context.Context, m *LottoRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LottoRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LottoRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LottoRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LottoRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown LottoRecord mutation op: %q", m.Op())
+	}
+}
+
+// LottoUserCountClient is a client for the LottoUserCount schema.
+type LottoUserCountClient struct {
+	config
+}
+
+// NewLottoUserCountClient returns a client for the LottoUserCount from the given config.
+func NewLottoUserCountClient(c config) *LottoUserCountClient {
+	return &LottoUserCountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lottousercount.Hooks(f(g(h())))`.
+func (c *LottoUserCountClient) Use(hooks ...Hook) {
+	c.hooks.LottoUserCount = append(c.hooks.LottoUserCount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lottousercount.Intercept(f(g(h())))`.
+func (c *LottoUserCountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LottoUserCount = append(c.inters.LottoUserCount, interceptors...)
+}
+
+// Create returns a builder for creating a LottoUserCount entity.
+func (c *LottoUserCountClient) Create() *LottoUserCountCreate {
+	mutation := newLottoUserCountMutation(c.config, OpCreate)
+	return &LottoUserCountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LottoUserCount entities.
+func (c *LottoUserCountClient) CreateBulk(builders ...*LottoUserCountCreate) *LottoUserCountCreateBulk {
+	return &LottoUserCountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LottoUserCountClient) MapCreateBulk(slice any, setFunc func(*LottoUserCountCreate, int)) *LottoUserCountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LottoUserCountCreateBulk{err: fmt.Errorf("calling to LottoUserCountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LottoUserCountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LottoUserCountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LottoUserCount.
+func (c *LottoUserCountClient) Update() *LottoUserCountUpdate {
+	mutation := newLottoUserCountMutation(c.config, OpUpdate)
+	return &LottoUserCountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LottoUserCountClient) UpdateOne(luc *LottoUserCount) *LottoUserCountUpdateOne {
+	mutation := newLottoUserCountMutation(c.config, OpUpdateOne, withLottoUserCount(luc))
+	return &LottoUserCountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LottoUserCountClient) UpdateOneID(id int64) *LottoUserCountUpdateOne {
+	mutation := newLottoUserCountMutation(c.config, OpUpdateOne, withLottoUserCountID(id))
+	return &LottoUserCountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LottoUserCount.
+func (c *LottoUserCountClient) Delete() *LottoUserCountDelete {
+	mutation := newLottoUserCountMutation(c.config, OpDelete)
+	return &LottoUserCountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LottoUserCountClient) DeleteOne(luc *LottoUserCount) *LottoUserCountDeleteOne {
+	return c.DeleteOneID(luc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LottoUserCountClient) DeleteOneID(id int64) *LottoUserCountDeleteOne {
+	builder := c.Delete().Where(lottousercount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LottoUserCountDeleteOne{builder}
+}
+
+// Query returns a query builder for LottoUserCount.
+func (c *LottoUserCountClient) Query() *LottoUserCountQuery {
+	return &LottoUserCountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLottoUserCount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LottoUserCount entity by its id.
+func (c *LottoUserCountClient) Get(ctx context.Context, id int64) (*LottoUserCount, error) {
+	return c.Query().Where(lottousercount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LottoUserCountClient) GetX(ctx context.Context, id int64) *LottoUserCount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a LottoUserCount.
+func (c *LottoUserCountClient) QueryUser(luc *LottoUserCount) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := luc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottousercount.Table, lottousercount.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottousercount.UserTable, lottousercount.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(luc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLotto queries the lotto edge of a LottoUserCount.
+func (c *LottoUserCountClient) QueryLotto(luc *LottoUserCount) *LottoQuery {
+	query := (&LottoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := luc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottousercount.Table, lottousercount.FieldID, id),
+			sqlgraph.To(lotto.Table, lotto.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottousercount.LottoTable, lottousercount.LottoColumn),
+		)
+		fromV = sqlgraph.Neighbors(luc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LottoUserCountClient) Hooks() []Hook {
+	return c.hooks.LottoUserCount
+}
+
+// Interceptors returns the client interceptors.
+func (c *LottoUserCountClient) Interceptors() []Interceptor {
+	return c.inters.LottoUserCount
+}
+
+func (c *LottoUserCountClient) mutate(ctx context.Context, m *LottoUserCountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LottoUserCountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LottoUserCountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LottoUserCountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LottoUserCountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown LottoUserCount mutation op: %q", m.Op())
 	}
 }
 
@@ -8784,6 +9874,86 @@ func (c *UserClient) QueryArtworkLikes(u *User) *ArtworkLikeQuery {
 	return query
 }
 
+// QueryCdkInfos queries the cdk_infos edge of a User.
+func (c *UserClient) QueryCdkInfos(u *User) *CDKInfoQuery {
+	query := (&CDKInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(cdkinfo.Table, cdkinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CdkInfosTable, user.CdkInfosColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUseCdkInfos queries the use_cdk_infos edge of a User.
+func (c *UserClient) QueryUseCdkInfos(u *User) *CDKInfoQuery {
+	query := (&CDKInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(cdkinfo.Table, cdkinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UseCdkInfosTable, user.UseCdkInfosColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoRecords queries the lotto_records edge of a User.
+func (c *UserClient) QueryLottoRecords(u *User) *LottoRecordQuery {
+	query := (&LottoRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(lottorecord.Table, lottorecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LottoRecordsTable, user.LottoRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoUserCounts queries the lotto_user_counts edge of a User.
+func (c *UserClient) QueryLottoUserCounts(u *User) *LottoUserCountQuery {
+	query := (&LottoUserCountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(lottousercount.Table, lottousercount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LottoUserCountsTable, user.LottoUserCountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLottoGetCountRecords queries the lotto_get_count_records edge of a User.
+func (c *UserClient) QueryLottoGetCountRecords(u *User) *LottoGetCountRecordQuery {
+	query := (&LottoGetCountRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(lottogetcountrecord.Table, lottogetcountrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LottoGetCountRecordsTable, user.LottoGetCountRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -9621,23 +10791,25 @@ func (c *WithdrawAccountClient) mutate(ctx context.Context, m *WithdrawAccountMu
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Artwork, ArtworkLike, Bill, Campaign, CampaignOrder, Collect, CostAccount,
-		CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus,
-		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
-		HmacKeyPair, InputLog, Invite, LoginRecord, Mission, MissionBatch,
-		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
-		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
+		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
+		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
+		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Lotto,
+		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
+		MissionBatch, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
+		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
 		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
-		Artwork, ArtworkLike, Bill, Campaign, CampaignOrder, Collect, CostAccount,
-		CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition, EnumMissionStatus,
-		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
-		HmacKeyPair, InputLog, Invite, LoginRecord, Mission, MissionBatch,
-		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
-		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
+		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
+		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
+		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Lotto,
+		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
+		MissionBatch, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
+		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
 		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
