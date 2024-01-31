@@ -28,26 +28,34 @@ const (
 	MissionTypeSdXlTime           MissionType = "sd_xl_time"
 	MissionTypeSdChickTime        MissionType = "sd_chick_time"
 	MissionTypeAscendTime         MissionType = "ascend_time"
+	MissionTypeSdWuShanTime       MissionType = "sd_wu_shan_time"
+	MissionTypeSdLangTime         MissionType = "sd_lang_time"
+	MissionTypeComfyuiKeTime      MissionType = "comfyui_ke_time"
+	MissionTypeChatchatTime       MissionType = "chatchat_time"
 
-	MissionTypeSdTimePlan       MissionType = "sd_time_plan"
-	MissionTypeWtTimePlan       MissionType = "wt_time_plan"
-	MissionTypeJpTimePlan       MissionType = "jp_time_plan"
-	MissionTypeJpDkTimePlan     MissionType = "jp_dk_time_plan"
-	MissionTypeSshTimePlan      MissionType = "ssh_time_plan"
-	MissionTypeSdTomatoTimePlan MissionType = "sd_tomato_time_plan"
-	MissionTypeSdCmdTimePlan    MissionType = "sd_cmd_time_plan"
-	MissionTypeSdBingoTimePlan  MissionType = "sd_bingo_time_plan"
-	MissionTypeFooocusTimePlan  MissionType = "fooocus_time_plan"
-	MissionTypeTabbyTimePlan    MissionType = "tabby_time_plan"
-	MissionTypeJpCondaTimePlan  MissionType = "jp_conda_time_plan"
-	MissionTypeJpMlTimePlan     MissionType = "jp_ml_time_plan"
-	MissionTypeSdCatTimePlan    MissionType = "sd_cat_time_plan"
-	MissionTypeSdFireTimePlan   MissionType = "sd_fire_time_plan"
-	MissionTypeComfyuiTimePlan  MissionType = "comfyui_time_plan"
-	MissionTypeJpDk3TimePlan    MissionType = "jp_dk_3_time_plan"
-	MissionTypeSdXlTimePlan     MissionType = "sd_xl_time_plan"
-	MissionTypeSdChickTimePlan  MissionType = "sd_chick_time_plan"
-	MissionTypeAscendTimePlan   MissionType = "ascend_time_plan"
+	MissionTypeSdTimePlan        MissionType = "sd_time_plan"
+	MissionTypeWtTimePlan        MissionType = "wt_time_plan"
+	MissionTypeJpTimePlan        MissionType = "jp_time_plan"
+	MissionTypeJpDkTimePlan      MissionType = "jp_dk_time_plan"
+	MissionTypeSshTimePlan       MissionType = "ssh_time_plan"
+	MissionTypeSdTomatoTimePlan  MissionType = "sd_tomato_time_plan"
+	MissionTypeSdCmdTimePlan     MissionType = "sd_cmd_time_plan"
+	MissionTypeSdBingoTimePlan   MissionType = "sd_bingo_time_plan"
+	MissionTypeFooocusTimePlan   MissionType = "fooocus_time_plan"
+	MissionTypeTabbyTimePlan     MissionType = "tabby_time_plan"
+	MissionTypeJpCondaTimePlan   MissionType = "jp_conda_time_plan"
+	MissionTypeJpMlTimePlan      MissionType = "jp_ml_time_plan"
+	MissionTypeSdCatTimePlan     MissionType = "sd_cat_time_plan"
+	MissionTypeSdFireTimePlan    MissionType = "sd_fire_time_plan"
+	MissionTypeComfyuiTimePlan   MissionType = "comfyui_time_plan"
+	MissionTypeJpDk3TimePlan     MissionType = "jp_dk_3_time_plan"
+	MissionTypeSdXlTimePlan      MissionType = "sd_xl_time_plan"
+	MissionTypeSdChickTimePlan   MissionType = "sd_chick_time_plan"
+	MissionTypeAscendTimePlan    MissionType = "ascend_time_plan"
+	MissionTypeSdWuShanTimePlan  MissionType = "sd_wu_shan_time_plan"
+	MissionTypeSdLangTimePlan    MissionType = "sd_lang_time_plan"
+	MissionTypeComfyuiKeTimePlan MissionType = "comfyui_ke_time_plan"
+	MissionTypeChatchatTimePlan  MissionType = "chatchat_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -96,6 +104,14 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdChickTimePlan),
 		string(MissionTypeAscendTime),
 		string(MissionTypeAscendTimePlan),
+		string(MissionTypeSdWuShanTime),
+		string(MissionTypeSdWuShanTimePlan),
+		string(MissionTypeSdLangTime),
+		string(MissionTypeSdLangTimePlan),
+		string(MissionTypeComfyuiKeTime),
+		string(MissionTypeComfyuiKeTimePlan),
+		string(MissionTypeChatchatTime),
+		string(MissionTypeChatchatTimePlan),
 	}
 }
 
