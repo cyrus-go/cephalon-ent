@@ -31,6 +31,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -1435,6 +1436,49 @@ func init() {
 	lottoDescID := lottoMixinFields0[0].Descriptor()
 	// lotto.DefaultID holds the default value on creation for the id field.
 	lotto.DefaultID = lottoDescID.Default.(func() int64)
+	lottochanceruleMixin := schema.LottoChanceRule{}.Mixin()
+	lottochanceruleMixinFields0 := lottochanceruleMixin[0].Fields()
+	_ = lottochanceruleMixinFields0
+	lottochanceruleFields := schema.LottoChanceRule{}.Fields()
+	_ = lottochanceruleFields
+	// lottochanceruleDescCreatedBy is the schema descriptor for created_by field.
+	lottochanceruleDescCreatedBy := lottochanceruleMixinFields0[1].Descriptor()
+	// lottochancerule.DefaultCreatedBy holds the default value on creation for the created_by field.
+	lottochancerule.DefaultCreatedBy = lottochanceruleDescCreatedBy.Default.(int64)
+	// lottochanceruleDescUpdatedBy is the schema descriptor for updated_by field.
+	lottochanceruleDescUpdatedBy := lottochanceruleMixinFields0[2].Descriptor()
+	// lottochancerule.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	lottochancerule.DefaultUpdatedBy = lottochanceruleDescUpdatedBy.Default.(int64)
+	// lottochanceruleDescCreatedAt is the schema descriptor for created_at field.
+	lottochanceruleDescCreatedAt := lottochanceruleMixinFields0[3].Descriptor()
+	// lottochancerule.DefaultCreatedAt holds the default value on creation for the created_at field.
+	lottochancerule.DefaultCreatedAt = lottochanceruleDescCreatedAt.Default.(func() time.Time)
+	// lottochanceruleDescUpdatedAt is the schema descriptor for updated_at field.
+	lottochanceruleDescUpdatedAt := lottochanceruleMixinFields0[4].Descriptor()
+	// lottochancerule.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	lottochancerule.DefaultUpdatedAt = lottochanceruleDescUpdatedAt.Default.(func() time.Time)
+	// lottochancerule.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	lottochancerule.UpdateDefaultUpdatedAt = lottochanceruleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// lottochanceruleDescDeletedAt is the schema descriptor for deleted_at field.
+	lottochanceruleDescDeletedAt := lottochanceruleMixinFields0[5].Descriptor()
+	// lottochancerule.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	lottochancerule.DefaultDeletedAt = lottochanceruleDescDeletedAt.Default.(time.Time)
+	// lottochanceruleDescLottoID is the schema descriptor for lotto_id field.
+	lottochanceruleDescLottoID := lottochanceruleFields[0].Descriptor()
+	// lottochancerule.DefaultLottoID holds the default value on creation for the lotto_id field.
+	lottochancerule.DefaultLottoID = lottochanceruleDescLottoID.Default.(int64)
+	// lottochanceruleDescAwardCount is the schema descriptor for award_count field.
+	lottochanceruleDescAwardCount := lottochanceruleFields[2].Descriptor()
+	// lottochancerule.DefaultAwardCount holds the default value on creation for the award_count field.
+	lottochancerule.DefaultAwardCount = lottochanceruleDescAwardCount.Default.(int64)
+	// lottochanceruleDescRechargeAmount is the schema descriptor for recharge_amount field.
+	lottochanceruleDescRechargeAmount := lottochanceruleFields[3].Descriptor()
+	// lottochancerule.DefaultRechargeAmount holds the default value on creation for the recharge_amount field.
+	lottochancerule.DefaultRechargeAmount = lottochanceruleDescRechargeAmount.Default.(int64)
+	// lottochanceruleDescID is the schema descriptor for id field.
+	lottochanceruleDescID := lottochanceruleMixinFields0[0].Descriptor()
+	// lottochancerule.DefaultID holds the default value on creation for the id field.
+	lottochancerule.DefaultID = lottochanceruleDescID.Default.(func() int64)
 	lottogetcountrecordMixin := schema.LottoGetCountRecord{}.Mixin()
 	lottogetcountrecordMixinFields0 := lottogetcountrecordMixin[0].Fields()
 	_ = lottogetcountrecordMixinFields0

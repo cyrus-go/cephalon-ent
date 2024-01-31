@@ -608,6 +608,29 @@ func HasLottoGetCountRecordsWith(preds ...predicate.LottoGetCountRecord) predica
 	})
 }
 
+// HasLottoChangeRules applies the HasEdge predicate on the "lotto_Change_rules" edge.
+func HasLottoChangeRules() predicate.Lotto {
+	return predicate.Lotto(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LottoChangeRulesTable, LottoChangeRulesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLottoChangeRulesWith applies the HasEdge predicate on the "lotto_Change_rules" edge with a given conditions (other predicates).
+func HasLottoChangeRulesWith(preds ...predicate.LottoChanceRule) predicate.Lotto {
+	return predicate.Lotto(func(s *sql.Selector) {
+		step := newLottoChangeRulesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Lotto) predicate.Lotto {
 	return predicate.Lotto(sql.AndPredicates(predicates...))

@@ -1028,6 +1028,34 @@ var (
 			},
 		},
 	}
+	// LottoChanceRulesColumns holds the columns for the "lotto_chance_rules" table.
+	LottoChanceRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "condition", Type: field.TypeEnum, Comment: "条件", Enums: []string{"unknown", "register", "invite_register", "recharge"}, Default: "unknown"},
+		{Name: "award_count", Type: field.TypeInt64, Comment: "奖励抽奖次数", Default: 0},
+		{Name: "recharge_amount", Type: field.TypeInt64, Comment: "充值金额，类型为充值时才有数据", Default: 0},
+		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
+	}
+	// LottoChanceRulesTable holds the schema information for the "lotto_chance_rules" table.
+	LottoChanceRulesTable = &schema.Table{
+		Name:       "lotto_chance_rules",
+		Comment:    "获取抽奖次数规则表",
+		Columns:    LottoChanceRulesColumns,
+		PrimaryKey: []*schema.Column{LottoChanceRulesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "lotto_chance_rules_lottos_lotto_Change_rules",
+				Columns:    []*schema.Column{LottoChanceRulesColumns[9]},
+				RefColumns: []*schema.Column{LottosColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// LottoGetCountRecordsColumns holds the columns for the "lotto_get_count_records" table.
 	LottoGetCountRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2362,6 +2390,7 @@ var (
 		InvitesTable,
 		LoginRecordsTable,
 		LottosTable,
+		LottoChanceRulesTable,
 		LottoGetCountRecordsTable,
 		PrizesTable,
 		LottoRecordsTable,
@@ -2461,6 +2490,8 @@ func init() {
 	LoginRecordsTable.ForeignKeys[0].RefTable = UsersTable
 	LoginRecordsTable.Annotation = &entsql.Annotation{}
 	LottosTable.Annotation = &entsql.Annotation{}
+	LottoChanceRulesTable.ForeignKeys[0].RefTable = LottosTable
+	LottoChanceRulesTable.Annotation = &entsql.Annotation{}
 	LottoGetCountRecordsTable.ForeignKeys[0].RefTable = LottosTable
 	LottoGetCountRecordsTable.ForeignKeys[1].RefTable = UsersTable
 	LottoGetCountRecordsTable.Annotation = &entsql.Annotation{}

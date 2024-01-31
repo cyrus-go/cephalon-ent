@@ -32,6 +32,7 @@ func (Lotto) Edges() []ent.Edge {
 		edge.To("lotto_records", LottoRecord.Type),
 		edge.To("lotto_user_counts", LottoUserCount.Type),
 		edge.To("lotto_get_count_records", LottoGetCountRecord.Type),
+		edge.To("lotto_Change_rules", LottoChanceRule.Type),
 	}
 }
 

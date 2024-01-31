@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -30,6 +31,7 @@ type LottoQuery struct {
 	withLottoRecords         *LottoRecordQuery
 	withLottoUserCounts      *LottoUserCountQuery
 	withLottoGetCountRecords *LottoGetCountRecordQuery
+	withLottoChangeRules     *LottoChanceRuleQuery
 	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -148,6 +150,28 @@ func (lq *LottoQuery) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
 			sqlgraph.From(lotto.Table, lotto.FieldID, selector),
 			sqlgraph.To(lottogetcountrecord.Table, lottogetcountrecord.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoGetCountRecordsTable, lotto.LottoGetCountRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(lq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLottoChangeRules chains the current query on the "lotto_Change_rules" edge.
+func (lq *LottoQuery) QueryLottoChangeRules() *LottoChanceRuleQuery {
+	query := (&LottoChanceRuleClient{config: lq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := lq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := lq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lotto.Table, lotto.FieldID, selector),
+			sqlgraph.To(lottochancerule.Table, lottochancerule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoChangeRulesTable, lotto.LottoChangeRulesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(lq.driver.Dialect(), step)
 		return fromU, nil
@@ -351,6 +375,7 @@ func (lq *LottoQuery) Clone() *LottoQuery {
 		withLottoRecords:         lq.withLottoRecords.Clone(),
 		withLottoUserCounts:      lq.withLottoUserCounts.Clone(),
 		withLottoGetCountRecords: lq.withLottoGetCountRecords.Clone(),
+		withLottoChangeRules:     lq.withLottoChangeRules.Clone(),
 		// clone intermediate query.
 		sql:  lq.sql.Clone(),
 		path: lq.path,
@@ -398,6 +423,17 @@ func (lq *LottoQuery) WithLottoGetCountRecords(opts ...func(*LottoGetCountRecord
 		opt(query)
 	}
 	lq.withLottoGetCountRecords = query
+	return lq
+}
+
+// WithLottoChangeRules tells the query-builder to eager-load the nodes that are connected to
+// the "lotto_Change_rules" edge. The optional arguments are used to configure the query builder of the edge.
+func (lq *LottoQuery) WithLottoChangeRules(opts ...func(*LottoChanceRuleQuery)) *LottoQuery {
+	query := (&LottoChanceRuleClient{config: lq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	lq.withLottoChangeRules = query
 	return lq
 }
 
@@ -479,11 +515,12 @@ func (lq *LottoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lotto,
 	var (
 		nodes       = []*Lotto{}
 		_spec       = lq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			lq.withLottoPrizes != nil,
 			lq.withLottoRecords != nil,
 			lq.withLottoUserCounts != nil,
 			lq.withLottoGetCountRecords != nil,
+			lq.withLottoChangeRules != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -534,6 +571,13 @@ func (lq *LottoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lotto,
 			func(n *Lotto, e *LottoGetCountRecord) {
 				n.Edges.LottoGetCountRecords = append(n.Edges.LottoGetCountRecords, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := lq.withLottoChangeRules; query != nil {
+		if err := lq.loadLottoChangeRules(ctx, query, nodes,
+			func(n *Lotto) { n.Edges.LottoChangeRules = []*LottoChanceRule{} },
+			func(n *Lotto, e *LottoChanceRule) { n.Edges.LottoChangeRules = append(n.Edges.LottoChangeRules, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -645,6 +689,36 @@ func (lq *LottoQuery) loadLottoGetCountRecords(ctx context.Context, query *Lotto
 	}
 	query.Where(predicate.LottoGetCountRecord(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(lotto.LottoGetCountRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.LottoID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "lotto_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (lq *LottoQuery) loadLottoChangeRules(ctx context.Context, query *LottoChanceRuleQuery, nodes []*Lotto, init func(*Lotto), assign func(*Lotto, *LottoChanceRule)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Lotto)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(lottochancerule.FieldLottoID)
+	}
+	query.Where(predicate.LottoChanceRule(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(lotto.LottoChangeRulesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

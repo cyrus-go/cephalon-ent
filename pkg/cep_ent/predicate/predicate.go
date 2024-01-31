@@ -103,6 +103,9 @@ type LoginRecord func(*sql.Selector)
 // Lotto is the predicate function for lotto builders.
 type Lotto func(*sql.Selector)
 
+// LottoChanceRule is the predicate function for lottochancerule builders.
+type LottoChanceRule func(*sql.Selector)
+
 // LottoGetCountRecord is the predicate function for lottogetcountrecord builders.
 type LottoGetCountRecord func(*sql.Selector)
 

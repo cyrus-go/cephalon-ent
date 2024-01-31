@@ -44,6 +44,8 @@ const (
 	EdgeLottoUserCounts = "lotto_user_counts"
 	// EdgeLottoGetCountRecords holds the string denoting the lotto_get_count_records edge name in mutations.
 	EdgeLottoGetCountRecords = "lotto_get_count_records"
+	// EdgeLottoChangeRules holds the string denoting the lotto_change_rules edge name in mutations.
+	EdgeLottoChangeRules = "lotto_Change_rules"
 	// Table holds the table name of the lotto in the database.
 	Table = "lottos"
 	// LottoPrizesTable is the table that holds the lotto_prizes relation/edge.
@@ -74,6 +76,13 @@ const (
 	LottoGetCountRecordsInverseTable = "lotto_get_count_records"
 	// LottoGetCountRecordsColumn is the table column denoting the lotto_get_count_records relation/edge.
 	LottoGetCountRecordsColumn = "lotto_id"
+	// LottoChangeRulesTable is the table that holds the lotto_Change_rules relation/edge.
+	LottoChangeRulesTable = "lotto_chance_rules"
+	// LottoChangeRulesInverseTable is the table name for the LottoChanceRule entity.
+	// It exists in this package in order to avoid circular dependency with the "lottochancerule" package.
+	LottoChangeRulesInverseTable = "lotto_chance_rules"
+	// LottoChangeRulesColumn is the table column denoting the lotto_Change_rules relation/edge.
+	LottoChangeRulesColumn = "lotto_id"
 )
 
 // Columns holds all SQL columns for lotto fields.
@@ -251,6 +260,20 @@ func ByLottoGetCountRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newLottoGetCountRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLottoChangeRulesCount orders the results by lotto_Change_rules count.
+func ByLottoChangeRulesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLottoChangeRulesStep(), opts...)
+	}
+}
+
+// ByLottoChangeRules orders the results by lotto_Change_rules terms.
+func ByLottoChangeRules(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLottoChangeRulesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newLottoPrizesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -277,5 +300,12 @@ func newLottoGetCountRecordsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LottoGetCountRecordsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LottoGetCountRecordsTable, LottoGetCountRecordsColumn),
+	)
+}
+func newLottoChangeRulesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LottoChangeRulesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LottoChangeRulesTable, LottoChangeRulesColumn),
 	)
 }

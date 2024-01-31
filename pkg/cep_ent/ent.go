@@ -37,6 +37,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -151,6 +152,7 @@ func checkColumn(table, column string) error {
 			invite.Table:               invite.ValidColumn,
 			loginrecord.Table:          loginrecord.ValidColumn,
 			lotto.Table:                lotto.ValidColumn,
+			lottochancerule.Table:      lottochancerule.ValidColumn,
 			lottogetcountrecord.Table:  lottogetcountrecord.ValidColumn,
 			lottoprize.Table:           lottoprize.ValidColumn,
 			lottorecord.Table:          lottorecord.ValidColumn,

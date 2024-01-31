@@ -62,6 +62,8 @@ type Tx struct {
 	LoginRecord *LoginRecordClient
 	// Lotto is the client for interacting with the Lotto builders.
 	Lotto *LottoClient
+	// LottoChanceRule is the client for interacting with the LottoChanceRule builders.
+	LottoChanceRule *LottoChanceRuleClient
 	// LottoGetCountRecord is the client for interacting with the LottoGetCountRecord builders.
 	LottoGetCountRecord *LottoGetCountRecordClient
 	// LottoPrize is the client for interacting with the LottoPrize builders.
@@ -276,6 +278,7 @@ func (tx *Tx) init() {
 	tx.Invite = NewInviteClient(tx.config)
 	tx.LoginRecord = NewLoginRecordClient(tx.config)
 	tx.Lotto = NewLottoClient(tx.config)
+	tx.LottoChanceRule = NewLottoChanceRuleClient(tx.config)
 	tx.LottoGetCountRecord = NewLottoGetCountRecordClient(tx.config)
 	tx.LottoPrize = NewLottoPrizeClient(tx.config)
 	tx.LottoRecord = NewLottoRecordClient(tx.config)
