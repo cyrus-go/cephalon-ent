@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // LottoGetCountRecordUpdate is the builder for updating LottoGetCountRecord entities.
@@ -143,15 +144,15 @@ func (lgcru *LottoGetCountRecordUpdate) AddCount(i int64) *LottoGetCountRecordUp
 }
 
 // SetType sets the "type" field.
-func (lgcru *LottoGetCountRecordUpdate) SetType(l lottogetcountrecord.Type) *LottoGetCountRecordUpdate {
-	lgcru.mutation.SetType(l)
+func (lgcru *LottoGetCountRecordUpdate) SetType(ec enums.LottoCondition) *LottoGetCountRecordUpdate {
+	lgcru.mutation.SetType(ec)
 	return lgcru
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (lgcru *LottoGetCountRecordUpdate) SetNillableType(l *lottogetcountrecord.Type) *LottoGetCountRecordUpdate {
-	if l != nil {
-		lgcru.SetType(*l)
+func (lgcru *LottoGetCountRecordUpdate) SetNillableType(ec *enums.LottoCondition) *LottoGetCountRecordUpdate {
+	if ec != nil {
+		lgcru.SetType(*ec)
 	}
 	return lgcru
 }
@@ -499,15 +500,15 @@ func (lgcruo *LottoGetCountRecordUpdateOne) AddCount(i int64) *LottoGetCountReco
 }
 
 // SetType sets the "type" field.
-func (lgcruo *LottoGetCountRecordUpdateOne) SetType(l lottogetcountrecord.Type) *LottoGetCountRecordUpdateOne {
-	lgcruo.mutation.SetType(l)
+func (lgcruo *LottoGetCountRecordUpdateOne) SetType(ec enums.LottoCondition) *LottoGetCountRecordUpdateOne {
+	lgcruo.mutation.SetType(ec)
 	return lgcruo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (lgcruo *LottoGetCountRecordUpdateOne) SetNillableType(l *lottogetcountrecord.Type) *LottoGetCountRecordUpdateOne {
-	if l != nil {
-		lgcruo.SetType(*l)
+func (lgcruo *LottoGetCountRecordUpdateOne) SetNillableType(ec *enums.LottoCondition) *LottoGetCountRecordUpdateOne {
+	if ec != nil {
+		lgcruo.SetType(*ec)
 	}
 	return lgcruo
 }

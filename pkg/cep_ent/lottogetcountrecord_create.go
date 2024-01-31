@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // LottoGetCountRecordCreate is the builder for creating a LottoGetCountRecord entity.
@@ -137,15 +138,15 @@ func (lgcrc *LottoGetCountRecordCreate) SetNillableCount(i *int64) *LottoGetCoun
 }
 
 // SetType sets the "type" field.
-func (lgcrc *LottoGetCountRecordCreate) SetType(l lottogetcountrecord.Type) *LottoGetCountRecordCreate {
-	lgcrc.mutation.SetType(l)
+func (lgcrc *LottoGetCountRecordCreate) SetType(ec enums.LottoCondition) *LottoGetCountRecordCreate {
+	lgcrc.mutation.SetType(ec)
 	return lgcrc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (lgcrc *LottoGetCountRecordCreate) SetNillableType(l *lottogetcountrecord.Type) *LottoGetCountRecordCreate {
-	if l != nil {
-		lgcrc.SetType(*l)
+func (lgcrc *LottoGetCountRecordCreate) SetNillableType(ec *enums.LottoCondition) *LottoGetCountRecordCreate {
+	if ec != nil {
+		lgcrc.SetType(*ec)
 	}
 	return lgcrc
 }
@@ -566,7 +567,7 @@ func (u *LottoGetCountRecordUpsert) AddCount(v int64) *LottoGetCountRecordUpsert
 }
 
 // SetType sets the "type" field.
-func (u *LottoGetCountRecordUpsert) SetType(v lottogetcountrecord.Type) *LottoGetCountRecordUpsert {
+func (u *LottoGetCountRecordUpsert) SetType(v enums.LottoCondition) *LottoGetCountRecordUpsert {
 	u.Set(lottogetcountrecord.FieldType, v)
 	return u
 }
@@ -766,7 +767,7 @@ func (u *LottoGetCountRecordUpsertOne) UpdateCount() *LottoGetCountRecordUpsertO
 }
 
 // SetType sets the "type" field.
-func (u *LottoGetCountRecordUpsertOne) SetType(v lottogetcountrecord.Type) *LottoGetCountRecordUpsertOne {
+func (u *LottoGetCountRecordUpsertOne) SetType(v enums.LottoCondition) *LottoGetCountRecordUpsertOne {
 	return u.Update(func(s *LottoGetCountRecordUpsert) {
 		s.SetType(v)
 	})
@@ -1137,7 +1138,7 @@ func (u *LottoGetCountRecordUpsertBulk) UpdateCount() *LottoGetCountRecordUpsert
 }
 
 // SetType sets the "type" field.
-func (u *LottoGetCountRecordUpsertBulk) SetType(v lottogetcountrecord.Type) *LottoGetCountRecordUpsertBulk {
+func (u *LottoGetCountRecordUpsertBulk) SetType(v enums.LottoCondition) *LottoGetCountRecordUpsertBulk {
 	return u.Update(func(s *LottoGetCountRecordUpsert) {
 		s.SetType(v)
 	})

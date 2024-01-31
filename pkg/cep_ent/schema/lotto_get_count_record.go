@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 type LottoGetCountRecord struct {
@@ -16,7 +17,7 @@ func (LottoGetCountRecord) Fields() []ent.Field {
 		field.Int64("user_id").StructTag(`json:"user_id"`).Default(0).Comment("外键：用户 ID"),
 		field.Int64("lotto_id").StructTag(`json:"lotto_id"`).Default(0).Comment("外键：抽奖活动 ID"),
 		field.Int64("count").StructTag(`json:"count"`).Default(0).Comment("此次奖励的抽奖次数"),
-		field.Enum("type").Values("unknow", "register", "invite_register", "recharge").Default("unknow").StructTag(`json:"type"`).Comment("抽奖结果"),
+		field.Enum("type").GoType(enums.LottoConditionUnknown).Default(string(enums.LottoStatusUnknown)).StructTag(`json:"type"`).Comment("获得抽奖次数的条件类型"),
 		field.Int64("recharge_amount").StructTag(`json:"recharge_amount"`).Default(0).Comment("充值金额，类型为充值时才有数据"),
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -381,23 +382,33 @@ func CountLTE(v int64) predicate.LottoGetCountRecord {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.LottoGetCountRecord {
-	return predicate.LottoGetCountRecord(sql.FieldEQ(FieldType, v))
+func TypeEQ(v enums.LottoCondition) predicate.LottoGetCountRecord {
+	vc := v
+	return predicate.LottoGetCountRecord(sql.FieldEQ(FieldType, vc))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.LottoGetCountRecord {
-	return predicate.LottoGetCountRecord(sql.FieldNEQ(FieldType, v))
+func TypeNEQ(v enums.LottoCondition) predicate.LottoGetCountRecord {
+	vc := v
+	return predicate.LottoGetCountRecord(sql.FieldNEQ(FieldType, vc))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.LottoGetCountRecord {
-	return predicate.LottoGetCountRecord(sql.FieldIn(FieldType, vs...))
+func TypeIn(vs ...enums.LottoCondition) predicate.LottoGetCountRecord {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.LottoGetCountRecord(sql.FieldIn(FieldType, v...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.LottoGetCountRecord {
-	return predicate.LottoGetCountRecord(sql.FieldNotIn(FieldType, vs...))
+func TypeNotIn(vs ...enums.LottoCondition) predicate.LottoGetCountRecord {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.LottoGetCountRecord(sql.FieldNotIn(FieldType, v...))
 }
 
 // RechargeAmountEQ applies the EQ predicate on the "recharge_amount" field.

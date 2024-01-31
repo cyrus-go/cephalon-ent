@@ -32557,7 +32557,7 @@ type LottoGetCountRecordMutation struct {
 	deleted_at         *time.Time
 	count              *int64
 	addcount           *int64
-	_type              *lottogetcountrecord.Type
+	_type              *enums.LottoCondition
 	recharge_amount    *int64
 	addrecharge_amount *int64
 	clearedFields      map[string]struct{}
@@ -33023,12 +33023,12 @@ func (m *LottoGetCountRecordMutation) ResetCount() {
 }
 
 // SetType sets the "type" field.
-func (m *LottoGetCountRecordMutation) SetType(l lottogetcountrecord.Type) {
-	m._type = &l
+func (m *LottoGetCountRecordMutation) SetType(ec enums.LottoCondition) {
+	m._type = &ec
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *LottoGetCountRecordMutation) GetType() (r lottogetcountrecord.Type, exists bool) {
+func (m *LottoGetCountRecordMutation) GetType() (r enums.LottoCondition, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -33039,7 +33039,7 @@ func (m *LottoGetCountRecordMutation) GetType() (r lottogetcountrecord.Type, exi
 // OldType returns the old "type" field's value of the LottoGetCountRecord entity.
 // If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LottoGetCountRecordMutation) OldType(ctx context.Context) (v lottogetcountrecord.Type, err error) {
+func (m *LottoGetCountRecordMutation) OldType(ctx context.Context) (v enums.LottoCondition, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -33356,7 +33356,7 @@ func (m *LottoGetCountRecordMutation) SetField(name string, value ent.Value) err
 		m.SetCount(v)
 		return nil
 	case lottogetcountrecord.FieldType:
-		v, ok := value.(lottogetcountrecord.Type)
+		v, ok := value.(enums.LottoCondition)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

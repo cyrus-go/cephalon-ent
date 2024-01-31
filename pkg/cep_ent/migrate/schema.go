@@ -1065,7 +1065,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "count", Type: field.TypeInt64, Comment: "此次奖励的抽奖次数", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Comment: "抽奖结果", Enums: []string{"unknow", "register", "invite_register", "recharge"}, Default: "unknow"},
+		{Name: "type", Type: field.TypeEnum, Comment: "获得抽奖次数的条件类型", Enums: []string{"unknown", "register", "invite_register", "recharge"}, Default: "unknown"},
 		{Name: "recharge_amount", Type: field.TypeInt64, Comment: "充值金额，类型为充值时才有数据", Default: 0},
 		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键：用户 ID", Default: 0},
