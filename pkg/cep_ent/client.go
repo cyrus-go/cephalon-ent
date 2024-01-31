@@ -40,6 +40,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -126,6 +127,8 @@ type Client struct {
 	LoginRecord *LoginRecordClient
 	// Lotto is the client for interacting with the Lotto builders.
 	Lotto *LottoClient
+	// LottoChanceRule is the client for interacting with the LottoChanceRule builders.
+	LottoChanceRule *LottoChanceRuleClient
 	// LottoGetCountRecord is the client for interacting with the LottoGetCountRecord builders.
 	LottoGetCountRecord *LottoGetCountRecordClient
 	// LottoPrize is the client for interacting with the LottoPrize builders.
@@ -222,6 +225,7 @@ func (c *Client) init() {
 	c.Invite = NewInviteClient(c.config)
 	c.LoginRecord = NewLoginRecordClient(c.config)
 	c.Lotto = NewLottoClient(c.config)
+	c.LottoChanceRule = NewLottoChanceRuleClient(c.config)
 	c.LottoGetCountRecord = NewLottoGetCountRecordClient(c.config)
 	c.LottoPrize = NewLottoPrizeClient(c.config)
 	c.LottoRecord = NewLottoRecordClient(c.config)
@@ -361,6 +365,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Invite:               NewInviteClient(cfg),
 		LoginRecord:          NewLoginRecordClient(cfg),
 		Lotto:                NewLottoClient(cfg),
+		LottoChanceRule:      NewLottoChanceRuleClient(cfg),
 		LottoGetCountRecord:  NewLottoGetCountRecordClient(cfg),
 		LottoPrize:           NewLottoPrizeClient(cfg),
 		LottoRecord:          NewLottoRecordClient(cfg),
@@ -434,6 +439,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Invite:               NewInviteClient(cfg),
 		LoginRecord:          NewLoginRecordClient(cfg),
 		Lotto:                NewLottoClient(cfg),
+		LottoChanceRule:      NewLottoChanceRuleClient(cfg),
 		LottoGetCountRecord:  NewLottoGetCountRecordClient(cfg),
 		LottoPrize:           NewLottoPrizeClient(cfg),
 		LottoRecord:          NewLottoRecordClient(cfg),
@@ -496,8 +502,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
 		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Invite, c.LoginRecord, c.Lotto, c.LottoGetCountRecord, c.LottoPrize,
-		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
+		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
 		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
@@ -517,8 +523,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
 		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
 		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Invite, c.LoginRecord, c.Lotto, c.LottoGetCountRecord, c.LottoPrize,
-		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
+		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
 		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
@@ -583,6 +589,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.LoginRecord.mutate(ctx, m)
 	case *LottoMutation:
 		return c.Lotto.mutate(ctx, m)
+	case *LottoChanceRuleMutation:
+		return c.LottoChanceRule.mutate(ctx, m)
 	case *LottoGetCountRecordMutation:
 		return c.LottoGetCountRecord.mutate(ctx, m)
 	case *LottoPrizeMutation:
@@ -4954,6 +4962,22 @@ func (c *LottoClient) QueryLottoGetCountRecords(l *Lotto) *LottoGetCountRecordQu
 	return query
 }
 
+// QueryLottoChangeRules queries the lotto_Change_rules edge of a Lotto.
+func (c *LottoClient) QueryLottoChangeRules(l *Lotto) *LottoChanceRuleQuery {
+	query := (&LottoChanceRuleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lotto.Table, lotto.FieldID, id),
+			sqlgraph.To(lottochancerule.Table, lottochancerule.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, lotto.LottoChangeRulesTable, lotto.LottoChangeRulesColumn),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *LottoClient) Hooks() []Hook {
 	return c.hooks.Lotto
@@ -4976,6 +5000,155 @@ func (c *LottoClient) mutate(ctx context.Context, m *LottoMutation) (Value, erro
 		return (&LottoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown Lotto mutation op: %q", m.Op())
+	}
+}
+
+// LottoChanceRuleClient is a client for the LottoChanceRule schema.
+type LottoChanceRuleClient struct {
+	config
+}
+
+// NewLottoChanceRuleClient returns a client for the LottoChanceRule from the given config.
+func NewLottoChanceRuleClient(c config) *LottoChanceRuleClient {
+	return &LottoChanceRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lottochancerule.Hooks(f(g(h())))`.
+func (c *LottoChanceRuleClient) Use(hooks ...Hook) {
+	c.hooks.LottoChanceRule = append(c.hooks.LottoChanceRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lottochancerule.Intercept(f(g(h())))`.
+func (c *LottoChanceRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LottoChanceRule = append(c.inters.LottoChanceRule, interceptors...)
+}
+
+// Create returns a builder for creating a LottoChanceRule entity.
+func (c *LottoChanceRuleClient) Create() *LottoChanceRuleCreate {
+	mutation := newLottoChanceRuleMutation(c.config, OpCreate)
+	return &LottoChanceRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LottoChanceRule entities.
+func (c *LottoChanceRuleClient) CreateBulk(builders ...*LottoChanceRuleCreate) *LottoChanceRuleCreateBulk {
+	return &LottoChanceRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LottoChanceRuleClient) MapCreateBulk(slice any, setFunc func(*LottoChanceRuleCreate, int)) *LottoChanceRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LottoChanceRuleCreateBulk{err: fmt.Errorf("calling to LottoChanceRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LottoChanceRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LottoChanceRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LottoChanceRule.
+func (c *LottoChanceRuleClient) Update() *LottoChanceRuleUpdate {
+	mutation := newLottoChanceRuleMutation(c.config, OpUpdate)
+	return &LottoChanceRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LottoChanceRuleClient) UpdateOne(lcr *LottoChanceRule) *LottoChanceRuleUpdateOne {
+	mutation := newLottoChanceRuleMutation(c.config, OpUpdateOne, withLottoChanceRule(lcr))
+	return &LottoChanceRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LottoChanceRuleClient) UpdateOneID(id int64) *LottoChanceRuleUpdateOne {
+	mutation := newLottoChanceRuleMutation(c.config, OpUpdateOne, withLottoChanceRuleID(id))
+	return &LottoChanceRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LottoChanceRule.
+func (c *LottoChanceRuleClient) Delete() *LottoChanceRuleDelete {
+	mutation := newLottoChanceRuleMutation(c.config, OpDelete)
+	return &LottoChanceRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LottoChanceRuleClient) DeleteOne(lcr *LottoChanceRule) *LottoChanceRuleDeleteOne {
+	return c.DeleteOneID(lcr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LottoChanceRuleClient) DeleteOneID(id int64) *LottoChanceRuleDeleteOne {
+	builder := c.Delete().Where(lottochancerule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LottoChanceRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for LottoChanceRule.
+func (c *LottoChanceRuleClient) Query() *LottoChanceRuleQuery {
+	return &LottoChanceRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLottoChanceRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LottoChanceRule entity by its id.
+func (c *LottoChanceRuleClient) Get(ctx context.Context, id int64) (*LottoChanceRule, error) {
+	return c.Query().Where(lottochancerule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LottoChanceRuleClient) GetX(ctx context.Context, id int64) *LottoChanceRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryLotto queries the lotto edge of a LottoChanceRule.
+func (c *LottoChanceRuleClient) QueryLotto(lcr *LottoChanceRule) *LottoQuery {
+	query := (&LottoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := lcr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lottochancerule.Table, lottochancerule.FieldID, id),
+			sqlgraph.To(lotto.Table, lotto.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lottochancerule.LottoTable, lottochancerule.LottoColumn),
+		)
+		fromV = sqlgraph.Neighbors(lcr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LottoChanceRuleClient) Hooks() []Hook {
+	return c.hooks.LottoChanceRule
+}
+
+// Interceptors returns the client interceptors.
+func (c *LottoChanceRuleClient) Interceptors() []Interceptor {
+	return c.inters.LottoChanceRule
+}
+
+func (c *LottoChanceRuleClient) mutate(ctx context.Context, m *LottoChanceRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LottoChanceRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LottoChanceRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LottoChanceRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LottoChanceRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown LottoChanceRule mutation op: %q", m.Op())
 	}
 }
 
@@ -10795,23 +10968,25 @@ type (
 		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
 		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
 		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Lotto,
-		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
-		MissionBatch, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
-		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
-		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
-		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
+		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
+		Mission, MissionBatch, MissionConsumeOrder, MissionExtraService,
+		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
+		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Symbol,
+		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet,
+		WithdrawAccount []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
 		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
 		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
 		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Lotto,
-		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
-		MissionBatch, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
-		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
-		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
-		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
+		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
+		Mission, MissionBatch, MissionConsumeOrder, MissionExtraService,
+		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
+		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Symbol,
+		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet,
+		WithdrawAccount []ent.Interceptor
 	}
 )

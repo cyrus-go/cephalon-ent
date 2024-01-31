@@ -55,9 +55,11 @@ type LottoEdges struct {
 	LottoUserCounts []*LottoUserCount `json:"lotto_user_counts,omitempty"`
 	// LottoGetCountRecords holds the value of the lotto_get_count_records edge.
 	LottoGetCountRecords []*LottoGetCountRecord `json:"lotto_get_count_records,omitempty"`
+	// LottoChangeRules holds the value of the lotto_Change_rules edge.
+	LottoChangeRules []*LottoChanceRule `json:"lotto_Change_rules,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // LottoPrizesOrErr returns the LottoPrizes value or an error if the edge
@@ -94,6 +96,15 @@ func (e LottoEdges) LottoGetCountRecordsOrErr() ([]*LottoGetCountRecord, error) 
 		return e.LottoGetCountRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "lotto_get_count_records"}
+}
+
+// LottoChangeRulesOrErr returns the LottoChangeRules value or an error if the edge
+// was not loaded in eager-loading.
+func (e LottoEdges) LottoChangeRulesOrErr() ([]*LottoChanceRule, error) {
+	if e.loadedTypes[4] {
+		return e.LottoChangeRules, nil
+	}
+	return nil, &NotLoadedError{edge: "lotto_Change_rules"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -219,6 +230,11 @@ func (l *Lotto) QueryLottoUserCounts() *LottoUserCountQuery {
 // QueryLottoGetCountRecords queries the "lotto_get_count_records" edge of the Lotto entity.
 func (l *Lotto) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
 	return NewLottoClient(l.config).QueryLottoGetCountRecords(l)
+}
+
+// QueryLottoChangeRules queries the "lotto_Change_rules" edge of the Lotto entity.
+func (l *Lotto) QueryLottoChangeRules() *LottoChanceRuleQuery {
+	return NewLottoClient(l.config).QueryLottoChangeRules(l)
 }
 
 // Update returns a builder for updating this Lotto.

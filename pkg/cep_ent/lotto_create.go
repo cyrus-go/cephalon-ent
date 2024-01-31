@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -239,6 +240,21 @@ func (lc *LottoCreate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *Lotto
 		ids[i] = l[i].ID
 	}
 	return lc.AddLottoGetCountRecordIDs(ids...)
+}
+
+// AddLottoChangeRuleIDs adds the "lotto_Change_rules" edge to the LottoChanceRule entity by IDs.
+func (lc *LottoCreate) AddLottoChangeRuleIDs(ids ...int64) *LottoCreate {
+	lc.mutation.AddLottoChangeRuleIDs(ids...)
+	return lc
+}
+
+// AddLottoChangeRules adds the "lotto_Change_rules" edges to the LottoChanceRule entity.
+func (lc *LottoCreate) AddLottoChangeRules(l ...*LottoChanceRule) *LottoCreate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return lc.AddLottoChangeRuleIDs(ids...)
 }
 
 // Mutation returns the LottoMutation object of the builder.
@@ -489,6 +505,22 @@ func (lc *LottoCreate) createSpec() (*Lotto, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := lc.mutation.LottoChangeRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

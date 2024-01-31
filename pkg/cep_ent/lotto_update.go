@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottochancerule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottoprize"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottorecord"
@@ -233,6 +234,21 @@ func (lu *LottoUpdate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *Lotto
 	return lu.AddLottoGetCountRecordIDs(ids...)
 }
 
+// AddLottoChangeRuleIDs adds the "lotto_Change_rules" edge to the LottoChanceRule entity by IDs.
+func (lu *LottoUpdate) AddLottoChangeRuleIDs(ids ...int64) *LottoUpdate {
+	lu.mutation.AddLottoChangeRuleIDs(ids...)
+	return lu
+}
+
+// AddLottoChangeRules adds the "lotto_Change_rules" edges to the LottoChanceRule entity.
+func (lu *LottoUpdate) AddLottoChangeRules(l ...*LottoChanceRule) *LottoUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return lu.AddLottoChangeRuleIDs(ids...)
+}
+
 // Mutation returns the LottoMutation object of the builder.
 func (lu *LottoUpdate) Mutation() *LottoMutation {
 	return lu.mutation
@@ -320,6 +336,27 @@ func (lu *LottoUpdate) RemoveLottoGetCountRecords(l ...*LottoGetCountRecord) *Lo
 		ids[i] = l[i].ID
 	}
 	return lu.RemoveLottoGetCountRecordIDs(ids...)
+}
+
+// ClearLottoChangeRules clears all "lotto_Change_rules" edges to the LottoChanceRule entity.
+func (lu *LottoUpdate) ClearLottoChangeRules() *LottoUpdate {
+	lu.mutation.ClearLottoChangeRules()
+	return lu
+}
+
+// RemoveLottoChangeRuleIDs removes the "lotto_Change_rules" edge to LottoChanceRule entities by IDs.
+func (lu *LottoUpdate) RemoveLottoChangeRuleIDs(ids ...int64) *LottoUpdate {
+	lu.mutation.RemoveLottoChangeRuleIDs(ids...)
+	return lu
+}
+
+// RemoveLottoChangeRules removes "lotto_Change_rules" edges to LottoChanceRule entities.
+func (lu *LottoUpdate) RemoveLottoChangeRules(l ...*LottoChanceRule) *LottoUpdate {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return lu.RemoveLottoChangeRuleIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -602,6 +639,51 @@ func (lu *LottoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if lu.mutation.LottoChangeRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedLottoChangeRulesIDs(); len(nodes) > 0 && !lu.mutation.LottoChangeRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.LottoChangeRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(lu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -823,6 +905,21 @@ func (luo *LottoUpdateOne) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *L
 	return luo.AddLottoGetCountRecordIDs(ids...)
 }
 
+// AddLottoChangeRuleIDs adds the "lotto_Change_rules" edge to the LottoChanceRule entity by IDs.
+func (luo *LottoUpdateOne) AddLottoChangeRuleIDs(ids ...int64) *LottoUpdateOne {
+	luo.mutation.AddLottoChangeRuleIDs(ids...)
+	return luo
+}
+
+// AddLottoChangeRules adds the "lotto_Change_rules" edges to the LottoChanceRule entity.
+func (luo *LottoUpdateOne) AddLottoChangeRules(l ...*LottoChanceRule) *LottoUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return luo.AddLottoChangeRuleIDs(ids...)
+}
+
 // Mutation returns the LottoMutation object of the builder.
 func (luo *LottoUpdateOne) Mutation() *LottoMutation {
 	return luo.mutation
@@ -910,6 +1007,27 @@ func (luo *LottoUpdateOne) RemoveLottoGetCountRecords(l ...*LottoGetCountRecord)
 		ids[i] = l[i].ID
 	}
 	return luo.RemoveLottoGetCountRecordIDs(ids...)
+}
+
+// ClearLottoChangeRules clears all "lotto_Change_rules" edges to the LottoChanceRule entity.
+func (luo *LottoUpdateOne) ClearLottoChangeRules() *LottoUpdateOne {
+	luo.mutation.ClearLottoChangeRules()
+	return luo
+}
+
+// RemoveLottoChangeRuleIDs removes the "lotto_Change_rules" edge to LottoChanceRule entities by IDs.
+func (luo *LottoUpdateOne) RemoveLottoChangeRuleIDs(ids ...int64) *LottoUpdateOne {
+	luo.mutation.RemoveLottoChangeRuleIDs(ids...)
+	return luo
+}
+
+// RemoveLottoChangeRules removes "lotto_Change_rules" edges to LottoChanceRule entities.
+func (luo *LottoUpdateOne) RemoveLottoChangeRules(l ...*LottoChanceRule) *LottoUpdateOne {
+	ids := make([]int64, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return luo.RemoveLottoChangeRuleIDs(ids...)
 }
 
 // Where appends a list predicates to the LottoUpdate builder.
@@ -1215,6 +1333,51 @@ func (luo *LottoUpdateOne) sqlSave(ctx context.Context) (_node *Lotto, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if luo.mutation.LottoChangeRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedLottoChangeRulesIDs(); len(nodes) > 0 && !luo.mutation.LottoChangeRulesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.LottoChangeRulesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   lotto.LottoChangeRulesTable,
+			Columns: []string{lotto.LottoChangeRulesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lottochancerule.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
