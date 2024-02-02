@@ -39,6 +39,10 @@ type LottoPrize struct {
 	Name string `json:"name"`
 	// 状态
 	Status lottoprize.Status `json:"status"`
+	// 类型
+	Type lottoprize.Type `json:"type"`
+	// 类型为 get_cep 时，cep 的数量
+	CepAmount int64 `json:"cep_amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LottoPrizeQuery when eager-loading is set.
 	Edges        LottoPrizeEdges `json:"edges"`
@@ -83,9 +87,9 @@ func (*LottoPrize) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case lottoprize.FieldID, lottoprize.FieldCreatedBy, lottoprize.FieldUpdatedBy, lottoprize.FieldLottoID, lottoprize.FieldWeight:
+		case lottoprize.FieldID, lottoprize.FieldCreatedBy, lottoprize.FieldUpdatedBy, lottoprize.FieldLottoID, lottoprize.FieldWeight, lottoprize.FieldCepAmount:
 			values[i] = new(sql.NullInt64)
-		case lottoprize.FieldLevelName, lottoprize.FieldName, lottoprize.FieldStatus:
+		case lottoprize.FieldLevelName, lottoprize.FieldName, lottoprize.FieldStatus, lottoprize.FieldType:
 			values[i] = new(sql.NullString)
 		case lottoprize.FieldCreatedAt, lottoprize.FieldUpdatedAt, lottoprize.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -170,6 +174,18 @@ func (lp *LottoPrize) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				lp.Status = lottoprize.Status(value.String)
 			}
+		case lottoprize.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				lp.Type = lottoprize.Type(value.String)
+			}
+		case lottoprize.FieldCepAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cep_amount", values[i])
+			} else if value.Valid {
+				lp.CepAmount = value.Int64
+			}
 		default:
 			lp.selectValues.Set(columns[i], values[i])
 		}
@@ -245,6 +261,12 @@ func (lp *LottoPrize) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", lp.Status))
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", lp.Type))
+	builder.WriteString(", ")
+	builder.WriteString("cep_amount=")
+	builder.WriteString(fmt.Sprintf("%v", lp.CepAmount))
 	builder.WriteByte(')')
 	return builder.String()
 }

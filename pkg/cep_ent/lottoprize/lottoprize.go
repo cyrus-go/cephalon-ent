@@ -35,6 +35,10 @@ const (
 	FieldName = "name"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
+	// FieldCepAmount holds the string denoting the cep_amount field in the database.
+	FieldCepAmount = "cep_amount"
 	// EdgeLotto holds the string denoting the lotto edge name in mutations.
 	EdgeLotto = "lotto"
 	// EdgeLottoRecords holds the string denoting the lotto_records edge name in mutations.
@@ -70,6 +74,8 @@ var Columns = []string{
 	FieldWeight,
 	FieldName,
 	FieldStatus,
+	FieldType,
+	FieldCepAmount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,6 +109,8 @@ var (
 	DefaultWeight int64
 	// DefaultName holds the default value on creation for the "name" field.
 	DefaultName string
+	// DefaultCepAmount holds the default value on creation for the "cep_amount" field.
+	DefaultCepAmount int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -131,6 +139,32 @@ func StatusValidator(s Status) error {
 		return nil
 	default:
 		return fmt.Errorf("lottoprize: invalid enum value for status field: %q", s)
+	}
+}
+
+// Type defines the type for the "type" enum field.
+type Type string
+
+// TypeUnknow is the default value of the Type enum.
+const DefaultType = TypeUnknow
+
+// Type values.
+const (
+	TypeUnknow Type = "unknow"
+	TypeGetCep Type = "get_cep"
+)
+
+func (_type Type) String() string {
+	return string(_type)
+}
+
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type Type) error {
+	switch _type {
+	case TypeUnknow, TypeGetCep:
+		return nil
+	default:
+		return fmt.Errorf("lottoprize: invalid enum value for type field: %q", _type)
 	}
 }
 
@@ -190,6 +224,16 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByCepAmount orders the results by the cep_amount field.
+func ByCepAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCepAmount, opts...).ToFunc()
 }
 
 // ByLottoField orders the results by lotto field.
