@@ -34,6 +34,7 @@ const (
 	BillWayWithdrawAlipay            BillWay = "withdraw_alipay"
 	BillWayBankCard                  BillWay = "withdraw_bank_card"
 	BillWayCdkExchange               BillWay = "cdk_exchange"
+	BillWayLottoPrize                BillWay = "lotto_prize"
 )
 
 func (BillWay) Values() []string {
@@ -69,6 +70,7 @@ func (BillWay) Values() []string {
 		string(BillWayActiveInviteRecharge),
 		string(BillWayExtraServiceTime),
 		string(BillWayCdkExchange),
+		string(BillWayLottoPrize),
 	}
 }
 
