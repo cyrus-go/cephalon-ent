@@ -20,7 +20,7 @@ func (LottoPrize) Fields() []ent.Field {
 		field.Int64("weight").StructTag(`json:"weight"`).Default(0).Comment("奖品等级权重"),
 		field.String("name").StructTag(`json:"name"`).Default("").Comment("奖品名称"),
 		field.Enum("status").Values("unknow", "normal", "canceled").Default("unknow").StructTag(`json:"status"`).Comment("状态"),
-		field.Enum("type").Values("unknow", "get_cep").Default("unknow").StructTag(`json:"type"`).Comment("类型"),
+		field.Enum("type").Values("unknow", "get_cep", "other").Default("unknow").StructTag(`json:"type"`).Comment("类型"),
 		field.Int64("cep_amount").StructTag(`json:"cep_amount"`).Default(0).Comment("类型为 get_cep 时，cep 的数量"),
 	}
 }

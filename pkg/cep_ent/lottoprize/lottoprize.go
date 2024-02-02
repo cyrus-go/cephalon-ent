@@ -152,6 +152,7 @@ const DefaultType = TypeUnknow
 const (
 	TypeUnknow Type = "unknow"
 	TypeGetCep Type = "get_cep"
+	TypeOther  Type = "other"
 )
 
 func (_type Type) String() string {
@@ -161,7 +162,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeUnknow, TypeGetCep:
+	case TypeUnknow, TypeGetCep, TypeOther:
 		return nil
 	default:
 		return fmt.Errorf("lottoprize: invalid enum value for type field: %q", _type)

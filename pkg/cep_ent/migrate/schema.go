@@ -1103,7 +1103,7 @@ var (
 		{Name: "weight", Type: field.TypeInt64, Comment: "奖品等级权重", Default: 0},
 		{Name: "name", Type: field.TypeString, Comment: "奖品名称", Default: ""},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknow", "normal", "canceled"}, Default: "unknow"},
-		{Name: "type", Type: field.TypeEnum, Comment: "类型", Enums: []string{"unknow", "get_cep"}, Default: "unknow"},
+		{Name: "type", Type: field.TypeEnum, Comment: "类型", Enums: []string{"unknow", "get_cep", "other"}, Default: "unknow"},
 		{Name: "cep_amount", Type: field.TypeInt64, Comment: "类型为 get_cep 时，cep 的数量", Default: 0},
 		{Name: "lotto_id", Type: field.TypeInt64, Comment: "外键：抽奖活动 ID", Default: 0},
 	}
