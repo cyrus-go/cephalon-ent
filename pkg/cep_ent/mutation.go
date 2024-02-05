@@ -32557,7 +32557,7 @@ type LottoGetCountRecordMutation struct {
 	deleted_at         *time.Time
 	count              *int64
 	addcount           *int64
-	_type              *lottogetcountrecord.Type
+	_type              *enums.LottoCondition
 	recharge_amount    *int64
 	addrecharge_amount *int64
 	clearedFields      map[string]struct{}
@@ -33023,12 +33023,12 @@ func (m *LottoGetCountRecordMutation) ResetCount() {
 }
 
 // SetType sets the "type" field.
-func (m *LottoGetCountRecordMutation) SetType(l lottogetcountrecord.Type) {
-	m._type = &l
+func (m *LottoGetCountRecordMutation) SetType(ec enums.LottoCondition) {
+	m._type = &ec
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *LottoGetCountRecordMutation) GetType() (r lottogetcountrecord.Type, exists bool) {
+func (m *LottoGetCountRecordMutation) GetType() (r enums.LottoCondition, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -33039,7 +33039,7 @@ func (m *LottoGetCountRecordMutation) GetType() (r lottogetcountrecord.Type, exi
 // OldType returns the old "type" field's value of the LottoGetCountRecord entity.
 // If the LottoGetCountRecord object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LottoGetCountRecordMutation) OldType(ctx context.Context) (v lottogetcountrecord.Type, err error) {
+func (m *LottoGetCountRecordMutation) OldType(ctx context.Context) (v enums.LottoCondition, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -33356,7 +33356,7 @@ func (m *LottoGetCountRecordMutation) SetField(name string, value ent.Value) err
 		m.SetCount(v)
 		return nil
 	case lottogetcountrecord.FieldType:
-		v, ok := value.(lottogetcountrecord.Type)
+		v, ok := value.(enums.LottoCondition)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -33613,6 +33613,9 @@ type LottoPrizeMutation struct {
 	addweight            *int64
 	name                 *string
 	status               *lottoprize.Status
+	_type                *lottoprize.Type
+	cep_amount           *int64
+	addcep_amount        *int64
 	clearedFields        map[string]struct{}
 	lotto                *int64
 	clearedlotto         bool
@@ -34148,6 +34151,98 @@ func (m *LottoPrizeMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetType sets the "type" field.
+func (m *LottoPrizeMutation) SetType(l lottoprize.Type) {
+	m._type = &l
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *LottoPrizeMutation) GetType() (r lottoprize.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldType(ctx context.Context) (v lottoprize.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *LottoPrizeMutation) ResetType() {
+	m._type = nil
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (m *LottoPrizeMutation) SetCepAmount(i int64) {
+	m.cep_amount = &i
+	m.addcep_amount = nil
+}
+
+// CepAmount returns the value of the "cep_amount" field in the mutation.
+func (m *LottoPrizeMutation) CepAmount() (r int64, exists bool) {
+	v := m.cep_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCepAmount returns the old "cep_amount" field's value of the LottoPrize entity.
+// If the LottoPrize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LottoPrizeMutation) OldCepAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCepAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCepAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCepAmount: %w", err)
+	}
+	return oldValue.CepAmount, nil
+}
+
+// AddCepAmount adds i to the "cep_amount" field.
+func (m *LottoPrizeMutation) AddCepAmount(i int64) {
+	if m.addcep_amount != nil {
+		*m.addcep_amount += i
+	} else {
+		m.addcep_amount = &i
+	}
+}
+
+// AddedCepAmount returns the value that was added to the "cep_amount" field in this mutation.
+func (m *LottoPrizeMutation) AddedCepAmount() (r int64, exists bool) {
+	v := m.addcep_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCepAmount resets all changes to the "cep_amount" field.
+func (m *LottoPrizeMutation) ResetCepAmount() {
+	m.cep_amount = nil
+	m.addcep_amount = nil
+}
+
 // ClearLotto clears the "lotto" edge to the Lotto entity.
 func (m *LottoPrizeMutation) ClearLotto() {
 	m.clearedlotto = true
@@ -34263,7 +34358,7 @@ func (m *LottoPrizeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LottoPrizeMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, lottoprize.FieldCreatedBy)
 	}
@@ -34294,6 +34389,12 @@ func (m *LottoPrizeMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, lottoprize.FieldStatus)
 	}
+	if m._type != nil {
+		fields = append(fields, lottoprize.FieldType)
+	}
+	if m.cep_amount != nil {
+		fields = append(fields, lottoprize.FieldCepAmount)
+	}
 	return fields
 }
 
@@ -34322,6 +34423,10 @@ func (m *LottoPrizeMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case lottoprize.FieldStatus:
 		return m.Status()
+	case lottoprize.FieldType:
+		return m.GetType()
+	case lottoprize.FieldCepAmount:
+		return m.CepAmount()
 	}
 	return nil, false
 }
@@ -34351,6 +34456,10 @@ func (m *LottoPrizeMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldName(ctx)
 	case lottoprize.FieldStatus:
 		return m.OldStatus(ctx)
+	case lottoprize.FieldType:
+		return m.OldType(ctx)
+	case lottoprize.FieldCepAmount:
+		return m.OldCepAmount(ctx)
 	}
 	return nil, fmt.Errorf("unknown LottoPrize field %s", name)
 }
@@ -34430,6 +34539,20 @@ func (m *LottoPrizeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case lottoprize.FieldType:
+		v, ok := value.(lottoprize.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case lottoprize.FieldCepAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCepAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown LottoPrize field %s", name)
 }
@@ -34447,6 +34570,9 @@ func (m *LottoPrizeMutation) AddedFields() []string {
 	if m.addweight != nil {
 		fields = append(fields, lottoprize.FieldWeight)
 	}
+	if m.addcep_amount != nil {
+		fields = append(fields, lottoprize.FieldCepAmount)
+	}
 	return fields
 }
 
@@ -34461,6 +34587,8 @@ func (m *LottoPrizeMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case lottoprize.FieldWeight:
 		return m.AddedWeight()
+	case lottoprize.FieldCepAmount:
+		return m.AddedCepAmount()
 	}
 	return nil, false
 }
@@ -34490,6 +34618,13 @@ func (m *LottoPrizeMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddWeight(v)
+		return nil
+	case lottoprize.FieldCepAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCepAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown LottoPrize numeric field %s", name)
@@ -34547,6 +34682,12 @@ func (m *LottoPrizeMutation) ResetField(name string) error {
 		return nil
 	case lottoprize.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case lottoprize.FieldType:
+		m.ResetType()
+		return nil
+	case lottoprize.FieldCepAmount:
+		m.ResetCepAmount()
 		return nil
 	}
 	return fmt.Errorf("unknown LottoPrize field %s", name)

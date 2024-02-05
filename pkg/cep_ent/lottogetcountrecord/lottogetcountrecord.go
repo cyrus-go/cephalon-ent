@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -107,28 +108,12 @@ var (
 	DefaultID func() int64
 )
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeUnknow is the default value of the Type enum.
-const DefaultType = TypeUnknow
-
-// Type values.
-const (
-	TypeUnknow         Type = "unknow"
-	TypeRegister       Type = "register"
-	TypeInviteRegister Type = "invite_register"
-	TypeRecharge       Type = "recharge"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
+const DefaultType enums.LottoCondition = "unknown"
 
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
+func TypeValidator(_type enums.LottoCondition) error {
 	switch _type {
-	case TypeUnknow, TypeRegister, TypeInviteRegister, TypeRecharge:
+	case "unknown", "register", "invite_register", "recharge":
 		return nil
 	default:
 		return fmt.Errorf("lottogetcountrecord: invalid enum value for type field: %q", _type)

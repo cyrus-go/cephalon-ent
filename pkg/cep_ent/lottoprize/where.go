@@ -100,6 +100,11 @@ func Name(v string) predicate.LottoPrize {
 	return predicate.LottoPrize(sql.FieldEQ(FieldName, v))
 }
 
+// CepAmount applies equality check predicate on the "cep_amount" field. It's identical to CepAmountEQ.
+func CepAmount(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldEQ(FieldCepAmount, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.LottoPrize {
 	return predicate.LottoPrize(sql.FieldEQ(FieldCreatedBy, v))
@@ -508,6 +513,66 @@ func StatusIn(vs ...Status) predicate.LottoPrize {
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...Status) predicate.LottoPrize {
 	return predicate.LottoPrize(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v Type) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v Type) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...Type) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...Type) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldNotIn(FieldType, vs...))
+}
+
+// CepAmountEQ applies the EQ predicate on the "cep_amount" field.
+func CepAmountEQ(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldEQ(FieldCepAmount, v))
+}
+
+// CepAmountNEQ applies the NEQ predicate on the "cep_amount" field.
+func CepAmountNEQ(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldNEQ(FieldCepAmount, v))
+}
+
+// CepAmountIn applies the In predicate on the "cep_amount" field.
+func CepAmountIn(vs ...int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldIn(FieldCepAmount, vs...))
+}
+
+// CepAmountNotIn applies the NotIn predicate on the "cep_amount" field.
+func CepAmountNotIn(vs ...int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldNotIn(FieldCepAmount, vs...))
+}
+
+// CepAmountGT applies the GT predicate on the "cep_amount" field.
+func CepAmountGT(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldGT(FieldCepAmount, v))
+}
+
+// CepAmountGTE applies the GTE predicate on the "cep_amount" field.
+func CepAmountGTE(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldGTE(FieldCepAmount, v))
+}
+
+// CepAmountLT applies the LT predicate on the "cep_amount" field.
+func CepAmountLT(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldLT(FieldCepAmount, v))
+}
+
+// CepAmountLTE applies the LTE predicate on the "cep_amount" field.
+func CepAmountLTE(v int64) predicate.LottoPrize {
+	return predicate.LottoPrize(sql.FieldLTE(FieldCepAmount, v))
 }
 
 // HasLotto applies the HasEdge predicate on the "lotto" edge.

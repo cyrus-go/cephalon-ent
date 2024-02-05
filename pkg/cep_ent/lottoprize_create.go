@@ -164,6 +164,34 @@ func (lpc *LottoPrizeCreate) SetNillableStatus(l *lottoprize.Status) *LottoPrize
 	return lpc
 }
 
+// SetType sets the "type" field.
+func (lpc *LottoPrizeCreate) SetType(l lottoprize.Type) *LottoPrizeCreate {
+	lpc.mutation.SetType(l)
+	return lpc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (lpc *LottoPrizeCreate) SetNillableType(l *lottoprize.Type) *LottoPrizeCreate {
+	if l != nil {
+		lpc.SetType(*l)
+	}
+	return lpc
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (lpc *LottoPrizeCreate) SetCepAmount(i int64) *LottoPrizeCreate {
+	lpc.mutation.SetCepAmount(i)
+	return lpc
+}
+
+// SetNillableCepAmount sets the "cep_amount" field if the given value is not nil.
+func (lpc *LottoPrizeCreate) SetNillableCepAmount(i *int64) *LottoPrizeCreate {
+	if i != nil {
+		lpc.SetCepAmount(*i)
+	}
+	return lpc
+}
+
 // SetID sets the "id" field.
 func (lpc *LottoPrizeCreate) SetID(i int64) *LottoPrizeCreate {
 	lpc.mutation.SetID(i)
@@ -273,6 +301,14 @@ func (lpc *LottoPrizeCreate) defaults() {
 		v := lottoprize.DefaultStatus
 		lpc.mutation.SetStatus(v)
 	}
+	if _, ok := lpc.mutation.GetType(); !ok {
+		v := lottoprize.DefaultType
+		lpc.mutation.SetType(v)
+	}
+	if _, ok := lpc.mutation.CepAmount(); !ok {
+		v := lottoprize.DefaultCepAmount
+		lpc.mutation.SetCepAmount(v)
+	}
 	if _, ok := lpc.mutation.ID(); !ok {
 		v := lottoprize.DefaultID()
 		lpc.mutation.SetID(v)
@@ -315,6 +351,17 @@ func (lpc *LottoPrizeCreate) check() error {
 		if err := lottoprize.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "LottoPrize.status": %w`, err)}
 		}
+	}
+	if _, ok := lpc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "LottoPrize.type"`)}
+	}
+	if v, ok := lpc.mutation.GetType(); ok {
+		if err := lottoprize.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "LottoPrize.type": %w`, err)}
+		}
+	}
+	if _, ok := lpc.mutation.CepAmount(); !ok {
+		return &ValidationError{Name: "cep_amount", err: errors.New(`cep_ent: missing required field "LottoPrize.cep_amount"`)}
 	}
 	if _, ok := lpc.mutation.LottoID(); !ok {
 		return &ValidationError{Name: "lotto", err: errors.New(`cep_ent: missing required edge "LottoPrize.lotto"`)}
@@ -387,6 +434,14 @@ func (lpc *LottoPrizeCreate) createSpec() (*LottoPrize, *sqlgraph.CreateSpec) {
 	if value, ok := lpc.mutation.Status(); ok {
 		_spec.SetField(lottoprize.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := lpc.mutation.GetType(); ok {
+		_spec.SetField(lottoprize.FieldType, field.TypeEnum, value)
+		_node.Type = value
+	}
+	if value, ok := lpc.mutation.CepAmount(); ok {
+		_spec.SetField(lottoprize.FieldCepAmount, field.TypeInt64, value)
+		_node.CepAmount = value
 	}
 	if nodes := lpc.mutation.LottoIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -599,6 +654,36 @@ func (u *LottoPrizeUpsert) UpdateStatus() *LottoPrizeUpsert {
 	return u
 }
 
+// SetType sets the "type" field.
+func (u *LottoPrizeUpsert) SetType(v lottoprize.Type) *LottoPrizeUpsert {
+	u.Set(lottoprize.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *LottoPrizeUpsert) UpdateType() *LottoPrizeUpsert {
+	u.SetExcluded(lottoprize.FieldType)
+	return u
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (u *LottoPrizeUpsert) SetCepAmount(v int64) *LottoPrizeUpsert {
+	u.Set(lottoprize.FieldCepAmount, v)
+	return u
+}
+
+// UpdateCepAmount sets the "cep_amount" field to the value that was provided on create.
+func (u *LottoPrizeUpsert) UpdateCepAmount() *LottoPrizeUpsert {
+	u.SetExcluded(lottoprize.FieldCepAmount)
+	return u
+}
+
+// AddCepAmount adds v to the "cep_amount" field.
+func (u *LottoPrizeUpsert) AddCepAmount(v int64) *LottoPrizeUpsert {
+	u.Add(lottoprize.FieldCepAmount, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -794,6 +879,41 @@ func (u *LottoPrizeUpsertOne) SetStatus(v lottoprize.Status) *LottoPrizeUpsertOn
 func (u *LottoPrizeUpsertOne) UpdateStatus() *LottoPrizeUpsertOne {
 	return u.Update(func(s *LottoPrizeUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *LottoPrizeUpsertOne) SetType(v lottoprize.Type) *LottoPrizeUpsertOne {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *LottoPrizeUpsertOne) UpdateType() *LottoPrizeUpsertOne {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (u *LottoPrizeUpsertOne) SetCepAmount(v int64) *LottoPrizeUpsertOne {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.SetCepAmount(v)
+	})
+}
+
+// AddCepAmount adds v to the "cep_amount" field.
+func (u *LottoPrizeUpsertOne) AddCepAmount(v int64) *LottoPrizeUpsertOne {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.AddCepAmount(v)
+	})
+}
+
+// UpdateCepAmount sets the "cep_amount" field to the value that was provided on create.
+func (u *LottoPrizeUpsertOne) UpdateCepAmount() *LottoPrizeUpsertOne {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.UpdateCepAmount()
 	})
 }
 
@@ -1158,6 +1278,41 @@ func (u *LottoPrizeUpsertBulk) SetStatus(v lottoprize.Status) *LottoPrizeUpsertB
 func (u *LottoPrizeUpsertBulk) UpdateStatus() *LottoPrizeUpsertBulk {
 	return u.Update(func(s *LottoPrizeUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *LottoPrizeUpsertBulk) SetType(v lottoprize.Type) *LottoPrizeUpsertBulk {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *LottoPrizeUpsertBulk) UpdateType() *LottoPrizeUpsertBulk {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (u *LottoPrizeUpsertBulk) SetCepAmount(v int64) *LottoPrizeUpsertBulk {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.SetCepAmount(v)
+	})
+}
+
+// AddCepAmount adds v to the "cep_amount" field.
+func (u *LottoPrizeUpsertBulk) AddCepAmount(v int64) *LottoPrizeUpsertBulk {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.AddCepAmount(v)
+	})
+}
+
+// UpdateCepAmount sets the "cep_amount" field to the value that was provided on create.
+func (u *LottoPrizeUpsertBulk) UpdateCepAmount() *LottoPrizeUpsertBulk {
+	return u.Update(func(s *LottoPrizeUpsert) {
+		s.UpdateCepAmount()
 	})
 }
 

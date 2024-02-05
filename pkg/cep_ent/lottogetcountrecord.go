@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lotto"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 用户获得抽奖次数记录表
@@ -36,8 +37,8 @@ type LottoGetCountRecord struct {
 	LottoID int64 `json:"lotto_id"`
 	// 此次奖励的抽奖次数
 	Count int64 `json:"count"`
-	// 抽奖结果
-	Type lottogetcountrecord.Type `json:"type"`
+	// 获得抽奖次数的条件类型
+	Type enums.LottoCondition `json:"type"`
 	// 充值金额，类型为充值时才有数据
 	RechargeAmount int64 `json:"recharge_amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -167,7 +168,7 @@ func (lgcr *LottoGetCountRecord) assignValues(columns []string, values []any) er
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				lgcr.Type = lottogetcountrecord.Type(value.String)
+				lgcr.Type = enums.LottoCondition(value.String)
 			}
 		case lottogetcountrecord.FieldRechargeAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

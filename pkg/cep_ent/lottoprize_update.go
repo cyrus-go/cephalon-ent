@@ -170,6 +170,41 @@ func (lpu *LottoPrizeUpdate) SetNillableStatus(l *lottoprize.Status) *LottoPrize
 	return lpu
 }
 
+// SetType sets the "type" field.
+func (lpu *LottoPrizeUpdate) SetType(l lottoprize.Type) *LottoPrizeUpdate {
+	lpu.mutation.SetType(l)
+	return lpu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (lpu *LottoPrizeUpdate) SetNillableType(l *lottoprize.Type) *LottoPrizeUpdate {
+	if l != nil {
+		lpu.SetType(*l)
+	}
+	return lpu
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (lpu *LottoPrizeUpdate) SetCepAmount(i int64) *LottoPrizeUpdate {
+	lpu.mutation.ResetCepAmount()
+	lpu.mutation.SetCepAmount(i)
+	return lpu
+}
+
+// SetNillableCepAmount sets the "cep_amount" field if the given value is not nil.
+func (lpu *LottoPrizeUpdate) SetNillableCepAmount(i *int64) *LottoPrizeUpdate {
+	if i != nil {
+		lpu.SetCepAmount(*i)
+	}
+	return lpu
+}
+
+// AddCepAmount adds i to the "cep_amount" field.
+func (lpu *LottoPrizeUpdate) AddCepAmount(i int64) *LottoPrizeUpdate {
+	lpu.mutation.AddCepAmount(i)
+	return lpu
+}
+
 // SetLotto sets the "lotto" edge to the Lotto entity.
 func (lpu *LottoPrizeUpdate) SetLotto(l *Lotto) *LottoPrizeUpdate {
 	return lpu.SetLottoID(l.ID)
@@ -265,6 +300,11 @@ func (lpu *LottoPrizeUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "LottoPrize.status": %w`, err)}
 		}
 	}
+	if v, ok := lpu.mutation.GetType(); ok {
+		if err := lottoprize.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "LottoPrize.type": %w`, err)}
+		}
+	}
 	if _, ok := lpu.mutation.LottoID(); lpu.mutation.LottoCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "LottoPrize.lotto"`)
 	}
@@ -321,6 +361,15 @@ func (lpu *LottoPrizeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := lpu.mutation.Status(); ok {
 		_spec.SetField(lottoprize.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := lpu.mutation.GetType(); ok {
+		_spec.SetField(lottoprize.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := lpu.mutation.CepAmount(); ok {
+		_spec.SetField(lottoprize.FieldCepAmount, field.TypeInt64, value)
+	}
+	if value, ok := lpu.mutation.AddedCepAmount(); ok {
+		_spec.AddField(lottoprize.FieldCepAmount, field.TypeInt64, value)
 	}
 	if lpu.mutation.LottoCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -557,6 +606,41 @@ func (lpuo *LottoPrizeUpdateOne) SetNillableStatus(l *lottoprize.Status) *LottoP
 	return lpuo
 }
 
+// SetType sets the "type" field.
+func (lpuo *LottoPrizeUpdateOne) SetType(l lottoprize.Type) *LottoPrizeUpdateOne {
+	lpuo.mutation.SetType(l)
+	return lpuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (lpuo *LottoPrizeUpdateOne) SetNillableType(l *lottoprize.Type) *LottoPrizeUpdateOne {
+	if l != nil {
+		lpuo.SetType(*l)
+	}
+	return lpuo
+}
+
+// SetCepAmount sets the "cep_amount" field.
+func (lpuo *LottoPrizeUpdateOne) SetCepAmount(i int64) *LottoPrizeUpdateOne {
+	lpuo.mutation.ResetCepAmount()
+	lpuo.mutation.SetCepAmount(i)
+	return lpuo
+}
+
+// SetNillableCepAmount sets the "cep_amount" field if the given value is not nil.
+func (lpuo *LottoPrizeUpdateOne) SetNillableCepAmount(i *int64) *LottoPrizeUpdateOne {
+	if i != nil {
+		lpuo.SetCepAmount(*i)
+	}
+	return lpuo
+}
+
+// AddCepAmount adds i to the "cep_amount" field.
+func (lpuo *LottoPrizeUpdateOne) AddCepAmount(i int64) *LottoPrizeUpdateOne {
+	lpuo.mutation.AddCepAmount(i)
+	return lpuo
+}
+
 // SetLotto sets the "lotto" edge to the Lotto entity.
 func (lpuo *LottoPrizeUpdateOne) SetLotto(l *Lotto) *LottoPrizeUpdateOne {
 	return lpuo.SetLottoID(l.ID)
@@ -665,6 +749,11 @@ func (lpuo *LottoPrizeUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "LottoPrize.status": %w`, err)}
 		}
 	}
+	if v, ok := lpuo.mutation.GetType(); ok {
+		if err := lottoprize.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "LottoPrize.type": %w`, err)}
+		}
+	}
 	if _, ok := lpuo.mutation.LottoID(); lpuo.mutation.LottoCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "LottoPrize.lotto"`)
 	}
@@ -738,6 +827,15 @@ func (lpuo *LottoPrizeUpdateOne) sqlSave(ctx context.Context) (_node *LottoPrize
 	}
 	if value, ok := lpuo.mutation.Status(); ok {
 		_spec.SetField(lottoprize.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := lpuo.mutation.GetType(); ok {
+		_spec.SetField(lottoprize.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := lpuo.mutation.CepAmount(); ok {
+		_spec.SetField(lottoprize.FieldCepAmount, field.TypeInt64, value)
+	}
+	if value, ok := lpuo.mutation.AddedCepAmount(); ok {
+		_spec.AddField(lottoprize.FieldCepAmount, field.TypeInt64, value)
 	}
 	if lpuo.mutation.LottoCleared() {
 		edge := &sqlgraph.EdgeSpec{

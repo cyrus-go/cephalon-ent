@@ -1569,6 +1569,10 @@ func init() {
 	lottoprizeDescName := lottoprizeFields[3].Descriptor()
 	// lottoprize.DefaultName holds the default value on creation for the name field.
 	lottoprize.DefaultName = lottoprizeDescName.Default.(string)
+	// lottoprizeDescCepAmount is the schema descriptor for cep_amount field.
+	lottoprizeDescCepAmount := lottoprizeFields[6].Descriptor()
+	// lottoprize.DefaultCepAmount holds the default value on creation for the cep_amount field.
+	lottoprize.DefaultCepAmount = lottoprizeDescCepAmount.Default.(int64)
 	// lottoprizeDescID is the schema descriptor for id field.
 	lottoprizeDescID := lottoprizeMixinFields0[0].Descriptor()
 	// lottoprize.DefaultID holds the default value on creation for the id field.
