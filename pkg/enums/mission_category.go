@@ -25,6 +25,7 @@ const (
 	MissionCategorySDLang    MissionCategory = "SD_LANG"
 	MissionCategoryComfyuiKe MissionCategory = "COMFYUI_KE"
 	MissionCategoryChatchat  MissionCategory = "CHATCHAT"
+	MissionCategoryLora      MissionCategory = "LORA"
 )
 
 func (obj MissionCategory) Values() []string {
@@ -51,6 +52,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategorySDLang),
 		string(MissionCategoryComfyuiKe),
 		string(MissionCategoryChatchat),
+		string(MissionCategoryLora),
 	}
 }
 
