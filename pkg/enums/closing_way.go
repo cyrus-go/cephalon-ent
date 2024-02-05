@@ -7,6 +7,7 @@ const (
 	CloseWayUser             CloseWay = "user"
 	CloseWayBalanceNotEnough CloseWay = "balance_not_enough"
 	CloseWayExpired          CloseWay = "expired"
+	CloseWayAdmin            CloseWay = "admin"
 )
 
 func (CloseWay) Values() []string {
@@ -15,6 +16,7 @@ func (CloseWay) Values() []string {
 		string(CloseWayUser),
 		string(CloseWayBalanceNotEnough),
 		string(CloseWayExpired),
+		string(CloseWayAdmin),
 	}
 }
 

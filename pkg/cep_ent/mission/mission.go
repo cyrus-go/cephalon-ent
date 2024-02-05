@@ -429,7 +429,7 @@ const DefaultCloseWay enums.CloseWay = "unknown"
 // CloseWayValidator is a validator for the "close_way" field enum values. It is called by the builders before save.
 func CloseWayValidator(cw enums.CloseWay) error {
 	switch cw {
-	case "unknown", "user", "balance_not_enough", "expired":
+	case "unknown", "user", "balance_not_enough", "expired", "admin":
 		return nil
 	default:
 		return fmt.Errorf("mission: invalid enum value for close_way field: %q", cw)
