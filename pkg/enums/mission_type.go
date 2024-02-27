@@ -33,6 +33,9 @@ const (
 	MissionTypeComfyuiKeTime      MissionType = "comfyui_ke_time"
 	MissionTypeChatchatTime       MissionType = "chatchat_time"
 	MissionTypeLoraTime           MissionType = "lora_time"
+	MissionTypeFooocusWuTime      MissionType = "fooocus_wu_time"
+	MissionTypeSvdBackTime        MissionType = "svd_back_time"
+	MissionTypeSdJiTime           MissionType = "sd_ji_time"
 
 	MissionTypeSdTimePlan        MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan        MissionType = "wt_time_plan"
@@ -58,6 +61,9 @@ const (
 	MissionTypeComfyuiKeTimePlan MissionType = "comfyui_ke_time_plan"
 	MissionTypeChatchatTimePlan  MissionType = "chatchat_time_plan"
 	MissionTypeLoraTimePlan      MissionType = "lora_time_plan"
+	MissionTypeFooocusWuTimePlan MissionType = "fooocus_wu_time_plan"
+	MissionTypeSvdBackTimePlan   MissionType = "svd_back_time_plan"
+	MissionTypeSdJiTimePlan      MissionType = "sd_ji_time_plan"
 )
 
 func (obj MissionType) Values() []string {
@@ -116,6 +122,12 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeChatchatTimePlan),
 		string(MissionTypeLoraTime),
 		string(MissionTypeLoraTimePlan),
+		string(MissionTypeFooocusWuTime),
+		string(MissionTypeFooocusWuTimePlan),
+		string(MissionTypeSvdBackTime),
+		string(MissionTypeSvdBackTimePlan),
+		string(MissionTypeSdJiTime),
+		string(MissionTypeSdJiTimePlan),
 	}
 }
 
