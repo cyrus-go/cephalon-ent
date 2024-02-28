@@ -1906,6 +1906,29 @@ func HasLottoGetCountRecordsWith(preds ...predicate.LottoGetCountRecord) predica
 	})
 }
 
+// HasCloudFiles applies the HasEdge predicate on the "cloud_files" edge.
+func HasCloudFiles() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CloudFilesTable, CloudFilesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCloudFilesWith applies the HasEdge predicate on the "cloud_files" edge with a given conditions (other predicates).
+func HasCloudFilesWith(preds ...predicate.CloudFile) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newCloudFilesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

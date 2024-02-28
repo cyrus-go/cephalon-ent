@@ -127,6 +127,8 @@ const (
 	EdgeLottoUserCounts = "lotto_user_counts"
 	// EdgeLottoGetCountRecords holds the string denoting the lotto_get_count_records edge name in mutations.
 	EdgeLottoGetCountRecords = "lotto_get_count_records"
+	// EdgeCloudFiles holds the string denoting the cloud_files edge name in mutations.
+	EdgeCloudFiles = "cloud_files"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -382,6 +384,13 @@ const (
 	LottoGetCountRecordsInverseTable = "lotto_get_count_records"
 	// LottoGetCountRecordsColumn is the table column denoting the lotto_get_count_records relation/edge.
 	LottoGetCountRecordsColumn = "user_id"
+	// CloudFilesTable is the table that holds the cloud_files relation/edge.
+	CloudFilesTable = "cloud_files"
+	// CloudFilesInverseTable is the table name for the CloudFile entity.
+	// It exists in this package in order to avoid circular dependency with the "cloudfile" package.
+	CloudFilesInverseTable = "cloud_files"
+	// CloudFilesColumn is the table column denoting the cloud_files relation/edge.
+	CloudFilesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1079,6 +1088,20 @@ func ByLottoGetCountRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newLottoGetCountRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByCloudFilesCount orders the results by cloud_files count.
+func ByCloudFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCloudFilesStep(), opts...)
+	}
+}
+
+// ByCloudFiles orders the results by cloud_files terms.
+func ByCloudFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCloudFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1336,5 +1359,12 @@ func newLottoGetCountRecordsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LottoGetCountRecordsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LottoGetCountRecordsTable, LottoGetCountRecordsColumn),
+	)
+}
+func newCloudFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CloudFilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CloudFilesTable, CloudFilesColumn),
 	)
 }

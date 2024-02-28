@@ -17,6 +17,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -85,6 +86,7 @@ const (
 	TypeCDKInfo              = "CDKInfo"
 	TypeCampaign             = "Campaign"
 	TypeCampaignOrder        = "CampaignOrder"
+	TypeCloudFile            = "CloudFile"
 	TypeCollect              = "Collect"
 	TypeCostAccount          = "CostAccount"
 	TypeCostBill             = "CostBill"
@@ -7438,6 +7440,980 @@ func (m *CampaignOrderMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown CampaignOrder edge %s", name)
+}
+
+// CloudFileMutation represents an operation that mutates the CloudFile nodes in the graph.
+type CloudFileMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	name          *string
+	icon          *string
+	size          *int64
+	addsize       *int64
+	md5           *string
+	clearedFields map[string]struct{}
+	user          *int64
+	cleareduser   bool
+	done          bool
+	oldValue      func(context.Context) (*CloudFile, error)
+	predicates    []predicate.CloudFile
+}
+
+var _ ent.Mutation = (*CloudFileMutation)(nil)
+
+// cloudfileOption allows management of the mutation configuration using functional options.
+type cloudfileOption func(*CloudFileMutation)
+
+// newCloudFileMutation creates new mutation for the CloudFile entity.
+func newCloudFileMutation(c config, op Op, opts ...cloudfileOption) *CloudFileMutation {
+	m := &CloudFileMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCloudFile,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCloudFileID sets the ID field of the mutation.
+func withCloudFileID(id int64) cloudfileOption {
+	return func(m *CloudFileMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CloudFile
+		)
+		m.oldValue = func(ctx context.Context) (*CloudFile, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CloudFile.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCloudFile sets the old CloudFile of the mutation.
+func withCloudFile(node *CloudFile) cloudfileOption {
+	return func(m *CloudFileMutation) {
+		m.oldValue = func(context.Context) (*CloudFile, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CloudFileMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CloudFileMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CloudFile entities.
+func (m *CloudFileMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CloudFileMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CloudFileMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CloudFile.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *CloudFileMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *CloudFileMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *CloudFileMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *CloudFileMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *CloudFileMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *CloudFileMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *CloudFileMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *CloudFileMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *CloudFileMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *CloudFileMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CloudFileMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CloudFileMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CloudFileMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CloudFileMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CloudFileMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CloudFileMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CloudFileMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CloudFileMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CloudFileMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *CloudFileMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *CloudFileMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *CloudFileMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetName sets the "name" field.
+func (m *CloudFileMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *CloudFileMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *CloudFileMutation) ResetName() {
+	m.name = nil
+}
+
+// SetIcon sets the "icon" field.
+func (m *CloudFileMutation) SetIcon(s string) {
+	m.icon = &s
+}
+
+// Icon returns the value of the "icon" field in the mutation.
+func (m *CloudFileMutation) Icon() (r string, exists bool) {
+	v := m.icon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIcon returns the old "icon" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldIcon(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIcon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIcon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
+	}
+	return oldValue.Icon, nil
+}
+
+// ResetIcon resets all changes to the "icon" field.
+func (m *CloudFileMutation) ResetIcon() {
+	m.icon = nil
+}
+
+// SetSize sets the "size" field.
+func (m *CloudFileMutation) SetSize(i int64) {
+	m.size = &i
+	m.addsize = nil
+}
+
+// Size returns the value of the "size" field in the mutation.
+func (m *CloudFileMutation) Size() (r int64, exists bool) {
+	v := m.size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSize returns the old "size" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldSize(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSize is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSize requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSize: %w", err)
+	}
+	return oldValue.Size, nil
+}
+
+// AddSize adds i to the "size" field.
+func (m *CloudFileMutation) AddSize(i int64) {
+	if m.addsize != nil {
+		*m.addsize += i
+	} else {
+		m.addsize = &i
+	}
+}
+
+// AddedSize returns the value that was added to the "size" field in this mutation.
+func (m *CloudFileMutation) AddedSize() (r int64, exists bool) {
+	v := m.addsize
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSize resets all changes to the "size" field.
+func (m *CloudFileMutation) ResetSize() {
+	m.size = nil
+	m.addsize = nil
+}
+
+// SetMd5 sets the "md5" field.
+func (m *CloudFileMutation) SetMd5(s string) {
+	m.md5 = &s
+}
+
+// Md5 returns the value of the "md5" field in the mutation.
+func (m *CloudFileMutation) Md5() (r string, exists bool) {
+	v := m.md5
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMd5 returns the old "md5" field's value of the CloudFile entity.
+// If the CloudFile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CloudFileMutation) OldMd5(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMd5 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMd5 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMd5: %w", err)
+	}
+	return oldValue.Md5, nil
+}
+
+// ResetMd5 resets all changes to the "md5" field.
+func (m *CloudFileMutation) ResetMd5() {
+	m.md5 = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *CloudFileMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[cloudfile.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *CloudFileMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *CloudFileMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *CloudFileMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the CloudFileMutation builder.
+func (m *CloudFileMutation) Where(ps ...predicate.CloudFile) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CloudFileMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CloudFileMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CloudFile, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CloudFileMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CloudFileMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CloudFile).
+func (m *CloudFileMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CloudFileMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_by != nil {
+		fields = append(fields, cloudfile.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, cloudfile.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, cloudfile.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, cloudfile.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, cloudfile.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, cloudfile.FieldUserID)
+	}
+	if m.name != nil {
+		fields = append(fields, cloudfile.FieldName)
+	}
+	if m.icon != nil {
+		fields = append(fields, cloudfile.FieldIcon)
+	}
+	if m.size != nil {
+		fields = append(fields, cloudfile.FieldSize)
+	}
+	if m.md5 != nil {
+		fields = append(fields, cloudfile.FieldMd5)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CloudFileMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cloudfile.FieldCreatedBy:
+		return m.CreatedBy()
+	case cloudfile.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case cloudfile.FieldCreatedAt:
+		return m.CreatedAt()
+	case cloudfile.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case cloudfile.FieldDeletedAt:
+		return m.DeletedAt()
+	case cloudfile.FieldUserID:
+		return m.UserID()
+	case cloudfile.FieldName:
+		return m.Name()
+	case cloudfile.FieldIcon:
+		return m.Icon()
+	case cloudfile.FieldSize:
+		return m.Size()
+	case cloudfile.FieldMd5:
+		return m.Md5()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CloudFileMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cloudfile.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case cloudfile.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case cloudfile.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case cloudfile.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case cloudfile.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case cloudfile.FieldUserID:
+		return m.OldUserID(ctx)
+	case cloudfile.FieldName:
+		return m.OldName(ctx)
+	case cloudfile.FieldIcon:
+		return m.OldIcon(ctx)
+	case cloudfile.FieldSize:
+		return m.OldSize(ctx)
+	case cloudfile.FieldMd5:
+		return m.OldMd5(ctx)
+	}
+	return nil, fmt.Errorf("unknown CloudFile field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CloudFileMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cloudfile.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case cloudfile.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case cloudfile.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case cloudfile.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case cloudfile.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case cloudfile.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case cloudfile.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case cloudfile.FieldIcon:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIcon(v)
+		return nil
+	case cloudfile.FieldSize:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSize(v)
+		return nil
+	case cloudfile.FieldMd5:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMd5(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CloudFile field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CloudFileMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, cloudfile.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, cloudfile.FieldUpdatedBy)
+	}
+	if m.addsize != nil {
+		fields = append(fields, cloudfile.FieldSize)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CloudFileMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cloudfile.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case cloudfile.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case cloudfile.FieldSize:
+		return m.AddedSize()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CloudFileMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cloudfile.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case cloudfile.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case cloudfile.FieldSize:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSize(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CloudFile numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CloudFileMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CloudFileMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CloudFileMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown CloudFile nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CloudFileMutation) ResetField(name string) error {
+	switch name {
+	case cloudfile.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case cloudfile.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case cloudfile.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case cloudfile.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case cloudfile.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case cloudfile.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case cloudfile.FieldName:
+		m.ResetName()
+		return nil
+	case cloudfile.FieldIcon:
+		m.ResetIcon()
+		return nil
+	case cloudfile.FieldSize:
+		m.ResetSize()
+		return nil
+	case cloudfile.FieldMd5:
+		m.ResetMd5()
+		return nil
+	}
+	return fmt.Errorf("unknown CloudFile field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CloudFileMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, cloudfile.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CloudFileMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case cloudfile.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CloudFileMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CloudFileMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CloudFileMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, cloudfile.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CloudFileMutation) EdgeCleared(name string) bool {
+	switch name {
+	case cloudfile.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CloudFileMutation) ClearEdge(name string) error {
+	switch name {
+	case cloudfile.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown CloudFile unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CloudFileMutation) ResetEdge(name string) error {
+	switch name {
+	case cloudfile.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown CloudFile edge %s", name)
 }
 
 // CollectMutation represents an operation that mutates the Collect nodes in the graph.
@@ -64661,6 +65637,9 @@ type UserMutation struct {
 	lotto_get_count_records        map[int64]struct{}
 	removedlotto_get_count_records map[int64]struct{}
 	clearedlotto_get_count_records bool
+	cloud_files                    map[int64]struct{}
+	removedcloud_files             map[int64]struct{}
+	clearedcloud_files             bool
 	done                           bool
 	oldValue                       func(context.Context) (*User, error)
 	predicates                     []predicate.User
@@ -67420,6 +68399,60 @@ func (m *UserMutation) ResetLottoGetCountRecords() {
 	m.removedlotto_get_count_records = nil
 }
 
+// AddCloudFileIDs adds the "cloud_files" edge to the CloudFile entity by ids.
+func (m *UserMutation) AddCloudFileIDs(ids ...int64) {
+	if m.cloud_files == nil {
+		m.cloud_files = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.cloud_files[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCloudFiles clears the "cloud_files" edge to the CloudFile entity.
+func (m *UserMutation) ClearCloudFiles() {
+	m.clearedcloud_files = true
+}
+
+// CloudFilesCleared reports if the "cloud_files" edge to the CloudFile entity was cleared.
+func (m *UserMutation) CloudFilesCleared() bool {
+	return m.clearedcloud_files
+}
+
+// RemoveCloudFileIDs removes the "cloud_files" edge to the CloudFile entity by IDs.
+func (m *UserMutation) RemoveCloudFileIDs(ids ...int64) {
+	if m.removedcloud_files == nil {
+		m.removedcloud_files = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.cloud_files, ids[i])
+		m.removedcloud_files[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCloudFiles returns the removed IDs of the "cloud_files" edge to the CloudFile entity.
+func (m *UserMutation) RemovedCloudFilesIDs() (ids []int64) {
+	for id := range m.removedcloud_files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CloudFilesIDs returns the "cloud_files" edge IDs in the mutation.
+func (m *UserMutation) CloudFilesIDs() (ids []int64) {
+	for id := range m.cloud_files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCloudFiles resets all changes to the "cloud_files" edge.
+func (m *UserMutation) ResetCloudFiles() {
+	m.cloud_files = nil
+	m.clearedcloud_files = false
+	m.removedcloud_files = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -67886,7 +68919,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 37)
+	edges := make([]string, 0, 38)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -67997,6 +69030,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.lotto_get_count_records != nil {
 		edges = append(edges, user.EdgeLottoGetCountRecords)
+	}
+	if m.cloud_files != nil {
+		edges = append(edges, user.EdgeCloudFiles)
 	}
 	return edges
 }
@@ -68219,13 +69255,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCloudFiles:
+		ids := make([]ent.Value, 0, len(m.cloud_files))
+		for id := range m.cloud_files {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 37)
+	edges := make([]string, 0, 38)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -68324,6 +69366,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedlotto_get_count_records != nil {
 		edges = append(edges, user.EdgeLottoGetCountRecords)
+	}
+	if m.removedcloud_files != nil {
+		edges = append(edges, user.EdgeCloudFiles)
 	}
 	return edges
 }
@@ -68530,13 +69575,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeCloudFiles:
+		ids := make([]ent.Value, 0, len(m.removedcloud_files))
+		for id := range m.removedcloud_files {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 37)
+	edges := make([]string, 0, 38)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -68648,6 +69699,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedlotto_get_count_records {
 		edges = append(edges, user.EdgeLottoGetCountRecords)
 	}
+	if m.clearedcloud_files {
+		edges = append(edges, user.EdgeCloudFiles)
+	}
 	return edges
 }
 
@@ -68729,6 +69783,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedlotto_user_counts
 	case user.EdgeLottoGetCountRecords:
 		return m.clearedlotto_get_count_records
+	case user.EdgeCloudFiles:
+		return m.clearedcloud_files
 	}
 	return false
 }
@@ -68867,6 +69923,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeLottoGetCountRecords:
 		m.ResetLottoGetCountRecords()
+		return nil
+	case user.EdgeCloudFiles:
+		m.ResetCloudFiles()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

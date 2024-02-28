@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -390,6 +391,57 @@ func init() {
 	campaignorderDescID := campaignorderMixinFields0[0].Descriptor()
 	// campaignorder.DefaultID holds the default value on creation for the id field.
 	campaignorder.DefaultID = campaignorderDescID.Default.(func() int64)
+	cloudfileMixin := schema.CloudFile{}.Mixin()
+	cloudfileMixinFields0 := cloudfileMixin[0].Fields()
+	_ = cloudfileMixinFields0
+	cloudfileFields := schema.CloudFile{}.Fields()
+	_ = cloudfileFields
+	// cloudfileDescCreatedBy is the schema descriptor for created_by field.
+	cloudfileDescCreatedBy := cloudfileMixinFields0[1].Descriptor()
+	// cloudfile.DefaultCreatedBy holds the default value on creation for the created_by field.
+	cloudfile.DefaultCreatedBy = cloudfileDescCreatedBy.Default.(int64)
+	// cloudfileDescUpdatedBy is the schema descriptor for updated_by field.
+	cloudfileDescUpdatedBy := cloudfileMixinFields0[2].Descriptor()
+	// cloudfile.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	cloudfile.DefaultUpdatedBy = cloudfileDescUpdatedBy.Default.(int64)
+	// cloudfileDescCreatedAt is the schema descriptor for created_at field.
+	cloudfileDescCreatedAt := cloudfileMixinFields0[3].Descriptor()
+	// cloudfile.DefaultCreatedAt holds the default value on creation for the created_at field.
+	cloudfile.DefaultCreatedAt = cloudfileDescCreatedAt.Default.(func() time.Time)
+	// cloudfileDescUpdatedAt is the schema descriptor for updated_at field.
+	cloudfileDescUpdatedAt := cloudfileMixinFields0[4].Descriptor()
+	// cloudfile.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	cloudfile.DefaultUpdatedAt = cloudfileDescUpdatedAt.Default.(func() time.Time)
+	// cloudfile.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	cloudfile.UpdateDefaultUpdatedAt = cloudfileDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// cloudfileDescDeletedAt is the schema descriptor for deleted_at field.
+	cloudfileDescDeletedAt := cloudfileMixinFields0[5].Descriptor()
+	// cloudfile.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	cloudfile.DefaultDeletedAt = cloudfileDescDeletedAt.Default.(time.Time)
+	// cloudfileDescUserID is the schema descriptor for user_id field.
+	cloudfileDescUserID := cloudfileFields[0].Descriptor()
+	// cloudfile.DefaultUserID holds the default value on creation for the user_id field.
+	cloudfile.DefaultUserID = cloudfileDescUserID.Default.(int64)
+	// cloudfileDescName is the schema descriptor for name field.
+	cloudfileDescName := cloudfileFields[1].Descriptor()
+	// cloudfile.DefaultName holds the default value on creation for the name field.
+	cloudfile.DefaultName = cloudfileDescName.Default.(string)
+	// cloudfileDescIcon is the schema descriptor for icon field.
+	cloudfileDescIcon := cloudfileFields[2].Descriptor()
+	// cloudfile.DefaultIcon holds the default value on creation for the icon field.
+	cloudfile.DefaultIcon = cloudfileDescIcon.Default.(string)
+	// cloudfileDescSize is the schema descriptor for size field.
+	cloudfileDescSize := cloudfileFields[3].Descriptor()
+	// cloudfile.DefaultSize holds the default value on creation for the size field.
+	cloudfile.DefaultSize = cloudfileDescSize.Default.(int64)
+	// cloudfileDescMd5 is the schema descriptor for md5 field.
+	cloudfileDescMd5 := cloudfileFields[4].Descriptor()
+	// cloudfile.DefaultMd5 holds the default value on creation for the md5 field.
+	cloudfile.DefaultMd5 = cloudfileDescMd5.Default.(string)
+	// cloudfileDescID is the schema descriptor for id field.
+	cloudfileDescID := cloudfileMixinFields0[0].Descriptor()
+	// cloudfile.DefaultID holds the default value on creation for the id field.
+	cloudfile.DefaultID = cloudfileDescID.Default.(func() int64)
 	collectMixin := schema.Collect{}.Mixin()
 	collectMixinFields0 := collectMixin[0].Fields()
 	_ = collectMixinFields0

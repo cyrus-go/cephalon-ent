@@ -297,6 +297,41 @@ var (
 			},
 		},
 	}
+	// CloudFilesColumns holds the columns for the "cloud_files" table.
+	CloudFilesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "文件名", Default: ""},
+		{Name: "icon", Type: field.TypeString, Comment: "文件图标", Default: ""},
+		{Name: "size", Type: field.TypeInt64, Comment: "文件大小", Default: 0},
+		{Name: "md5", Type: field.TypeString, Comment: "md5", Default: ""},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户id", Default: 0},
+	}
+	// CloudFilesTable holds the schema information for the "cloud_files" table.
+	CloudFilesTable = &schema.Table{
+		Name:       "cloud_files",
+		Columns:    CloudFilesColumns,
+		PrimaryKey: []*schema.Column{CloudFilesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "cloud_files_users_cloud_files",
+				Columns:    []*schema.Column{CloudFilesColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "cloudfile_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{CloudFilesColumns[10]},
+			},
+		},
+	}
 	// CollectsColumns holds the columns for the "collects" table.
 	CollectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2373,6 +2408,7 @@ var (
 		CdkInfosTable,
 		CampaignsTable,
 		CampaignOrdersTable,
+		CloudFilesTable,
 		CollectsTable,
 		CostAccountsTable,
 		CostBillsTable,
@@ -2447,6 +2483,8 @@ func init() {
 	CampaignOrdersTable.ForeignKeys[0].RefTable = CampaignsTable
 	CampaignOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	CampaignOrdersTable.Annotation = &entsql.Annotation{}
+	CloudFilesTable.ForeignKeys[0].RefTable = UsersTable
+	CloudFilesTable.Annotation = &entsql.Annotation{}
 	CollectsTable.ForeignKeys[0].RefTable = UsersTable
 	CollectsTable.Annotation = &entsql.Annotation{}
 	CostAccountsTable.ForeignKeys[0].RefTable = UsersTable

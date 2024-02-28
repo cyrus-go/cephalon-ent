@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -875,6 +876,21 @@ func (uu *UserUpdate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *UserUp
 	return uu.AddLottoGetCountRecordIDs(ids...)
 }
 
+// AddCloudFileIDs adds the "cloud_files" edge to the CloudFile entity by IDs.
+func (uu *UserUpdate) AddCloudFileIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddCloudFileIDs(ids...)
+	return uu
+}
+
+// AddCloudFiles adds the "cloud_files" edges to the CloudFile entity.
+func (uu *UserUpdate) AddCloudFiles(c ...*CloudFile) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.AddCloudFileIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1595,6 +1611,27 @@ func (uu *UserUpdate) RemoveLottoGetCountRecords(l ...*LottoGetCountRecord) *Use
 		ids[i] = l[i].ID
 	}
 	return uu.RemoveLottoGetCountRecordIDs(ids...)
+}
+
+// ClearCloudFiles clears all "cloud_files" edges to the CloudFile entity.
+func (uu *UserUpdate) ClearCloudFiles() *UserUpdate {
+	uu.mutation.ClearCloudFiles()
+	return uu
+}
+
+// RemoveCloudFileIDs removes the "cloud_files" edge to CloudFile entities by IDs.
+func (uu *UserUpdate) RemoveCloudFileIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveCloudFileIDs(ids...)
+	return uu
+}
+
+// RemoveCloudFiles removes "cloud_files" edges to CloudFile entities.
+func (uu *UserUpdate) RemoveCloudFiles(c ...*CloudFile) *UserUpdate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uu.RemoveCloudFileIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -3322,6 +3359,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.CloudFilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedCloudFilesIDs(); len(nodes) > 0 && !uu.mutation.CloudFilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.CloudFilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -4159,6 +4241,21 @@ func (uuo *UserUpdateOne) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *Us
 	return uuo.AddLottoGetCountRecordIDs(ids...)
 }
 
+// AddCloudFileIDs adds the "cloud_files" edge to the CloudFile entity by IDs.
+func (uuo *UserUpdateOne) AddCloudFileIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddCloudFileIDs(ids...)
+	return uuo
+}
+
+// AddCloudFiles adds the "cloud_files" edges to the CloudFile entity.
+func (uuo *UserUpdateOne) AddCloudFiles(c ...*CloudFile) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.AddCloudFileIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -4879,6 +4976,27 @@ func (uuo *UserUpdateOne) RemoveLottoGetCountRecords(l ...*LottoGetCountRecord) 
 		ids[i] = l[i].ID
 	}
 	return uuo.RemoveLottoGetCountRecordIDs(ids...)
+}
+
+// ClearCloudFiles clears all "cloud_files" edges to the CloudFile entity.
+func (uuo *UserUpdateOne) ClearCloudFiles() *UserUpdateOne {
+	uuo.mutation.ClearCloudFiles()
+	return uuo
+}
+
+// RemoveCloudFileIDs removes the "cloud_files" edge to CloudFile entities by IDs.
+func (uuo *UserUpdateOne) RemoveCloudFileIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveCloudFileIDs(ids...)
+	return uuo
+}
+
+// RemoveCloudFiles removes "cloud_files" edges to CloudFile entities.
+func (uuo *UserUpdateOne) RemoveCloudFiles(c ...*CloudFile) *UserUpdateOne {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uuo.RemoveCloudFileIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -6629,6 +6747,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.CloudFilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedCloudFilesIDs(); len(nodes) > 0 && !uuo.mutation.CloudFilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.CloudFilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

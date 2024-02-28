@@ -141,9 +141,11 @@ type UserEdges struct {
 	LottoUserCounts []*LottoUserCount `json:"lotto_user_counts,omitempty"`
 	// LottoGetCountRecords holds the value of the lotto_get_count_records edge.
 	LottoGetCountRecords []*LottoGetCountRecord `json:"lotto_get_count_records,omitempty"`
+	// CloudFiles holds the value of the cloud_files edge.
+	CloudFiles []*CloudFile `json:"cloud_files,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [37]bool
+	loadedTypes [38]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -495,6 +497,15 @@ func (e UserEdges) LottoGetCountRecordsOrErr() ([]*LottoGetCountRecord, error) {
 	return nil, &NotLoadedError{edge: "lotto_get_count_records"}
 }
 
+// CloudFilesOrErr returns the CloudFiles value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CloudFilesOrErr() ([]*CloudFile, error) {
+	if e.loadedTypes[37] {
+		return e.CloudFiles, nil
+	}
+	return nil, &NotLoadedError{edge: "cloud_files"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -839,6 +850,11 @@ func (u *User) QueryLottoUserCounts() *LottoUserCountQuery {
 // QueryLottoGetCountRecords queries the "lotto_get_count_records" edge of the User entity.
 func (u *User) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
 	return NewUserClient(u.config).QueryLottoGetCountRecords(u)
+}
+
+// QueryCloudFiles queries the "cloud_files" edge of the User entity.
+func (u *User) QueryCloudFiles() *CloudFileQuery {
+	return NewUserClient(u.config).QueryCloudFiles(u)
 }
 
 // Update returns a builder for updating this User.

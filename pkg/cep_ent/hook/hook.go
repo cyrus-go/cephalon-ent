@@ -81,6 +81,18 @@ func (f CampaignOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.CampaignOrderMutation", m)
 }
 
+// The CloudFileFunc type is an adapter to allow the use of ordinary
+// function as CloudFile mutator.
+type CloudFileFunc func(context.Context, *cep_ent.CloudFileMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CloudFileFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.CloudFileMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.CloudFileMutation", m)
+}
+
 // The CollectFunc type is an adapter to allow the use of ordinary
 // function as Collect mutator.
 type CollectFunc func(context.Context, *cep_ent.CollectMutation) (cep_ent.Value, error)

@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -888,6 +889,21 @@ func (uc *UserCreate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *UserCr
 		ids[i] = l[i].ID
 	}
 	return uc.AddLottoGetCountRecordIDs(ids...)
+}
+
+// AddCloudFileIDs adds the "cloud_files" edge to the CloudFile entity by IDs.
+func (uc *UserCreate) AddCloudFileIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCloudFileIDs(ids...)
+	return uc
+}
+
+// AddCloudFiles adds the "cloud_files" edges to the CloudFile entity.
+func (uc *UserCreate) AddCloudFiles(c ...*CloudFile) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCloudFileIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1765,6 +1781,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(lottogetcountrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.CloudFilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
