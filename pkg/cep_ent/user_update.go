@@ -319,6 +319,27 @@ func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
 	return uu
 }
 
+// SetCloudSpace sets the "cloud_space" field.
+func (uu *UserUpdate) SetCloudSpace(i int64) *UserUpdate {
+	uu.mutation.ResetCloudSpace()
+	uu.mutation.SetCloudSpace(i)
+	return uu
+}
+
+// SetNillableCloudSpace sets the "cloud_space" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCloudSpace(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetCloudSpace(*i)
+	}
+	return uu
+}
+
+// AddCloudSpace adds i to the "cloud_space" field.
+func (uu *UserUpdate) AddCloudSpace(i int64) *UserUpdate {
+	uu.mutation.AddCloudSpace(i)
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -1757,6 +1778,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.CloudSpace(); ok {
+		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.AddedCloudSpace(); ok {
+		_spec.AddField(user.FieldCloudSpace, field.TypeInt64, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -3684,6 +3711,27 @@ func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetCloudSpace sets the "cloud_space" field.
+func (uuo *UserUpdateOne) SetCloudSpace(i int64) *UserUpdateOne {
+	uuo.mutation.ResetCloudSpace()
+	uuo.mutation.SetCloudSpace(i)
+	return uuo
+}
+
+// SetNillableCloudSpace sets the "cloud_space" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCloudSpace(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetCloudSpace(*i)
+	}
+	return uuo
+}
+
+// AddCloudSpace adds i to the "cloud_space" field.
+func (uuo *UserUpdateOne) AddCloudSpace(i int64) *UserUpdateOne {
+	uuo.mutation.AddCloudSpace(i)
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -5152,6 +5200,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.CloudSpace(); ok {
+		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.AddedCloudSpace(); ok {
+		_spec.AddField(user.FieldCloudSpace, field.TypeInt64, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -59,6 +59,8 @@ type User struct {
 	AreaCode string `json:"area_code"`
 	// 邮箱
 	Email string `json:"email"'`
+	// 云盘空间
+	CloudSpace int64 `json:"cloud_space"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -513,7 +515,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsFrozen, user.FieldIsRecharge:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldCloudSpace:
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail:
 			values[i] = new(sql.NullString)
@@ -653,6 +655,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
 				u.Email = value.String
+			}
+		case user.FieldCloudSpace:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cloud_space", values[i])
+			} else if value.Valid {
+				u.CloudSpace = value.Int64
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -934,6 +942,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
+	builder.WriteString(", ")
+	builder.WriteString("cloud_space=")
+	builder.WriteString(fmt.Sprintf("%v", u.CloudSpace))
 	builder.WriteByte(')')
 	return builder.String()
 }

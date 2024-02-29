@@ -320,6 +320,20 @@ func (uc *UserCreate) SetNillableEmail(s *string) *UserCreate {
 	return uc
 }
 
+// SetCloudSpace sets the "cloud_space" field.
+func (uc *UserCreate) SetCloudSpace(i int64) *UserCreate {
+	uc.mutation.SetCloudSpace(i)
+	return uc
+}
+
+// SetNillableCloudSpace sets the "cloud_space" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCloudSpace(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetCloudSpace(*i)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1017,6 +1031,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultEmail
 		uc.mutation.SetEmail(v)
 	}
+	if _, ok := uc.mutation.CloudSpace(); !ok {
+		v := user.DefaultCloudSpace
+		uc.mutation.SetCloudSpace(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1086,6 +1104,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`cep_ent: missing required field "User.email"`)}
+	}
+	if _, ok := uc.mutation.CloudSpace(); !ok {
+		return &ValidationError{Name: "cloud_space", err: errors.New(`cep_ent: missing required field "User.cloud_space"`)}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -1194,6 +1215,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
+	}
+	if value, ok := uc.mutation.CloudSpace(); ok {
+		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
+		_node.CloudSpace = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2084,6 +2109,24 @@ func (u *UserUpsert) UpdateEmail() *UserUpsert {
 	return u
 }
 
+// SetCloudSpace sets the "cloud_space" field.
+func (u *UserUpsert) SetCloudSpace(v int64) *UserUpsert {
+	u.Set(user.FieldCloudSpace, v)
+	return u
+}
+
+// UpdateCloudSpace sets the "cloud_space" field to the value that was provided on create.
+func (u *UserUpsert) UpdateCloudSpace() *UserUpsert {
+	u.SetExcluded(user.FieldCloudSpace)
+	return u
+}
+
+// AddCloudSpace adds v to the "cloud_space" field.
+func (u *UserUpsert) AddCloudSpace(v int64) *UserUpsert {
+	u.Add(user.FieldCloudSpace, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2398,6 +2441,27 @@ func (u *UserUpsertOne) SetEmail(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateEmail()
+	})
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (u *UserUpsertOne) SetCloudSpace(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetCloudSpace(v)
+	})
+}
+
+// AddCloudSpace adds v to the "cloud_space" field.
+func (u *UserUpsertOne) AddCloudSpace(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddCloudSpace(v)
+	})
+}
+
+// UpdateCloudSpace sets the "cloud_space" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateCloudSpace() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateCloudSpace()
 	})
 }
 
@@ -2881,6 +2945,27 @@ func (u *UserUpsertBulk) SetEmail(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateEmail()
+	})
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (u *UserUpsertBulk) SetCloudSpace(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetCloudSpace(v)
+	})
+}
+
+// AddCloudSpace adds v to the "cloud_space" field.
+func (u *UserUpsertBulk) AddCloudSpace(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddCloudSpace(v)
+	})
+}
+
+// UpdateCloudSpace sets the "cloud_space" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateCloudSpace() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateCloudSpace()
 	})
 }
 

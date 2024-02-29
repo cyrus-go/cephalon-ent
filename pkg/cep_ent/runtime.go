@@ -2909,6 +2909,10 @@ func init() {
 	userDescEmail := userFields[13].Descriptor()
 	// user.DefaultEmail holds the default value on creation for the email field.
 	user.DefaultEmail = userDescEmail.Default.(string)
+	// userDescCloudSpace is the schema descriptor for cloud_space field.
+	userDescCloudSpace := userFields[14].Descriptor()
+	// user.DefaultCloudSpace holds the default value on creation for the cloud_space field.
+	user.DefaultCloudSpace = userDescCloudSpace.Default.(int64)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

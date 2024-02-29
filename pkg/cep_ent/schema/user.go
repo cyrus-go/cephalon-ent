@@ -29,6 +29,7 @@ func (User) Fields() []ent.Field {
 		field.String("pop_version").Default("").StructTag(`json:"pop_version"`).Comment("用户最新弹窗版本"),
 		field.String("area_code").Default("+86").StructTag(`json:"area_code"`).Comment("国家区号"),
 		field.String("email").Default("").StructTag(`json:"email"'`).Comment("邮箱"),
+		field.Int64("cloud_space").Default(0).StructTag(`json:"cloud_space"`).Comment("云盘空间"),
 	}
 }
 

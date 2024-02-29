@@ -65529,6 +65529,8 @@ type UserMutation struct {
 	pop_version                    *string
 	area_code                      *string
 	email                          *string
+	cloud_space                    *int64
+	addcloud_space                 *int64
 	clearedFields                  map[string]struct{}
 	vx_accounts                    map[int64]struct{}
 	removedvx_accounts             map[int64]struct{}
@@ -66471,6 +66473,62 @@ func (m *UserMutation) OldEmail(ctx context.Context) (v string, err error) {
 // ResetEmail resets all changes to the "email" field.
 func (m *UserMutation) ResetEmail() {
 	m.email = nil
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (m *UserMutation) SetCloudSpace(i int64) {
+	m.cloud_space = &i
+	m.addcloud_space = nil
+}
+
+// CloudSpace returns the value of the "cloud_space" field in the mutation.
+func (m *UserMutation) CloudSpace() (r int64, exists bool) {
+	v := m.cloud_space
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCloudSpace returns the old "cloud_space" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCloudSpace(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCloudSpace is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCloudSpace requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCloudSpace: %w", err)
+	}
+	return oldValue.CloudSpace, nil
+}
+
+// AddCloudSpace adds i to the "cloud_space" field.
+func (m *UserMutation) AddCloudSpace(i int64) {
+	if m.addcloud_space != nil {
+		*m.addcloud_space += i
+	} else {
+		m.addcloud_space = &i
+	}
+}
+
+// AddedCloudSpace returns the value that was added to the "cloud_space" field in this mutation.
+func (m *UserMutation) AddedCloudSpace() (r int64, exists bool) {
+	v := m.addcloud_space
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCloudSpace resets all changes to the "cloud_space" field.
+func (m *UserMutation) ResetCloudSpace() {
+	m.cloud_space = nil
+	m.addcloud_space = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -68487,7 +68545,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -68545,6 +68603,9 @@ func (m *UserMutation) Fields() []string {
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
+	if m.cloud_space != nil {
+		fields = append(fields, user.FieldCloudSpace)
+	}
 	return fields
 }
 
@@ -68591,6 +68652,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.AreaCode()
 	case user.FieldEmail:
 		return m.Email()
+	case user.FieldCloudSpace:
+		return m.CloudSpace()
 	}
 	return nil, false
 }
@@ -68638,6 +68701,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAreaCode(ctx)
 	case user.FieldEmail:
 		return m.OldEmail(ctx)
+	case user.FieldCloudSpace:
+		return m.OldCloudSpace(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -68780,6 +68845,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetEmail(v)
 		return nil
+	case user.FieldCloudSpace:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCloudSpace(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -68794,6 +68866,9 @@ func (m *UserMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, user.FieldUpdatedBy)
 	}
+	if m.addcloud_space != nil {
+		fields = append(fields, user.FieldCloudSpace)
+	}
 	return fields
 }
 
@@ -68806,6 +68881,8 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case user.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case user.FieldCloudSpace:
+		return m.AddedCloudSpace()
 	}
 	return nil, false
 }
@@ -68828,6 +68905,13 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedBy(v)
+		return nil
+	case user.FieldCloudSpace:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCloudSpace(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
@@ -68912,6 +68996,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldEmail:
 		m.ResetEmail()
+		return nil
+	case user.FieldCloudSpace:
+		m.ResetCloudSpace()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

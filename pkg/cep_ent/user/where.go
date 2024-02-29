@@ -145,6 +145,11 @@ func Email(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
 }
 
+// CloudSpace applies equality check predicate on the "cloud_space" field. It's identical to CloudSpaceEQ.
+func CloudSpace(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCloudSpace, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
@@ -1053,6 +1058,46 @@ func EmailEqualFold(v string) predicate.User {
 // EmailContainsFold applies the ContainsFold predicate on the "email" field.
 func EmailContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldEmail, v))
+}
+
+// CloudSpaceEQ applies the EQ predicate on the "cloud_space" field.
+func CloudSpaceEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCloudSpace, v))
+}
+
+// CloudSpaceNEQ applies the NEQ predicate on the "cloud_space" field.
+func CloudSpaceNEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCloudSpace, v))
+}
+
+// CloudSpaceIn applies the In predicate on the "cloud_space" field.
+func CloudSpaceIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCloudSpace, vs...))
+}
+
+// CloudSpaceNotIn applies the NotIn predicate on the "cloud_space" field.
+func CloudSpaceNotIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCloudSpace, vs...))
+}
+
+// CloudSpaceGT applies the GT predicate on the "cloud_space" field.
+func CloudSpaceGT(v int64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCloudSpace, v))
+}
+
+// CloudSpaceGTE applies the GTE predicate on the "cloud_space" field.
+func CloudSpaceGTE(v int64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCloudSpace, v))
+}
+
+// CloudSpaceLT applies the LT predicate on the "cloud_space" field.
+func CloudSpaceLT(v int64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCloudSpace, v))
+}
+
+// CloudSpaceLTE applies the LTE predicate on the "cloud_space" field.
+func CloudSpaceLTE(v int64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCloudSpace, v))
 }
 
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.

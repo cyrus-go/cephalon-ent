@@ -53,6 +53,8 @@ const (
 	FieldAreaCode = "area_code"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldCloudSpace holds the string denoting the cloud_space field in the database.
+	FieldCloudSpace = "cloud_space"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -415,6 +417,7 @@ var Columns = []string{
 	FieldPopVersion,
 	FieldAreaCode,
 	FieldEmail,
+	FieldCloudSpace,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -466,6 +469,8 @@ var (
 	DefaultAreaCode string
 	// DefaultEmail holds the default value on creation for the "email" field.
 	DefaultEmail string
+	// DefaultCloudSpace holds the default value on creation for the "cloud_space" field.
+	DefaultCloudSpace int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -597,6 +602,11 @@ func ByAreaCode(opts ...sql.OrderTermOption) OrderOption {
 // ByEmail orders the results by the email field.
 func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByCloudSpace orders the results by the cloud_space field.
+func ByCloudSpace(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCloudSpace, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.
