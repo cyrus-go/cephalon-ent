@@ -53,6 +53,8 @@ const (
 	FieldAreaCode = "area_code"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldCloudSpace holds the string denoting the cloud_space field in the database.
+	FieldCloudSpace = "cloud_space"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -127,6 +129,8 @@ const (
 	EdgeLottoUserCounts = "lotto_user_counts"
 	// EdgeLottoGetCountRecords holds the string denoting the lotto_get_count_records edge name in mutations.
 	EdgeLottoGetCountRecords = "lotto_get_count_records"
+	// EdgeCloudFiles holds the string denoting the cloud_files edge name in mutations.
+	EdgeCloudFiles = "cloud_files"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -382,6 +386,13 @@ const (
 	LottoGetCountRecordsInverseTable = "lotto_get_count_records"
 	// LottoGetCountRecordsColumn is the table column denoting the lotto_get_count_records relation/edge.
 	LottoGetCountRecordsColumn = "user_id"
+	// CloudFilesTable is the table that holds the cloud_files relation/edge.
+	CloudFilesTable = "cloud_files"
+	// CloudFilesInverseTable is the table name for the CloudFile entity.
+	// It exists in this package in order to avoid circular dependency with the "cloudfile" package.
+	CloudFilesInverseTable = "cloud_files"
+	// CloudFilesColumn is the table column denoting the cloud_files relation/edge.
+	CloudFilesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -406,6 +417,7 @@ var Columns = []string{
 	FieldPopVersion,
 	FieldAreaCode,
 	FieldEmail,
+	FieldCloudSpace,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -457,6 +469,8 @@ var (
 	DefaultAreaCode string
 	// DefaultEmail holds the default value on creation for the "email" field.
 	DefaultEmail string
+	// DefaultCloudSpace holds the default value on creation for the "cloud_space" field.
+	DefaultCloudSpace int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -588,6 +602,11 @@ func ByAreaCode(opts ...sql.OrderTermOption) OrderOption {
 // ByEmail orders the results by the email field.
 func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByCloudSpace orders the results by the cloud_space field.
+func ByCloudSpace(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCloudSpace, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.
@@ -1079,6 +1098,20 @@ func ByLottoGetCountRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newLottoGetCountRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByCloudFilesCount orders the results by cloud_files count.
+func ByCloudFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCloudFilesStep(), opts...)
+	}
+}
+
+// ByCloudFiles orders the results by cloud_files terms.
+func ByCloudFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCloudFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1336,5 +1369,12 @@ func newLottoGetCountRecordsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LottoGetCountRecordsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LottoGetCountRecordsTable, LottoGetCountRecordsColumn),
+	)
+}
+func newCloudFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CloudFilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CloudFilesTable, CloudFilesColumn),
 	)
 }

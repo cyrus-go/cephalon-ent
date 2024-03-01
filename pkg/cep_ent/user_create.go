@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -315,6 +316,20 @@ func (uc *UserCreate) SetEmail(s string) *UserCreate {
 func (uc *UserCreate) SetNillableEmail(s *string) *UserCreate {
 	if s != nil {
 		uc.SetEmail(*s)
+	}
+	return uc
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (uc *UserCreate) SetCloudSpace(i int64) *UserCreate {
+	uc.mutation.SetCloudSpace(i)
+	return uc
+}
+
+// SetNillableCloudSpace sets the "cloud_space" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCloudSpace(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetCloudSpace(*i)
 	}
 	return uc
 }
@@ -890,6 +905,21 @@ func (uc *UserCreate) AddLottoGetCountRecords(l ...*LottoGetCountRecord) *UserCr
 	return uc.AddLottoGetCountRecordIDs(ids...)
 }
 
+// AddCloudFileIDs adds the "cloud_files" edge to the CloudFile entity by IDs.
+func (uc *UserCreate) AddCloudFileIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddCloudFileIDs(ids...)
+	return uc
+}
+
+// AddCloudFiles adds the "cloud_files" edges to the CloudFile entity.
+func (uc *UserCreate) AddCloudFiles(c ...*CloudFile) *UserCreate {
+	ids := make([]int64, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddCloudFileIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -1001,6 +1031,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultEmail
 		uc.mutation.SetEmail(v)
 	}
+	if _, ok := uc.mutation.CloudSpace(); !ok {
+		v := user.DefaultCloudSpace
+		uc.mutation.SetCloudSpace(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1070,6 +1104,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`cep_ent: missing required field "User.email"`)}
+	}
+	if _, ok := uc.mutation.CloudSpace(); !ok {
+		return &ValidationError{Name: "cloud_space", err: errors.New(`cep_ent: missing required field "User.cloud_space"`)}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -1178,6 +1215,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
+	}
+	if value, ok := uc.mutation.CloudSpace(); ok {
+		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
+		_node.CloudSpace = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1772,6 +1813,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := uc.mutation.CloudFilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CloudFilesTable,
+			Columns: []string{user.CloudFilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -2049,6 +2106,24 @@ func (u *UserUpsert) SetEmail(v string) *UserUpsert {
 // UpdateEmail sets the "email" field to the value that was provided on create.
 func (u *UserUpsert) UpdateEmail() *UserUpsert {
 	u.SetExcluded(user.FieldEmail)
+	return u
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (u *UserUpsert) SetCloudSpace(v int64) *UserUpsert {
+	u.Set(user.FieldCloudSpace, v)
+	return u
+}
+
+// UpdateCloudSpace sets the "cloud_space" field to the value that was provided on create.
+func (u *UserUpsert) UpdateCloudSpace() *UserUpsert {
+	u.SetExcluded(user.FieldCloudSpace)
+	return u
+}
+
+// AddCloudSpace adds v to the "cloud_space" field.
+func (u *UserUpsert) AddCloudSpace(v int64) *UserUpsert {
+	u.Add(user.FieldCloudSpace, v)
 	return u
 }
 
@@ -2366,6 +2441,27 @@ func (u *UserUpsertOne) SetEmail(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateEmail()
+	})
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (u *UserUpsertOne) SetCloudSpace(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetCloudSpace(v)
+	})
+}
+
+// AddCloudSpace adds v to the "cloud_space" field.
+func (u *UserUpsertOne) AddCloudSpace(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddCloudSpace(v)
+	})
+}
+
+// UpdateCloudSpace sets the "cloud_space" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateCloudSpace() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateCloudSpace()
 	})
 }
 
@@ -2849,6 +2945,27 @@ func (u *UserUpsertBulk) SetEmail(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateEmail()
+	})
+}
+
+// SetCloudSpace sets the "cloud_space" field.
+func (u *UserUpsertBulk) SetCloudSpace(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetCloudSpace(v)
+	})
+}
+
+// AddCloudSpace adds v to the "cloud_space" field.
+func (u *UserUpsertBulk) AddCloudSpace(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddCloudSpace(v)
+	})
+}
+
+// UpdateCloudSpace sets the "cloud_space" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateCloudSpace() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateCloudSpace()
 	})
 }
 

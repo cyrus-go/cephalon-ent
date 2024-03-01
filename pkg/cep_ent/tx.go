@@ -24,6 +24,8 @@ type Tx struct {
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
 	CampaignOrder *CampaignOrderClient
+	// CloudFile is the client for interacting with the CloudFile builders.
+	CloudFile *CloudFileClient
 	// Collect is the client for interacting with the Collect builders.
 	Collect *CollectClient
 	// CostAccount is the client for interacting with the CostAccount builders.
@@ -259,6 +261,7 @@ func (tx *Tx) init() {
 	tx.CDKInfo = NewCDKInfoClient(tx.config)
 	tx.Campaign = NewCampaignClient(tx.config)
 	tx.CampaignOrder = NewCampaignOrderClient(tx.config)
+	tx.CloudFile = NewCloudFileClient(tx.config)
 	tx.Collect = NewCollectClient(tx.config)
 	tx.CostAccount = NewCostAccountClient(tx.config)
 	tx.CostBill = NewCostBillClient(tx.config)

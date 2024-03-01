@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -90,6 +91,7 @@ type UserQuery struct {
 	withLottoRecords          *LottoRecordQuery
 	withLottoUserCounts       *LottoUserCountQuery
 	withLottoGetCountRecords  *LottoGetCountRecordQuery
+	withCloudFiles            *CloudFileQuery
 	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -941,6 +943,28 @@ func (uq *UserQuery) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
 	return query
 }
 
+// QueryCloudFiles chains the current query on the "cloud_files" edge.
+func (uq *UserQuery) QueryCloudFiles() *CloudFileQuery {
+	query := (&CloudFileClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(cloudfile.Table, cloudfile.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CloudFilesTable, user.CloudFilesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1170,6 +1194,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withLottoRecords:          uq.withLottoRecords.Clone(),
 		withLottoUserCounts:       uq.withLottoUserCounts.Clone(),
 		withLottoGetCountRecords:  uq.withLottoGetCountRecords.Clone(),
+		withCloudFiles:            uq.withCloudFiles.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1583,6 +1608,17 @@ func (uq *UserQuery) WithLottoGetCountRecords(opts ...func(*LottoGetCountRecordQ
 	return uq
 }
 
+// WithCloudFiles tells the query-builder to eager-load the nodes that are connected to
+// the "cloud_files" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithCloudFiles(opts ...func(*CloudFileQuery)) *UserQuery {
+	query := (&CloudFileClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withCloudFiles = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1661,7 +1697,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [37]bool{
+		loadedTypes = [38]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1699,6 +1735,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withLottoRecords != nil,
 			uq.withLottoUserCounts != nil,
 			uq.withLottoGetCountRecords != nil,
+			uq.withCloudFiles != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1986,6 +2023,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			func(n *User, e *LottoGetCountRecord) {
 				n.Edges.LottoGetCountRecords = append(n.Edges.LottoGetCountRecords, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withCloudFiles; query != nil {
+		if err := uq.loadCloudFiles(ctx, query, nodes,
+			func(n *User) { n.Edges.CloudFiles = []*CloudFile{} },
+			func(n *User, e *CloudFile) { n.Edges.CloudFiles = append(n.Edges.CloudFiles, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -3079,6 +3123,36 @@ func (uq *UserQuery) loadLottoGetCountRecords(ctx context.Context, query *LottoG
 	}
 	query.Where(predicate.LottoGetCountRecord(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.LottoGetCountRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadCloudFiles(ctx context.Context, query *CloudFileQuery, nodes []*User, init func(*User), assign func(*User, *CloudFile)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(cloudfile.FieldUserID)
+	}
+	query.Where(predicate.CloudFile(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.CloudFilesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -21,6 +21,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaignorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cdkinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/cloudfile"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/collect"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
@@ -89,6 +90,8 @@ type Client struct {
 	Campaign *CampaignClient
 	// CampaignOrder is the client for interacting with the CampaignOrder builders.
 	CampaignOrder *CampaignOrderClient
+	// CloudFile is the client for interacting with the CloudFile builders.
+	CloudFile *CloudFileClient
 	// Collect is the client for interacting with the Collect builders.
 	Collect *CollectClient
 	// CostAccount is the client for interacting with the CostAccount builders.
@@ -206,6 +209,7 @@ func (c *Client) init() {
 	c.CDKInfo = NewCDKInfoClient(c.config)
 	c.Campaign = NewCampaignClient(c.config)
 	c.CampaignOrder = NewCampaignOrderClient(c.config)
+	c.CloudFile = NewCloudFileClient(c.config)
 	c.Collect = NewCollectClient(c.config)
 	c.CostAccount = NewCostAccountClient(c.config)
 	c.CostBill = NewCostBillClient(c.config)
@@ -346,6 +350,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CDKInfo:              NewCDKInfoClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
+		CloudFile:            NewCloudFileClient(cfg),
 		Collect:              NewCollectClient(cfg),
 		CostAccount:          NewCostAccountClient(cfg),
 		CostBill:             NewCostBillClient(cfg),
@@ -420,6 +425,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CDKInfo:              NewCDKInfoClient(cfg),
 		Campaign:             NewCampaignClient(cfg),
 		CampaignOrder:        NewCampaignOrderClient(cfg),
+		CloudFile:            NewCloudFileClient(cfg),
 		Collect:              NewCollectClient(cfg),
 		CostAccount:          NewCostAccountClient(cfg),
 		CostBill:             NewCostBillClient(cfg),
@@ -499,17 +505,17 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
-		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
-		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
-		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
-		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
-		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
-		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount,
+		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
+		c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
+		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
+		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
+		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
+		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder, c.User,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
 	} {
 		n.Use(hooks...)
 	}
@@ -520,17 +526,17 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
-		c.Collect, c.CostAccount, c.CostBill, c.Device, c.DeviceGpuMission, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
-		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog,
-		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
-		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
-		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
-		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
-		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount,
+		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
+		c.DeviceGpuMission, c.EarnBill, c.EnumCondition, c.EnumMissionStatus,
+		c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo,
+		c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
+		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionConsumeOrder,
+		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
+		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder, c.User,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -551,6 +557,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Campaign.mutate(ctx, m)
 	case *CampaignOrderMutation:
 		return c.CampaignOrder.mutate(ctx, m)
+	case *CloudFileMutation:
+		return c.CloudFile.mutate(ctx, m)
 	case *CollectMutation:
 		return c.Collect.mutate(ctx, m)
 	case *CostAccountMutation:
@@ -1737,6 +1745,155 @@ func (c *CampaignOrderClient) mutate(ctx context.Context, m *CampaignOrderMutati
 		return (&CampaignOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown CampaignOrder mutation op: %q", m.Op())
+	}
+}
+
+// CloudFileClient is a client for the CloudFile schema.
+type CloudFileClient struct {
+	config
+}
+
+// NewCloudFileClient returns a client for the CloudFile from the given config.
+func NewCloudFileClient(c config) *CloudFileClient {
+	return &CloudFileClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cloudfile.Hooks(f(g(h())))`.
+func (c *CloudFileClient) Use(hooks ...Hook) {
+	c.hooks.CloudFile = append(c.hooks.CloudFile, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cloudfile.Intercept(f(g(h())))`.
+func (c *CloudFileClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CloudFile = append(c.inters.CloudFile, interceptors...)
+}
+
+// Create returns a builder for creating a CloudFile entity.
+func (c *CloudFileClient) Create() *CloudFileCreate {
+	mutation := newCloudFileMutation(c.config, OpCreate)
+	return &CloudFileCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CloudFile entities.
+func (c *CloudFileClient) CreateBulk(builders ...*CloudFileCreate) *CloudFileCreateBulk {
+	return &CloudFileCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CloudFileClient) MapCreateBulk(slice any, setFunc func(*CloudFileCreate, int)) *CloudFileCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CloudFileCreateBulk{err: fmt.Errorf("calling to CloudFileClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CloudFileCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CloudFileCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CloudFile.
+func (c *CloudFileClient) Update() *CloudFileUpdate {
+	mutation := newCloudFileMutation(c.config, OpUpdate)
+	return &CloudFileUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CloudFileClient) UpdateOne(cf *CloudFile) *CloudFileUpdateOne {
+	mutation := newCloudFileMutation(c.config, OpUpdateOne, withCloudFile(cf))
+	return &CloudFileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CloudFileClient) UpdateOneID(id int64) *CloudFileUpdateOne {
+	mutation := newCloudFileMutation(c.config, OpUpdateOne, withCloudFileID(id))
+	return &CloudFileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CloudFile.
+func (c *CloudFileClient) Delete() *CloudFileDelete {
+	mutation := newCloudFileMutation(c.config, OpDelete)
+	return &CloudFileDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CloudFileClient) DeleteOne(cf *CloudFile) *CloudFileDeleteOne {
+	return c.DeleteOneID(cf.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CloudFileClient) DeleteOneID(id int64) *CloudFileDeleteOne {
+	builder := c.Delete().Where(cloudfile.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CloudFileDeleteOne{builder}
+}
+
+// Query returns a query builder for CloudFile.
+func (c *CloudFileClient) Query() *CloudFileQuery {
+	return &CloudFileQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCloudFile},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CloudFile entity by its id.
+func (c *CloudFileClient) Get(ctx context.Context, id int64) (*CloudFile, error) {
+	return c.Query().Where(cloudfile.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CloudFileClient) GetX(ctx context.Context, id int64) *CloudFile {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a CloudFile.
+func (c *CloudFileClient) QueryUser(cf *CloudFile) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := cf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(cloudfile.Table, cloudfile.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, cloudfile.UserTable, cloudfile.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(cf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CloudFileClient) Hooks() []Hook {
+	return c.hooks.CloudFile
+}
+
+// Interceptors returns the client interceptors.
+func (c *CloudFileClient) Interceptors() []Interceptor {
+	return c.inters.CloudFile
+}
+
+func (c *CloudFileClient) mutate(ctx context.Context, m *CloudFileMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CloudFileCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CloudFileUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CloudFileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CloudFileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown CloudFile mutation op: %q", m.Op())
 	}
 }
 
@@ -10127,6 +10284,22 @@ func (c *UserClient) QueryLottoGetCountRecords(u *User) *LottoGetCountRecordQuer
 	return query
 }
 
+// QueryCloudFiles queries the cloud_files edge of a User.
+func (c *UserClient) QueryCloudFiles(u *User) *CloudFileQuery {
+	query := (&CloudFileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(cloudfile.Table, cloudfile.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CloudFilesTable, user.CloudFilesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -10964,29 +11137,29 @@ func (c *WithdrawAccountClient) mutate(ctx context.Context, m *WithdrawAccountMu
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
-		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
-		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
-		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Lotto,
-		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
-		Mission, MissionBatch, MissionConsumeOrder, MissionExtraService,
-		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Symbol,
-		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet,
-		WithdrawAccount []ent.Hook
+		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
+		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
+		EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
+		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite,
+		LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize,
+		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionConsumeOrder,
+		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
+		Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
-		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, Collect,
-		CostAccount, CostBill, Device, DeviceGpuMission, EarnBill, EnumCondition,
-		EnumMissionStatus, ExtraService, ExtraServiceOrder, ExtraServicePrice,
-		FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite, LoginRecord, Lotto,
-		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
-		Mission, MissionBatch, MissionConsumeOrder, MissionExtraService,
-		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Symbol,
-		TransferOrder, User, UserDevice, VXAccount, VXSocial, Wallet,
-		WithdrawAccount []ent.Interceptor
+		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
+		Collect, CostAccount, CostBill, Device, DeviceGpuMission, EarnBill,
+		EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
+		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite,
+		LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize,
+		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionConsumeOrder,
+		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
+		Wallet, WithdrawAccount []ent.Interceptor
 	}
 )

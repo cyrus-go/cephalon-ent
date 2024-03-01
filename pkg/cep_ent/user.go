@@ -59,6 +59,8 @@ type User struct {
 	AreaCode string `json:"area_code"`
 	// 邮箱
 	Email string `json:"email"'`
+	// 云盘空间
+	CloudSpace int64 `json:"cloud_space"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -141,9 +143,11 @@ type UserEdges struct {
 	LottoUserCounts []*LottoUserCount `json:"lotto_user_counts,omitempty"`
 	// LottoGetCountRecords holds the value of the lotto_get_count_records edge.
 	LottoGetCountRecords []*LottoGetCountRecord `json:"lotto_get_count_records,omitempty"`
+	// CloudFiles holds the value of the cloud_files edge.
+	CloudFiles []*CloudFile `json:"cloud_files,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [37]bool
+	loadedTypes [38]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -495,6 +499,15 @@ func (e UserEdges) LottoGetCountRecordsOrErr() ([]*LottoGetCountRecord, error) {
 	return nil, &NotLoadedError{edge: "lotto_get_count_records"}
 }
 
+// CloudFilesOrErr returns the CloudFiles value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) CloudFilesOrErr() ([]*CloudFile, error) {
+	if e.loadedTypes[37] {
+		return e.CloudFiles, nil
+	}
+	return nil, &NotLoadedError{edge: "cloud_files"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -502,7 +515,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsFrozen, user.FieldIsRecharge:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldCloudSpace:
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail:
 			values[i] = new(sql.NullString)
@@ -642,6 +655,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
 				u.Email = value.String
+			}
+		case user.FieldCloudSpace:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cloud_space", values[i])
+			} else if value.Valid {
+				u.CloudSpace = value.Int64
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -841,6 +860,11 @@ func (u *User) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
 	return NewUserClient(u.config).QueryLottoGetCountRecords(u)
 }
 
+// QueryCloudFiles queries the "cloud_files" edge of the User entity.
+func (u *User) QueryCloudFiles() *CloudFileQuery {
+	return NewUserClient(u.config).QueryCloudFiles(u)
+}
+
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -918,6 +942,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
+	builder.WriteString(", ")
+	builder.WriteString("cloud_space=")
+	builder.WriteString(fmt.Sprintf("%v", u.CloudSpace))
 	builder.WriteByte(')')
 	return builder.String()
 }
