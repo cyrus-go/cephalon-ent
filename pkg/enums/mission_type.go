@@ -66,8 +66,8 @@ const (
 	MissionTypeSvdBackTimePlan    MissionType = "svd_back_time_plan"
 	MissionTypeSdJiTimePlan       MissionType = "sd_ji_time_plan"
 	MissionTypeSdShangJinTimePlan MissionType = "sd_shang_jin_time_plan"
-	TaskTypeWaitingTime           MissionType = "waiting_time"      //等待任务
-	TaskTypeWaitingTimePlan       MissionType = "waiting_time_plan" //等待任务
+	MissionTypeWaitingTime        MissionType = "waiting_time"      //等待任务
+	MissionTypeWaitingTimePlan    MissionType = "waiting_time_plan" //等待任务
 )
 
 func (obj MissionType) Values() []string {
@@ -134,8 +134,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdJiTimePlan),
 		string(MissionTypeSdShangJinTime),
 		string(MissionTypeSdShangJinTimePlan),
-		string(TaskTypeWaitingTime),
-		string(TaskTypeWaitingTimePlan),
+		string(MissionTypeWaitingTime),
+		string(MissionTypeWaitingTimePlan),
 	}
 }
 
