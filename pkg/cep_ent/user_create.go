@@ -334,6 +334,20 @@ func (uc *UserCreate) SetNillableCloudSpace(i *int64) *UserCreate {
 	return uc
 }
 
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (uc *UserCreate) SetBaiduRefreshToken(s string) *UserCreate {
+	uc.mutation.SetBaiduRefreshToken(s)
+	return uc
+}
+
+// SetNillableBaiduRefreshToken sets the "baidu_refresh_token" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBaiduRefreshToken(s *string) *UserCreate {
+	if s != nil {
+		uc.SetBaiduRefreshToken(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1035,6 +1049,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultCloudSpace
 		uc.mutation.SetCloudSpace(v)
 	}
+	if _, ok := uc.mutation.BaiduRefreshToken(); !ok {
+		v := user.DefaultBaiduRefreshToken
+		uc.mutation.SetBaiduRefreshToken(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1107,6 +1125,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.CloudSpace(); !ok {
 		return &ValidationError{Name: "cloud_space", err: errors.New(`cep_ent: missing required field "User.cloud_space"`)}
+	}
+	if _, ok := uc.mutation.BaiduRefreshToken(); !ok {
+		return &ValidationError{Name: "baidu_refresh_token", err: errors.New(`cep_ent: missing required field "User.baidu_refresh_token"`)}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -1219,6 +1240,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
 		_node.CloudSpace = value
+	}
+	if value, ok := uc.mutation.BaiduRefreshToken(); ok {
+		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
+		_node.BaiduRefreshToken = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2127,6 +2152,18 @@ func (u *UserUpsert) AddCloudSpace(v int64) *UserUpsert {
 	return u
 }
 
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (u *UserUpsert) SetBaiduRefreshToken(v string) *UserUpsert {
+	u.Set(user.FieldBaiduRefreshToken, v)
+	return u
+}
+
+// UpdateBaiduRefreshToken sets the "baidu_refresh_token" field to the value that was provided on create.
+func (u *UserUpsert) UpdateBaiduRefreshToken() *UserUpsert {
+	u.SetExcluded(user.FieldBaiduRefreshToken)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2462,6 +2499,20 @@ func (u *UserUpsertOne) AddCloudSpace(v int64) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateCloudSpace() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateCloudSpace()
+	})
+}
+
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (u *UserUpsertOne) SetBaiduRefreshToken(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetBaiduRefreshToken(v)
+	})
+}
+
+// UpdateBaiduRefreshToken sets the "baidu_refresh_token" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateBaiduRefreshToken() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateBaiduRefreshToken()
 	})
 }
 
@@ -2966,6 +3017,20 @@ func (u *UserUpsertBulk) AddCloudSpace(v int64) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateCloudSpace() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateCloudSpace()
+	})
+}
+
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (u *UserUpsertBulk) SetBaiduRefreshToken(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetBaiduRefreshToken(v)
+	})
+}
+
+// UpdateBaiduRefreshToken sets the "baidu_refresh_token" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateBaiduRefreshToken() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateBaiduRefreshToken()
 	})
 }
 

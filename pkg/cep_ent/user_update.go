@@ -340,6 +340,20 @@ func (uu *UserUpdate) AddCloudSpace(i int64) *UserUpdate {
 	return uu
 }
 
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (uu *UserUpdate) SetBaiduRefreshToken(s string) *UserUpdate {
+	uu.mutation.SetBaiduRefreshToken(s)
+	return uu
+}
+
+// SetNillableBaiduRefreshToken sets the "baidu_refresh_token" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableBaiduRefreshToken(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetBaiduRefreshToken(*s)
+	}
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -1784,6 +1798,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.AddedCloudSpace(); ok {
 		_spec.AddField(user.FieldCloudSpace, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.BaiduRefreshToken(); ok {
+		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -3732,6 +3749,20 @@ func (uuo *UserUpdateOne) AddCloudSpace(i int64) *UserUpdateOne {
 	return uuo
 }
 
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (uuo *UserUpdateOne) SetBaiduRefreshToken(s string) *UserUpdateOne {
+	uuo.mutation.SetBaiduRefreshToken(s)
+	return uuo
+}
+
+// SetNillableBaiduRefreshToken sets the "baidu_refresh_token" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableBaiduRefreshToken(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetBaiduRefreshToken(*s)
+	}
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -5206,6 +5237,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.AddedCloudSpace(); ok {
 		_spec.AddField(user.FieldCloudSpace, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.BaiduRefreshToken(); ok {
+		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

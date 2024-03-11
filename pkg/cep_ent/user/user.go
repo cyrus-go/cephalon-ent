@@ -55,6 +55,8 @@ const (
 	FieldEmail = "email"
 	// FieldCloudSpace holds the string denoting the cloud_space field in the database.
 	FieldCloudSpace = "cloud_space"
+	// FieldBaiduRefreshToken holds the string denoting the baidu_refresh_token field in the database.
+	FieldBaiduRefreshToken = "baidu_refresh_token"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -418,6 +420,7 @@ var Columns = []string{
 	FieldAreaCode,
 	FieldEmail,
 	FieldCloudSpace,
+	FieldBaiduRefreshToken,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -471,6 +474,8 @@ var (
 	DefaultEmail string
 	// DefaultCloudSpace holds the default value on creation for the "cloud_space" field.
 	DefaultCloudSpace int64
+	// DefaultBaiduRefreshToken holds the default value on creation for the "baidu_refresh_token" field.
+	DefaultBaiduRefreshToken string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -607,6 +612,11 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByCloudSpace orders the results by the cloud_space field.
 func ByCloudSpace(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCloudSpace, opts...).ToFunc()
+}
+
+// ByBaiduRefreshToken orders the results by the baidu_refresh_token field.
+func ByBaiduRefreshToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBaiduRefreshToken, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

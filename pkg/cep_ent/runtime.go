@@ -2913,6 +2913,10 @@ func init() {
 	userDescCloudSpace := userFields[14].Descriptor()
 	// user.DefaultCloudSpace holds the default value on creation for the cloud_space field.
 	user.DefaultCloudSpace = userDescCloudSpace.Default.(int64)
+	// userDescBaiduRefreshToken is the schema descriptor for baidu_refresh_token field.
+	userDescBaiduRefreshToken := userFields[15].Descriptor()
+	// user.DefaultBaiduRefreshToken holds the default value on creation for the baidu_refresh_token field.
+	user.DefaultBaiduRefreshToken = userDescBaiduRefreshToken.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

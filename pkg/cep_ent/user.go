@@ -61,6 +61,8 @@ type User struct {
 	Email string `json:"email"'`
 	// 云盘空间
 	CloudSpace int64 `json:"cloud_space"`
+	// 百度网盘刷新 token
+	BaiduRefreshToken string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -517,7 +519,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldCloudSpace:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail:
+		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduRefreshToken:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -661,6 +663,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field cloud_space", values[i])
 			} else if value.Valid {
 				u.CloudSpace = value.Int64
+			}
+		case user.FieldBaiduRefreshToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field baidu_refresh_token", values[i])
+			} else if value.Valid {
+				u.BaiduRefreshToken = value.String
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -945,6 +953,8 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cloud_space=")
 	builder.WriteString(fmt.Sprintf("%v", u.CloudSpace))
+	builder.WriteString(", ")
+	builder.WriteString("baidu_refresh_token=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }

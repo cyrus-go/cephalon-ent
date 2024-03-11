@@ -65531,6 +65531,7 @@ type UserMutation struct {
 	email                          *string
 	cloud_space                    *int64
 	addcloud_space                 *int64
+	baidu_refresh_token            *string
 	clearedFields                  map[string]struct{}
 	vx_accounts                    map[int64]struct{}
 	removedvx_accounts             map[int64]struct{}
@@ -66529,6 +66530,42 @@ func (m *UserMutation) AddedCloudSpace() (r int64, exists bool) {
 func (m *UserMutation) ResetCloudSpace() {
 	m.cloud_space = nil
 	m.addcloud_space = nil
+}
+
+// SetBaiduRefreshToken sets the "baidu_refresh_token" field.
+func (m *UserMutation) SetBaiduRefreshToken(s string) {
+	m.baidu_refresh_token = &s
+}
+
+// BaiduRefreshToken returns the value of the "baidu_refresh_token" field in the mutation.
+func (m *UserMutation) BaiduRefreshToken() (r string, exists bool) {
+	v := m.baidu_refresh_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBaiduRefreshToken returns the old "baidu_refresh_token" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldBaiduRefreshToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBaiduRefreshToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBaiduRefreshToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBaiduRefreshToken: %w", err)
+	}
+	return oldValue.BaiduRefreshToken, nil
+}
+
+// ResetBaiduRefreshToken resets all changes to the "baidu_refresh_token" field.
+func (m *UserMutation) ResetBaiduRefreshToken() {
+	m.baidu_refresh_token = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -68545,7 +68582,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -68606,6 +68643,9 @@ func (m *UserMutation) Fields() []string {
 	if m.cloud_space != nil {
 		fields = append(fields, user.FieldCloudSpace)
 	}
+	if m.baidu_refresh_token != nil {
+		fields = append(fields, user.FieldBaiduRefreshToken)
+	}
 	return fields
 }
 
@@ -68654,6 +68694,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Email()
 	case user.FieldCloudSpace:
 		return m.CloudSpace()
+	case user.FieldBaiduRefreshToken:
+		return m.BaiduRefreshToken()
 	}
 	return nil, false
 }
@@ -68703,6 +68745,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEmail(ctx)
 	case user.FieldCloudSpace:
 		return m.OldCloudSpace(ctx)
+	case user.FieldBaiduRefreshToken:
+		return m.OldBaiduRefreshToken(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -68852,6 +68896,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCloudSpace(v)
 		return nil
+	case user.FieldBaiduRefreshToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBaiduRefreshToken(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -68999,6 +69050,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldCloudSpace:
 		m.ResetCloudSpace()
+		return nil
+	case user.FieldBaiduRefreshToken:
+		m.ResetBaiduRefreshToken()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
