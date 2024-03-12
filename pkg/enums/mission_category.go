@@ -30,6 +30,7 @@ const (
 	MissionCategorySvdBack    MissionCategory = "SVD_BACK"
 	MissionCategorySDJi       MissionCategory = "SD_JI"
 	MissionCategorySDShangJin MissionCategory = "SD_SHANG_JIN"
+	MissionCategoryWaiting    MissionCategory = "WAITING"
 )
 
 func (obj MissionCategory) Values() []string {
@@ -61,6 +62,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategorySvdBack),
 		string(MissionCategorySDJi),
 		string(MissionCategorySDShangJin),
+		string(MissionCategoryWaiting),
 	}
 }
 
