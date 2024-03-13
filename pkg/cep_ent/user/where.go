@@ -150,6 +150,11 @@ func CloudSpace(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCloudSpace, v))
 }
 
+// BaiduAccessToken applies equality check predicate on the "baidu_access_token" field. It's identical to BaiduAccessTokenEQ.
+func BaiduAccessToken(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldBaiduAccessToken, v))
+}
+
 // BaiduRefreshToken applies equality check predicate on the "baidu_refresh_token" field. It's identical to BaiduRefreshTokenEQ.
 func BaiduRefreshToken(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBaiduRefreshToken, v))
@@ -1103,6 +1108,71 @@ func CloudSpaceLT(v int64) predicate.User {
 // CloudSpaceLTE applies the LTE predicate on the "cloud_space" field.
 func CloudSpaceLTE(v int64) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldCloudSpace, v))
+}
+
+// BaiduAccessTokenEQ applies the EQ predicate on the "baidu_access_token" field.
+func BaiduAccessTokenEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenNEQ applies the NEQ predicate on the "baidu_access_token" field.
+func BaiduAccessTokenNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenIn applies the In predicate on the "baidu_access_token" field.
+func BaiduAccessTokenIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldBaiduAccessToken, vs...))
+}
+
+// BaiduAccessTokenNotIn applies the NotIn predicate on the "baidu_access_token" field.
+func BaiduAccessTokenNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldBaiduAccessToken, vs...))
+}
+
+// BaiduAccessTokenGT applies the GT predicate on the "baidu_access_token" field.
+func BaiduAccessTokenGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenGTE applies the GTE predicate on the "baidu_access_token" field.
+func BaiduAccessTokenGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenLT applies the LT predicate on the "baidu_access_token" field.
+func BaiduAccessTokenLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenLTE applies the LTE predicate on the "baidu_access_token" field.
+func BaiduAccessTokenLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenContains applies the Contains predicate on the "baidu_access_token" field.
+func BaiduAccessTokenContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenHasPrefix applies the HasPrefix predicate on the "baidu_access_token" field.
+func BaiduAccessTokenHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenHasSuffix applies the HasSuffix predicate on the "baidu_access_token" field.
+func BaiduAccessTokenHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenEqualFold applies the EqualFold predicate on the "baidu_access_token" field.
+func BaiduAccessTokenEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldBaiduAccessToken, v))
+}
+
+// BaiduAccessTokenContainsFold applies the ContainsFold predicate on the "baidu_access_token" field.
+func BaiduAccessTokenContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldBaiduAccessToken, v))
 }
 
 // BaiduRefreshTokenEQ applies the EQ predicate on the "baidu_refresh_token" field.

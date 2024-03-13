@@ -334,6 +334,20 @@ func (uc *UserCreate) SetNillableCloudSpace(i *int64) *UserCreate {
 	return uc
 }
 
+// SetBaiduAccessToken sets the "baidu_access_token" field.
+func (uc *UserCreate) SetBaiduAccessToken(s string) *UserCreate {
+	uc.mutation.SetBaiduAccessToken(s)
+	return uc
+}
+
+// SetNillableBaiduAccessToken sets the "baidu_access_token" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBaiduAccessToken(s *string) *UserCreate {
+	if s != nil {
+		uc.SetBaiduAccessToken(*s)
+	}
+	return uc
+}
+
 // SetBaiduRefreshToken sets the "baidu_refresh_token" field.
 func (uc *UserCreate) SetBaiduRefreshToken(s string) *UserCreate {
 	uc.mutation.SetBaiduRefreshToken(s)
@@ -1049,6 +1063,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultCloudSpace
 		uc.mutation.SetCloudSpace(v)
 	}
+	if _, ok := uc.mutation.BaiduAccessToken(); !ok {
+		v := user.DefaultBaiduAccessToken
+		uc.mutation.SetBaiduAccessToken(v)
+	}
 	if _, ok := uc.mutation.BaiduRefreshToken(); !ok {
 		v := user.DefaultBaiduRefreshToken
 		uc.mutation.SetBaiduRefreshToken(v)
@@ -1125,6 +1143,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.CloudSpace(); !ok {
 		return &ValidationError{Name: "cloud_space", err: errors.New(`cep_ent: missing required field "User.cloud_space"`)}
+	}
+	if _, ok := uc.mutation.BaiduAccessToken(); !ok {
+		return &ValidationError{Name: "baidu_access_token", err: errors.New(`cep_ent: missing required field "User.baidu_access_token"`)}
 	}
 	if _, ok := uc.mutation.BaiduRefreshToken(); !ok {
 		return &ValidationError{Name: "baidu_refresh_token", err: errors.New(`cep_ent: missing required field "User.baidu_refresh_token"`)}
@@ -1240,6 +1261,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.CloudSpace(); ok {
 		_spec.SetField(user.FieldCloudSpace, field.TypeInt64, value)
 		_node.CloudSpace = value
+	}
+	if value, ok := uc.mutation.BaiduAccessToken(); ok {
+		_spec.SetField(user.FieldBaiduAccessToken, field.TypeString, value)
+		_node.BaiduAccessToken = value
 	}
 	if value, ok := uc.mutation.BaiduRefreshToken(); ok {
 		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
@@ -2152,6 +2177,18 @@ func (u *UserUpsert) AddCloudSpace(v int64) *UserUpsert {
 	return u
 }
 
+// SetBaiduAccessToken sets the "baidu_access_token" field.
+func (u *UserUpsert) SetBaiduAccessToken(v string) *UserUpsert {
+	u.Set(user.FieldBaiduAccessToken, v)
+	return u
+}
+
+// UpdateBaiduAccessToken sets the "baidu_access_token" field to the value that was provided on create.
+func (u *UserUpsert) UpdateBaiduAccessToken() *UserUpsert {
+	u.SetExcluded(user.FieldBaiduAccessToken)
+	return u
+}
+
 // SetBaiduRefreshToken sets the "baidu_refresh_token" field.
 func (u *UserUpsert) SetBaiduRefreshToken(v string) *UserUpsert {
 	u.Set(user.FieldBaiduRefreshToken, v)
@@ -2499,6 +2536,20 @@ func (u *UserUpsertOne) AddCloudSpace(v int64) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateCloudSpace() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateCloudSpace()
+	})
+}
+
+// SetBaiduAccessToken sets the "baidu_access_token" field.
+func (u *UserUpsertOne) SetBaiduAccessToken(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetBaiduAccessToken(v)
+	})
+}
+
+// UpdateBaiduAccessToken sets the "baidu_access_token" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateBaiduAccessToken() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateBaiduAccessToken()
 	})
 }
 
@@ -3017,6 +3068,20 @@ func (u *UserUpsertBulk) AddCloudSpace(v int64) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateCloudSpace() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateCloudSpace()
+	})
+}
+
+// SetBaiduAccessToken sets the "baidu_access_token" field.
+func (u *UserUpsertBulk) SetBaiduAccessToken(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetBaiduAccessToken(v)
+	})
+}
+
+// UpdateBaiduAccessToken sets the "baidu_access_token" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateBaiduAccessToken() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateBaiduAccessToken()
 	})
 }
 

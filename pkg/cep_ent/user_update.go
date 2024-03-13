@@ -340,6 +340,20 @@ func (uu *UserUpdate) AddCloudSpace(i int64) *UserUpdate {
 	return uu
 }
 
+// SetBaiduAccessToken sets the "baidu_access_token" field.
+func (uu *UserUpdate) SetBaiduAccessToken(s string) *UserUpdate {
+	uu.mutation.SetBaiduAccessToken(s)
+	return uu
+}
+
+// SetNillableBaiduAccessToken sets the "baidu_access_token" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableBaiduAccessToken(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetBaiduAccessToken(*s)
+	}
+	return uu
+}
+
 // SetBaiduRefreshToken sets the "baidu_refresh_token" field.
 func (uu *UserUpdate) SetBaiduRefreshToken(s string) *UserUpdate {
 	uu.mutation.SetBaiduRefreshToken(s)
@@ -1798,6 +1812,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.AddedCloudSpace(); ok {
 		_spec.AddField(user.FieldCloudSpace, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.BaiduAccessToken(); ok {
+		_spec.SetField(user.FieldBaiduAccessToken, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.BaiduRefreshToken(); ok {
 		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
@@ -3749,6 +3766,20 @@ func (uuo *UserUpdateOne) AddCloudSpace(i int64) *UserUpdateOne {
 	return uuo
 }
 
+// SetBaiduAccessToken sets the "baidu_access_token" field.
+func (uuo *UserUpdateOne) SetBaiduAccessToken(s string) *UserUpdateOne {
+	uuo.mutation.SetBaiduAccessToken(s)
+	return uuo
+}
+
+// SetNillableBaiduAccessToken sets the "baidu_access_token" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableBaiduAccessToken(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetBaiduAccessToken(*s)
+	}
+	return uuo
+}
+
 // SetBaiduRefreshToken sets the "baidu_refresh_token" field.
 func (uuo *UserUpdateOne) SetBaiduRefreshToken(s string) *UserUpdateOne {
 	uuo.mutation.SetBaiduRefreshToken(s)
@@ -5237,6 +5268,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.AddedCloudSpace(); ok {
 		_spec.AddField(user.FieldCloudSpace, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.BaiduAccessToken(); ok {
+		_spec.SetField(user.FieldBaiduAccessToken, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.BaiduRefreshToken(); ok {
 		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
