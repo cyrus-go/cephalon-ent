@@ -859,6 +859,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "tag", Type: field.TypeString, Comment: "ini 文件服务端 tag", Default: ""},
+		{Name: "domain", Type: field.TypeString, Comment: "域名", Default: ""},
 		{Name: "server_addr", Type: field.TypeString, Comment: "frps 服务地址", Default: ""},
 		{Name: "server_port", Type: field.TypeInt, Comment: "frps 服务端口", Default: 0},
 		{Name: "authentication_method", Type: field.TypeString, Comment: "frps 认证方式", Default: ""},

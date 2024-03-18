@@ -1170,24 +1170,28 @@ func init() {
 	frpsinfoDescTag := frpsinfoFields[0].Descriptor()
 	// frpsinfo.DefaultTag holds the default value on creation for the tag field.
 	frpsinfo.DefaultTag = frpsinfoDescTag.Default.(string)
+	// frpsinfoDescDomain is the schema descriptor for domain field.
+	frpsinfoDescDomain := frpsinfoFields[1].Descriptor()
+	// frpsinfo.DefaultDomain holds the default value on creation for the domain field.
+	frpsinfo.DefaultDomain = frpsinfoDescDomain.Default.(string)
 	// frpsinfoDescServerAddr is the schema descriptor for server_addr field.
-	frpsinfoDescServerAddr := frpsinfoFields[1].Descriptor()
+	frpsinfoDescServerAddr := frpsinfoFields[2].Descriptor()
 	// frpsinfo.DefaultServerAddr holds the default value on creation for the server_addr field.
 	frpsinfo.DefaultServerAddr = frpsinfoDescServerAddr.Default.(string)
 	// frpsinfoDescServerPort is the schema descriptor for server_port field.
-	frpsinfoDescServerPort := frpsinfoFields[2].Descriptor()
+	frpsinfoDescServerPort := frpsinfoFields[3].Descriptor()
 	// frpsinfo.DefaultServerPort holds the default value on creation for the server_port field.
 	frpsinfo.DefaultServerPort = frpsinfoDescServerPort.Default.(int)
 	// frpsinfoDescAuthenticationMethod is the schema descriptor for authentication_method field.
-	frpsinfoDescAuthenticationMethod := frpsinfoFields[3].Descriptor()
+	frpsinfoDescAuthenticationMethod := frpsinfoFields[4].Descriptor()
 	// frpsinfo.DefaultAuthenticationMethod holds the default value on creation for the authentication_method field.
 	frpsinfo.DefaultAuthenticationMethod = frpsinfoDescAuthenticationMethod.Default.(string)
 	// frpsinfoDescToken is the schema descriptor for token field.
-	frpsinfoDescToken := frpsinfoFields[4].Descriptor()
+	frpsinfoDescToken := frpsinfoFields[5].Descriptor()
 	// frpsinfo.DefaultToken holds the default value on creation for the token field.
 	frpsinfo.DefaultToken = frpsinfoDescToken.Default.(string)
 	// frpsinfoDescType is the schema descriptor for type field.
-	frpsinfoDescType := frpsinfoFields[5].Descriptor()
+	frpsinfoDescType := frpsinfoFields[6].Descriptor()
 	// frpsinfo.DefaultType holds the default value on creation for the type field.
 	frpsinfo.DefaultType = frpsinfoDescType.Default.(string)
 	// frpsinfoDescID is the schema descriptor for id field.

@@ -24481,6 +24481,7 @@ type FrpsInfoMutation struct {
 	updated_at            *time.Time
 	deleted_at            *time.Time
 	tag                   *string
+	domain                *string
 	server_addr           *string
 	server_port           *int
 	addserver_port        *int
@@ -24856,6 +24857,42 @@ func (m *FrpsInfoMutation) ResetTag() {
 	m.tag = nil
 }
 
+// SetDomain sets the "domain" field.
+func (m *FrpsInfoMutation) SetDomain(s string) {
+	m.domain = &s
+}
+
+// Domain returns the value of the "domain" field in the mutation.
+func (m *FrpsInfoMutation) Domain() (r string, exists bool) {
+	v := m.domain
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDomain returns the old "domain" field's value of the FrpsInfo entity.
+// If the FrpsInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FrpsInfoMutation) OldDomain(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDomain is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDomain requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDomain: %w", err)
+	}
+	return oldValue.Domain, nil
+}
+
+// ResetDomain resets all changes to the "domain" field.
+func (m *FrpsInfoMutation) ResetDomain() {
+	m.domain = nil
+}
+
 // SetServerAddr sets the "server_addr" field.
 func (m *FrpsInfoMutation) SetServerAddr(s string) {
 	m.server_addr = &s
@@ -25144,7 +25181,7 @@ func (m *FrpsInfoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FrpsInfoMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, frpsinfo.FieldCreatedBy)
 	}
@@ -25162,6 +25199,9 @@ func (m *FrpsInfoMutation) Fields() []string {
 	}
 	if m.tag != nil {
 		fields = append(fields, frpsinfo.FieldTag)
+	}
+	if m.domain != nil {
+		fields = append(fields, frpsinfo.FieldDomain)
 	}
 	if m.server_addr != nil {
 		fields = append(fields, frpsinfo.FieldServerAddr)
@@ -25198,6 +25238,8 @@ func (m *FrpsInfoMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case frpsinfo.FieldTag:
 		return m.Tag()
+	case frpsinfo.FieldDomain:
+		return m.Domain()
 	case frpsinfo.FieldServerAddr:
 		return m.ServerAddr()
 	case frpsinfo.FieldServerPort:
@@ -25229,6 +25271,8 @@ func (m *FrpsInfoMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDeletedAt(ctx)
 	case frpsinfo.FieldTag:
 		return m.OldTag(ctx)
+	case frpsinfo.FieldDomain:
+		return m.OldDomain(ctx)
 	case frpsinfo.FieldServerAddr:
 		return m.OldServerAddr(ctx)
 	case frpsinfo.FieldServerPort:
@@ -25289,6 +25333,13 @@ func (m *FrpsInfoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTag(v)
+		return nil
+	case frpsinfo.FieldDomain:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDomain(v)
 		return nil
 	case frpsinfo.FieldServerAddr:
 		v, ok := value.(string)
@@ -25430,6 +25481,9 @@ func (m *FrpsInfoMutation) ResetField(name string) error {
 		return nil
 	case frpsinfo.FieldTag:
 		m.ResetTag()
+		return nil
+	case frpsinfo.FieldDomain:
+		m.ResetDomain()
 		return nil
 	case frpsinfo.FieldServerAddr:
 		m.ResetServerAddr()

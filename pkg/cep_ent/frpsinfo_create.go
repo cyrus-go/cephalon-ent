@@ -107,6 +107,20 @@ func (fic *FrpsInfoCreate) SetNillableTag(s *string) *FrpsInfoCreate {
 	return fic
 }
 
+// SetDomain sets the "domain" field.
+func (fic *FrpsInfoCreate) SetDomain(s string) *FrpsInfoCreate {
+	fic.mutation.SetDomain(s)
+	return fic
+}
+
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (fic *FrpsInfoCreate) SetNillableDomain(s *string) *FrpsInfoCreate {
+	if s != nil {
+		fic.SetDomain(*s)
+	}
+	return fic
+}
+
 // SetServerAddr sets the "server_addr" field.
 func (fic *FrpsInfoCreate) SetServerAddr(s string) *FrpsInfoCreate {
 	fic.mutation.SetServerAddr(s)
@@ -265,6 +279,10 @@ func (fic *FrpsInfoCreate) defaults() {
 		v := frpsinfo.DefaultTag
 		fic.mutation.SetTag(v)
 	}
+	if _, ok := fic.mutation.Domain(); !ok {
+		v := frpsinfo.DefaultDomain
+		fic.mutation.SetDomain(v)
+	}
 	if _, ok := fic.mutation.ServerAddr(); !ok {
 		v := frpsinfo.DefaultServerAddr
 		fic.mutation.SetServerAddr(v)
@@ -310,6 +328,9 @@ func (fic *FrpsInfoCreate) check() error {
 	}
 	if _, ok := fic.mutation.Tag(); !ok {
 		return &ValidationError{Name: "tag", err: errors.New(`cep_ent: missing required field "FrpsInfo.tag"`)}
+	}
+	if _, ok := fic.mutation.Domain(); !ok {
+		return &ValidationError{Name: "domain", err: errors.New(`cep_ent: missing required field "FrpsInfo.domain"`)}
 	}
 	if _, ok := fic.mutation.ServerAddr(); !ok {
 		return &ValidationError{Name: "server_addr", err: errors.New(`cep_ent: missing required field "FrpsInfo.server_addr"`)}
@@ -382,6 +403,10 @@ func (fic *FrpsInfoCreate) createSpec() (*FrpsInfo, *sqlgraph.CreateSpec) {
 	if value, ok := fic.mutation.Tag(); ok {
 		_spec.SetField(frpsinfo.FieldTag, field.TypeString, value)
 		_node.Tag = value
+	}
+	if value, ok := fic.mutation.Domain(); ok {
+		_spec.SetField(frpsinfo.FieldDomain, field.TypeString, value)
+		_node.Domain = value
 	}
 	if value, ok := fic.mutation.ServerAddr(); ok {
 		_spec.SetField(frpsinfo.FieldServerAddr, field.TypeString, value)
@@ -540,6 +565,18 @@ func (u *FrpsInfoUpsert) SetTag(v string) *FrpsInfoUpsert {
 // UpdateTag sets the "tag" field to the value that was provided on create.
 func (u *FrpsInfoUpsert) UpdateTag() *FrpsInfoUpsert {
 	u.SetExcluded(frpsinfo.FieldTag)
+	return u
+}
+
+// SetDomain sets the "domain" field.
+func (u *FrpsInfoUpsert) SetDomain(v string) *FrpsInfoUpsert {
+	u.Set(frpsinfo.FieldDomain, v)
+	return u
+}
+
+// UpdateDomain sets the "domain" field to the value that was provided on create.
+func (u *FrpsInfoUpsert) UpdateDomain() *FrpsInfoUpsert {
+	u.SetExcluded(frpsinfo.FieldDomain)
 	return u
 }
 
@@ -741,6 +778,20 @@ func (u *FrpsInfoUpsertOne) SetTag(v string) *FrpsInfoUpsertOne {
 func (u *FrpsInfoUpsertOne) UpdateTag() *FrpsInfoUpsertOne {
 	return u.Update(func(s *FrpsInfoUpsert) {
 		s.UpdateTag()
+	})
+}
+
+// SetDomain sets the "domain" field.
+func (u *FrpsInfoUpsertOne) SetDomain(v string) *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetDomain(v)
+	})
+}
+
+// UpdateDomain sets the "domain" field to the value that was provided on create.
+func (u *FrpsInfoUpsertOne) UpdateDomain() *FrpsInfoUpsertOne {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateDomain()
 	})
 }
 
@@ -1119,6 +1170,20 @@ func (u *FrpsInfoUpsertBulk) SetTag(v string) *FrpsInfoUpsertBulk {
 func (u *FrpsInfoUpsertBulk) UpdateTag() *FrpsInfoUpsertBulk {
 	return u.Update(func(s *FrpsInfoUpsert) {
 		s.UpdateTag()
+	})
+}
+
+// SetDomain sets the "domain" field.
+func (u *FrpsInfoUpsertBulk) SetDomain(v string) *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.SetDomain(v)
+	})
+}
+
+// UpdateDomain sets the "domain" field to the value that was provided on create.
+func (u *FrpsInfoUpsertBulk) UpdateDomain() *FrpsInfoUpsertBulk {
+	return u.Update(func(s *FrpsInfoUpsert) {
+		s.UpdateDomain()
 	})
 }
 

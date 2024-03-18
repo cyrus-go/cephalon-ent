@@ -26,6 +26,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldTag holds the string denoting the tag field in the database.
 	FieldTag = "tag"
+	// FieldDomain holds the string denoting the domain field in the database.
+	FieldDomain = "domain"
 	// FieldServerAddr holds the string denoting the server_addr field in the database.
 	FieldServerAddr = "server_addr"
 	// FieldServerPort holds the string denoting the server_port field in the database.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldTag,
+	FieldDomain,
 	FieldServerAddr,
 	FieldServerPort,
 	FieldAuthenticationMethod,
@@ -90,6 +93,8 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultTag holds the default value on creation for the "tag" field.
 	DefaultTag string
+	// DefaultDomain holds the default value on creation for the "domain" field.
+	DefaultDomain string
 	// DefaultServerAddr holds the default value on creation for the "server_addr" field.
 	DefaultServerAddr string
 	// DefaultServerPort holds the default value on creation for the "server_port" field.
@@ -140,6 +145,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByTag orders the results by the tag field.
 func ByTag(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTag, opts...).ToFunc()
+}
+
+// ByDomain orders the results by the domain field.
+func ByDomain(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDomain, opts...).ToFunc()
 }
 
 // ByServerAddr orders the results by the server_addr field.

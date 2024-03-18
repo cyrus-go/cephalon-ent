@@ -85,6 +85,11 @@ func Tag(v string) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldEQ(FieldTag, v))
 }
 
+// Domain applies equality check predicate on the "domain" field. It's identical to DomainEQ.
+func Domain(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldDomain, v))
+}
+
 // ServerAddr applies equality check predicate on the "server_addr" field. It's identical to ServerAddrEQ.
 func ServerAddr(v string) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldEQ(FieldServerAddr, v))
@@ -373,6 +378,71 @@ func TagEqualFold(v string) predicate.FrpsInfo {
 // TagContainsFold applies the ContainsFold predicate on the "tag" field.
 func TagContainsFold(v string) predicate.FrpsInfo {
 	return predicate.FrpsInfo(sql.FieldContainsFold(FieldTag, v))
+}
+
+// DomainEQ applies the EQ predicate on the "domain" field.
+func DomainEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEQ(FieldDomain, v))
+}
+
+// DomainNEQ applies the NEQ predicate on the "domain" field.
+func DomainNEQ(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNEQ(FieldDomain, v))
+}
+
+// DomainIn applies the In predicate on the "domain" field.
+func DomainIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldIn(FieldDomain, vs...))
+}
+
+// DomainNotIn applies the NotIn predicate on the "domain" field.
+func DomainNotIn(vs ...string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldNotIn(FieldDomain, vs...))
+}
+
+// DomainGT applies the GT predicate on the "domain" field.
+func DomainGT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGT(FieldDomain, v))
+}
+
+// DomainGTE applies the GTE predicate on the "domain" field.
+func DomainGTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldGTE(FieldDomain, v))
+}
+
+// DomainLT applies the LT predicate on the "domain" field.
+func DomainLT(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLT(FieldDomain, v))
+}
+
+// DomainLTE applies the LTE predicate on the "domain" field.
+func DomainLTE(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldLTE(FieldDomain, v))
+}
+
+// DomainContains applies the Contains predicate on the "domain" field.
+func DomainContains(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContains(FieldDomain, v))
+}
+
+// DomainHasPrefix applies the HasPrefix predicate on the "domain" field.
+func DomainHasPrefix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasPrefix(FieldDomain, v))
+}
+
+// DomainHasSuffix applies the HasSuffix predicate on the "domain" field.
+func DomainHasSuffix(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldHasSuffix(FieldDomain, v))
+}
+
+// DomainEqualFold applies the EqualFold predicate on the "domain" field.
+func DomainEqualFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldEqualFold(FieldDomain, v))
+}
+
+// DomainContainsFold applies the ContainsFold predicate on the "domain" field.
+func DomainContainsFold(v string) predicate.FrpsInfo {
+	return predicate.FrpsInfo(sql.FieldContainsFold(FieldDomain, v))
 }
 
 // ServerAddrEQ applies the EQ predicate on the "server_addr" field.

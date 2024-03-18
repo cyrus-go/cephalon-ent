@@ -106,6 +106,20 @@ func (fiu *FrpsInfoUpdate) SetNillableTag(s *string) *FrpsInfoUpdate {
 	return fiu
 }
 
+// SetDomain sets the "domain" field.
+func (fiu *FrpsInfoUpdate) SetDomain(s string) *FrpsInfoUpdate {
+	fiu.mutation.SetDomain(s)
+	return fiu
+}
+
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (fiu *FrpsInfoUpdate) SetNillableDomain(s *string) *FrpsInfoUpdate {
+	if s != nil {
+		fiu.SetDomain(*s)
+	}
+	return fiu
+}
+
 // SetServerAddr sets the "server_addr" field.
 func (fiu *FrpsInfoUpdate) SetServerAddr(s string) *FrpsInfoUpdate {
 	fiu.mutation.SetServerAddr(s)
@@ -296,6 +310,9 @@ func (fiu *FrpsInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := fiu.mutation.Tag(); ok {
 		_spec.SetField(frpsinfo.FieldTag, field.TypeString, value)
 	}
+	if value, ok := fiu.mutation.Domain(); ok {
+		_spec.SetField(frpsinfo.FieldDomain, field.TypeString, value)
+	}
 	if value, ok := fiu.mutation.ServerAddr(); ok {
 		_spec.SetField(frpsinfo.FieldServerAddr, field.TypeString, value)
 	}
@@ -453,6 +470,20 @@ func (fiuo *FrpsInfoUpdateOne) SetTag(s string) *FrpsInfoUpdateOne {
 func (fiuo *FrpsInfoUpdateOne) SetNillableTag(s *string) *FrpsInfoUpdateOne {
 	if s != nil {
 		fiuo.SetTag(*s)
+	}
+	return fiuo
+}
+
+// SetDomain sets the "domain" field.
+func (fiuo *FrpsInfoUpdateOne) SetDomain(s string) *FrpsInfoUpdateOne {
+	fiuo.mutation.SetDomain(s)
+	return fiuo
+}
+
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (fiuo *FrpsInfoUpdateOne) SetNillableDomain(s *string) *FrpsInfoUpdateOne {
+	if s != nil {
+		fiuo.SetDomain(*s)
 	}
 	return fiuo
 }
@@ -676,6 +707,9 @@ func (fiuo *FrpsInfoUpdateOne) sqlSave(ctx context.Context) (_node *FrpsInfo, er
 	}
 	if value, ok := fiuo.mutation.Tag(); ok {
 		_spec.SetField(frpsinfo.FieldTag, field.TypeString, value)
+	}
+	if value, ok := fiuo.mutation.Domain(); ok {
+		_spec.SetField(frpsinfo.FieldDomain, field.TypeString, value)
 	}
 	if value, ok := fiuo.mutation.ServerAddr(); ok {
 		_spec.SetField(frpsinfo.FieldServerAddr, field.TypeString, value)

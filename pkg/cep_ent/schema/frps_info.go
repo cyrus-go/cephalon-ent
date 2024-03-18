@@ -16,6 +16,7 @@ type FrpsInfo struct {
 func (FrpsInfo) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("tag").Default("").StructTag(`json:"tag"`).Comment("ini 文件服务端 tag"),
+		field.String("domain").Default("").StructTag(`json:"domain"`).Comment("域名"),
 		field.String("server_addr").Default("").StructTag(`json:"server_addr"`).Comment("frps 服务地址"),
 		field.Int("server_port").Default(0).StructTag(`json:"server_port"`).Comment("frps 服务端口"),
 		field.String("authentication_method").Default("").StructTag(`json:"authentication_method"`).Comment("frps 认证方式"),

@@ -30,6 +30,8 @@ type FrpsInfo struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// ini 文件服务端 tag
 	Tag string `json:"tag"`
+	// 域名
+	Domain string `json:"domain"`
 	// frps 服务地址
 	ServerAddr string `json:"server_addr"`
 	// frps 服务端口
@@ -71,7 +73,7 @@ func (*FrpsInfo) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case frpsinfo.FieldID, frpsinfo.FieldCreatedBy, frpsinfo.FieldUpdatedBy, frpsinfo.FieldServerPort:
 			values[i] = new(sql.NullInt64)
-		case frpsinfo.FieldTag, frpsinfo.FieldServerAddr, frpsinfo.FieldAuthenticationMethod, frpsinfo.FieldToken, frpsinfo.FieldType:
+		case frpsinfo.FieldTag, frpsinfo.FieldDomain, frpsinfo.FieldServerAddr, frpsinfo.FieldAuthenticationMethod, frpsinfo.FieldToken, frpsinfo.FieldType:
 			values[i] = new(sql.NullString)
 		case frpsinfo.FieldCreatedAt, frpsinfo.FieldUpdatedAt, frpsinfo.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -131,6 +133,12 @@ func (fi *FrpsInfo) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field tag", values[i])
 			} else if value.Valid {
 				fi.Tag = value.String
+			}
+		case frpsinfo.FieldDomain:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field domain", values[i])
+			} else if value.Valid {
+				fi.Domain = value.String
 			}
 		case frpsinfo.FieldServerAddr:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -220,6 +228,9 @@ func (fi *FrpsInfo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tag=")
 	builder.WriteString(fi.Tag)
+	builder.WriteString(", ")
+	builder.WriteString("domain=")
+	builder.WriteString(fi.Domain)
 	builder.WriteString(", ")
 	builder.WriteString("server_addr=")
 	builder.WriteString(fi.ServerAddr)
