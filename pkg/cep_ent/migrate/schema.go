@@ -2092,6 +2092,7 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
 		{Name: "out_transaction_id", Type: field.TypeString, Comment: "平台方订单号", Default: ""},
+		{Name: "withdraw_account", Type: field.TypeString, Comment: "提现账户（类型为提现才有数据）", Default: ""},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "转账目标的用户 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "转账来源的用户 id", Default: 0},
@@ -2106,25 +2107,25 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transfer_orders_symbols_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[12]},
+				Columns:    []*schema.Column{TransferOrdersColumns[13]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transfer_orders_users_income_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[13]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "transfer_orders_users_outcome_transfer_orders",
 				Columns:    []*schema.Column{TransferOrdersColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Symbol:     "transfer_orders_users_outcome_transfer_orders",
 				Columns:    []*schema.Column{TransferOrdersColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Columns:    []*schema.Column{TransferOrdersColumns[16]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2133,22 +2134,22 @@ var (
 			{
 				Name:    "transferorder_source_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[14]},
+				Columns: []*schema.Column{TransferOrdersColumns[15]},
 			},
 			{
 				Name:    "transferorder_target_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[13]},
+				Columns: []*schema.Column{TransferOrdersColumns[14]},
 			},
 			{
 				Name:    "transferorder_social_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[15]},
+				Columns: []*schema.Column{TransferOrdersColumns[16]},
 			},
 			{
 				Name:    "transferorder_symbol_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[12]},
+				Columns: []*schema.Column{TransferOrdersColumns[13]},
 			},
 		},
 	}

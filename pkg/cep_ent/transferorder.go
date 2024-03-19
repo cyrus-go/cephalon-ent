@@ -52,6 +52,8 @@ type TransferOrder struct {
 	ThirdAPIResp string `json:"third_api_resp"`
 	// 平台方订单号
 	OutTransactionID string `json:"out_transaction_id"`
+	// 提现账户（类型为提现才有数据）
+	WithdrawAccount string `json:"withdraw_account"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransferOrderQuery when eager-loading is set.
 	Edges        TransferOrderEdges `json:"edges"`
@@ -143,7 +145,7 @@ func (*TransferOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID:
 			values[i] = new(sql.NullInt64)
-		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID:
+		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID, transferorder.FieldWithdrawAccount:
 			values[i] = new(sql.NullString)
 		case transferorder.FieldCreatedAt, transferorder.FieldUpdatedAt, transferorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -258,6 +260,12 @@ func (to *TransferOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				to.OutTransactionID = value.String
 			}
+		case transferorder.FieldWithdrawAccount:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field withdraw_account", values[i])
+			} else if value.Valid {
+				to.WithdrawAccount = value.String
+			}
 		default:
 			to.selectValues.Set(columns[i], values[i])
 		}
@@ -363,6 +371,9 @@ func (to *TransferOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("out_transaction_id=")
 	builder.WriteString(to.OutTransactionID)
+	builder.WriteString(", ")
+	builder.WriteString("withdraw_account=")
+	builder.WriteString(to.WithdrawAccount)
 	builder.WriteByte(')')
 	return builder.String()
 }

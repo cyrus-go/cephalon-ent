@@ -121,6 +121,11 @@ func OutTransactionID(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldOutTransactionID, v))
 }
 
+// WithdrawAccount applies equality check predicate on the "withdraw_account" field. It's identical to WithdrawAccountEQ.
+func WithdrawAccount(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawAccount, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -694,6 +699,71 @@ func OutTransactionIDEqualFold(v string) predicate.TransferOrder {
 // OutTransactionIDContainsFold applies the ContainsFold predicate on the "out_transaction_id" field.
 func OutTransactionIDContainsFold(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldContainsFold(FieldOutTransactionID, v))
+}
+
+// WithdrawAccountEQ applies the EQ predicate on the "withdraw_account" field.
+func WithdrawAccountEQ(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountNEQ applies the NEQ predicate on the "withdraw_account" field.
+func WithdrawAccountNEQ(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNEQ(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountIn applies the In predicate on the "withdraw_account" field.
+func WithdrawAccountIn(vs ...string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldIn(FieldWithdrawAccount, vs...))
+}
+
+// WithdrawAccountNotIn applies the NotIn predicate on the "withdraw_account" field.
+func WithdrawAccountNotIn(vs ...string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNotIn(FieldWithdrawAccount, vs...))
+}
+
+// WithdrawAccountGT applies the GT predicate on the "withdraw_account" field.
+func WithdrawAccountGT(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGT(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountGTE applies the GTE predicate on the "withdraw_account" field.
+func WithdrawAccountGTE(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGTE(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountLT applies the LT predicate on the "withdraw_account" field.
+func WithdrawAccountLT(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLT(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountLTE applies the LTE predicate on the "withdraw_account" field.
+func WithdrawAccountLTE(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLTE(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountContains applies the Contains predicate on the "withdraw_account" field.
+func WithdrawAccountContains(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldContains(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountHasPrefix applies the HasPrefix predicate on the "withdraw_account" field.
+func WithdrawAccountHasPrefix(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldHasPrefix(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountHasSuffix applies the HasSuffix predicate on the "withdraw_account" field.
+func WithdrawAccountHasSuffix(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldHasSuffix(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountEqualFold applies the EqualFold predicate on the "withdraw_account" field.
+func WithdrawAccountEqualFold(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEqualFold(FieldWithdrawAccount, v))
+}
+
+// WithdrawAccountContainsFold applies the ContainsFold predicate on the "withdraw_account" field.
+func WithdrawAccountContainsFold(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldContainsFold(FieldWithdrawAccount, v))
 }
 
 // HasSourceUser applies the HasEdge predicate on the "source_user" edge.

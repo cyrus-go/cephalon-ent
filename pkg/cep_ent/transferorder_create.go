@@ -237,6 +237,20 @@ func (toc *TransferOrderCreate) SetNillableOutTransactionID(s *string) *Transfer
 	return toc
 }
 
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (toc *TransferOrderCreate) SetWithdrawAccount(s string) *TransferOrderCreate {
+	toc.mutation.SetWithdrawAccount(s)
+	return toc
+}
+
+// SetNillableWithdrawAccount sets the "withdraw_account" field if the given value is not nil.
+func (toc *TransferOrderCreate) SetNillableWithdrawAccount(s *string) *TransferOrderCreate {
+	if s != nil {
+		toc.SetWithdrawAccount(*s)
+	}
+	return toc
+}
+
 // SetID sets the "id" field.
 func (toc *TransferOrderCreate) SetID(i int64) *TransferOrderCreate {
 	toc.mutation.SetID(i)
@@ -395,6 +409,10 @@ func (toc *TransferOrderCreate) defaults() {
 		v := transferorder.DefaultOutTransactionID
 		toc.mutation.SetOutTransactionID(v)
 	}
+	if _, ok := toc.mutation.WithdrawAccount(); !ok {
+		v := transferorder.DefaultWithdrawAccount
+		toc.mutation.SetWithdrawAccount(v)
+	}
 	if _, ok := toc.mutation.ID(); !ok {
 		v := transferorder.DefaultID()
 		toc.mutation.SetID(v)
@@ -454,6 +472,9 @@ func (toc *TransferOrderCreate) check() error {
 	}
 	if _, ok := toc.mutation.OutTransactionID(); !ok {
 		return &ValidationError{Name: "out_transaction_id", err: errors.New(`cep_ent: missing required field "TransferOrder.out_transaction_id"`)}
+	}
+	if _, ok := toc.mutation.WithdrawAccount(); !ok {
+		return &ValidationError{Name: "withdraw_account", err: errors.New(`cep_ent: missing required field "TransferOrder.withdraw_account"`)}
 	}
 	if _, ok := toc.mutation.SourceUserID(); !ok {
 		return &ValidationError{Name: "source_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.source_user"`)}
@@ -540,6 +561,10 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 	if value, ok := toc.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
 		_node.OutTransactionID = value
+	}
+	if value, ok := toc.mutation.WithdrawAccount(); ok {
+		_spec.SetField(transferorder.FieldWithdrawAccount, field.TypeString, value)
+		_node.WithdrawAccount = value
 	}
 	if nodes := toc.mutation.SourceUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -869,6 +894,18 @@ func (u *TransferOrderUpsert) UpdateOutTransactionID() *TransferOrderUpsert {
 	return u
 }
 
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (u *TransferOrderUpsert) SetWithdrawAccount(v string) *TransferOrderUpsert {
+	u.Set(transferorder.FieldWithdrawAccount, v)
+	return u
+}
+
+// UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
+func (u *TransferOrderUpsert) UpdateWithdrawAccount() *TransferOrderUpsert {
+	u.SetExcluded(transferorder.FieldWithdrawAccount)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1141,6 +1178,20 @@ func (u *TransferOrderUpsertOne) SetOutTransactionID(v string) *TransferOrderUps
 func (u *TransferOrderUpsertOne) UpdateOutTransactionID() *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOutTransactionID()
+	})
+}
+
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (u *TransferOrderUpsertOne) SetWithdrawAccount(v string) *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetWithdrawAccount(v)
+	})
+}
+
+// UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
+func (u *TransferOrderUpsertOne) UpdateWithdrawAccount() *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateWithdrawAccount()
 	})
 }
 
@@ -1582,6 +1633,20 @@ func (u *TransferOrderUpsertBulk) SetOutTransactionID(v string) *TransferOrderUp
 func (u *TransferOrderUpsertBulk) UpdateOutTransactionID() *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOutTransactionID()
+	})
+}
+
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (u *TransferOrderUpsertBulk) SetWithdrawAccount(v string) *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetWithdrawAccount(v)
+	})
+}
+
+// UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
+func (u *TransferOrderUpsertBulk) UpdateWithdrawAccount() *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateWithdrawAccount()
 	})
 }
 

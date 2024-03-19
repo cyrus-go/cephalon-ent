@@ -64075,6 +64075,7 @@ type TransferOrderMutation struct {
 	serial_number      *string
 	third_api_resp     *string
 	out_transaction_id *string
+	withdraw_account   *string
 	clearedFields      map[string]struct{}
 	source_user        *int64
 	clearedsource_user bool
@@ -64809,6 +64810,42 @@ func (m *TransferOrderMutation) ResetOutTransactionID() {
 	m.out_transaction_id = nil
 }
 
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (m *TransferOrderMutation) SetWithdrawAccount(s string) {
+	m.withdraw_account = &s
+}
+
+// WithdrawAccount returns the value of the "withdraw_account" field in the mutation.
+func (m *TransferOrderMutation) WithdrawAccount() (r string, exists bool) {
+	v := m.withdraw_account
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWithdrawAccount returns the old "withdraw_account" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldWithdrawAccount(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWithdrawAccount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWithdrawAccount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWithdrawAccount: %w", err)
+	}
+	return oldValue.WithdrawAccount, nil
+}
+
+// ResetWithdrawAccount resets all changes to the "withdraw_account" field.
+func (m *TransferOrderMutation) ResetWithdrawAccount() {
+	m.withdraw_account = nil
+}
+
 // ClearSourceUser clears the "source_user" edge to the User entity.
 func (m *TransferOrderMutation) ClearSourceUser() {
 	m.clearedsource_user = true
@@ -65018,7 +65055,7 @@ func (m *TransferOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferOrderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, transferorder.FieldCreatedBy)
 	}
@@ -65064,6 +65101,9 @@ func (m *TransferOrderMutation) Fields() []string {
 	if m.out_transaction_id != nil {
 		fields = append(fields, transferorder.FieldOutTransactionID)
 	}
+	if m.withdraw_account != nil {
+		fields = append(fields, transferorder.FieldWithdrawAccount)
+	}
 	return fields
 }
 
@@ -65102,6 +65142,8 @@ func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.ThirdAPIResp()
 	case transferorder.FieldOutTransactionID:
 		return m.OutTransactionID()
+	case transferorder.FieldWithdrawAccount:
+		return m.WithdrawAccount()
 	}
 	return nil, false
 }
@@ -65141,6 +65183,8 @@ func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldThirdAPIResp(ctx)
 	case transferorder.FieldOutTransactionID:
 		return m.OldOutTransactionID(ctx)
+	case transferorder.FieldWithdrawAccount:
+		return m.OldWithdrawAccount(ctx)
 	}
 	return nil, fmt.Errorf("unknown TransferOrder field %s", name)
 }
@@ -65254,6 +65298,13 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOutTransactionID(v)
+		return nil
+	case transferorder.FieldWithdrawAccount:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWithdrawAccount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)
@@ -65396,6 +65447,9 @@ func (m *TransferOrderMutation) ResetField(name string) error {
 		return nil
 	case transferorder.FieldOutTransactionID:
 		m.ResetOutTransactionID()
+		return nil
+	case transferorder.FieldWithdrawAccount:
+		m.ResetWithdrawAccount()
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)

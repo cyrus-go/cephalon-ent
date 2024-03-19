@@ -249,6 +249,20 @@ func (tou *TransferOrderUpdate) SetNillableOutTransactionID(s *string) *Transfer
 	return tou
 }
 
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (tou *TransferOrderUpdate) SetWithdrawAccount(s string) *TransferOrderUpdate {
+	tou.mutation.SetWithdrawAccount(s)
+	return tou
+}
+
+// SetNillableWithdrawAccount sets the "withdraw_account" field if the given value is not nil.
+func (tou *TransferOrderUpdate) SetNillableWithdrawAccount(s *string) *TransferOrderUpdate {
+	if s != nil {
+		tou.SetWithdrawAccount(*s)
+	}
+	return tou
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (tou *TransferOrderUpdate) SetSourceUser(u *User) *TransferOrderUpdate {
 	return tou.SetSourceUserID(u.ID)
@@ -464,6 +478,9 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tou.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
+	}
+	if value, ok := tou.mutation.WithdrawAccount(); ok {
+		_spec.SetField(transferorder.FieldWithdrawAccount, field.TypeString, value)
 	}
 	if tou.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -863,6 +880,20 @@ func (touo *TransferOrderUpdateOne) SetNillableOutTransactionID(s *string) *Tran
 	return touo
 }
 
+// SetWithdrawAccount sets the "withdraw_account" field.
+func (touo *TransferOrderUpdateOne) SetWithdrawAccount(s string) *TransferOrderUpdateOne {
+	touo.mutation.SetWithdrawAccount(s)
+	return touo
+}
+
+// SetNillableWithdrawAccount sets the "withdraw_account" field if the given value is not nil.
+func (touo *TransferOrderUpdateOne) SetNillableWithdrawAccount(s *string) *TransferOrderUpdateOne {
+	if s != nil {
+		touo.SetWithdrawAccount(*s)
+	}
+	return touo
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (touo *TransferOrderUpdateOne) SetSourceUser(u *User) *TransferOrderUpdateOne {
 	return touo.SetSourceUserID(u.ID)
@@ -1108,6 +1139,9 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 	}
 	if value, ok := touo.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
+	}
+	if value, ok := touo.mutation.WithdrawAccount(); ok {
+		_spec.SetField(transferorder.FieldWithdrawAccount, field.TypeString, value)
 	}
 	if touo.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
