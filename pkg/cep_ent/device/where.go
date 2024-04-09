@@ -982,6 +982,29 @@ func HasMissionProductionsWith(preds ...predicate.MissionProduction) predicate.D
 	})
 }
 
+// HasDeviceRebootTimes applies the HasEdge predicate on the "device_reboot_times" edge.
+func HasDeviceRebootTimes() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceRebootTimesTable, DeviceRebootTimesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDeviceRebootTimesWith applies the HasEdge predicate on the "device_reboot_times" edge with a given conditions (other predicates).
+func HasDeviceRebootTimesWith(preds ...predicate.DeviceRebootTime) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := newDeviceRebootTimesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Device) predicate.Device {
 	return predicate.Device(sql.AndPredicates(predicates...))

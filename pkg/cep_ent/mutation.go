@@ -23,6 +23,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
@@ -92,6 +93,7 @@ const (
 	TypeCostBill             = "CostBill"
 	TypeDevice               = "Device"
 	TypeDeviceGpuMission     = "DeviceGpuMission"
+	TypeDeviceRebootTime     = "DeviceRebootTime"
 	TypeEarnBill             = "EarnBill"
 	TypeEnumCondition        = "EnumCondition"
 	TypeEnumMissionStatus    = "EnumMissionStatus"
@@ -12603,6 +12605,9 @@ type DeviceMutation struct {
 	mission_productions           map[int64]struct{}
 	removedmission_productions    map[int64]struct{}
 	clearedmission_productions    bool
+	device_reboot_times           map[int64]struct{}
+	removeddevice_reboot_times    map[int64]struct{}
+	cleareddevice_reboot_times    bool
 	done                          bool
 	oldValue                      func(context.Context) (*Device, error)
 	predicates                    []predicate.Device
@@ -13880,6 +13885,60 @@ func (m *DeviceMutation) ResetMissionProductions() {
 	m.removedmission_productions = nil
 }
 
+// AddDeviceRebootTimeIDs adds the "device_reboot_times" edge to the DeviceRebootTime entity by ids.
+func (m *DeviceMutation) AddDeviceRebootTimeIDs(ids ...int64) {
+	if m.device_reboot_times == nil {
+		m.device_reboot_times = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.device_reboot_times[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDeviceRebootTimes clears the "device_reboot_times" edge to the DeviceRebootTime entity.
+func (m *DeviceMutation) ClearDeviceRebootTimes() {
+	m.cleareddevice_reboot_times = true
+}
+
+// DeviceRebootTimesCleared reports if the "device_reboot_times" edge to the DeviceRebootTime entity was cleared.
+func (m *DeviceMutation) DeviceRebootTimesCleared() bool {
+	return m.cleareddevice_reboot_times
+}
+
+// RemoveDeviceRebootTimeIDs removes the "device_reboot_times" edge to the DeviceRebootTime entity by IDs.
+func (m *DeviceMutation) RemoveDeviceRebootTimeIDs(ids ...int64) {
+	if m.removeddevice_reboot_times == nil {
+		m.removeddevice_reboot_times = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.device_reboot_times, ids[i])
+		m.removeddevice_reboot_times[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDeviceRebootTimes returns the removed IDs of the "device_reboot_times" edge to the DeviceRebootTime entity.
+func (m *DeviceMutation) RemovedDeviceRebootTimesIDs() (ids []int64) {
+	for id := range m.removeddevice_reboot_times {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DeviceRebootTimesIDs returns the "device_reboot_times" edge IDs in the mutation.
+func (m *DeviceMutation) DeviceRebootTimesIDs() (ids []int64) {
+	for id := range m.device_reboot_times {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDeviceRebootTimes resets all changes to the "device_reboot_times" edge.
+func (m *DeviceMutation) ResetDeviceRebootTimes() {
+	m.device_reboot_times = nil
+	m.cleareddevice_reboot_times = false
+	m.removeddevice_reboot_times = nil
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -14403,7 +14462,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -14424,6 +14483,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.mission_productions != nil {
 		edges = append(edges, device.EdgeMissionProductions)
+	}
+	if m.device_reboot_times != nil {
+		edges = append(edges, device.EdgeDeviceRebootTimes)
 	}
 	return edges
 }
@@ -14472,13 +14534,19 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeDeviceRebootTimes:
+		ids := make([]ent.Value, 0, len(m.device_reboot_times))
+		for id := range m.device_reboot_times {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -14496,6 +14564,9 @@ func (m *DeviceMutation) RemovedEdges() []string {
 	}
 	if m.removedmission_productions != nil {
 		edges = append(edges, device.EdgeMissionProductions)
+	}
+	if m.removeddevice_reboot_times != nil {
+		edges = append(edges, device.EdgeDeviceRebootTimes)
 	}
 	return edges
 }
@@ -14540,13 +14611,19 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeDeviceRebootTimes:
+		ids := make([]ent.Value, 0, len(m.removeddevice_reboot_times))
+		for id := range m.removeddevice_reboot_times {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -14567,6 +14644,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	}
 	if m.clearedmission_productions {
 		edges = append(edges, device.EdgeMissionProductions)
+	}
+	if m.cleareddevice_reboot_times {
+		edges = append(edges, device.EdgeDeviceRebootTimes)
 	}
 	return edges
 }
@@ -14589,6 +14669,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_orders
 	case device.EdgeMissionProductions:
 		return m.clearedmission_productions
+	case device.EdgeDeviceRebootTimes:
+		return m.cleareddevice_reboot_times
 	}
 	return false
 }
@@ -14628,6 +14710,9 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 		return nil
 	case device.EdgeMissionProductions:
 		m.ResetMissionProductions()
+		return nil
+	case device.EdgeDeviceRebootTimes:
+		m.ResetDeviceRebootTimes()
 		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
@@ -15833,6 +15918,947 @@ func (m *DeviceGpuMissionMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission edge %s", name)
+}
+
+// DeviceRebootTimeMutation represents an operation that mutates the DeviceRebootTime nodes in the graph.
+type DeviceRebootTimeMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	start_time    *time.Time
+	end_time      *time.Time
+	online_time   *string
+	offline_time  *string
+	clearedFields map[string]struct{}
+	device        *int64
+	cleareddevice bool
+	done          bool
+	oldValue      func(context.Context) (*DeviceRebootTime, error)
+	predicates    []predicate.DeviceRebootTime
+}
+
+var _ ent.Mutation = (*DeviceRebootTimeMutation)(nil)
+
+// devicereboottimeOption allows management of the mutation configuration using functional options.
+type devicereboottimeOption func(*DeviceRebootTimeMutation)
+
+// newDeviceRebootTimeMutation creates new mutation for the DeviceRebootTime entity.
+func newDeviceRebootTimeMutation(c config, op Op, opts ...devicereboottimeOption) *DeviceRebootTimeMutation {
+	m := &DeviceRebootTimeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDeviceRebootTime,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDeviceRebootTimeID sets the ID field of the mutation.
+func withDeviceRebootTimeID(id int64) devicereboottimeOption {
+	return func(m *DeviceRebootTimeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DeviceRebootTime
+		)
+		m.oldValue = func(ctx context.Context) (*DeviceRebootTime, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DeviceRebootTime.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDeviceRebootTime sets the old DeviceRebootTime of the mutation.
+func withDeviceRebootTime(node *DeviceRebootTime) devicereboottimeOption {
+	return func(m *DeviceRebootTimeMutation) {
+		m.oldValue = func(context.Context) (*DeviceRebootTime, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DeviceRebootTimeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DeviceRebootTimeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DeviceRebootTime entities.
+func (m *DeviceRebootTimeMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DeviceRebootTimeMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DeviceRebootTimeMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().DeviceRebootTime.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *DeviceRebootTimeMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *DeviceRebootTimeMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *DeviceRebootTimeMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *DeviceRebootTimeMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *DeviceRebootTimeMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *DeviceRebootTimeMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *DeviceRebootTimeMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *DeviceRebootTimeMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *DeviceRebootTimeMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *DeviceRebootTimeMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DeviceRebootTimeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DeviceRebootTimeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DeviceRebootTimeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DeviceRebootTimeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DeviceRebootTimeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DeviceRebootTimeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DeviceRebootTimeMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DeviceRebootTimeMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DeviceRebootTimeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *DeviceRebootTimeMutation) SetDeviceID(i int64) {
+	m.device = &i
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *DeviceRebootTimeMutation) DeviceID() (r int64, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *DeviceRebootTimeMutation) ResetDeviceID() {
+	m.device = nil
+}
+
+// SetStartTime sets the "start_time" field.
+func (m *DeviceRebootTimeMutation) SetStartTime(t time.Time) {
+	m.start_time = &t
+}
+
+// StartTime returns the value of the "start_time" field in the mutation.
+func (m *DeviceRebootTimeMutation) StartTime() (r time.Time, exists bool) {
+	v := m.start_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartTime returns the old "start_time" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldStartTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartTime: %w", err)
+	}
+	return oldValue.StartTime, nil
+}
+
+// ResetStartTime resets all changes to the "start_time" field.
+func (m *DeviceRebootTimeMutation) ResetStartTime() {
+	m.start_time = nil
+}
+
+// SetEndTime sets the "end_time" field.
+func (m *DeviceRebootTimeMutation) SetEndTime(t time.Time) {
+	m.end_time = &t
+}
+
+// EndTime returns the value of the "end_time" field in the mutation.
+func (m *DeviceRebootTimeMutation) EndTime() (r time.Time, exists bool) {
+	v := m.end_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndTime returns the old "end_time" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldEndTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndTime: %w", err)
+	}
+	return oldValue.EndTime, nil
+}
+
+// ResetEndTime resets all changes to the "end_time" field.
+func (m *DeviceRebootTimeMutation) ResetEndTime() {
+	m.end_time = nil
+}
+
+// SetOnlineTime sets the "online_time" field.
+func (m *DeviceRebootTimeMutation) SetOnlineTime(s string) {
+	m.online_time = &s
+}
+
+// OnlineTime returns the value of the "online_time" field in the mutation.
+func (m *DeviceRebootTimeMutation) OnlineTime() (r string, exists bool) {
+	v := m.online_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOnlineTime returns the old "online_time" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldOnlineTime(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOnlineTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOnlineTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOnlineTime: %w", err)
+	}
+	return oldValue.OnlineTime, nil
+}
+
+// ResetOnlineTime resets all changes to the "online_time" field.
+func (m *DeviceRebootTimeMutation) ResetOnlineTime() {
+	m.online_time = nil
+}
+
+// SetOfflineTime sets the "offline_time" field.
+func (m *DeviceRebootTimeMutation) SetOfflineTime(s string) {
+	m.offline_time = &s
+}
+
+// OfflineTime returns the value of the "offline_time" field in the mutation.
+func (m *DeviceRebootTimeMutation) OfflineTime() (r string, exists bool) {
+	v := m.offline_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOfflineTime returns the old "offline_time" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldOfflineTime(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOfflineTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOfflineTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOfflineTime: %w", err)
+	}
+	return oldValue.OfflineTime, nil
+}
+
+// ResetOfflineTime resets all changes to the "offline_time" field.
+func (m *DeviceRebootTimeMutation) ResetOfflineTime() {
+	m.offline_time = nil
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *DeviceRebootTimeMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[devicereboottime.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *DeviceRebootTimeMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *DeviceRebootTimeMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *DeviceRebootTimeMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
+// Where appends a list predicates to the DeviceRebootTimeMutation builder.
+func (m *DeviceRebootTimeMutation) Where(ps ...predicate.DeviceRebootTime) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DeviceRebootTimeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DeviceRebootTimeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.DeviceRebootTime, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DeviceRebootTimeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DeviceRebootTimeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (DeviceRebootTime).
+func (m *DeviceRebootTimeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DeviceRebootTimeMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_by != nil {
+		fields = append(fields, devicereboottime.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, devicereboottime.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, devicereboottime.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, devicereboottime.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, devicereboottime.FieldDeletedAt)
+	}
+	if m.device != nil {
+		fields = append(fields, devicereboottime.FieldDeviceID)
+	}
+	if m.start_time != nil {
+		fields = append(fields, devicereboottime.FieldStartTime)
+	}
+	if m.end_time != nil {
+		fields = append(fields, devicereboottime.FieldEndTime)
+	}
+	if m.online_time != nil {
+		fields = append(fields, devicereboottime.FieldOnlineTime)
+	}
+	if m.offline_time != nil {
+		fields = append(fields, devicereboottime.FieldOfflineTime)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DeviceRebootTimeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case devicereboottime.FieldCreatedBy:
+		return m.CreatedBy()
+	case devicereboottime.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case devicereboottime.FieldCreatedAt:
+		return m.CreatedAt()
+	case devicereboottime.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case devicereboottime.FieldDeletedAt:
+		return m.DeletedAt()
+	case devicereboottime.FieldDeviceID:
+		return m.DeviceID()
+	case devicereboottime.FieldStartTime:
+		return m.StartTime()
+	case devicereboottime.FieldEndTime:
+		return m.EndTime()
+	case devicereboottime.FieldOnlineTime:
+		return m.OnlineTime()
+	case devicereboottime.FieldOfflineTime:
+		return m.OfflineTime()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DeviceRebootTimeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case devicereboottime.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case devicereboottime.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case devicereboottime.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case devicereboottime.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case devicereboottime.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case devicereboottime.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	case devicereboottime.FieldStartTime:
+		return m.OldStartTime(ctx)
+	case devicereboottime.FieldEndTime:
+		return m.OldEndTime(ctx)
+	case devicereboottime.FieldOnlineTime:
+		return m.OldOnlineTime(ctx)
+	case devicereboottime.FieldOfflineTime:
+		return m.OldOfflineTime(ctx)
+	}
+	return nil, fmt.Errorf("unknown DeviceRebootTime field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DeviceRebootTimeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case devicereboottime.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case devicereboottime.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case devicereboottime.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case devicereboottime.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case devicereboottime.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case devicereboottime.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	case devicereboottime.FieldStartTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartTime(v)
+		return nil
+	case devicereboottime.FieldEndTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndTime(v)
+		return nil
+	case devicereboottime.FieldOnlineTime:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOnlineTime(v)
+		return nil
+	case devicereboottime.FieldOfflineTime:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOfflineTime(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceRebootTime field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DeviceRebootTimeMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, devicereboottime.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, devicereboottime.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DeviceRebootTimeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case devicereboottime.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case devicereboottime.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DeviceRebootTimeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case devicereboottime.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case devicereboottime.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceRebootTime numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DeviceRebootTimeMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DeviceRebootTimeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DeviceRebootTimeMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown DeviceRebootTime nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DeviceRebootTimeMutation) ResetField(name string) error {
+	switch name {
+	case devicereboottime.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case devicereboottime.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case devicereboottime.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case devicereboottime.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case devicereboottime.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case devicereboottime.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case devicereboottime.FieldStartTime:
+		m.ResetStartTime()
+		return nil
+	case devicereboottime.FieldEndTime:
+		m.ResetEndTime()
+		return nil
+	case devicereboottime.FieldOnlineTime:
+		m.ResetOnlineTime()
+		return nil
+	case devicereboottime.FieldOfflineTime:
+		m.ResetOfflineTime()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceRebootTime field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DeviceRebootTimeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.device != nil {
+		edges = append(edges, devicereboottime.EdgeDevice)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DeviceRebootTimeMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case devicereboottime.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DeviceRebootTimeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DeviceRebootTimeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DeviceRebootTimeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareddevice {
+		edges = append(edges, devicereboottime.EdgeDevice)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DeviceRebootTimeMutation) EdgeCleared(name string) bool {
+	switch name {
+	case devicereboottime.EdgeDevice:
+		return m.cleareddevice
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DeviceRebootTimeMutation) ClearEdge(name string) error {
+	switch name {
+	case devicereboottime.EdgeDevice:
+		m.ClearDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceRebootTime unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DeviceRebootTimeMutation) ResetEdge(name string) error {
+	switch name {
+	case devicereboottime.EdgeDevice:
+		m.ResetDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceRebootTime edge %s", name)
 }
 
 // EarnBillMutation represents an operation that mutates the EarnBill nodes in the graph.

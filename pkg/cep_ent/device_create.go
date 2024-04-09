@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -395,6 +396,21 @@ func (dc *DeviceCreate) AddMissionProductions(m ...*MissionProduction) *DeviceCr
 		ids[i] = m[i].ID
 	}
 	return dc.AddMissionProductionIDs(ids...)
+}
+
+// AddDeviceRebootTimeIDs adds the "device_reboot_times" edge to the DeviceRebootTime entity by IDs.
+func (dc *DeviceCreate) AddDeviceRebootTimeIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddDeviceRebootTimeIDs(ids...)
+	return dc
+}
+
+// AddDeviceRebootTimes adds the "device_reboot_times" edges to the DeviceRebootTime entity.
+func (dc *DeviceCreate) AddDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return dc.AddDeviceRebootTimeIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -807,6 +823,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.DeviceRebootTimesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

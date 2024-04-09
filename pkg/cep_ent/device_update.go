@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -416,6 +417,21 @@ func (du *DeviceUpdate) AddMissionProductions(m ...*MissionProduction) *DeviceUp
 	return du.AddMissionProductionIDs(ids...)
 }
 
+// AddDeviceRebootTimeIDs adds the "device_reboot_times" edge to the DeviceRebootTime entity by IDs.
+func (du *DeviceUpdate) AddDeviceRebootTimeIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddDeviceRebootTimeIDs(ids...)
+	return du
+}
+
+// AddDeviceRebootTimes adds the "device_reboot_times" edges to the DeviceRebootTime entity.
+func (du *DeviceUpdate) AddDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.AddDeviceRebootTimeIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -551,6 +567,27 @@ func (du *DeviceUpdate) RemoveMissionProductions(m ...*MissionProduction) *Devic
 		ids[i] = m[i].ID
 	}
 	return du.RemoveMissionProductionIDs(ids...)
+}
+
+// ClearDeviceRebootTimes clears all "device_reboot_times" edges to the DeviceRebootTime entity.
+func (du *DeviceUpdate) ClearDeviceRebootTimes() *DeviceUpdate {
+	du.mutation.ClearDeviceRebootTimes()
+	return du
+}
+
+// RemoveDeviceRebootTimeIDs removes the "device_reboot_times" edge to DeviceRebootTime entities by IDs.
+func (du *DeviceUpdate) RemoveDeviceRebootTimeIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveDeviceRebootTimeIDs(ids...)
+	return du
+}
+
+// RemoveDeviceRebootTimes removes "device_reboot_times" edges to DeviceRebootTime entities.
+func (du *DeviceUpdate) RemoveDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.RemoveDeviceRebootTimeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1010,6 +1047,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.DeviceRebootTimesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedDeviceRebootTimesIDs(); len(nodes) > 0 && !du.mutation.DeviceRebootTimesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.DeviceRebootTimesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1411,6 +1493,21 @@ func (duo *DeviceUpdateOne) AddMissionProductions(m ...*MissionProduction) *Devi
 	return duo.AddMissionProductionIDs(ids...)
 }
 
+// AddDeviceRebootTimeIDs adds the "device_reboot_times" edge to the DeviceRebootTime entity by IDs.
+func (duo *DeviceUpdateOne) AddDeviceRebootTimeIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddDeviceRebootTimeIDs(ids...)
+	return duo
+}
+
+// AddDeviceRebootTimes adds the "device_reboot_times" edges to the DeviceRebootTime entity.
+func (duo *DeviceUpdateOne) AddDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.AddDeviceRebootTimeIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -1546,6 +1643,27 @@ func (duo *DeviceUpdateOne) RemoveMissionProductions(m ...*MissionProduction) *D
 		ids[i] = m[i].ID
 	}
 	return duo.RemoveMissionProductionIDs(ids...)
+}
+
+// ClearDeviceRebootTimes clears all "device_reboot_times" edges to the DeviceRebootTime entity.
+func (duo *DeviceUpdateOne) ClearDeviceRebootTimes() *DeviceUpdateOne {
+	duo.mutation.ClearDeviceRebootTimes()
+	return duo
+}
+
+// RemoveDeviceRebootTimeIDs removes the "device_reboot_times" edge to DeviceRebootTime entities by IDs.
+func (duo *DeviceUpdateOne) RemoveDeviceRebootTimeIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveDeviceRebootTimeIDs(ids...)
+	return duo
+}
+
+// RemoveDeviceRebootTimes removes "device_reboot_times" edges to DeviceRebootTime entities.
+func (duo *DeviceUpdateOne) RemoveDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.RemoveDeviceRebootTimeIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -2028,6 +2146,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionproduction.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.DeviceRebootTimesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedDeviceRebootTimesIDs(); len(nodes) > 0 && !duo.mutation.DeviceRebootTimesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.DeviceRebootTimesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceRebootTimesTable,
+			Columns: []string{device.DeviceRebootTimesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

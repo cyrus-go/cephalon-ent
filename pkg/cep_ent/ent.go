@@ -24,6 +24,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
@@ -140,6 +141,7 @@ func checkColumn(table, column string) error {
 			costbill.Table:             costbill.ValidColumn,
 			device.Table:               device.ValidColumn,
 			devicegpumission.Table:     devicegpumission.ValidColumn,
+			devicereboottime.Table:     devicereboottime.ValidColumn,
 			earnbill.Table:             earnbill.ValidColumn,
 			enumcondition.Table:        enumcondition.ValidColumn,
 			enummissionstatus.Table:    enummissionstatus.ValidColumn,

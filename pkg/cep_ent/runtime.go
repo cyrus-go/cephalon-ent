@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
@@ -746,6 +747,57 @@ func init() {
 	devicegpumissionDescID := devicegpumissionMixinFields0[0].Descriptor()
 	// devicegpumission.DefaultID holds the default value on creation for the id field.
 	devicegpumission.DefaultID = devicegpumissionDescID.Default.(func() int64)
+	devicereboottimeMixin := schema.DeviceRebootTime{}.Mixin()
+	devicereboottimeMixinFields0 := devicereboottimeMixin[0].Fields()
+	_ = devicereboottimeMixinFields0
+	devicereboottimeFields := schema.DeviceRebootTime{}.Fields()
+	_ = devicereboottimeFields
+	// devicereboottimeDescCreatedBy is the schema descriptor for created_by field.
+	devicereboottimeDescCreatedBy := devicereboottimeMixinFields0[1].Descriptor()
+	// devicereboottime.DefaultCreatedBy holds the default value on creation for the created_by field.
+	devicereboottime.DefaultCreatedBy = devicereboottimeDescCreatedBy.Default.(int64)
+	// devicereboottimeDescUpdatedBy is the schema descriptor for updated_by field.
+	devicereboottimeDescUpdatedBy := devicereboottimeMixinFields0[2].Descriptor()
+	// devicereboottime.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	devicereboottime.DefaultUpdatedBy = devicereboottimeDescUpdatedBy.Default.(int64)
+	// devicereboottimeDescCreatedAt is the schema descriptor for created_at field.
+	devicereboottimeDescCreatedAt := devicereboottimeMixinFields0[3].Descriptor()
+	// devicereboottime.DefaultCreatedAt holds the default value on creation for the created_at field.
+	devicereboottime.DefaultCreatedAt = devicereboottimeDescCreatedAt.Default.(func() time.Time)
+	// devicereboottimeDescUpdatedAt is the schema descriptor for updated_at field.
+	devicereboottimeDescUpdatedAt := devicereboottimeMixinFields0[4].Descriptor()
+	// devicereboottime.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	devicereboottime.DefaultUpdatedAt = devicereboottimeDescUpdatedAt.Default.(func() time.Time)
+	// devicereboottime.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	devicereboottime.UpdateDefaultUpdatedAt = devicereboottimeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// devicereboottimeDescDeletedAt is the schema descriptor for deleted_at field.
+	devicereboottimeDescDeletedAt := devicereboottimeMixinFields0[5].Descriptor()
+	// devicereboottime.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	devicereboottime.DefaultDeletedAt = devicereboottimeDescDeletedAt.Default.(time.Time)
+	// devicereboottimeDescDeviceID is the schema descriptor for device_id field.
+	devicereboottimeDescDeviceID := devicereboottimeFields[0].Descriptor()
+	// devicereboottime.DefaultDeviceID holds the default value on creation for the device_id field.
+	devicereboottime.DefaultDeviceID = devicereboottimeDescDeviceID.Default.(int64)
+	// devicereboottimeDescStartTime is the schema descriptor for start_time field.
+	devicereboottimeDescStartTime := devicereboottimeFields[1].Descriptor()
+	// devicereboottime.DefaultStartTime holds the default value on creation for the start_time field.
+	devicereboottime.DefaultStartTime = devicereboottimeDescStartTime.Default.(time.Time)
+	// devicereboottimeDescEndTime is the schema descriptor for end_time field.
+	devicereboottimeDescEndTime := devicereboottimeFields[2].Descriptor()
+	// devicereboottime.DefaultEndTime holds the default value on creation for the end_time field.
+	devicereboottime.DefaultEndTime = devicereboottimeDescEndTime.Default.(time.Time)
+	// devicereboottimeDescOnlineTime is the schema descriptor for online_time field.
+	devicereboottimeDescOnlineTime := devicereboottimeFields[3].Descriptor()
+	// devicereboottime.DefaultOnlineTime holds the default value on creation for the online_time field.
+	devicereboottime.DefaultOnlineTime = devicereboottimeDescOnlineTime.Default.(string)
+	// devicereboottimeDescOfflineTime is the schema descriptor for offline_time field.
+	devicereboottimeDescOfflineTime := devicereboottimeFields[4].Descriptor()
+	// devicereboottime.DefaultOfflineTime holds the default value on creation for the offline_time field.
+	devicereboottime.DefaultOfflineTime = devicereboottimeDescOfflineTime.Default.(string)
+	// devicereboottimeDescID is the schema descriptor for id field.
+	devicereboottimeDescID := devicereboottimeMixinFields0[0].Descriptor()
+	// devicereboottime.DefaultID holds the default value on creation for the id field.
+	devicereboottime.DefaultID = devicereboottimeDescID.Default.(func() int64)
 	earnbillMixin := schema.EarnBill{}.Mixin()
 	earnbillMixinFields0 := earnbillMixin[0].Fields()
 	_ = earnbillMixinFields0

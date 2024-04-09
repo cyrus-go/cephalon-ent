@@ -36,6 +36,8 @@ type Tx struct {
 	Device *DeviceClient
 	// DeviceGpuMission is the client for interacting with the DeviceGpuMission builders.
 	DeviceGpuMission *DeviceGpuMissionClient
+	// DeviceRebootTime is the client for interacting with the DeviceRebootTime builders.
+	DeviceRebootTime *DeviceRebootTimeClient
 	// EarnBill is the client for interacting with the EarnBill builders.
 	EarnBill *EarnBillClient
 	// EnumCondition is the client for interacting with the EnumCondition builders.
@@ -267,6 +269,7 @@ func (tx *Tx) init() {
 	tx.CostBill = NewCostBillClient(tx.config)
 	tx.Device = NewDeviceClient(tx.config)
 	tx.DeviceGpuMission = NewDeviceGpuMissionClient(tx.config)
+	tx.DeviceRebootTime = NewDeviceRebootTimeClient(tx.config)
 	tx.EarnBill = NewEarnBillClient(tx.config)
 	tx.EnumCondition = NewEnumConditionClient(tx.config)
 	tx.EnumMissionStatus = NewEnumMissionStatusClient(tx.config)

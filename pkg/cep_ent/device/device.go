@@ -69,6 +69,8 @@ const (
 	EdgeMissionOrders = "mission_orders"
 	// EdgeMissionProductions holds the string denoting the mission_productions edge name in mutations.
 	EdgeMissionProductions = "mission_productions"
+	// EdgeDeviceRebootTimes holds the string denoting the device_reboot_times edge name in mutations.
+	EdgeDeviceRebootTimes = "device_reboot_times"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -120,6 +122,13 @@ const (
 	MissionProductionsInverseTable = "mission_productions"
 	// MissionProductionsColumn is the table column denoting the mission_productions relation/edge.
 	MissionProductionsColumn = "device_id"
+	// DeviceRebootTimesTable is the table that holds the device_reboot_times relation/edge.
+	DeviceRebootTimesTable = "device_reboot_times"
+	// DeviceRebootTimesInverseTable is the table name for the DeviceRebootTime entity.
+	// It exists in this package in order to avoid circular dependency with the "devicereboottime" package.
+	DeviceRebootTimesInverseTable = "device_reboot_times"
+	// DeviceRebootTimesColumn is the table column denoting the device_reboot_times relation/edge.
+	DeviceRebootTimesColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -466,6 +475,20 @@ func ByMissionProductions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newMissionProductionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByDeviceRebootTimesCount orders the results by device_reboot_times count.
+func ByDeviceRebootTimesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDeviceRebootTimesStep(), opts...)
+	}
+}
+
+// ByDeviceRebootTimes orders the results by device_reboot_times terms.
+func ByDeviceRebootTimes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceRebootTimesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -513,5 +536,12 @@ func newMissionProductionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionProductionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionProductionsTable, MissionProductionsColumn),
+	)
+}
+func newDeviceRebootTimesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceRebootTimesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DeviceRebootTimesTable, DeviceRebootTimesColumn),
 	)
 }

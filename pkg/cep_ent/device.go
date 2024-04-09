@@ -80,9 +80,11 @@ type DeviceEdges struct {
 	MissionOrders []*MissionOrder `json:"mission_orders,omitempty"`
 	// MissionProductions holds the value of the mission_productions edge.
 	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
+	// DeviceRebootTimes holds the value of the device_reboot_times edge.
+	DeviceRebootTimes []*DeviceRebootTime `json:"device_reboot_times,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -150,6 +152,15 @@ func (e DeviceEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
 		return e.MissionProductions, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_productions"}
+}
+
+// DeviceRebootTimesOrErr returns the DeviceRebootTimes value or an error if the edge
+// was not loaded in eager-loading.
+func (e DeviceEdges) DeviceRebootTimesOrErr() ([]*DeviceRebootTime, error) {
+	if e.loadedTypes[7] {
+		return e.DeviceRebootTimes, nil
+	}
+	return nil, &NotLoadedError{edge: "device_reboot_times"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -350,6 +361,11 @@ func (d *Device) QueryMissionOrders() *MissionOrderQuery {
 // QueryMissionProductions queries the "mission_productions" edge of the Device entity.
 func (d *Device) QueryMissionProductions() *MissionProductionQuery {
 	return NewDeviceClient(d.config).QueryMissionProductions(d)
+}
+
+// QueryDeviceRebootTimes queries the "device_reboot_times" edge of the Device entity.
+func (d *Device) QueryDeviceRebootTimes() *DeviceRebootTimeQuery {
+	return NewDeviceClient(d.config).QueryDeviceRebootTimes(d)
 }
 
 // Update returns a builder for updating this Device.

@@ -560,6 +560,42 @@ var (
 			},
 		},
 	}
+	// DeviceRebootTimesColumns holds the columns for the "device_reboot_times" table.
+	DeviceRebootTimesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "start_time", Type: field.TypeTime, Comment: "设备开机时间"},
+		{Name: "end_time", Type: field.TypeTime, Comment: "设备关机时间"},
+		{Name: "online_time", Type: field.TypeString, Comment: "设备运行时间", Default: "None"},
+		{Name: "offline_time", Type: field.TypeString, Comment: "设备宕机时间", Default: "None"},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
+	}
+	// DeviceRebootTimesTable holds the schema information for the "device_reboot_times" table.
+	DeviceRebootTimesTable = &schema.Table{
+		Name:       "device_reboot_times",
+		Comment:    "设备重启时间记录",
+		Columns:    DeviceRebootTimesColumns,
+		PrimaryKey: []*schema.Column{DeviceRebootTimesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "device_reboot_times_devices_device_reboot_times",
+				Columns:    []*schema.Column{DeviceRebootTimesColumns[10]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "devicereboottime_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{DeviceRebootTimesColumns[10]},
+			},
+		},
+	}
 	// EarnBillsColumns holds the columns for the "earn_bills" table.
 	EarnBillsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2419,6 +2455,7 @@ var (
 		CostBillsTable,
 		DevicesTable,
 		DeviceGpuMissionsTable,
+		DeviceRebootTimesTable,
 		EarnBillsTable,
 		EnumConditionsTable,
 		EnumMissionStatusTable,
@@ -2506,6 +2543,8 @@ func init() {
 	DeviceGpuMissionsTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceGpuMissionsTable.ForeignKeys[1].RefTable = GpusTable
 	DeviceGpuMissionsTable.Annotation = &entsql.Annotation{}
+	DeviceRebootTimesTable.ForeignKeys[0].RefTable = DevicesTable
+	DeviceRebootTimesTable.Annotation = &entsql.Annotation{}
 	EarnBillsTable.ForeignKeys[0].RefTable = MissionProduceOrdersTable
 	EarnBillsTable.ForeignKeys[1].RefTable = PlatformAccountsTable
 	EarnBillsTable.ForeignKeys[2].RefTable = ProfitAccountsTable
