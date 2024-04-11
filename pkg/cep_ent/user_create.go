@@ -948,6 +948,21 @@ func (uc *UserCreate) AddCloudFiles(c ...*CloudFile) *UserCreate {
 	return uc.AddCloudFileIDs(ids...)
 }
 
+// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uc *UserCreate) AddOperateTransferOrderIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddOperateTransferOrderIDs(ids...)
+	return uc
+}
+
+// AddOperateTransferOrders adds the "operate_transfer_orders" edges to the TransferOrder entity.
+func (uc *UserCreate) AddOperateTransferOrders(t ...*TransferOrder) *UserCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddOperateTransferOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -1872,6 +1887,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OperateTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

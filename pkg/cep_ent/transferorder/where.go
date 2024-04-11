@@ -126,6 +126,11 @@ func WithdrawAccount(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawAccount, v))
 }
 
+// OperateUserID applies equality check predicate on the "operate_user_id" field. It's identical to OperateUserIDEQ.
+func OperateUserID(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldOperateUserID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -766,6 +771,26 @@ func WithdrawAccountContainsFold(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldContainsFold(FieldWithdrawAccount, v))
 }
 
+// OperateUserIDEQ applies the EQ predicate on the "operate_user_id" field.
+func OperateUserIDEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldOperateUserID, v))
+}
+
+// OperateUserIDNEQ applies the NEQ predicate on the "operate_user_id" field.
+func OperateUserIDNEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNEQ(FieldOperateUserID, v))
+}
+
+// OperateUserIDIn applies the In predicate on the "operate_user_id" field.
+func OperateUserIDIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldIn(FieldOperateUserID, vs...))
+}
+
+// OperateUserIDNotIn applies the NotIn predicate on the "operate_user_id" field.
+func OperateUserIDNotIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNotIn(FieldOperateUserID, vs...))
+}
+
 // HasSourceUser applies the HasEdge predicate on the "source_user" edge.
 func HasSourceUser() predicate.TransferOrder {
 	return predicate.TransferOrder(func(s *sql.Selector) {
@@ -873,6 +898,29 @@ func HasSymbol() predicate.TransferOrder {
 func HasSymbolWith(preds ...predicate.Symbol) predicate.TransferOrder {
 	return predicate.TransferOrder(func(s *sql.Selector) {
 		step := newSymbolStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOperateUser applies the HasEdge predicate on the "operate_user" edge.
+func HasOperateUser() predicate.TransferOrder {
+	return predicate.TransferOrder(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OperateUserTable, OperateUserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOperateUserWith applies the HasEdge predicate on the "operate_user" edge with a given conditions (other predicates).
+func HasOperateUserWith(preds ...predicate.User) predicate.TransferOrder {
+	return predicate.TransferOrder(func(s *sql.Selector) {
+		step := newOperateUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

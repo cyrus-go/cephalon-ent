@@ -92,6 +92,7 @@ type UserQuery struct {
 	withLottoUserCounts       *LottoUserCountQuery
 	withLottoGetCountRecords  *LottoGetCountRecordQuery
 	withCloudFiles            *CloudFileQuery
+	withOperateTransferOrders *TransferOrderQuery
 	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -965,6 +966,28 @@ func (uq *UserQuery) QueryCloudFiles() *CloudFileQuery {
 	return query
 }
 
+// QueryOperateTransferOrders chains the current query on the "operate_transfer_orders" edge.
+func (uq *UserQuery) QueryOperateTransferOrders() *TransferOrderQuery {
+	query := (&TransferOrderClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(transferorder.Table, transferorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateTransferOrdersTable, user.OperateTransferOrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1195,6 +1218,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withLottoUserCounts:       uq.withLottoUserCounts.Clone(),
 		withLottoGetCountRecords:  uq.withLottoGetCountRecords.Clone(),
 		withCloudFiles:            uq.withCloudFiles.Clone(),
+		withOperateTransferOrders: uq.withOperateTransferOrders.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1619,6 +1643,17 @@ func (uq *UserQuery) WithCloudFiles(opts ...func(*CloudFileQuery)) *UserQuery {
 	return uq
 }
 
+// WithOperateTransferOrders tells the query-builder to eager-load the nodes that are connected to
+// the "operate_transfer_orders" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithOperateTransferOrders(opts ...func(*TransferOrderQuery)) *UserQuery {
+	query := (&TransferOrderClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withOperateTransferOrders = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1697,7 +1732,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [38]bool{
+		loadedTypes = [39]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1736,6 +1771,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withLottoUserCounts != nil,
 			uq.withLottoGetCountRecords != nil,
 			uq.withCloudFiles != nil,
+			uq.withOperateTransferOrders != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2030,6 +2066,15 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadCloudFiles(ctx, query, nodes,
 			func(n *User) { n.Edges.CloudFiles = []*CloudFile{} },
 			func(n *User, e *CloudFile) { n.Edges.CloudFiles = append(n.Edges.CloudFiles, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withOperateTransferOrders; query != nil {
+		if err := uq.loadOperateTransferOrders(ctx, query, nodes,
+			func(n *User) { n.Edges.OperateTransferOrders = []*TransferOrder{} },
+			func(n *User, e *TransferOrder) {
+				n.Edges.OperateTransferOrders = append(n.Edges.OperateTransferOrders, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -3163,6 +3208,36 @@ func (uq *UserQuery) loadCloudFiles(ctx context.Context, query *CloudFileQuery, 
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadOperateTransferOrders(ctx context.Context, query *TransferOrderQuery, nodes []*User, init func(*User), assign func(*User, *TransferOrder)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(transferorder.FieldOperateUserID)
+	}
+	query.Where(predicate.TransferOrder(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.OperateTransferOrdersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OperateUserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "operate_user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -54,6 +54,8 @@ type TransferOrder struct {
 	OutTransactionID string `json:"out_transaction_id"`
 	// 提现账户（类型为提现才有数据）
 	WithdrawAccount string `json:"withdraw_account"`
+	// 操作的用户 id，手动充值才有数据，默认为 0
+	OperateUserID int64 `json:"operate_user_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransferOrderQuery when eager-loading is set.
 	Edges        TransferOrderEdges `json:"edges"`
@@ -72,9 +74,11 @@ type TransferOrderEdges struct {
 	VxSocial *VXSocial `json:"vx_social,omitempty"`
 	// Symbol holds the value of the symbol edge.
 	Symbol *Symbol `json:"symbol,omitempty"`
+	// OperateUser holds the value of the operate_user edge.
+	OperateUser *User `json:"operate_user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // SourceUserOrErr returns the SourceUser value or an error if the edge
@@ -138,12 +142,25 @@ func (e TransferOrderEdges) SymbolOrErr() (*Symbol, error) {
 	return nil, &NotLoadedError{edge: "symbol"}
 }
 
+// OperateUserOrErr returns the OperateUser value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransferOrderEdges) OperateUserOrErr() (*User, error) {
+	if e.loadedTypes[5] {
+		if e.OperateUser == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.OperateUser, nil
+	}
+	return nil, &NotLoadedError{edge: "operate_user"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*TransferOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID:
+		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID, transferorder.FieldOperateUserID:
 			values[i] = new(sql.NullInt64)
 		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID, transferorder.FieldWithdrawAccount:
 			values[i] = new(sql.NullString)
@@ -266,6 +283,12 @@ func (to *TransferOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				to.WithdrawAccount = value.String
 			}
+		case transferorder.FieldOperateUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field operate_user_id", values[i])
+			} else if value.Valid {
+				to.OperateUserID = value.Int64
+			}
 		default:
 			to.selectValues.Set(columns[i], values[i])
 		}
@@ -302,6 +325,11 @@ func (to *TransferOrder) QueryVxSocial() *VXSocialQuery {
 // QuerySymbol queries the "symbol" edge of the TransferOrder entity.
 func (to *TransferOrder) QuerySymbol() *SymbolQuery {
 	return NewTransferOrderClient(to.config).QuerySymbol(to)
+}
+
+// QueryOperateUser queries the "operate_user" edge of the TransferOrder entity.
+func (to *TransferOrder) QueryOperateUser() *UserQuery {
+	return NewTransferOrderClient(to.config).QueryOperateUser(to)
 }
 
 // Update returns a builder for updating this TransferOrder.
@@ -374,6 +402,9 @@ func (to *TransferOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("withdraw_account=")
 	builder.WriteString(to.WithdrawAccount)
+	builder.WriteString(", ")
+	builder.WriteString("operate_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", to.OperateUserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

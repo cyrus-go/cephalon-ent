@@ -28,6 +28,7 @@ func (TransferOrder) Fields() []ent.Field {
 		field.String("third_api_resp").Default("").StructTag(`json:"third_api_resp"`).Comment("第三方平台的返回，给到前端才能发起支付"),
 		field.String("out_transaction_id").Default("").StructTag(`json:"out_transaction_id"`).Comment("平台方订单号"),
 		field.String("withdraw_account").Default("").StructTag(`json:"withdraw_account"`).Comment("提现账户（类型为提现才有数据）"),
+		field.Int64("operate_user_id").StructTag(`json:"operate_user_id,string"`).Default(0).Comment("操作的用户 id，手动充值才有数据，默认为 0"),
 	}
 }
 
@@ -40,6 +41,7 @@ func (TransferOrder) Edges() []ent.Edge {
 		edge.To("bills", Bill.Type),
 		edge.From("vx_social", VXSocial.Type).Ref("transfer_orders").Field("social_id").Unique(),
 		edge.From("symbol", Symbol.Type).Ref("transfer_orders").Field("symbol_id").Unique().Required(),
+		edge.From("operate_user", User.Type).Ref("operate_transfer_orders").Field("operate_user_id").Unique().Required(),
 	}
 }
 

@@ -9734,6 +9734,22 @@ func (c *TransferOrderClient) QuerySymbol(to *TransferOrder) *SymbolQuery {
 	return query
 }
 
+// QueryOperateUser queries the operate_user edge of a TransferOrder.
+func (c *TransferOrderClient) QueryOperateUser(to *TransferOrder) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := to.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transferorder.Table, transferorder.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.OperateUserTable, transferorder.OperateUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(to.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TransferOrderClient) Hooks() []Hook {
 	return c.hooks.TransferOrder
@@ -10468,6 +10484,22 @@ func (c *UserClient) QueryCloudFiles(u *User) *CloudFileQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(cloudfile.Table, cloudfile.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.CloudFilesTable, user.CloudFilesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOperateTransferOrders queries the operate_transfer_orders edge of a User.
+func (c *UserClient) QueryOperateTransferOrders(u *User) *TransferOrderQuery {
+	query := (&TransferOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(transferorder.Table, transferorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateTransferOrdersTable, user.OperateTransferOrdersColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

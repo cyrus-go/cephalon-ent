@@ -263,6 +263,20 @@ func (tou *TransferOrderUpdate) SetNillableWithdrawAccount(s *string) *TransferO
 	return tou
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (tou *TransferOrderUpdate) SetOperateUserID(i int64) *TransferOrderUpdate {
+	tou.mutation.SetOperateUserID(i)
+	return tou
+}
+
+// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
+func (tou *TransferOrderUpdate) SetNillableOperateUserID(i *int64) *TransferOrderUpdate {
+	if i != nil {
+		tou.SetOperateUserID(*i)
+	}
+	return tou
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (tou *TransferOrderUpdate) SetSourceUser(u *User) *TransferOrderUpdate {
 	return tou.SetSourceUserID(u.ID)
@@ -312,6 +326,11 @@ func (tou *TransferOrderUpdate) SetSymbol(s *Symbol) *TransferOrderUpdate {
 	return tou.SetSymbolID(s.ID)
 }
 
+// SetOperateUser sets the "operate_user" edge to the User entity.
+func (tou *TransferOrderUpdate) SetOperateUser(u *User) *TransferOrderUpdate {
+	return tou.SetOperateUserID(u.ID)
+}
+
 // Mutation returns the TransferOrderMutation object of the builder.
 func (tou *TransferOrderUpdate) Mutation() *TransferOrderMutation {
 	return tou.mutation
@@ -359,6 +378,12 @@ func (tou *TransferOrderUpdate) ClearVxSocial() *TransferOrderUpdate {
 // ClearSymbol clears the "symbol" edge to the Symbol entity.
 func (tou *TransferOrderUpdate) ClearSymbol() *TransferOrderUpdate {
 	tou.mutation.ClearSymbol()
+	return tou
+}
+
+// ClearOperateUser clears the "operate_user" edge to the User entity.
+func (tou *TransferOrderUpdate) ClearOperateUser() *TransferOrderUpdate {
+	tou.mutation.ClearOperateUser()
 	return tou
 }
 
@@ -418,6 +443,9 @@ func (tou *TransferOrderUpdate) check() error {
 	}
 	if _, ok := tou.mutation.SymbolID(); tou.mutation.SymbolCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.symbol"`)
+	}
+	if _, ok := tou.mutation.OperateUserID(); tou.mutation.OperateUserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.operate_user"`)
 	}
 	return nil
 }
@@ -636,6 +664,35 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tou.mutation.OperateUserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.OperateUserTable,
+			Columns: []string{transferorder.OperateUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tou.mutation.OperateUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.OperateUserTable,
+			Columns: []string{transferorder.OperateUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -894,6 +951,20 @@ func (touo *TransferOrderUpdateOne) SetNillableWithdrawAccount(s *string) *Trans
 	return touo
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (touo *TransferOrderUpdateOne) SetOperateUserID(i int64) *TransferOrderUpdateOne {
+	touo.mutation.SetOperateUserID(i)
+	return touo
+}
+
+// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
+func (touo *TransferOrderUpdateOne) SetNillableOperateUserID(i *int64) *TransferOrderUpdateOne {
+	if i != nil {
+		touo.SetOperateUserID(*i)
+	}
+	return touo
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (touo *TransferOrderUpdateOne) SetSourceUser(u *User) *TransferOrderUpdateOne {
 	return touo.SetSourceUserID(u.ID)
@@ -943,6 +1014,11 @@ func (touo *TransferOrderUpdateOne) SetSymbol(s *Symbol) *TransferOrderUpdateOne
 	return touo.SetSymbolID(s.ID)
 }
 
+// SetOperateUser sets the "operate_user" edge to the User entity.
+func (touo *TransferOrderUpdateOne) SetOperateUser(u *User) *TransferOrderUpdateOne {
+	return touo.SetOperateUserID(u.ID)
+}
+
 // Mutation returns the TransferOrderMutation object of the builder.
 func (touo *TransferOrderUpdateOne) Mutation() *TransferOrderMutation {
 	return touo.mutation
@@ -990,6 +1066,12 @@ func (touo *TransferOrderUpdateOne) ClearVxSocial() *TransferOrderUpdateOne {
 // ClearSymbol clears the "symbol" edge to the Symbol entity.
 func (touo *TransferOrderUpdateOne) ClearSymbol() *TransferOrderUpdateOne {
 	touo.mutation.ClearSymbol()
+	return touo
+}
+
+// ClearOperateUser clears the "operate_user" edge to the User entity.
+func (touo *TransferOrderUpdateOne) ClearOperateUser() *TransferOrderUpdateOne {
+	touo.mutation.ClearOperateUser()
 	return touo
 }
 
@@ -1062,6 +1144,9 @@ func (touo *TransferOrderUpdateOne) check() error {
 	}
 	if _, ok := touo.mutation.SymbolID(); touo.mutation.SymbolCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.symbol"`)
+	}
+	if _, ok := touo.mutation.OperateUserID(); touo.mutation.OperateUserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.operate_user"`)
 	}
 	return nil
 }
@@ -1297,6 +1382,35 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if touo.mutation.OperateUserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.OperateUserTable,
+			Columns: []string{transferorder.OperateUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := touo.mutation.OperateUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transferorder.OperateUserTable,
+			Columns: []string{transferorder.OperateUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

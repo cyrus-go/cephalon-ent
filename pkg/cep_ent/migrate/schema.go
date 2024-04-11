@@ -2132,6 +2132,7 @@ var (
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "转账目标的用户 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "转账来源的用户 id", Default: 0},
+		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作的用户 id，手动充值才有数据，默认为 0", Default: 0},
 		{Name: "social_id", Type: field.TypeInt64, Nullable: true, Comment: "关联充值来源的身份源 id", Default: 0},
 	}
 	// TransferOrdersTable holds the schema information for the "transfer_orders" table.
@@ -2160,8 +2161,14 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Symbol:     "transfer_orders_users_operate_transfer_orders",
 				Columns:    []*schema.Column{TransferOrdersColumns[16]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Columns:    []*schema.Column{TransferOrdersColumns[17]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2180,7 +2187,7 @@ var (
 			{
 				Name:    "transferorder_social_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[16]},
+				Columns: []*schema.Column{TransferOrdersColumns[17]},
 			},
 			{
 				Name:    "transferorder_symbol_id",
@@ -2646,7 +2653,8 @@ func init() {
 	TransferOrdersTable.ForeignKeys[0].RefTable = SymbolsTable
 	TransferOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	TransferOrdersTable.ForeignKeys[2].RefTable = UsersTable
-	TransferOrdersTable.ForeignKeys[3].RefTable = VxSocialsTable
+	TransferOrdersTable.ForeignKeys[3].RefTable = UsersTable
+	TransferOrdersTable.ForeignKeys[4].RefTable = VxSocialsTable
 	TransferOrdersTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}

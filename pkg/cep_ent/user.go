@@ -149,9 +149,11 @@ type UserEdges struct {
 	LottoGetCountRecords []*LottoGetCountRecord `json:"lotto_get_count_records,omitempty"`
 	// CloudFiles holds the value of the cloud_files edge.
 	CloudFiles []*CloudFile `json:"cloud_files,omitempty"`
+	// OperateTransferOrders holds the value of the operate_transfer_orders edge.
+	OperateTransferOrders []*TransferOrder `json:"operate_transfer_orders,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [38]bool
+	loadedTypes [39]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -510,6 +512,15 @@ func (e UserEdges) CloudFilesOrErr() ([]*CloudFile, error) {
 		return e.CloudFiles, nil
 	}
 	return nil, &NotLoadedError{edge: "cloud_files"}
+}
+
+// OperateTransferOrdersOrErr returns the OperateTransferOrders value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OperateTransferOrdersOrErr() ([]*TransferOrder, error) {
+	if e.loadedTypes[38] {
+		return e.OperateTransferOrders, nil
+	}
+	return nil, &NotLoadedError{edge: "operate_transfer_orders"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -879,6 +890,11 @@ func (u *User) QueryLottoGetCountRecords() *LottoGetCountRecordQuery {
 // QueryCloudFiles queries the "cloud_files" edge of the User entity.
 func (u *User) QueryCloudFiles() *CloudFileQuery {
 	return NewUserClient(u.config).QueryCloudFiles(u)
+}
+
+// QueryOperateTransferOrders queries the "operate_transfer_orders" edge of the User entity.
+func (u *User) QueryOperateTransferOrders() *TransferOrderQuery {
+	return NewUserClient(u.config).QueryOperateTransferOrders(u)
 }
 
 // Update returns a builder for updating this User.

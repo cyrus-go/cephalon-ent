@@ -2886,6 +2886,10 @@ func init() {
 	transferorderDescWithdrawAccount := transferorderFields[10].Descriptor()
 	// transferorder.DefaultWithdrawAccount holds the default value on creation for the withdraw_account field.
 	transferorder.DefaultWithdrawAccount = transferorderDescWithdrawAccount.Default.(string)
+	// transferorderDescOperateUserID is the schema descriptor for operate_user_id field.
+	transferorderDescOperateUserID := transferorderFields[11].Descriptor()
+	// transferorder.DefaultOperateUserID holds the default value on creation for the operate_user_id field.
+	transferorder.DefaultOperateUserID = transferorderDescOperateUserID.Default.(int64)
 	// transferorderDescID is the schema descriptor for id field.
 	transferorderDescID := transferorderMixinFields0[0].Descriptor()
 	// transferorder.DefaultID holds the default value on creation for the id field.

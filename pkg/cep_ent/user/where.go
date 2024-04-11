@@ -2114,6 +2114,29 @@ func HasCloudFilesWith(preds ...predicate.CloudFile) predicate.User {
 	})
 }
 
+// HasOperateTransferOrders applies the HasEdge predicate on the "operate_transfer_orders" edge.
+func HasOperateTransferOrders() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, OperateTransferOrdersTable, OperateTransferOrdersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOperateTransferOrdersWith applies the HasEdge predicate on the "operate_transfer_orders" edge with a given conditions (other predicates).
+func HasOperateTransferOrdersWith(preds ...predicate.TransferOrder) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newOperateTransferOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

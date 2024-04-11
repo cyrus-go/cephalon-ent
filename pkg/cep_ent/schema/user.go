@@ -75,6 +75,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("lotto_user_counts", LottoUserCount.Type),
 		edge.To("lotto_get_count_records", LottoGetCountRecord.Type),
 		edge.To("cloud_files", CloudFile.Type),
+		edge.To("operate_transfer_orders", TransferOrder.Type),
 	}
 }
 

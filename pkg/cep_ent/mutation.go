@@ -65084,39 +65084,41 @@ func (m *SymbolMutation) ResetEdge(name string) error {
 // TransferOrderMutation represents an operation that mutates the TransferOrder nodes in the graph.
 type TransferOrderMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int64
-	created_by         *int64
-	addcreated_by      *int64
-	updated_by         *int64
-	addupdated_by      *int64
-	created_at         *time.Time
-	updated_at         *time.Time
-	deleted_at         *time.Time
-	status             *transferorder.Status
-	amount             *int64
-	addamount          *int64
-	_type              *enums.TransferOrderType
-	serial_number      *string
-	third_api_resp     *string
-	out_transaction_id *string
-	withdraw_account   *string
-	clearedFields      map[string]struct{}
-	source_user        *int64
-	clearedsource_user bool
-	target_user        *int64
-	clearedtarget_user bool
-	bills              map[int64]struct{}
-	removedbills       map[int64]struct{}
-	clearedbills       bool
-	vx_social          *int64
-	clearedvx_social   bool
-	symbol             *int64
-	clearedsymbol      bool
-	done               bool
-	oldValue           func(context.Context) (*TransferOrder, error)
-	predicates         []predicate.TransferOrder
+	op                  Op
+	typ                 string
+	id                  *int64
+	created_by          *int64
+	addcreated_by       *int64
+	updated_by          *int64
+	addupdated_by       *int64
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	status              *transferorder.Status
+	amount              *int64
+	addamount           *int64
+	_type               *enums.TransferOrderType
+	serial_number       *string
+	third_api_resp      *string
+	out_transaction_id  *string
+	withdraw_account    *string
+	clearedFields       map[string]struct{}
+	source_user         *int64
+	clearedsource_user  bool
+	target_user         *int64
+	clearedtarget_user  bool
+	bills               map[int64]struct{}
+	removedbills        map[int64]struct{}
+	clearedbills        bool
+	vx_social           *int64
+	clearedvx_social    bool
+	symbol              *int64
+	clearedsymbol       bool
+	operate_user        *int64
+	clearedoperate_user bool
+	done                bool
+	oldValue            func(context.Context) (*TransferOrder, error)
+	predicates          []predicate.TransferOrder
 }
 
 var _ ent.Mutation = (*TransferOrderMutation)(nil)
@@ -65872,6 +65874,42 @@ func (m *TransferOrderMutation) ResetWithdrawAccount() {
 	m.withdraw_account = nil
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (m *TransferOrderMutation) SetOperateUserID(i int64) {
+	m.operate_user = &i
+}
+
+// OperateUserID returns the value of the "operate_user_id" field in the mutation.
+func (m *TransferOrderMutation) OperateUserID() (r int64, exists bool) {
+	v := m.operate_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperateUserID returns the old "operate_user_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldOperateUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperateUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperateUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperateUserID: %w", err)
+	}
+	return oldValue.OperateUserID, nil
+}
+
+// ResetOperateUserID resets all changes to the "operate_user_id" field.
+func (m *TransferOrderMutation) ResetOperateUserID() {
+	m.operate_user = nil
+}
+
 // ClearSourceUser clears the "source_user" edge to the User entity.
 func (m *TransferOrderMutation) ClearSourceUser() {
 	m.clearedsource_user = true
@@ -66047,6 +66085,33 @@ func (m *TransferOrderMutation) ResetSymbol() {
 	m.clearedsymbol = false
 }
 
+// ClearOperateUser clears the "operate_user" edge to the User entity.
+func (m *TransferOrderMutation) ClearOperateUser() {
+	m.clearedoperate_user = true
+	m.clearedFields[transferorder.FieldOperateUserID] = struct{}{}
+}
+
+// OperateUserCleared reports if the "operate_user" edge to the User entity was cleared.
+func (m *TransferOrderMutation) OperateUserCleared() bool {
+	return m.clearedoperate_user
+}
+
+// OperateUserIDs returns the "operate_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OperateUserID instead. It exists only for internal usage by the builders.
+func (m *TransferOrderMutation) OperateUserIDs() (ids []int64) {
+	if id := m.operate_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOperateUser resets all changes to the "operate_user" edge.
+func (m *TransferOrderMutation) ResetOperateUser() {
+	m.operate_user = nil
+	m.clearedoperate_user = false
+}
+
 // Where appends a list predicates to the TransferOrderMutation builder.
 func (m *TransferOrderMutation) Where(ps ...predicate.TransferOrder) {
 	m.predicates = append(m.predicates, ps...)
@@ -66081,7 +66146,7 @@ func (m *TransferOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferOrderMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_by != nil {
 		fields = append(fields, transferorder.FieldCreatedBy)
 	}
@@ -66130,6 +66195,9 @@ func (m *TransferOrderMutation) Fields() []string {
 	if m.withdraw_account != nil {
 		fields = append(fields, transferorder.FieldWithdrawAccount)
 	}
+	if m.operate_user != nil {
+		fields = append(fields, transferorder.FieldOperateUserID)
+	}
 	return fields
 }
 
@@ -66170,6 +66238,8 @@ func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.OutTransactionID()
 	case transferorder.FieldWithdrawAccount:
 		return m.WithdrawAccount()
+	case transferorder.FieldOperateUserID:
+		return m.OperateUserID()
 	}
 	return nil, false
 }
@@ -66211,6 +66281,8 @@ func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldOutTransactionID(ctx)
 	case transferorder.FieldWithdrawAccount:
 		return m.OldWithdrawAccount(ctx)
+	case transferorder.FieldOperateUserID:
+		return m.OldOperateUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown TransferOrder field %s", name)
 }
@@ -66331,6 +66403,13 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWithdrawAccount(v)
+		return nil
+	case transferorder.FieldOperateUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperateUserID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)
@@ -66477,13 +66556,16 @@ func (m *TransferOrderMutation) ResetField(name string) error {
 	case transferorder.FieldWithdrawAccount:
 		m.ResetWithdrawAccount()
 		return nil
+	case transferorder.FieldOperateUserID:
+		m.ResetOperateUserID()
+		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TransferOrderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.source_user != nil {
 		edges = append(edges, transferorder.EdgeSourceUser)
 	}
@@ -66498,6 +66580,9 @@ func (m *TransferOrderMutation) AddedEdges() []string {
 	}
 	if m.symbol != nil {
 		edges = append(edges, transferorder.EdgeSymbol)
+	}
+	if m.operate_user != nil {
+		edges = append(edges, transferorder.EdgeOperateUser)
 	}
 	return edges
 }
@@ -66528,13 +66613,17 @@ func (m *TransferOrderMutation) AddedIDs(name string) []ent.Value {
 		if id := m.symbol; id != nil {
 			return []ent.Value{*id}
 		}
+	case transferorder.EdgeOperateUser:
+		if id := m.operate_user; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TransferOrderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedbills != nil {
 		edges = append(edges, transferorder.EdgeBills)
 	}
@@ -66557,7 +66646,7 @@ func (m *TransferOrderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TransferOrderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedsource_user {
 		edges = append(edges, transferorder.EdgeSourceUser)
 	}
@@ -66572,6 +66661,9 @@ func (m *TransferOrderMutation) ClearedEdges() []string {
 	}
 	if m.clearedsymbol {
 		edges = append(edges, transferorder.EdgeSymbol)
+	}
+	if m.clearedoperate_user {
+		edges = append(edges, transferorder.EdgeOperateUser)
 	}
 	return edges
 }
@@ -66590,6 +66682,8 @@ func (m *TransferOrderMutation) EdgeCleared(name string) bool {
 		return m.clearedvx_social
 	case transferorder.EdgeSymbol:
 		return m.clearedsymbol
+	case transferorder.EdgeOperateUser:
+		return m.clearedoperate_user
 	}
 	return false
 }
@@ -66609,6 +66703,9 @@ func (m *TransferOrderMutation) ClearEdge(name string) error {
 		return nil
 	case transferorder.EdgeSymbol:
 		m.ClearSymbol()
+		return nil
+	case transferorder.EdgeOperateUser:
+		m.ClearOperateUser()
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder unique edge %s", name)
@@ -66632,6 +66729,9 @@ func (m *TransferOrderMutation) ResetEdge(name string) error {
 		return nil
 	case transferorder.EdgeSymbol:
 		m.ResetSymbol()
+		return nil
+	case transferorder.EdgeOperateUser:
+		m.ResetOperateUser()
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder edge %s", name)
@@ -66778,6 +66878,9 @@ type UserMutation struct {
 	cloud_files                    map[int64]struct{}
 	removedcloud_files             map[int64]struct{}
 	clearedcloud_files             bool
+	operate_transfer_orders        map[int64]struct{}
+	removedoperate_transfer_orders map[int64]struct{}
+	clearedoperate_transfer_orders bool
 	done                           bool
 	oldValue                       func(context.Context) (*User, error)
 	predicates                     []predicate.User
@@ -69719,6 +69822,60 @@ func (m *UserMutation) ResetCloudFiles() {
 	m.removedcloud_files = nil
 }
 
+// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by ids.
+func (m *UserMutation) AddOperateTransferOrderIDs(ids ...int64) {
+	if m.operate_transfer_orders == nil {
+		m.operate_transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.operate_transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOperateTransferOrders clears the "operate_transfer_orders" edge to the TransferOrder entity.
+func (m *UserMutation) ClearOperateTransferOrders() {
+	m.clearedoperate_transfer_orders = true
+}
+
+// OperateTransferOrdersCleared reports if the "operate_transfer_orders" edge to the TransferOrder entity was cleared.
+func (m *UserMutation) OperateTransferOrdersCleared() bool {
+	return m.clearedoperate_transfer_orders
+}
+
+// RemoveOperateTransferOrderIDs removes the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
+func (m *UserMutation) RemoveOperateTransferOrderIDs(ids ...int64) {
+	if m.removedoperate_transfer_orders == nil {
+		m.removedoperate_transfer_orders = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.operate_transfer_orders, ids[i])
+		m.removedoperate_transfer_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOperateTransferOrders returns the removed IDs of the "operate_transfer_orders" edge to the TransferOrder entity.
+func (m *UserMutation) RemovedOperateTransferOrdersIDs() (ids []int64) {
+	for id := range m.removedoperate_transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OperateTransferOrdersIDs returns the "operate_transfer_orders" edge IDs in the mutation.
+func (m *UserMutation) OperateTransferOrdersIDs() (ids []int64) {
+	for id := range m.operate_transfer_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOperateTransferOrders resets all changes to the "operate_transfer_orders" edge.
+func (m *UserMutation) ResetOperateTransferOrders() {
+	m.operate_transfer_orders = nil
+	m.clearedoperate_transfer_orders = false
+	m.removedoperate_transfer_orders = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -70248,7 +70405,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 38)
+	edges := make([]string, 0, 39)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -70362,6 +70519,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.cloud_files != nil {
 		edges = append(edges, user.EdgeCloudFiles)
+	}
+	if m.operate_transfer_orders != nil {
+		edges = append(edges, user.EdgeOperateTransferOrders)
 	}
 	return edges
 }
@@ -70590,13 +70750,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeOperateTransferOrders:
+		ids := make([]ent.Value, 0, len(m.operate_transfer_orders))
+		for id := range m.operate_transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 38)
+	edges := make([]string, 0, 39)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -70698,6 +70864,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedcloud_files != nil {
 		edges = append(edges, user.EdgeCloudFiles)
+	}
+	if m.removedoperate_transfer_orders != nil {
+		edges = append(edges, user.EdgeOperateTransferOrders)
 	}
 	return edges
 }
@@ -70910,13 +71079,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeOperateTransferOrders:
+		ids := make([]ent.Value, 0, len(m.removedoperate_transfer_orders))
+		for id := range m.removedoperate_transfer_orders {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 38)
+	edges := make([]string, 0, 39)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -71031,6 +71206,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedcloud_files {
 		edges = append(edges, user.EdgeCloudFiles)
 	}
+	if m.clearedoperate_transfer_orders {
+		edges = append(edges, user.EdgeOperateTransferOrders)
+	}
 	return edges
 }
 
@@ -71114,6 +71292,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedlotto_get_count_records
 	case user.EdgeCloudFiles:
 		return m.clearedcloud_files
+	case user.EdgeOperateTransferOrders:
+		return m.clearedoperate_transfer_orders
 	}
 	return false
 }
@@ -71255,6 +71435,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeCloudFiles:
 		m.ResetCloudFiles()
+		return nil
+	case user.EdgeOperateTransferOrders:
+		m.ResetOperateTransferOrders()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

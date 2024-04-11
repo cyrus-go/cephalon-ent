@@ -940,6 +940,21 @@ func (uu *UserUpdate) AddCloudFiles(c ...*CloudFile) *UserUpdate {
 	return uu.AddCloudFileIDs(ids...)
 }
 
+// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uu *UserUpdate) AddOperateTransferOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddOperateTransferOrderIDs(ids...)
+	return uu
+}
+
+// AddOperateTransferOrders adds the "operate_transfer_orders" edges to the TransferOrder entity.
+func (uu *UserUpdate) AddOperateTransferOrders(t ...*TransferOrder) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddOperateTransferOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1681,6 +1696,27 @@ func (uu *UserUpdate) RemoveCloudFiles(c ...*CloudFile) *UserUpdate {
 		ids[i] = c[i].ID
 	}
 	return uu.RemoveCloudFileIDs(ids...)
+}
+
+// ClearOperateTransferOrders clears all "operate_transfer_orders" edges to the TransferOrder entity.
+func (uu *UserUpdate) ClearOperateTransferOrders() *UserUpdate {
+	uu.mutation.ClearOperateTransferOrders()
+	return uu
+}
+
+// RemoveOperateTransferOrderIDs removes the "operate_transfer_orders" edge to TransferOrder entities by IDs.
+func (uu *UserUpdate) RemoveOperateTransferOrderIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveOperateTransferOrderIDs(ids...)
+	return uu
+}
+
+// RemoveOperateTransferOrders removes "operate_transfer_orders" edges to TransferOrder entities.
+func (uu *UserUpdate) RemoveOperateTransferOrders(t ...*TransferOrder) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveOperateTransferOrderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -3465,6 +3501,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.OperateTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOperateTransferOrdersIDs(); len(nodes) > 0 && !uu.mutation.OperateTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OperateTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -4366,6 +4447,21 @@ func (uuo *UserUpdateOne) AddCloudFiles(c ...*CloudFile) *UserUpdateOne {
 	return uuo.AddCloudFileIDs(ids...)
 }
 
+// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
+func (uuo *UserUpdateOne) AddOperateTransferOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddOperateTransferOrderIDs(ids...)
+	return uuo
+}
+
+// AddOperateTransferOrders adds the "operate_transfer_orders" edges to the TransferOrder entity.
+func (uuo *UserUpdateOne) AddOperateTransferOrders(t ...*TransferOrder) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddOperateTransferOrderIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -5107,6 +5203,27 @@ func (uuo *UserUpdateOne) RemoveCloudFiles(c ...*CloudFile) *UserUpdateOne {
 		ids[i] = c[i].ID
 	}
 	return uuo.RemoveCloudFileIDs(ids...)
+}
+
+// ClearOperateTransferOrders clears all "operate_transfer_orders" edges to the TransferOrder entity.
+func (uuo *UserUpdateOne) ClearOperateTransferOrders() *UserUpdateOne {
+	uuo.mutation.ClearOperateTransferOrders()
+	return uuo
+}
+
+// RemoveOperateTransferOrderIDs removes the "operate_transfer_orders" edge to TransferOrder entities by IDs.
+func (uuo *UserUpdateOne) RemoveOperateTransferOrderIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveOperateTransferOrderIDs(ids...)
+	return uuo
+}
+
+// RemoveOperateTransferOrders removes "operate_transfer_orders" edges to TransferOrder entities.
+func (uuo *UserUpdateOne) RemoveOperateTransferOrders(t ...*TransferOrder) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveOperateTransferOrderIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -6914,6 +7031,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(cloudfile.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OperateTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOperateTransferOrdersIDs(); len(nodes) > 0 && !uuo.mutation.OperateTransferOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OperateTransferOrdersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateTransferOrdersTable,
+			Columns: []string{user.OperateTransferOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -135,6 +135,8 @@ const (
 	EdgeLottoGetCountRecords = "lotto_get_count_records"
 	// EdgeCloudFiles holds the string denoting the cloud_files edge name in mutations.
 	EdgeCloudFiles = "cloud_files"
+	// EdgeOperateTransferOrders holds the string denoting the operate_transfer_orders edge name in mutations.
+	EdgeOperateTransferOrders = "operate_transfer_orders"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -397,6 +399,13 @@ const (
 	CloudFilesInverseTable = "cloud_files"
 	// CloudFilesColumn is the table column denoting the cloud_files relation/edge.
 	CloudFilesColumn = "user_id"
+	// OperateTransferOrdersTable is the table that holds the operate_transfer_orders relation/edge.
+	OperateTransferOrdersTable = "transfer_orders"
+	// OperateTransferOrdersInverseTable is the table name for the TransferOrder entity.
+	// It exists in this package in order to avoid circular dependency with the "transferorder" package.
+	OperateTransferOrdersInverseTable = "transfer_orders"
+	// OperateTransferOrdersColumn is the table column denoting the operate_transfer_orders relation/edge.
+	OperateTransferOrdersColumn = "operate_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1133,6 +1142,20 @@ func ByCloudFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCloudFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByOperateTransferOrdersCount orders the results by operate_transfer_orders count.
+func ByOperateTransferOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOperateTransferOrdersStep(), opts...)
+	}
+}
+
+// ByOperateTransferOrders orders the results by operate_transfer_orders terms.
+func ByOperateTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOperateTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1397,5 +1420,12 @@ func newCloudFilesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CloudFilesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CloudFilesTable, CloudFilesColumn),
+	)
+}
+func newOperateTransferOrdersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OperateTransferOrdersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OperateTransferOrdersTable, OperateTransferOrdersColumn),
 	)
 }
