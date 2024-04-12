@@ -65084,41 +65084,45 @@ func (m *SymbolMutation) ResetEdge(name string) error {
 // TransferOrderMutation represents an operation that mutates the TransferOrder nodes in the graph.
 type TransferOrderMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int64
-	created_by          *int64
-	addcreated_by       *int64
-	updated_by          *int64
-	addupdated_by       *int64
-	created_at          *time.Time
-	updated_at          *time.Time
-	deleted_at          *time.Time
-	status              *transferorder.Status
-	amount              *int64
-	addamount           *int64
-	_type               *enums.TransferOrderType
-	serial_number       *string
-	third_api_resp      *string
-	out_transaction_id  *string
-	withdraw_account    *string
-	clearedFields       map[string]struct{}
-	source_user         *int64
-	clearedsource_user  bool
-	target_user         *int64
-	clearedtarget_user  bool
-	bills               map[int64]struct{}
-	removedbills        map[int64]struct{}
-	clearedbills        bool
-	vx_social           *int64
-	clearedvx_social    bool
-	symbol              *int64
-	clearedsymbol       bool
-	operate_user        *int64
-	clearedoperate_user bool
-	done                bool
-	oldValue            func(context.Context) (*TransferOrder, error)
-	predicates          []predicate.TransferOrder
+	op                      Op
+	typ                     string
+	id                      *int64
+	created_by              *int64
+	addcreated_by           *int64
+	updated_by              *int64
+	addupdated_by           *int64
+	created_at              *time.Time
+	updated_at              *time.Time
+	deleted_at              *time.Time
+	status                  *transferorder.Status
+	amount                  *int64
+	addamount               *int64
+	_type                   *enums.TransferOrderType
+	serial_number           *string
+	third_api_resp          *string
+	out_transaction_id      *string
+	withdraw_account        *string
+	withdraw_rate           *int64
+	addwithdraw_rate        *int64
+	withdraw_real_amount    *int64
+	addwithdraw_real_amount *int64
+	clearedFields           map[string]struct{}
+	source_user             *int64
+	clearedsource_user      bool
+	target_user             *int64
+	clearedtarget_user      bool
+	bills                   map[int64]struct{}
+	removedbills            map[int64]struct{}
+	clearedbills            bool
+	vx_social               *int64
+	clearedvx_social        bool
+	symbol                  *int64
+	clearedsymbol           bool
+	operate_user            *int64
+	clearedoperate_user     bool
+	done                    bool
+	oldValue                func(context.Context) (*TransferOrder, error)
+	predicates              []predicate.TransferOrder
 }
 
 var _ ent.Mutation = (*TransferOrderMutation)(nil)
@@ -65874,6 +65878,118 @@ func (m *TransferOrderMutation) ResetWithdrawAccount() {
 	m.withdraw_account = nil
 }
 
+// SetWithdrawRate sets the "withdraw_rate" field.
+func (m *TransferOrderMutation) SetWithdrawRate(i int64) {
+	m.withdraw_rate = &i
+	m.addwithdraw_rate = nil
+}
+
+// WithdrawRate returns the value of the "withdraw_rate" field in the mutation.
+func (m *TransferOrderMutation) WithdrawRate() (r int64, exists bool) {
+	v := m.withdraw_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWithdrawRate returns the old "withdraw_rate" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldWithdrawRate(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWithdrawRate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWithdrawRate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWithdrawRate: %w", err)
+	}
+	return oldValue.WithdrawRate, nil
+}
+
+// AddWithdrawRate adds i to the "withdraw_rate" field.
+func (m *TransferOrderMutation) AddWithdrawRate(i int64) {
+	if m.addwithdraw_rate != nil {
+		*m.addwithdraw_rate += i
+	} else {
+		m.addwithdraw_rate = &i
+	}
+}
+
+// AddedWithdrawRate returns the value that was added to the "withdraw_rate" field in this mutation.
+func (m *TransferOrderMutation) AddedWithdrawRate() (r int64, exists bool) {
+	v := m.addwithdraw_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWithdrawRate resets all changes to the "withdraw_rate" field.
+func (m *TransferOrderMutation) ResetWithdrawRate() {
+	m.withdraw_rate = nil
+	m.addwithdraw_rate = nil
+}
+
+// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
+func (m *TransferOrderMutation) SetWithdrawRealAmount(i int64) {
+	m.withdraw_real_amount = &i
+	m.addwithdraw_real_amount = nil
+}
+
+// WithdrawRealAmount returns the value of the "withdraw_real_amount" field in the mutation.
+func (m *TransferOrderMutation) WithdrawRealAmount() (r int64, exists bool) {
+	v := m.withdraw_real_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWithdrawRealAmount returns the old "withdraw_real_amount" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldWithdrawRealAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWithdrawRealAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWithdrawRealAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWithdrawRealAmount: %w", err)
+	}
+	return oldValue.WithdrawRealAmount, nil
+}
+
+// AddWithdrawRealAmount adds i to the "withdraw_real_amount" field.
+func (m *TransferOrderMutation) AddWithdrawRealAmount(i int64) {
+	if m.addwithdraw_real_amount != nil {
+		*m.addwithdraw_real_amount += i
+	} else {
+		m.addwithdraw_real_amount = &i
+	}
+}
+
+// AddedWithdrawRealAmount returns the value that was added to the "withdraw_real_amount" field in this mutation.
+func (m *TransferOrderMutation) AddedWithdrawRealAmount() (r int64, exists bool) {
+	v := m.addwithdraw_real_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWithdrawRealAmount resets all changes to the "withdraw_real_amount" field.
+func (m *TransferOrderMutation) ResetWithdrawRealAmount() {
+	m.withdraw_real_amount = nil
+	m.addwithdraw_real_amount = nil
+}
+
 // SetOperateUserID sets the "operate_user_id" field.
 func (m *TransferOrderMutation) SetOperateUserID(i int64) {
 	m.operate_user = &i
@@ -66146,7 +66262,7 @@ func (m *TransferOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferOrderMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 19)
 	if m.created_by != nil {
 		fields = append(fields, transferorder.FieldCreatedBy)
 	}
@@ -66195,6 +66311,12 @@ func (m *TransferOrderMutation) Fields() []string {
 	if m.withdraw_account != nil {
 		fields = append(fields, transferorder.FieldWithdrawAccount)
 	}
+	if m.withdraw_rate != nil {
+		fields = append(fields, transferorder.FieldWithdrawRate)
+	}
+	if m.withdraw_real_amount != nil {
+		fields = append(fields, transferorder.FieldWithdrawRealAmount)
+	}
 	if m.operate_user != nil {
 		fields = append(fields, transferorder.FieldOperateUserID)
 	}
@@ -66238,6 +66360,10 @@ func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.OutTransactionID()
 	case transferorder.FieldWithdrawAccount:
 		return m.WithdrawAccount()
+	case transferorder.FieldWithdrawRate:
+		return m.WithdrawRate()
+	case transferorder.FieldWithdrawRealAmount:
+		return m.WithdrawRealAmount()
 	case transferorder.FieldOperateUserID:
 		return m.OperateUserID()
 	}
@@ -66281,6 +66407,10 @@ func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldOutTransactionID(ctx)
 	case transferorder.FieldWithdrawAccount:
 		return m.OldWithdrawAccount(ctx)
+	case transferorder.FieldWithdrawRate:
+		return m.OldWithdrawRate(ctx)
+	case transferorder.FieldWithdrawRealAmount:
+		return m.OldWithdrawRealAmount(ctx)
 	case transferorder.FieldOperateUserID:
 		return m.OldOperateUserID(ctx)
 	}
@@ -66404,6 +66534,20 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetWithdrawAccount(v)
 		return nil
+	case transferorder.FieldWithdrawRate:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWithdrawRate(v)
+		return nil
+	case transferorder.FieldWithdrawRealAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWithdrawRealAmount(v)
+		return nil
 	case transferorder.FieldOperateUserID:
 		v, ok := value.(int64)
 		if !ok {
@@ -66428,6 +66572,12 @@ func (m *TransferOrderMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, transferorder.FieldAmount)
 	}
+	if m.addwithdraw_rate != nil {
+		fields = append(fields, transferorder.FieldWithdrawRate)
+	}
+	if m.addwithdraw_real_amount != nil {
+		fields = append(fields, transferorder.FieldWithdrawRealAmount)
+	}
 	return fields
 }
 
@@ -66442,6 +66592,10 @@ func (m *TransferOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case transferorder.FieldAmount:
 		return m.AddedAmount()
+	case transferorder.FieldWithdrawRate:
+		return m.AddedWithdrawRate()
+	case transferorder.FieldWithdrawRealAmount:
+		return m.AddedWithdrawRealAmount()
 	}
 	return nil, false
 }
@@ -66471,6 +66625,20 @@ func (m *TransferOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case transferorder.FieldWithdrawRate:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWithdrawRate(v)
+		return nil
+	case transferorder.FieldWithdrawRealAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWithdrawRealAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder numeric field %s", name)
@@ -66555,6 +66723,12 @@ func (m *TransferOrderMutation) ResetField(name string) error {
 		return nil
 	case transferorder.FieldWithdrawAccount:
 		m.ResetWithdrawAccount()
+		return nil
+	case transferorder.FieldWithdrawRate:
+		m.ResetWithdrawRate()
+		return nil
+	case transferorder.FieldWithdrawRealAmount:
+		m.ResetWithdrawRealAmount()
 		return nil
 	case transferorder.FieldOperateUserID:
 		m.ResetOperateUserID()

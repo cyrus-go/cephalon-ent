@@ -126,6 +126,16 @@ func WithdrawAccount(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawAccount, v))
 }
 
+// WithdrawRate applies equality check predicate on the "withdraw_rate" field. It's identical to WithdrawRateEQ.
+func WithdrawRate(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawRate, v))
+}
+
+// WithdrawRealAmount applies equality check predicate on the "withdraw_real_amount" field. It's identical to WithdrawRealAmountEQ.
+func WithdrawRealAmount(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawRealAmount, v))
+}
+
 // OperateUserID applies equality check predicate on the "operate_user_id" field. It's identical to OperateUserIDEQ.
 func OperateUserID(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldOperateUserID, v))
@@ -769,6 +779,86 @@ func WithdrawAccountEqualFold(v string) predicate.TransferOrder {
 // WithdrawAccountContainsFold applies the ContainsFold predicate on the "withdraw_account" field.
 func WithdrawAccountContainsFold(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldContainsFold(FieldWithdrawAccount, v))
+}
+
+// WithdrawRateEQ applies the EQ predicate on the "withdraw_rate" field.
+func WithdrawRateEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawRate, v))
+}
+
+// WithdrawRateNEQ applies the NEQ predicate on the "withdraw_rate" field.
+func WithdrawRateNEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNEQ(FieldWithdrawRate, v))
+}
+
+// WithdrawRateIn applies the In predicate on the "withdraw_rate" field.
+func WithdrawRateIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldIn(FieldWithdrawRate, vs...))
+}
+
+// WithdrawRateNotIn applies the NotIn predicate on the "withdraw_rate" field.
+func WithdrawRateNotIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNotIn(FieldWithdrawRate, vs...))
+}
+
+// WithdrawRateGT applies the GT predicate on the "withdraw_rate" field.
+func WithdrawRateGT(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGT(FieldWithdrawRate, v))
+}
+
+// WithdrawRateGTE applies the GTE predicate on the "withdraw_rate" field.
+func WithdrawRateGTE(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGTE(FieldWithdrawRate, v))
+}
+
+// WithdrawRateLT applies the LT predicate on the "withdraw_rate" field.
+func WithdrawRateLT(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLT(FieldWithdrawRate, v))
+}
+
+// WithdrawRateLTE applies the LTE predicate on the "withdraw_rate" field.
+func WithdrawRateLTE(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLTE(FieldWithdrawRate, v))
+}
+
+// WithdrawRealAmountEQ applies the EQ predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldWithdrawRealAmount, v))
+}
+
+// WithdrawRealAmountNEQ applies the NEQ predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountNEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNEQ(FieldWithdrawRealAmount, v))
+}
+
+// WithdrawRealAmountIn applies the In predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldIn(FieldWithdrawRealAmount, vs...))
+}
+
+// WithdrawRealAmountNotIn applies the NotIn predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountNotIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNotIn(FieldWithdrawRealAmount, vs...))
+}
+
+// WithdrawRealAmountGT applies the GT predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountGT(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGT(FieldWithdrawRealAmount, v))
+}
+
+// WithdrawRealAmountGTE applies the GTE predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountGTE(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGTE(FieldWithdrawRealAmount, v))
+}
+
+// WithdrawRealAmountLT applies the LT predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountLT(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLT(FieldWithdrawRealAmount, v))
+}
+
+// WithdrawRealAmountLTE applies the LTE predicate on the "withdraw_real_amount" field.
+func WithdrawRealAmountLTE(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLTE(FieldWithdrawRealAmount, v))
 }
 
 // OperateUserIDEQ applies the EQ predicate on the "operate_user_id" field.

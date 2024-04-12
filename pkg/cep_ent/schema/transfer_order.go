@@ -28,6 +28,8 @@ func (TransferOrder) Fields() []ent.Field {
 		field.String("third_api_resp").Default("").StructTag(`json:"third_api_resp"`).Comment("第三方平台的返回，给到前端才能发起支付"),
 		field.String("out_transaction_id").Default("").StructTag(`json:"out_transaction_id"`).Comment("平台方订单号"),
 		field.String("withdraw_account").Default("").StructTag(`json:"withdraw_account"`).Comment("提现账户（类型为提现才有数据）"),
+		field.Int64("withdraw_rate").StructTag(`json:"withdraw_rate"`).Default(7).Comment("提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%"),
+		field.Int64("withdraw_real_amount").StructTag(`json:"withdraw_real_amount"`).Default(0).Comment("提现实际到账，单位：cep"),
 		field.Int64("operate_user_id").StructTag(`json:"operate_user_id,string"`).Default(0).Comment("操作的用户 id，手动充值才有数据，默认为 0"),
 	}
 }

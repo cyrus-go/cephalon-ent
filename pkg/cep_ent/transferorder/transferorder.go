@@ -48,6 +48,10 @@ const (
 	FieldOutTransactionID = "out_transaction_id"
 	// FieldWithdrawAccount holds the string denoting the withdraw_account field in the database.
 	FieldWithdrawAccount = "withdraw_account"
+	// FieldWithdrawRate holds the string denoting the withdraw_rate field in the database.
+	FieldWithdrawRate = "withdraw_rate"
+	// FieldWithdrawRealAmount holds the string denoting the withdraw_real_amount field in the database.
+	FieldWithdrawRealAmount = "withdraw_real_amount"
 	// FieldOperateUserID holds the string denoting the operate_user_id field in the database.
 	FieldOperateUserID = "operate_user_id"
 	// EdgeSourceUser holds the string denoting the source_user edge name in mutations.
@@ -127,6 +131,8 @@ var Columns = []string{
 	FieldThirdAPIResp,
 	FieldOutTransactionID,
 	FieldWithdrawAccount,
+	FieldWithdrawRate,
+	FieldWithdrawRealAmount,
 	FieldOperateUserID,
 }
 
@@ -171,6 +177,10 @@ var (
 	DefaultOutTransactionID string
 	// DefaultWithdrawAccount holds the default value on creation for the "withdraw_account" field.
 	DefaultWithdrawAccount string
+	// DefaultWithdrawRate holds the default value on creation for the "withdraw_rate" field.
+	DefaultWithdrawRate int64
+	// DefaultWithdrawRealAmount holds the default value on creation for the "withdraw_real_amount" field.
+	DefaultWithdrawRealAmount int64
 	// DefaultOperateUserID holds the default value on creation for the "operate_user_id" field.
 	DefaultOperateUserID int64
 	// DefaultID holds the default value on creation for the "id" field.
@@ -306,6 +316,16 @@ func ByOutTransactionID(opts ...sql.OrderTermOption) OrderOption {
 // ByWithdrawAccount orders the results by the withdraw_account field.
 func ByWithdrawAccount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWithdrawAccount, opts...).ToFunc()
+}
+
+// ByWithdrawRate orders the results by the withdraw_rate field.
+func ByWithdrawRate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWithdrawRate, opts...).ToFunc()
+}
+
+// ByWithdrawRealAmount orders the results by the withdraw_real_amount field.
+func ByWithdrawRealAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWithdrawRealAmount, opts...).ToFunc()
 }
 
 // ByOperateUserID orders the results by the operate_user_id field.
