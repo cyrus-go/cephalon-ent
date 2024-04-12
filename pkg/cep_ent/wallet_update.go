@@ -142,6 +142,27 @@ func (wu *WalletUpdate) AddAmount(i int64) *WalletUpdate {
 	return wu
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (wu *WalletUpdate) SetTotalAmount(i int64) *WalletUpdate {
+	wu.mutation.ResetTotalAmount()
+	wu.mutation.SetTotalAmount(i)
+	return wu
+}
+
+// SetNillableTotalAmount sets the "total_amount" field if the given value is not nil.
+func (wu *WalletUpdate) SetNillableTotalAmount(i *int64) *WalletUpdate {
+	if i != nil {
+		wu.SetTotalAmount(*i)
+	}
+	return wu
+}
+
+// AddTotalAmount adds i to the "total_amount" field.
+func (wu *WalletUpdate) AddTotalAmount(i int64) *WalletUpdate {
+	wu.mutation.AddTotalAmount(i)
+	return wu
+}
+
 // SetWithdrawAmount sets the "withdraw_amount" field.
 func (wu *WalletUpdate) SetWithdrawAmount(i int64) *WalletUpdate {
 	wu.mutation.ResetWithdrawAmount()
@@ -278,6 +299,12 @@ func (wu *WalletUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := wu.mutation.AddedAmount(); ok {
 		_spec.AddField(wallet.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := wu.mutation.TotalAmount(); ok {
+		_spec.SetField(wallet.FieldTotalAmount, field.TypeInt64, value)
+	}
+	if value, ok := wu.mutation.AddedTotalAmount(); ok {
+		_spec.AddField(wallet.FieldTotalAmount, field.TypeInt64, value)
 	}
 	if value, ok := wu.mutation.WithdrawAmount(); ok {
 		_spec.SetField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
@@ -476,6 +503,27 @@ func (wuo *WalletUpdateOne) AddAmount(i int64) *WalletUpdateOne {
 	return wuo
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (wuo *WalletUpdateOne) SetTotalAmount(i int64) *WalletUpdateOne {
+	wuo.mutation.ResetTotalAmount()
+	wuo.mutation.SetTotalAmount(i)
+	return wuo
+}
+
+// SetNillableTotalAmount sets the "total_amount" field if the given value is not nil.
+func (wuo *WalletUpdateOne) SetNillableTotalAmount(i *int64) *WalletUpdateOne {
+	if i != nil {
+		wuo.SetTotalAmount(*i)
+	}
+	return wuo
+}
+
+// AddTotalAmount adds i to the "total_amount" field.
+func (wuo *WalletUpdateOne) AddTotalAmount(i int64) *WalletUpdateOne {
+	wuo.mutation.AddTotalAmount(i)
+	return wuo
+}
+
 // SetWithdrawAmount sets the "withdraw_amount" field.
 func (wuo *WalletUpdateOne) SetWithdrawAmount(i int64) *WalletUpdateOne {
 	wuo.mutation.ResetWithdrawAmount()
@@ -642,6 +690,12 @@ func (wuo *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err err
 	}
 	if value, ok := wuo.mutation.AddedAmount(); ok {
 		_spec.AddField(wallet.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := wuo.mutation.TotalAmount(); ok {
+		_spec.SetField(wallet.FieldTotalAmount, field.TypeInt64, value)
+	}
+	if value, ok := wuo.mutation.AddedTotalAmount(); ok {
+		_spec.AddField(wallet.FieldTotalAmount, field.TypeInt64, value)
 	}
 	if value, ok := wuo.mutation.WithdrawAmount(); ok {
 		_spec.SetField(wallet.FieldWithdrawAmount, field.TypeInt64, value)

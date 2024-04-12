@@ -136,6 +136,20 @@ func (wc *WalletCreate) SetNillableAmount(i *int64) *WalletCreate {
 	return wc
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (wc *WalletCreate) SetTotalAmount(i int64) *WalletCreate {
+	wc.mutation.SetTotalAmount(i)
+	return wc
+}
+
+// SetNillableTotalAmount sets the "total_amount" field if the given value is not nil.
+func (wc *WalletCreate) SetNillableTotalAmount(i *int64) *WalletCreate {
+	if i != nil {
+		wc.SetTotalAmount(*i)
+	}
+	return wc
+}
+
 // SetWithdrawAmount sets the "withdraw_amount" field.
 func (wc *WalletCreate) SetWithdrawAmount(i int64) *WalletCreate {
 	wc.mutation.SetWithdrawAmount(i)
@@ -241,6 +255,10 @@ func (wc *WalletCreate) defaults() {
 		v := wallet.DefaultAmount
 		wc.mutation.SetAmount(v)
 	}
+	if _, ok := wc.mutation.TotalAmount(); !ok {
+		v := wallet.DefaultTotalAmount
+		wc.mutation.SetTotalAmount(v)
+	}
 	if _, ok := wc.mutation.WithdrawAmount(); !ok {
 		v := wallet.DefaultWithdrawAmount
 		wc.mutation.SetWithdrawAmount(v)
@@ -276,6 +294,9 @@ func (wc *WalletCreate) check() error {
 	}
 	if _, ok := wc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "Wallet.amount"`)}
+	}
+	if _, ok := wc.mutation.TotalAmount(); !ok {
+		return &ValidationError{Name: "total_amount", err: errors.New(`cep_ent: missing required field "Wallet.total_amount"`)}
 	}
 	if _, ok := wc.mutation.WithdrawAmount(); !ok {
 		return &ValidationError{Name: "withdraw_amount", err: errors.New(`cep_ent: missing required field "Wallet.withdraw_amount"`)}
@@ -342,6 +363,10 @@ func (wc *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.Amount(); ok {
 		_spec.SetField(wallet.FieldAmount, field.TypeInt64, value)
 		_node.Amount = value
+	}
+	if value, ok := wc.mutation.TotalAmount(); ok {
+		_spec.SetField(wallet.FieldTotalAmount, field.TypeInt64, value)
+		_node.TotalAmount = value
 	}
 	if value, ok := wc.mutation.WithdrawAmount(); ok {
 		_spec.SetField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
@@ -535,6 +560,24 @@ func (u *WalletUpsert) AddAmount(v int64) *WalletUpsert {
 	return u
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (u *WalletUpsert) SetTotalAmount(v int64) *WalletUpsert {
+	u.Set(wallet.FieldTotalAmount, v)
+	return u
+}
+
+// UpdateTotalAmount sets the "total_amount" field to the value that was provided on create.
+func (u *WalletUpsert) UpdateTotalAmount() *WalletUpsert {
+	u.SetExcluded(wallet.FieldTotalAmount)
+	return u
+}
+
+// AddTotalAmount adds v to the "total_amount" field.
+func (u *WalletUpsert) AddTotalAmount(v int64) *WalletUpsert {
+	u.Add(wallet.FieldTotalAmount, v)
+	return u
+}
+
 // SetWithdrawAmount sets the "withdraw_amount" field.
 func (u *WalletUpsert) SetWithdrawAmount(v int64) *WalletUpsert {
 	u.Set(wallet.FieldWithdrawAmount, v)
@@ -720,6 +763,27 @@ func (u *WalletUpsertOne) AddAmount(v int64) *WalletUpsertOne {
 func (u *WalletUpsertOne) UpdateAmount() *WalletUpsertOne {
 	return u.Update(func(s *WalletUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetTotalAmount sets the "total_amount" field.
+func (u *WalletUpsertOne) SetTotalAmount(v int64) *WalletUpsertOne {
+	return u.Update(func(s *WalletUpsert) {
+		s.SetTotalAmount(v)
+	})
+}
+
+// AddTotalAmount adds v to the "total_amount" field.
+func (u *WalletUpsertOne) AddTotalAmount(v int64) *WalletUpsertOne {
+	return u.Update(func(s *WalletUpsert) {
+		s.AddTotalAmount(v)
+	})
+}
+
+// UpdateTotalAmount sets the "total_amount" field to the value that was provided on create.
+func (u *WalletUpsertOne) UpdateTotalAmount() *WalletUpsertOne {
+	return u.Update(func(s *WalletUpsert) {
+		s.UpdateTotalAmount()
 	})
 }
 
@@ -1077,6 +1141,27 @@ func (u *WalletUpsertBulk) AddAmount(v int64) *WalletUpsertBulk {
 func (u *WalletUpsertBulk) UpdateAmount() *WalletUpsertBulk {
 	return u.Update(func(s *WalletUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetTotalAmount sets the "total_amount" field.
+func (u *WalletUpsertBulk) SetTotalAmount(v int64) *WalletUpsertBulk {
+	return u.Update(func(s *WalletUpsert) {
+		s.SetTotalAmount(v)
+	})
+}
+
+// AddTotalAmount adds v to the "total_amount" field.
+func (u *WalletUpsertBulk) AddTotalAmount(v int64) *WalletUpsertBulk {
+	return u.Update(func(s *WalletUpsert) {
+		s.AddTotalAmount(v)
+	})
+}
+
+// UpdateTotalAmount sets the "total_amount" field to the value that was provided on create.
+func (u *WalletUpsertBulk) UpdateTotalAmount() *WalletUpsertBulk {
+	return u.Update(func(s *WalletUpsert) {
+		s.UpdateTotalAmount()
 	})
 }
 

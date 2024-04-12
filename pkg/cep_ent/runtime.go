@@ -3177,8 +3177,12 @@ func init() {
 	walletDescAmount := walletFields[2].Descriptor()
 	// wallet.DefaultAmount holds the default value on creation for the amount field.
 	wallet.DefaultAmount = walletDescAmount.Default.(int64)
+	// walletDescTotalAmount is the schema descriptor for total_amount field.
+	walletDescTotalAmount := walletFields[3].Descriptor()
+	// wallet.DefaultTotalAmount holds the default value on creation for the total_amount field.
+	wallet.DefaultTotalAmount = walletDescTotalAmount.Default.(int64)
 	// walletDescWithdrawAmount is the schema descriptor for withdraw_amount field.
-	walletDescWithdrawAmount := walletFields[3].Descriptor()
+	walletDescWithdrawAmount := walletFields[4].Descriptor()
 	// wallet.DefaultWithdrawAmount holds the default value on creation for the withdraw_amount field.
 	wallet.DefaultWithdrawAmount = walletDescWithdrawAmount.Default.(int64)
 	// walletDescID is the schema descriptor for id field.

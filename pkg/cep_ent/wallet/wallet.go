@@ -30,6 +30,8 @@ const (
 	FieldSymbolID = "symbol_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
+	// FieldTotalAmount holds the string denoting the total_amount field in the database.
+	FieldTotalAmount = "total_amount"
 	// FieldWithdrawAmount holds the string denoting the withdraw_amount field in the database.
 	FieldWithdrawAmount = "withdraw_amount"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldSymbolID,
 	FieldAmount,
+	FieldTotalAmount,
 	FieldWithdrawAmount,
 }
 
@@ -97,6 +100,8 @@ var (
 	DefaultSymbolID int64
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount int64
+	// DefaultTotalAmount holds the default value on creation for the "total_amount" field.
+	DefaultTotalAmount int64
 	// DefaultWithdrawAmount holds the default value on creation for the "withdraw_amount" field.
 	DefaultWithdrawAmount int64
 	// DefaultID holds the default value on creation for the "id" field.
@@ -149,6 +154,11 @@ func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByTotalAmount orders the results by the total_amount field.
+func ByTotalAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalAmount, opts...).ToFunc()
 }
 
 // ByWithdrawAmount orders the results by the withdraw_amount field.

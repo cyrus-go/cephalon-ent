@@ -74495,6 +74495,8 @@ type WalletMutation struct {
 	deleted_at         *time.Time
 	amount             *int64
 	addamount          *int64
+	total_amount       *int64
+	addtotal_amount    *int64
 	withdraw_amount    *int64
 	addwithdraw_amount *int64
 	clearedFields      map[string]struct{}
@@ -74959,6 +74961,62 @@ func (m *WalletMutation) ResetAmount() {
 	m.addamount = nil
 }
 
+// SetTotalAmount sets the "total_amount" field.
+func (m *WalletMutation) SetTotalAmount(i int64) {
+	m.total_amount = &i
+	m.addtotal_amount = nil
+}
+
+// TotalAmount returns the value of the "total_amount" field in the mutation.
+func (m *WalletMutation) TotalAmount() (r int64, exists bool) {
+	v := m.total_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalAmount returns the old "total_amount" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldTotalAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalAmount: %w", err)
+	}
+	return oldValue.TotalAmount, nil
+}
+
+// AddTotalAmount adds i to the "total_amount" field.
+func (m *WalletMutation) AddTotalAmount(i int64) {
+	if m.addtotal_amount != nil {
+		*m.addtotal_amount += i
+	} else {
+		m.addtotal_amount = &i
+	}
+}
+
+// AddedTotalAmount returns the value that was added to the "total_amount" field in this mutation.
+func (m *WalletMutation) AddedTotalAmount() (r int64, exists bool) {
+	v := m.addtotal_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalAmount resets all changes to the "total_amount" field.
+func (m *WalletMutation) ResetTotalAmount() {
+	m.total_amount = nil
+	m.addtotal_amount = nil
+}
+
 // SetWithdrawAmount sets the "withdraw_amount" field.
 func (m *WalletMutation) SetWithdrawAmount(i int64) {
 	m.withdraw_amount = &i
@@ -75103,7 +75161,7 @@ func (m *WalletMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WalletMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, wallet.FieldCreatedBy)
 	}
@@ -75127,6 +75185,9 @@ func (m *WalletMutation) Fields() []string {
 	}
 	if m.amount != nil {
 		fields = append(fields, wallet.FieldAmount)
+	}
+	if m.total_amount != nil {
+		fields = append(fields, wallet.FieldTotalAmount)
 	}
 	if m.withdraw_amount != nil {
 		fields = append(fields, wallet.FieldWithdrawAmount)
@@ -75155,6 +75216,8 @@ func (m *WalletMutation) Field(name string) (ent.Value, bool) {
 		return m.SymbolID()
 	case wallet.FieldAmount:
 		return m.Amount()
+	case wallet.FieldTotalAmount:
+		return m.TotalAmount()
 	case wallet.FieldWithdrawAmount:
 		return m.WithdrawAmount()
 	}
@@ -75182,6 +75245,8 @@ func (m *WalletMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldSymbolID(ctx)
 	case wallet.FieldAmount:
 		return m.OldAmount(ctx)
+	case wallet.FieldTotalAmount:
+		return m.OldTotalAmount(ctx)
 	case wallet.FieldWithdrawAmount:
 		return m.OldWithdrawAmount(ctx)
 	}
@@ -75249,6 +75314,13 @@ func (m *WalletMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAmount(v)
 		return nil
+	case wallet.FieldTotalAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalAmount(v)
+		return nil
 	case wallet.FieldWithdrawAmount:
 		v, ok := value.(int64)
 		if !ok {
@@ -75273,6 +75345,9 @@ func (m *WalletMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, wallet.FieldAmount)
 	}
+	if m.addtotal_amount != nil {
+		fields = append(fields, wallet.FieldTotalAmount)
+	}
 	if m.addwithdraw_amount != nil {
 		fields = append(fields, wallet.FieldWithdrawAmount)
 	}
@@ -75290,6 +75365,8 @@ func (m *WalletMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case wallet.FieldAmount:
 		return m.AddedAmount()
+	case wallet.FieldTotalAmount:
+		return m.AddedTotalAmount()
 	case wallet.FieldWithdrawAmount:
 		return m.AddedWithdrawAmount()
 	}
@@ -75321,6 +75398,13 @@ func (m *WalletMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case wallet.FieldTotalAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalAmount(v)
 		return nil
 	case wallet.FieldWithdrawAmount:
 		v, ok := value.(int64)
@@ -75379,6 +75463,9 @@ func (m *WalletMutation) ResetField(name string) error {
 		return nil
 	case wallet.FieldAmount:
 		m.ResetAmount()
+		return nil
+	case wallet.FieldTotalAmount:
+		m.ResetTotalAmount()
 		return nil
 	case wallet.FieldWithdrawAmount:
 		m.ResetWithdrawAmount()

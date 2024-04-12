@@ -2365,6 +2365,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "货币余额", Default: 0},
+		{Name: "total_amount", Type: field.TypeInt64, Comment: "货币总量，当货币是收益货币时，代表总收益，当货币是充值货币时，代表总充值金额", Default: 0},
 		{Name: "withdraw_amount", Type: field.TypeInt64, Comment: "已提现金额，目前只有一种货币可以提现", Default: 0},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
@@ -2378,13 +2379,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "wallets_symbols_wallets",
-				Columns:    []*schema.Column{WalletsColumns[8]},
+				Columns:    []*schema.Column{WalletsColumns[9]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "wallets_users_wallets",
-				Columns:    []*schema.Column{WalletsColumns[9]},
+				Columns:    []*schema.Column{WalletsColumns[10]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2393,17 +2394,17 @@ var (
 			{
 				Name:    "wallet_user_id_symbol_id_deleted_at",
 				Unique:  true,
-				Columns: []*schema.Column{WalletsColumns[9], WalletsColumns[8], WalletsColumns[5]},
+				Columns: []*schema.Column{WalletsColumns[10], WalletsColumns[9], WalletsColumns[5]},
 			},
 			{
 				Name:    "wallet_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{WalletsColumns[9]},
+				Columns: []*schema.Column{WalletsColumns[10]},
 			},
 			{
 				Name:    "wallet_symbol_id",
 				Unique:  false,
-				Columns: []*schema.Column{WalletsColumns[8]},
+				Columns: []*schema.Column{WalletsColumns[9]},
 			},
 		},
 	}

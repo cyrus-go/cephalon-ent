@@ -36,6 +36,8 @@ type Wallet struct {
 	SymbolID int64 `json:"symbol_id,string"`
 	// 货币余额
 	Amount int64 `json:"amount"`
+	// 货币总量，当货币是收益货币时，代表总收益，当货币是充值货币时，代表总充值金额
+	TotalAmount int64 `json:"total_amount"`
 	// 已提现金额，目前只有一种货币可以提现
 	WithdrawAmount int64 `json:"withdraw_amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -86,7 +88,7 @@ func (*Wallet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case wallet.FieldID, wallet.FieldCreatedBy, wallet.FieldUpdatedBy, wallet.FieldUserID, wallet.FieldSymbolID, wallet.FieldAmount, wallet.FieldWithdrawAmount:
+		case wallet.FieldID, wallet.FieldCreatedBy, wallet.FieldUpdatedBy, wallet.FieldUserID, wallet.FieldSymbolID, wallet.FieldAmount, wallet.FieldTotalAmount, wallet.FieldWithdrawAmount:
 			values[i] = new(sql.NullInt64)
 		case wallet.FieldCreatedAt, wallet.FieldUpdatedAt, wallet.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -158,6 +160,12 @@ func (w *Wallet) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
 				w.Amount = value.Int64
+			}
+		case wallet.FieldTotalAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field total_amount", values[i])
+			} else if value.Valid {
+				w.TotalAmount = value.Int64
 			}
 		case wallet.FieldWithdrawAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -234,6 +242,9 @@ func (w *Wallet) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", w.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("total_amount=")
+	builder.WriteString(fmt.Sprintf("%v", w.TotalAmount))
 	builder.WriteString(", ")
 	builder.WriteString("withdraw_amount=")
 	builder.WriteString(fmt.Sprintf("%v", w.WithdrawAmount))

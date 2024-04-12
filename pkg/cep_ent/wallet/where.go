@@ -95,6 +95,11 @@ func Amount(v int64) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldAmount, v))
 }
 
+// TotalAmount applies equality check predicate on the "total_amount" field. It's identical to TotalAmountEQ.
+func TotalAmount(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldTotalAmount, v))
+}
+
 // WithdrawAmount applies equality check predicate on the "withdraw_amount" field. It's identical to WithdrawAmountEQ.
 func WithdrawAmount(v int64) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldWithdrawAmount, v))
@@ -378,6 +383,46 @@ func AmountLT(v int64) predicate.Wallet {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v int64) predicate.Wallet {
 	return predicate.Wallet(sql.FieldLTE(FieldAmount, v))
+}
+
+// TotalAmountEQ applies the EQ predicate on the "total_amount" field.
+func TotalAmountEQ(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldTotalAmount, v))
+}
+
+// TotalAmountNEQ applies the NEQ predicate on the "total_amount" field.
+func TotalAmountNEQ(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldTotalAmount, v))
+}
+
+// TotalAmountIn applies the In predicate on the "total_amount" field.
+func TotalAmountIn(vs ...int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldTotalAmount, vs...))
+}
+
+// TotalAmountNotIn applies the NotIn predicate on the "total_amount" field.
+func TotalAmountNotIn(vs ...int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldTotalAmount, vs...))
+}
+
+// TotalAmountGT applies the GT predicate on the "total_amount" field.
+func TotalAmountGT(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldTotalAmount, v))
+}
+
+// TotalAmountGTE applies the GTE predicate on the "total_amount" field.
+func TotalAmountGTE(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldTotalAmount, v))
+}
+
+// TotalAmountLT applies the LT predicate on the "total_amount" field.
+func TotalAmountLT(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldTotalAmount, v))
+}
+
+// TotalAmountLTE applies the LTE predicate on the "total_amount" field.
+func TotalAmountLTE(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldTotalAmount, v))
 }
 
 // WithdrawAmountEQ applies the EQ predicate on the "withdraw_amount" field.
