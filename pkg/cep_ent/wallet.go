@@ -36,6 +36,8 @@ type Wallet struct {
 	SymbolID int64 `json:"symbol_id,string"`
 	// 货币余额
 	Amount int64 `json:"amount"`
+	// 已提现金额，目前只有一种货币可以提现
+	WithdrawAmount int64 `json:"withdraw_amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WalletQuery when eager-loading is set.
 	Edges        WalletEdges `json:"edges"`
@@ -84,7 +86,7 @@ func (*Wallet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case wallet.FieldID, wallet.FieldCreatedBy, wallet.FieldUpdatedBy, wallet.FieldUserID, wallet.FieldSymbolID, wallet.FieldAmount:
+		case wallet.FieldID, wallet.FieldCreatedBy, wallet.FieldUpdatedBy, wallet.FieldUserID, wallet.FieldSymbolID, wallet.FieldAmount, wallet.FieldWithdrawAmount:
 			values[i] = new(sql.NullInt64)
 		case wallet.FieldCreatedAt, wallet.FieldUpdatedAt, wallet.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -157,6 +159,12 @@ func (w *Wallet) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				w.Amount = value.Int64
 			}
+		case wallet.FieldWithdrawAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field withdraw_amount", values[i])
+			} else if value.Valid {
+				w.WithdrawAmount = value.Int64
+			}
 		default:
 			w.selectValues.Set(columns[i], values[i])
 		}
@@ -226,6 +234,9 @@ func (w *Wallet) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", w.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("withdraw_amount=")
+	builder.WriteString(fmt.Sprintf("%v", w.WithdrawAmount))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -19,6 +19,7 @@ func (Wallet) Fields() []ent.Field {
 		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("外键用户 id"),
 		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("外键币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("货币余额"),
+		field.Int64("withdraw_amount").Default(0).StructTag(`json:"withdraw_amount"`).Comment("已提现金额，目前只有一种货币可以提现"),
 	}
 }
 

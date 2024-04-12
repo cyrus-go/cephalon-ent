@@ -74483,26 +74483,28 @@ func (m *VXSocialMutation) ResetEdge(name string) error {
 // WalletMutation represents an operation that mutates the Wallet nodes in the graph.
 type WalletMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	created_by    *int64
-	addcreated_by *int64
-	updated_by    *int64
-	addupdated_by *int64
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	amount        *int64
-	addamount     *int64
-	clearedFields map[string]struct{}
-	user          *int64
-	cleareduser   bool
-	symbol        *int64
-	clearedsymbol bool
-	done          bool
-	oldValue      func(context.Context) (*Wallet, error)
-	predicates    []predicate.Wallet
+	op                 Op
+	typ                string
+	id                 *int64
+	created_by         *int64
+	addcreated_by      *int64
+	updated_by         *int64
+	addupdated_by      *int64
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
+	amount             *int64
+	addamount          *int64
+	withdraw_amount    *int64
+	addwithdraw_amount *int64
+	clearedFields      map[string]struct{}
+	user               *int64
+	cleareduser        bool
+	symbol             *int64
+	clearedsymbol      bool
+	done               bool
+	oldValue           func(context.Context) (*Wallet, error)
+	predicates         []predicate.Wallet
 }
 
 var _ ent.Mutation = (*WalletMutation)(nil)
@@ -74957,6 +74959,62 @@ func (m *WalletMutation) ResetAmount() {
 	m.addamount = nil
 }
 
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (m *WalletMutation) SetWithdrawAmount(i int64) {
+	m.withdraw_amount = &i
+	m.addwithdraw_amount = nil
+}
+
+// WithdrawAmount returns the value of the "withdraw_amount" field in the mutation.
+func (m *WalletMutation) WithdrawAmount() (r int64, exists bool) {
+	v := m.withdraw_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWithdrawAmount returns the old "withdraw_amount" field's value of the Wallet entity.
+// If the Wallet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WalletMutation) OldWithdrawAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWithdrawAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWithdrawAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWithdrawAmount: %w", err)
+	}
+	return oldValue.WithdrawAmount, nil
+}
+
+// AddWithdrawAmount adds i to the "withdraw_amount" field.
+func (m *WalletMutation) AddWithdrawAmount(i int64) {
+	if m.addwithdraw_amount != nil {
+		*m.addwithdraw_amount += i
+	} else {
+		m.addwithdraw_amount = &i
+	}
+}
+
+// AddedWithdrawAmount returns the value that was added to the "withdraw_amount" field in this mutation.
+func (m *WalletMutation) AddedWithdrawAmount() (r int64, exists bool) {
+	v := m.addwithdraw_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWithdrawAmount resets all changes to the "withdraw_amount" field.
+func (m *WalletMutation) ResetWithdrawAmount() {
+	m.withdraw_amount = nil
+	m.addwithdraw_amount = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *WalletMutation) ClearUser() {
 	m.cleareduser = true
@@ -75045,7 +75103,7 @@ func (m *WalletMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WalletMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_by != nil {
 		fields = append(fields, wallet.FieldCreatedBy)
 	}
@@ -75069,6 +75127,9 @@ func (m *WalletMutation) Fields() []string {
 	}
 	if m.amount != nil {
 		fields = append(fields, wallet.FieldAmount)
+	}
+	if m.withdraw_amount != nil {
+		fields = append(fields, wallet.FieldWithdrawAmount)
 	}
 	return fields
 }
@@ -75094,6 +75155,8 @@ func (m *WalletMutation) Field(name string) (ent.Value, bool) {
 		return m.SymbolID()
 	case wallet.FieldAmount:
 		return m.Amount()
+	case wallet.FieldWithdrawAmount:
+		return m.WithdrawAmount()
 	}
 	return nil, false
 }
@@ -75119,6 +75182,8 @@ func (m *WalletMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldSymbolID(ctx)
 	case wallet.FieldAmount:
 		return m.OldAmount(ctx)
+	case wallet.FieldWithdrawAmount:
+		return m.OldWithdrawAmount(ctx)
 	}
 	return nil, fmt.Errorf("unknown Wallet field %s", name)
 }
@@ -75184,6 +75249,13 @@ func (m *WalletMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAmount(v)
 		return nil
+	case wallet.FieldWithdrawAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWithdrawAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Wallet field %s", name)
 }
@@ -75201,6 +75273,9 @@ func (m *WalletMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, wallet.FieldAmount)
 	}
+	if m.addwithdraw_amount != nil {
+		fields = append(fields, wallet.FieldWithdrawAmount)
+	}
 	return fields
 }
 
@@ -75215,6 +75290,8 @@ func (m *WalletMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case wallet.FieldAmount:
 		return m.AddedAmount()
+	case wallet.FieldWithdrawAmount:
+		return m.AddedWithdrawAmount()
 	}
 	return nil, false
 }
@@ -75244,6 +75321,13 @@ func (m *WalletMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case wallet.FieldWithdrawAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWithdrawAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Wallet numeric field %s", name)
@@ -75295,6 +75379,9 @@ func (m *WalletMutation) ResetField(name string) error {
 		return nil
 	case wallet.FieldAmount:
 		m.ResetAmount()
+		return nil
+	case wallet.FieldWithdrawAmount:
+		m.ResetWithdrawAmount()
 		return nil
 	}
 	return fmt.Errorf("unknown Wallet field %s", name)

@@ -95,6 +95,11 @@ func Amount(v int64) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldAmount, v))
 }
 
+// WithdrawAmount applies equality check predicate on the "withdraw_amount" field. It's identical to WithdrawAmountEQ.
+func WithdrawAmount(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldWithdrawAmount, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Wallet {
 	return predicate.Wallet(sql.FieldEQ(FieldCreatedBy, v))
@@ -373,6 +378,46 @@ func AmountLT(v int64) predicate.Wallet {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v int64) predicate.Wallet {
 	return predicate.Wallet(sql.FieldLTE(FieldAmount, v))
+}
+
+// WithdrawAmountEQ applies the EQ predicate on the "withdraw_amount" field.
+func WithdrawAmountEQ(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldEQ(FieldWithdrawAmount, v))
+}
+
+// WithdrawAmountNEQ applies the NEQ predicate on the "withdraw_amount" field.
+func WithdrawAmountNEQ(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNEQ(FieldWithdrawAmount, v))
+}
+
+// WithdrawAmountIn applies the In predicate on the "withdraw_amount" field.
+func WithdrawAmountIn(vs ...int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldIn(FieldWithdrawAmount, vs...))
+}
+
+// WithdrawAmountNotIn applies the NotIn predicate on the "withdraw_amount" field.
+func WithdrawAmountNotIn(vs ...int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldNotIn(FieldWithdrawAmount, vs...))
+}
+
+// WithdrawAmountGT applies the GT predicate on the "withdraw_amount" field.
+func WithdrawAmountGT(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGT(FieldWithdrawAmount, v))
+}
+
+// WithdrawAmountGTE applies the GTE predicate on the "withdraw_amount" field.
+func WithdrawAmountGTE(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldGTE(FieldWithdrawAmount, v))
+}
+
+// WithdrawAmountLT applies the LT predicate on the "withdraw_amount" field.
+func WithdrawAmountLT(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLT(FieldWithdrawAmount, v))
+}
+
+// WithdrawAmountLTE applies the LTE predicate on the "withdraw_amount" field.
+func WithdrawAmountLTE(v int64) predicate.Wallet {
+	return predicate.Wallet(sql.FieldLTE(FieldWithdrawAmount, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

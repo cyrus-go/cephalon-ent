@@ -142,6 +142,27 @@ func (wu *WalletUpdate) AddAmount(i int64) *WalletUpdate {
 	return wu
 }
 
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (wu *WalletUpdate) SetWithdrawAmount(i int64) *WalletUpdate {
+	wu.mutation.ResetWithdrawAmount()
+	wu.mutation.SetWithdrawAmount(i)
+	return wu
+}
+
+// SetNillableWithdrawAmount sets the "withdraw_amount" field if the given value is not nil.
+func (wu *WalletUpdate) SetNillableWithdrawAmount(i *int64) *WalletUpdate {
+	if i != nil {
+		wu.SetWithdrawAmount(*i)
+	}
+	return wu
+}
+
+// AddWithdrawAmount adds i to the "withdraw_amount" field.
+func (wu *WalletUpdate) AddWithdrawAmount(i int64) *WalletUpdate {
+	wu.mutation.AddWithdrawAmount(i)
+	return wu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wu *WalletUpdate) SetUser(u *User) *WalletUpdate {
 	return wu.SetUserID(u.ID)
@@ -257,6 +278,12 @@ func (wu *WalletUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := wu.mutation.AddedAmount(); ok {
 		_spec.AddField(wallet.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := wu.mutation.WithdrawAmount(); ok {
+		_spec.SetField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
+	}
+	if value, ok := wu.mutation.AddedWithdrawAmount(); ok {
+		_spec.AddField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
 	}
 	if wu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -449,6 +476,27 @@ func (wuo *WalletUpdateOne) AddAmount(i int64) *WalletUpdateOne {
 	return wuo
 }
 
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (wuo *WalletUpdateOne) SetWithdrawAmount(i int64) *WalletUpdateOne {
+	wuo.mutation.ResetWithdrawAmount()
+	wuo.mutation.SetWithdrawAmount(i)
+	return wuo
+}
+
+// SetNillableWithdrawAmount sets the "withdraw_amount" field if the given value is not nil.
+func (wuo *WalletUpdateOne) SetNillableWithdrawAmount(i *int64) *WalletUpdateOne {
+	if i != nil {
+		wuo.SetWithdrawAmount(*i)
+	}
+	return wuo
+}
+
+// AddWithdrawAmount adds i to the "withdraw_amount" field.
+func (wuo *WalletUpdateOne) AddWithdrawAmount(i int64) *WalletUpdateOne {
+	wuo.mutation.AddWithdrawAmount(i)
+	return wuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (wuo *WalletUpdateOne) SetUser(u *User) *WalletUpdateOne {
 	return wuo.SetUserID(u.ID)
@@ -594,6 +642,12 @@ func (wuo *WalletUpdateOne) sqlSave(ctx context.Context) (_node *Wallet, err err
 	}
 	if value, ok := wuo.mutation.AddedAmount(); ok {
 		_spec.AddField(wallet.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := wuo.mutation.WithdrawAmount(); ok {
+		_spec.SetField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
+	}
+	if value, ok := wuo.mutation.AddedWithdrawAmount(); ok {
+		_spec.AddField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
 	}
 	if wuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

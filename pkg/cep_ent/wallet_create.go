@@ -136,6 +136,20 @@ func (wc *WalletCreate) SetNillableAmount(i *int64) *WalletCreate {
 	return wc
 }
 
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (wc *WalletCreate) SetWithdrawAmount(i int64) *WalletCreate {
+	wc.mutation.SetWithdrawAmount(i)
+	return wc
+}
+
+// SetNillableWithdrawAmount sets the "withdraw_amount" field if the given value is not nil.
+func (wc *WalletCreate) SetNillableWithdrawAmount(i *int64) *WalletCreate {
+	if i != nil {
+		wc.SetWithdrawAmount(*i)
+	}
+	return wc
+}
+
 // SetID sets the "id" field.
 func (wc *WalletCreate) SetID(i int64) *WalletCreate {
 	wc.mutation.SetID(i)
@@ -227,6 +241,10 @@ func (wc *WalletCreate) defaults() {
 		v := wallet.DefaultAmount
 		wc.mutation.SetAmount(v)
 	}
+	if _, ok := wc.mutation.WithdrawAmount(); !ok {
+		v := wallet.DefaultWithdrawAmount
+		wc.mutation.SetWithdrawAmount(v)
+	}
 	if _, ok := wc.mutation.ID(); !ok {
 		v := wallet.DefaultID()
 		wc.mutation.SetID(v)
@@ -258,6 +276,9 @@ func (wc *WalletCreate) check() error {
 	}
 	if _, ok := wc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "Wallet.amount"`)}
+	}
+	if _, ok := wc.mutation.WithdrawAmount(); !ok {
+		return &ValidationError{Name: "withdraw_amount", err: errors.New(`cep_ent: missing required field "Wallet.withdraw_amount"`)}
 	}
 	if _, ok := wc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Wallet.user"`)}
@@ -321,6 +342,10 @@ func (wc *WalletCreate) createSpec() (*Wallet, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.Amount(); ok {
 		_spec.SetField(wallet.FieldAmount, field.TypeInt64, value)
 		_node.Amount = value
+	}
+	if value, ok := wc.mutation.WithdrawAmount(); ok {
+		_spec.SetField(wallet.FieldWithdrawAmount, field.TypeInt64, value)
+		_node.WithdrawAmount = value
 	}
 	if nodes := wc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -510,6 +535,24 @@ func (u *WalletUpsert) AddAmount(v int64) *WalletUpsert {
 	return u
 }
 
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (u *WalletUpsert) SetWithdrawAmount(v int64) *WalletUpsert {
+	u.Set(wallet.FieldWithdrawAmount, v)
+	return u
+}
+
+// UpdateWithdrawAmount sets the "withdraw_amount" field to the value that was provided on create.
+func (u *WalletUpsert) UpdateWithdrawAmount() *WalletUpsert {
+	u.SetExcluded(wallet.FieldWithdrawAmount)
+	return u
+}
+
+// AddWithdrawAmount adds v to the "withdraw_amount" field.
+func (u *WalletUpsert) AddWithdrawAmount(v int64) *WalletUpsert {
+	u.Add(wallet.FieldWithdrawAmount, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -677,6 +720,27 @@ func (u *WalletUpsertOne) AddAmount(v int64) *WalletUpsertOne {
 func (u *WalletUpsertOne) UpdateAmount() *WalletUpsertOne {
 	return u.Update(func(s *WalletUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (u *WalletUpsertOne) SetWithdrawAmount(v int64) *WalletUpsertOne {
+	return u.Update(func(s *WalletUpsert) {
+		s.SetWithdrawAmount(v)
+	})
+}
+
+// AddWithdrawAmount adds v to the "withdraw_amount" field.
+func (u *WalletUpsertOne) AddWithdrawAmount(v int64) *WalletUpsertOne {
+	return u.Update(func(s *WalletUpsert) {
+		s.AddWithdrawAmount(v)
+	})
+}
+
+// UpdateWithdrawAmount sets the "withdraw_amount" field to the value that was provided on create.
+func (u *WalletUpsertOne) UpdateWithdrawAmount() *WalletUpsertOne {
+	return u.Update(func(s *WalletUpsert) {
+		s.UpdateWithdrawAmount()
 	})
 }
 
@@ -1013,6 +1077,27 @@ func (u *WalletUpsertBulk) AddAmount(v int64) *WalletUpsertBulk {
 func (u *WalletUpsertBulk) UpdateAmount() *WalletUpsertBulk {
 	return u.Update(func(s *WalletUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetWithdrawAmount sets the "withdraw_amount" field.
+func (u *WalletUpsertBulk) SetWithdrawAmount(v int64) *WalletUpsertBulk {
+	return u.Update(func(s *WalletUpsert) {
+		s.SetWithdrawAmount(v)
+	})
+}
+
+// AddWithdrawAmount adds v to the "withdraw_amount" field.
+func (u *WalletUpsertBulk) AddWithdrawAmount(v int64) *WalletUpsertBulk {
+	return u.Update(func(s *WalletUpsert) {
+		s.AddWithdrawAmount(v)
+	})
+}
+
+// UpdateWithdrawAmount sets the "withdraw_amount" field to the value that was provided on create.
+func (u *WalletUpsertBulk) UpdateWithdrawAmount() *WalletUpsertBulk {
+	return u.Update(func(s *WalletUpsert) {
+		s.UpdateWithdrawAmount()
 	})
 }
 
