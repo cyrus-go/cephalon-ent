@@ -37,6 +37,8 @@ const (
 	MissionTypeSvdBackTime        MissionType = "svd_back_time"
 	MissionTypeSdJiTime           MissionType = "sd_ji_time"
 	MissionTypeSdShangJinTime     MissionType = "sd_shang_jin_time"
+	MissionTypeSdXiaoChunTime     MissionType = "sd_xiao_chun_time"
+	MissionTypeComfyuiWuTime      MissionType = "comfyui_wu_time"
 	MissionTypeWaitingTime        MissionType = "waiting_time" //等待任务
 
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
@@ -67,6 +69,8 @@ const (
 	MissionTypeSvdBackTimePlan    MissionType = "svd_back_time_plan"
 	MissionTypeSdJiTimePlan       MissionType = "sd_ji_time_plan"
 	MissionTypeSdShangJinTimePlan MissionType = "sd_shang_jin_time_plan"
+	MissionTypeSdXiaoChunTimePlan MissionType = "sd_xiao_chun_time_plan"
+	MissionTypeComfyuiWuTimePlan  MissionType = "comfyui_wu_time_plan"
 	MissionTypeWaitingTimePlan    MissionType = "waiting_time_plan" //等待任务
 )
 
@@ -134,6 +138,10 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeSdJiTimePlan),
 		string(MissionTypeSdShangJinTime),
 		string(MissionTypeSdShangJinTimePlan),
+		string(MissionTypeSdXiaoChunTime),
+		string(MissionTypeSdXiaoChunTimePlan),
+		string(MissionTypeComfyuiWuTime),
+		string(MissionTypeComfyuiWuTimePlan),
 		string(MissionTypeWaitingTime),
 		string(MissionTypeWaitingTimePlan),
 	}
