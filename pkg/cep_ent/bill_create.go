@@ -154,6 +154,20 @@ func (bc *BillCreate) SetNillableSymbolID(i *int64) *BillCreate {
 	return bc
 }
 
+// SetTargetSymbolID sets the "target_symbol_id" field.
+func (bc *BillCreate) SetTargetSymbolID(i int64) *BillCreate {
+	bc.mutation.SetTargetSymbolID(i)
+	return bc
+}
+
+// SetNillableTargetSymbolID sets the "target_symbol_id" field if the given value is not nil.
+func (bc *BillCreate) SetNillableTargetSymbolID(i *int64) *BillCreate {
+	if i != nil {
+		bc.SetTargetSymbolID(*i)
+	}
+	return bc
+}
+
 // SetProfitSymbolID sets the "profit_symbol_id" field.
 func (bc *BillCreate) SetProfitSymbolID(i int64) *BillCreate {
 	bc.mutation.SetProfitSymbolID(i)
@@ -366,6 +380,11 @@ func (bc *BillCreate) SetSymbol(s *Symbol) *BillCreate {
 	return bc.SetSymbolID(s.ID)
 }
 
+// SetTargetSymbol sets the "target_symbol" edge to the Symbol entity.
+func (bc *BillCreate) SetTargetSymbol(s *Symbol) *BillCreate {
+	return bc.SetTargetSymbolID(s.ID)
+}
+
 // Mutation returns the BillMutation object of the builder.
 func (bc *BillCreate) Mutation() *BillMutation {
 	return bc.mutation
@@ -436,6 +455,10 @@ func (bc *BillCreate) defaults() {
 	if _, ok := bc.mutation.SymbolID(); !ok {
 		v := bill.DefaultSymbolID
 		bc.mutation.SetSymbolID(v)
+	}
+	if _, ok := bc.mutation.TargetSymbolID(); !ok {
+		v := bill.DefaultTargetSymbolID
+		bc.mutation.SetTargetSymbolID(v)
 	}
 	if _, ok := bc.mutation.ProfitSymbolID(); !ok {
 		v := bill.DefaultProfitSymbolID
@@ -519,6 +542,9 @@ func (bc *BillCreate) check() error {
 	if _, ok := bc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol_id", err: errors.New(`cep_ent: missing required field "Bill.symbol_id"`)}
 	}
+	if _, ok := bc.mutation.TargetSymbolID(); !ok {
+		return &ValidationError{Name: "target_symbol_id", err: errors.New(`cep_ent: missing required field "Bill.target_symbol_id"`)}
+	}
 	if _, ok := bc.mutation.ProfitSymbolID(); !ok {
 		return &ValidationError{Name: "profit_symbol_id", err: errors.New(`cep_ent: missing required field "Bill.profit_symbol_id"`)}
 	}
@@ -560,6 +586,9 @@ func (bc *BillCreate) check() error {
 	}
 	if _, ok := bc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "Bill.symbol"`)}
+	}
+	if _, ok := bc.mutation.TargetSymbolID(); !ok {
+		return &ValidationError{Name: "target_symbol", err: errors.New(`cep_ent: missing required edge "Bill.target_symbol"`)}
 	}
 	return nil
 }
@@ -752,6 +781,23 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 		_node.SymbolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := bc.mutation.TargetSymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.TargetSymbolTable,
+			Columns: []string{bill.TargetSymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.TargetSymbolID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -915,6 +961,18 @@ func (u *BillUpsert) SetSymbolID(v int64) *BillUpsert {
 // UpdateSymbolID sets the "symbol_id" field to the value that was provided on create.
 func (u *BillUpsert) UpdateSymbolID() *BillUpsert {
 	u.SetExcluded(bill.FieldSymbolID)
+	return u
+}
+
+// SetTargetSymbolID sets the "target_symbol_id" field.
+func (u *BillUpsert) SetTargetSymbolID(v int64) *BillUpsert {
+	u.Set(bill.FieldTargetSymbolID, v)
+	return u
+}
+
+// UpdateTargetSymbolID sets the "target_symbol_id" field to the value that was provided on create.
+func (u *BillUpsert) UpdateTargetSymbolID() *BillUpsert {
+	u.SetExcluded(bill.FieldTargetSymbolID)
 	return u
 }
 
@@ -1255,6 +1313,20 @@ func (u *BillUpsertOne) SetSymbolID(v int64) *BillUpsertOne {
 func (u *BillUpsertOne) UpdateSymbolID() *BillUpsertOne {
 	return u.Update(func(s *BillUpsert) {
 		s.UpdateSymbolID()
+	})
+}
+
+// SetTargetSymbolID sets the "target_symbol_id" field.
+func (u *BillUpsertOne) SetTargetSymbolID(v int64) *BillUpsertOne {
+	return u.Update(func(s *BillUpsert) {
+		s.SetTargetSymbolID(v)
+	})
+}
+
+// UpdateTargetSymbolID sets the "target_symbol_id" field to the value that was provided on create.
+func (u *BillUpsertOne) UpdateTargetSymbolID() *BillUpsertOne {
+	return u.Update(func(s *BillUpsert) {
+		s.UpdateTargetSymbolID()
 	})
 }
 
@@ -1787,6 +1859,20 @@ func (u *BillUpsertBulk) SetSymbolID(v int64) *BillUpsertBulk {
 func (u *BillUpsertBulk) UpdateSymbolID() *BillUpsertBulk {
 	return u.Update(func(s *BillUpsert) {
 		s.UpdateSymbolID()
+	})
+}
+
+// SetTargetSymbolID sets the "target_symbol_id" field.
+func (u *BillUpsertBulk) SetTargetSymbolID(v int64) *BillUpsertBulk {
+	return u.Update(func(s *BillUpsert) {
+		s.SetTargetSymbolID(v)
+	})
+}
+
+// UpdateTargetSymbolID sets the "target_symbol_id" field to the value that was provided on create.
+func (u *BillUpsertBulk) UpdateTargetSymbolID() *BillUpsertBulk {
+	return u.Update(func(s *BillUpsert) {
+		s.UpdateTargetSymbolID()
 	})
 }
 

@@ -159,6 +159,20 @@ func (bu *BillUpdate) SetNillableSymbolID(i *int64) *BillUpdate {
 	return bu
 }
 
+// SetTargetSymbolID sets the "target_symbol_id" field.
+func (bu *BillUpdate) SetTargetSymbolID(i int64) *BillUpdate {
+	bu.mutation.SetTargetSymbolID(i)
+	return bu
+}
+
+// SetNillableTargetSymbolID sets the "target_symbol_id" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableTargetSymbolID(i *int64) *BillUpdate {
+	if i != nil {
+		bu.SetTargetSymbolID(*i)
+	}
+	return bu
+}
+
 // SetProfitSymbolID sets the "profit_symbol_id" field.
 func (bu *BillUpdate) SetProfitSymbolID(i int64) *BillUpdate {
 	bu.mutation.ResetProfitSymbolID()
@@ -399,6 +413,11 @@ func (bu *BillUpdate) SetSymbol(s *Symbol) *BillUpdate {
 	return bu.SetSymbolID(s.ID)
 }
 
+// SetTargetSymbol sets the "target_symbol" edge to the Symbol entity.
+func (bu *BillUpdate) SetTargetSymbol(s *Symbol) *BillUpdate {
+	return bu.SetTargetSymbolID(s.ID)
+}
+
 // Mutation returns the BillMutation object of the builder.
 func (bu *BillUpdate) Mutation() *BillMutation {
 	return bu.mutation
@@ -437,6 +456,12 @@ func (bu *BillUpdate) ClearInvite() *BillUpdate {
 // ClearSymbol clears the "symbol" edge to the Symbol entity.
 func (bu *BillUpdate) ClearSymbol() *BillUpdate {
 	bu.mutation.ClearSymbol()
+	return bu
+}
+
+// ClearTargetSymbol clears the "target_symbol" edge to the Symbol entity.
+func (bu *BillUpdate) ClearTargetSymbol() *BillUpdate {
+	bu.mutation.ClearTargetSymbol()
 	return bu
 }
 
@@ -499,6 +524,9 @@ func (bu *BillUpdate) check() error {
 	}
 	if _, ok := bu.mutation.SymbolID(); bu.mutation.SymbolCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Bill.symbol"`)
+	}
+	if _, ok := bu.mutation.TargetSymbolID(); bu.mutation.TargetSymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Bill.target_symbol"`)
 	}
 	return nil
 }
@@ -758,6 +786,35 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if bu.mutation.TargetSymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.TargetSymbolTable,
+			Columns: []string{bill.TargetSymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.TargetSymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.TargetSymbolTable,
+			Columns: []string{bill.TargetSymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(bu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -900,6 +957,20 @@ func (buo *BillUpdateOne) SetSymbolID(i int64) *BillUpdateOne {
 func (buo *BillUpdateOne) SetNillableSymbolID(i *int64) *BillUpdateOne {
 	if i != nil {
 		buo.SetSymbolID(*i)
+	}
+	return buo
+}
+
+// SetTargetSymbolID sets the "target_symbol_id" field.
+func (buo *BillUpdateOne) SetTargetSymbolID(i int64) *BillUpdateOne {
+	buo.mutation.SetTargetSymbolID(i)
+	return buo
+}
+
+// SetNillableTargetSymbolID sets the "target_symbol_id" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableTargetSymbolID(i *int64) *BillUpdateOne {
+	if i != nil {
+		buo.SetTargetSymbolID(*i)
 	}
 	return buo
 }
@@ -1144,6 +1215,11 @@ func (buo *BillUpdateOne) SetSymbol(s *Symbol) *BillUpdateOne {
 	return buo.SetSymbolID(s.ID)
 }
 
+// SetTargetSymbol sets the "target_symbol" edge to the Symbol entity.
+func (buo *BillUpdateOne) SetTargetSymbol(s *Symbol) *BillUpdateOne {
+	return buo.SetTargetSymbolID(s.ID)
+}
+
 // Mutation returns the BillMutation object of the builder.
 func (buo *BillUpdateOne) Mutation() *BillMutation {
 	return buo.mutation
@@ -1182,6 +1258,12 @@ func (buo *BillUpdateOne) ClearInvite() *BillUpdateOne {
 // ClearSymbol clears the "symbol" edge to the Symbol entity.
 func (buo *BillUpdateOne) ClearSymbol() *BillUpdateOne {
 	buo.mutation.ClearSymbol()
+	return buo
+}
+
+// ClearTargetSymbol clears the "target_symbol" edge to the Symbol entity.
+func (buo *BillUpdateOne) ClearTargetSymbol() *BillUpdateOne {
+	buo.mutation.ClearTargetSymbol()
 	return buo
 }
 
@@ -1257,6 +1339,9 @@ func (buo *BillUpdateOne) check() error {
 	}
 	if _, ok := buo.mutation.SymbolID(); buo.mutation.SymbolCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Bill.symbol"`)
+	}
+	if _, ok := buo.mutation.TargetSymbolID(); buo.mutation.TargetSymbolCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "Bill.target_symbol"`)
 	}
 	return nil
 }
@@ -1523,6 +1608,35 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 			Inverse: true,
 			Table:   bill.SymbolTable,
 			Columns: []string{bill.SymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.TargetSymbolCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.TargetSymbolTable,
+			Columns: []string{bill.TargetSymbolColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.TargetSymbolIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   bill.TargetSymbolTable,
+			Columns: []string{bill.TargetSymbolColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(symbol.FieldID, field.TypeInt64),

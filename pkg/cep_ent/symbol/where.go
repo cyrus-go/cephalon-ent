@@ -396,6 +396,29 @@ func HasBillsWith(preds ...predicate.Bill) predicate.Symbol {
 	})
 }
 
+// HasIncomeBills applies the HasEdge predicate on the "income_bills" edge.
+func HasIncomeBills() predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncomeBillsTable, IncomeBillsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncomeBillsWith applies the HasEdge predicate on the "income_bills" edge with a given conditions (other predicates).
+func HasIncomeBillsWith(preds ...predicate.Bill) predicate.Symbol {
+	return predicate.Symbol(func(s *sql.Selector) {
+		step := newIncomeBillsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMissionOrders applies the HasEdge predicate on the "mission_orders" edge.
 func HasMissionOrders() predicate.Symbol {
 	return predicate.Symbol(func(s *sql.Selector) {

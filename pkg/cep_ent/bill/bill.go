@@ -34,6 +34,8 @@ const (
 	FieldWay = "way"
 	// FieldSymbolID holds the string denoting the symbol_id field in the database.
 	FieldSymbolID = "symbol_id"
+	// FieldTargetSymbolID holds the string denoting the target_symbol_id field in the database.
+	FieldTargetSymbolID = "target_symbol_id"
 	// FieldProfitSymbolID holds the string denoting the profit_symbol_id field in the database.
 	FieldProfitSymbolID = "profit_symbol_id"
 	// FieldAmount holds the string denoting the amount field in the database.
@@ -66,6 +68,8 @@ const (
 	EdgeInvite = "invite"
 	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
 	EdgeSymbol = "symbol"
+	// EdgeTargetSymbol holds the string denoting the target_symbol edge name in mutations.
+	EdgeTargetSymbol = "target_symbol"
 	// Table holds the table name of the bill in the database.
 	Table = "bills"
 	// SourceUserTable is the table that holds the source_user relation/edge.
@@ -110,6 +114,13 @@ const (
 	SymbolInverseTable = "symbols"
 	// SymbolColumn is the table column denoting the symbol relation/edge.
 	SymbolColumn = "symbol_id"
+	// TargetSymbolTable is the table that holds the target_symbol relation/edge.
+	TargetSymbolTable = "bills"
+	// TargetSymbolInverseTable is the table name for the Symbol entity.
+	// It exists in this package in order to avoid circular dependency with the "symbol" package.
+	TargetSymbolInverseTable = "symbols"
+	// TargetSymbolColumn is the table column denoting the target_symbol relation/edge.
+	TargetSymbolColumn = "target_symbol_id"
 )
 
 // Columns holds all SQL columns for bill fields.
@@ -124,6 +135,7 @@ var Columns = []string{
 	FieldOrderID,
 	FieldWay,
 	FieldSymbolID,
+	FieldTargetSymbolID,
 	FieldProfitSymbolID,
 	FieldAmount,
 	FieldTargetUserID,
@@ -163,6 +175,8 @@ var (
 	DefaultOrderID int64
 	// DefaultSymbolID holds the default value on creation for the "symbol_id" field.
 	DefaultSymbolID int64
+	// DefaultTargetSymbolID holds the default value on creation for the "target_symbol_id" field.
+	DefaultTargetSymbolID int64
 	// DefaultProfitSymbolID holds the default value on creation for the "profit_symbol_id" field.
 	DefaultProfitSymbolID int64
 	// DefaultAmount holds the default value on creation for the "amount" field.
@@ -264,6 +278,11 @@ func BySymbolID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSymbolID, opts...).ToFunc()
 }
 
+// ByTargetSymbolID orders the results by the target_symbol_id field.
+func ByTargetSymbolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTargetSymbolID, opts...).ToFunc()
+}
+
 // ByProfitSymbolID orders the results by the profit_symbol_id field.
 func ByProfitSymbolID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProfitSymbolID, opts...).ToFunc()
@@ -355,6 +374,13 @@ func BySymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSymbolStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByTargetSymbolField orders the results by target_symbol field.
+func ByTargetSymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTargetSymbolStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newSourceUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -395,5 +421,12 @@ func newSymbolStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SymbolInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
+	)
+}
+func newTargetSymbolStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TargetSymbolInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, TargetSymbolTable, TargetSymbolColumn),
 	)
 }

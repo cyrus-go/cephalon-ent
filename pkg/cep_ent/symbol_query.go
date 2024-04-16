@@ -29,6 +29,7 @@ type SymbolQuery struct {
 	predicates            []predicate.Symbol
 	withWallets           *WalletQuery
 	withBills             *BillQuery
+	withIncomeBills       *BillQuery
 	withMissionOrders     *MissionOrderQuery
 	withTransferOrders    *TransferOrderQuery
 	withExtraServiceOrder *ExtraServiceOrderQuery
@@ -106,6 +107,28 @@ func (sq *SymbolQuery) QueryBills() *BillQuery {
 			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
 			sqlgraph.To(bill.Table, bill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, symbol.BillsTable, symbol.BillsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIncomeBills chains the current query on the "income_bills" edge.
+func (sq *SymbolQuery) QueryIncomeBills() *BillQuery {
+	query := (&BillClient{config: sq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := sq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := sq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, selector),
+			sqlgraph.To(bill.Table, bill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.IncomeBillsTable, symbol.IncomeBillsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
 		return fromU, nil
@@ -373,6 +396,7 @@ func (sq *SymbolQuery) Clone() *SymbolQuery {
 		predicates:            append([]predicate.Symbol{}, sq.predicates...),
 		withWallets:           sq.withWallets.Clone(),
 		withBills:             sq.withBills.Clone(),
+		withIncomeBills:       sq.withIncomeBills.Clone(),
 		withMissionOrders:     sq.withMissionOrders.Clone(),
 		withTransferOrders:    sq.withTransferOrders.Clone(),
 		withExtraServiceOrder: sq.withExtraServiceOrder.Clone(),
@@ -401,6 +425,17 @@ func (sq *SymbolQuery) WithBills(opts ...func(*BillQuery)) *SymbolQuery {
 		opt(query)
 	}
 	sq.withBills = query
+	return sq
+}
+
+// WithIncomeBills tells the query-builder to eager-load the nodes that are connected to
+// the "income_bills" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *SymbolQuery) WithIncomeBills(opts ...func(*BillQuery)) *SymbolQuery {
+	query := (&BillClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	sq.withIncomeBills = query
 	return sq
 }
 
@@ -515,9 +550,10 @@ func (sq *SymbolQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Symbo
 	var (
 		nodes       = []*Symbol{}
 		_spec       = sq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			sq.withWallets != nil,
 			sq.withBills != nil,
+			sq.withIncomeBills != nil,
 			sq.withMissionOrders != nil,
 			sq.withTransferOrders != nil,
 			sq.withExtraServiceOrder != nil,
@@ -555,6 +591,13 @@ func (sq *SymbolQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Symbo
 		if err := sq.loadBills(ctx, query, nodes,
 			func(n *Symbol) { n.Edges.Bills = []*Bill{} },
 			func(n *Symbol, e *Bill) { n.Edges.Bills = append(n.Edges.Bills, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := sq.withIncomeBills; query != nil {
+		if err := sq.loadIncomeBills(ctx, query, nodes,
+			func(n *Symbol) { n.Edges.IncomeBills = []*Bill{} },
+			func(n *Symbol, e *Bill) { n.Edges.IncomeBills = append(n.Edges.IncomeBills, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -639,6 +682,36 @@ func (sq *SymbolQuery) loadBills(ctx context.Context, query *BillQuery, nodes []
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "symbol_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (sq *SymbolQuery) loadIncomeBills(ctx context.Context, query *BillQuery, nodes []*Symbol, init func(*Symbol), assign func(*Symbol, *Bill)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Symbol)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(bill.FieldTargetSymbolID)
+	}
+	query.Where(predicate.Bill(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(symbol.IncomeBillsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.TargetSymbolID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "target_symbol_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

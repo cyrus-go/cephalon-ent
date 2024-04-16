@@ -155,6 +155,21 @@ func (sc *SymbolCreate) AddBills(b ...*Bill) *SymbolCreate {
 	return sc.AddBillIDs(ids...)
 }
 
+// AddIncomeBillIDs adds the "income_bills" edge to the Bill entity by IDs.
+func (sc *SymbolCreate) AddIncomeBillIDs(ids ...int64) *SymbolCreate {
+	sc.mutation.AddIncomeBillIDs(ids...)
+	return sc
+}
+
+// AddIncomeBills adds the "income_bills" edges to the Bill entity.
+func (sc *SymbolCreate) AddIncomeBills(b ...*Bill) *SymbolCreate {
+	ids := make([]int64, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return sc.AddIncomeBillIDs(ids...)
+}
+
 // AddMissionOrderIDs adds the "mission_orders" edge to the MissionOrder entity by IDs.
 func (sc *SymbolCreate) AddMissionOrderIDs(ids ...int64) *SymbolCreate {
 	sc.mutation.AddMissionOrderIDs(ids...)
@@ -364,6 +379,22 @@ func (sc *SymbolCreate) createSpec() (*Symbol, *sqlgraph.CreateSpec) {
 			Inverse: false,
 			Table:   symbol.BillsTable,
 			Columns: []string{symbol.BillsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.IncomeBillsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   symbol.IncomeBillsTable,
+			Columns: []string{symbol.IncomeBillsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt64),

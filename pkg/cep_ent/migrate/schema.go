@@ -107,7 +107,8 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Comment: "流水号，唯一", Default: ""},
 		{Name: "invite_id", Type: field.TypeInt64, Comment: "外键关联某个邀请码", Default: 0},
 		{Name: "order_id", Type: field.TypeInt64, Nullable: true, Comment: "比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息", Default: 0},
-		{Name: "symbol_id", Type: field.TypeInt64, Comment: "外键币种 id", Default: 0},
+		{Name: "symbol_id", Type: field.TypeInt64, Comment: "消费的外键币种 id", Default: 0},
+		{Name: "target_symbol_id", Type: field.TypeInt64, Comment: "获得的外键币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "流水目标钱包 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "流水来源钱包 id", Default: 0},
 	}
@@ -137,6 +138,12 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
+				Symbol:     "bills_symbols_income_bills",
+				Columns:    []*schema.Column{BillsColumns[18]},
+				RefColumns: []*schema.Column{SymbolsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
 				Symbol:     "bills_transfer_orders_bills",
 				Columns:    []*schema.Column{BillsColumns[16]},
 				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
@@ -144,13 +151,13 @@ var (
 			},
 			{
 				Symbol:     "bills_users_income_bills",
-				Columns:    []*schema.Column{BillsColumns[18]},
+				Columns:    []*schema.Column{BillsColumns[19]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "bills_users_outcome_bills",
-				Columns:    []*schema.Column{BillsColumns[19]},
+				Columns:    []*schema.Column{BillsColumns[20]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -159,12 +166,12 @@ var (
 			{
 				Name:    "bill_source_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{BillsColumns[19]},
+				Columns: []*schema.Column{BillsColumns[20]},
 			},
 			{
 				Name:    "bill_target_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{BillsColumns[18]},
+				Columns: []*schema.Column{BillsColumns[19]},
 			},
 			{
 				Name:    "bill_order_id",
@@ -2524,9 +2531,10 @@ func init() {
 	BillsTable.ForeignKeys[0].RefTable = InvitesTable
 	BillsTable.ForeignKeys[1].RefTable = MissionOrdersTable
 	BillsTable.ForeignKeys[2].RefTable = SymbolsTable
-	BillsTable.ForeignKeys[3].RefTable = TransferOrdersTable
-	BillsTable.ForeignKeys[4].RefTable = UsersTable
+	BillsTable.ForeignKeys[3].RefTable = SymbolsTable
+	BillsTable.ForeignKeys[4].RefTable = TransferOrdersTable
 	BillsTable.ForeignKeys[5].RefTable = UsersTable
+	BillsTable.ForeignKeys[6].RefTable = UsersTable
 	BillsTable.Annotation = &entsql.Annotation{}
 	CdkInfosTable.ForeignKeys[0].RefTable = UsersTable
 	CdkInfosTable.ForeignKeys[1].RefTable = UsersTable

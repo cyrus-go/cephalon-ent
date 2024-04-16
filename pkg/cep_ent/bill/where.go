@@ -91,6 +91,11 @@ func SymbolID(v int64) predicate.Bill {
 	return predicate.Bill(sql.FieldEQ(FieldSymbolID, v))
 }
 
+// TargetSymbolID applies equality check predicate on the "target_symbol_id" field. It's identical to TargetSymbolIDEQ.
+func TargetSymbolID(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldTargetSymbolID, v))
+}
+
 // ProfitSymbolID applies equality check predicate on the "profit_symbol_id" field. It's identical to ProfitSymbolIDEQ.
 func ProfitSymbolID(v int64) predicate.Bill {
 	return predicate.Bill(sql.FieldEQ(FieldProfitSymbolID, v))
@@ -449,6 +454,26 @@ func SymbolIDIn(vs ...int64) predicate.Bill {
 // SymbolIDNotIn applies the NotIn predicate on the "symbol_id" field.
 func SymbolIDNotIn(vs ...int64) predicate.Bill {
 	return predicate.Bill(sql.FieldNotIn(FieldSymbolID, vs...))
+}
+
+// TargetSymbolIDEQ applies the EQ predicate on the "target_symbol_id" field.
+func TargetSymbolIDEQ(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldTargetSymbolID, v))
+}
+
+// TargetSymbolIDNEQ applies the NEQ predicate on the "target_symbol_id" field.
+func TargetSymbolIDNEQ(v int64) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldTargetSymbolID, v))
+}
+
+// TargetSymbolIDIn applies the In predicate on the "target_symbol_id" field.
+func TargetSymbolIDIn(vs ...int64) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldTargetSymbolID, vs...))
+}
+
+// TargetSymbolIDNotIn applies the NotIn predicate on the "target_symbol_id" field.
+func TargetSymbolIDNotIn(vs ...int64) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldTargetSymbolID, vs...))
 }
 
 // ProfitSymbolIDEQ applies the EQ predicate on the "profit_symbol_id" field.
@@ -946,6 +971,29 @@ func HasSymbol() predicate.Bill {
 func HasSymbolWith(preds ...predicate.Symbol) predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
 		step := newSymbolStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTargetSymbol applies the HasEdge predicate on the "target_symbol" edge.
+func HasTargetSymbol() predicate.Bill {
+	return predicate.Bill(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, TargetSymbolTable, TargetSymbolColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTargetSymbolWith applies the HasEdge predicate on the "target_symbol" edge with a given conditions (other predicates).
+func HasTargetSymbolWith(preds ...predicate.Symbol) predicate.Bill {
+	return predicate.Bill(func(s *sql.Selector) {
+		step := newTargetSymbolStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

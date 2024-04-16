@@ -19,7 +19,8 @@ func (Bill) Fields() []ent.Field {
 		field.Enum("type").GoType(enums.BillTypeRecharge).Default(string(enums.BillTypeUnknown)).StructTag(`json:"type"`).Comment("流水的类型，对应的 order_id 关联哪张表依赖于该字段"),
 		field.Int64("order_id").Default(0).Optional().StructTag(`json:"order_id,string"`).Comment("比如 type 为 mission 时关联任务订单。当为 0 时，流水没有详细订单信息"),
 		field.Enum("way").GoType(enums.BillWayRechargeWechat).Default(string(enums.BillWayUnknown)).StructTag(`json:"way"`).Comment("额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示"),
-		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("外键币种 id"),
+		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("消费的外键币种 id"),
+		field.Int64("target_symbol_id").Default(0).StructTag(`json:"target_symbol_id,string"`).Comment("获得的外键币种 id"),
 		field.Int64("profit_symbol_id").Default(3).StructTag(`json:"profit_symbol_id,string"`).Comment("外键分润币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("消耗多少货币金额"),
 		field.Int64("target_user_id").Default(0).StructTag(`json:"target_user_id,string"`).Comment("流水目标钱包 id"),
@@ -43,6 +44,7 @@ func (Bill) Edges() []ent.Edge {
 		edge.From("mission_order", MissionOrder.Type).Ref("bills").Field("order_id").Unique(),
 		edge.From("invite", Invite.Type).Ref("bills").Field("invite_id").Unique().Required(),
 		edge.From("symbol", Symbol.Type).Ref("bills").Field("symbol_id").Unique().Required(),
+		edge.From("target_symbol", Symbol.Type).Ref("income_bills").Field("target_symbol_id").Unique().Required(),
 	}
 }
 

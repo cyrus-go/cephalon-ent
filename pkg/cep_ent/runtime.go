@@ -191,44 +191,48 @@ func init() {
 	billDescSymbolID := billFields[3].Descriptor()
 	// bill.DefaultSymbolID holds the default value on creation for the symbol_id field.
 	bill.DefaultSymbolID = billDescSymbolID.Default.(int64)
+	// billDescTargetSymbolID is the schema descriptor for target_symbol_id field.
+	billDescTargetSymbolID := billFields[4].Descriptor()
+	// bill.DefaultTargetSymbolID holds the default value on creation for the target_symbol_id field.
+	bill.DefaultTargetSymbolID = billDescTargetSymbolID.Default.(int64)
 	// billDescProfitSymbolID is the schema descriptor for profit_symbol_id field.
-	billDescProfitSymbolID := billFields[4].Descriptor()
+	billDescProfitSymbolID := billFields[5].Descriptor()
 	// bill.DefaultProfitSymbolID holds the default value on creation for the profit_symbol_id field.
 	bill.DefaultProfitSymbolID = billDescProfitSymbolID.Default.(int64)
 	// billDescAmount is the schema descriptor for amount field.
-	billDescAmount := billFields[5].Descriptor()
+	billDescAmount := billFields[6].Descriptor()
 	// bill.DefaultAmount holds the default value on creation for the amount field.
 	bill.DefaultAmount = billDescAmount.Default.(int64)
 	// billDescTargetUserID is the schema descriptor for target_user_id field.
-	billDescTargetUserID := billFields[6].Descriptor()
+	billDescTargetUserID := billFields[7].Descriptor()
 	// bill.DefaultTargetUserID holds the default value on creation for the target_user_id field.
 	bill.DefaultTargetUserID = billDescTargetUserID.Default.(int64)
 	// billDescTargetBeforeAmount is the schema descriptor for target_before_amount field.
-	billDescTargetBeforeAmount := billFields[7].Descriptor()
+	billDescTargetBeforeAmount := billFields[8].Descriptor()
 	// bill.DefaultTargetBeforeAmount holds the default value on creation for the target_before_amount field.
 	bill.DefaultTargetBeforeAmount = billDescTargetBeforeAmount.Default.(int64)
 	// billDescTargetAfterAmount is the schema descriptor for target_after_amount field.
-	billDescTargetAfterAmount := billFields[8].Descriptor()
+	billDescTargetAfterAmount := billFields[9].Descriptor()
 	// bill.DefaultTargetAfterAmount holds the default value on creation for the target_after_amount field.
 	bill.DefaultTargetAfterAmount = billDescTargetAfterAmount.Default.(int64)
 	// billDescSourceUserID is the schema descriptor for source_user_id field.
-	billDescSourceUserID := billFields[9].Descriptor()
+	billDescSourceUserID := billFields[10].Descriptor()
 	// bill.DefaultSourceUserID holds the default value on creation for the source_user_id field.
 	bill.DefaultSourceUserID = billDescSourceUserID.Default.(int64)
 	// billDescSourceBeforeAmount is the schema descriptor for source_before_amount field.
-	billDescSourceBeforeAmount := billFields[10].Descriptor()
+	billDescSourceBeforeAmount := billFields[11].Descriptor()
 	// bill.DefaultSourceBeforeAmount holds the default value on creation for the source_before_amount field.
 	bill.DefaultSourceBeforeAmount = billDescSourceBeforeAmount.Default.(int64)
 	// billDescSourceAfterAmount is the schema descriptor for source_after_amount field.
-	billDescSourceAfterAmount := billFields[11].Descriptor()
+	billDescSourceAfterAmount := billFields[12].Descriptor()
 	// bill.DefaultSourceAfterAmount holds the default value on creation for the source_after_amount field.
 	bill.DefaultSourceAfterAmount = billDescSourceAfterAmount.Default.(int64)
 	// billDescSerialNumber is the schema descriptor for serial_number field.
-	billDescSerialNumber := billFields[12].Descriptor()
+	billDescSerialNumber := billFields[13].Descriptor()
 	// bill.DefaultSerialNumber holds the default value on creation for the serial_number field.
 	bill.DefaultSerialNumber = billDescSerialNumber.Default.(string)
 	// billDescInviteID is the schema descriptor for invite_id field.
-	billDescInviteID := billFields[13].Descriptor()
+	billDescInviteID := billFields[14].Descriptor()
 	// bill.DefaultInviteID holds the default value on creation for the invite_id field.
 	bill.DefaultInviteID = billDescInviteID.Default.(int64)
 	// billDescID is the schema descriptor for id field.

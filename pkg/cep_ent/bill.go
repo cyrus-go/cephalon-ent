@@ -40,8 +40,10 @@ type Bill struct {
 	OrderID int64 `json:"order_id,string"`
 	// 额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示
 	Way enums.BillWay `json:"way"`
-	// 外键币种 id
+	// 消费的外键币种 id
 	SymbolID int64 `json:"symbol_id,string"`
+	// 获得的外键币种 id
+	TargetSymbolID int64 `json:"target_symbol_id,string"`
 	// 外键分润币种 id
 	ProfitSymbolID int64 `json:"profit_symbol_id,string"`
 	// 消耗多少货币金额
@@ -82,9 +84,11 @@ type BillEdges struct {
 	Invite *Invite `json:"invite,omitempty"`
 	// Symbol holds the value of the symbol edge.
 	Symbol *Symbol `json:"symbol,omitempty"`
+	// TargetSymbol holds the value of the target_symbol edge.
+	TargetSymbol *Symbol `json:"target_symbol,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // SourceUserOrErr returns the SourceUser value or an error if the edge
@@ -165,12 +169,25 @@ func (e BillEdges) SymbolOrErr() (*Symbol, error) {
 	return nil, &NotLoadedError{edge: "symbol"}
 }
 
+// TargetSymbolOrErr returns the TargetSymbol value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BillEdges) TargetSymbolOrErr() (*Symbol, error) {
+	if e.loadedTypes[6] {
+		if e.TargetSymbol == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: symbol.Label}
+		}
+		return e.TargetSymbol, nil
+	}
+	return nil, &NotLoadedError{edge: "target_symbol"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Bill) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case bill.FieldID, bill.FieldCreatedBy, bill.FieldUpdatedBy, bill.FieldOrderID, bill.FieldSymbolID, bill.FieldProfitSymbolID, bill.FieldAmount, bill.FieldTargetUserID, bill.FieldTargetBeforeAmount, bill.FieldTargetAfterAmount, bill.FieldSourceUserID, bill.FieldSourceBeforeAmount, bill.FieldSourceAfterAmount, bill.FieldInviteID:
+		case bill.FieldID, bill.FieldCreatedBy, bill.FieldUpdatedBy, bill.FieldOrderID, bill.FieldSymbolID, bill.FieldTargetSymbolID, bill.FieldProfitSymbolID, bill.FieldAmount, bill.FieldTargetUserID, bill.FieldTargetBeforeAmount, bill.FieldTargetAfterAmount, bill.FieldSourceUserID, bill.FieldSourceBeforeAmount, bill.FieldSourceAfterAmount, bill.FieldInviteID:
 			values[i] = new(sql.NullInt64)
 		case bill.FieldType, bill.FieldWay, bill.FieldSerialNumber:
 			values[i] = new(sql.NullString)
@@ -250,6 +267,12 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field symbol_id", values[i])
 			} else if value.Valid {
 				b.SymbolID = value.Int64
+			}
+		case bill.FieldTargetSymbolID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field target_symbol_id", values[i])
+			} else if value.Valid {
+				b.TargetSymbolID = value.Int64
 			}
 		case bill.FieldProfitSymbolID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -354,6 +377,11 @@ func (b *Bill) QuerySymbol() *SymbolQuery {
 	return NewBillClient(b.config).QuerySymbol(b)
 }
 
+// QueryTargetSymbol queries the "target_symbol" edge of the Bill entity.
+func (b *Bill) QueryTargetSymbol() *SymbolQuery {
+	return NewBillClient(b.config).QueryTargetSymbol(b)
+}
+
 // Update returns a builder for updating this Bill.
 // Note that you need to call Bill.Unwrap() before calling this method if this Bill
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -403,6 +431,9 @@ func (b *Bill) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("symbol_id=")
 	builder.WriteString(fmt.Sprintf("%v", b.SymbolID))
+	builder.WriteString(", ")
+	builder.WriteString("target_symbol_id=")
+	builder.WriteString(fmt.Sprintf("%v", b.TargetSymbolID))
 	builder.WriteString(", ")
 	builder.WriteString("profit_symbol_id=")
 	builder.WriteString(fmt.Sprintf("%v", b.ProfitSymbolID))

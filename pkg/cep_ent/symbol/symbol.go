@@ -30,6 +30,8 @@ const (
 	EdgeWallets = "wallets"
 	// EdgeBills holds the string denoting the bills edge name in mutations.
 	EdgeBills = "bills"
+	// EdgeIncomeBills holds the string denoting the income_bills edge name in mutations.
+	EdgeIncomeBills = "income_bills"
 	// EdgeMissionOrders holds the string denoting the mission_orders edge name in mutations.
 	EdgeMissionOrders = "mission_orders"
 	// EdgeTransferOrders holds the string denoting the transfer_orders edge name in mutations.
@@ -52,6 +54,13 @@ const (
 	BillsInverseTable = "bills"
 	// BillsColumn is the table column denoting the bills relation/edge.
 	BillsColumn = "symbol_id"
+	// IncomeBillsTable is the table that holds the income_bills relation/edge.
+	IncomeBillsTable = "bills"
+	// IncomeBillsInverseTable is the table name for the Bill entity.
+	// It exists in this package in order to avoid circular dependency with the "bill" package.
+	IncomeBillsInverseTable = "bills"
+	// IncomeBillsColumn is the table column denoting the income_bills relation/edge.
+	IncomeBillsColumn = "target_symbol_id"
 	// MissionOrdersTable is the table that holds the mission_orders relation/edge.
 	MissionOrdersTable = "mission_orders"
 	// MissionOrdersInverseTable is the table name for the MissionOrder entity.
@@ -181,6 +190,20 @@ func ByBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByIncomeBillsCount orders the results by income_bills count.
+func ByIncomeBillsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncomeBillsStep(), opts...)
+	}
+}
+
+// ByIncomeBills orders the results by income_bills terms.
+func ByIncomeBills(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncomeBillsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByMissionOrdersCount orders the results by mission_orders count.
 func ByMissionOrdersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -234,6 +257,13 @@ func newBillsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(BillsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, BillsTable, BillsColumn),
+	)
+}
+func newIncomeBillsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncomeBillsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncomeBillsTable, IncomeBillsColumn),
 	)
 }
 func newMissionOrdersStep() *sqlgraph.Step {

@@ -1206,6 +1206,22 @@ func (c *BillClient) QuerySymbol(b *Bill) *SymbolQuery {
 	return query
 }
 
+// QueryTargetSymbol queries the target_symbol edge of a Bill.
+func (c *BillClient) QueryTargetSymbol(b *Bill) *SymbolQuery {
+	query := (&SymbolClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bill.Table, bill.FieldID, id),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.TargetSymbolTable, bill.TargetSymbolColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *BillClient) Hooks() []Hook {
 	return c.hooks.Bill
@@ -9466,6 +9482,22 @@ func (c *SymbolClient) QueryBills(s *Symbol) *BillQuery {
 			sqlgraph.From(symbol.Table, symbol.FieldID, id),
 			sqlgraph.To(bill.Table, bill.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, symbol.BillsTable, symbol.BillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIncomeBills queries the income_bills edge of a Symbol.
+func (c *SymbolClient) QueryIncomeBills(s *Symbol) *BillQuery {
+	query := (&BillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(symbol.Table, symbol.FieldID, id),
+			sqlgraph.To(bill.Table, bill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, symbol.IncomeBillsTable, symbol.IncomeBillsColumn),
 		)
 		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
 		return fromV, nil

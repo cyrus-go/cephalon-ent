@@ -32,6 +32,7 @@ type BillQuery struct {
 	withMissionOrder  *MissionOrderQuery
 	withInvite        *InviteQuery
 	withSymbol        *SymbolQuery
+	withTargetSymbol  *SymbolQuery
 	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -194,6 +195,28 @@ func (bq *BillQuery) QuerySymbol() *SymbolQuery {
 			sqlgraph.From(bill.Table, bill.FieldID, selector),
 			sqlgraph.To(symbol.Table, symbol.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, bill.SymbolTable, bill.SymbolColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTargetSymbol chains the current query on the "target_symbol" edge.
+func (bq *BillQuery) QueryTargetSymbol() *SymbolQuery {
+	query := (&SymbolClient{config: bq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := bq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bill.Table, bill.FieldID, selector),
+			sqlgraph.To(symbol.Table, symbol.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.TargetSymbolTable, bill.TargetSymbolColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -399,6 +422,7 @@ func (bq *BillQuery) Clone() *BillQuery {
 		withMissionOrder:  bq.withMissionOrder.Clone(),
 		withInvite:        bq.withInvite.Clone(),
 		withSymbol:        bq.withSymbol.Clone(),
+		withTargetSymbol:  bq.withTargetSymbol.Clone(),
 		// clone intermediate query.
 		sql:  bq.sql.Clone(),
 		path: bq.path,
@@ -468,6 +492,17 @@ func (bq *BillQuery) WithSymbol(opts ...func(*SymbolQuery)) *BillQuery {
 		opt(query)
 	}
 	bq.withSymbol = query
+	return bq
+}
+
+// WithTargetSymbol tells the query-builder to eager-load the nodes that are connected to
+// the "target_symbol" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BillQuery) WithTargetSymbol(opts ...func(*SymbolQuery)) *BillQuery {
+	query := (&SymbolClient{config: bq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withTargetSymbol = query
 	return bq
 }
 
@@ -549,13 +584,14 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 	var (
 		nodes       = []*Bill{}
 		_spec       = bq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			bq.withSourceUser != nil,
 			bq.withTargetUser != nil,
 			bq.withTransferOrder != nil,
 			bq.withMissionOrder != nil,
 			bq.withInvite != nil,
 			bq.withSymbol != nil,
+			bq.withTargetSymbol != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -612,6 +648,12 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 	if query := bq.withSymbol; query != nil {
 		if err := bq.loadSymbol(ctx, query, nodes, nil,
 			func(n *Bill, e *Symbol) { n.Edges.Symbol = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := bq.withTargetSymbol; query != nil {
+		if err := bq.loadTargetSymbol(ctx, query, nodes, nil,
+			func(n *Bill, e *Symbol) { n.Edges.TargetSymbol = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -792,6 +834,35 @@ func (bq *BillQuery) loadSymbol(ctx context.Context, query *SymbolQuery, nodes [
 	}
 	return nil
 }
+func (bq *BillQuery) loadTargetSymbol(ctx context.Context, query *SymbolQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *Symbol)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*Bill)
+	for i := range nodes {
+		fk := nodes[i].TargetSymbolID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(symbol.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "target_symbol_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (bq *BillQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := bq.querySpec()
@@ -838,6 +909,9 @@ func (bq *BillQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if bq.withSymbol != nil {
 			_spec.Node.AddColumnOnce(bill.FieldSymbolID)
+		}
+		if bq.withTargetSymbol != nil {
+			_spec.Node.AddColumnOnce(bill.FieldTargetSymbolID)
 		}
 	}
 	if ps := bq.predicates; len(ps) > 0 {
