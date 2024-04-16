@@ -30,6 +30,8 @@ const (
 	FieldStartTime = "start_time"
 	// FieldEndTime holds the string denoting the end_time field in the database.
 	FieldEndTime = "end_time"
+	// FieldNowTime holds the string denoting the now_time field in the database.
+	FieldNowTime = "now_time"
 	// FieldOnlineTime holds the string denoting the online_time field in the database.
 	FieldOnlineTime = "online_time"
 	// FieldOfflineTime holds the string denoting the offline_time field in the database.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldDeviceID,
 	FieldStartTime,
 	FieldEndTime,
+	FieldNowTime,
 	FieldOnlineTime,
 	FieldOfflineTime,
 }
@@ -91,6 +94,8 @@ var (
 	DefaultStartTime time.Time
 	// DefaultEndTime holds the default value on creation for the "end_time" field.
 	DefaultEndTime time.Time
+	// DefaultNowTime holds the default value on creation for the "now_time" field.
+	DefaultNowTime time.Time
 	// DefaultOnlineTime holds the default value on creation for the "online_time" field.
 	DefaultOnlineTime string
 	// DefaultOfflineTime holds the default value on creation for the "offline_time" field.
@@ -145,6 +150,11 @@ func ByStartTime(opts ...sql.OrderTermOption) OrderOption {
 // ByEndTime orders the results by the end_time field.
 func ByEndTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEndTime, opts...).ToFunc()
+}
+
+// ByNowTime orders the results by the now_time field.
+func ByNowTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNowTime, opts...).ToFunc()
 }
 
 // ByOnlineTime orders the results by the online_time field.

@@ -570,6 +570,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "start_time", Type: field.TypeTime, Comment: "设备开机时间"},
 		{Name: "end_time", Type: field.TypeTime, Comment: "设备关机时间"},
+		{Name: "now_time", Type: field.TypeTime, Comment: "设备上线时间"},
 		{Name: "online_time", Type: field.TypeString, Comment: "设备运行时间", Default: "None"},
 		{Name: "offline_time", Type: field.TypeString, Comment: "设备宕机时间", Default: "None"},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
@@ -583,7 +584,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "device_reboot_times_devices_device_reboot_times",
-				Columns:    []*schema.Column{DeviceRebootTimesColumns[10]},
+				Columns:    []*schema.Column{DeviceRebootTimesColumns[11]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -592,7 +593,7 @@ var (
 			{
 				Name:    "devicereboottime_device_id",
 				Unique:  false,
-				Columns: []*schema.Column{DeviceRebootTimesColumns[10]},
+				Columns: []*schema.Column{DeviceRebootTimesColumns[11]},
 			},
 		},
 	}

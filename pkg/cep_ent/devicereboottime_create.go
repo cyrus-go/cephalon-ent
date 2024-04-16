@@ -135,6 +135,20 @@ func (drtc *DeviceRebootTimeCreate) SetNillableEndTime(t *time.Time) *DeviceRebo
 	return drtc
 }
 
+// SetNowTime sets the "now_time" field.
+func (drtc *DeviceRebootTimeCreate) SetNowTime(t time.Time) *DeviceRebootTimeCreate {
+	drtc.mutation.SetNowTime(t)
+	return drtc
+}
+
+// SetNillableNowTime sets the "now_time" field if the given value is not nil.
+func (drtc *DeviceRebootTimeCreate) SetNillableNowTime(t *time.Time) *DeviceRebootTimeCreate {
+	if t != nil {
+		drtc.SetNowTime(*t)
+	}
+	return drtc
+}
+
 // SetOnlineTime sets the "online_time" field.
 func (drtc *DeviceRebootTimeCreate) SetOnlineTime(s string) *DeviceRebootTimeCreate {
 	drtc.mutation.SetOnlineTime(s)
@@ -249,6 +263,10 @@ func (drtc *DeviceRebootTimeCreate) defaults() {
 		v := devicereboottime.DefaultEndTime
 		drtc.mutation.SetEndTime(v)
 	}
+	if _, ok := drtc.mutation.NowTime(); !ok {
+		v := devicereboottime.DefaultNowTime
+		drtc.mutation.SetNowTime(v)
+	}
 	if _, ok := drtc.mutation.OnlineTime(); !ok {
 		v := devicereboottime.DefaultOnlineTime
 		drtc.mutation.SetOnlineTime(v)
@@ -288,6 +306,9 @@ func (drtc *DeviceRebootTimeCreate) check() error {
 	}
 	if _, ok := drtc.mutation.EndTime(); !ok {
 		return &ValidationError{Name: "end_time", err: errors.New(`cep_ent: missing required field "DeviceRebootTime.end_time"`)}
+	}
+	if _, ok := drtc.mutation.NowTime(); !ok {
+		return &ValidationError{Name: "now_time", err: errors.New(`cep_ent: missing required field "DeviceRebootTime.now_time"`)}
 	}
 	if _, ok := drtc.mutation.OnlineTime(); !ok {
 		return &ValidationError{Name: "online_time", err: errors.New(`cep_ent: missing required field "DeviceRebootTime.online_time"`)}
@@ -358,6 +379,10 @@ func (drtc *DeviceRebootTimeCreate) createSpec() (*DeviceRebootTime, *sqlgraph.C
 	if value, ok := drtc.mutation.EndTime(); ok {
 		_spec.SetField(devicereboottime.FieldEndTime, field.TypeTime, value)
 		_node.EndTime = value
+	}
+	if value, ok := drtc.mutation.NowTime(); ok {
+		_spec.SetField(devicereboottime.FieldNowTime, field.TypeTime, value)
+		_node.NowTime = value
 	}
 	if value, ok := drtc.mutation.OnlineTime(); ok {
 		_spec.SetField(devicereboottime.FieldOnlineTime, field.TypeString, value)
@@ -529,6 +554,18 @@ func (u *DeviceRebootTimeUpsert) SetEndTime(v time.Time) *DeviceRebootTimeUpsert
 // UpdateEndTime sets the "end_time" field to the value that was provided on create.
 func (u *DeviceRebootTimeUpsert) UpdateEndTime() *DeviceRebootTimeUpsert {
 	u.SetExcluded(devicereboottime.FieldEndTime)
+	return u
+}
+
+// SetNowTime sets the "now_time" field.
+func (u *DeviceRebootTimeUpsert) SetNowTime(v time.Time) *DeviceRebootTimeUpsert {
+	u.Set(devicereboottime.FieldNowTime, v)
+	return u
+}
+
+// UpdateNowTime sets the "now_time" field to the value that was provided on create.
+func (u *DeviceRebootTimeUpsert) UpdateNowTime() *DeviceRebootTimeUpsert {
+	u.SetExcluded(devicereboottime.FieldNowTime)
 	return u
 }
 
@@ -716,6 +753,20 @@ func (u *DeviceRebootTimeUpsertOne) SetEndTime(v time.Time) *DeviceRebootTimeUps
 func (u *DeviceRebootTimeUpsertOne) UpdateEndTime() *DeviceRebootTimeUpsertOne {
 	return u.Update(func(s *DeviceRebootTimeUpsert) {
 		s.UpdateEndTime()
+	})
+}
+
+// SetNowTime sets the "now_time" field.
+func (u *DeviceRebootTimeUpsertOne) SetNowTime(v time.Time) *DeviceRebootTimeUpsertOne {
+	return u.Update(func(s *DeviceRebootTimeUpsert) {
+		s.SetNowTime(v)
+	})
+}
+
+// UpdateNowTime sets the "now_time" field to the value that was provided on create.
+func (u *DeviceRebootTimeUpsertOne) UpdateNowTime() *DeviceRebootTimeUpsertOne {
+	return u.Update(func(s *DeviceRebootTimeUpsert) {
+		s.UpdateNowTime()
 	})
 }
 
@@ -1073,6 +1124,20 @@ func (u *DeviceRebootTimeUpsertBulk) SetEndTime(v time.Time) *DeviceRebootTimeUp
 func (u *DeviceRebootTimeUpsertBulk) UpdateEndTime() *DeviceRebootTimeUpsertBulk {
 	return u.Update(func(s *DeviceRebootTimeUpsert) {
 		s.UpdateEndTime()
+	})
+}
+
+// SetNowTime sets the "now_time" field.
+func (u *DeviceRebootTimeUpsertBulk) SetNowTime(v time.Time) *DeviceRebootTimeUpsertBulk {
+	return u.Update(func(s *DeviceRebootTimeUpsert) {
+		s.SetNowTime(v)
+	})
+}
+
+// UpdateNowTime sets the "now_time" field to the value that was provided on create.
+func (u *DeviceRebootTimeUpsertBulk) UpdateNowTime() *DeviceRebootTimeUpsertBulk {
+	return u.Update(func(s *DeviceRebootTimeUpsert) {
+		s.UpdateNowTime()
 	})
 }
 

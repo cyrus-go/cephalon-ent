@@ -786,12 +786,16 @@ func init() {
 	devicereboottimeDescEndTime := devicereboottimeFields[2].Descriptor()
 	// devicereboottime.DefaultEndTime holds the default value on creation for the end_time field.
 	devicereboottime.DefaultEndTime = devicereboottimeDescEndTime.Default.(time.Time)
+	// devicereboottimeDescNowTime is the schema descriptor for now_time field.
+	devicereboottimeDescNowTime := devicereboottimeFields[3].Descriptor()
+	// devicereboottime.DefaultNowTime holds the default value on creation for the now_time field.
+	devicereboottime.DefaultNowTime = devicereboottimeDescNowTime.Default.(time.Time)
 	// devicereboottimeDescOnlineTime is the schema descriptor for online_time field.
-	devicereboottimeDescOnlineTime := devicereboottimeFields[3].Descriptor()
+	devicereboottimeDescOnlineTime := devicereboottimeFields[4].Descriptor()
 	// devicereboottime.DefaultOnlineTime holds the default value on creation for the online_time field.
 	devicereboottime.DefaultOnlineTime = devicereboottimeDescOnlineTime.Default.(string)
 	// devicereboottimeDescOfflineTime is the schema descriptor for offline_time field.
-	devicereboottimeDescOfflineTime := devicereboottimeFields[4].Descriptor()
+	devicereboottimeDescOfflineTime := devicereboottimeFields[5].Descriptor()
 	// devicereboottime.DefaultOfflineTime holds the default value on creation for the offline_time field.
 	devicereboottime.DefaultOfflineTime = devicereboottimeDescOfflineTime.Default.(string)
 	// devicereboottimeDescID is the schema descriptor for id field.

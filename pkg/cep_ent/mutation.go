@@ -15935,6 +15935,7 @@ type DeviceRebootTimeMutation struct {
 	deleted_at    *time.Time
 	start_time    *time.Time
 	end_time      *time.Time
+	now_time      *time.Time
 	online_time   *string
 	offline_time  *string
 	clearedFields map[string]struct{}
@@ -16377,6 +16378,42 @@ func (m *DeviceRebootTimeMutation) ResetEndTime() {
 	m.end_time = nil
 }
 
+// SetNowTime sets the "now_time" field.
+func (m *DeviceRebootTimeMutation) SetNowTime(t time.Time) {
+	m.now_time = &t
+}
+
+// NowTime returns the value of the "now_time" field in the mutation.
+func (m *DeviceRebootTimeMutation) NowTime() (r time.Time, exists bool) {
+	v := m.now_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNowTime returns the old "now_time" field's value of the DeviceRebootTime entity.
+// If the DeviceRebootTime object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceRebootTimeMutation) OldNowTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNowTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNowTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNowTime: %w", err)
+	}
+	return oldValue.NowTime, nil
+}
+
+// ResetNowTime resets all changes to the "now_time" field.
+func (m *DeviceRebootTimeMutation) ResetNowTime() {
+	m.now_time = nil
+}
+
 // SetOnlineTime sets the "online_time" field.
 func (m *DeviceRebootTimeMutation) SetOnlineTime(s string) {
 	m.online_time = &s
@@ -16510,7 +16547,7 @@ func (m *DeviceRebootTimeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceRebootTimeMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_by != nil {
 		fields = append(fields, devicereboottime.FieldCreatedBy)
 	}
@@ -16534,6 +16571,9 @@ func (m *DeviceRebootTimeMutation) Fields() []string {
 	}
 	if m.end_time != nil {
 		fields = append(fields, devicereboottime.FieldEndTime)
+	}
+	if m.now_time != nil {
+		fields = append(fields, devicereboottime.FieldNowTime)
 	}
 	if m.online_time != nil {
 		fields = append(fields, devicereboottime.FieldOnlineTime)
@@ -16565,6 +16605,8 @@ func (m *DeviceRebootTimeMutation) Field(name string) (ent.Value, bool) {
 		return m.StartTime()
 	case devicereboottime.FieldEndTime:
 		return m.EndTime()
+	case devicereboottime.FieldNowTime:
+		return m.NowTime()
 	case devicereboottime.FieldOnlineTime:
 		return m.OnlineTime()
 	case devicereboottime.FieldOfflineTime:
@@ -16594,6 +16636,8 @@ func (m *DeviceRebootTimeMutation) OldField(ctx context.Context, name string) (e
 		return m.OldStartTime(ctx)
 	case devicereboottime.FieldEndTime:
 		return m.OldEndTime(ctx)
+	case devicereboottime.FieldNowTime:
+		return m.OldNowTime(ctx)
 	case devicereboottime.FieldOnlineTime:
 		return m.OldOnlineTime(ctx)
 	case devicereboottime.FieldOfflineTime:
@@ -16662,6 +16706,13 @@ func (m *DeviceRebootTimeMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEndTime(v)
+		return nil
+	case devicereboottime.FieldNowTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNowTime(v)
 		return nil
 	case devicereboottime.FieldOnlineTime:
 		v, ok := value.(string)
@@ -16776,6 +16827,9 @@ func (m *DeviceRebootTimeMutation) ResetField(name string) error {
 		return nil
 	case devicereboottime.FieldEndTime:
 		m.ResetEndTime()
+		return nil
+	case devicereboottime.FieldNowTime:
+		m.ResetNowTime()
 		return nil
 	case devicereboottime.FieldOnlineTime:
 		m.ResetOnlineTime()

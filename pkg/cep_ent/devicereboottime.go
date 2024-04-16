@@ -35,6 +35,8 @@ type DeviceRebootTime struct {
 	StartTime time.Time `json:"start_time"`
 	// 设备关机时间
 	EndTime time.Time `json:"end_time"`
+	// 设备上线时间
+	NowTime time.Time `json:"now_time"`
 	// 设备运行时间
 	OnlineTime string `json:"online_time"`
 	// 设备宕机时间
@@ -76,7 +78,7 @@ func (*DeviceRebootTime) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case devicereboottime.FieldOnlineTime, devicereboottime.FieldOfflineTime:
 			values[i] = new(sql.NullString)
-		case devicereboottime.FieldCreatedAt, devicereboottime.FieldUpdatedAt, devicereboottime.FieldDeletedAt, devicereboottime.FieldStartTime, devicereboottime.FieldEndTime:
+		case devicereboottime.FieldCreatedAt, devicereboottime.FieldUpdatedAt, devicereboottime.FieldDeletedAt, devicereboottime.FieldStartTime, devicereboottime.FieldEndTime, devicereboottime.FieldNowTime:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -146,6 +148,12 @@ func (drt *DeviceRebootTime) assignValues(columns []string, values []any) error 
 				return fmt.Errorf("unexpected type %T for field end_time", values[i])
 			} else if value.Valid {
 				drt.EndTime = value.Time
+			}
+		case devicereboottime.FieldNowTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field now_time", values[i])
+			} else if value.Valid {
+				drt.NowTime = value.Time
 			}
 		case devicereboottime.FieldOnlineTime:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -223,6 +231,9 @@ func (drt *DeviceRebootTime) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("end_time=")
 	builder.WriteString(drt.EndTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("now_time=")
+	builder.WriteString(drt.NowTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("online_time=")
 	builder.WriteString(drt.OnlineTime)

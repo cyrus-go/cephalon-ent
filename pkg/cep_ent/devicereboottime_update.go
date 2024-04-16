@@ -134,6 +134,20 @@ func (drtu *DeviceRebootTimeUpdate) SetNillableEndTime(t *time.Time) *DeviceRebo
 	return drtu
 }
 
+// SetNowTime sets the "now_time" field.
+func (drtu *DeviceRebootTimeUpdate) SetNowTime(t time.Time) *DeviceRebootTimeUpdate {
+	drtu.mutation.SetNowTime(t)
+	return drtu
+}
+
+// SetNillableNowTime sets the "now_time" field if the given value is not nil.
+func (drtu *DeviceRebootTimeUpdate) SetNillableNowTime(t *time.Time) *DeviceRebootTimeUpdate {
+	if t != nil {
+		drtu.SetNowTime(*t)
+	}
+	return drtu
+}
+
 // SetOnlineTime sets the "online_time" field.
 func (drtu *DeviceRebootTimeUpdate) SetOnlineTime(s string) *DeviceRebootTimeUpdate {
 	drtu.mutation.SetOnlineTime(s)
@@ -263,6 +277,9 @@ func (drtu *DeviceRebootTimeUpdate) sqlSave(ctx context.Context) (n int, err err
 	}
 	if value, ok := drtu.mutation.EndTime(); ok {
 		_spec.SetField(devicereboottime.FieldEndTime, field.TypeTime, value)
+	}
+	if value, ok := drtu.mutation.NowTime(); ok {
+		_spec.SetField(devicereboottime.FieldNowTime, field.TypeTime, value)
 	}
 	if value, ok := drtu.mutation.OnlineTime(); ok {
 		_spec.SetField(devicereboottime.FieldOnlineTime, field.TypeString, value)
@@ -421,6 +438,20 @@ func (drtuo *DeviceRebootTimeUpdateOne) SetEndTime(t time.Time) *DeviceRebootTim
 func (drtuo *DeviceRebootTimeUpdateOne) SetNillableEndTime(t *time.Time) *DeviceRebootTimeUpdateOne {
 	if t != nil {
 		drtuo.SetEndTime(*t)
+	}
+	return drtuo
+}
+
+// SetNowTime sets the "now_time" field.
+func (drtuo *DeviceRebootTimeUpdateOne) SetNowTime(t time.Time) *DeviceRebootTimeUpdateOne {
+	drtuo.mutation.SetNowTime(t)
+	return drtuo
+}
+
+// SetNillableNowTime sets the "now_time" field if the given value is not nil.
+func (drtuo *DeviceRebootTimeUpdateOne) SetNillableNowTime(t *time.Time) *DeviceRebootTimeUpdateOne {
+	if t != nil {
+		drtuo.SetNowTime(*t)
 	}
 	return drtuo
 }
@@ -584,6 +615,9 @@ func (drtuo *DeviceRebootTimeUpdateOne) sqlSave(ctx context.Context) (_node *Dev
 	}
 	if value, ok := drtuo.mutation.EndTime(); ok {
 		_spec.SetField(devicereboottime.FieldEndTime, field.TypeTime, value)
+	}
+	if value, ok := drtuo.mutation.NowTime(); ok {
+		_spec.SetField(devicereboottime.FieldNowTime, field.TypeTime, value)
 	}
 	if value, ok := drtuo.mutation.OnlineTime(); ok {
 		_spec.SetField(devicereboottime.FieldOnlineTime, field.TypeString, value)

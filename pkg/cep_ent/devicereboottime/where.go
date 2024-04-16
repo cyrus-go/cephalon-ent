@@ -95,6 +95,11 @@ func EndTime(v time.Time) predicate.DeviceRebootTime {
 	return predicate.DeviceRebootTime(sql.FieldEQ(FieldEndTime, v))
 }
 
+// NowTime applies equality check predicate on the "now_time" field. It's identical to NowTimeEQ.
+func NowTime(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldEQ(FieldNowTime, v))
+}
+
 // OnlineTime applies equality check predicate on the "online_time" field. It's identical to OnlineTimeEQ.
 func OnlineTime(v string) predicate.DeviceRebootTime {
 	return predicate.DeviceRebootTime(sql.FieldEQ(FieldOnlineTime, v))
@@ -403,6 +408,46 @@ func EndTimeLT(v time.Time) predicate.DeviceRebootTime {
 // EndTimeLTE applies the LTE predicate on the "end_time" field.
 func EndTimeLTE(v time.Time) predicate.DeviceRebootTime {
 	return predicate.DeviceRebootTime(sql.FieldLTE(FieldEndTime, v))
+}
+
+// NowTimeEQ applies the EQ predicate on the "now_time" field.
+func NowTimeEQ(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldEQ(FieldNowTime, v))
+}
+
+// NowTimeNEQ applies the NEQ predicate on the "now_time" field.
+func NowTimeNEQ(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldNEQ(FieldNowTime, v))
+}
+
+// NowTimeIn applies the In predicate on the "now_time" field.
+func NowTimeIn(vs ...time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldIn(FieldNowTime, vs...))
+}
+
+// NowTimeNotIn applies the NotIn predicate on the "now_time" field.
+func NowTimeNotIn(vs ...time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldNotIn(FieldNowTime, vs...))
+}
+
+// NowTimeGT applies the GT predicate on the "now_time" field.
+func NowTimeGT(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldGT(FieldNowTime, v))
+}
+
+// NowTimeGTE applies the GTE predicate on the "now_time" field.
+func NowTimeGTE(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldGTE(FieldNowTime, v))
+}
+
+// NowTimeLT applies the LT predicate on the "now_time" field.
+func NowTimeLT(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldLT(FieldNowTime, v))
+}
+
+// NowTimeLTE applies the LTE predicate on the "now_time" field.
+func NowTimeLTE(v time.Time) predicate.DeviceRebootTime {
+	return predicate.DeviceRebootTime(sql.FieldLTE(FieldNowTime, v))
 }
 
 // OnlineTimeEQ applies the EQ predicate on the "online_time" field.
