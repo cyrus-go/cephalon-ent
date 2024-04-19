@@ -2130,7 +2130,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved"}, Default: "pending"},
+		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved", "reject"}, Default: "pending"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "充值多少货币量", Default: 0},
 		{Name: "type", Type: field.TypeEnum, Comment: "充值订单的类型", Enums: []string{"withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund"}, Default: "unknown"},
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
@@ -2139,10 +2139,11 @@ var (
 		{Name: "withdraw_account", Type: field.TypeString, Comment: "提现账户（类型为提现才有数据）", Default: ""},
 		{Name: "withdraw_rate", Type: field.TypeInt64, Comment: "提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%", Default: 7},
 		{Name: "withdraw_real_amount", Type: field.TypeInt64, Comment: "提现实际到账，单位：cep", Default: 0},
+		{Name: "reject_reason", Type: field.TypeString, Comment: "提现审批拒绝的理由", Default: ""},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "转账目标的用户 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "转账来源的用户 id", Default: 0},
-		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作的用户 id，手动充值才有数据，默认为 0", Default: 0},
+		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作的用户 id，手动充值或者提现审批才有数据，默认为 0", Default: 0},
 		{Name: "social_id", Type: field.TypeInt64, Nullable: true, Comment: "关联充值来源的身份源 id", Default: 0},
 	}
 	// TransferOrdersTable holds the schema information for the "transfer_orders" table.
@@ -2154,31 +2155,31 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transfer_orders_symbols_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[15]},
+				Columns:    []*schema.Column{TransferOrdersColumns[16]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transfer_orders_users_income_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[16]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "transfer_orders_users_outcome_transfer_orders",
 				Columns:    []*schema.Column{TransferOrdersColumns[17]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "transfer_orders_users_operate_transfer_orders",
+				Symbol:     "transfer_orders_users_outcome_transfer_orders",
 				Columns:    []*schema.Column{TransferOrdersColumns[18]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Symbol:     "transfer_orders_users_operate_transfer_orders",
 				Columns:    []*schema.Column{TransferOrdersColumns[19]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transfer_orders_vx_socials_transfer_orders",
+				Columns:    []*schema.Column{TransferOrdersColumns[20]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2187,22 +2188,22 @@ var (
 			{
 				Name:    "transferorder_source_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[17]},
+				Columns: []*schema.Column{TransferOrdersColumns[18]},
 			},
 			{
 				Name:    "transferorder_target_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[16]},
+				Columns: []*schema.Column{TransferOrdersColumns[17]},
 			},
 			{
 				Name:    "transferorder_social_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[19]},
+				Columns: []*schema.Column{TransferOrdersColumns[20]},
 			},
 			{
 				Name:    "transferorder_symbol_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[15]},
+				Columns: []*schema.Column{TransferOrdersColumns[16]},
 			},
 		},
 	}

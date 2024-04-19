@@ -65343,6 +65343,7 @@ type TransferOrderMutation struct {
 	addwithdraw_rate        *int64
 	withdraw_real_amount    *int64
 	addwithdraw_real_amount *int64
+	reject_reason           *string
 	clearedFields           map[string]struct{}
 	source_user             *int64
 	clearedsource_user      bool
@@ -66263,6 +66264,42 @@ func (m *TransferOrderMutation) ResetOperateUserID() {
 	m.operate_user = nil
 }
 
+// SetRejectReason sets the "reject_reason" field.
+func (m *TransferOrderMutation) SetRejectReason(s string) {
+	m.reject_reason = &s
+}
+
+// RejectReason returns the value of the "reject_reason" field in the mutation.
+func (m *TransferOrderMutation) RejectReason() (r string, exists bool) {
+	v := m.reject_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRejectReason returns the old "reject_reason" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldRejectReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRejectReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRejectReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRejectReason: %w", err)
+	}
+	return oldValue.RejectReason, nil
+}
+
+// ResetRejectReason resets all changes to the "reject_reason" field.
+func (m *TransferOrderMutation) ResetRejectReason() {
+	m.reject_reason = nil
+}
+
 // ClearSourceUser clears the "source_user" edge to the User entity.
 func (m *TransferOrderMutation) ClearSourceUser() {
 	m.clearedsource_user = true
@@ -66499,7 +66536,7 @@ func (m *TransferOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferOrderMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_by != nil {
 		fields = append(fields, transferorder.FieldCreatedBy)
 	}
@@ -66557,6 +66594,9 @@ func (m *TransferOrderMutation) Fields() []string {
 	if m.operate_user != nil {
 		fields = append(fields, transferorder.FieldOperateUserID)
 	}
+	if m.reject_reason != nil {
+		fields = append(fields, transferorder.FieldRejectReason)
+	}
 	return fields
 }
 
@@ -66603,6 +66643,8 @@ func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.WithdrawRealAmount()
 	case transferorder.FieldOperateUserID:
 		return m.OperateUserID()
+	case transferorder.FieldRejectReason:
+		return m.RejectReason()
 	}
 	return nil, false
 }
@@ -66650,6 +66692,8 @@ func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldWithdrawRealAmount(ctx)
 	case transferorder.FieldOperateUserID:
 		return m.OldOperateUserID(ctx)
+	case transferorder.FieldRejectReason:
+		return m.OldRejectReason(ctx)
 	}
 	return nil, fmt.Errorf("unknown TransferOrder field %s", name)
 }
@@ -66791,6 +66835,13 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOperateUserID(v)
+		return nil
+	case transferorder.FieldRejectReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRejectReason(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)
@@ -66969,6 +67020,9 @@ func (m *TransferOrderMutation) ResetField(name string) error {
 		return nil
 	case transferorder.FieldOperateUserID:
 		m.ResetOperateUserID()
+		return nil
+	case transferorder.FieldRejectReason:
+		m.ResetRejectReason()
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)

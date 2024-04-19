@@ -19,7 +19,7 @@ func (TransferOrder) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("source_user_id").StructTag(`json:"source_user_id,string"`).Default(0).Comment("转账来源的用户 id"),
 		field.Int64("target_user_id").StructTag(`json:"target_user_id,string"`).Default(0).Comment("转账目标的用户 id"),
-		field.Enum("status").Values("pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved").Default("pending").StructTag(`json:"status"`).Comment("转账订单的状态，比如微信发起支付后可能没完成支付"),
+		field.Enum("status").Values("pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved", "reject").Default("pending").StructTag(`json:"status"`).Comment("转账订单的状态，比如微信发起支付后可能没完成支付"),
 		field.Int64("symbol_id").Default(0).StructTag(`json:"symbol_id,string"`).Comment("币种 id"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("充值多少货币量"),
 		field.Enum("type").GoType(enums.TransferOrderTypeRecharge).Default(string(enums.TransferOrderTypeUnknown)).StructTag(`json:"type"`).Comment("充值订单的类型"),
@@ -30,7 +30,8 @@ func (TransferOrder) Fields() []ent.Field {
 		field.String("withdraw_account").Default("").StructTag(`json:"withdraw_account"`).Comment("提现账户（类型为提现才有数据）"),
 		field.Int64("withdraw_rate").StructTag(`json:"withdraw_rate"`).Default(7).Comment("提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%"),
 		field.Int64("withdraw_real_amount").StructTag(`json:"withdraw_real_amount"`).Default(0).Comment("提现实际到账，单位：cep"),
-		field.Int64("operate_user_id").StructTag(`json:"operate_user_id,string"`).Default(0).Comment("操作的用户 id，手动充值才有数据，默认为 0"),
+		field.Int64("operate_user_id").StructTag(`json:"operate_user_id,string"`).Default(0).Comment("操作的用户 id，手动充值或者提现审批才有数据，默认为 0"),
+		field.String("reject_reason").Default("").StructTag(`json:"reject_reason"`).Comment("提现审批拒绝的理由"),
 	}
 }
 

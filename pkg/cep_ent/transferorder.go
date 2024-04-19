@@ -58,8 +58,10 @@ type TransferOrder struct {
 	WithdrawRate int64 `json:"withdraw_rate"`
 	// 提现实际到账，单位：cep
 	WithdrawRealAmount int64 `json:"withdraw_real_amount"`
-	// 操作的用户 id，手动充值才有数据，默认为 0
+	// 操作的用户 id，手动充值或者提现审批才有数据，默认为 0
 	OperateUserID int64 `json:"operate_user_id,string"`
+	// 提现审批拒绝的理由
+	RejectReason string `json:"reject_reason"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransferOrderQuery when eager-loading is set.
 	Edges        TransferOrderEdges `json:"edges"`
@@ -166,7 +168,7 @@ func (*TransferOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID, transferorder.FieldWithdrawRate, transferorder.FieldWithdrawRealAmount, transferorder.FieldOperateUserID:
 			values[i] = new(sql.NullInt64)
-		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID, transferorder.FieldWithdrawAccount:
+		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID, transferorder.FieldWithdrawAccount, transferorder.FieldRejectReason:
 			values[i] = new(sql.NullString)
 		case transferorder.FieldCreatedAt, transferorder.FieldUpdatedAt, transferorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -305,6 +307,12 @@ func (to *TransferOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				to.OperateUserID = value.Int64
 			}
+		case transferorder.FieldRejectReason:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field reject_reason", values[i])
+			} else if value.Valid {
+				to.RejectReason = value.String
+			}
 		default:
 			to.selectValues.Set(columns[i], values[i])
 		}
@@ -427,6 +435,9 @@ func (to *TransferOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("operate_user_id=")
 	builder.WriteString(fmt.Sprintf("%v", to.OperateUserID))
+	builder.WriteString(", ")
+	builder.WriteString("reject_reason=")
+	builder.WriteString(to.RejectReason)
 	builder.WriteByte(')')
 	return builder.String()
 }

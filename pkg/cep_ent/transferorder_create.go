@@ -293,6 +293,20 @@ func (toc *TransferOrderCreate) SetNillableOperateUserID(i *int64) *TransferOrde
 	return toc
 }
 
+// SetRejectReason sets the "reject_reason" field.
+func (toc *TransferOrderCreate) SetRejectReason(s string) *TransferOrderCreate {
+	toc.mutation.SetRejectReason(s)
+	return toc
+}
+
+// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
+func (toc *TransferOrderCreate) SetNillableRejectReason(s *string) *TransferOrderCreate {
+	if s != nil {
+		toc.SetRejectReason(*s)
+	}
+	return toc
+}
+
 // SetID sets the "id" field.
 func (toc *TransferOrderCreate) SetID(i int64) *TransferOrderCreate {
 	toc.mutation.SetID(i)
@@ -472,6 +486,10 @@ func (toc *TransferOrderCreate) defaults() {
 		v := transferorder.DefaultOperateUserID
 		toc.mutation.SetOperateUserID(v)
 	}
+	if _, ok := toc.mutation.RejectReason(); !ok {
+		v := transferorder.DefaultRejectReason
+		toc.mutation.SetRejectReason(v)
+	}
 	if _, ok := toc.mutation.ID(); !ok {
 		v := transferorder.DefaultID()
 		toc.mutation.SetID(v)
@@ -543,6 +561,9 @@ func (toc *TransferOrderCreate) check() error {
 	}
 	if _, ok := toc.mutation.OperateUserID(); !ok {
 		return &ValidationError{Name: "operate_user_id", err: errors.New(`cep_ent: missing required field "TransferOrder.operate_user_id"`)}
+	}
+	if _, ok := toc.mutation.RejectReason(); !ok {
+		return &ValidationError{Name: "reject_reason", err: errors.New(`cep_ent: missing required field "TransferOrder.reject_reason"`)}
 	}
 	if _, ok := toc.mutation.SourceUserID(); !ok {
 		return &ValidationError{Name: "source_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.source_user"`)}
@@ -644,6 +665,10 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 	if value, ok := toc.mutation.WithdrawRealAmount(); ok {
 		_spec.SetField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
 		_node.WithdrawRealAmount = value
+	}
+	if value, ok := toc.mutation.RejectReason(); ok {
+		_spec.SetField(transferorder.FieldRejectReason, field.TypeString, value)
+		_node.RejectReason = value
 	}
 	if nodes := toc.mutation.SourceUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1050,6 +1075,18 @@ func (u *TransferOrderUpsert) UpdateOperateUserID() *TransferOrderUpsert {
 	return u
 }
 
+// SetRejectReason sets the "reject_reason" field.
+func (u *TransferOrderUpsert) SetRejectReason(v string) *TransferOrderUpsert {
+	u.Set(transferorder.FieldRejectReason, v)
+	return u
+}
+
+// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
+func (u *TransferOrderUpsert) UpdateRejectReason() *TransferOrderUpsert {
+	u.SetExcluded(transferorder.FieldRejectReason)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1392,6 +1429,20 @@ func (u *TransferOrderUpsertOne) SetOperateUserID(v int64) *TransferOrderUpsertO
 func (u *TransferOrderUpsertOne) UpdateOperateUserID() *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOperateUserID()
+	})
+}
+
+// SetRejectReason sets the "reject_reason" field.
+func (u *TransferOrderUpsertOne) SetRejectReason(v string) *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetRejectReason(v)
+	})
+}
+
+// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
+func (u *TransferOrderUpsertOne) UpdateRejectReason() *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateRejectReason()
 	})
 }
 
@@ -1903,6 +1954,20 @@ func (u *TransferOrderUpsertBulk) SetOperateUserID(v int64) *TransferOrderUpsert
 func (u *TransferOrderUpsertBulk) UpdateOperateUserID() *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOperateUserID()
+	})
+}
+
+// SetRejectReason sets the "reject_reason" field.
+func (u *TransferOrderUpsertBulk) SetRejectReason(v string) *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetRejectReason(v)
+	})
+}
+
+// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
+func (u *TransferOrderUpsertBulk) UpdateRejectReason() *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateRejectReason()
 	})
 }
 

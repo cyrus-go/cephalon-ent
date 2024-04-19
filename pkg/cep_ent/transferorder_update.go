@@ -319,6 +319,20 @@ func (tou *TransferOrderUpdate) SetNillableOperateUserID(i *int64) *TransferOrde
 	return tou
 }
 
+// SetRejectReason sets the "reject_reason" field.
+func (tou *TransferOrderUpdate) SetRejectReason(s string) *TransferOrderUpdate {
+	tou.mutation.SetRejectReason(s)
+	return tou
+}
+
+// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
+func (tou *TransferOrderUpdate) SetNillableRejectReason(s *string) *TransferOrderUpdate {
+	if s != nil {
+		tou.SetRejectReason(*s)
+	}
+	return tou
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (tou *TransferOrderUpdate) SetSourceUser(u *User) *TransferOrderUpdate {
 	return tou.SetSourceUserID(u.ID)
@@ -563,6 +577,9 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tou.mutation.AddedWithdrawRealAmount(); ok {
 		_spec.AddField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
+	}
+	if value, ok := tou.mutation.RejectReason(); ok {
+		_spec.SetField(transferorder.FieldRejectReason, field.TypeString, value)
 	}
 	if tou.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1061,6 +1078,20 @@ func (touo *TransferOrderUpdateOne) SetNillableOperateUserID(i *int64) *Transfer
 	return touo
 }
 
+// SetRejectReason sets the "reject_reason" field.
+func (touo *TransferOrderUpdateOne) SetRejectReason(s string) *TransferOrderUpdateOne {
+	touo.mutation.SetRejectReason(s)
+	return touo
+}
+
+// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
+func (touo *TransferOrderUpdateOne) SetNillableRejectReason(s *string) *TransferOrderUpdateOne {
+	if s != nil {
+		touo.SetRejectReason(*s)
+	}
+	return touo
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (touo *TransferOrderUpdateOne) SetSourceUser(u *User) *TransferOrderUpdateOne {
 	return touo.SetSourceUserID(u.ID)
@@ -1335,6 +1366,9 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 	}
 	if value, ok := touo.mutation.AddedWithdrawRealAmount(); ok {
 		_spec.AddField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
+	}
+	if value, ok := touo.mutation.RejectReason(); ok {
+		_spec.SetField(transferorder.FieldRejectReason, field.TypeString, value)
 	}
 	if touo.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{

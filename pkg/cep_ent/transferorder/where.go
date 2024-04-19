@@ -141,6 +141,11 @@ func OperateUserID(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldOperateUserID, v))
 }
 
+// RejectReason applies equality check predicate on the "reject_reason" field. It's identical to RejectReasonEQ.
+func RejectReason(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldRejectReason, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -879,6 +884,71 @@ func OperateUserIDIn(vs ...int64) predicate.TransferOrder {
 // OperateUserIDNotIn applies the NotIn predicate on the "operate_user_id" field.
 func OperateUserIDNotIn(vs ...int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldNotIn(FieldOperateUserID, vs...))
+}
+
+// RejectReasonEQ applies the EQ predicate on the "reject_reason" field.
+func RejectReasonEQ(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldRejectReason, v))
+}
+
+// RejectReasonNEQ applies the NEQ predicate on the "reject_reason" field.
+func RejectReasonNEQ(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNEQ(FieldRejectReason, v))
+}
+
+// RejectReasonIn applies the In predicate on the "reject_reason" field.
+func RejectReasonIn(vs ...string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldIn(FieldRejectReason, vs...))
+}
+
+// RejectReasonNotIn applies the NotIn predicate on the "reject_reason" field.
+func RejectReasonNotIn(vs ...string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNotIn(FieldRejectReason, vs...))
+}
+
+// RejectReasonGT applies the GT predicate on the "reject_reason" field.
+func RejectReasonGT(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGT(FieldRejectReason, v))
+}
+
+// RejectReasonGTE applies the GTE predicate on the "reject_reason" field.
+func RejectReasonGTE(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGTE(FieldRejectReason, v))
+}
+
+// RejectReasonLT applies the LT predicate on the "reject_reason" field.
+func RejectReasonLT(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLT(FieldRejectReason, v))
+}
+
+// RejectReasonLTE applies the LTE predicate on the "reject_reason" field.
+func RejectReasonLTE(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLTE(FieldRejectReason, v))
+}
+
+// RejectReasonContains applies the Contains predicate on the "reject_reason" field.
+func RejectReasonContains(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldContains(FieldRejectReason, v))
+}
+
+// RejectReasonHasPrefix applies the HasPrefix predicate on the "reject_reason" field.
+func RejectReasonHasPrefix(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldHasPrefix(FieldRejectReason, v))
+}
+
+// RejectReasonHasSuffix applies the HasSuffix predicate on the "reject_reason" field.
+func RejectReasonHasSuffix(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldHasSuffix(FieldRejectReason, v))
+}
+
+// RejectReasonEqualFold applies the EqualFold predicate on the "reject_reason" field.
+func RejectReasonEqualFold(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEqualFold(FieldRejectReason, v))
+}
+
+// RejectReasonContainsFold applies the ContainsFold predicate on the "reject_reason" field.
+func RejectReasonContainsFold(v string) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldContainsFold(FieldRejectReason, v))
 }
 
 // HasSourceUser applies the HasEdge predicate on the "source_user" edge.

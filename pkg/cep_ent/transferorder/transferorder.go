@@ -54,6 +54,8 @@ const (
 	FieldWithdrawRealAmount = "withdraw_real_amount"
 	// FieldOperateUserID holds the string denoting the operate_user_id field in the database.
 	FieldOperateUserID = "operate_user_id"
+	// FieldRejectReason holds the string denoting the reject_reason field in the database.
+	FieldRejectReason = "reject_reason"
 	// EdgeSourceUser holds the string denoting the source_user edge name in mutations.
 	EdgeSourceUser = "source_user"
 	// EdgeTargetUser holds the string denoting the target_user edge name in mutations.
@@ -134,6 +136,7 @@ var Columns = []string{
 	FieldWithdrawRate,
 	FieldWithdrawRealAmount,
 	FieldOperateUserID,
+	FieldRejectReason,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -183,6 +186,8 @@ var (
 	DefaultWithdrawRealAmount int64
 	// DefaultOperateUserID holds the default value on creation for the "operate_user_id" field.
 	DefaultOperateUserID int64
+	// DefaultRejectReason holds the default value on creation for the "reject_reason" field.
+	DefaultRejectReason string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -202,6 +207,7 @@ const (
 	StatusReexchange   Status = "reexchange"
 	StatusPendingOrder Status = "pending_order"
 	StatusApproved     Status = "approved"
+	StatusReject       Status = "reject"
 )
 
 func (s Status) String() string {
@@ -211,7 +217,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPending, StatusCanceled, StatusSucceed, StatusFailed, StatusReexchange, StatusPendingOrder, StatusApproved:
+	case StatusPending, StatusCanceled, StatusSucceed, StatusFailed, StatusReexchange, StatusPendingOrder, StatusApproved, StatusReject:
 		return nil
 	default:
 		return fmt.Errorf("transferorder: invalid enum value for status field: %q", s)
@@ -331,6 +337,11 @@ func ByWithdrawRealAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByOperateUserID orders the results by the operate_user_id field.
 func ByOperateUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOperateUserID, opts...).ToFunc()
+}
+
+// ByRejectReason orders the results by the reject_reason field.
+func ByRejectReason(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRejectReason, opts...).ToFunc()
 }
 
 // BySourceUserField orders the results by source_user field.

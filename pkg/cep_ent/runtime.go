@@ -2906,6 +2906,10 @@ func init() {
 	transferorderDescOperateUserID := transferorderFields[13].Descriptor()
 	// transferorder.DefaultOperateUserID holds the default value on creation for the operate_user_id field.
 	transferorder.DefaultOperateUserID = transferorderDescOperateUserID.Default.(int64)
+	// transferorderDescRejectReason is the schema descriptor for reject_reason field.
+	transferorderDescRejectReason := transferorderFields[14].Descriptor()
+	// transferorder.DefaultRejectReason holds the default value on creation for the reject_reason field.
+	transferorder.DefaultRejectReason = transferorderDescRejectReason.Default.(string)
 	// transferorderDescID is the schema descriptor for id field.
 	transferorderDescID := transferorderMixinFields0[0].Descriptor()
 	// transferorder.DefaultID holds the default value on creation for the id field.
