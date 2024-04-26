@@ -67,8 +67,8 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategorySDShangJin),
 		string(MissionCategorySDXiaoChun),
 		string(MissionCategoryComfyuiWu),
-		string(MissionCategoryWaiting),
 		string(MissionCategoryComfyuiLiu),
+		string(MissionCategoryWaiting),
 	}
 }
 
