@@ -40,7 +40,7 @@ const (
 	MissionTypeSdXiaoChunTime     MissionType = "sd_xiao_chun_time"
 	MissionTypeComfyuiWuTime      MissionType = "comfyui_wu_time"
 	MissionTypeComfyuiLiuTime     MissionType = "comfyui_liu_time"
-	MissionTypeWaitingTime        MissionType = "training_time" //等待任务
+	MissionTypeWaitingTime        MissionType = "waiting_time" //等待任务
 
 	MissionTypeSdTimePlan         MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan         MissionType = "wt_time_plan"
@@ -73,7 +73,7 @@ const (
 	MissionTypeSdXiaoChunTimePlan MissionType = "sd_xiao_chun_time_plan"
 	MissionTypeComfyuiWuTimePlan  MissionType = "comfyui_wu_time_plan"
 	MissionTypeComfyuiLiuTimePlan MissionType = "comfyui_liu_time_plan"
-	MissionTypeWaitingTimePlan    MissionType = "training_time_plan" //等待任务
+	MissionTypeWaitingTimePlan    MissionType = "waiting_time_plan" //等待任务
 )
 
 func (obj MissionType) Values() []string {
