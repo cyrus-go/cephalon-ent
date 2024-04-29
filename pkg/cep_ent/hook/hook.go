@@ -417,6 +417,18 @@ func (f MissionBatchFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionBatchMutation", m)
 }
 
+// The MissionCategoryFunc type is an adapter to allow the use of ordinary
+// function as MissionCategory mutator.
+type MissionCategoryFunc func(context.Context, *cep_ent.MissionCategoryMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionCategoryFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionCategoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionCategoryMutation", m)
+}
+
 // The MissionConsumeOrderFunc type is an adapter to allow the use of ordinary
 // function as MissionConsumeOrder mutator.
 type MissionConsumeOrderFunc func(context.Context, *cep_ent.MissionConsumeOrderMutation) (cep_ent.Value, error)

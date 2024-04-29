@@ -141,6 +141,9 @@ func MissionOrErr(p Mission, err error) Mission {
 // MissionBatch is the predicate function for missionbatch builders.
 type MissionBatch func(*sql.Selector)
 
+// MissionCategory is the predicate function for missioncategory builders.
+type MissionCategory func(*sql.Selector)
+
 // MissionConsumeOrder is the predicate function for missionconsumeorder builders.
 type MissionConsumeOrder func(*sql.Selector)
 

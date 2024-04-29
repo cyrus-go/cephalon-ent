@@ -80,6 +80,8 @@ type Tx struct {
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
 	MissionBatch *MissionBatchClient
+	// MissionCategory is the client for interacting with the MissionCategory builders.
+	MissionCategory *MissionCategoryClient
 	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
 	MissionConsumeOrder *MissionConsumeOrderClient
 	// MissionExtraService is the client for interacting with the MissionExtraService builders.
@@ -291,6 +293,7 @@ func (tx *Tx) init() {
 	tx.LottoUserCount = NewLottoUserCountClient(tx.config)
 	tx.Mission = NewMissionClient(tx.config)
 	tx.MissionBatch = NewMissionBatchClient(tx.config)
+	tx.MissionCategory = NewMissionCategoryClient(tx.config)
 	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)
 	tx.MissionExtraService = NewMissionExtraServiceClient(tx.config)
 	tx.MissionKeyPair = NewMissionKeyPairClient(tx.config)

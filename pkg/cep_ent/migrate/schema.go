@@ -1418,6 +1418,25 @@ var (
 			},
 		},
 	}
+	// MissionCategoriesColumns holds the columns for the "mission_categories" table.
+	MissionCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "category", Type: field.TypeString, Unique: true, Comment: "任务大类"},
+		{Name: "type", Type: field.TypeEnum, Comment: "任务大类类型，比如热门类型等", Enums: []string{"unknown", "hot"}, Default: "unknown"},
+		{Name: "weight", Type: field.TypeInt, Comment: "权重（目前排序可以用到）", Default: 0},
+	}
+	// MissionCategoriesTable holds the schema information for the "mission_categories" table.
+	MissionCategoriesTable = &schema.Table{
+		Name:       "mission_categories",
+		Comment:    "任务大类，任务类型的最高抽象层，记录了所有任务大类",
+		Columns:    MissionCategoriesColumns,
+		PrimaryKey: []*schema.Column{MissionCategoriesColumns[0]},
+	}
 	// MissionConsumeOrdersColumns holds the columns for the "mission_consume_orders" table.
 	MissionConsumeOrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2497,6 +2516,7 @@ var (
 		LottoUserCountsTable,
 		MissionsTable,
 		MissionBatchesTable,
+		MissionCategoriesTable,
 		MissionConsumeOrdersTable,
 		MissionExtraServicesTable,
 		MissionKeyPairsTable,
@@ -2619,6 +2639,7 @@ func init() {
 	MissionsTable.Annotation = &entsql.Annotation{}
 	MissionBatchesTable.ForeignKeys[0].RefTable = UsersTable
 	MissionBatchesTable.Annotation = &entsql.Annotation{}
+	MissionCategoriesTable.Annotation = &entsql.Annotation{}
 	MissionConsumeOrdersTable.ForeignKeys[0].RefTable = MissionsTable
 	MissionConsumeOrdersTable.ForeignKeys[1].RefTable = MissionBatchesTable
 	MissionConsumeOrdersTable.ForeignKeys[2].RefTable = UsersTable

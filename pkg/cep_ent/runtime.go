@@ -40,6 +40,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missioncategory"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
@@ -1951,6 +1952,41 @@ func init() {
 	missionbatchDescID := missionbatchMixinFields0[0].Descriptor()
 	// missionbatch.DefaultID holds the default value on creation for the id field.
 	missionbatch.DefaultID = missionbatchDescID.Default.(func() int64)
+	missioncategoryMixin := schema.MissionCategory{}.Mixin()
+	missioncategoryMixinFields0 := missioncategoryMixin[0].Fields()
+	_ = missioncategoryMixinFields0
+	missioncategoryFields := schema.MissionCategory{}.Fields()
+	_ = missioncategoryFields
+	// missioncategoryDescCreatedBy is the schema descriptor for created_by field.
+	missioncategoryDescCreatedBy := missioncategoryMixinFields0[1].Descriptor()
+	// missioncategory.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missioncategory.DefaultCreatedBy = missioncategoryDescCreatedBy.Default.(int64)
+	// missioncategoryDescUpdatedBy is the schema descriptor for updated_by field.
+	missioncategoryDescUpdatedBy := missioncategoryMixinFields0[2].Descriptor()
+	// missioncategory.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missioncategory.DefaultUpdatedBy = missioncategoryDescUpdatedBy.Default.(int64)
+	// missioncategoryDescCreatedAt is the schema descriptor for created_at field.
+	missioncategoryDescCreatedAt := missioncategoryMixinFields0[3].Descriptor()
+	// missioncategory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missioncategory.DefaultCreatedAt = missioncategoryDescCreatedAt.Default.(func() time.Time)
+	// missioncategoryDescUpdatedAt is the schema descriptor for updated_at field.
+	missioncategoryDescUpdatedAt := missioncategoryMixinFields0[4].Descriptor()
+	// missioncategory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missioncategory.DefaultUpdatedAt = missioncategoryDescUpdatedAt.Default.(func() time.Time)
+	// missioncategory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missioncategory.UpdateDefaultUpdatedAt = missioncategoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missioncategoryDescDeletedAt is the schema descriptor for deleted_at field.
+	missioncategoryDescDeletedAt := missioncategoryMixinFields0[5].Descriptor()
+	// missioncategory.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missioncategory.DefaultDeletedAt = missioncategoryDescDeletedAt.Default.(time.Time)
+	// missioncategoryDescWeight is the schema descriptor for weight field.
+	missioncategoryDescWeight := missioncategoryFields[2].Descriptor()
+	// missioncategory.DefaultWeight holds the default value on creation for the weight field.
+	missioncategory.DefaultWeight = missioncategoryDescWeight.Default.(int)
+	// missioncategoryDescID is the schema descriptor for id field.
+	missioncategoryDescID := missioncategoryMixinFields0[0].Descriptor()
+	// missioncategory.DefaultID holds the default value on creation for the id field.
+	missioncategory.DefaultID = missioncategoryDescID.Default.(func() int64)
 	missionconsumeorderMixin := schema.MissionConsumeOrder{}.Mixin()
 	missionconsumeorderMixinFields0 := missionconsumeorderMixin[0].Fields()
 	_ = missionconsumeorderMixinFields0

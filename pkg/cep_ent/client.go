@@ -49,6 +49,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missioncategory"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
@@ -147,6 +148,8 @@ type Client struct {
 	Mission *MissionClient
 	// MissionBatch is the client for interacting with the MissionBatch builders.
 	MissionBatch *MissionBatchClient
+	// MissionCategory is the client for interacting with the MissionCategory builders.
+	MissionCategory *MissionCategoryClient
 	// MissionConsumeOrder is the client for interacting with the MissionConsumeOrder builders.
 	MissionConsumeOrder *MissionConsumeOrderClient
 	// MissionExtraService is the client for interacting with the MissionExtraService builders.
@@ -240,6 +243,7 @@ func (c *Client) init() {
 	c.LottoUserCount = NewLottoUserCountClient(c.config)
 	c.Mission = NewMissionClient(c.config)
 	c.MissionBatch = NewMissionBatchClient(c.config)
+	c.MissionCategory = NewMissionCategoryClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
 	c.MissionExtraService = NewMissionExtraServiceClient(c.config)
 	c.MissionKeyPair = NewMissionKeyPairClient(c.config)
@@ -382,6 +386,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		LottoUserCount:       NewLottoUserCountClient(cfg),
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
+		MissionCategory:      NewMissionCategoryClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
 		MissionExtraService:  NewMissionExtraServiceClient(cfg),
 		MissionKeyPair:       NewMissionKeyPairClient(cfg),
@@ -458,6 +463,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		LottoUserCount:       NewLottoUserCountClient(cfg),
 		Mission:              NewMissionClient(cfg),
 		MissionBatch:         NewMissionBatchClient(cfg),
+		MissionCategory:      NewMissionCategoryClient(cfg),
 		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
 		MissionExtraService:  NewMissionExtraServiceClient(cfg),
 		MissionKeyPair:       NewMissionKeyPairClient(cfg),
@@ -516,7 +522,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
 		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite,
 		c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize,
-		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
 		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
@@ -538,7 +544,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
 		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.InputLog, c.Invite,
 		c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize,
-		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
 		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
@@ -621,6 +627,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Mission.mutate(ctx, m)
 	case *MissionBatchMutation:
 		return c.MissionBatch.mutate(ctx, m)
+	case *MissionCategoryMutation:
+		return c.MissionCategory.mutate(ctx, m)
 	case *MissionConsumeOrderMutation:
 		return c.MissionConsumeOrder.mutate(ctx, m)
 	case *MissionExtraServiceMutation:
@@ -6730,6 +6738,139 @@ func (c *MissionBatchClient) mutate(ctx context.Context, m *MissionBatchMutation
 	}
 }
 
+// MissionCategoryClient is a client for the MissionCategory schema.
+type MissionCategoryClient struct {
+	config
+}
+
+// NewMissionCategoryClient returns a client for the MissionCategory from the given config.
+func NewMissionCategoryClient(c config) *MissionCategoryClient {
+	return &MissionCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missioncategory.Hooks(f(g(h())))`.
+func (c *MissionCategoryClient) Use(hooks ...Hook) {
+	c.hooks.MissionCategory = append(c.hooks.MissionCategory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missioncategory.Intercept(f(g(h())))`.
+func (c *MissionCategoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionCategory = append(c.inters.MissionCategory, interceptors...)
+}
+
+// Create returns a builder for creating a MissionCategory entity.
+func (c *MissionCategoryClient) Create() *MissionCategoryCreate {
+	mutation := newMissionCategoryMutation(c.config, OpCreate)
+	return &MissionCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionCategory entities.
+func (c *MissionCategoryClient) CreateBulk(builders ...*MissionCategoryCreate) *MissionCategoryCreateBulk {
+	return &MissionCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MissionCategoryClient) MapCreateBulk(slice any, setFunc func(*MissionCategoryCreate, int)) *MissionCategoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MissionCategoryCreateBulk{err: fmt.Errorf("calling to MissionCategoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MissionCategoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MissionCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionCategory.
+func (c *MissionCategoryClient) Update() *MissionCategoryUpdate {
+	mutation := newMissionCategoryMutation(c.config, OpUpdate)
+	return &MissionCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionCategoryClient) UpdateOne(mc *MissionCategory) *MissionCategoryUpdateOne {
+	mutation := newMissionCategoryMutation(c.config, OpUpdateOne, withMissionCategory(mc))
+	return &MissionCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionCategoryClient) UpdateOneID(id int64) *MissionCategoryUpdateOne {
+	mutation := newMissionCategoryMutation(c.config, OpUpdateOne, withMissionCategoryID(id))
+	return &MissionCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionCategory.
+func (c *MissionCategoryClient) Delete() *MissionCategoryDelete {
+	mutation := newMissionCategoryMutation(c.config, OpDelete)
+	return &MissionCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionCategoryClient) DeleteOne(mc *MissionCategory) *MissionCategoryDeleteOne {
+	return c.DeleteOneID(mc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionCategoryClient) DeleteOneID(id int64) *MissionCategoryDeleteOne {
+	builder := c.Delete().Where(missioncategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionCategory.
+func (c *MissionCategoryClient) Query() *MissionCategoryQuery {
+	return &MissionCategoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionCategory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionCategory entity by its id.
+func (c *MissionCategoryClient) Get(ctx context.Context, id int64) (*MissionCategory, error) {
+	return c.Query().Where(missioncategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionCategoryClient) GetX(ctx context.Context, id int64) *MissionCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MissionCategoryClient) Hooks() []Hook {
+	return c.hooks.MissionCategory
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionCategoryClient) Interceptors() []Interceptor {
+	return c.inters.MissionCategory
+}
+
+func (c *MissionCategoryClient) mutate(ctx context.Context, m *MissionCategoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionCategory mutation op: %q", m.Op())
+	}
+}
+
 // MissionConsumeOrderClient is a client for the MissionConsumeOrder schema.
 type MissionConsumeOrderClient struct {
 	config
@@ -11381,12 +11522,12 @@ type (
 		EarnBill, EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
 		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite,
 		LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize,
-		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionConsumeOrder,
-		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
-		Wallet, WithdrawAccount []ent.Hook
+		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
+		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
+		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
@@ -11394,11 +11535,11 @@ type (
 		EarnBill, EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
 		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, InputLog, Invite,
 		LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord, LottoPrize,
-		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionConsumeOrder,
-		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Symbol, TransferOrder, User, UserDevice, VXAccount, VXSocial,
-		Wallet, WithdrawAccount []ent.Interceptor
+		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
+		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
+		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
 	}
 )

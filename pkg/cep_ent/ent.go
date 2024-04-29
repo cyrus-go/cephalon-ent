@@ -46,6 +46,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottousercount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missioncategory"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
@@ -163,6 +164,7 @@ func checkColumn(table, column string) error {
 			lottousercount.Table:       lottousercount.ValidColumn,
 			mission.Table:              mission.ValidColumn,
 			missionbatch.Table:         missionbatch.ValidColumn,
+			missioncategory.Table:      missioncategory.ValidColumn,
 			missionconsumeorder.Table:  missionconsumeorder.ValidColumn,
 			missionextraservice.Table:  missionextraservice.ValidColumn,
 			missionkeypair.Table:       missionkeypair.ValidColumn,
