@@ -15,6 +15,7 @@ const (
 	BillTypeWithdraw       BillType = "withdraw"
 	BillTypeCdk            BillType = "cdk"
 	BillTypeLotto          BillType = "lotto"
+	BillTypeNodeTrouble    BillType = "node_trouble" // 节点故障扣费
 )
 
 func (BillType) Values() []string {
@@ -31,6 +32,7 @@ func (BillType) Values() []string {
 		string(BillTypeExtraService),
 		string(BillTypeCdk),
 		string(BillTypeLotto),
+		string(BillTypeNodeTrouble),
 	}
 }
 
