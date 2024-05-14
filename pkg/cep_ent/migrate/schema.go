@@ -932,6 +932,7 @@ var (
 		{Name: "memory", Type: field.TypeInt, Comment: "内存", Default: 128},
 		{Name: "lowest_earn_month", Type: field.TypeInt64, Comment: "保底最低月收益", Default: 0},
 		{Name: "highest_earn_month", Type: field.TypeInt64, Comment: "保底最高月收益", Default: 0},
+		{Name: "trouble_deduct_amount", Type: field.TypeInt64, Comment: "故障扣费金额，单位：分/小时", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{
@@ -2226,6 +2227,36 @@ var (
 			},
 		},
 	}
+	// TroubleDeductsColumns holds the columns for the "trouble_deducts" table.
+	TroubleDeductsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "started_at", Type: field.TypeTime, Comment: "故障开始时刻"},
+		{Name: "finished_at", Type: field.TypeTime, Comment: "故障结束时刻"},
+		{Name: "time_of_duration", Type: field.TypeFloat64, Comment: "持续时长，单位：小时", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：分", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "设备 id", Default: 0},
+	}
+	// TroubleDeductsTable holds the schema information for the "trouble_deducts" table.
+	TroubleDeductsTable = &schema.Table{
+		Name:       "trouble_deducts",
+		Comment:    "故障扣费记录，节点故障时，需要扣费，记录到这个表里",
+		Columns:    TroubleDeductsColumns,
+		PrimaryKey: []*schema.Column{TroubleDeductsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "trouble_deducts_devices_trouble_deducts",
+				Columns:    []*schema.Column{TroubleDeductsColumns[11]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2534,6 +2565,7 @@ var (
 		RenewalAgreementsTable,
 		SymbolsTable,
 		TransferOrdersTable,
+		TroubleDeductsTable,
 		UsersTable,
 		UserDevicesTable,
 		VxAccountsTable,
@@ -2691,6 +2723,8 @@ func init() {
 	TransferOrdersTable.ForeignKeys[3].RefTable = UsersTable
 	TransferOrdersTable.ForeignKeys[4].RefTable = VxSocialsTable
 	TransferOrdersTable.Annotation = &entsql.Annotation{}
+	TroubleDeductsTable.ForeignKeys[0].RefTable = DevicesTable
+	TroubleDeductsTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}
 	UserDevicesTable.ForeignKeys[0].RefTable = DevicesTable

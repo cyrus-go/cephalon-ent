@@ -67,6 +67,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
@@ -184,6 +185,8 @@ type Client struct {
 	Symbol *SymbolClient
 	// TransferOrder is the client for interacting with the TransferOrder builders.
 	TransferOrder *TransferOrderClient
+	// TroubleDeduct is the client for interacting with the TroubleDeduct builders.
+	TroubleDeduct *TroubleDeductClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
@@ -261,6 +264,7 @@ func (c *Client) init() {
 	c.RenewalAgreement = NewRenewalAgreementClient(c.config)
 	c.Symbol = NewSymbolClient(c.config)
 	c.TransferOrder = NewTransferOrderClient(c.config)
+	c.TroubleDeduct = NewTroubleDeductClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserDevice = NewUserDeviceClient(c.config)
 	c.VXAccount = NewVXAccountClient(c.config)
@@ -404,6 +408,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RenewalAgreement:     NewRenewalAgreementClient(cfg),
 		Symbol:               NewSymbolClient(cfg),
 		TransferOrder:        NewTransferOrderClient(cfg),
+		TroubleDeduct:        NewTroubleDeductClient(cfg),
 		User:                 NewUserClient(cfg),
 		UserDevice:           NewUserDeviceClient(cfg),
 		VXAccount:            NewVXAccountClient(cfg),
@@ -481,6 +486,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RenewalAgreement:     NewRenewalAgreementClient(cfg),
 		Symbol:               NewSymbolClient(cfg),
 		TransferOrder:        NewTransferOrderClient(cfg),
+		TroubleDeduct:        NewTroubleDeductClient(cfg),
 		User:                 NewUserClient(cfg),
 		UserDevice:           NewUserDeviceClient(cfg),
 		VXAccount:            NewVXAccountClient(cfg),
@@ -527,8 +533,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
-		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount,
+		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount,
 	} {
 		n.Use(hooks...)
 	}
@@ -549,8 +555,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
-		c.TransferOrder, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount,
+		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -663,6 +669,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Symbol.mutate(ctx, m)
 	case *TransferOrderMutation:
 		return c.TransferOrder.mutate(ctx, m)
+	case *TroubleDeductMutation:
+		return c.TroubleDeduct.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserDeviceMutation:
@@ -2703,6 +2711,22 @@ func (c *DeviceClient) QueryDeviceRebootTimes(d *Device) *DeviceRebootTimeQuery 
 			sqlgraph.From(device.Table, device.FieldID, id),
 			sqlgraph.To(devicereboottime.Table, devicereboottime.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceRebootTimesTable, device.DeviceRebootTimesColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTroubleDeducts queries the trouble_deducts edge of a Device.
+func (c *DeviceClient) QueryTroubleDeducts(d *Device) *TroubleDeductQuery {
+	query := (&TroubleDeductClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(troublededuct.Table, troublededuct.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.TroubleDeductsTable, device.TroubleDeductsColumn),
 		)
 		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
 		return fromV, nil
@@ -9948,6 +9972,155 @@ func (c *TransferOrderClient) mutate(ctx context.Context, m *TransferOrderMutati
 	}
 }
 
+// TroubleDeductClient is a client for the TroubleDeduct schema.
+type TroubleDeductClient struct {
+	config
+}
+
+// NewTroubleDeductClient returns a client for the TroubleDeduct from the given config.
+func NewTroubleDeductClient(c config) *TroubleDeductClient {
+	return &TroubleDeductClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `troublededuct.Hooks(f(g(h())))`.
+func (c *TroubleDeductClient) Use(hooks ...Hook) {
+	c.hooks.TroubleDeduct = append(c.hooks.TroubleDeduct, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `troublededuct.Intercept(f(g(h())))`.
+func (c *TroubleDeductClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TroubleDeduct = append(c.inters.TroubleDeduct, interceptors...)
+}
+
+// Create returns a builder for creating a TroubleDeduct entity.
+func (c *TroubleDeductClient) Create() *TroubleDeductCreate {
+	mutation := newTroubleDeductMutation(c.config, OpCreate)
+	return &TroubleDeductCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TroubleDeduct entities.
+func (c *TroubleDeductClient) CreateBulk(builders ...*TroubleDeductCreate) *TroubleDeductCreateBulk {
+	return &TroubleDeductCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TroubleDeductClient) MapCreateBulk(slice any, setFunc func(*TroubleDeductCreate, int)) *TroubleDeductCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TroubleDeductCreateBulk{err: fmt.Errorf("calling to TroubleDeductClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TroubleDeductCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TroubleDeductCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TroubleDeduct.
+func (c *TroubleDeductClient) Update() *TroubleDeductUpdate {
+	mutation := newTroubleDeductMutation(c.config, OpUpdate)
+	return &TroubleDeductUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TroubleDeductClient) UpdateOne(td *TroubleDeduct) *TroubleDeductUpdateOne {
+	mutation := newTroubleDeductMutation(c.config, OpUpdateOne, withTroubleDeduct(td))
+	return &TroubleDeductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TroubleDeductClient) UpdateOneID(id int64) *TroubleDeductUpdateOne {
+	mutation := newTroubleDeductMutation(c.config, OpUpdateOne, withTroubleDeductID(id))
+	return &TroubleDeductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TroubleDeduct.
+func (c *TroubleDeductClient) Delete() *TroubleDeductDelete {
+	mutation := newTroubleDeductMutation(c.config, OpDelete)
+	return &TroubleDeductDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TroubleDeductClient) DeleteOne(td *TroubleDeduct) *TroubleDeductDeleteOne {
+	return c.DeleteOneID(td.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TroubleDeductClient) DeleteOneID(id int64) *TroubleDeductDeleteOne {
+	builder := c.Delete().Where(troublededuct.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TroubleDeductDeleteOne{builder}
+}
+
+// Query returns a query builder for TroubleDeduct.
+func (c *TroubleDeductClient) Query() *TroubleDeductQuery {
+	return &TroubleDeductQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTroubleDeduct},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TroubleDeduct entity by its id.
+func (c *TroubleDeductClient) Get(ctx context.Context, id int64) (*TroubleDeduct, error) {
+	return c.Query().Where(troublededuct.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TroubleDeductClient) GetX(ctx context.Context, id int64) *TroubleDeduct {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDevice queries the device edge of a TroubleDeduct.
+func (c *TroubleDeductClient) QueryDevice(td *TroubleDeduct) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := td.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(troublededuct.Table, troublededuct.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, troublededuct.DeviceTable, troublededuct.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(td.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TroubleDeductClient) Hooks() []Hook {
+	return c.hooks.TroubleDeduct
+}
+
+// Interceptors returns the client interceptors.
+func (c *TroubleDeductClient) Interceptors() []Interceptor {
+	return c.inters.TroubleDeduct
+}
+
+func (c *TroubleDeductClient) mutate(ctx context.Context, m *TroubleDeductMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TroubleDeductCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TroubleDeductUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TroubleDeductUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TroubleDeductDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown TroubleDeduct mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -11526,8 +11699,8 @@ type (
 		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
 		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
-		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
+		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
+		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
@@ -11539,7 +11712,7 @@ type (
 		MissionConsumeOrder, MissionExtraService, MissionKeyPair, MissionKind,
 		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, User, UserDevice,
-		VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
+		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
+		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
 	}
 )

@@ -59,6 +59,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/schema"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
@@ -1310,6 +1311,10 @@ func init() {
 	gpuDescHighestEarnMonth := gpuFields[6].Descriptor()
 	// gpu.DefaultHighestEarnMonth holds the default value on creation for the highest_earn_month field.
 	gpu.DefaultHighestEarnMonth = gpuDescHighestEarnMonth.Default.(int64)
+	// gpuDescTroubleDeductAmount is the schema descriptor for trouble_deduct_amount field.
+	gpuDescTroubleDeductAmount := gpuFields[7].Descriptor()
+	// gpu.DefaultTroubleDeductAmount holds the default value on creation for the trouble_deduct_amount field.
+	gpu.DefaultTroubleDeductAmount = gpuDescTroubleDeductAmount.Default.(int64)
 	// gpuDescID is the schema descriptor for id field.
 	gpuDescID := gpuMixinFields0[0].Descriptor()
 	// gpu.DefaultID holds the default value on creation for the id field.
@@ -2950,6 +2955,57 @@ func init() {
 	transferorderDescID := transferorderMixinFields0[0].Descriptor()
 	// transferorder.DefaultID holds the default value on creation for the id field.
 	transferorder.DefaultID = transferorderDescID.Default.(func() int64)
+	troubledeductMixin := schema.TroubleDeduct{}.Mixin()
+	troubledeductMixinFields0 := troubledeductMixin[0].Fields()
+	_ = troubledeductMixinFields0
+	troubledeductFields := schema.TroubleDeduct{}.Fields()
+	_ = troubledeductFields
+	// troubledeductDescCreatedBy is the schema descriptor for created_by field.
+	troubledeductDescCreatedBy := troubledeductMixinFields0[1].Descriptor()
+	// troublededuct.DefaultCreatedBy holds the default value on creation for the created_by field.
+	troublededuct.DefaultCreatedBy = troubledeductDescCreatedBy.Default.(int64)
+	// troubledeductDescUpdatedBy is the schema descriptor for updated_by field.
+	troubledeductDescUpdatedBy := troubledeductMixinFields0[2].Descriptor()
+	// troublededuct.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	troublededuct.DefaultUpdatedBy = troubledeductDescUpdatedBy.Default.(int64)
+	// troubledeductDescCreatedAt is the schema descriptor for created_at field.
+	troubledeductDescCreatedAt := troubledeductMixinFields0[3].Descriptor()
+	// troublededuct.DefaultCreatedAt holds the default value on creation for the created_at field.
+	troublededuct.DefaultCreatedAt = troubledeductDescCreatedAt.Default.(func() time.Time)
+	// troubledeductDescUpdatedAt is the schema descriptor for updated_at field.
+	troubledeductDescUpdatedAt := troubledeductMixinFields0[4].Descriptor()
+	// troublededuct.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	troublededuct.DefaultUpdatedAt = troubledeductDescUpdatedAt.Default.(func() time.Time)
+	// troublededuct.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	troublededuct.UpdateDefaultUpdatedAt = troubledeductDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// troubledeductDescDeletedAt is the schema descriptor for deleted_at field.
+	troubledeductDescDeletedAt := troubledeductMixinFields0[5].Descriptor()
+	// troublededuct.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	troublededuct.DefaultDeletedAt = troubledeductDescDeletedAt.Default.(time.Time)
+	// troubledeductDescDeviceID is the schema descriptor for device_id field.
+	troubledeductDescDeviceID := troubledeductFields[0].Descriptor()
+	// troublededuct.DefaultDeviceID holds the default value on creation for the device_id field.
+	troublededuct.DefaultDeviceID = troubledeductDescDeviceID.Default.(int64)
+	// troubledeductDescStartedAt is the schema descriptor for started_at field.
+	troubledeductDescStartedAt := troubledeductFields[1].Descriptor()
+	// troublededuct.DefaultStartedAt holds the default value on creation for the started_at field.
+	troublededuct.DefaultStartedAt = troubledeductDescStartedAt.Default.(time.Time)
+	// troubledeductDescFinishedAt is the schema descriptor for finished_at field.
+	troubledeductDescFinishedAt := troubledeductFields[2].Descriptor()
+	// troublededuct.DefaultFinishedAt holds the default value on creation for the finished_at field.
+	troublededuct.DefaultFinishedAt = troubledeductDescFinishedAt.Default.(time.Time)
+	// troubledeductDescTimeOfDuration is the schema descriptor for time_of_duration field.
+	troubledeductDescTimeOfDuration := troubledeductFields[3].Descriptor()
+	// troublededuct.DefaultTimeOfDuration holds the default value on creation for the time_of_duration field.
+	troublededuct.DefaultTimeOfDuration = troubledeductDescTimeOfDuration.Default.(float64)
+	// troubledeductDescAmount is the schema descriptor for amount field.
+	troubledeductDescAmount := troubledeductFields[4].Descriptor()
+	// troublededuct.DefaultAmount holds the default value on creation for the amount field.
+	troublededuct.DefaultAmount = troubledeductDescAmount.Default.(int64)
+	// troubledeductDescID is the schema descriptor for id field.
+	troubledeductDescID := troubledeductMixinFields0[0].Descriptor()
+	// troublededuct.DefaultID holds the default value on creation for the id field.
+	troublededuct.DefaultID = troubledeductDescID.Default.(func() int64)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

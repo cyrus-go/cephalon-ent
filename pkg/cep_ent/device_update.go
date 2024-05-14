@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -432,6 +433,21 @@ func (du *DeviceUpdate) AddDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceUpda
 	return du.AddDeviceRebootTimeIDs(ids...)
 }
 
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (du *DeviceUpdate) AddTroubleDeductIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddTroubleDeductIDs(ids...)
+	return du
+}
+
+// AddTroubleDeducts adds the "trouble_deducts" edges to the TroubleDeduct entity.
+func (du *DeviceUpdate) AddTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return du.AddTroubleDeductIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -588,6 +604,27 @@ func (du *DeviceUpdate) RemoveDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceU
 		ids[i] = d[i].ID
 	}
 	return du.RemoveDeviceRebootTimeIDs(ids...)
+}
+
+// ClearTroubleDeducts clears all "trouble_deducts" edges to the TroubleDeduct entity.
+func (du *DeviceUpdate) ClearTroubleDeducts() *DeviceUpdate {
+	du.mutation.ClearTroubleDeducts()
+	return du
+}
+
+// RemoveTroubleDeductIDs removes the "trouble_deducts" edge to TroubleDeduct entities by IDs.
+func (du *DeviceUpdate) RemoveTroubleDeductIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveTroubleDeductIDs(ids...)
+	return du
+}
+
+// RemoveTroubleDeducts removes "trouble_deducts" edges to TroubleDeduct entities.
+func (du *DeviceUpdate) RemoveTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return du.RemoveTroubleDeductIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1092,6 +1129,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedTroubleDeductsIDs(); len(nodes) > 0 && !du.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.TroubleDeductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1508,6 +1590,21 @@ func (duo *DeviceUpdateOne) AddDeviceRebootTimes(d ...*DeviceRebootTime) *Device
 	return duo.AddDeviceRebootTimeIDs(ids...)
 }
 
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (duo *DeviceUpdateOne) AddTroubleDeductIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddTroubleDeductIDs(ids...)
+	return duo
+}
+
+// AddTroubleDeducts adds the "trouble_deducts" edges to the TroubleDeduct entity.
+func (duo *DeviceUpdateOne) AddTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return duo.AddTroubleDeductIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -1664,6 +1761,27 @@ func (duo *DeviceUpdateOne) RemoveDeviceRebootTimes(d ...*DeviceRebootTime) *Dev
 		ids[i] = d[i].ID
 	}
 	return duo.RemoveDeviceRebootTimeIDs(ids...)
+}
+
+// ClearTroubleDeducts clears all "trouble_deducts" edges to the TroubleDeduct entity.
+func (duo *DeviceUpdateOne) ClearTroubleDeducts() *DeviceUpdateOne {
+	duo.mutation.ClearTroubleDeducts()
+	return duo
+}
+
+// RemoveTroubleDeductIDs removes the "trouble_deducts" edge to TroubleDeduct entities by IDs.
+func (duo *DeviceUpdateOne) RemoveTroubleDeductIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveTroubleDeductIDs(ids...)
+	return duo
+}
+
+// RemoveTroubleDeducts removes "trouble_deducts" edges to TroubleDeduct entities.
+func (duo *DeviceUpdateOne) RemoveTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return duo.RemoveTroubleDeductIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -2191,6 +2309,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedTroubleDeductsIDs(); len(nodes) > 0 && !duo.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.TroubleDeductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

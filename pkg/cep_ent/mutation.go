@@ -64,6 +64,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
@@ -134,6 +135,7 @@ const (
 	TypeRenewalAgreement     = "RenewalAgreement"
 	TypeSymbol               = "Symbol"
 	TypeTransferOrder        = "TransferOrder"
+	TypeTroubleDeduct        = "TroubleDeduct"
 	TypeUser                 = "User"
 	TypeUserDevice           = "UserDevice"
 	TypeVXAccount            = "VXAccount"
@@ -12710,6 +12712,9 @@ type DeviceMutation struct {
 	device_reboot_times           map[int64]struct{}
 	removeddevice_reboot_times    map[int64]struct{}
 	cleareddevice_reboot_times    bool
+	trouble_deducts               map[int64]struct{}
+	removedtrouble_deducts        map[int64]struct{}
+	clearedtrouble_deducts        bool
 	done                          bool
 	oldValue                      func(context.Context) (*Device, error)
 	predicates                    []predicate.Device
@@ -14041,6 +14046,60 @@ func (m *DeviceMutation) ResetDeviceRebootTimes() {
 	m.removeddevice_reboot_times = nil
 }
 
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by ids.
+func (m *DeviceMutation) AddTroubleDeductIDs(ids ...int64) {
+	if m.trouble_deducts == nil {
+		m.trouble_deducts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.trouble_deducts[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTroubleDeducts clears the "trouble_deducts" edge to the TroubleDeduct entity.
+func (m *DeviceMutation) ClearTroubleDeducts() {
+	m.clearedtrouble_deducts = true
+}
+
+// TroubleDeductsCleared reports if the "trouble_deducts" edge to the TroubleDeduct entity was cleared.
+func (m *DeviceMutation) TroubleDeductsCleared() bool {
+	return m.clearedtrouble_deducts
+}
+
+// RemoveTroubleDeductIDs removes the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (m *DeviceMutation) RemoveTroubleDeductIDs(ids ...int64) {
+	if m.removedtrouble_deducts == nil {
+		m.removedtrouble_deducts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.trouble_deducts, ids[i])
+		m.removedtrouble_deducts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTroubleDeducts returns the removed IDs of the "trouble_deducts" edge to the TroubleDeduct entity.
+func (m *DeviceMutation) RemovedTroubleDeductsIDs() (ids []int64) {
+	for id := range m.removedtrouble_deducts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TroubleDeductsIDs returns the "trouble_deducts" edge IDs in the mutation.
+func (m *DeviceMutation) TroubleDeductsIDs() (ids []int64) {
+	for id := range m.trouble_deducts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTroubleDeducts resets all changes to the "trouble_deducts" edge.
+func (m *DeviceMutation) ResetTroubleDeducts() {
+	m.trouble_deducts = nil
+	m.clearedtrouble_deducts = false
+	m.removedtrouble_deducts = nil
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -14564,7 +14623,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -14588,6 +14647,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.device_reboot_times != nil {
 		edges = append(edges, device.EdgeDeviceRebootTimes)
+	}
+	if m.trouble_deducts != nil {
+		edges = append(edges, device.EdgeTroubleDeducts)
 	}
 	return edges
 }
@@ -14642,13 +14704,19 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeTroubleDeducts:
+		ids := make([]ent.Value, 0, len(m.trouble_deducts))
+		for id := range m.trouble_deducts {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -14669,6 +14737,9 @@ func (m *DeviceMutation) RemovedEdges() []string {
 	}
 	if m.removeddevice_reboot_times != nil {
 		edges = append(edges, device.EdgeDeviceRebootTimes)
+	}
+	if m.removedtrouble_deducts != nil {
+		edges = append(edges, device.EdgeTroubleDeducts)
 	}
 	return edges
 }
@@ -14719,13 +14790,19 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeTroubleDeducts:
+		ids := make([]ent.Value, 0, len(m.removedtrouble_deducts))
+		for id := range m.removedtrouble_deducts {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -14750,6 +14827,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	if m.cleareddevice_reboot_times {
 		edges = append(edges, device.EdgeDeviceRebootTimes)
 	}
+	if m.clearedtrouble_deducts {
+		edges = append(edges, device.EdgeTroubleDeducts)
+	}
 	return edges
 }
 
@@ -14773,6 +14853,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_productions
 	case device.EdgeDeviceRebootTimes:
 		return m.cleareddevice_reboot_times
+	case device.EdgeTroubleDeducts:
+		return m.clearedtrouble_deducts
 	}
 	return false
 }
@@ -14815,6 +14897,9 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 		return nil
 	case device.EdgeDeviceRebootTimes:
 		m.ResetDeviceRebootTimes()
+		return nil
+	case device.EdgeTroubleDeducts:
+		m.ResetTroubleDeducts()
 		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
@@ -26796,6 +26881,8 @@ type GpuMutation struct {
 	addlowest_earn_month       *int64
 	highest_earn_month         *int64
 	addhighest_earn_month      *int64
+	trouble_deduct_amount      *int64
+	addtrouble_deduct_amount   *int64
 	clearedFields              map[string]struct{}
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
@@ -27504,6 +27591,62 @@ func (m *GpuMutation) ResetHighestEarnMonth() {
 	m.addhighest_earn_month = nil
 }
 
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (m *GpuMutation) SetTroubleDeductAmount(i int64) {
+	m.trouble_deduct_amount = &i
+	m.addtrouble_deduct_amount = nil
+}
+
+// TroubleDeductAmount returns the value of the "trouble_deduct_amount" field in the mutation.
+func (m *GpuMutation) TroubleDeductAmount() (r int64, exists bool) {
+	v := m.trouble_deduct_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTroubleDeductAmount returns the old "trouble_deduct_amount" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldTroubleDeductAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTroubleDeductAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTroubleDeductAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTroubleDeductAmount: %w", err)
+	}
+	return oldValue.TroubleDeductAmount, nil
+}
+
+// AddTroubleDeductAmount adds i to the "trouble_deduct_amount" field.
+func (m *GpuMutation) AddTroubleDeductAmount(i int64) {
+	if m.addtrouble_deduct_amount != nil {
+		*m.addtrouble_deduct_amount += i
+	} else {
+		m.addtrouble_deduct_amount = &i
+	}
+}
+
+// AddedTroubleDeductAmount returns the value that was added to the "trouble_deduct_amount" field in this mutation.
+func (m *GpuMutation) AddedTroubleDeductAmount() (r int64, exists bool) {
+	v := m.addtrouble_deduct_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTroubleDeductAmount resets all changes to the "trouble_deduct_amount" field.
+func (m *GpuMutation) ResetTroubleDeductAmount() {
+	m.trouble_deduct_amount = nil
+	m.addtrouble_deduct_amount = nil
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
 func (m *GpuMutation) AddDeviceGpuMissionIDs(ids ...int64) {
 	if m.device_gpu_missions == nil {
@@ -27646,7 +27789,7 @@ func (m *GpuMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GpuMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, gpu.FieldCreatedBy)
 	}
@@ -27683,6 +27826,9 @@ func (m *GpuMutation) Fields() []string {
 	if m.highest_earn_month != nil {
 		fields = append(fields, gpu.FieldHighestEarnMonth)
 	}
+	if m.trouble_deduct_amount != nil {
+		fields = append(fields, gpu.FieldTroubleDeductAmount)
+	}
 	return fields
 }
 
@@ -27715,6 +27861,8 @@ func (m *GpuMutation) Field(name string) (ent.Value, bool) {
 		return m.LowestEarnMonth()
 	case gpu.FieldHighestEarnMonth:
 		return m.HighestEarnMonth()
+	case gpu.FieldTroubleDeductAmount:
+		return m.TroubleDeductAmount()
 	}
 	return nil, false
 }
@@ -27748,6 +27896,8 @@ func (m *GpuMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldLowestEarnMonth(ctx)
 	case gpu.FieldHighestEarnMonth:
 		return m.OldHighestEarnMonth(ctx)
+	case gpu.FieldTroubleDeductAmount:
+		return m.OldTroubleDeductAmount(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -27841,6 +27991,13 @@ func (m *GpuMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetHighestEarnMonth(v)
 		return nil
+	case gpu.FieldTroubleDeductAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTroubleDeductAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -27873,6 +28030,9 @@ func (m *GpuMutation) AddedFields() []string {
 	if m.addhighest_earn_month != nil {
 		fields = append(fields, gpu.FieldHighestEarnMonth)
 	}
+	if m.addtrouble_deduct_amount != nil {
+		fields = append(fields, gpu.FieldTroubleDeductAmount)
+	}
 	return fields
 }
 
@@ -27897,6 +28057,8 @@ func (m *GpuMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedLowestEarnMonth()
 	case gpu.FieldHighestEarnMonth:
 		return m.AddedHighestEarnMonth()
+	case gpu.FieldTroubleDeductAmount:
+		return m.AddedTroubleDeductAmount()
 	}
 	return nil, false
 }
@@ -27962,6 +28124,13 @@ func (m *GpuMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddHighestEarnMonth(v)
 		return nil
+	case gpu.FieldTroubleDeductAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTroubleDeductAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu numeric field %s", name)
 }
@@ -28024,6 +28193,9 @@ func (m *GpuMutation) ResetField(name string) error {
 		return nil
 	case gpu.FieldHighestEarnMonth:
 		m.ResetHighestEarnMonth()
+		return nil
+	case gpu.FieldTroubleDeductAmount:
+		m.ResetTroubleDeductAmount()
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
@@ -68014,6 +68186,1067 @@ func (m *TransferOrderMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder edge %s", name)
+}
+
+// TroubleDeductMutation represents an operation that mutates the TroubleDeduct nodes in the graph.
+type TroubleDeductMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *int64
+	created_by          *int64
+	addcreated_by       *int64
+	updated_by          *int64
+	addupdated_by       *int64
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	started_at          *time.Time
+	finished_at         *time.Time
+	time_of_duration    *float64
+	addtime_of_duration *float64
+	amount              *int64
+	addamount           *int64
+	status              *troublededuct.Status
+	clearedFields       map[string]struct{}
+	device              *int64
+	cleareddevice       bool
+	done                bool
+	oldValue            func(context.Context) (*TroubleDeduct, error)
+	predicates          []predicate.TroubleDeduct
+}
+
+var _ ent.Mutation = (*TroubleDeductMutation)(nil)
+
+// troubledeductOption allows management of the mutation configuration using functional options.
+type troubledeductOption func(*TroubleDeductMutation)
+
+// newTroubleDeductMutation creates new mutation for the TroubleDeduct entity.
+func newTroubleDeductMutation(c config, op Op, opts ...troubledeductOption) *TroubleDeductMutation {
+	m := &TroubleDeductMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTroubleDeduct,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTroubleDeductID sets the ID field of the mutation.
+func withTroubleDeductID(id int64) troubledeductOption {
+	return func(m *TroubleDeductMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TroubleDeduct
+		)
+		m.oldValue = func(ctx context.Context) (*TroubleDeduct, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TroubleDeduct.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTroubleDeduct sets the old TroubleDeduct of the mutation.
+func withTroubleDeduct(node *TroubleDeduct) troubledeductOption {
+	return func(m *TroubleDeductMutation) {
+		m.oldValue = func(context.Context) (*TroubleDeduct, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TroubleDeductMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TroubleDeductMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of TroubleDeduct entities.
+func (m *TroubleDeductMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TroubleDeductMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TroubleDeductMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().TroubleDeduct.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *TroubleDeductMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *TroubleDeductMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *TroubleDeductMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *TroubleDeductMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *TroubleDeductMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TroubleDeductMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TroubleDeductMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *TroubleDeductMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *TroubleDeductMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TroubleDeductMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TroubleDeductMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TroubleDeductMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TroubleDeductMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TroubleDeductMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TroubleDeductMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TroubleDeductMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TroubleDeductMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TroubleDeductMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TroubleDeductMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *TroubleDeductMutation) SetDeviceID(i int64) {
+	m.device = &i
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *TroubleDeductMutation) DeviceID() (r int64, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *TroubleDeductMutation) ResetDeviceID() {
+	m.device = nil
+}
+
+// SetStartedAt sets the "started_at" field.
+func (m *TroubleDeductMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *TroubleDeductMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldStartedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *TroubleDeductMutation) ResetStartedAt() {
+	m.started_at = nil
+}
+
+// SetFinishedAt sets the "finished_at" field.
+func (m *TroubleDeductMutation) SetFinishedAt(t time.Time) {
+	m.finished_at = &t
+}
+
+// FinishedAt returns the value of the "finished_at" field in the mutation.
+func (m *TroubleDeductMutation) FinishedAt() (r time.Time, exists bool) {
+	v := m.finished_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFinishedAt returns the old "finished_at" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldFinishedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFinishedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFinishedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFinishedAt: %w", err)
+	}
+	return oldValue.FinishedAt, nil
+}
+
+// ResetFinishedAt resets all changes to the "finished_at" field.
+func (m *TroubleDeductMutation) ResetFinishedAt() {
+	m.finished_at = nil
+}
+
+// SetTimeOfDuration sets the "time_of_duration" field.
+func (m *TroubleDeductMutation) SetTimeOfDuration(f float64) {
+	m.time_of_duration = &f
+	m.addtime_of_duration = nil
+}
+
+// TimeOfDuration returns the value of the "time_of_duration" field in the mutation.
+func (m *TroubleDeductMutation) TimeOfDuration() (r float64, exists bool) {
+	v := m.time_of_duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimeOfDuration returns the old "time_of_duration" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldTimeOfDuration(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimeOfDuration is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimeOfDuration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimeOfDuration: %w", err)
+	}
+	return oldValue.TimeOfDuration, nil
+}
+
+// AddTimeOfDuration adds f to the "time_of_duration" field.
+func (m *TroubleDeductMutation) AddTimeOfDuration(f float64) {
+	if m.addtime_of_duration != nil {
+		*m.addtime_of_duration += f
+	} else {
+		m.addtime_of_duration = &f
+	}
+}
+
+// AddedTimeOfDuration returns the value that was added to the "time_of_duration" field in this mutation.
+func (m *TroubleDeductMutation) AddedTimeOfDuration() (r float64, exists bool) {
+	v := m.addtime_of_duration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTimeOfDuration resets all changes to the "time_of_duration" field.
+func (m *TroubleDeductMutation) ResetTimeOfDuration() {
+	m.time_of_duration = nil
+	m.addtime_of_duration = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *TroubleDeductMutation) SetAmount(i int64) {
+	m.amount = &i
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *TroubleDeductMutation) Amount() (r int64, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds i to the "amount" field.
+func (m *TroubleDeductMutation) AddAmount(i int64) {
+	if m.addamount != nil {
+		*m.addamount += i
+	} else {
+		m.addamount = &i
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *TroubleDeductMutation) AddedAmount() (r int64, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *TroubleDeductMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *TroubleDeductMutation) SetStatus(t troublededuct.Status) {
+	m.status = &t
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *TroubleDeductMutation) Status() (r troublededuct.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldStatus(ctx context.Context) (v troublededuct.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *TroubleDeductMutation) ResetStatus() {
+	m.status = nil
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *TroubleDeductMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[troublededuct.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *TroubleDeductMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *TroubleDeductMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *TroubleDeductMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
+// Where appends a list predicates to the TroubleDeductMutation builder.
+func (m *TroubleDeductMutation) Where(ps ...predicate.TroubleDeduct) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TroubleDeductMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TroubleDeductMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TroubleDeduct, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TroubleDeductMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TroubleDeductMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (TroubleDeduct).
+func (m *TroubleDeductMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TroubleDeductMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_by != nil {
+		fields = append(fields, troublededuct.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, troublededuct.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, troublededuct.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, troublededuct.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, troublededuct.FieldDeletedAt)
+	}
+	if m.device != nil {
+		fields = append(fields, troublededuct.FieldDeviceID)
+	}
+	if m.started_at != nil {
+		fields = append(fields, troublededuct.FieldStartedAt)
+	}
+	if m.finished_at != nil {
+		fields = append(fields, troublededuct.FieldFinishedAt)
+	}
+	if m.time_of_duration != nil {
+		fields = append(fields, troublededuct.FieldTimeOfDuration)
+	}
+	if m.amount != nil {
+		fields = append(fields, troublededuct.FieldAmount)
+	}
+	if m.status != nil {
+		fields = append(fields, troublededuct.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TroubleDeductMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case troublededuct.FieldCreatedBy:
+		return m.CreatedBy()
+	case troublededuct.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case troublededuct.FieldCreatedAt:
+		return m.CreatedAt()
+	case troublededuct.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case troublededuct.FieldDeletedAt:
+		return m.DeletedAt()
+	case troublededuct.FieldDeviceID:
+		return m.DeviceID()
+	case troublededuct.FieldStartedAt:
+		return m.StartedAt()
+	case troublededuct.FieldFinishedAt:
+		return m.FinishedAt()
+	case troublededuct.FieldTimeOfDuration:
+		return m.TimeOfDuration()
+	case troublededuct.FieldAmount:
+		return m.Amount()
+	case troublededuct.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TroubleDeductMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case troublededuct.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case troublededuct.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case troublededuct.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case troublededuct.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case troublededuct.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case troublededuct.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	case troublededuct.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case troublededuct.FieldFinishedAt:
+		return m.OldFinishedAt(ctx)
+	case troublededuct.FieldTimeOfDuration:
+		return m.OldTimeOfDuration(ctx)
+	case troublededuct.FieldAmount:
+		return m.OldAmount(ctx)
+	case troublededuct.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown TroubleDeduct field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case troublededuct.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case troublededuct.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case troublededuct.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case troublededuct.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case troublededuct.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case troublededuct.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	case troublededuct.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case troublededuct.FieldFinishedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFinishedAt(v)
+		return nil
+	case troublededuct.FieldTimeOfDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimeOfDuration(v)
+		return nil
+	case troublededuct.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case troublededuct.FieldStatus:
+		v, ok := value.(troublededuct.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TroubleDeduct field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TroubleDeductMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, troublededuct.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, troublededuct.FieldUpdatedBy)
+	}
+	if m.addtime_of_duration != nil {
+		fields = append(fields, troublededuct.FieldTimeOfDuration)
+	}
+	if m.addamount != nil {
+		fields = append(fields, troublededuct.FieldAmount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TroubleDeductMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case troublededuct.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case troublededuct.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case troublededuct.FieldTimeOfDuration:
+		return m.AddedTimeOfDuration()
+	case troublededuct.FieldAmount:
+		return m.AddedAmount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TroubleDeductMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case troublededuct.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case troublededuct.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case troublededuct.FieldTimeOfDuration:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTimeOfDuration(v)
+		return nil
+	case troublededuct.FieldAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TroubleDeduct numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TroubleDeductMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TroubleDeductMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TroubleDeductMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown TroubleDeduct nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TroubleDeductMutation) ResetField(name string) error {
+	switch name {
+	case troublededuct.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case troublededuct.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case troublededuct.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case troublededuct.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case troublededuct.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case troublededuct.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case troublededuct.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case troublededuct.FieldFinishedAt:
+		m.ResetFinishedAt()
+		return nil
+	case troublededuct.FieldTimeOfDuration:
+		m.ResetTimeOfDuration()
+		return nil
+	case troublededuct.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case troublededuct.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown TroubleDeduct field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TroubleDeductMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.device != nil {
+		edges = append(edges, troublededuct.EdgeDevice)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TroubleDeductMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case troublededuct.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TroubleDeductMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TroubleDeductMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TroubleDeductMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareddevice {
+		edges = append(edges, troublededuct.EdgeDevice)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TroubleDeductMutation) EdgeCleared(name string) bool {
+	switch name {
+	case troublededuct.EdgeDevice:
+		return m.cleareddevice
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TroubleDeductMutation) ClearEdge(name string) error {
+	switch name {
+	case troublededuct.EdgeDevice:
+		m.ClearDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown TroubleDeduct unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TroubleDeductMutation) ResetEdge(name string) error {
+	switch name {
+	case troublededuct.EdgeDevice:
+		m.ResetDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown TroubleDeduct edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

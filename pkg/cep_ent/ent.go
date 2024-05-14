@@ -64,6 +64,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
@@ -182,6 +183,7 @@ func checkColumn(table, column string) error {
 			renewalagreement.Table:     renewalagreement.ValidColumn,
 			symbol.Table:               symbol.ValidColumn,
 			transferorder.Table:        transferorder.ValidColumn,
+			troublededuct.Table:        troublededuct.ValidColumn,
 			user.Table:                 user.ValidColumn,
 			userdevice.Table:           userdevice.ValidColumn,
 			vxaccount.Table:            vxaccount.ValidColumn,

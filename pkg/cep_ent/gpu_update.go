@@ -234,6 +234,27 @@ func (gu *GpuUpdate) AddHighestEarnMonth(i int64) *GpuUpdate {
 	return gu
 }
 
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (gu *GpuUpdate) SetTroubleDeductAmount(i int64) *GpuUpdate {
+	gu.mutation.ResetTroubleDeductAmount()
+	gu.mutation.SetTroubleDeductAmount(i)
+	return gu
+}
+
+// SetNillableTroubleDeductAmount sets the "trouble_deduct_amount" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableTroubleDeductAmount(i *int64) *GpuUpdate {
+	if i != nil {
+		gu.SetTroubleDeductAmount(*i)
+	}
+	return gu
+}
+
+// AddTroubleDeductAmount adds i to the "trouble_deduct_amount" field.
+func (gu *GpuUpdate) AddTroubleDeductAmount(i int64) *GpuUpdate {
+	gu.mutation.AddTroubleDeductAmount(i)
+	return gu
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (gu *GpuUpdate) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdate {
 	gu.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -431,6 +452,12 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.AddedHighestEarnMonth(); ok {
 		_spec.AddField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.TroubleDeductAmount(); ok {
+		_spec.SetField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.AddedTroubleDeductAmount(); ok {
+		_spec.AddField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
 	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -746,6 +773,27 @@ func (guo *GpuUpdateOne) AddHighestEarnMonth(i int64) *GpuUpdateOne {
 	return guo
 }
 
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (guo *GpuUpdateOne) SetTroubleDeductAmount(i int64) *GpuUpdateOne {
+	guo.mutation.ResetTroubleDeductAmount()
+	guo.mutation.SetTroubleDeductAmount(i)
+	return guo
+}
+
+// SetNillableTroubleDeductAmount sets the "trouble_deduct_amount" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableTroubleDeductAmount(i *int64) *GpuUpdateOne {
+	if i != nil {
+		guo.SetTroubleDeductAmount(*i)
+	}
+	return guo
+}
+
+// AddTroubleDeductAmount adds i to the "trouble_deduct_amount" field.
+func (guo *GpuUpdateOne) AddTroubleDeductAmount(i int64) *GpuUpdateOne {
+	guo.mutation.AddTroubleDeductAmount(i)
+	return guo
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (guo *GpuUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdateOne {
 	guo.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -973,6 +1021,12 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	}
 	if value, ok := guo.mutation.AddedHighestEarnMonth(); ok {
 		_spec.AddField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.TroubleDeductAmount(); ok {
+		_spec.SetField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.AddedTroubleDeductAmount(); ok {
+		_spec.AddField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
 	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

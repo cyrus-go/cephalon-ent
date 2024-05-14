@@ -111,6 +111,11 @@ func HighestEarnMonth(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldHighestEarnMonth, v))
 }
 
+// TroubleDeductAmount applies equality check predicate on the "trouble_deduct_amount" field. It's identical to TroubleDeductAmountEQ.
+func TroubleDeductAmount(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldTroubleDeductAmount, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldCreatedBy, v))
@@ -579,6 +584,46 @@ func HighestEarnMonthLT(v int64) predicate.Gpu {
 // HighestEarnMonthLTE applies the LTE predicate on the "highest_earn_month" field.
 func HighestEarnMonthLTE(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldLTE(FieldHighestEarnMonth, v))
+}
+
+// TroubleDeductAmountEQ applies the EQ predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountEQ(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldTroubleDeductAmount, v))
+}
+
+// TroubleDeductAmountNEQ applies the NEQ predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountNEQ(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldTroubleDeductAmount, v))
+}
+
+// TroubleDeductAmountIn applies the In predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountIn(vs ...int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldTroubleDeductAmount, vs...))
+}
+
+// TroubleDeductAmountNotIn applies the NotIn predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountNotIn(vs ...int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldTroubleDeductAmount, vs...))
+}
+
+// TroubleDeductAmountGT applies the GT predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountGT(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldTroubleDeductAmount, v))
+}
+
+// TroubleDeductAmountGTE applies the GTE predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountGTE(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldTroubleDeductAmount, v))
+}
+
+// TroubleDeductAmountLT applies the LT predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountLT(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldTroubleDeductAmount, v))
+}
+
+// TroubleDeductAmountLTE applies the LTE predicate on the "trouble_deduct_amount" field.
+func TroubleDeductAmountLTE(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldTroubleDeductAmount, v))
 }
 
 // HasDeviceGpuMissions applies the HasEdge predicate on the "device_gpu_missions" edge.

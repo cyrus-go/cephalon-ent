@@ -193,6 +193,20 @@ func (gc *GpuCreate) SetNillableHighestEarnMonth(i *int64) *GpuCreate {
 	return gc
 }
 
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (gc *GpuCreate) SetTroubleDeductAmount(i int64) *GpuCreate {
+	gc.mutation.SetTroubleDeductAmount(i)
+	return gc
+}
+
+// SetNillableTroubleDeductAmount sets the "trouble_deduct_amount" field if the given value is not nil.
+func (gc *GpuCreate) SetNillableTroubleDeductAmount(i *int64) *GpuCreate {
+	if i != nil {
+		gc.SetTroubleDeductAmount(*i)
+	}
+	return gc
+}
+
 // SetID sets the "id" field.
 func (gc *GpuCreate) SetID(i int64) *GpuCreate {
 	gc.mutation.SetID(i)
@@ -320,6 +334,10 @@ func (gc *GpuCreate) defaults() {
 		v := gpu.DefaultHighestEarnMonth
 		gc.mutation.SetHighestEarnMonth(v)
 	}
+	if _, ok := gc.mutation.TroubleDeductAmount(); !ok {
+		v := gpu.DefaultTroubleDeductAmount
+		gc.mutation.SetTroubleDeductAmount(v)
+	}
 	if _, ok := gc.mutation.ID(); !ok {
 		v := gpu.DefaultID()
 		gc.mutation.SetID(v)
@@ -368,6 +386,9 @@ func (gc *GpuCreate) check() error {
 	}
 	if _, ok := gc.mutation.HighestEarnMonth(); !ok {
 		return &ValidationError{Name: "highest_earn_month", err: errors.New(`cep_ent: missing required field "Gpu.highest_earn_month"`)}
+	}
+	if _, ok := gc.mutation.TroubleDeductAmount(); !ok {
+		return &ValidationError{Name: "trouble_deduct_amount", err: errors.New(`cep_ent: missing required field "Gpu.trouble_deduct_amount"`)}
 	}
 	return nil
 }
@@ -449,6 +470,10 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.HighestEarnMonth(); ok {
 		_spec.SetField(gpu.FieldHighestEarnMonth, field.TypeInt64, value)
 		_node.HighestEarnMonth = value
+	}
+	if value, ok := gc.mutation.TroubleDeductAmount(); ok {
+		_spec.SetField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
+		_node.TroubleDeductAmount = value
 	}
 	if nodes := gc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -714,6 +739,24 @@ func (u *GpuUpsert) AddHighestEarnMonth(v int64) *GpuUpsert {
 	return u
 }
 
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (u *GpuUpsert) SetTroubleDeductAmount(v int64) *GpuUpsert {
+	u.Set(gpu.FieldTroubleDeductAmount, v)
+	return u
+}
+
+// UpdateTroubleDeductAmount sets the "trouble_deduct_amount" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateTroubleDeductAmount() *GpuUpsert {
+	u.SetExcluded(gpu.FieldTroubleDeductAmount)
+	return u
+}
+
+// AddTroubleDeductAmount adds v to the "trouble_deduct_amount" field.
+func (u *GpuUpsert) AddTroubleDeductAmount(v int64) *GpuUpsert {
+	u.Add(gpu.FieldTroubleDeductAmount, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -972,6 +1015,27 @@ func (u *GpuUpsertOne) AddHighestEarnMonth(v int64) *GpuUpsertOne {
 func (u *GpuUpsertOne) UpdateHighestEarnMonth() *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateHighestEarnMonth()
+	})
+}
+
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (u *GpuUpsertOne) SetTroubleDeductAmount(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetTroubleDeductAmount(v)
+	})
+}
+
+// AddTroubleDeductAmount adds v to the "trouble_deduct_amount" field.
+func (u *GpuUpsertOne) AddTroubleDeductAmount(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddTroubleDeductAmount(v)
+	})
+}
+
+// UpdateTroubleDeductAmount sets the "trouble_deduct_amount" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateTroubleDeductAmount() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateTroubleDeductAmount()
 	})
 }
 
@@ -1399,6 +1463,27 @@ func (u *GpuUpsertBulk) AddHighestEarnMonth(v int64) *GpuUpsertBulk {
 func (u *GpuUpsertBulk) UpdateHighestEarnMonth() *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateHighestEarnMonth()
+	})
+}
+
+// SetTroubleDeductAmount sets the "trouble_deduct_amount" field.
+func (u *GpuUpsertBulk) SetTroubleDeductAmount(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetTroubleDeductAmount(v)
+	})
+}
+
+// AddTroubleDeductAmount adds v to the "trouble_deduct_amount" field.
+func (u *GpuUpsertBulk) AddTroubleDeductAmount(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddTroubleDeductAmount(v)
+	})
+}
+
+// UpdateTroubleDeductAmount sets the "trouble_deduct_amount" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateTroubleDeductAmount() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateTroubleDeductAmount()
 	})
 }
 

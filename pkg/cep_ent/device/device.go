@@ -71,6 +71,8 @@ const (
 	EdgeMissionProductions = "mission_productions"
 	// EdgeDeviceRebootTimes holds the string denoting the device_reboot_times edge name in mutations.
 	EdgeDeviceRebootTimes = "device_reboot_times"
+	// EdgeTroubleDeducts holds the string denoting the trouble_deducts edge name in mutations.
+	EdgeTroubleDeducts = "trouble_deducts"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -129,6 +131,13 @@ const (
 	DeviceRebootTimesInverseTable = "device_reboot_times"
 	// DeviceRebootTimesColumn is the table column denoting the device_reboot_times relation/edge.
 	DeviceRebootTimesColumn = "device_id"
+	// TroubleDeductsTable is the table that holds the trouble_deducts relation/edge.
+	TroubleDeductsTable = "trouble_deducts"
+	// TroubleDeductsInverseTable is the table name for the TroubleDeduct entity.
+	// It exists in this package in order to avoid circular dependency with the "troublededuct" package.
+	TroubleDeductsInverseTable = "trouble_deducts"
+	// TroubleDeductsColumn is the table column denoting the trouble_deducts relation/edge.
+	TroubleDeductsColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -489,6 +498,20 @@ func ByDeviceRebootTimes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption
 		sqlgraph.OrderByNeighborTerms(s, newDeviceRebootTimesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTroubleDeductsCount orders the results by trouble_deducts count.
+func ByTroubleDeductsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTroubleDeductsStep(), opts...)
+	}
+}
+
+// ByTroubleDeducts orders the results by trouble_deducts terms.
+func ByTroubleDeducts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTroubleDeductsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -543,5 +566,12 @@ func newDeviceRebootTimesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceRebootTimesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, DeviceRebootTimesTable, DeviceRebootTimesColumn),
+	)
+}
+func newTroubleDeductsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TroubleDeductsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TroubleDeductsTable, TroubleDeductsColumn),
 	)
 }

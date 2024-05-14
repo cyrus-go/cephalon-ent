@@ -46,6 +46,7 @@ func (Device) Edges() []ent.Edge {
 		edge.To("mission_orders", MissionOrder.Type),
 		edge.To("mission_productions", MissionProduction.Type),
 		edge.To("device_reboot_times", DeviceRebootTime.Type),
+		edge.To("trouble_deducts", TroubleDeduct.Type),
 	}
 }
 

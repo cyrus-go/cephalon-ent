@@ -116,6 +116,8 @@ type Tx struct {
 	Symbol *SymbolClient
 	// TransferOrder is the client for interacting with the TransferOrder builders.
 	TransferOrder *TransferOrderClient
+	// TroubleDeduct is the client for interacting with the TroubleDeduct builders.
+	TroubleDeduct *TroubleDeductClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
@@ -311,6 +313,7 @@ func (tx *Tx) init() {
 	tx.RenewalAgreement = NewRenewalAgreementClient(tx.config)
 	tx.Symbol = NewSymbolClient(tx.config)
 	tx.TransferOrder = NewTransferOrderClient(tx.config)
+	tx.TroubleDeduct = NewTroubleDeductClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)
 	tx.VXAccount = NewVXAccountClient(tx.config)

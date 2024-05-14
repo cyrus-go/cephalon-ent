@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -411,6 +412,21 @@ func (dc *DeviceCreate) AddDeviceRebootTimes(d ...*DeviceRebootTime) *DeviceCrea
 		ids[i] = d[i].ID
 	}
 	return dc.AddDeviceRebootTimeIDs(ids...)
+}
+
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (dc *DeviceCreate) AddTroubleDeductIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddTroubleDeductIDs(ids...)
+	return dc
+}
+
+// AddTroubleDeducts adds the "trouble_deducts" edges to the TroubleDeduct entity.
+func (dc *DeviceCreate) AddTroubleDeducts(t ...*TroubleDeduct) *DeviceCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return dc.AddTroubleDeductIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -839,6 +855,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicereboottime.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.TroubleDeductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.TroubleDeductsTable,
+			Columns: []string{device.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

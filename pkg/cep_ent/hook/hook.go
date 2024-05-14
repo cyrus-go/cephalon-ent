@@ -633,6 +633,18 @@ func (f TransferOrderFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.TransferOrderMutation", m)
 }
 
+// The TroubleDeductFunc type is an adapter to allow the use of ordinary
+// function as TroubleDeduct mutator.
+type TroubleDeductFunc func(context.Context, *cep_ent.TroubleDeductMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TroubleDeductFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.TroubleDeductMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.TroubleDeductMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *cep_ent.UserMutation) (cep_ent.Value, error)

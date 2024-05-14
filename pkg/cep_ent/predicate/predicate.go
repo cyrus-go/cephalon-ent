@@ -195,6 +195,9 @@ type Symbol func(*sql.Selector)
 // TransferOrder is the predicate function for transferorder builders.
 type TransferOrder func(*sql.Selector)
 
+// TroubleDeduct is the predicate function for troublededuct builders.
+type TroubleDeduct func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
