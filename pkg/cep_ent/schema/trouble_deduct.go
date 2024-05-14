@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/common"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // TroubleDeduct holds the schema definition for the TroubleDeduct entity.
@@ -21,7 +22,7 @@ func (TroubleDeduct) Fields() []ent.Field {
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("故障结束时刻"),
 		field.Float("time_of_duration").Default(0).StructTag(`json:"time_of_duration,string"`).Comment("持续时长，单位：小时"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("扣费金额，单位：分"),
-		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("状态"),
+		field.Enum("status").GoType(enums.TroubleDeductStatusPending).Default(string(enums.TroubleDeductStatusPending)).StructTag(`json:"status"`).Comment("状态"),
 		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("扣费原因"),
 		field.String("cancel_reason").StructTag(`json:"cancel_reason"`).Default("").Comment("取消扣费原因"),
 	}

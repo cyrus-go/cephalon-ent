@@ -68207,7 +68207,7 @@ type TroubleDeductMutation struct {
 	addtime_of_duration *float64
 	amount              *int64
 	addamount           *int64
-	status              *troublededuct.Status
+	status              *enums.TroubleDeductStatus
 	reason              *string
 	cancel_reason       *string
 	clearedFields       map[string]struct{}
@@ -68763,12 +68763,12 @@ func (m *TroubleDeductMutation) ResetAmount() {
 }
 
 // SetStatus sets the "status" field.
-func (m *TroubleDeductMutation) SetStatus(t troublededuct.Status) {
-	m.status = &t
+func (m *TroubleDeductMutation) SetStatus(eds enums.TroubleDeductStatus) {
+	m.status = &eds
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *TroubleDeductMutation) Status() (r troublededuct.Status, exists bool) {
+func (m *TroubleDeductMutation) Status() (r enums.TroubleDeductStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -68779,7 +68779,7 @@ func (m *TroubleDeductMutation) Status() (r troublededuct.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the TroubleDeduct entity.
 // If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TroubleDeductMutation) OldStatus(ctx context.Context) (v troublededuct.Status, err error) {
+func (m *TroubleDeductMutation) OldStatus(ctx context.Context) (v enums.TroubleDeductStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -69120,7 +69120,7 @@ func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
 		m.SetAmount(v)
 		return nil
 	case troublededuct.FieldStatus:
-		v, ok := value.(troublededuct.Status)
+		v, ok := value.(enums.TroubleDeductStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

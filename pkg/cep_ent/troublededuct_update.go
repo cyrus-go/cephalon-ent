@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // TroubleDeductUpdate is the builder for updating TroubleDeduct entities.
@@ -177,15 +178,15 @@ func (tdu *TroubleDeductUpdate) AddAmount(i int64) *TroubleDeductUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (tdu *TroubleDeductUpdate) SetStatus(t troublededuct.Status) *TroubleDeductUpdate {
-	tdu.mutation.SetStatus(t)
+func (tdu *TroubleDeductUpdate) SetStatus(eds enums.TroubleDeductStatus) *TroubleDeductUpdate {
+	tdu.mutation.SetStatus(eds)
 	return tdu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tdu *TroubleDeductUpdate) SetNillableStatus(t *troublededuct.Status) *TroubleDeductUpdate {
-	if t != nil {
-		tdu.SetStatus(*t)
+func (tdu *TroubleDeductUpdate) SetNillableStatus(eds *enums.TroubleDeductStatus) *TroubleDeductUpdate {
+	if eds != nil {
+		tdu.SetStatus(*eds)
 	}
 	return tdu
 }
@@ -544,15 +545,15 @@ func (tduo *TroubleDeductUpdateOne) AddAmount(i int64) *TroubleDeductUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (tduo *TroubleDeductUpdateOne) SetStatus(t troublededuct.Status) *TroubleDeductUpdateOne {
-	tduo.mutation.SetStatus(t)
+func (tduo *TroubleDeductUpdateOne) SetStatus(eds enums.TroubleDeductStatus) *TroubleDeductUpdateOne {
+	tduo.mutation.SetStatus(eds)
 	return tduo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tduo *TroubleDeductUpdateOne) SetNillableStatus(t *troublededuct.Status) *TroubleDeductUpdateOne {
-	if t != nil {
-		tduo.SetStatus(*t)
+func (tduo *TroubleDeductUpdateOne) SetNillableStatus(eds *enums.TroubleDeductStatus) *TroubleDeductUpdateOne {
+	if eds != nil {
+		tduo.SetStatus(*eds)
 	}
 	return tduo
 }

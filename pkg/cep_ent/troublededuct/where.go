@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -496,23 +497,33 @@ func AmountLTE(v int64) predicate.TroubleDeduct {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.TroubleDeduct {
-	return predicate.TroubleDeduct(sql.FieldEQ(FieldStatus, v))
+func StatusEQ(v enums.TroubleDeductStatus) predicate.TroubleDeduct {
+	vc := v
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.TroubleDeduct {
-	return predicate.TroubleDeduct(sql.FieldNEQ(FieldStatus, v))
+func StatusNEQ(v enums.TroubleDeductStatus) predicate.TroubleDeduct {
+	vc := v
+	return predicate.TroubleDeduct(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.TroubleDeduct {
-	return predicate.TroubleDeduct(sql.FieldIn(FieldStatus, vs...))
+func StatusIn(vs ...enums.TroubleDeductStatus) predicate.TroubleDeduct {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TroubleDeduct(sql.FieldIn(FieldStatus, v...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.TroubleDeduct {
-	return predicate.TroubleDeduct(sql.FieldNotIn(FieldStatus, vs...))
+func StatusNotIn(vs ...enums.TroubleDeductStatus) predicate.TroubleDeduct {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TroubleDeduct(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // ReasonEQ applies the EQ predicate on the "reason" field.

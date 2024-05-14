@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 故障扣费记录，节点故障时，需要扣费，记录到这个表里
@@ -40,7 +41,7 @@ type TroubleDeduct struct {
 	// 扣费金额，单位：分
 	Amount int64 `json:"amount"`
 	// 状态
-	Status troublededuct.Status `json:"status"`
+	Status enums.TroubleDeductStatus `json:"status"`
 	// 扣费原因
 	Reason string `json:"reason"`
 	// 取消扣费原因
@@ -171,7 +172,7 @@ func (td *TroubleDeduct) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				td.Status = troublededuct.Status(value.String)
+				td.Status = enums.TroubleDeductStatus(value.String)
 			}
 		case troublededuct.FieldReason:
 			if value, ok := values[i].(*sql.NullString); !ok {

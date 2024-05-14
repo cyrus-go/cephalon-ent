@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -113,28 +114,12 @@ var (
 	DefaultID func() int64
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusPending is the default value of the Status enum.
-const DefaultStatus = StatusPending
-
-// Status values.
-const (
-	StatusPending  Status = "pending"
-	StatusCanceled Status = "canceled"
-	StatusSucceed  Status = "succeed"
-	StatusFailed   Status = "failed"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.TroubleDeductStatus = "pending"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.TroubleDeductStatus) error {
 	switch s {
-	case StatusPending, StatusCanceled, StatusSucceed, StatusFailed:
+	case "pending", "canceled", "succeed", "failed", "reject":
 		return nil
 	default:
 		return fmt.Errorf("troublededuct: invalid enum value for status field: %q", s)

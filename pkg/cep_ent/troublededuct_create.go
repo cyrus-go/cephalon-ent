@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // TroubleDeductCreate is the builder for creating a TroubleDeduct entity.
@@ -164,15 +165,15 @@ func (tdc *TroubleDeductCreate) SetNillableAmount(i *int64) *TroubleDeductCreate
 }
 
 // SetStatus sets the "status" field.
-func (tdc *TroubleDeductCreate) SetStatus(t troublededuct.Status) *TroubleDeductCreate {
-	tdc.mutation.SetStatus(t)
+func (tdc *TroubleDeductCreate) SetStatus(eds enums.TroubleDeductStatus) *TroubleDeductCreate {
+	tdc.mutation.SetStatus(eds)
 	return tdc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tdc *TroubleDeductCreate) SetNillableStatus(t *troublededuct.Status) *TroubleDeductCreate {
-	if t != nil {
-		tdc.SetStatus(*t)
+func (tdc *TroubleDeductCreate) SetNillableStatus(eds *enums.TroubleDeductStatus) *TroubleDeductCreate {
+	if eds != nil {
+		tdc.SetStatus(*eds)
 	}
 	return tdc
 }
@@ -649,7 +650,7 @@ func (u *TroubleDeductUpsert) AddAmount(v int64) *TroubleDeductUpsert {
 }
 
 // SetStatus sets the "status" field.
-func (u *TroubleDeductUpsert) SetStatus(v troublededuct.Status) *TroubleDeductUpsert {
+func (u *TroubleDeductUpsert) SetStatus(v enums.TroubleDeductStatus) *TroubleDeductUpsert {
 	u.Set(troublededuct.FieldStatus, v)
 	return u
 }
@@ -890,7 +891,7 @@ func (u *TroubleDeductUpsertOne) UpdateAmount() *TroubleDeductUpsertOne {
 }
 
 // SetStatus sets the "status" field.
-func (u *TroubleDeductUpsertOne) SetStatus(v troublededuct.Status) *TroubleDeductUpsertOne {
+func (u *TroubleDeductUpsertOne) SetStatus(v enums.TroubleDeductStatus) *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.SetStatus(v)
 	})
@@ -1303,7 +1304,7 @@ func (u *TroubleDeductUpsertBulk) UpdateAmount() *TroubleDeductUpsertBulk {
 }
 
 // SetStatus sets the "status" field.
-func (u *TroubleDeductUpsertBulk) SetStatus(v troublededuct.Status) *TroubleDeductUpsertBulk {
+func (u *TroubleDeductUpsertBulk) SetStatus(v enums.TroubleDeductStatus) *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.SetStatus(v)
 	})

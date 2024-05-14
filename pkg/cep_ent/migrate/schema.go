@@ -2239,7 +2239,7 @@ var (
 		{Name: "finished_at", Type: field.TypeTime, Comment: "故障结束时刻"},
 		{Name: "time_of_duration", Type: field.TypeFloat64, Comment: "持续时长，单位：小时", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：分", Default: 0},
-		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
 		{Name: "reason", Type: field.TypeString, Comment: "扣费原因", Default: ""},
 		{Name: "cancel_reason", Type: field.TypeString, Comment: "取消扣费原因", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "设备 id", Default: 0},
