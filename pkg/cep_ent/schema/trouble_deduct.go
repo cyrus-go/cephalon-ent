@@ -22,6 +22,7 @@ func (TroubleDeduct) Fields() []ent.Field {
 		field.Float("time_of_duration").Default(0).StructTag(`json:"time_of_duration,string"`).Comment("持续时长，单位：小时"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("扣费金额，单位：分"),
 		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("状态"),
+		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("扣费原因"),
 	}
 }
 

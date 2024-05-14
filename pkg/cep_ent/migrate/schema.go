@@ -2240,6 +2240,7 @@ var (
 		{Name: "time_of_duration", Type: field.TypeFloat64, Comment: "持续时长，单位：小时", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：分", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed"}, Default: "pending"},
+		{Name: "reason", Type: field.TypeString, Comment: "扣费原因", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "设备 id", Default: 0},
 	}
 	// TroubleDeductsTable holds the schema information for the "trouble_deducts" table.
@@ -2251,7 +2252,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "trouble_deducts_devices_trouble_deducts",
-				Columns:    []*schema.Column{TroubleDeductsColumns[11]},
+				Columns:    []*schema.Column{TroubleDeductsColumns[12]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

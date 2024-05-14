@@ -177,6 +177,20 @@ func (tdc *TroubleDeductCreate) SetNillableStatus(t *troublededuct.Status) *Trou
 	return tdc
 }
 
+// SetReason sets the "reason" field.
+func (tdc *TroubleDeductCreate) SetReason(s string) *TroubleDeductCreate {
+	tdc.mutation.SetReason(s)
+	return tdc
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (tdc *TroubleDeductCreate) SetNillableReason(s *string) *TroubleDeductCreate {
+	if s != nil {
+		tdc.SetReason(*s)
+	}
+	return tdc
+}
+
 // SetID sets the "id" field.
 func (tdc *TroubleDeductCreate) SetID(i int64) *TroubleDeductCreate {
 	tdc.mutation.SetID(i)
@@ -275,6 +289,10 @@ func (tdc *TroubleDeductCreate) defaults() {
 		v := troublededuct.DefaultStatus
 		tdc.mutation.SetStatus(v)
 	}
+	if _, ok := tdc.mutation.Reason(); !ok {
+		v := troublededuct.DefaultReason
+		tdc.mutation.SetReason(v)
+	}
 	if _, ok := tdc.mutation.ID(); !ok {
 		v := troublededuct.DefaultID()
 		tdc.mutation.SetID(v)
@@ -320,6 +338,9 @@ func (tdc *TroubleDeductCreate) check() error {
 		if err := troublededuct.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "TroubleDeduct.status": %w`, err)}
 		}
+	}
+	if _, ok := tdc.mutation.Reason(); !ok {
+		return &ValidationError{Name: "reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.reason"`)}
 	}
 	if _, ok := tdc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "TroubleDeduct.device"`)}
@@ -396,6 +417,10 @@ func (tdc *TroubleDeductCreate) createSpec() (*TroubleDeduct, *sqlgraph.CreateSp
 	if value, ok := tdc.mutation.Status(); ok {
 		_spec.SetField(troublededuct.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := tdc.mutation.Reason(); ok {
+		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
+		_node.Reason = value
 	}
 	if nodes := tdc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -607,6 +632,18 @@ func (u *TroubleDeductUpsert) SetStatus(v troublededuct.Status) *TroubleDeductUp
 // UpdateStatus sets the "status" field to the value that was provided on create.
 func (u *TroubleDeductUpsert) UpdateStatus() *TroubleDeductUpsert {
 	u.SetExcluded(troublededuct.FieldStatus)
+	return u
+}
+
+// SetReason sets the "reason" field.
+func (u *TroubleDeductUpsert) SetReason(v string) *TroubleDeductUpsert {
+	u.Set(troublededuct.FieldReason, v)
+	return u
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsert) UpdateReason() *TroubleDeductUpsert {
+	u.SetExcluded(troublededuct.FieldReason)
 	return u
 }
 
@@ -826,6 +863,20 @@ func (u *TroubleDeductUpsertOne) SetStatus(v troublededuct.Status) *TroubleDeduc
 func (u *TroubleDeductUpsertOne) UpdateStatus() *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetReason sets the "reason" field.
+func (u *TroubleDeductUpsertOne) SetReason(v string) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetReason(v)
+	})
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsertOne) UpdateReason() *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateReason()
 	})
 }
 
@@ -1211,6 +1262,20 @@ func (u *TroubleDeductUpsertBulk) SetStatus(v troublededuct.Status) *TroubleDedu
 func (u *TroubleDeductUpsertBulk) UpdateStatus() *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetReason sets the "reason" field.
+func (u *TroubleDeductUpsertBulk) SetReason(v string) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetReason(v)
+	})
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsertBulk) UpdateReason() *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateReason()
 	})
 }
 

@@ -41,6 +41,8 @@ type TroubleDeduct struct {
 	Amount int64 `json:"amount"`
 	// 状态
 	Status troublededuct.Status `json:"status"`
+	// 扣费原因
+	Reason string `json:"reason"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TroubleDeductQuery when eager-loading is set.
 	Edges        TroubleDeductEdges `json:"edges"`
@@ -78,7 +80,7 @@ func (*TroubleDeduct) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldDeviceID, troublededuct.FieldAmount:
 			values[i] = new(sql.NullInt64)
-		case troublededuct.FieldStatus:
+		case troublededuct.FieldStatus, troublededuct.FieldReason:
 			values[i] = new(sql.NullString)
 		case troublededuct.FieldCreatedAt, troublededuct.FieldUpdatedAt, troublededuct.FieldDeletedAt, troublededuct.FieldStartedAt, troublededuct.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -169,6 +171,12 @@ func (td *TroubleDeduct) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				td.Status = troublededuct.Status(value.String)
 			}
+		case troublededuct.FieldReason:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field reason", values[i])
+			} else if value.Valid {
+				td.Reason = value.String
+			}
 		default:
 			td.selectValues.Set(columns[i], values[i])
 		}
@@ -242,6 +250,9 @@ func (td *TroubleDeduct) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", td.Status))
+	builder.WriteString(", ")
+	builder.WriteString("reason=")
+	builder.WriteString(td.Reason)
 	builder.WriteByte(')')
 	return builder.String()
 }

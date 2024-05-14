@@ -68208,6 +68208,7 @@ type TroubleDeductMutation struct {
 	amount              *int64
 	addamount           *int64
 	status              *troublededuct.Status
+	reason              *string
 	clearedFields       map[string]struct{}
 	device              *int64
 	cleareddevice       bool
@@ -68796,6 +68797,42 @@ func (m *TroubleDeductMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetReason sets the "reason" field.
+func (m *TroubleDeductMutation) SetReason(s string) {
+	m.reason = &s
+}
+
+// Reason returns the value of the "reason" field in the mutation.
+func (m *TroubleDeductMutation) Reason() (r string, exists bool) {
+	v := m.reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReason returns the old "reason" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReason: %w", err)
+	}
+	return oldValue.Reason, nil
+}
+
+// ResetReason resets all changes to the "reason" field.
+func (m *TroubleDeductMutation) ResetReason() {
+	m.reason = nil
+}
+
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *TroubleDeductMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -68857,7 +68894,7 @@ func (m *TroubleDeductMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TroubleDeductMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, troublededuct.FieldCreatedBy)
 	}
@@ -68891,6 +68928,9 @@ func (m *TroubleDeductMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, troublededuct.FieldStatus)
 	}
+	if m.reason != nil {
+		fields = append(fields, troublededuct.FieldReason)
+	}
 	return fields
 }
 
@@ -68921,6 +68961,8 @@ func (m *TroubleDeductMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case troublededuct.FieldStatus:
 		return m.Status()
+	case troublededuct.FieldReason:
+		return m.Reason()
 	}
 	return nil, false
 }
@@ -68952,6 +68994,8 @@ func (m *TroubleDeductMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldAmount(ctx)
 	case troublededuct.FieldStatus:
 		return m.OldStatus(ctx)
+	case troublededuct.FieldReason:
+		return m.OldReason(ctx)
 	}
 	return nil, fmt.Errorf("unknown TroubleDeduct field %s", name)
 }
@@ -69037,6 +69081,13 @@ func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case troublededuct.FieldReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReason(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TroubleDeduct field %s", name)
@@ -69170,6 +69221,9 @@ func (m *TroubleDeductMutation) ResetField(name string) error {
 		return nil
 	case troublededuct.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case troublededuct.FieldReason:
+		m.ResetReason()
 		return nil
 	}
 	return fmt.Errorf("unknown TroubleDeduct field %s", name)

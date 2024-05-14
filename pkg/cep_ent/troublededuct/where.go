@@ -105,6 +105,11 @@ func Amount(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldAmount, v))
 }
 
+// Reason applies equality check predicate on the "reason" field. It's identical to ReasonEQ.
+func Reason(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldReason, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldCreatedBy, v))
@@ -503,6 +508,71 @@ func StatusIn(vs ...Status) predicate.TroubleDeduct {
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...Status) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// ReasonEQ applies the EQ predicate on the "reason" field.
+func ReasonEQ(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldReason, v))
+}
+
+// ReasonNEQ applies the NEQ predicate on the "reason" field.
+func ReasonNEQ(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNEQ(FieldReason, v))
+}
+
+// ReasonIn applies the In predicate on the "reason" field.
+func ReasonIn(vs ...string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldIn(FieldReason, vs...))
+}
+
+// ReasonNotIn applies the NotIn predicate on the "reason" field.
+func ReasonNotIn(vs ...string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNotIn(FieldReason, vs...))
+}
+
+// ReasonGT applies the GT predicate on the "reason" field.
+func ReasonGT(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGT(FieldReason, v))
+}
+
+// ReasonGTE applies the GTE predicate on the "reason" field.
+func ReasonGTE(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGTE(FieldReason, v))
+}
+
+// ReasonLT applies the LT predicate on the "reason" field.
+func ReasonLT(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLT(FieldReason, v))
+}
+
+// ReasonLTE applies the LTE predicate on the "reason" field.
+func ReasonLTE(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLTE(FieldReason, v))
+}
+
+// ReasonContains applies the Contains predicate on the "reason" field.
+func ReasonContains(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldContains(FieldReason, v))
+}
+
+// ReasonHasPrefix applies the HasPrefix predicate on the "reason" field.
+func ReasonHasPrefix(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldHasPrefix(FieldReason, v))
+}
+
+// ReasonHasSuffix applies the HasSuffix predicate on the "reason" field.
+func ReasonHasSuffix(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldHasSuffix(FieldReason, v))
+}
+
+// ReasonEqualFold applies the EqualFold predicate on the "reason" field.
+func ReasonEqualFold(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEqualFold(FieldReason, v))
+}
+
+// ReasonContainsFold applies the ContainsFold predicate on the "reason" field.
+func ReasonContainsFold(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldContainsFold(FieldReason, v))
 }
 
 // HasDevice applies the HasEdge predicate on the "device" edge.
