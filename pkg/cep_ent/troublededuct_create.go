@@ -191,6 +191,20 @@ func (tdc *TroubleDeductCreate) SetNillableReason(s *string) *TroubleDeductCreat
 	return tdc
 }
 
+// SetCancelReason sets the "cancel_reason" field.
+func (tdc *TroubleDeductCreate) SetCancelReason(s string) *TroubleDeductCreate {
+	tdc.mutation.SetCancelReason(s)
+	return tdc
+}
+
+// SetNillableCancelReason sets the "cancel_reason" field if the given value is not nil.
+func (tdc *TroubleDeductCreate) SetNillableCancelReason(s *string) *TroubleDeductCreate {
+	if s != nil {
+		tdc.SetCancelReason(*s)
+	}
+	return tdc
+}
+
 // SetID sets the "id" field.
 func (tdc *TroubleDeductCreate) SetID(i int64) *TroubleDeductCreate {
 	tdc.mutation.SetID(i)
@@ -293,6 +307,10 @@ func (tdc *TroubleDeductCreate) defaults() {
 		v := troublededuct.DefaultReason
 		tdc.mutation.SetReason(v)
 	}
+	if _, ok := tdc.mutation.CancelReason(); !ok {
+		v := troublededuct.DefaultCancelReason
+		tdc.mutation.SetCancelReason(v)
+	}
 	if _, ok := tdc.mutation.ID(); !ok {
 		v := troublededuct.DefaultID()
 		tdc.mutation.SetID(v)
@@ -341,6 +359,9 @@ func (tdc *TroubleDeductCreate) check() error {
 	}
 	if _, ok := tdc.mutation.Reason(); !ok {
 		return &ValidationError{Name: "reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.reason"`)}
+	}
+	if _, ok := tdc.mutation.CancelReason(); !ok {
+		return &ValidationError{Name: "cancel_reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.cancel_reason"`)}
 	}
 	if _, ok := tdc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "TroubleDeduct.device"`)}
@@ -421,6 +442,10 @@ func (tdc *TroubleDeductCreate) createSpec() (*TroubleDeduct, *sqlgraph.CreateSp
 	if value, ok := tdc.mutation.Reason(); ok {
 		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
 		_node.Reason = value
+	}
+	if value, ok := tdc.mutation.CancelReason(); ok {
+		_spec.SetField(troublededuct.FieldCancelReason, field.TypeString, value)
+		_node.CancelReason = value
 	}
 	if nodes := tdc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -644,6 +669,18 @@ func (u *TroubleDeductUpsert) SetReason(v string) *TroubleDeductUpsert {
 // UpdateReason sets the "reason" field to the value that was provided on create.
 func (u *TroubleDeductUpsert) UpdateReason() *TroubleDeductUpsert {
 	u.SetExcluded(troublededuct.FieldReason)
+	return u
+}
+
+// SetCancelReason sets the "cancel_reason" field.
+func (u *TroubleDeductUpsert) SetCancelReason(v string) *TroubleDeductUpsert {
+	u.Set(troublededuct.FieldCancelReason, v)
+	return u
+}
+
+// UpdateCancelReason sets the "cancel_reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsert) UpdateCancelReason() *TroubleDeductUpsert {
+	u.SetExcluded(troublededuct.FieldCancelReason)
 	return u
 }
 
@@ -877,6 +914,20 @@ func (u *TroubleDeductUpsertOne) SetReason(v string) *TroubleDeductUpsertOne {
 func (u *TroubleDeductUpsertOne) UpdateReason() *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateReason()
+	})
+}
+
+// SetCancelReason sets the "cancel_reason" field.
+func (u *TroubleDeductUpsertOne) SetCancelReason(v string) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetCancelReason(v)
+	})
+}
+
+// UpdateCancelReason sets the "cancel_reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsertOne) UpdateCancelReason() *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateCancelReason()
 	})
 }
 
@@ -1276,6 +1327,20 @@ func (u *TroubleDeductUpsertBulk) SetReason(v string) *TroubleDeductUpsertBulk {
 func (u *TroubleDeductUpsertBulk) UpdateReason() *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateReason()
+	})
+}
+
+// SetCancelReason sets the "cancel_reason" field.
+func (u *TroubleDeductUpsertBulk) SetCancelReason(v string) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetCancelReason(v)
+	})
+}
+
+// UpdateCancelReason sets the "cancel_reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsertBulk) UpdateCancelReason() *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateCancelReason()
 	})
 }
 

@@ -3006,6 +3006,10 @@ func init() {
 	troubledeductDescReason := troubledeductFields[6].Descriptor()
 	// troublededuct.DefaultReason holds the default value on creation for the reason field.
 	troublededuct.DefaultReason = troubledeductDescReason.Default.(string)
+	// troubledeductDescCancelReason is the schema descriptor for cancel_reason field.
+	troubledeductDescCancelReason := troubledeductFields[7].Descriptor()
+	// troublededuct.DefaultCancelReason holds the default value on creation for the cancel_reason field.
+	troublededuct.DefaultCancelReason = troubledeductDescCancelReason.Default.(string)
 	// troubledeductDescID is the schema descriptor for id field.
 	troubledeductDescID := troubledeductMixinFields0[0].Descriptor()
 	// troublededuct.DefaultID holds the default value on creation for the id field.

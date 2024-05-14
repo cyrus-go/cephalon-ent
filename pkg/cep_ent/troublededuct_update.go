@@ -204,6 +204,20 @@ func (tdu *TroubleDeductUpdate) SetNillableReason(s *string) *TroubleDeductUpdat
 	return tdu
 }
 
+// SetCancelReason sets the "cancel_reason" field.
+func (tdu *TroubleDeductUpdate) SetCancelReason(s string) *TroubleDeductUpdate {
+	tdu.mutation.SetCancelReason(s)
+	return tdu
+}
+
+// SetNillableCancelReason sets the "cancel_reason" field if the given value is not nil.
+func (tdu *TroubleDeductUpdate) SetNillableCancelReason(s *string) *TroubleDeductUpdate {
+	if s != nil {
+		tdu.SetCancelReason(*s)
+	}
+	return tdu
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (tdu *TroubleDeductUpdate) SetDevice(d *Device) *TroubleDeductUpdate {
 	return tdu.SetDeviceID(d.ID)
@@ -328,6 +342,9 @@ func (tdu *TroubleDeductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tdu.mutation.Reason(); ok {
 		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
+	}
+	if value, ok := tdu.mutation.CancelReason(); ok {
+		_spec.SetField(troublededuct.FieldCancelReason, field.TypeString, value)
 	}
 	if tdu.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -554,6 +571,20 @@ func (tduo *TroubleDeductUpdateOne) SetNillableReason(s *string) *TroubleDeductU
 	return tduo
 }
 
+// SetCancelReason sets the "cancel_reason" field.
+func (tduo *TroubleDeductUpdateOne) SetCancelReason(s string) *TroubleDeductUpdateOne {
+	tduo.mutation.SetCancelReason(s)
+	return tduo
+}
+
+// SetNillableCancelReason sets the "cancel_reason" field if the given value is not nil.
+func (tduo *TroubleDeductUpdateOne) SetNillableCancelReason(s *string) *TroubleDeductUpdateOne {
+	if s != nil {
+		tduo.SetCancelReason(*s)
+	}
+	return tduo
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (tduo *TroubleDeductUpdateOne) SetDevice(d *Device) *TroubleDeductUpdateOne {
 	return tduo.SetDeviceID(d.ID)
@@ -708,6 +739,9 @@ func (tduo *TroubleDeductUpdateOne) sqlSave(ctx context.Context) (_node *Trouble
 	}
 	if value, ok := tduo.mutation.Reason(); ok {
 		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
+	}
+	if value, ok := tduo.mutation.CancelReason(); ok {
+		_spec.SetField(troublededuct.FieldCancelReason, field.TypeString, value)
 	}
 	if tduo.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{

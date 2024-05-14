@@ -23,6 +23,7 @@ func (TroubleDeduct) Fields() []ent.Field {
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("扣费金额，单位：分"),
 		field.Enum("status").Values("pending", "canceled", "succeed", "failed").Default("pending").StructTag(`json:"status"`).Comment("状态"),
 		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("扣费原因"),
+		field.String("cancel_reason").StructTag(`json:"cancel_reason"`).Default("").Comment("取消扣费原因"),
 	}
 }
 

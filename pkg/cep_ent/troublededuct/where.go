@@ -110,6 +110,11 @@ func Reason(v string) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldReason, v))
 }
 
+// CancelReason applies equality check predicate on the "cancel_reason" field. It's identical to CancelReasonEQ.
+func CancelReason(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldCancelReason, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldCreatedBy, v))
@@ -573,6 +578,71 @@ func ReasonEqualFold(v string) predicate.TroubleDeduct {
 // ReasonContainsFold applies the ContainsFold predicate on the "reason" field.
 func ReasonContainsFold(v string) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldContainsFold(FieldReason, v))
+}
+
+// CancelReasonEQ applies the EQ predicate on the "cancel_reason" field.
+func CancelReasonEQ(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldCancelReason, v))
+}
+
+// CancelReasonNEQ applies the NEQ predicate on the "cancel_reason" field.
+func CancelReasonNEQ(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNEQ(FieldCancelReason, v))
+}
+
+// CancelReasonIn applies the In predicate on the "cancel_reason" field.
+func CancelReasonIn(vs ...string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldIn(FieldCancelReason, vs...))
+}
+
+// CancelReasonNotIn applies the NotIn predicate on the "cancel_reason" field.
+func CancelReasonNotIn(vs ...string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNotIn(FieldCancelReason, vs...))
+}
+
+// CancelReasonGT applies the GT predicate on the "cancel_reason" field.
+func CancelReasonGT(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGT(FieldCancelReason, v))
+}
+
+// CancelReasonGTE applies the GTE predicate on the "cancel_reason" field.
+func CancelReasonGTE(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGTE(FieldCancelReason, v))
+}
+
+// CancelReasonLT applies the LT predicate on the "cancel_reason" field.
+func CancelReasonLT(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLT(FieldCancelReason, v))
+}
+
+// CancelReasonLTE applies the LTE predicate on the "cancel_reason" field.
+func CancelReasonLTE(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLTE(FieldCancelReason, v))
+}
+
+// CancelReasonContains applies the Contains predicate on the "cancel_reason" field.
+func CancelReasonContains(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldContains(FieldCancelReason, v))
+}
+
+// CancelReasonHasPrefix applies the HasPrefix predicate on the "cancel_reason" field.
+func CancelReasonHasPrefix(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldHasPrefix(FieldCancelReason, v))
+}
+
+// CancelReasonHasSuffix applies the HasSuffix predicate on the "cancel_reason" field.
+func CancelReasonHasSuffix(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldHasSuffix(FieldCancelReason, v))
+}
+
+// CancelReasonEqualFold applies the EqualFold predicate on the "cancel_reason" field.
+func CancelReasonEqualFold(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEqualFold(FieldCancelReason, v))
+}
+
+// CancelReasonContainsFold applies the ContainsFold predicate on the "cancel_reason" field.
+func CancelReasonContainsFold(v string) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldContainsFold(FieldCancelReason, v))
 }
 
 // HasDevice applies the HasEdge predicate on the "device" edge.
