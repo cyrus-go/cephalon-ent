@@ -205,16 +205,16 @@ func (tdu *TroubleDeductUpdate) SetNillableReason(s *string) *TroubleDeductUpdat
 	return tdu
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (tdu *TroubleDeductUpdate) SetCancelReason(s string) *TroubleDeductUpdate {
-	tdu.mutation.SetCancelReason(s)
+// SetRejectReason sets the "reject_reason" field.
+func (tdu *TroubleDeductUpdate) SetRejectReason(s string) *TroubleDeductUpdate {
+	tdu.mutation.SetRejectReason(s)
 	return tdu
 }
 
-// SetNillableCancelReason sets the "cancel_reason" field if the given value is not nil.
-func (tdu *TroubleDeductUpdate) SetNillableCancelReason(s *string) *TroubleDeductUpdate {
+// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
+func (tdu *TroubleDeductUpdate) SetNillableRejectReason(s *string) *TroubleDeductUpdate {
 	if s != nil {
-		tdu.SetCancelReason(*s)
+		tdu.SetRejectReason(*s)
 	}
 	return tdu
 }
@@ -344,8 +344,8 @@ func (tdu *TroubleDeductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := tdu.mutation.Reason(); ok {
 		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
 	}
-	if value, ok := tdu.mutation.CancelReason(); ok {
-		_spec.SetField(troublededuct.FieldCancelReason, field.TypeString, value)
+	if value, ok := tdu.mutation.RejectReason(); ok {
+		_spec.SetField(troublededuct.FieldRejectReason, field.TypeString, value)
 	}
 	if tdu.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -572,16 +572,16 @@ func (tduo *TroubleDeductUpdateOne) SetNillableReason(s *string) *TroubleDeductU
 	return tduo
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (tduo *TroubleDeductUpdateOne) SetCancelReason(s string) *TroubleDeductUpdateOne {
-	tduo.mutation.SetCancelReason(s)
+// SetRejectReason sets the "reject_reason" field.
+func (tduo *TroubleDeductUpdateOne) SetRejectReason(s string) *TroubleDeductUpdateOne {
+	tduo.mutation.SetRejectReason(s)
 	return tduo
 }
 
-// SetNillableCancelReason sets the "cancel_reason" field if the given value is not nil.
-func (tduo *TroubleDeductUpdateOne) SetNillableCancelReason(s *string) *TroubleDeductUpdateOne {
+// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
+func (tduo *TroubleDeductUpdateOne) SetNillableRejectReason(s *string) *TroubleDeductUpdateOne {
 	if s != nil {
-		tduo.SetCancelReason(*s)
+		tduo.SetRejectReason(*s)
 	}
 	return tduo
 }
@@ -741,8 +741,8 @@ func (tduo *TroubleDeductUpdateOne) sqlSave(ctx context.Context) (_node *Trouble
 	if value, ok := tduo.mutation.Reason(); ok {
 		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
 	}
-	if value, ok := tduo.mutation.CancelReason(); ok {
-		_spec.SetField(troublededuct.FieldCancelReason, field.TypeString, value)
+	if value, ok := tduo.mutation.RejectReason(); ok {
+		_spec.SetField(troublededuct.FieldRejectReason, field.TypeString, value)
 	}
 	if tduo.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{

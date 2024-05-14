@@ -40,8 +40,8 @@ const (
 	FieldStatus = "status"
 	// FieldReason holds the string denoting the reason field in the database.
 	FieldReason = "reason"
-	// FieldCancelReason holds the string denoting the cancel_reason field in the database.
-	FieldCancelReason = "cancel_reason"
+	// FieldRejectReason holds the string denoting the reject_reason field in the database.
+	FieldRejectReason = "reject_reason"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// Table holds the table name of the troublededuct in the database.
@@ -70,7 +70,7 @@ var Columns = []string{
 	FieldAmount,
 	FieldStatus,
 	FieldReason,
-	FieldCancelReason,
+	FieldRejectReason,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -108,8 +108,8 @@ var (
 	DefaultAmount int64
 	// DefaultReason holds the default value on creation for the "reason" field.
 	DefaultReason string
-	// DefaultCancelReason holds the default value on creation for the "cancel_reason" field.
-	DefaultCancelReason string
+	// DefaultRejectReason holds the default value on creation for the "reject_reason" field.
+	DefaultRejectReason string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -194,9 +194,9 @@ func ByReason(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldReason, opts...).ToFunc()
 }
 
-// ByCancelReason orders the results by the cancel_reason field.
-func ByCancelReason(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCancelReason, opts...).ToFunc()
+// ByRejectReason orders the results by the reject_reason field.
+func ByRejectReason(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRejectReason, opts...).ToFunc()
 }
 
 // ByDeviceField orders the results by device field.

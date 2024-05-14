@@ -192,16 +192,16 @@ func (tdc *TroubleDeductCreate) SetNillableReason(s *string) *TroubleDeductCreat
 	return tdc
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (tdc *TroubleDeductCreate) SetCancelReason(s string) *TroubleDeductCreate {
-	tdc.mutation.SetCancelReason(s)
+// SetRejectReason sets the "reject_reason" field.
+func (tdc *TroubleDeductCreate) SetRejectReason(s string) *TroubleDeductCreate {
+	tdc.mutation.SetRejectReason(s)
 	return tdc
 }
 
-// SetNillableCancelReason sets the "cancel_reason" field if the given value is not nil.
-func (tdc *TroubleDeductCreate) SetNillableCancelReason(s *string) *TroubleDeductCreate {
+// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
+func (tdc *TroubleDeductCreate) SetNillableRejectReason(s *string) *TroubleDeductCreate {
 	if s != nil {
-		tdc.SetCancelReason(*s)
+		tdc.SetRejectReason(*s)
 	}
 	return tdc
 }
@@ -308,9 +308,9 @@ func (tdc *TroubleDeductCreate) defaults() {
 		v := troublededuct.DefaultReason
 		tdc.mutation.SetReason(v)
 	}
-	if _, ok := tdc.mutation.CancelReason(); !ok {
-		v := troublededuct.DefaultCancelReason
-		tdc.mutation.SetCancelReason(v)
+	if _, ok := tdc.mutation.RejectReason(); !ok {
+		v := troublededuct.DefaultRejectReason
+		tdc.mutation.SetRejectReason(v)
 	}
 	if _, ok := tdc.mutation.ID(); !ok {
 		v := troublededuct.DefaultID()
@@ -361,8 +361,8 @@ func (tdc *TroubleDeductCreate) check() error {
 	if _, ok := tdc.mutation.Reason(); !ok {
 		return &ValidationError{Name: "reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.reason"`)}
 	}
-	if _, ok := tdc.mutation.CancelReason(); !ok {
-		return &ValidationError{Name: "cancel_reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.cancel_reason"`)}
+	if _, ok := tdc.mutation.RejectReason(); !ok {
+		return &ValidationError{Name: "reject_reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.reject_reason"`)}
 	}
 	if _, ok := tdc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "TroubleDeduct.device"`)}
@@ -444,9 +444,9 @@ func (tdc *TroubleDeductCreate) createSpec() (*TroubleDeduct, *sqlgraph.CreateSp
 		_spec.SetField(troublededuct.FieldReason, field.TypeString, value)
 		_node.Reason = value
 	}
-	if value, ok := tdc.mutation.CancelReason(); ok {
-		_spec.SetField(troublededuct.FieldCancelReason, field.TypeString, value)
-		_node.CancelReason = value
+	if value, ok := tdc.mutation.RejectReason(); ok {
+		_spec.SetField(troublededuct.FieldRejectReason, field.TypeString, value)
+		_node.RejectReason = value
 	}
 	if nodes := tdc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -673,15 +673,15 @@ func (u *TroubleDeductUpsert) UpdateReason() *TroubleDeductUpsert {
 	return u
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (u *TroubleDeductUpsert) SetCancelReason(v string) *TroubleDeductUpsert {
-	u.Set(troublededuct.FieldCancelReason, v)
+// SetRejectReason sets the "reject_reason" field.
+func (u *TroubleDeductUpsert) SetRejectReason(v string) *TroubleDeductUpsert {
+	u.Set(troublededuct.FieldRejectReason, v)
 	return u
 }
 
-// UpdateCancelReason sets the "cancel_reason" field to the value that was provided on create.
-func (u *TroubleDeductUpsert) UpdateCancelReason() *TroubleDeductUpsert {
-	u.SetExcluded(troublededuct.FieldCancelReason)
+// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsert) UpdateRejectReason() *TroubleDeductUpsert {
+	u.SetExcluded(troublededuct.FieldRejectReason)
 	return u
 }
 
@@ -918,17 +918,17 @@ func (u *TroubleDeductUpsertOne) UpdateReason() *TroubleDeductUpsertOne {
 	})
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (u *TroubleDeductUpsertOne) SetCancelReason(v string) *TroubleDeductUpsertOne {
+// SetRejectReason sets the "reject_reason" field.
+func (u *TroubleDeductUpsertOne) SetRejectReason(v string) *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
-		s.SetCancelReason(v)
+		s.SetRejectReason(v)
 	})
 }
 
-// UpdateCancelReason sets the "cancel_reason" field to the value that was provided on create.
-func (u *TroubleDeductUpsertOne) UpdateCancelReason() *TroubleDeductUpsertOne {
+// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsertOne) UpdateRejectReason() *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
-		s.UpdateCancelReason()
+		s.UpdateRejectReason()
 	})
 }
 
@@ -1331,17 +1331,17 @@ func (u *TroubleDeductUpsertBulk) UpdateReason() *TroubleDeductUpsertBulk {
 	})
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (u *TroubleDeductUpsertBulk) SetCancelReason(v string) *TroubleDeductUpsertBulk {
+// SetRejectReason sets the "reject_reason" field.
+func (u *TroubleDeductUpsertBulk) SetRejectReason(v string) *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
-		s.SetCancelReason(v)
+		s.SetRejectReason(v)
 	})
 }
 
-// UpdateCancelReason sets the "cancel_reason" field to the value that was provided on create.
-func (u *TroubleDeductUpsertBulk) UpdateCancelReason() *TroubleDeductUpsertBulk {
+// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
+func (u *TroubleDeductUpsertBulk) UpdateRejectReason() *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
-		s.UpdateCancelReason()
+		s.UpdateRejectReason()
 	})
 }
 

@@ -68209,7 +68209,7 @@ type TroubleDeductMutation struct {
 	addamount           *int64
 	status              *enums.TroubleDeductStatus
 	reason              *string
-	cancel_reason       *string
+	reject_reason       *string
 	clearedFields       map[string]struct{}
 	device              *int64
 	cleareddevice       bool
@@ -68834,40 +68834,40 @@ func (m *TroubleDeductMutation) ResetReason() {
 	m.reason = nil
 }
 
-// SetCancelReason sets the "cancel_reason" field.
-func (m *TroubleDeductMutation) SetCancelReason(s string) {
-	m.cancel_reason = &s
+// SetRejectReason sets the "reject_reason" field.
+func (m *TroubleDeductMutation) SetRejectReason(s string) {
+	m.reject_reason = &s
 }
 
-// CancelReason returns the value of the "cancel_reason" field in the mutation.
-func (m *TroubleDeductMutation) CancelReason() (r string, exists bool) {
-	v := m.cancel_reason
+// RejectReason returns the value of the "reject_reason" field in the mutation.
+func (m *TroubleDeductMutation) RejectReason() (r string, exists bool) {
+	v := m.reject_reason
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCancelReason returns the old "cancel_reason" field's value of the TroubleDeduct entity.
+// OldRejectReason returns the old "reject_reason" field's value of the TroubleDeduct entity.
 // If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TroubleDeductMutation) OldCancelReason(ctx context.Context) (v string, err error) {
+func (m *TroubleDeductMutation) OldRejectReason(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCancelReason is only allowed on UpdateOne operations")
+		return v, errors.New("OldRejectReason is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCancelReason requires an ID field in the mutation")
+		return v, errors.New("OldRejectReason requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCancelReason: %w", err)
+		return v, fmt.Errorf("querying old value for OldRejectReason: %w", err)
 	}
-	return oldValue.CancelReason, nil
+	return oldValue.RejectReason, nil
 }
 
-// ResetCancelReason resets all changes to the "cancel_reason" field.
-func (m *TroubleDeductMutation) ResetCancelReason() {
-	m.cancel_reason = nil
+// ResetRejectReason resets all changes to the "reject_reason" field.
+func (m *TroubleDeductMutation) ResetRejectReason() {
+	m.reject_reason = nil
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -68968,8 +68968,8 @@ func (m *TroubleDeductMutation) Fields() []string {
 	if m.reason != nil {
 		fields = append(fields, troublededuct.FieldReason)
 	}
-	if m.cancel_reason != nil {
-		fields = append(fields, troublededuct.FieldCancelReason)
+	if m.reject_reason != nil {
+		fields = append(fields, troublededuct.FieldRejectReason)
 	}
 	return fields
 }
@@ -69003,8 +69003,8 @@ func (m *TroubleDeductMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case troublededuct.FieldReason:
 		return m.Reason()
-	case troublededuct.FieldCancelReason:
-		return m.CancelReason()
+	case troublededuct.FieldRejectReason:
+		return m.RejectReason()
 	}
 	return nil, false
 }
@@ -69038,8 +69038,8 @@ func (m *TroubleDeductMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldStatus(ctx)
 	case troublededuct.FieldReason:
 		return m.OldReason(ctx)
-	case troublededuct.FieldCancelReason:
-		return m.OldCancelReason(ctx)
+	case troublededuct.FieldRejectReason:
+		return m.OldRejectReason(ctx)
 	}
 	return nil, fmt.Errorf("unknown TroubleDeduct field %s", name)
 }
@@ -69133,12 +69133,12 @@ func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetReason(v)
 		return nil
-	case troublededuct.FieldCancelReason:
+	case troublededuct.FieldRejectReason:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCancelReason(v)
+		m.SetRejectReason(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TroubleDeduct field %s", name)
@@ -69276,8 +69276,8 @@ func (m *TroubleDeductMutation) ResetField(name string) error {
 	case troublededuct.FieldReason:
 		m.ResetReason()
 		return nil
-	case troublededuct.FieldCancelReason:
-		m.ResetCancelReason()
+	case troublededuct.FieldRejectReason:
+		m.ResetRejectReason()
 		return nil
 	}
 	return fmt.Errorf("unknown TroubleDeduct field %s", name)

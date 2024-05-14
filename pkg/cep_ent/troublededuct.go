@@ -44,8 +44,8 @@ type TroubleDeduct struct {
 	Status enums.TroubleDeductStatus `json:"status"`
 	// 扣费原因
 	Reason string `json:"reason"`
-	// 取消扣费原因
-	CancelReason string `json:"cancel_reason"`
+	// 拒绝扣费原因
+	RejectReason string `json:"reject_reason"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TroubleDeductQuery when eager-loading is set.
 	Edges        TroubleDeductEdges `json:"edges"`
@@ -83,7 +83,7 @@ func (*TroubleDeduct) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldDeviceID, troublededuct.FieldAmount:
 			values[i] = new(sql.NullInt64)
-		case troublededuct.FieldStatus, troublededuct.FieldReason, troublededuct.FieldCancelReason:
+		case troublededuct.FieldStatus, troublededuct.FieldReason, troublededuct.FieldRejectReason:
 			values[i] = new(sql.NullString)
 		case troublededuct.FieldCreatedAt, troublededuct.FieldUpdatedAt, troublededuct.FieldDeletedAt, troublededuct.FieldStartedAt, troublededuct.FieldFinishedAt:
 			values[i] = new(sql.NullTime)
@@ -180,11 +180,11 @@ func (td *TroubleDeduct) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				td.Reason = value.String
 			}
-		case troublededuct.FieldCancelReason:
+		case troublededuct.FieldRejectReason:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field cancel_reason", values[i])
+				return fmt.Errorf("unexpected type %T for field reject_reason", values[i])
 			} else if value.Valid {
-				td.CancelReason = value.String
+				td.RejectReason = value.String
 			}
 		default:
 			td.selectValues.Set(columns[i], values[i])
@@ -263,8 +263,8 @@ func (td *TroubleDeduct) String() string {
 	builder.WriteString("reason=")
 	builder.WriteString(td.Reason)
 	builder.WriteString(", ")
-	builder.WriteString("cancel_reason=")
-	builder.WriteString(td.CancelReason)
+	builder.WriteString("reject_reason=")
+	builder.WriteString(td.RejectReason)
 	builder.WriteByte(')')
 	return builder.String()
 }
