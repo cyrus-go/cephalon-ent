@@ -20,7 +20,7 @@ func (TroubleDeduct) Fields() []ent.Field {
 		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("设备 id"),
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("故障开始时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("故障结束时刻"),
-		field.Float("time_of_duration").Default(0).StructTag(`json:"time_of_duration,string"`).Comment("持续时长，单位：小时"),
+		field.Float("time_of_duration").Default(0).StructTag(`json:"time_of_duration"`).Comment("持续时长，单位：小时"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("扣费金额，单位：分"),
 		field.Enum("status").GoType(enums.TroubleDeductStatusPending).Default(string(enums.TroubleDeductStatusPending)).StructTag(`json:"status"`).Comment("状态"),
 		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("扣费原因"),

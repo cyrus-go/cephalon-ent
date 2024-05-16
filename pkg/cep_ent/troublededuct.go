@@ -37,7 +37,7 @@ type TroubleDeduct struct {
 	// 故障结束时刻
 	FinishedAt time.Time `json:"finished_at"`
 	// 持续时长，单位：小时
-	TimeOfDuration float64 `json:"time_of_duration,string"`
+	TimeOfDuration float64 `json:"time_of_duration"`
 	// 扣费金额，单位：分
 	Amount int64 `json:"amount"`
 	// 状态
