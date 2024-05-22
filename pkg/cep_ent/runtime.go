@@ -2998,16 +2998,20 @@ func init() {
 	troubledeductDescTimeOfDuration := troubledeductFields[3].Descriptor()
 	// troublededuct.DefaultTimeOfDuration holds the default value on creation for the time_of_duration field.
 	troublededuct.DefaultTimeOfDuration = troubledeductDescTimeOfDuration.Default.(float64)
+	// troubledeductDescDeductStandard is the schema descriptor for deduct_standard field.
+	troubledeductDescDeductStandard := troubledeductFields[4].Descriptor()
+	// troublededuct.DefaultDeductStandard holds the default value on creation for the deduct_standard field.
+	troublededuct.DefaultDeductStandard = troubledeductDescDeductStandard.Default.(int64)
 	// troubledeductDescAmount is the schema descriptor for amount field.
-	troubledeductDescAmount := troubledeductFields[4].Descriptor()
+	troubledeductDescAmount := troubledeductFields[5].Descriptor()
 	// troublededuct.DefaultAmount holds the default value on creation for the amount field.
 	troublededuct.DefaultAmount = troubledeductDescAmount.Default.(int64)
 	// troubledeductDescReason is the schema descriptor for reason field.
-	troubledeductDescReason := troubledeductFields[6].Descriptor()
+	troubledeductDescReason := troubledeductFields[7].Descriptor()
 	// troublededuct.DefaultReason holds the default value on creation for the reason field.
 	troublededuct.DefaultReason = troubledeductDescReason.Default.(string)
 	// troubledeductDescRejectReason is the schema descriptor for reject_reason field.
-	troubledeductDescRejectReason := troubledeductFields[7].Descriptor()
+	troubledeductDescRejectReason := troubledeductFields[8].Descriptor()
 	// troublededuct.DefaultRejectReason holds the default value on creation for the reject_reason field.
 	troublededuct.DefaultRejectReason = troubledeductDescRejectReason.Default.(string)
 	// troubledeductDescID is the schema descriptor for id field.

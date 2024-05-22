@@ -101,6 +101,11 @@ func TimeOfDuration(v float64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldTimeOfDuration, v))
 }
 
+// DeductStandard applies equality check predicate on the "deduct_standard" field. It's identical to DeductStandardEQ.
+func DeductStandard(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldDeductStandard, v))
+}
+
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldAmount, v))
@@ -454,6 +459,46 @@ func TimeOfDurationLT(v float64) predicate.TroubleDeduct {
 // TimeOfDurationLTE applies the LTE predicate on the "time_of_duration" field.
 func TimeOfDurationLTE(v float64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldLTE(FieldTimeOfDuration, v))
+}
+
+// DeductStandardEQ applies the EQ predicate on the "deduct_standard" field.
+func DeductStandardEQ(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldDeductStandard, v))
+}
+
+// DeductStandardNEQ applies the NEQ predicate on the "deduct_standard" field.
+func DeductStandardNEQ(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNEQ(FieldDeductStandard, v))
+}
+
+// DeductStandardIn applies the In predicate on the "deduct_standard" field.
+func DeductStandardIn(vs ...int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldIn(FieldDeductStandard, vs...))
+}
+
+// DeductStandardNotIn applies the NotIn predicate on the "deduct_standard" field.
+func DeductStandardNotIn(vs ...int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNotIn(FieldDeductStandard, vs...))
+}
+
+// DeductStandardGT applies the GT predicate on the "deduct_standard" field.
+func DeductStandardGT(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGT(FieldDeductStandard, v))
+}
+
+// DeductStandardGTE applies the GTE predicate on the "deduct_standard" field.
+func DeductStandardGTE(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGTE(FieldDeductStandard, v))
+}
+
+// DeductStandardLT applies the LT predicate on the "deduct_standard" field.
+func DeductStandardLT(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLT(FieldDeductStandard, v))
+}
+
+// DeductStandardLTE applies the LTE predicate on the "deduct_standard" field.
+func DeductStandardLTE(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLTE(FieldDeductStandard, v))
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.

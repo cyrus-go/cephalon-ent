@@ -2238,6 +2238,7 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Comment: "故障开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "故障结束时刻"},
 		{Name: "time_of_duration", Type: field.TypeFloat64, Comment: "持续时长，单位：小时", Default: 0},
+		{Name: "deduct_standard", Type: field.TypeInt64, Comment: "扣费标准，单位：分", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：分", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
 		{Name: "reason", Type: field.TypeString, Comment: "扣费原因", Default: ""},
@@ -2253,7 +2254,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "trouble_deducts_devices_trouble_deducts",
-				Columns:    []*schema.Column{TroubleDeductsColumns[13]},
+				Columns:    []*schema.Column{TroubleDeductsColumns[14]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

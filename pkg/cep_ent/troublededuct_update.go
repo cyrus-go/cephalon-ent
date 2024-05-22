@@ -156,6 +156,27 @@ func (tdu *TroubleDeductUpdate) AddTimeOfDuration(f float64) *TroubleDeductUpdat
 	return tdu
 }
 
+// SetDeductStandard sets the "deduct_standard" field.
+func (tdu *TroubleDeductUpdate) SetDeductStandard(i int64) *TroubleDeductUpdate {
+	tdu.mutation.ResetDeductStandard()
+	tdu.mutation.SetDeductStandard(i)
+	return tdu
+}
+
+// SetNillableDeductStandard sets the "deduct_standard" field if the given value is not nil.
+func (tdu *TroubleDeductUpdate) SetNillableDeductStandard(i *int64) *TroubleDeductUpdate {
+	if i != nil {
+		tdu.SetDeductStandard(*i)
+	}
+	return tdu
+}
+
+// AddDeductStandard adds i to the "deduct_standard" field.
+func (tdu *TroubleDeductUpdate) AddDeductStandard(i int64) *TroubleDeductUpdate {
+	tdu.mutation.AddDeductStandard(i)
+	return tdu
+}
+
 // SetAmount sets the "amount" field.
 func (tdu *TroubleDeductUpdate) SetAmount(i int64) *TroubleDeductUpdate {
 	tdu.mutation.ResetAmount()
@@ -331,6 +352,12 @@ func (tdu *TroubleDeductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tdu.mutation.AddedTimeOfDuration(); ok {
 		_spec.AddField(troublededuct.FieldTimeOfDuration, field.TypeFloat64, value)
+	}
+	if value, ok := tdu.mutation.DeductStandard(); ok {
+		_spec.SetField(troublededuct.FieldDeductStandard, field.TypeInt64, value)
+	}
+	if value, ok := tdu.mutation.AddedDeductStandard(); ok {
+		_spec.AddField(troublededuct.FieldDeductStandard, field.TypeInt64, value)
 	}
 	if value, ok := tdu.mutation.Amount(); ok {
 		_spec.SetField(troublededuct.FieldAmount, field.TypeInt64, value)
@@ -520,6 +547,27 @@ func (tduo *TroubleDeductUpdateOne) SetNillableTimeOfDuration(f *float64) *Troub
 // AddTimeOfDuration adds f to the "time_of_duration" field.
 func (tduo *TroubleDeductUpdateOne) AddTimeOfDuration(f float64) *TroubleDeductUpdateOne {
 	tduo.mutation.AddTimeOfDuration(f)
+	return tduo
+}
+
+// SetDeductStandard sets the "deduct_standard" field.
+func (tduo *TroubleDeductUpdateOne) SetDeductStandard(i int64) *TroubleDeductUpdateOne {
+	tduo.mutation.ResetDeductStandard()
+	tduo.mutation.SetDeductStandard(i)
+	return tduo
+}
+
+// SetNillableDeductStandard sets the "deduct_standard" field if the given value is not nil.
+func (tduo *TroubleDeductUpdateOne) SetNillableDeductStandard(i *int64) *TroubleDeductUpdateOne {
+	if i != nil {
+		tduo.SetDeductStandard(*i)
+	}
+	return tduo
+}
+
+// AddDeductStandard adds i to the "deduct_standard" field.
+func (tduo *TroubleDeductUpdateOne) AddDeductStandard(i int64) *TroubleDeductUpdateOne {
+	tduo.mutation.AddDeductStandard(i)
 	return tduo
 }
 
@@ -728,6 +776,12 @@ func (tduo *TroubleDeductUpdateOne) sqlSave(ctx context.Context) (_node *Trouble
 	}
 	if value, ok := tduo.mutation.AddedTimeOfDuration(); ok {
 		_spec.AddField(troublededuct.FieldTimeOfDuration, field.TypeFloat64, value)
+	}
+	if value, ok := tduo.mutation.DeductStandard(); ok {
+		_spec.SetField(troublededuct.FieldDeductStandard, field.TypeInt64, value)
+	}
+	if value, ok := tduo.mutation.AddedDeductStandard(); ok {
+		_spec.AddField(troublededuct.FieldDeductStandard, field.TypeInt64, value)
 	}
 	if value, ok := tduo.mutation.Amount(); ok {
 		_spec.SetField(troublededuct.FieldAmount, field.TypeInt64, value)

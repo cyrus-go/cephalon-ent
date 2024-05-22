@@ -34,6 +34,8 @@ const (
 	FieldFinishedAt = "finished_at"
 	// FieldTimeOfDuration holds the string denoting the time_of_duration field in the database.
 	FieldTimeOfDuration = "time_of_duration"
+	// FieldDeductStandard holds the string denoting the deduct_standard field in the database.
+	FieldDeductStandard = "deduct_standard"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -67,6 +69,7 @@ var Columns = []string{
 	FieldStartedAt,
 	FieldFinishedAt,
 	FieldTimeOfDuration,
+	FieldDeductStandard,
 	FieldAmount,
 	FieldStatus,
 	FieldReason,
@@ -104,6 +107,8 @@ var (
 	DefaultFinishedAt time.Time
 	// DefaultTimeOfDuration holds the default value on creation for the "time_of_duration" field.
 	DefaultTimeOfDuration float64
+	// DefaultDeductStandard holds the default value on creation for the "deduct_standard" field.
+	DefaultDeductStandard int64
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount int64
 	// DefaultReason holds the default value on creation for the "reason" field.
@@ -177,6 +182,11 @@ func ByFinishedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByTimeOfDuration orders the results by the time_of_duration field.
 func ByTimeOfDuration(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimeOfDuration, opts...).ToFunc()
+}
+
+// ByDeductStandard orders the results by the deduct_standard field.
+func ByDeductStandard(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeductStandard, opts...).ToFunc()
 }
 
 // ByAmount orders the results by the amount field.

@@ -150,6 +150,20 @@ func (tdc *TroubleDeductCreate) SetNillableTimeOfDuration(f *float64) *TroubleDe
 	return tdc
 }
 
+// SetDeductStandard sets the "deduct_standard" field.
+func (tdc *TroubleDeductCreate) SetDeductStandard(i int64) *TroubleDeductCreate {
+	tdc.mutation.SetDeductStandard(i)
+	return tdc
+}
+
+// SetNillableDeductStandard sets the "deduct_standard" field if the given value is not nil.
+func (tdc *TroubleDeductCreate) SetNillableDeductStandard(i *int64) *TroubleDeductCreate {
+	if i != nil {
+		tdc.SetDeductStandard(*i)
+	}
+	return tdc
+}
+
 // SetAmount sets the "amount" field.
 func (tdc *TroubleDeductCreate) SetAmount(i int64) *TroubleDeductCreate {
 	tdc.mutation.SetAmount(i)
@@ -296,6 +310,10 @@ func (tdc *TroubleDeductCreate) defaults() {
 		v := troublededuct.DefaultTimeOfDuration
 		tdc.mutation.SetTimeOfDuration(v)
 	}
+	if _, ok := tdc.mutation.DeductStandard(); !ok {
+		v := troublededuct.DefaultDeductStandard
+		tdc.mutation.SetDeductStandard(v)
+	}
 	if _, ok := tdc.mutation.Amount(); !ok {
 		v := troublededuct.DefaultAmount
 		tdc.mutation.SetAmount(v)
@@ -346,6 +364,9 @@ func (tdc *TroubleDeductCreate) check() error {
 	}
 	if _, ok := tdc.mutation.TimeOfDuration(); !ok {
 		return &ValidationError{Name: "time_of_duration", err: errors.New(`cep_ent: missing required field "TroubleDeduct.time_of_duration"`)}
+	}
+	if _, ok := tdc.mutation.DeductStandard(); !ok {
+		return &ValidationError{Name: "deduct_standard", err: errors.New(`cep_ent: missing required field "TroubleDeduct.deduct_standard"`)}
 	}
 	if _, ok := tdc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "TroubleDeduct.amount"`)}
@@ -431,6 +452,10 @@ func (tdc *TroubleDeductCreate) createSpec() (*TroubleDeduct, *sqlgraph.CreateSp
 	if value, ok := tdc.mutation.TimeOfDuration(); ok {
 		_spec.SetField(troublededuct.FieldTimeOfDuration, field.TypeFloat64, value)
 		_node.TimeOfDuration = value
+	}
+	if value, ok := tdc.mutation.DeductStandard(); ok {
+		_spec.SetField(troublededuct.FieldDeductStandard, field.TypeInt64, value)
+		_node.DeductStandard = value
 	}
 	if value, ok := tdc.mutation.Amount(); ok {
 		_spec.SetField(troublededuct.FieldAmount, field.TypeInt64, value)
@@ -628,6 +653,24 @@ func (u *TroubleDeductUpsert) UpdateTimeOfDuration() *TroubleDeductUpsert {
 // AddTimeOfDuration adds v to the "time_of_duration" field.
 func (u *TroubleDeductUpsert) AddTimeOfDuration(v float64) *TroubleDeductUpsert {
 	u.Add(troublededuct.FieldTimeOfDuration, v)
+	return u
+}
+
+// SetDeductStandard sets the "deduct_standard" field.
+func (u *TroubleDeductUpsert) SetDeductStandard(v int64) *TroubleDeductUpsert {
+	u.Set(troublededuct.FieldDeductStandard, v)
+	return u
+}
+
+// UpdateDeductStandard sets the "deduct_standard" field to the value that was provided on create.
+func (u *TroubleDeductUpsert) UpdateDeductStandard() *TroubleDeductUpsert {
+	u.SetExcluded(troublededuct.FieldDeductStandard)
+	return u
+}
+
+// AddDeductStandard adds v to the "deduct_standard" field.
+func (u *TroubleDeductUpsert) AddDeductStandard(v int64) *TroubleDeductUpsert {
+	u.Add(troublededuct.FieldDeductStandard, v)
 	return u
 }
 
@@ -866,6 +909,27 @@ func (u *TroubleDeductUpsertOne) AddTimeOfDuration(v float64) *TroubleDeductUpse
 func (u *TroubleDeductUpsertOne) UpdateTimeOfDuration() *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateTimeOfDuration()
+	})
+}
+
+// SetDeductStandard sets the "deduct_standard" field.
+func (u *TroubleDeductUpsertOne) SetDeductStandard(v int64) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetDeductStandard(v)
+	})
+}
+
+// AddDeductStandard adds v to the "deduct_standard" field.
+func (u *TroubleDeductUpsertOne) AddDeductStandard(v int64) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.AddDeductStandard(v)
+	})
+}
+
+// UpdateDeductStandard sets the "deduct_standard" field to the value that was provided on create.
+func (u *TroubleDeductUpsertOne) UpdateDeductStandard() *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateDeductStandard()
 	})
 }
 
@@ -1279,6 +1343,27 @@ func (u *TroubleDeductUpsertBulk) AddTimeOfDuration(v float64) *TroubleDeductUps
 func (u *TroubleDeductUpsertBulk) UpdateTimeOfDuration() *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateTimeOfDuration()
+	})
+}
+
+// SetDeductStandard sets the "deduct_standard" field.
+func (u *TroubleDeductUpsertBulk) SetDeductStandard(v int64) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetDeductStandard(v)
+	})
+}
+
+// AddDeductStandard adds v to the "deduct_standard" field.
+func (u *TroubleDeductUpsertBulk) AddDeductStandard(v int64) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.AddDeductStandard(v)
+	})
+}
+
+// UpdateDeductStandard sets the "deduct_standard" field to the value that was provided on create.
+func (u *TroubleDeductUpsertBulk) UpdateDeductStandard() *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateDeductStandard()
 	})
 }
 

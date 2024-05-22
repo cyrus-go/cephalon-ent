@@ -68205,6 +68205,8 @@ type TroubleDeductMutation struct {
 	finished_at         *time.Time
 	time_of_duration    *float64
 	addtime_of_duration *float64
+	deduct_standard     *int64
+	adddeduct_standard  *int64
 	amount              *int64
 	addamount           *int64
 	status              *enums.TroubleDeductStatus
@@ -68706,6 +68708,62 @@ func (m *TroubleDeductMutation) ResetTimeOfDuration() {
 	m.addtime_of_duration = nil
 }
 
+// SetDeductStandard sets the "deduct_standard" field.
+func (m *TroubleDeductMutation) SetDeductStandard(i int64) {
+	m.deduct_standard = &i
+	m.adddeduct_standard = nil
+}
+
+// DeductStandard returns the value of the "deduct_standard" field in the mutation.
+func (m *TroubleDeductMutation) DeductStandard() (r int64, exists bool) {
+	v := m.deduct_standard
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeductStandard returns the old "deduct_standard" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldDeductStandard(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeductStandard is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeductStandard requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeductStandard: %w", err)
+	}
+	return oldValue.DeductStandard, nil
+}
+
+// AddDeductStandard adds i to the "deduct_standard" field.
+func (m *TroubleDeductMutation) AddDeductStandard(i int64) {
+	if m.adddeduct_standard != nil {
+		*m.adddeduct_standard += i
+	} else {
+		m.adddeduct_standard = &i
+	}
+}
+
+// AddedDeductStandard returns the value that was added to the "deduct_standard" field in this mutation.
+func (m *TroubleDeductMutation) AddedDeductStandard() (r int64, exists bool) {
+	v := m.adddeduct_standard
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeductStandard resets all changes to the "deduct_standard" field.
+func (m *TroubleDeductMutation) ResetDeductStandard() {
+	m.deduct_standard = nil
+	m.adddeduct_standard = nil
+}
+
 // SetAmount sets the "amount" field.
 func (m *TroubleDeductMutation) SetAmount(i int64) {
 	m.amount = &i
@@ -68931,7 +68989,7 @@ func (m *TroubleDeductMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TroubleDeductMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, troublededuct.FieldCreatedBy)
 	}
@@ -68958,6 +69016,9 @@ func (m *TroubleDeductMutation) Fields() []string {
 	}
 	if m.time_of_duration != nil {
 		fields = append(fields, troublededuct.FieldTimeOfDuration)
+	}
+	if m.deduct_standard != nil {
+		fields = append(fields, troublededuct.FieldDeductStandard)
 	}
 	if m.amount != nil {
 		fields = append(fields, troublededuct.FieldAmount)
@@ -68997,6 +69058,8 @@ func (m *TroubleDeductMutation) Field(name string) (ent.Value, bool) {
 		return m.FinishedAt()
 	case troublededuct.FieldTimeOfDuration:
 		return m.TimeOfDuration()
+	case troublededuct.FieldDeductStandard:
+		return m.DeductStandard()
 	case troublededuct.FieldAmount:
 		return m.Amount()
 	case troublededuct.FieldStatus:
@@ -69032,6 +69095,8 @@ func (m *TroubleDeductMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldFinishedAt(ctx)
 	case troublededuct.FieldTimeOfDuration:
 		return m.OldTimeOfDuration(ctx)
+	case troublededuct.FieldDeductStandard:
+		return m.OldDeductStandard(ctx)
 	case troublededuct.FieldAmount:
 		return m.OldAmount(ctx)
 	case troublededuct.FieldStatus:
@@ -69112,6 +69177,13 @@ func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTimeOfDuration(v)
 		return nil
+	case troublededuct.FieldDeductStandard:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeductStandard(v)
+		return nil
 	case troublededuct.FieldAmount:
 		v, ok := value.(int64)
 		if !ok {
@@ -69157,6 +69229,9 @@ func (m *TroubleDeductMutation) AddedFields() []string {
 	if m.addtime_of_duration != nil {
 		fields = append(fields, troublededuct.FieldTimeOfDuration)
 	}
+	if m.adddeduct_standard != nil {
+		fields = append(fields, troublededuct.FieldDeductStandard)
+	}
 	if m.addamount != nil {
 		fields = append(fields, troublededuct.FieldAmount)
 	}
@@ -69174,6 +69249,8 @@ func (m *TroubleDeductMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case troublededuct.FieldTimeOfDuration:
 		return m.AddedTimeOfDuration()
+	case troublededuct.FieldDeductStandard:
+		return m.AddedDeductStandard()
 	case troublededuct.FieldAmount:
 		return m.AddedAmount()
 	}
@@ -69205,6 +69282,13 @@ func (m *TroubleDeductMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTimeOfDuration(v)
+		return nil
+	case troublededuct.FieldDeductStandard:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeductStandard(v)
 		return nil
 	case troublededuct.FieldAmount:
 		v, ok := value.(int64)
@@ -69266,6 +69350,9 @@ func (m *TroubleDeductMutation) ResetField(name string) error {
 		return nil
 	case troublededuct.FieldTimeOfDuration:
 		m.ResetTimeOfDuration()
+		return nil
+	case troublededuct.FieldDeductStandard:
+		m.ResetDeductStandard()
 		return nil
 	case troublededuct.FieldAmount:
 		m.ResetAmount()

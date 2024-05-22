@@ -38,6 +38,8 @@ type TroubleDeduct struct {
 	FinishedAt time.Time `json:"finished_at"`
 	// 持续时长，单位：小时
 	TimeOfDuration float64 `json:"time_of_duration"`
+	// 扣费标准，单位：分
+	DeductStandard int64 `json:"deduct_standard"`
 	// 扣费金额，单位：分
 	Amount int64 `json:"amount"`
 	// 状态
@@ -81,7 +83,7 @@ func (*TroubleDeduct) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case troublededuct.FieldTimeOfDuration:
 			values[i] = new(sql.NullFloat64)
-		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldDeviceID, troublededuct.FieldAmount:
+		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldDeviceID, troublededuct.FieldDeductStandard, troublededuct.FieldAmount:
 			values[i] = new(sql.NullInt64)
 		case troublededuct.FieldStatus, troublededuct.FieldReason, troublededuct.FieldRejectReason:
 			values[i] = new(sql.NullString)
@@ -161,6 +163,12 @@ func (td *TroubleDeduct) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field time_of_duration", values[i])
 			} else if value.Valid {
 				td.TimeOfDuration = value.Float64
+			}
+		case troublededuct.FieldDeductStandard:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deduct_standard", values[i])
+			} else if value.Valid {
+				td.DeductStandard = value.Int64
 			}
 		case troublededuct.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -253,6 +261,9 @@ func (td *TroubleDeduct) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("time_of_duration=")
 	builder.WriteString(fmt.Sprintf("%v", td.TimeOfDuration))
+	builder.WriteString(", ")
+	builder.WriteString("deduct_standard=")
+	builder.WriteString(fmt.Sprintf("%v", td.DeductStandard))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", td.Amount))
