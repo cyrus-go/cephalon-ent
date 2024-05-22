@@ -932,7 +932,7 @@ var (
 		{Name: "memory", Type: field.TypeInt, Comment: "内存", Default: 128},
 		{Name: "lowest_earn_month", Type: field.TypeInt64, Comment: "保底最低月收益", Default: 0},
 		{Name: "highest_earn_month", Type: field.TypeInt64, Comment: "保底最高月收益", Default: 0},
-		{Name: "trouble_deduct_amount", Type: field.TypeInt64, Comment: "故障扣费金额，单位：分/小时", Default: 0},
+		{Name: "trouble_deduct_amount", Type: field.TypeInt64, Comment: "故障扣费金额，单位：厘/小时", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{
@@ -2238,8 +2238,8 @@ var (
 		{Name: "started_at", Type: field.TypeTime, Comment: "故障开始时刻"},
 		{Name: "finished_at", Type: field.TypeTime, Comment: "故障结束时刻"},
 		{Name: "time_of_duration", Type: field.TypeFloat64, Comment: "持续时长，单位：小时", Default: 0},
-		{Name: "deduct_standard", Type: field.TypeInt64, Comment: "扣费标准，单位：分", Default: 0},
-		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：分", Default: 0},
+		{Name: "deduct_standard", Type: field.TypeInt64, Comment: "扣费标准，单位：厘", Default: 0},
+		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：厘", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
 		{Name: "reason", Type: field.TypeString, Comment: "扣费原因", Default: ""},
 		{Name: "reject_reason", Type: field.TypeString, Comment: "拒绝扣费原因", Default: ""},

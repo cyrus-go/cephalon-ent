@@ -21,7 +21,7 @@ func (Gpu) Fields() []ent.Field {
 		field.Int("memory").Default(128).StructTag(`json:"memory"`).Comment("内存"),
 		field.Int64("lowest_earn_month").Default(0).StructTag(`json:"lowest_earn_month"`).Comment("保底最低月收益"),
 		field.Int64("highest_earn_month").Default(0).StructTag(`json:"highest_earn_month"`).Comment("保底最高月收益"),
-		field.Int64("trouble_deduct_amount").Default(0).StructTag(`json:"trouble_deduct_amount"`).Comment("故障扣费金额，单位：分/小时"),
+		field.Int64("trouble_deduct_amount").Default(0).StructTag(`json:"trouble_deduct_amount"`).Comment("故障扣费金额，单位：厘/小时"),
 	}
 }
 

@@ -38,9 +38,9 @@ type TroubleDeduct struct {
 	FinishedAt time.Time `json:"finished_at"`
 	// 持续时长，单位：小时
 	TimeOfDuration float64 `json:"time_of_duration"`
-	// 扣费标准，单位：分
+	// 扣费标准，单位：厘
 	DeductStandard int64 `json:"deduct_standard"`
-	// 扣费金额，单位：分
+	// 扣费金额，单位：厘
 	Amount int64 `json:"amount"`
 	// 状态
 	Status enums.TroubleDeductStatus `json:"status"`

@@ -43,7 +43,7 @@ type Gpu struct {
 	LowestEarnMonth int64 `json:"lowest_earn_month"`
 	// 保底最高月收益
 	HighestEarnMonth int64 `json:"highest_earn_month"`
-	// 故障扣费金额，单位：分/小时
+	// 故障扣费金额，单位：厘/小时
 	TroubleDeductAmount int64 `json:"trouble_deduct_amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GpuQuery when eager-loading is set.
