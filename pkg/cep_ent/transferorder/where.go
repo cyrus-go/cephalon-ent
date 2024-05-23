@@ -121,6 +121,11 @@ func OutTransactionID(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldOutTransactionID, v))
 }
 
+// OperateUserID applies equality check predicate on the "operate_user_id" field. It's identical to OperateUserIDEQ.
+func OperateUserID(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldOperateUserID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldEQ(FieldCreatedBy, v))
@@ -694,6 +699,46 @@ func OutTransactionIDEqualFold(v string) predicate.TransferOrder {
 // OutTransactionIDContainsFold applies the ContainsFold predicate on the "out_transaction_id" field.
 func OutTransactionIDContainsFold(v string) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldContainsFold(FieldOutTransactionID, v))
+}
+
+// OperateUserIDEQ applies the EQ predicate on the "operate_user_id" field.
+func OperateUserIDEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldEQ(FieldOperateUserID, v))
+}
+
+// OperateUserIDNEQ applies the NEQ predicate on the "operate_user_id" field.
+func OperateUserIDNEQ(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNEQ(FieldOperateUserID, v))
+}
+
+// OperateUserIDIn applies the In predicate on the "operate_user_id" field.
+func OperateUserIDIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldIn(FieldOperateUserID, vs...))
+}
+
+// OperateUserIDNotIn applies the NotIn predicate on the "operate_user_id" field.
+func OperateUserIDNotIn(vs ...int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldNotIn(FieldOperateUserID, vs...))
+}
+
+// OperateUserIDGT applies the GT predicate on the "operate_user_id" field.
+func OperateUserIDGT(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGT(FieldOperateUserID, v))
+}
+
+// OperateUserIDGTE applies the GTE predicate on the "operate_user_id" field.
+func OperateUserIDGTE(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldGTE(FieldOperateUserID, v))
+}
+
+// OperateUserIDLT applies the LT predicate on the "operate_user_id" field.
+func OperateUserIDLT(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLT(FieldOperateUserID, v))
+}
+
+// OperateUserIDLTE applies the LTE predicate on the "operate_user_id" field.
+func OperateUserIDLTE(v int64) predicate.TransferOrder {
+	return predicate.TransferOrder(sql.FieldLTE(FieldOperateUserID, v))
 }
 
 // HasSourceUser applies the HasEdge predicate on the "source_user" edge.

@@ -46,6 +46,8 @@ const (
 	FieldThirdAPIResp = "third_api_resp"
 	// FieldOutTransactionID holds the string denoting the out_transaction_id field in the database.
 	FieldOutTransactionID = "out_transaction_id"
+	// FieldOperateUserID holds the string denoting the operate_user_id field in the database.
+	FieldOperateUserID = "operate_user_id"
 	// EdgeSourceUser holds the string denoting the source_user edge name in mutations.
 	EdgeSourceUser = "source_user"
 	// EdgeTargetUser holds the string denoting the target_user edge name in mutations.
@@ -122,6 +124,7 @@ var Columns = []string{
 	FieldSocialID,
 	FieldThirdAPIResp,
 	FieldOutTransactionID,
+	FieldOperateUserID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -163,6 +166,8 @@ var (
 	DefaultThirdAPIResp string
 	// DefaultOutTransactionID holds the default value on creation for the "out_transaction_id" field.
 	DefaultOutTransactionID string
+	// DefaultOperateUserID holds the default value on creation for the "operate_user_id" field.
+	DefaultOperateUserID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -292,6 +297,11 @@ func ByThirdAPIResp(opts ...sql.OrderTermOption) OrderOption {
 // ByOutTransactionID orders the results by the out_transaction_id field.
 func ByOutTransactionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOutTransactionID, opts...).ToFunc()
+}
+
+// ByOperateUserID orders the results by the operate_user_id field.
+func ByOperateUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOperateUserID, opts...).ToFunc()
 }
 
 // BySourceUserField orders the results by source_user field.

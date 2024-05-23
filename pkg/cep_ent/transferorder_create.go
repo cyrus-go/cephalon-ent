@@ -238,6 +238,20 @@ func (toc *TransferOrderCreate) SetNillableOutTransactionID(s *string) *Transfer
 	return toc
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (toc *TransferOrderCreate) SetOperateUserID(i int64) *TransferOrderCreate {
+	toc.mutation.SetOperateUserID(i)
+	return toc
+}
+
+// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
+func (toc *TransferOrderCreate) SetNillableOperateUserID(i *int64) *TransferOrderCreate {
+	if i != nil {
+		toc.SetOperateUserID(*i)
+	}
+	return toc
+}
+
 // SetID sets the "id" field.
 func (toc *TransferOrderCreate) SetID(i int64) *TransferOrderCreate {
 	toc.mutation.SetID(i)
@@ -415,6 +429,10 @@ func (toc *TransferOrderCreate) defaults() {
 		v := transferorder.DefaultOutTransactionID
 		toc.mutation.SetOutTransactionID(v)
 	}
+	if _, ok := toc.mutation.OperateUserID(); !ok {
+		v := transferorder.DefaultOperateUserID
+		toc.mutation.SetOperateUserID(v)
+	}
 	if _, ok := toc.mutation.ID(); !ok {
 		v := transferorder.DefaultID()
 		toc.mutation.SetID(v)
@@ -474,6 +492,9 @@ func (toc *TransferOrderCreate) check() error {
 	}
 	if _, ok := toc.mutation.OutTransactionID(); !ok {
 		return &ValidationError{Name: "out_transaction_id", err: errors.New(`cep_ent: missing required field "TransferOrder.out_transaction_id"`)}
+	}
+	if _, ok := toc.mutation.OperateUserID(); !ok {
+		return &ValidationError{Name: "operate_user_id", err: errors.New(`cep_ent: missing required field "TransferOrder.operate_user_id"`)}
 	}
 	if _, ok := toc.mutation.SourceUserID(); !ok {
 		return &ValidationError{Name: "source_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.source_user"`)}
@@ -560,6 +581,10 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 	if value, ok := toc.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
 		_node.OutTransactionID = value
+	}
+	if value, ok := toc.mutation.OperateUserID(); ok {
+		_spec.SetField(transferorder.FieldOperateUserID, field.TypeInt64, value)
+		_node.OperateUserID = value
 	}
 	if nodes := toc.mutation.SourceUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -905,6 +930,24 @@ func (u *TransferOrderUpsert) UpdateOutTransactionID() *TransferOrderUpsert {
 	return u
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (u *TransferOrderUpsert) SetOperateUserID(v int64) *TransferOrderUpsert {
+	u.Set(transferorder.FieldOperateUserID, v)
+	return u
+}
+
+// UpdateOperateUserID sets the "operate_user_id" field to the value that was provided on create.
+func (u *TransferOrderUpsert) UpdateOperateUserID() *TransferOrderUpsert {
+	u.SetExcluded(transferorder.FieldOperateUserID)
+	return u
+}
+
+// AddOperateUserID adds v to the "operate_user_id" field.
+func (u *TransferOrderUpsert) AddOperateUserID(v int64) *TransferOrderUpsert {
+	u.Add(transferorder.FieldOperateUserID, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1177,6 +1220,27 @@ func (u *TransferOrderUpsertOne) SetOutTransactionID(v string) *TransferOrderUps
 func (u *TransferOrderUpsertOne) UpdateOutTransactionID() *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOutTransactionID()
+	})
+}
+
+// SetOperateUserID sets the "operate_user_id" field.
+func (u *TransferOrderUpsertOne) SetOperateUserID(v int64) *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetOperateUserID(v)
+	})
+}
+
+// AddOperateUserID adds v to the "operate_user_id" field.
+func (u *TransferOrderUpsertOne) AddOperateUserID(v int64) *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.AddOperateUserID(v)
+	})
+}
+
+// UpdateOperateUserID sets the "operate_user_id" field to the value that was provided on create.
+func (u *TransferOrderUpsertOne) UpdateOperateUserID() *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateOperateUserID()
 	})
 }
 
@@ -1618,6 +1682,27 @@ func (u *TransferOrderUpsertBulk) SetOutTransactionID(v string) *TransferOrderUp
 func (u *TransferOrderUpsertBulk) UpdateOutTransactionID() *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOutTransactionID()
+	})
+}
+
+// SetOperateUserID sets the "operate_user_id" field.
+func (u *TransferOrderUpsertBulk) SetOperateUserID(v int64) *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetOperateUserID(v)
+	})
+}
+
+// AddOperateUserID adds v to the "operate_user_id" field.
+func (u *TransferOrderUpsertBulk) AddOperateUserID(v int64) *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.AddOperateUserID(v)
+	})
+}
+
+// UpdateOperateUserID sets the "operate_user_id" field to the value that was provided on create.
+func (u *TransferOrderUpsertBulk) UpdateOperateUserID() *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateOperateUserID()
 	})
 }
 

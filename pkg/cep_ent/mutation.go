@@ -66326,6 +66326,8 @@ type TransferOrderMutation struct {
 	serial_number          *string
 	third_api_resp         *string
 	out_transaction_id     *string
+	operate_user_id        *int64
+	addoperate_user_id     *int64
 	clearedFields          map[string]struct{}
 	source_user            *int64
 	clearedsource_user     bool
@@ -67062,6 +67064,62 @@ func (m *TransferOrderMutation) ResetOutTransactionID() {
 	m.out_transaction_id = nil
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (m *TransferOrderMutation) SetOperateUserID(i int64) {
+	m.operate_user_id = &i
+	m.addoperate_user_id = nil
+}
+
+// OperateUserID returns the value of the "operate_user_id" field in the mutation.
+func (m *TransferOrderMutation) OperateUserID() (r int64, exists bool) {
+	v := m.operate_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperateUserID returns the old "operate_user_id" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldOperateUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperateUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperateUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperateUserID: %w", err)
+	}
+	return oldValue.OperateUserID, nil
+}
+
+// AddOperateUserID adds i to the "operate_user_id" field.
+func (m *TransferOrderMutation) AddOperateUserID(i int64) {
+	if m.addoperate_user_id != nil {
+		*m.addoperate_user_id += i
+	} else {
+		m.addoperate_user_id = &i
+	}
+}
+
+// AddedOperateUserID returns the value that was added to the "operate_user_id" field in this mutation.
+func (m *TransferOrderMutation) AddedOperateUserID() (r int64, exists bool) {
+	v := m.addoperate_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetOperateUserID resets all changes to the "operate_user_id" field.
+func (m *TransferOrderMutation) ResetOperateUserID() {
+	m.operate_user_id = nil
+	m.addoperate_user_id = nil
+}
+
 // ClearSourceUser clears the "source_user" edge to the User entity.
 func (m *TransferOrderMutation) ClearSourceUser() {
 	m.clearedsource_user = true
@@ -67310,7 +67368,7 @@ func (m *TransferOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferOrderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, transferorder.FieldCreatedBy)
 	}
@@ -67356,6 +67414,9 @@ func (m *TransferOrderMutation) Fields() []string {
 	if m.out_transaction_id != nil {
 		fields = append(fields, transferorder.FieldOutTransactionID)
 	}
+	if m.operate_user_id != nil {
+		fields = append(fields, transferorder.FieldOperateUserID)
+	}
 	return fields
 }
 
@@ -67394,6 +67455,8 @@ func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.ThirdAPIResp()
 	case transferorder.FieldOutTransactionID:
 		return m.OutTransactionID()
+	case transferorder.FieldOperateUserID:
+		return m.OperateUserID()
 	}
 	return nil, false
 }
@@ -67433,6 +67496,8 @@ func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldThirdAPIResp(ctx)
 	case transferorder.FieldOutTransactionID:
 		return m.OldOutTransactionID(ctx)
+	case transferorder.FieldOperateUserID:
+		return m.OldOperateUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown TransferOrder field %s", name)
 }
@@ -67547,6 +67612,13 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOutTransactionID(v)
 		return nil
+	case transferorder.FieldOperateUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperateUserID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)
 }
@@ -67564,6 +67636,9 @@ func (m *TransferOrderMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, transferorder.FieldAmount)
 	}
+	if m.addoperate_user_id != nil {
+		fields = append(fields, transferorder.FieldOperateUserID)
+	}
 	return fields
 }
 
@@ -67578,6 +67653,8 @@ func (m *TransferOrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case transferorder.FieldAmount:
 		return m.AddedAmount()
+	case transferorder.FieldOperateUserID:
+		return m.AddedOperateUserID()
 	}
 	return nil, false
 }
@@ -67607,6 +67684,13 @@ func (m *TransferOrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case transferorder.FieldOperateUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOperateUserID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder numeric field %s", name)
@@ -67688,6 +67772,9 @@ func (m *TransferOrderMutation) ResetField(name string) error {
 		return nil
 	case transferorder.FieldOutTransactionID:
 		m.ResetOutTransactionID()
+		return nil
+	case transferorder.FieldOperateUserID:
+		m.ResetOperateUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)

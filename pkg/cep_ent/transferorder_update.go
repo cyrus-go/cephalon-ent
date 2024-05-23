@@ -250,6 +250,27 @@ func (tou *TransferOrderUpdate) SetNillableOutTransactionID(s *string) *Transfer
 	return tou
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (tou *TransferOrderUpdate) SetOperateUserID(i int64) *TransferOrderUpdate {
+	tou.mutation.ResetOperateUserID()
+	tou.mutation.SetOperateUserID(i)
+	return tou
+}
+
+// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
+func (tou *TransferOrderUpdate) SetNillableOperateUserID(i *int64) *TransferOrderUpdate {
+	if i != nil {
+		tou.SetOperateUserID(*i)
+	}
+	return tou
+}
+
+// AddOperateUserID adds i to the "operate_user_id" field.
+func (tou *TransferOrderUpdate) AddOperateUserID(i int64) *TransferOrderUpdate {
+	tou.mutation.AddOperateUserID(i)
+	return tou
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (tou *TransferOrderUpdate) SetSourceUser(u *User) *TransferOrderUpdate {
 	return tou.SetSourceUserID(u.ID)
@@ -490,6 +511,12 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tou.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
+	}
+	if value, ok := tou.mutation.OperateUserID(); ok {
+		_spec.SetField(transferorder.FieldOperateUserID, field.TypeInt64, value)
+	}
+	if value, ok := tou.mutation.AddedOperateUserID(); ok {
+		_spec.AddField(transferorder.FieldOperateUserID, field.TypeInt64, value)
 	}
 	if tou.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -918,6 +945,27 @@ func (touo *TransferOrderUpdateOne) SetNillableOutTransactionID(s *string) *Tran
 	return touo
 }
 
+// SetOperateUserID sets the "operate_user_id" field.
+func (touo *TransferOrderUpdateOne) SetOperateUserID(i int64) *TransferOrderUpdateOne {
+	touo.mutation.ResetOperateUserID()
+	touo.mutation.SetOperateUserID(i)
+	return touo
+}
+
+// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
+func (touo *TransferOrderUpdateOne) SetNillableOperateUserID(i *int64) *TransferOrderUpdateOne {
+	if i != nil {
+		touo.SetOperateUserID(*i)
+	}
+	return touo
+}
+
+// AddOperateUserID adds i to the "operate_user_id" field.
+func (touo *TransferOrderUpdateOne) AddOperateUserID(i int64) *TransferOrderUpdateOne {
+	touo.mutation.AddOperateUserID(i)
+	return touo
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (touo *TransferOrderUpdateOne) SetSourceUser(u *User) *TransferOrderUpdateOne {
 	return touo.SetSourceUserID(u.ID)
@@ -1188,6 +1236,12 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 	}
 	if value, ok := touo.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
+	}
+	if value, ok := touo.mutation.OperateUserID(); ok {
+		_spec.SetField(transferorder.FieldOperateUserID, field.TypeInt64, value)
+	}
+	if value, ok := touo.mutation.AddedOperateUserID(); ok {
+		_spec.AddField(transferorder.FieldOperateUserID, field.TypeInt64, value)
 	}
 	if touo.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
