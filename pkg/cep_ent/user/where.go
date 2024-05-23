@@ -2114,21 +2114,44 @@ func HasCloudFilesWith(preds ...predicate.CloudFile) predicate.User {
 	})
 }
 
-// HasOperateTransferOrders applies the HasEdge predicate on the "operate_transfer_orders" edge.
-func HasOperateTransferOrders() predicate.User {
+// HasWithdrawRecords applies the HasEdge predicate on the "withdraw_records" edge.
+func HasWithdrawRecords() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, OperateTransferOrdersTable, OperateTransferOrdersColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, WithdrawRecordsTable, WithdrawRecordsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasOperateTransferOrdersWith applies the HasEdge predicate on the "operate_transfer_orders" edge with a given conditions (other predicates).
-func HasOperateTransferOrdersWith(preds ...predicate.TransferOrder) predicate.User {
+// HasWithdrawRecordsWith applies the HasEdge predicate on the "withdraw_records" edge with a given conditions (other predicates).
+func HasWithdrawRecordsWith(preds ...predicate.WithdrawRecord) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newOperateTransferOrdersStep()
+		step := newWithdrawRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOperateWithdrawRecords applies the HasEdge predicate on the "operate_withdraw_records" edge.
+func HasOperateWithdrawRecords() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, OperateWithdrawRecordsTable, OperateWithdrawRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOperateWithdrawRecordsWith applies the HasEdge predicate on the "operate_withdraw_records" edge with a given conditions (other predicates).
+func HasOperateWithdrawRecordsWith(preds ...predicate.WithdrawRecord) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newOperateWithdrawRecordsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

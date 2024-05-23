@@ -17,22 +17,23 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // TransferOrderQuery is the builder for querying TransferOrder entities.
 type TransferOrderQuery struct {
 	config
-	ctx             *QueryContext
-	order           []transferorder.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.TransferOrder
-	withSourceUser  *UserQuery
-	withTargetUser  *UserQuery
-	withBills       *BillQuery
-	withVxSocial    *VXSocialQuery
-	withSymbol      *SymbolQuery
-	withOperateUser *UserQuery
-	modifiers       []func(*sql.Selector)
+	ctx                *QueryContext
+	order              []transferorder.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.TransferOrder
+	withSourceUser     *UserQuery
+	withTargetUser     *UserQuery
+	withBills          *BillQuery
+	withVxSocial       *VXSocialQuery
+	withSymbol         *SymbolQuery
+	withWithdrawRecord *WithdrawRecordQuery
+	modifiers          []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -179,9 +180,9 @@ func (toq *TransferOrderQuery) QuerySymbol() *SymbolQuery {
 	return query
 }
 
-// QueryOperateUser chains the current query on the "operate_user" edge.
-func (toq *TransferOrderQuery) QueryOperateUser() *UserQuery {
-	query := (&UserClient{config: toq.config}).Query()
+// QueryWithdrawRecord chains the current query on the "withdraw_record" edge.
+func (toq *TransferOrderQuery) QueryWithdrawRecord() *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: toq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := toq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -192,8 +193,8 @@ func (toq *TransferOrderQuery) QueryOperateUser() *UserQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(transferorder.Table, transferorder.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.OperateUserTable, transferorder.OperateUserColumn),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, transferorder.WithdrawRecordTable, transferorder.WithdrawRecordColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(toq.driver.Dialect(), step)
 		return fromU, nil
@@ -388,17 +389,17 @@ func (toq *TransferOrderQuery) Clone() *TransferOrderQuery {
 		return nil
 	}
 	return &TransferOrderQuery{
-		config:          toq.config,
-		ctx:             toq.ctx.Clone(),
-		order:           append([]transferorder.OrderOption{}, toq.order...),
-		inters:          append([]Interceptor{}, toq.inters...),
-		predicates:      append([]predicate.TransferOrder{}, toq.predicates...),
-		withSourceUser:  toq.withSourceUser.Clone(),
-		withTargetUser:  toq.withTargetUser.Clone(),
-		withBills:       toq.withBills.Clone(),
-		withVxSocial:    toq.withVxSocial.Clone(),
-		withSymbol:      toq.withSymbol.Clone(),
-		withOperateUser: toq.withOperateUser.Clone(),
+		config:             toq.config,
+		ctx:                toq.ctx.Clone(),
+		order:              append([]transferorder.OrderOption{}, toq.order...),
+		inters:             append([]Interceptor{}, toq.inters...),
+		predicates:         append([]predicate.TransferOrder{}, toq.predicates...),
+		withSourceUser:     toq.withSourceUser.Clone(),
+		withTargetUser:     toq.withTargetUser.Clone(),
+		withBills:          toq.withBills.Clone(),
+		withVxSocial:       toq.withVxSocial.Clone(),
+		withSymbol:         toq.withSymbol.Clone(),
+		withWithdrawRecord: toq.withWithdrawRecord.Clone(),
 		// clone intermediate query.
 		sql:  toq.sql.Clone(),
 		path: toq.path,
@@ -460,14 +461,14 @@ func (toq *TransferOrderQuery) WithSymbol(opts ...func(*SymbolQuery)) *TransferO
 	return toq
 }
 
-// WithOperateUser tells the query-builder to eager-load the nodes that are connected to
-// the "operate_user" edge. The optional arguments are used to configure the query builder of the edge.
-func (toq *TransferOrderQuery) WithOperateUser(opts ...func(*UserQuery)) *TransferOrderQuery {
-	query := (&UserClient{config: toq.config}).Query()
+// WithWithdrawRecord tells the query-builder to eager-load the nodes that are connected to
+// the "withdraw_record" edge. The optional arguments are used to configure the query builder of the edge.
+func (toq *TransferOrderQuery) WithWithdrawRecord(opts ...func(*WithdrawRecordQuery)) *TransferOrderQuery {
+	query := (&WithdrawRecordClient{config: toq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	toq.withOperateUser = query
+	toq.withWithdrawRecord = query
 	return toq
 }
 
@@ -555,7 +556,7 @@ func (toq *TransferOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 			toq.withBills != nil,
 			toq.withVxSocial != nil,
 			toq.withSymbol != nil,
-			toq.withOperateUser != nil,
+			toq.withWithdrawRecord != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -610,9 +611,9 @@ func (toq *TransferOrderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 			return nil, err
 		}
 	}
-	if query := toq.withOperateUser; query != nil {
-		if err := toq.loadOperateUser(ctx, query, nodes, nil,
-			func(n *TransferOrder, e *User) { n.Edges.OperateUser = e }); err != nil {
+	if query := toq.withWithdrawRecord; query != nil {
+		if err := toq.loadWithdrawRecord(ctx, query, nodes, nil,
+			func(n *TransferOrder, e *WithdrawRecord) { n.Edges.WithdrawRecord = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -765,32 +766,30 @@ func (toq *TransferOrderQuery) loadSymbol(ctx context.Context, query *SymbolQuer
 	}
 	return nil
 }
-func (toq *TransferOrderQuery) loadOperateUser(ctx context.Context, query *UserQuery, nodes []*TransferOrder, init func(*TransferOrder), assign func(*TransferOrder, *User)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*TransferOrder)
+func (toq *TransferOrderQuery) loadWithdrawRecord(ctx context.Context, query *WithdrawRecordQuery, nodes []*TransferOrder, init func(*TransferOrder), assign func(*TransferOrder, *WithdrawRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*TransferOrder)
 	for i := range nodes {
-		fk := nodes[i].OperateUserID
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 	}
-	if len(ids) == 0 {
-		return nil
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(withdrawrecord.FieldTransferOrderID)
 	}
-	query.Where(user.IDIn(ids...))
+	query.Where(predicate.WithdrawRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(transferorder.WithdrawRecordColumn), fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.TransferOrderID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "operate_user_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "transfer_order_id" returned %v for node %v`, fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -834,9 +833,6 @@ func (toq *TransferOrderQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if toq.withSymbol != nil {
 			_spec.Node.AddColumnOnce(transferorder.FieldSymbolID)
-		}
-		if toq.withOperateUser != nil {
-			_spec.Node.AddColumnOnce(transferorder.FieldOperateUserID)
 		}
 	}
 	if ps := toq.predicates; len(ps) > 0 {

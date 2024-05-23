@@ -74,6 +74,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // Client is the client that holds all ent builders.
@@ -199,6 +200,8 @@ type Client struct {
 	Wallet *WalletClient
 	// WithdrawAccount is the client for interacting with the WithdrawAccount builders.
 	WithdrawAccount *WithdrawAccountClient
+	// WithdrawRecord is the client for interacting with the WithdrawRecord builders.
+	WithdrawRecord *WithdrawRecordClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -271,6 +274,7 @@ func (c *Client) init() {
 	c.VXSocial = NewVXSocialClient(c.config)
 	c.Wallet = NewWalletClient(c.config)
 	c.WithdrawAccount = NewWithdrawAccountClient(c.config)
+	c.WithdrawRecord = NewWithdrawRecordClient(c.config)
 }
 
 type (
@@ -415,6 +419,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		VXSocial:             NewVXSocialClient(cfg),
 		Wallet:               NewWalletClient(cfg),
 		WithdrawAccount:      NewWithdrawAccountClient(cfg),
+		WithdrawRecord:       NewWithdrawRecordClient(cfg),
 	}, nil
 }
 
@@ -493,6 +498,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		VXSocial:             NewVXSocialClient(cfg),
 		Wallet:               NewWalletClient(cfg),
 		WithdrawAccount:      NewWithdrawAccountClient(cfg),
+		WithdrawRecord:       NewWithdrawRecordClient(cfg),
 	}, nil
 }
 
@@ -534,7 +540,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
 		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet, c.WithdrawAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
 	}
@@ -556,7 +562,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Symbol,
 		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet, c.WithdrawAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -683,6 +689,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Wallet.mutate(ctx, m)
 	case *WithdrawAccountMutation:
 		return c.WithdrawAccount.mutate(ctx, m)
+	case *WithdrawRecordMutation:
+		return c.WithdrawRecord.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown mutation type %T", m)
 	}
@@ -9931,15 +9939,15 @@ func (c *TransferOrderClient) QuerySymbol(to *TransferOrder) *SymbolQuery {
 	return query
 }
 
-// QueryOperateUser queries the operate_user edge of a TransferOrder.
-func (c *TransferOrderClient) QueryOperateUser(to *TransferOrder) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
+// QueryWithdrawRecord queries the withdraw_record edge of a TransferOrder.
+func (c *TransferOrderClient) QueryWithdrawRecord(to *TransferOrder) *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := to.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(transferorder.Table, transferorder.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, transferorder.OperateUserTable, transferorder.OperateUserColumn),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, transferorder.WithdrawRecordTable, transferorder.WithdrawRecordColumn),
 		)
 		fromV = sqlgraph.Neighbors(to.driver.Dialect(), step)
 		return fromV, nil
@@ -10837,15 +10845,31 @@ func (c *UserClient) QueryCloudFiles(u *User) *CloudFileQuery {
 	return query
 }
 
-// QueryOperateTransferOrders queries the operate_transfer_orders edge of a User.
-func (c *UserClient) QueryOperateTransferOrders(u *User) *TransferOrderQuery {
-	query := (&TransferOrderClient{config: c.config}).Query()
+// QueryWithdrawRecords queries the withdraw_records edge of a User.
+func (c *UserClient) QueryWithdrawRecords(u *User) *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(transferorder.Table, transferorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateTransferOrdersTable, user.OperateTransferOrdersColumn),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawRecordsTable, user.WithdrawRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOperateWithdrawRecords queries the operate_withdraw_records edge of a User.
+func (c *UserClient) QueryOperateWithdrawRecords(u *User) *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateWithdrawRecordsTable, user.OperateWithdrawRecordsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -11687,6 +11711,187 @@ func (c *WithdrawAccountClient) mutate(ctx context.Context, m *WithdrawAccountMu
 	}
 }
 
+// WithdrawRecordClient is a client for the WithdrawRecord schema.
+type WithdrawRecordClient struct {
+	config
+}
+
+// NewWithdrawRecordClient returns a client for the WithdrawRecord from the given config.
+func NewWithdrawRecordClient(c config) *WithdrawRecordClient {
+	return &WithdrawRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `withdrawrecord.Hooks(f(g(h())))`.
+func (c *WithdrawRecordClient) Use(hooks ...Hook) {
+	c.hooks.WithdrawRecord = append(c.hooks.WithdrawRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `withdrawrecord.Intercept(f(g(h())))`.
+func (c *WithdrawRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.WithdrawRecord = append(c.inters.WithdrawRecord, interceptors...)
+}
+
+// Create returns a builder for creating a WithdrawRecord entity.
+func (c *WithdrawRecordClient) Create() *WithdrawRecordCreate {
+	mutation := newWithdrawRecordMutation(c.config, OpCreate)
+	return &WithdrawRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of WithdrawRecord entities.
+func (c *WithdrawRecordClient) CreateBulk(builders ...*WithdrawRecordCreate) *WithdrawRecordCreateBulk {
+	return &WithdrawRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *WithdrawRecordClient) MapCreateBulk(slice any, setFunc func(*WithdrawRecordCreate, int)) *WithdrawRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &WithdrawRecordCreateBulk{err: fmt.Errorf("calling to WithdrawRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*WithdrawRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &WithdrawRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for WithdrawRecord.
+func (c *WithdrawRecordClient) Update() *WithdrawRecordUpdate {
+	mutation := newWithdrawRecordMutation(c.config, OpUpdate)
+	return &WithdrawRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WithdrawRecordClient) UpdateOne(wr *WithdrawRecord) *WithdrawRecordUpdateOne {
+	mutation := newWithdrawRecordMutation(c.config, OpUpdateOne, withWithdrawRecord(wr))
+	return &WithdrawRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WithdrawRecordClient) UpdateOneID(id int64) *WithdrawRecordUpdateOne {
+	mutation := newWithdrawRecordMutation(c.config, OpUpdateOne, withWithdrawRecordID(id))
+	return &WithdrawRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for WithdrawRecord.
+func (c *WithdrawRecordClient) Delete() *WithdrawRecordDelete {
+	mutation := newWithdrawRecordMutation(c.config, OpDelete)
+	return &WithdrawRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WithdrawRecordClient) DeleteOne(wr *WithdrawRecord) *WithdrawRecordDeleteOne {
+	return c.DeleteOneID(wr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WithdrawRecordClient) DeleteOneID(id int64) *WithdrawRecordDeleteOne {
+	builder := c.Delete().Where(withdrawrecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WithdrawRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for WithdrawRecord.
+func (c *WithdrawRecordClient) Query() *WithdrawRecordQuery {
+	return &WithdrawRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWithdrawRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a WithdrawRecord entity by its id.
+func (c *WithdrawRecordClient) Get(ctx context.Context, id int64) (*WithdrawRecord, error) {
+	return c.Query().Where(withdrawrecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WithdrawRecordClient) GetX(ctx context.Context, id int64) *WithdrawRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a WithdrawRecord.
+func (c *WithdrawRecordClient) QueryUser(wr *WithdrawRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := wr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawrecord.UserTable, withdrawrecord.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(wr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOperateUser queries the operate_user edge of a WithdrawRecord.
+func (c *WithdrawRecordClient) QueryOperateUser(wr *WithdrawRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := wr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawrecord.OperateUserTable, withdrawrecord.OperateUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(wr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransferOrder queries the transfer_order edge of a WithdrawRecord.
+func (c *WithdrawRecordClient) QueryTransferOrder(wr *WithdrawRecord) *TransferOrderQuery {
+	query := (&TransferOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := wr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawrecord.Table, withdrawrecord.FieldID, id),
+			sqlgraph.To(transferorder.Table, transferorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, withdrawrecord.TransferOrderTable, withdrawrecord.TransferOrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(wr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *WithdrawRecordClient) Hooks() []Hook {
+	return c.hooks.WithdrawRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *WithdrawRecordClient) Interceptors() []Interceptor {
+	return c.inters.WithdrawRecord
+}
+
+func (c *WithdrawRecordClient) mutate(ctx context.Context, m *WithdrawRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WithdrawRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WithdrawRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WithdrawRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WithdrawRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown WithdrawRecord mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
@@ -11700,7 +11905,8 @@ type (
 		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
-		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Hook
+		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
@@ -11713,6 +11919,7 @@ type (
 		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
-		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount []ent.Interceptor
+		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Interceptor
 	}
 )

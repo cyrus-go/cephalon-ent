@@ -149,11 +149,13 @@ type UserEdges struct {
 	LottoGetCountRecords []*LottoGetCountRecord `json:"lotto_get_count_records,omitempty"`
 	// CloudFiles holds the value of the cloud_files edge.
 	CloudFiles []*CloudFile `json:"cloud_files,omitempty"`
-	// OperateTransferOrders holds the value of the operate_transfer_orders edge.
-	OperateTransferOrders []*TransferOrder `json:"operate_transfer_orders,omitempty"`
+	// WithdrawRecords holds the value of the withdraw_records edge.
+	WithdrawRecords []*WithdrawRecord `json:"withdraw_records,omitempty"`
+	// OperateWithdrawRecords holds the value of the operate_withdraw_records edge.
+	OperateWithdrawRecords []*WithdrawRecord `json:"operate_withdraw_records,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [39]bool
+	loadedTypes [40]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -514,13 +516,22 @@ func (e UserEdges) CloudFilesOrErr() ([]*CloudFile, error) {
 	return nil, &NotLoadedError{edge: "cloud_files"}
 }
 
-// OperateTransferOrdersOrErr returns the OperateTransferOrders value or an error if the edge
+// WithdrawRecordsOrErr returns the WithdrawRecords value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) OperateTransferOrdersOrErr() ([]*TransferOrder, error) {
+func (e UserEdges) WithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
 	if e.loadedTypes[38] {
-		return e.OperateTransferOrders, nil
+		return e.WithdrawRecords, nil
 	}
-	return nil, &NotLoadedError{edge: "operate_transfer_orders"}
+	return nil, &NotLoadedError{edge: "withdraw_records"}
+}
+
+// OperateWithdrawRecordsOrErr returns the OperateWithdrawRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OperateWithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
+	if e.loadedTypes[39] {
+		return e.OperateWithdrawRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "operate_withdraw_records"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -892,9 +903,14 @@ func (u *User) QueryCloudFiles() *CloudFileQuery {
 	return NewUserClient(u.config).QueryCloudFiles(u)
 }
 
-// QueryOperateTransferOrders queries the "operate_transfer_orders" edge of the User entity.
-func (u *User) QueryOperateTransferOrders() *TransferOrderQuery {
-	return NewUserClient(u.config).QueryOperateTransferOrders(u)
+// QueryWithdrawRecords queries the "withdraw_records" edge of the User entity.
+func (u *User) QueryWithdrawRecords() *WithdrawRecordQuery {
+	return NewUserClient(u.config).QueryWithdrawRecords(u)
+}
+
+// QueryOperateWithdrawRecords queries the "operate_withdraw_records" edge of the User entity.
+func (u *User) QueryOperateWithdrawRecords() *WithdrawRecordQuery {
+	return NewUserClient(u.config).QueryOperateWithdrawRecords(u)
 }
 
 // Update returns a builder for updating this User.

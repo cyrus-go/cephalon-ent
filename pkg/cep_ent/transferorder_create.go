@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -237,76 +238,6 @@ func (toc *TransferOrderCreate) SetNillableOutTransactionID(s *string) *Transfer
 	return toc
 }
 
-// SetWithdrawAccount sets the "withdraw_account" field.
-func (toc *TransferOrderCreate) SetWithdrawAccount(s string) *TransferOrderCreate {
-	toc.mutation.SetWithdrawAccount(s)
-	return toc
-}
-
-// SetNillableWithdrawAccount sets the "withdraw_account" field if the given value is not nil.
-func (toc *TransferOrderCreate) SetNillableWithdrawAccount(s *string) *TransferOrderCreate {
-	if s != nil {
-		toc.SetWithdrawAccount(*s)
-	}
-	return toc
-}
-
-// SetWithdrawRate sets the "withdraw_rate" field.
-func (toc *TransferOrderCreate) SetWithdrawRate(i int64) *TransferOrderCreate {
-	toc.mutation.SetWithdrawRate(i)
-	return toc
-}
-
-// SetNillableWithdrawRate sets the "withdraw_rate" field if the given value is not nil.
-func (toc *TransferOrderCreate) SetNillableWithdrawRate(i *int64) *TransferOrderCreate {
-	if i != nil {
-		toc.SetWithdrawRate(*i)
-	}
-	return toc
-}
-
-// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
-func (toc *TransferOrderCreate) SetWithdrawRealAmount(i int64) *TransferOrderCreate {
-	toc.mutation.SetWithdrawRealAmount(i)
-	return toc
-}
-
-// SetNillableWithdrawRealAmount sets the "withdraw_real_amount" field if the given value is not nil.
-func (toc *TransferOrderCreate) SetNillableWithdrawRealAmount(i *int64) *TransferOrderCreate {
-	if i != nil {
-		toc.SetWithdrawRealAmount(*i)
-	}
-	return toc
-}
-
-// SetOperateUserID sets the "operate_user_id" field.
-func (toc *TransferOrderCreate) SetOperateUserID(i int64) *TransferOrderCreate {
-	toc.mutation.SetOperateUserID(i)
-	return toc
-}
-
-// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
-func (toc *TransferOrderCreate) SetNillableOperateUserID(i *int64) *TransferOrderCreate {
-	if i != nil {
-		toc.SetOperateUserID(*i)
-	}
-	return toc
-}
-
-// SetRejectReason sets the "reject_reason" field.
-func (toc *TransferOrderCreate) SetRejectReason(s string) *TransferOrderCreate {
-	toc.mutation.SetRejectReason(s)
-	return toc
-}
-
-// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
-func (toc *TransferOrderCreate) SetNillableRejectReason(s *string) *TransferOrderCreate {
-	if s != nil {
-		toc.SetRejectReason(*s)
-	}
-	return toc
-}
-
 // SetID sets the "id" field.
 func (toc *TransferOrderCreate) SetID(i int64) *TransferOrderCreate {
 	toc.mutation.SetID(i)
@@ -370,9 +301,23 @@ func (toc *TransferOrderCreate) SetSymbol(s *Symbol) *TransferOrderCreate {
 	return toc.SetSymbolID(s.ID)
 }
 
-// SetOperateUser sets the "operate_user" edge to the User entity.
-func (toc *TransferOrderCreate) SetOperateUser(u *User) *TransferOrderCreate {
-	return toc.SetOperateUserID(u.ID)
+// SetWithdrawRecordID sets the "withdraw_record" edge to the WithdrawRecord entity by ID.
+func (toc *TransferOrderCreate) SetWithdrawRecordID(id int64) *TransferOrderCreate {
+	toc.mutation.SetWithdrawRecordID(id)
+	return toc
+}
+
+// SetNillableWithdrawRecordID sets the "withdraw_record" edge to the WithdrawRecord entity by ID if the given value is not nil.
+func (toc *TransferOrderCreate) SetNillableWithdrawRecordID(id *int64) *TransferOrderCreate {
+	if id != nil {
+		toc = toc.SetWithdrawRecordID(*id)
+	}
+	return toc
+}
+
+// SetWithdrawRecord sets the "withdraw_record" edge to the WithdrawRecord entity.
+func (toc *TransferOrderCreate) SetWithdrawRecord(w *WithdrawRecord) *TransferOrderCreate {
+	return toc.SetWithdrawRecordID(w.ID)
 }
 
 // Mutation returns the TransferOrderMutation object of the builder.
@@ -470,26 +415,6 @@ func (toc *TransferOrderCreate) defaults() {
 		v := transferorder.DefaultOutTransactionID
 		toc.mutation.SetOutTransactionID(v)
 	}
-	if _, ok := toc.mutation.WithdrawAccount(); !ok {
-		v := transferorder.DefaultWithdrawAccount
-		toc.mutation.SetWithdrawAccount(v)
-	}
-	if _, ok := toc.mutation.WithdrawRate(); !ok {
-		v := transferorder.DefaultWithdrawRate
-		toc.mutation.SetWithdrawRate(v)
-	}
-	if _, ok := toc.mutation.WithdrawRealAmount(); !ok {
-		v := transferorder.DefaultWithdrawRealAmount
-		toc.mutation.SetWithdrawRealAmount(v)
-	}
-	if _, ok := toc.mutation.OperateUserID(); !ok {
-		v := transferorder.DefaultOperateUserID
-		toc.mutation.SetOperateUserID(v)
-	}
-	if _, ok := toc.mutation.RejectReason(); !ok {
-		v := transferorder.DefaultRejectReason
-		toc.mutation.SetRejectReason(v)
-	}
 	if _, ok := toc.mutation.ID(); !ok {
 		v := transferorder.DefaultID()
 		toc.mutation.SetID(v)
@@ -550,21 +475,6 @@ func (toc *TransferOrderCreate) check() error {
 	if _, ok := toc.mutation.OutTransactionID(); !ok {
 		return &ValidationError{Name: "out_transaction_id", err: errors.New(`cep_ent: missing required field "TransferOrder.out_transaction_id"`)}
 	}
-	if _, ok := toc.mutation.WithdrawAccount(); !ok {
-		return &ValidationError{Name: "withdraw_account", err: errors.New(`cep_ent: missing required field "TransferOrder.withdraw_account"`)}
-	}
-	if _, ok := toc.mutation.WithdrawRate(); !ok {
-		return &ValidationError{Name: "withdraw_rate", err: errors.New(`cep_ent: missing required field "TransferOrder.withdraw_rate"`)}
-	}
-	if _, ok := toc.mutation.WithdrawRealAmount(); !ok {
-		return &ValidationError{Name: "withdraw_real_amount", err: errors.New(`cep_ent: missing required field "TransferOrder.withdraw_real_amount"`)}
-	}
-	if _, ok := toc.mutation.OperateUserID(); !ok {
-		return &ValidationError{Name: "operate_user_id", err: errors.New(`cep_ent: missing required field "TransferOrder.operate_user_id"`)}
-	}
-	if _, ok := toc.mutation.RejectReason(); !ok {
-		return &ValidationError{Name: "reject_reason", err: errors.New(`cep_ent: missing required field "TransferOrder.reject_reason"`)}
-	}
 	if _, ok := toc.mutation.SourceUserID(); !ok {
 		return &ValidationError{Name: "source_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.source_user"`)}
 	}
@@ -573,9 +483,6 @@ func (toc *TransferOrderCreate) check() error {
 	}
 	if _, ok := toc.mutation.SymbolID(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`cep_ent: missing required edge "TransferOrder.symbol"`)}
-	}
-	if _, ok := toc.mutation.OperateUserID(); !ok {
-		return &ValidationError{Name: "operate_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.operate_user"`)}
 	}
 	return nil
 }
@@ -653,22 +560,6 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 	if value, ok := toc.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
 		_node.OutTransactionID = value
-	}
-	if value, ok := toc.mutation.WithdrawAccount(); ok {
-		_spec.SetField(transferorder.FieldWithdrawAccount, field.TypeString, value)
-		_node.WithdrawAccount = value
-	}
-	if value, ok := toc.mutation.WithdrawRate(); ok {
-		_spec.SetField(transferorder.FieldWithdrawRate, field.TypeInt64, value)
-		_node.WithdrawRate = value
-	}
-	if value, ok := toc.mutation.WithdrawRealAmount(); ok {
-		_spec.SetField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
-		_node.WithdrawRealAmount = value
-	}
-	if value, ok := toc.mutation.RejectReason(); ok {
-		_spec.SetField(transferorder.FieldRejectReason, field.TypeString, value)
-		_node.RejectReason = value
 	}
 	if nodes := toc.mutation.SourceUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -754,21 +645,20 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 		_node.SymbolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := toc.mutation.OperateUserIDs(); len(nodes) > 0 {
+	if nodes := toc.mutation.WithdrawRecordIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transferorder.OperateUserTable,
-			Columns: []string{transferorder.OperateUserColumn},
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   transferorder.WithdrawRecordTable,
+			Columns: []string{transferorder.WithdrawRecordColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.OperateUserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -1012,78 +902,6 @@ func (u *TransferOrderUpsert) SetOutTransactionID(v string) *TransferOrderUpsert
 // UpdateOutTransactionID sets the "out_transaction_id" field to the value that was provided on create.
 func (u *TransferOrderUpsert) UpdateOutTransactionID() *TransferOrderUpsert {
 	u.SetExcluded(transferorder.FieldOutTransactionID)
-	return u
-}
-
-// SetWithdrawAccount sets the "withdraw_account" field.
-func (u *TransferOrderUpsert) SetWithdrawAccount(v string) *TransferOrderUpsert {
-	u.Set(transferorder.FieldWithdrawAccount, v)
-	return u
-}
-
-// UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
-func (u *TransferOrderUpsert) UpdateWithdrawAccount() *TransferOrderUpsert {
-	u.SetExcluded(transferorder.FieldWithdrawAccount)
-	return u
-}
-
-// SetWithdrawRate sets the "withdraw_rate" field.
-func (u *TransferOrderUpsert) SetWithdrawRate(v int64) *TransferOrderUpsert {
-	u.Set(transferorder.FieldWithdrawRate, v)
-	return u
-}
-
-// UpdateWithdrawRate sets the "withdraw_rate" field to the value that was provided on create.
-func (u *TransferOrderUpsert) UpdateWithdrawRate() *TransferOrderUpsert {
-	u.SetExcluded(transferorder.FieldWithdrawRate)
-	return u
-}
-
-// AddWithdrawRate adds v to the "withdraw_rate" field.
-func (u *TransferOrderUpsert) AddWithdrawRate(v int64) *TransferOrderUpsert {
-	u.Add(transferorder.FieldWithdrawRate, v)
-	return u
-}
-
-// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
-func (u *TransferOrderUpsert) SetWithdrawRealAmount(v int64) *TransferOrderUpsert {
-	u.Set(transferorder.FieldWithdrawRealAmount, v)
-	return u
-}
-
-// UpdateWithdrawRealAmount sets the "withdraw_real_amount" field to the value that was provided on create.
-func (u *TransferOrderUpsert) UpdateWithdrawRealAmount() *TransferOrderUpsert {
-	u.SetExcluded(transferorder.FieldWithdrawRealAmount)
-	return u
-}
-
-// AddWithdrawRealAmount adds v to the "withdraw_real_amount" field.
-func (u *TransferOrderUpsert) AddWithdrawRealAmount(v int64) *TransferOrderUpsert {
-	u.Add(transferorder.FieldWithdrawRealAmount, v)
-	return u
-}
-
-// SetOperateUserID sets the "operate_user_id" field.
-func (u *TransferOrderUpsert) SetOperateUserID(v int64) *TransferOrderUpsert {
-	u.Set(transferorder.FieldOperateUserID, v)
-	return u
-}
-
-// UpdateOperateUserID sets the "operate_user_id" field to the value that was provided on create.
-func (u *TransferOrderUpsert) UpdateOperateUserID() *TransferOrderUpsert {
-	u.SetExcluded(transferorder.FieldOperateUserID)
-	return u
-}
-
-// SetRejectReason sets the "reject_reason" field.
-func (u *TransferOrderUpsert) SetRejectReason(v string) *TransferOrderUpsert {
-	u.Set(transferorder.FieldRejectReason, v)
-	return u
-}
-
-// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
-func (u *TransferOrderUpsert) UpdateRejectReason() *TransferOrderUpsert {
-	u.SetExcluded(transferorder.FieldRejectReason)
 	return u
 }
 
@@ -1359,90 +1177,6 @@ func (u *TransferOrderUpsertOne) SetOutTransactionID(v string) *TransferOrderUps
 func (u *TransferOrderUpsertOne) UpdateOutTransactionID() *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOutTransactionID()
-	})
-}
-
-// SetWithdrawAccount sets the "withdraw_account" field.
-func (u *TransferOrderUpsertOne) SetWithdrawAccount(v string) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetWithdrawAccount(v)
-	})
-}
-
-// UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
-func (u *TransferOrderUpsertOne) UpdateWithdrawAccount() *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateWithdrawAccount()
-	})
-}
-
-// SetWithdrawRate sets the "withdraw_rate" field.
-func (u *TransferOrderUpsertOne) SetWithdrawRate(v int64) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetWithdrawRate(v)
-	})
-}
-
-// AddWithdrawRate adds v to the "withdraw_rate" field.
-func (u *TransferOrderUpsertOne) AddWithdrawRate(v int64) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.AddWithdrawRate(v)
-	})
-}
-
-// UpdateWithdrawRate sets the "withdraw_rate" field to the value that was provided on create.
-func (u *TransferOrderUpsertOne) UpdateWithdrawRate() *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateWithdrawRate()
-	})
-}
-
-// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
-func (u *TransferOrderUpsertOne) SetWithdrawRealAmount(v int64) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetWithdrawRealAmount(v)
-	})
-}
-
-// AddWithdrawRealAmount adds v to the "withdraw_real_amount" field.
-func (u *TransferOrderUpsertOne) AddWithdrawRealAmount(v int64) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.AddWithdrawRealAmount(v)
-	})
-}
-
-// UpdateWithdrawRealAmount sets the "withdraw_real_amount" field to the value that was provided on create.
-func (u *TransferOrderUpsertOne) UpdateWithdrawRealAmount() *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateWithdrawRealAmount()
-	})
-}
-
-// SetOperateUserID sets the "operate_user_id" field.
-func (u *TransferOrderUpsertOne) SetOperateUserID(v int64) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetOperateUserID(v)
-	})
-}
-
-// UpdateOperateUserID sets the "operate_user_id" field to the value that was provided on create.
-func (u *TransferOrderUpsertOne) UpdateOperateUserID() *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateOperateUserID()
-	})
-}
-
-// SetRejectReason sets the "reject_reason" field.
-func (u *TransferOrderUpsertOne) SetRejectReason(v string) *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetRejectReason(v)
-	})
-}
-
-// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
-func (u *TransferOrderUpsertOne) UpdateRejectReason() *TransferOrderUpsertOne {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateRejectReason()
 	})
 }
 
@@ -1884,90 +1618,6 @@ func (u *TransferOrderUpsertBulk) SetOutTransactionID(v string) *TransferOrderUp
 func (u *TransferOrderUpsertBulk) UpdateOutTransactionID() *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOutTransactionID()
-	})
-}
-
-// SetWithdrawAccount sets the "withdraw_account" field.
-func (u *TransferOrderUpsertBulk) SetWithdrawAccount(v string) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetWithdrawAccount(v)
-	})
-}
-
-// UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
-func (u *TransferOrderUpsertBulk) UpdateWithdrawAccount() *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateWithdrawAccount()
-	})
-}
-
-// SetWithdrawRate sets the "withdraw_rate" field.
-func (u *TransferOrderUpsertBulk) SetWithdrawRate(v int64) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetWithdrawRate(v)
-	})
-}
-
-// AddWithdrawRate adds v to the "withdraw_rate" field.
-func (u *TransferOrderUpsertBulk) AddWithdrawRate(v int64) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.AddWithdrawRate(v)
-	})
-}
-
-// UpdateWithdrawRate sets the "withdraw_rate" field to the value that was provided on create.
-func (u *TransferOrderUpsertBulk) UpdateWithdrawRate() *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateWithdrawRate()
-	})
-}
-
-// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
-func (u *TransferOrderUpsertBulk) SetWithdrawRealAmount(v int64) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetWithdrawRealAmount(v)
-	})
-}
-
-// AddWithdrawRealAmount adds v to the "withdraw_real_amount" field.
-func (u *TransferOrderUpsertBulk) AddWithdrawRealAmount(v int64) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.AddWithdrawRealAmount(v)
-	})
-}
-
-// UpdateWithdrawRealAmount sets the "withdraw_real_amount" field to the value that was provided on create.
-func (u *TransferOrderUpsertBulk) UpdateWithdrawRealAmount() *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateWithdrawRealAmount()
-	})
-}
-
-// SetOperateUserID sets the "operate_user_id" field.
-func (u *TransferOrderUpsertBulk) SetOperateUserID(v int64) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetOperateUserID(v)
-	})
-}
-
-// UpdateOperateUserID sets the "operate_user_id" field to the value that was provided on create.
-func (u *TransferOrderUpsertBulk) UpdateOperateUserID() *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateOperateUserID()
-	})
-}
-
-// SetRejectReason sets the "reject_reason" field.
-func (u *TransferOrderUpsertBulk) SetRejectReason(v string) *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.SetRejectReason(v)
-	})
-}
-
-// UpdateRejectReason sets the "reject_reason" field to the value that was provided on create.
-func (u *TransferOrderUpsertBulk) UpdateRejectReason() *TransferOrderUpsertBulk {
-	return u.Update(func(s *TransferOrderUpsert) {
-		s.UpdateRejectReason()
 	})
 }
 

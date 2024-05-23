@@ -45,6 +45,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -940,19 +941,34 @@ func (uu *UserUpdate) AddCloudFiles(c ...*CloudFile) *UserUpdate {
 	return uu.AddCloudFileIDs(ids...)
 }
 
-// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
-func (uu *UserUpdate) AddOperateTransferOrderIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddOperateTransferOrderIDs(ids...)
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (uu *UserUpdate) AddWithdrawRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddWithdrawRecordIDs(ids...)
 	return uu
 }
 
-// AddOperateTransferOrders adds the "operate_transfer_orders" edges to the TransferOrder entity.
-func (uu *UserUpdate) AddOperateTransferOrders(t ...*TransferOrder) *UserUpdate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// AddWithdrawRecords adds the "withdraw_records" edges to the WithdrawRecord entity.
+func (uu *UserUpdate) AddWithdrawRecords(w ...*WithdrawRecord) *UserUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
 	}
-	return uu.AddOperateTransferOrderIDs(ids...)
+	return uu.AddWithdrawRecordIDs(ids...)
+}
+
+// AddOperateWithdrawRecordIDs adds the "operate_withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (uu *UserUpdate) AddOperateWithdrawRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddOperateWithdrawRecordIDs(ids...)
+	return uu
+}
+
+// AddOperateWithdrawRecords adds the "operate_withdraw_records" edges to the WithdrawRecord entity.
+func (uu *UserUpdate) AddOperateWithdrawRecords(w ...*WithdrawRecord) *UserUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uu.AddOperateWithdrawRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1698,25 +1714,46 @@ func (uu *UserUpdate) RemoveCloudFiles(c ...*CloudFile) *UserUpdate {
 	return uu.RemoveCloudFileIDs(ids...)
 }
 
-// ClearOperateTransferOrders clears all "operate_transfer_orders" edges to the TransferOrder entity.
-func (uu *UserUpdate) ClearOperateTransferOrders() *UserUpdate {
-	uu.mutation.ClearOperateTransferOrders()
+// ClearWithdrawRecords clears all "withdraw_records" edges to the WithdrawRecord entity.
+func (uu *UserUpdate) ClearWithdrawRecords() *UserUpdate {
+	uu.mutation.ClearWithdrawRecords()
 	return uu
 }
 
-// RemoveOperateTransferOrderIDs removes the "operate_transfer_orders" edge to TransferOrder entities by IDs.
-func (uu *UserUpdate) RemoveOperateTransferOrderIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveOperateTransferOrderIDs(ids...)
+// RemoveWithdrawRecordIDs removes the "withdraw_records" edge to WithdrawRecord entities by IDs.
+func (uu *UserUpdate) RemoveWithdrawRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveWithdrawRecordIDs(ids...)
 	return uu
 }
 
-// RemoveOperateTransferOrders removes "operate_transfer_orders" edges to TransferOrder entities.
-func (uu *UserUpdate) RemoveOperateTransferOrders(t ...*TransferOrder) *UserUpdate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// RemoveWithdrawRecords removes "withdraw_records" edges to WithdrawRecord entities.
+func (uu *UserUpdate) RemoveWithdrawRecords(w ...*WithdrawRecord) *UserUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
 	}
-	return uu.RemoveOperateTransferOrderIDs(ids...)
+	return uu.RemoveWithdrawRecordIDs(ids...)
+}
+
+// ClearOperateWithdrawRecords clears all "operate_withdraw_records" edges to the WithdrawRecord entity.
+func (uu *UserUpdate) ClearOperateWithdrawRecords() *UserUpdate {
+	uu.mutation.ClearOperateWithdrawRecords()
+	return uu
+}
+
+// RemoveOperateWithdrawRecordIDs removes the "operate_withdraw_records" edge to WithdrawRecord entities by IDs.
+func (uu *UserUpdate) RemoveOperateWithdrawRecordIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveOperateWithdrawRecordIDs(ids...)
+	return uu
+}
+
+// RemoveOperateWithdrawRecords removes "operate_withdraw_records" edges to WithdrawRecord entities.
+func (uu *UserUpdate) RemoveOperateWithdrawRecords(w ...*WithdrawRecord) *UserUpdate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uu.RemoveOperateWithdrawRecordIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -3501,28 +3538,28 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.OperateTransferOrdersCleared() {
+	if uu.mutation.WithdrawRecordsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedOperateTransferOrdersIDs(); len(nodes) > 0 && !uu.mutation.OperateTransferOrdersCleared() {
+	if nodes := uu.mutation.RemovedWithdrawRecordsIDs(); len(nodes) > 0 && !uu.mutation.WithdrawRecordsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -3530,15 +3567,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.OperateTransferOrdersIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.WithdrawRecordsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.OperateWithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOperateWithdrawRecordsIDs(); len(nodes) > 0 && !uu.mutation.OperateWithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OperateWithdrawRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -4447,19 +4529,34 @@ func (uuo *UserUpdateOne) AddCloudFiles(c ...*CloudFile) *UserUpdateOne {
 	return uuo.AddCloudFileIDs(ids...)
 }
 
-// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
-func (uuo *UserUpdateOne) AddOperateTransferOrderIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddOperateTransferOrderIDs(ids...)
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (uuo *UserUpdateOne) AddWithdrawRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddWithdrawRecordIDs(ids...)
 	return uuo
 }
 
-// AddOperateTransferOrders adds the "operate_transfer_orders" edges to the TransferOrder entity.
-func (uuo *UserUpdateOne) AddOperateTransferOrders(t ...*TransferOrder) *UserUpdateOne {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// AddWithdrawRecords adds the "withdraw_records" edges to the WithdrawRecord entity.
+func (uuo *UserUpdateOne) AddWithdrawRecords(w ...*WithdrawRecord) *UserUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
 	}
-	return uuo.AddOperateTransferOrderIDs(ids...)
+	return uuo.AddWithdrawRecordIDs(ids...)
+}
+
+// AddOperateWithdrawRecordIDs adds the "operate_withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (uuo *UserUpdateOne) AddOperateWithdrawRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddOperateWithdrawRecordIDs(ids...)
+	return uuo
+}
+
+// AddOperateWithdrawRecords adds the "operate_withdraw_records" edges to the WithdrawRecord entity.
+func (uuo *UserUpdateOne) AddOperateWithdrawRecords(w ...*WithdrawRecord) *UserUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uuo.AddOperateWithdrawRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -5205,25 +5302,46 @@ func (uuo *UserUpdateOne) RemoveCloudFiles(c ...*CloudFile) *UserUpdateOne {
 	return uuo.RemoveCloudFileIDs(ids...)
 }
 
-// ClearOperateTransferOrders clears all "operate_transfer_orders" edges to the TransferOrder entity.
-func (uuo *UserUpdateOne) ClearOperateTransferOrders() *UserUpdateOne {
-	uuo.mutation.ClearOperateTransferOrders()
+// ClearWithdrawRecords clears all "withdraw_records" edges to the WithdrawRecord entity.
+func (uuo *UserUpdateOne) ClearWithdrawRecords() *UserUpdateOne {
+	uuo.mutation.ClearWithdrawRecords()
 	return uuo
 }
 
-// RemoveOperateTransferOrderIDs removes the "operate_transfer_orders" edge to TransferOrder entities by IDs.
-func (uuo *UserUpdateOne) RemoveOperateTransferOrderIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveOperateTransferOrderIDs(ids...)
+// RemoveWithdrawRecordIDs removes the "withdraw_records" edge to WithdrawRecord entities by IDs.
+func (uuo *UserUpdateOne) RemoveWithdrawRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveWithdrawRecordIDs(ids...)
 	return uuo
 }
 
-// RemoveOperateTransferOrders removes "operate_transfer_orders" edges to TransferOrder entities.
-func (uuo *UserUpdateOne) RemoveOperateTransferOrders(t ...*TransferOrder) *UserUpdateOne {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// RemoveWithdrawRecords removes "withdraw_records" edges to WithdrawRecord entities.
+func (uuo *UserUpdateOne) RemoveWithdrawRecords(w ...*WithdrawRecord) *UserUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
 	}
-	return uuo.RemoveOperateTransferOrderIDs(ids...)
+	return uuo.RemoveWithdrawRecordIDs(ids...)
+}
+
+// ClearOperateWithdrawRecords clears all "operate_withdraw_records" edges to the WithdrawRecord entity.
+func (uuo *UserUpdateOne) ClearOperateWithdrawRecords() *UserUpdateOne {
+	uuo.mutation.ClearOperateWithdrawRecords()
+	return uuo
+}
+
+// RemoveOperateWithdrawRecordIDs removes the "operate_withdraw_records" edge to WithdrawRecord entities by IDs.
+func (uuo *UserUpdateOne) RemoveOperateWithdrawRecordIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveOperateWithdrawRecordIDs(ids...)
+	return uuo
+}
+
+// RemoveOperateWithdrawRecords removes "operate_withdraw_records" edges to WithdrawRecord entities.
+func (uuo *UserUpdateOne) RemoveOperateWithdrawRecords(w ...*WithdrawRecord) *UserUpdateOne {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uuo.RemoveOperateWithdrawRecordIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -7038,28 +7156,28 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.OperateTransferOrdersCleared() {
+	if uuo.mutation.WithdrawRecordsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedOperateTransferOrdersIDs(); len(nodes) > 0 && !uuo.mutation.OperateTransferOrdersCleared() {
+	if nodes := uuo.mutation.RemovedWithdrawRecordsIDs(); len(nodes) > 0 && !uuo.mutation.WithdrawRecordsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -7067,15 +7185,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.OperateTransferOrdersIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.WithdrawRecordsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OperateWithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOperateWithdrawRecordsIDs(); len(nodes) > 0 && !uuo.mutation.OperateWithdrawRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OperateWithdrawRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

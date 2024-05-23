@@ -215,3 +215,6 @@ type Wallet func(*sql.Selector)
 
 // WithdrawAccount is the predicate function for withdrawaccount builders.
 type WithdrawAccount func(*sql.Selector)
+
+// WithdrawRecord is the predicate function for withdrawrecord builders.
+type WithdrawRecord func(*sql.Selector)

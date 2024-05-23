@@ -45,55 +45,57 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                       *QueryContext
-	order                     []user.OrderOption
-	inters                    []Interceptor
-	predicates                []predicate.User
-	withVxAccounts            *VXAccountQuery
-	withCollects              *CollectQuery
-	withDevices               *DeviceQuery
-	withProfitSettings        *ProfitSettingQuery
-	withCostAccount           *CostAccountQuery
-	withProfitAccount         *ProfitAccountQuery
-	withCostBills             *CostBillQuery
-	withEarnBills             *EarnBillQuery
-	withMissionConsumeOrders  *MissionConsumeOrderQuery
-	withMissionProduceOrders  *MissionProduceOrderQuery
-	withRechargeOrders        *RechargeOrderQuery
-	withVxSocials             *VXSocialQuery
-	withMissionBatches        *MissionBatchQuery
-	withUserDevices           *UserDeviceQuery
-	withParent                *UserQuery
-	withChildren              *UserQuery
-	withInvites               *InviteQuery
-	withCampaignOrders        *CampaignOrderQuery
-	withWallets               *WalletQuery
-	withWithdrawAccount       *WithdrawAccountQuery
-	withIncomeBills           *BillQuery
-	withOutcomeBills          *BillQuery
-	withMissionProductions    *MissionProductionQuery
-	withMissions              *MissionQuery
-	withIncomeTransferOrders  *TransferOrderQuery
-	withOutcomeTransferOrders *TransferOrderQuery
-	withConsumeMissionOrders  *MissionOrderQuery
-	withProduceMissionOrders  *MissionOrderQuery
-	withLoginRecords          *LoginRecordQuery
-	withRenewalAgreements     *RenewalAgreementQuery
-	withArtworks              *ArtworkQuery
-	withArtworkLikes          *ArtworkLikeQuery
-	withCdkInfos              *CDKInfoQuery
-	withUseCdkInfos           *CDKInfoQuery
-	withLottoRecords          *LottoRecordQuery
-	withLottoUserCounts       *LottoUserCountQuery
-	withLottoGetCountRecords  *LottoGetCountRecordQuery
-	withCloudFiles            *CloudFileQuery
-	withOperateTransferOrders *TransferOrderQuery
-	modifiers                 []func(*sql.Selector)
+	ctx                        *QueryContext
+	order                      []user.OrderOption
+	inters                     []Interceptor
+	predicates                 []predicate.User
+	withVxAccounts             *VXAccountQuery
+	withCollects               *CollectQuery
+	withDevices                *DeviceQuery
+	withProfitSettings         *ProfitSettingQuery
+	withCostAccount            *CostAccountQuery
+	withProfitAccount          *ProfitAccountQuery
+	withCostBills              *CostBillQuery
+	withEarnBills              *EarnBillQuery
+	withMissionConsumeOrders   *MissionConsumeOrderQuery
+	withMissionProduceOrders   *MissionProduceOrderQuery
+	withRechargeOrders         *RechargeOrderQuery
+	withVxSocials              *VXSocialQuery
+	withMissionBatches         *MissionBatchQuery
+	withUserDevices            *UserDeviceQuery
+	withParent                 *UserQuery
+	withChildren               *UserQuery
+	withInvites                *InviteQuery
+	withCampaignOrders         *CampaignOrderQuery
+	withWallets                *WalletQuery
+	withWithdrawAccount        *WithdrawAccountQuery
+	withIncomeBills            *BillQuery
+	withOutcomeBills           *BillQuery
+	withMissionProductions     *MissionProductionQuery
+	withMissions               *MissionQuery
+	withIncomeTransferOrders   *TransferOrderQuery
+	withOutcomeTransferOrders  *TransferOrderQuery
+	withConsumeMissionOrders   *MissionOrderQuery
+	withProduceMissionOrders   *MissionOrderQuery
+	withLoginRecords           *LoginRecordQuery
+	withRenewalAgreements      *RenewalAgreementQuery
+	withArtworks               *ArtworkQuery
+	withArtworkLikes           *ArtworkLikeQuery
+	withCdkInfos               *CDKInfoQuery
+	withUseCdkInfos            *CDKInfoQuery
+	withLottoRecords           *LottoRecordQuery
+	withLottoUserCounts        *LottoUserCountQuery
+	withLottoGetCountRecords   *LottoGetCountRecordQuery
+	withCloudFiles             *CloudFileQuery
+	withWithdrawRecords        *WithdrawRecordQuery
+	withOperateWithdrawRecords *WithdrawRecordQuery
+	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -966,9 +968,9 @@ func (uq *UserQuery) QueryCloudFiles() *CloudFileQuery {
 	return query
 }
 
-// QueryOperateTransferOrders chains the current query on the "operate_transfer_orders" edge.
-func (uq *UserQuery) QueryOperateTransferOrders() *TransferOrderQuery {
-	query := (&TransferOrderClient{config: uq.config}).Query()
+// QueryWithdrawRecords chains the current query on the "withdraw_records" edge.
+func (uq *UserQuery) QueryWithdrawRecords() *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -979,8 +981,30 @@ func (uq *UserQuery) QueryOperateTransferOrders() *TransferOrderQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(transferorder.Table, transferorder.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateTransferOrdersTable, user.OperateTransferOrdersColumn),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawRecordsTable, user.WithdrawRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOperateWithdrawRecords chains the current query on the "operate_withdraw_records" edge.
+func (uq *UserQuery) QueryOperateWithdrawRecords() *WithdrawRecordQuery {
+	query := (&WithdrawRecordClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateWithdrawRecordsTable, user.OperateWithdrawRecordsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -1175,50 +1199,51 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                    uq.config,
-		ctx:                       uq.ctx.Clone(),
-		order:                     append([]user.OrderOption{}, uq.order...),
-		inters:                    append([]Interceptor{}, uq.inters...),
-		predicates:                append([]predicate.User{}, uq.predicates...),
-		withVxAccounts:            uq.withVxAccounts.Clone(),
-		withCollects:              uq.withCollects.Clone(),
-		withDevices:               uq.withDevices.Clone(),
-		withProfitSettings:        uq.withProfitSettings.Clone(),
-		withCostAccount:           uq.withCostAccount.Clone(),
-		withProfitAccount:         uq.withProfitAccount.Clone(),
-		withCostBills:             uq.withCostBills.Clone(),
-		withEarnBills:             uq.withEarnBills.Clone(),
-		withMissionConsumeOrders:  uq.withMissionConsumeOrders.Clone(),
-		withMissionProduceOrders:  uq.withMissionProduceOrders.Clone(),
-		withRechargeOrders:        uq.withRechargeOrders.Clone(),
-		withVxSocials:             uq.withVxSocials.Clone(),
-		withMissionBatches:        uq.withMissionBatches.Clone(),
-		withUserDevices:           uq.withUserDevices.Clone(),
-		withParent:                uq.withParent.Clone(),
-		withChildren:              uq.withChildren.Clone(),
-		withInvites:               uq.withInvites.Clone(),
-		withCampaignOrders:        uq.withCampaignOrders.Clone(),
-		withWallets:               uq.withWallets.Clone(),
-		withWithdrawAccount:       uq.withWithdrawAccount.Clone(),
-		withIncomeBills:           uq.withIncomeBills.Clone(),
-		withOutcomeBills:          uq.withOutcomeBills.Clone(),
-		withMissionProductions:    uq.withMissionProductions.Clone(),
-		withMissions:              uq.withMissions.Clone(),
-		withIncomeTransferOrders:  uq.withIncomeTransferOrders.Clone(),
-		withOutcomeTransferOrders: uq.withOutcomeTransferOrders.Clone(),
-		withConsumeMissionOrders:  uq.withConsumeMissionOrders.Clone(),
-		withProduceMissionOrders:  uq.withProduceMissionOrders.Clone(),
-		withLoginRecords:          uq.withLoginRecords.Clone(),
-		withRenewalAgreements:     uq.withRenewalAgreements.Clone(),
-		withArtworks:              uq.withArtworks.Clone(),
-		withArtworkLikes:          uq.withArtworkLikes.Clone(),
-		withCdkInfos:              uq.withCdkInfos.Clone(),
-		withUseCdkInfos:           uq.withUseCdkInfos.Clone(),
-		withLottoRecords:          uq.withLottoRecords.Clone(),
-		withLottoUserCounts:       uq.withLottoUserCounts.Clone(),
-		withLottoGetCountRecords:  uq.withLottoGetCountRecords.Clone(),
-		withCloudFiles:            uq.withCloudFiles.Clone(),
-		withOperateTransferOrders: uq.withOperateTransferOrders.Clone(),
+		config:                     uq.config,
+		ctx:                        uq.ctx.Clone(),
+		order:                      append([]user.OrderOption{}, uq.order...),
+		inters:                     append([]Interceptor{}, uq.inters...),
+		predicates:                 append([]predicate.User{}, uq.predicates...),
+		withVxAccounts:             uq.withVxAccounts.Clone(),
+		withCollects:               uq.withCollects.Clone(),
+		withDevices:                uq.withDevices.Clone(),
+		withProfitSettings:         uq.withProfitSettings.Clone(),
+		withCostAccount:            uq.withCostAccount.Clone(),
+		withProfitAccount:          uq.withProfitAccount.Clone(),
+		withCostBills:              uq.withCostBills.Clone(),
+		withEarnBills:              uq.withEarnBills.Clone(),
+		withMissionConsumeOrders:   uq.withMissionConsumeOrders.Clone(),
+		withMissionProduceOrders:   uq.withMissionProduceOrders.Clone(),
+		withRechargeOrders:         uq.withRechargeOrders.Clone(),
+		withVxSocials:              uq.withVxSocials.Clone(),
+		withMissionBatches:         uq.withMissionBatches.Clone(),
+		withUserDevices:            uq.withUserDevices.Clone(),
+		withParent:                 uq.withParent.Clone(),
+		withChildren:               uq.withChildren.Clone(),
+		withInvites:                uq.withInvites.Clone(),
+		withCampaignOrders:         uq.withCampaignOrders.Clone(),
+		withWallets:                uq.withWallets.Clone(),
+		withWithdrawAccount:        uq.withWithdrawAccount.Clone(),
+		withIncomeBills:            uq.withIncomeBills.Clone(),
+		withOutcomeBills:           uq.withOutcomeBills.Clone(),
+		withMissionProductions:     uq.withMissionProductions.Clone(),
+		withMissions:               uq.withMissions.Clone(),
+		withIncomeTransferOrders:   uq.withIncomeTransferOrders.Clone(),
+		withOutcomeTransferOrders:  uq.withOutcomeTransferOrders.Clone(),
+		withConsumeMissionOrders:   uq.withConsumeMissionOrders.Clone(),
+		withProduceMissionOrders:   uq.withProduceMissionOrders.Clone(),
+		withLoginRecords:           uq.withLoginRecords.Clone(),
+		withRenewalAgreements:      uq.withRenewalAgreements.Clone(),
+		withArtworks:               uq.withArtworks.Clone(),
+		withArtworkLikes:           uq.withArtworkLikes.Clone(),
+		withCdkInfos:               uq.withCdkInfos.Clone(),
+		withUseCdkInfos:            uq.withUseCdkInfos.Clone(),
+		withLottoRecords:           uq.withLottoRecords.Clone(),
+		withLottoUserCounts:        uq.withLottoUserCounts.Clone(),
+		withLottoGetCountRecords:   uq.withLottoGetCountRecords.Clone(),
+		withCloudFiles:             uq.withCloudFiles.Clone(),
+		withWithdrawRecords:        uq.withWithdrawRecords.Clone(),
+		withOperateWithdrawRecords: uq.withOperateWithdrawRecords.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1643,14 +1668,25 @@ func (uq *UserQuery) WithCloudFiles(opts ...func(*CloudFileQuery)) *UserQuery {
 	return uq
 }
 
-// WithOperateTransferOrders tells the query-builder to eager-load the nodes that are connected to
-// the "operate_transfer_orders" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithOperateTransferOrders(opts ...func(*TransferOrderQuery)) *UserQuery {
-	query := (&TransferOrderClient{config: uq.config}).Query()
+// WithWithdrawRecords tells the query-builder to eager-load the nodes that are connected to
+// the "withdraw_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithWithdrawRecords(opts ...func(*WithdrawRecordQuery)) *UserQuery {
+	query := (&WithdrawRecordClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withOperateTransferOrders = query
+	uq.withWithdrawRecords = query
+	return uq
+}
+
+// WithOperateWithdrawRecords tells the query-builder to eager-load the nodes that are connected to
+// the "operate_withdraw_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithOperateWithdrawRecords(opts ...func(*WithdrawRecordQuery)) *UserQuery {
+	query := (&WithdrawRecordClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withOperateWithdrawRecords = query
 	return uq
 }
 
@@ -1732,7 +1768,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [39]bool{
+		loadedTypes = [40]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1771,7 +1807,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withLottoUserCounts != nil,
 			uq.withLottoGetCountRecords != nil,
 			uq.withCloudFiles != nil,
-			uq.withOperateTransferOrders != nil,
+			uq.withWithdrawRecords != nil,
+			uq.withOperateWithdrawRecords != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2069,11 +2106,18 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withOperateTransferOrders; query != nil {
-		if err := uq.loadOperateTransferOrders(ctx, query, nodes,
-			func(n *User) { n.Edges.OperateTransferOrders = []*TransferOrder{} },
-			func(n *User, e *TransferOrder) {
-				n.Edges.OperateTransferOrders = append(n.Edges.OperateTransferOrders, e)
+	if query := uq.withWithdrawRecords; query != nil {
+		if err := uq.loadWithdrawRecords(ctx, query, nodes,
+			func(n *User) { n.Edges.WithdrawRecords = []*WithdrawRecord{} },
+			func(n *User, e *WithdrawRecord) { n.Edges.WithdrawRecords = append(n.Edges.WithdrawRecords, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withOperateWithdrawRecords; query != nil {
+		if err := uq.loadOperateWithdrawRecords(ctx, query, nodes,
+			func(n *User) { n.Edges.OperateWithdrawRecords = []*WithdrawRecord{} },
+			func(n *User, e *WithdrawRecord) {
+				n.Edges.OperateWithdrawRecords = append(n.Edges.OperateWithdrawRecords, e)
 			}); err != nil {
 			return nil, err
 		}
@@ -3213,7 +3257,7 @@ func (uq *UserQuery) loadCloudFiles(ctx context.Context, query *CloudFileQuery, 
 	}
 	return nil
 }
-func (uq *UserQuery) loadOperateTransferOrders(ctx context.Context, query *TransferOrderQuery, nodes []*User, init func(*User), assign func(*User, *TransferOrder)) error {
+func (uq *UserQuery) loadWithdrawRecords(ctx context.Context, query *WithdrawRecordQuery, nodes []*User, init func(*User), assign func(*User, *WithdrawRecord)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -3224,10 +3268,40 @@ func (uq *UserQuery) loadOperateTransferOrders(ctx context.Context, query *Trans
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(transferorder.FieldOperateUserID)
+		query.ctx.AppendFieldOnce(withdrawrecord.FieldUserID)
 	}
-	query.Where(predicate.TransferOrder(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.OperateTransferOrdersColumn), fks...))
+	query.Where(predicate.WithdrawRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.WithdrawRecordsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadOperateWithdrawRecords(ctx context.Context, query *WithdrawRecordQuery, nodes []*User, init func(*User), assign func(*User, *WithdrawRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(withdrawrecord.FieldOperateUserID)
+	}
+	query.Where(predicate.WithdrawRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.OperateWithdrawRecordsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

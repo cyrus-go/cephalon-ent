@@ -44,6 +44,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -948,19 +949,34 @@ func (uc *UserCreate) AddCloudFiles(c ...*CloudFile) *UserCreate {
 	return uc.AddCloudFileIDs(ids...)
 }
 
-// AddOperateTransferOrderIDs adds the "operate_transfer_orders" edge to the TransferOrder entity by IDs.
-func (uc *UserCreate) AddOperateTransferOrderIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddOperateTransferOrderIDs(ids...)
+// AddWithdrawRecordIDs adds the "withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (uc *UserCreate) AddWithdrawRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddWithdrawRecordIDs(ids...)
 	return uc
 }
 
-// AddOperateTransferOrders adds the "operate_transfer_orders" edges to the TransferOrder entity.
-func (uc *UserCreate) AddOperateTransferOrders(t ...*TransferOrder) *UserCreate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// AddWithdrawRecords adds the "withdraw_records" edges to the WithdrawRecord entity.
+func (uc *UserCreate) AddWithdrawRecords(w ...*WithdrawRecord) *UserCreate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
 	}
-	return uc.AddOperateTransferOrderIDs(ids...)
+	return uc.AddWithdrawRecordIDs(ids...)
+}
+
+// AddOperateWithdrawRecordIDs adds the "operate_withdraw_records" edge to the WithdrawRecord entity by IDs.
+func (uc *UserCreate) AddOperateWithdrawRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddOperateWithdrawRecordIDs(ids...)
+	return uc
+}
+
+// AddOperateWithdrawRecords adds the "operate_withdraw_records" edges to the WithdrawRecord entity.
+func (uc *UserCreate) AddOperateWithdrawRecords(w ...*WithdrawRecord) *UserCreate {
+	ids := make([]int64, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uc.AddOperateWithdrawRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1894,15 +1910,31 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.OperateTransferOrdersIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.WithdrawRecordsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.OperateTransferOrdersTable,
-			Columns: []string{user.OperateTransferOrdersColumn},
+			Table:   user.WithdrawRecordsTable,
+			Columns: []string{user.WithdrawRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transferorder.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OperateWithdrawRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateWithdrawRecordsTable,
+			Columns: []string{user.OperateWithdrawRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

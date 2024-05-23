@@ -135,8 +135,10 @@ const (
 	EdgeLottoGetCountRecords = "lotto_get_count_records"
 	// EdgeCloudFiles holds the string denoting the cloud_files edge name in mutations.
 	EdgeCloudFiles = "cloud_files"
-	// EdgeOperateTransferOrders holds the string denoting the operate_transfer_orders edge name in mutations.
-	EdgeOperateTransferOrders = "operate_transfer_orders"
+	// EdgeWithdrawRecords holds the string denoting the withdraw_records edge name in mutations.
+	EdgeWithdrawRecords = "withdraw_records"
+	// EdgeOperateWithdrawRecords holds the string denoting the operate_withdraw_records edge name in mutations.
+	EdgeOperateWithdrawRecords = "operate_withdraw_records"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -399,13 +401,20 @@ const (
 	CloudFilesInverseTable = "cloud_files"
 	// CloudFilesColumn is the table column denoting the cloud_files relation/edge.
 	CloudFilesColumn = "user_id"
-	// OperateTransferOrdersTable is the table that holds the operate_transfer_orders relation/edge.
-	OperateTransferOrdersTable = "transfer_orders"
-	// OperateTransferOrdersInverseTable is the table name for the TransferOrder entity.
-	// It exists in this package in order to avoid circular dependency with the "transferorder" package.
-	OperateTransferOrdersInverseTable = "transfer_orders"
-	// OperateTransferOrdersColumn is the table column denoting the operate_transfer_orders relation/edge.
-	OperateTransferOrdersColumn = "operate_user_id"
+	// WithdrawRecordsTable is the table that holds the withdraw_records relation/edge.
+	WithdrawRecordsTable = "withdraw_records"
+	// WithdrawRecordsInverseTable is the table name for the WithdrawRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "withdrawrecord" package.
+	WithdrawRecordsInverseTable = "withdraw_records"
+	// WithdrawRecordsColumn is the table column denoting the withdraw_records relation/edge.
+	WithdrawRecordsColumn = "user_id"
+	// OperateWithdrawRecordsTable is the table that holds the operate_withdraw_records relation/edge.
+	OperateWithdrawRecordsTable = "withdraw_records"
+	// OperateWithdrawRecordsInverseTable is the table name for the WithdrawRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "withdrawrecord" package.
+	OperateWithdrawRecordsInverseTable = "withdraw_records"
+	// OperateWithdrawRecordsColumn is the table column denoting the operate_withdraw_records relation/edge.
+	OperateWithdrawRecordsColumn = "operate_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1143,17 +1152,31 @@ func ByCloudFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByOperateTransferOrdersCount orders the results by operate_transfer_orders count.
-func ByOperateTransferOrdersCount(opts ...sql.OrderTermOption) OrderOption {
+// ByWithdrawRecordsCount orders the results by withdraw_records count.
+func ByWithdrawRecordsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newOperateTransferOrdersStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newWithdrawRecordsStep(), opts...)
 	}
 }
 
-// ByOperateTransferOrders orders the results by operate_transfer_orders terms.
-func ByOperateTransferOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByWithdrawRecords orders the results by withdraw_records terms.
+func ByWithdrawRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOperateTransferOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newWithdrawRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByOperateWithdrawRecordsCount orders the results by operate_withdraw_records count.
+func ByOperateWithdrawRecordsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOperateWithdrawRecordsStep(), opts...)
+	}
+}
+
+// ByOperateWithdrawRecords orders the results by operate_withdraw_records terms.
+func ByOperateWithdrawRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOperateWithdrawRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newVxAccountsStep() *sqlgraph.Step {
@@ -1422,10 +1445,17 @@ func newCloudFilesStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, CloudFilesTable, CloudFilesColumn),
 	)
 }
-func newOperateTransferOrdersStep() *sqlgraph.Step {
+func newWithdrawRecordsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OperateTransferOrdersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, OperateTransferOrdersTable, OperateTransferOrdersColumn),
+		sqlgraph.To(WithdrawRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, WithdrawRecordsTable, WithdrawRecordsColumn),
+	)
+}
+func newOperateWithdrawRecordsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OperateWithdrawRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OperateWithdrawRecordsTable, OperateWithdrawRecordsColumn),
 	)
 }

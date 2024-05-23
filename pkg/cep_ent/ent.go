@@ -71,6 +71,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -190,6 +191,7 @@ func checkColumn(table, column string) error {
 			vxsocial.Table:             vxsocial.ValidColumn,
 			wallet.Table:               wallet.ValidColumn,
 			withdrawaccount.Table:      withdrawaccount.ValidColumn,
+			withdrawrecord.Table:       withdrawrecord.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

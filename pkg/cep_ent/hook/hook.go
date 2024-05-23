@@ -717,6 +717,18 @@ func (f WithdrawAccountFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (ce
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.WithdrawAccountMutation", m)
 }
 
+// The WithdrawRecordFunc type is an adapter to allow the use of ordinary
+// function as WithdrawRecord mutator.
+type WithdrawRecordFunc func(context.Context, *cep_ent.WithdrawRecordMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WithdrawRecordFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.WithdrawRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.WithdrawRecordMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, cep_ent.Mutation) bool
 

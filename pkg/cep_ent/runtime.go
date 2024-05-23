@@ -66,6 +66,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -2931,26 +2932,6 @@ func init() {
 	transferorderDescOutTransactionID := transferorderFields[9].Descriptor()
 	// transferorder.DefaultOutTransactionID holds the default value on creation for the out_transaction_id field.
 	transferorder.DefaultOutTransactionID = transferorderDescOutTransactionID.Default.(string)
-	// transferorderDescWithdrawAccount is the schema descriptor for withdraw_account field.
-	transferorderDescWithdrawAccount := transferorderFields[10].Descriptor()
-	// transferorder.DefaultWithdrawAccount holds the default value on creation for the withdraw_account field.
-	transferorder.DefaultWithdrawAccount = transferorderDescWithdrawAccount.Default.(string)
-	// transferorderDescWithdrawRate is the schema descriptor for withdraw_rate field.
-	transferorderDescWithdrawRate := transferorderFields[11].Descriptor()
-	// transferorder.DefaultWithdrawRate holds the default value on creation for the withdraw_rate field.
-	transferorder.DefaultWithdrawRate = transferorderDescWithdrawRate.Default.(int64)
-	// transferorderDescWithdrawRealAmount is the schema descriptor for withdraw_real_amount field.
-	transferorderDescWithdrawRealAmount := transferorderFields[12].Descriptor()
-	// transferorder.DefaultWithdrawRealAmount holds the default value on creation for the withdraw_real_amount field.
-	transferorder.DefaultWithdrawRealAmount = transferorderDescWithdrawRealAmount.Default.(int64)
-	// transferorderDescOperateUserID is the schema descriptor for operate_user_id field.
-	transferorderDescOperateUserID := transferorderFields[13].Descriptor()
-	// transferorder.DefaultOperateUserID holds the default value on creation for the operate_user_id field.
-	transferorder.DefaultOperateUserID = transferorderDescOperateUserID.Default.(int64)
-	// transferorderDescRejectReason is the schema descriptor for reject_reason field.
-	transferorderDescRejectReason := transferorderFields[14].Descriptor()
-	// transferorder.DefaultRejectReason holds the default value on creation for the reject_reason field.
-	transferorder.DefaultRejectReason = transferorderDescRejectReason.Default.(string)
 	// transferorderDescID is the schema descriptor for id field.
 	transferorderDescID := transferorderMixinFields0[0].Descriptor()
 	// transferorder.DefaultID holds the default value on creation for the id field.
@@ -3380,4 +3361,71 @@ func init() {
 	withdrawaccountDescID := withdrawaccountMixinFields0[0].Descriptor()
 	// withdrawaccount.DefaultID holds the default value on creation for the id field.
 	withdrawaccount.DefaultID = withdrawaccountDescID.Default.(func() int64)
+	withdrawrecordMixin := schema.WithdrawRecord{}.Mixin()
+	withdrawrecordMixinFields0 := withdrawrecordMixin[0].Fields()
+	_ = withdrawrecordMixinFields0
+	withdrawrecordFields := schema.WithdrawRecord{}.Fields()
+	_ = withdrawrecordFields
+	// withdrawrecordDescCreatedBy is the schema descriptor for created_by field.
+	withdrawrecordDescCreatedBy := withdrawrecordMixinFields0[1].Descriptor()
+	// withdrawrecord.DefaultCreatedBy holds the default value on creation for the created_by field.
+	withdrawrecord.DefaultCreatedBy = withdrawrecordDescCreatedBy.Default.(int64)
+	// withdrawrecordDescUpdatedBy is the schema descriptor for updated_by field.
+	withdrawrecordDescUpdatedBy := withdrawrecordMixinFields0[2].Descriptor()
+	// withdrawrecord.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	withdrawrecord.DefaultUpdatedBy = withdrawrecordDescUpdatedBy.Default.(int64)
+	// withdrawrecordDescCreatedAt is the schema descriptor for created_at field.
+	withdrawrecordDescCreatedAt := withdrawrecordMixinFields0[3].Descriptor()
+	// withdrawrecord.DefaultCreatedAt holds the default value on creation for the created_at field.
+	withdrawrecord.DefaultCreatedAt = withdrawrecordDescCreatedAt.Default.(func() time.Time)
+	// withdrawrecordDescUpdatedAt is the schema descriptor for updated_at field.
+	withdrawrecordDescUpdatedAt := withdrawrecordMixinFields0[4].Descriptor()
+	// withdrawrecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	withdrawrecord.DefaultUpdatedAt = withdrawrecordDescUpdatedAt.Default.(func() time.Time)
+	// withdrawrecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	withdrawrecord.UpdateDefaultUpdatedAt = withdrawrecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// withdrawrecordDescDeletedAt is the schema descriptor for deleted_at field.
+	withdrawrecordDescDeletedAt := withdrawrecordMixinFields0[5].Descriptor()
+	// withdrawrecord.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	withdrawrecord.DefaultDeletedAt = withdrawrecordDescDeletedAt.Default.(time.Time)
+	// withdrawrecordDescUserID is the schema descriptor for user_id field.
+	withdrawrecordDescUserID := withdrawrecordFields[0].Descriptor()
+	// withdrawrecord.DefaultUserID holds the default value on creation for the user_id field.
+	withdrawrecord.DefaultUserID = withdrawrecordDescUserID.Default.(int64)
+	// withdrawrecordDescWithdrawAccount is the schema descriptor for withdraw_account field.
+	withdrawrecordDescWithdrawAccount := withdrawrecordFields[1].Descriptor()
+	// withdrawrecord.DefaultWithdrawAccount holds the default value on creation for the withdraw_account field.
+	withdrawrecord.DefaultWithdrawAccount = withdrawrecordDescWithdrawAccount.Default.(string)
+	// withdrawrecordDescAmount is the schema descriptor for amount field.
+	withdrawrecordDescAmount := withdrawrecordFields[3].Descriptor()
+	// withdrawrecord.DefaultAmount holds the default value on creation for the amount field.
+	withdrawrecord.DefaultAmount = withdrawrecordDescAmount.Default.(int64)
+	// withdrawrecordDescRemainAmount is the schema descriptor for remain_amount field.
+	withdrawrecordDescRemainAmount := withdrawrecordFields[4].Descriptor()
+	// withdrawrecord.DefaultRemainAmount holds the default value on creation for the remain_amount field.
+	withdrawrecord.DefaultRemainAmount = withdrawrecordDescRemainAmount.Default.(int64)
+	// withdrawrecordDescRate is the schema descriptor for rate field.
+	withdrawrecordDescRate := withdrawrecordFields[5].Descriptor()
+	// withdrawrecord.DefaultRate holds the default value on creation for the rate field.
+	withdrawrecord.DefaultRate = withdrawrecordDescRate.Default.(int64)
+	// withdrawrecordDescRealAmount is the schema descriptor for real_amount field.
+	withdrawrecordDescRealAmount := withdrawrecordFields[6].Descriptor()
+	// withdrawrecord.DefaultRealAmount holds the default value on creation for the real_amount field.
+	withdrawrecord.DefaultRealAmount = withdrawrecordDescRealAmount.Default.(int64)
+	// withdrawrecordDescRejectReason is the schema descriptor for reject_reason field.
+	withdrawrecordDescRejectReason := withdrawrecordFields[8].Descriptor()
+	// withdrawrecord.DefaultRejectReason holds the default value on creation for the reject_reason field.
+	withdrawrecord.DefaultRejectReason = withdrawrecordDescRejectReason.Default.(string)
+	// withdrawrecordDescOperateUserID is the schema descriptor for operate_user_id field.
+	withdrawrecordDescOperateUserID := withdrawrecordFields[9].Descriptor()
+	// withdrawrecord.DefaultOperateUserID holds the default value on creation for the operate_user_id field.
+	withdrawrecord.DefaultOperateUserID = withdrawrecordDescOperateUserID.Default.(int64)
+	// withdrawrecordDescTransferOrderID is the schema descriptor for transfer_order_id field.
+	withdrawrecordDescTransferOrderID := withdrawrecordFields[10].Descriptor()
+	// withdrawrecord.DefaultTransferOrderID holds the default value on creation for the transfer_order_id field.
+	withdrawrecord.DefaultTransferOrderID = withdrawrecordDescTransferOrderID.Default.(int64)
+	// withdrawrecordDescID is the schema descriptor for id field.
+	withdrawrecordDescID := withdrawrecordMixinFields0[0].Descriptor()
+	// withdrawrecord.DefaultID holds the default value on creation for the id field.
+	withdrawrecord.DefaultID = withdrawrecordDescID.Default.(func() int64)
 }

@@ -2156,14 +2156,9 @@ var (
 		{Name: "serial_number", Type: field.TypeString, Comment: "充值订单的序列号", Default: ""},
 		{Name: "third_api_resp", Type: field.TypeString, Comment: "第三方平台的返回，给到前端才能发起支付", Default: ""},
 		{Name: "out_transaction_id", Type: field.TypeString, Comment: "平台方订单号", Default: ""},
-		{Name: "withdraw_account", Type: field.TypeString, Comment: "提现账户（类型为提现才有数据）", Default: ""},
-		{Name: "withdraw_rate", Type: field.TypeInt64, Comment: "提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%", Default: 7},
-		{Name: "withdraw_real_amount", Type: field.TypeInt64, Comment: "提现实际到账，单位：cep", Default: 0},
-		{Name: "reject_reason", Type: field.TypeString, Comment: "提现审批拒绝的理由", Default: ""},
 		{Name: "symbol_id", Type: field.TypeInt64, Comment: "币种 id", Default: 0},
 		{Name: "target_user_id", Type: field.TypeInt64, Comment: "转账目标的用户 id", Default: 0},
 		{Name: "source_user_id", Type: field.TypeInt64, Comment: "转账来源的用户 id", Default: 0},
-		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作的用户 id，手动充值或者提现审批才有数据，默认为 0", Default: 0},
 		{Name: "social_id", Type: field.TypeInt64, Nullable: true, Comment: "关联充值来源的身份源 id", Default: 0},
 	}
 	// TransferOrdersTable holds the schema information for the "transfer_orders" table.
@@ -2175,31 +2170,25 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transfer_orders_symbols_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[16]},
+				Columns:    []*schema.Column{TransferOrdersColumns[12]},
 				RefColumns: []*schema.Column{SymbolsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transfer_orders_users_income_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[17]},
+				Columns:    []*schema.Column{TransferOrdersColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transfer_orders_users_outcome_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[18]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "transfer_orders_users_operate_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[19]},
+				Columns:    []*schema.Column{TransferOrdersColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transfer_orders_vx_socials_transfer_orders",
-				Columns:    []*schema.Column{TransferOrdersColumns[20]},
+				Columns:    []*schema.Column{TransferOrdersColumns[15]},
 				RefColumns: []*schema.Column{VxSocialsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2208,22 +2197,22 @@ var (
 			{
 				Name:    "transferorder_source_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[18]},
+				Columns: []*schema.Column{TransferOrdersColumns[14]},
 			},
 			{
 				Name:    "transferorder_target_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[17]},
+				Columns: []*schema.Column{TransferOrdersColumns[13]},
 			},
 			{
 				Name:    "transferorder_social_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[20]},
+				Columns: []*schema.Column{TransferOrdersColumns[15]},
 			},
 			{
 				Name:    "transferorder_symbol_id",
 				Unique:  false,
-				Columns: []*schema.Column{TransferOrdersColumns[16]},
+				Columns: []*schema.Column{TransferOrdersColumns[12]},
 			},
 		},
 	}
@@ -2514,6 +2503,60 @@ var (
 			},
 		},
 	}
+	// WithdrawRecordsColumns holds the columns for the "withdraw_records" table.
+	WithdrawRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "withdraw_account", Type: field.TypeString, Comment: "提现账户", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "提现类型", Enums: []string{"unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card"}, Default: "unknown"},
+		{Name: "amount", Type: field.TypeInt64, Comment: "提现金额，单位：厘", Default: 0},
+		{Name: "remain_amount", Type: field.TypeInt64, Comment: "本次提现后余额，单位：厘", Default: 0},
+		{Name: "rate", Type: field.TypeInt64, Comment: "提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%", Default: 7},
+		{Name: "real_amount", Type: field.TypeInt64, Comment: "提现实际到账（扣除手续费），单位：厘", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Comment: "转账订单的状态，比如微信发起支付后可能没完成支付", Enums: []string{"pending", "canceled", "succeed", "failed", "reexchange", "pending_order", "approved", "reject"}, Default: "pending"},
+		{Name: "reject_reason", Type: field.TypeString, Comment: "提现审批拒绝的理由", Default: ""},
+		{Name: "transfer_order_id", Type: field.TypeInt64, Unique: true, Comment: "对应的交易订单 id（一对一）", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "提现的用户 id", Default: 0},
+		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作的用户 id，手动充值或者提现审批才有数据，默认为 0", Default: 0},
+	}
+	// WithdrawRecordsTable holds the schema information for the "withdraw_records" table.
+	WithdrawRecordsTable = &schema.Table{
+		Name:       "withdraw_records",
+		Comment:    "提现记录，记录所有的提现信息",
+		Columns:    WithdrawRecordsColumns,
+		PrimaryKey: []*schema.Column{WithdrawRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "withdraw_records_transfer_orders_withdraw_record",
+				Columns:    []*schema.Column{WithdrawRecordsColumns[14]},
+				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "withdraw_records_users_withdraw_records",
+				Columns:    []*schema.Column{WithdrawRecordsColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "withdraw_records_users_operate_withdraw_records",
+				Columns:    []*schema.Column{WithdrawRecordsColumns[16]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "withdrawrecord_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{WithdrawRecordsColumns[15]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ArtworksTable,
@@ -2575,6 +2618,7 @@ var (
 		VxSocialsTable,
 		WalletsTable,
 		WithdrawAccountsTable,
+		WithdrawRecordsTable,
 	}
 )
 
@@ -2723,8 +2767,7 @@ func init() {
 	TransferOrdersTable.ForeignKeys[0].RefTable = SymbolsTable
 	TransferOrdersTable.ForeignKeys[1].RefTable = UsersTable
 	TransferOrdersTable.ForeignKeys[2].RefTable = UsersTable
-	TransferOrdersTable.ForeignKeys[3].RefTable = UsersTable
-	TransferOrdersTable.ForeignKeys[4].RefTable = VxSocialsTable
+	TransferOrdersTable.ForeignKeys[3].RefTable = VxSocialsTable
 	TransferOrdersTable.Annotation = &entsql.Annotation{}
 	TroubleDeductsTable.ForeignKeys[0].RefTable = DevicesTable
 	TroubleDeductsTable.Annotation = &entsql.Annotation{}
@@ -2742,4 +2785,8 @@ func init() {
 	WalletsTable.Annotation = &entsql.Annotation{}
 	WithdrawAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	WithdrawAccountsTable.Annotation = &entsql.Annotation{}
+	WithdrawRecordsTable.ForeignKeys[0].RefTable = TransferOrdersTable
+	WithdrawRecordsTable.ForeignKeys[1].RefTable = UsersTable
+	WithdrawRecordsTable.ForeignKeys[2].RefTable = UsersTable
+	WithdrawRecordsTable.Annotation = &entsql.Annotation{}
 }

@@ -46,16 +46,6 @@ const (
 	FieldThirdAPIResp = "third_api_resp"
 	// FieldOutTransactionID holds the string denoting the out_transaction_id field in the database.
 	FieldOutTransactionID = "out_transaction_id"
-	// FieldWithdrawAccount holds the string denoting the withdraw_account field in the database.
-	FieldWithdrawAccount = "withdraw_account"
-	// FieldWithdrawRate holds the string denoting the withdraw_rate field in the database.
-	FieldWithdrawRate = "withdraw_rate"
-	// FieldWithdrawRealAmount holds the string denoting the withdraw_real_amount field in the database.
-	FieldWithdrawRealAmount = "withdraw_real_amount"
-	// FieldOperateUserID holds the string denoting the operate_user_id field in the database.
-	FieldOperateUserID = "operate_user_id"
-	// FieldRejectReason holds the string denoting the reject_reason field in the database.
-	FieldRejectReason = "reject_reason"
 	// EdgeSourceUser holds the string denoting the source_user edge name in mutations.
 	EdgeSourceUser = "source_user"
 	// EdgeTargetUser holds the string denoting the target_user edge name in mutations.
@@ -66,8 +56,8 @@ const (
 	EdgeVxSocial = "vx_social"
 	// EdgeSymbol holds the string denoting the symbol edge name in mutations.
 	EdgeSymbol = "symbol"
-	// EdgeOperateUser holds the string denoting the operate_user edge name in mutations.
-	EdgeOperateUser = "operate_user"
+	// EdgeWithdrawRecord holds the string denoting the withdraw_record edge name in mutations.
+	EdgeWithdrawRecord = "withdraw_record"
 	// Table holds the table name of the transferorder in the database.
 	Table = "transfer_orders"
 	// SourceUserTable is the table that holds the source_user relation/edge.
@@ -105,13 +95,13 @@ const (
 	SymbolInverseTable = "symbols"
 	// SymbolColumn is the table column denoting the symbol relation/edge.
 	SymbolColumn = "symbol_id"
-	// OperateUserTable is the table that holds the operate_user relation/edge.
-	OperateUserTable = "transfer_orders"
-	// OperateUserInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	OperateUserInverseTable = "users"
-	// OperateUserColumn is the table column denoting the operate_user relation/edge.
-	OperateUserColumn = "operate_user_id"
+	// WithdrawRecordTable is the table that holds the withdraw_record relation/edge.
+	WithdrawRecordTable = "withdraw_records"
+	// WithdrawRecordInverseTable is the table name for the WithdrawRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "withdrawrecord" package.
+	WithdrawRecordInverseTable = "withdraw_records"
+	// WithdrawRecordColumn is the table column denoting the withdraw_record relation/edge.
+	WithdrawRecordColumn = "transfer_order_id"
 )
 
 // Columns holds all SQL columns for transferorder fields.
@@ -132,11 +122,6 @@ var Columns = []string{
 	FieldSocialID,
 	FieldThirdAPIResp,
 	FieldOutTransactionID,
-	FieldWithdrawAccount,
-	FieldWithdrawRate,
-	FieldWithdrawRealAmount,
-	FieldOperateUserID,
-	FieldRejectReason,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -178,16 +163,6 @@ var (
 	DefaultThirdAPIResp string
 	// DefaultOutTransactionID holds the default value on creation for the "out_transaction_id" field.
 	DefaultOutTransactionID string
-	// DefaultWithdrawAccount holds the default value on creation for the "withdraw_account" field.
-	DefaultWithdrawAccount string
-	// DefaultWithdrawRate holds the default value on creation for the "withdraw_rate" field.
-	DefaultWithdrawRate int64
-	// DefaultWithdrawRealAmount holds the default value on creation for the "withdraw_real_amount" field.
-	DefaultWithdrawRealAmount int64
-	// DefaultOperateUserID holds the default value on creation for the "operate_user_id" field.
-	DefaultOperateUserID int64
-	// DefaultRejectReason holds the default value on creation for the "reject_reason" field.
-	DefaultRejectReason string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -319,31 +294,6 @@ func ByOutTransactionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOutTransactionID, opts...).ToFunc()
 }
 
-// ByWithdrawAccount orders the results by the withdraw_account field.
-func ByWithdrawAccount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWithdrawAccount, opts...).ToFunc()
-}
-
-// ByWithdrawRate orders the results by the withdraw_rate field.
-func ByWithdrawRate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWithdrawRate, opts...).ToFunc()
-}
-
-// ByWithdrawRealAmount orders the results by the withdraw_real_amount field.
-func ByWithdrawRealAmount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWithdrawRealAmount, opts...).ToFunc()
-}
-
-// ByOperateUserID orders the results by the operate_user_id field.
-func ByOperateUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOperateUserID, opts...).ToFunc()
-}
-
-// ByRejectReason orders the results by the reject_reason field.
-func ByRejectReason(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRejectReason, opts...).ToFunc()
-}
-
 // BySourceUserField orders the results by source_user field.
 func BySourceUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -386,10 +336,10 @@ func BySymbolField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByOperateUserField orders the results by operate_user field.
-func ByOperateUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByWithdrawRecordField orders the results by withdraw_record field.
+func ByWithdrawRecordField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOperateUserStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newWithdrawRecordStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newSourceUserStep() *sqlgraph.Step {
@@ -427,10 +377,10 @@ func newSymbolStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, SymbolTable, SymbolColumn),
 	)
 }
-func newOperateUserStep() *sqlgraph.Step {
+func newWithdrawRecordStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OperateUserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, OperateUserTable, OperateUserColumn),
+		sqlgraph.To(WithdrawRecordInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, WithdrawRecordTable, WithdrawRecordColumn),
 	)
 }
