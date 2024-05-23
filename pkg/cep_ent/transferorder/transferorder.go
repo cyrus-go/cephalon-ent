@@ -46,16 +46,6 @@ const (
 	FieldThirdAPIResp = "third_api_resp"
 	// FieldOutTransactionID holds the string denoting the out_transaction_id field in the database.
 	FieldOutTransactionID = "out_transaction_id"
-	// FieldWithdrawAccount holds the string denoting the withdraw_account field in the database.
-	FieldWithdrawAccount = "withdraw_account"
-	// FieldWithdrawRate holds the string denoting the withdraw_rate field in the database.
-	FieldWithdrawRate = "withdraw_rate"
-	// FieldWithdrawRealAmount holds the string denoting the withdraw_real_amount field in the database.
-	FieldWithdrawRealAmount = "withdraw_real_amount"
-	// FieldOperateUserID holds the string denoting the operate_user_id field in the database.
-	FieldOperateUserID = "operate_user_id"
-	// FieldRejectReason holds the string denoting the reject_reason field in the database.
-	FieldRejectReason = "reject_reason"
 	// EdgeSourceUser holds the string denoting the source_user edge name in mutations.
 	EdgeSourceUser = "source_user"
 	// EdgeTargetUser holds the string denoting the target_user edge name in mutations.
@@ -132,11 +122,6 @@ var Columns = []string{
 	FieldSocialID,
 	FieldThirdAPIResp,
 	FieldOutTransactionID,
-	FieldWithdrawAccount,
-	FieldWithdrawRate,
-	FieldWithdrawRealAmount,
-	FieldOperateUserID,
-	FieldRejectReason,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -178,16 +163,6 @@ var (
 	DefaultThirdAPIResp string
 	// DefaultOutTransactionID holds the default value on creation for the "out_transaction_id" field.
 	DefaultOutTransactionID string
-	// DefaultWithdrawAccount holds the default value on creation for the "withdraw_account" field.
-	DefaultWithdrawAccount string
-	// DefaultWithdrawRate holds the default value on creation for the "withdraw_rate" field.
-	DefaultWithdrawRate int64
-	// DefaultWithdrawRealAmount holds the default value on creation for the "withdraw_real_amount" field.
-	DefaultWithdrawRealAmount int64
-	// DefaultOperateUserID holds the default value on creation for the "operate_user_id" field.
-	DefaultOperateUserID int64
-	// DefaultRejectReason holds the default value on creation for the "reject_reason" field.
-	DefaultRejectReason string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -317,31 +292,6 @@ func ByThirdAPIResp(opts ...sql.OrderTermOption) OrderOption {
 // ByOutTransactionID orders the results by the out_transaction_id field.
 func ByOutTransactionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOutTransactionID, opts...).ToFunc()
-}
-
-// ByWithdrawAccount orders the results by the withdraw_account field.
-func ByWithdrawAccount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWithdrawAccount, opts...).ToFunc()
-}
-
-// ByWithdrawRate orders the results by the withdraw_rate field.
-func ByWithdrawRate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWithdrawRate, opts...).ToFunc()
-}
-
-// ByWithdrawRealAmount orders the results by the withdraw_real_amount field.
-func ByWithdrawRealAmount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldWithdrawRealAmount, opts...).ToFunc()
-}
-
-// ByOperateUserID orders the results by the operate_user_id field.
-func ByOperateUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOperateUserID, opts...).ToFunc()
-}
-
-// ByRejectReason orders the results by the reject_reason field.
-func ByRejectReason(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRejectReason, opts...).ToFunc()
 }
 
 // BySourceUserField orders the results by source_user field.

@@ -250,97 +250,6 @@ func (tou *TransferOrderUpdate) SetNillableOutTransactionID(s *string) *Transfer
 	return tou
 }
 
-// SetWithdrawAccount sets the "withdraw_account" field.
-func (tou *TransferOrderUpdate) SetWithdrawAccount(s string) *TransferOrderUpdate {
-	tou.mutation.SetWithdrawAccount(s)
-	return tou
-}
-
-// SetNillableWithdrawAccount sets the "withdraw_account" field if the given value is not nil.
-func (tou *TransferOrderUpdate) SetNillableWithdrawAccount(s *string) *TransferOrderUpdate {
-	if s != nil {
-		tou.SetWithdrawAccount(*s)
-	}
-	return tou
-}
-
-// SetWithdrawRate sets the "withdraw_rate" field.
-func (tou *TransferOrderUpdate) SetWithdrawRate(i int64) *TransferOrderUpdate {
-	tou.mutation.ResetWithdrawRate()
-	tou.mutation.SetWithdrawRate(i)
-	return tou
-}
-
-// SetNillableWithdrawRate sets the "withdraw_rate" field if the given value is not nil.
-func (tou *TransferOrderUpdate) SetNillableWithdrawRate(i *int64) *TransferOrderUpdate {
-	if i != nil {
-		tou.SetWithdrawRate(*i)
-	}
-	return tou
-}
-
-// AddWithdrawRate adds i to the "withdraw_rate" field.
-func (tou *TransferOrderUpdate) AddWithdrawRate(i int64) *TransferOrderUpdate {
-	tou.mutation.AddWithdrawRate(i)
-	return tou
-}
-
-// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
-func (tou *TransferOrderUpdate) SetWithdrawRealAmount(i int64) *TransferOrderUpdate {
-	tou.mutation.ResetWithdrawRealAmount()
-	tou.mutation.SetWithdrawRealAmount(i)
-	return tou
-}
-
-// SetNillableWithdrawRealAmount sets the "withdraw_real_amount" field if the given value is not nil.
-func (tou *TransferOrderUpdate) SetNillableWithdrawRealAmount(i *int64) *TransferOrderUpdate {
-	if i != nil {
-		tou.SetWithdrawRealAmount(*i)
-	}
-	return tou
-}
-
-// AddWithdrawRealAmount adds i to the "withdraw_real_amount" field.
-func (tou *TransferOrderUpdate) AddWithdrawRealAmount(i int64) *TransferOrderUpdate {
-	tou.mutation.AddWithdrawRealAmount(i)
-	return tou
-}
-
-// SetOperateUserID sets the "operate_user_id" field.
-func (tou *TransferOrderUpdate) SetOperateUserID(i int64) *TransferOrderUpdate {
-	tou.mutation.ResetOperateUserID()
-	tou.mutation.SetOperateUserID(i)
-	return tou
-}
-
-// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
-func (tou *TransferOrderUpdate) SetNillableOperateUserID(i *int64) *TransferOrderUpdate {
-	if i != nil {
-		tou.SetOperateUserID(*i)
-	}
-	return tou
-}
-
-// AddOperateUserID adds i to the "operate_user_id" field.
-func (tou *TransferOrderUpdate) AddOperateUserID(i int64) *TransferOrderUpdate {
-	tou.mutation.AddOperateUserID(i)
-	return tou
-}
-
-// SetRejectReason sets the "reject_reason" field.
-func (tou *TransferOrderUpdate) SetRejectReason(s string) *TransferOrderUpdate {
-	tou.mutation.SetRejectReason(s)
-	return tou
-}
-
-// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
-func (tou *TransferOrderUpdate) SetNillableRejectReason(s *string) *TransferOrderUpdate {
-	if s != nil {
-		tou.SetRejectReason(*s)
-	}
-	return tou
-}
-
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (tou *TransferOrderUpdate) SetSourceUser(u *User) *TransferOrderUpdate {
 	return tou.SetSourceUserID(u.ID)
@@ -581,30 +490,6 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tou.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
-	}
-	if value, ok := tou.mutation.WithdrawAccount(); ok {
-		_spec.SetField(transferorder.FieldWithdrawAccount, field.TypeString, value)
-	}
-	if value, ok := tou.mutation.WithdrawRate(); ok {
-		_spec.SetField(transferorder.FieldWithdrawRate, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.AddedWithdrawRate(); ok {
-		_spec.AddField(transferorder.FieldWithdrawRate, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.WithdrawRealAmount(); ok {
-		_spec.SetField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.AddedWithdrawRealAmount(); ok {
-		_spec.AddField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.OperateUserID(); ok {
-		_spec.SetField(transferorder.FieldOperateUserID, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.AddedOperateUserID(); ok {
-		_spec.AddField(transferorder.FieldOperateUserID, field.TypeInt64, value)
-	}
-	if value, ok := tou.mutation.RejectReason(); ok {
-		_spec.SetField(transferorder.FieldRejectReason, field.TypeString, value)
 	}
 	if tou.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1033,97 +918,6 @@ func (touo *TransferOrderUpdateOne) SetNillableOutTransactionID(s *string) *Tran
 	return touo
 }
 
-// SetWithdrawAccount sets the "withdraw_account" field.
-func (touo *TransferOrderUpdateOne) SetWithdrawAccount(s string) *TransferOrderUpdateOne {
-	touo.mutation.SetWithdrawAccount(s)
-	return touo
-}
-
-// SetNillableWithdrawAccount sets the "withdraw_account" field if the given value is not nil.
-func (touo *TransferOrderUpdateOne) SetNillableWithdrawAccount(s *string) *TransferOrderUpdateOne {
-	if s != nil {
-		touo.SetWithdrawAccount(*s)
-	}
-	return touo
-}
-
-// SetWithdrawRate sets the "withdraw_rate" field.
-func (touo *TransferOrderUpdateOne) SetWithdrawRate(i int64) *TransferOrderUpdateOne {
-	touo.mutation.ResetWithdrawRate()
-	touo.mutation.SetWithdrawRate(i)
-	return touo
-}
-
-// SetNillableWithdrawRate sets the "withdraw_rate" field if the given value is not nil.
-func (touo *TransferOrderUpdateOne) SetNillableWithdrawRate(i *int64) *TransferOrderUpdateOne {
-	if i != nil {
-		touo.SetWithdrawRate(*i)
-	}
-	return touo
-}
-
-// AddWithdrawRate adds i to the "withdraw_rate" field.
-func (touo *TransferOrderUpdateOne) AddWithdrawRate(i int64) *TransferOrderUpdateOne {
-	touo.mutation.AddWithdrawRate(i)
-	return touo
-}
-
-// SetWithdrawRealAmount sets the "withdraw_real_amount" field.
-func (touo *TransferOrderUpdateOne) SetWithdrawRealAmount(i int64) *TransferOrderUpdateOne {
-	touo.mutation.ResetWithdrawRealAmount()
-	touo.mutation.SetWithdrawRealAmount(i)
-	return touo
-}
-
-// SetNillableWithdrawRealAmount sets the "withdraw_real_amount" field if the given value is not nil.
-func (touo *TransferOrderUpdateOne) SetNillableWithdrawRealAmount(i *int64) *TransferOrderUpdateOne {
-	if i != nil {
-		touo.SetWithdrawRealAmount(*i)
-	}
-	return touo
-}
-
-// AddWithdrawRealAmount adds i to the "withdraw_real_amount" field.
-func (touo *TransferOrderUpdateOne) AddWithdrawRealAmount(i int64) *TransferOrderUpdateOne {
-	touo.mutation.AddWithdrawRealAmount(i)
-	return touo
-}
-
-// SetOperateUserID sets the "operate_user_id" field.
-func (touo *TransferOrderUpdateOne) SetOperateUserID(i int64) *TransferOrderUpdateOne {
-	touo.mutation.ResetOperateUserID()
-	touo.mutation.SetOperateUserID(i)
-	return touo
-}
-
-// SetNillableOperateUserID sets the "operate_user_id" field if the given value is not nil.
-func (touo *TransferOrderUpdateOne) SetNillableOperateUserID(i *int64) *TransferOrderUpdateOne {
-	if i != nil {
-		touo.SetOperateUserID(*i)
-	}
-	return touo
-}
-
-// AddOperateUserID adds i to the "operate_user_id" field.
-func (touo *TransferOrderUpdateOne) AddOperateUserID(i int64) *TransferOrderUpdateOne {
-	touo.mutation.AddOperateUserID(i)
-	return touo
-}
-
-// SetRejectReason sets the "reject_reason" field.
-func (touo *TransferOrderUpdateOne) SetRejectReason(s string) *TransferOrderUpdateOne {
-	touo.mutation.SetRejectReason(s)
-	return touo
-}
-
-// SetNillableRejectReason sets the "reject_reason" field if the given value is not nil.
-func (touo *TransferOrderUpdateOne) SetNillableRejectReason(s *string) *TransferOrderUpdateOne {
-	if s != nil {
-		touo.SetRejectReason(*s)
-	}
-	return touo
-}
-
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (touo *TransferOrderUpdateOne) SetSourceUser(u *User) *TransferOrderUpdateOne {
 	return touo.SetSourceUserID(u.ID)
@@ -1394,30 +1188,6 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 	}
 	if value, ok := touo.mutation.OutTransactionID(); ok {
 		_spec.SetField(transferorder.FieldOutTransactionID, field.TypeString, value)
-	}
-	if value, ok := touo.mutation.WithdrawAccount(); ok {
-		_spec.SetField(transferorder.FieldWithdrawAccount, field.TypeString, value)
-	}
-	if value, ok := touo.mutation.WithdrawRate(); ok {
-		_spec.SetField(transferorder.FieldWithdrawRate, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.AddedWithdrawRate(); ok {
-		_spec.AddField(transferorder.FieldWithdrawRate, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.WithdrawRealAmount(); ok {
-		_spec.SetField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.AddedWithdrawRealAmount(); ok {
-		_spec.AddField(transferorder.FieldWithdrawRealAmount, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.OperateUserID(); ok {
-		_spec.SetField(transferorder.FieldOperateUserID, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.AddedOperateUserID(); ok {
-		_spec.AddField(transferorder.FieldOperateUserID, field.TypeInt64, value)
-	}
-	if value, ok := touo.mutation.RejectReason(); ok {
-		_spec.SetField(transferorder.FieldRejectReason, field.TypeString, value)
 	}
 	if touo.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
