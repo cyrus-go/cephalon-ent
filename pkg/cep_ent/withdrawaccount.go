@@ -49,7 +49,7 @@ type WithdrawAccount struct {
 	// 开户支行
 	Bank string `json:"bank"`
 	// 提现方式
-	Way enums.TransferOrderType `json:"way"`
+	Way enums.WithdrawType `json:"way"`
 	// 支付宝账户
 	AlipayCardNo string `json:"alipay_card_no"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -200,7 +200,7 @@ func (wa *WithdrawAccount) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field way", values[i])
 			} else if value.Valid {
-				wa.Way = enums.TransferOrderType(value.String)
+				wa.Way = enums.WithdrawType(value.String)
 			}
 		case withdrawaccount.FieldAlipayCardNo:
 			if value, ok := values[i].(*sql.NullString); !ok {

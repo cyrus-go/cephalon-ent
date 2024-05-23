@@ -26,7 +26,7 @@ func (WithdrawAccount) Fields() []ent.Field {
 		field.String("phone").Default("").StructTag(`json:"phone"`).Comment("个人商户手机号"),
 		field.String("bank_card_number").Default("").StructTag(`json:"bank_card_number"`).Comment("银行卡号"),
 		field.String("bank").Default("未知银行").StructTag(`json:"bank"`).Comment("开户支行"),
-		field.Enum("way").GoType(enums.TransferOrderTypeWithdrawAlipay).Default(string(enums.TransferOrderTypeUnknown)).StructTag(`json:"way"`).Comment("提现方式"),
+		field.Enum("way").GoType(enums.WithdrawTypeWithdrawAlipay).Default(string(enums.WithdrawTypeUnknown)).StructTag(`json:"way"`).Comment("提现方式"),
 		field.String("alipay_card_no").Default("").StructTag(`json:"alipay_card_no"`).Comment("支付宝账户"),
 	}
 }

@@ -227,15 +227,15 @@ func (wau *WithdrawAccountUpdate) SetNillableBank(s *string) *WithdrawAccountUpd
 }
 
 // SetWay sets the "way" field.
-func (wau *WithdrawAccountUpdate) SetWay(eot enums.TransferOrderType) *WithdrawAccountUpdate {
-	wau.mutation.SetWay(eot)
+func (wau *WithdrawAccountUpdate) SetWay(et enums.WithdrawType) *WithdrawAccountUpdate {
+	wau.mutation.SetWay(et)
 	return wau
 }
 
 // SetNillableWay sets the "way" field if the given value is not nil.
-func (wau *WithdrawAccountUpdate) SetNillableWay(eot *enums.TransferOrderType) *WithdrawAccountUpdate {
-	if eot != nil {
-		wau.SetWay(*eot)
+func (wau *WithdrawAccountUpdate) SetNillableWay(et *enums.WithdrawType) *WithdrawAccountUpdate {
+	if et != nil {
+		wau.SetWay(*et)
 	}
 	return wau
 }
@@ -640,15 +640,15 @@ func (wauo *WithdrawAccountUpdateOne) SetNillableBank(s *string) *WithdrawAccoun
 }
 
 // SetWay sets the "way" field.
-func (wauo *WithdrawAccountUpdateOne) SetWay(eot enums.TransferOrderType) *WithdrawAccountUpdateOne {
-	wauo.mutation.SetWay(eot)
+func (wauo *WithdrawAccountUpdateOne) SetWay(et enums.WithdrawType) *WithdrawAccountUpdateOne {
+	wauo.mutation.SetWay(et)
 	return wauo
 }
 
 // SetNillableWay sets the "way" field if the given value is not nil.
-func (wauo *WithdrawAccountUpdateOne) SetNillableWay(eot *enums.TransferOrderType) *WithdrawAccountUpdateOne {
-	if eot != nil {
-		wauo.SetWay(*eot)
+func (wauo *WithdrawAccountUpdateOne) SetNillableWay(et *enums.WithdrawType) *WithdrawAccountUpdateOne {
+	if et != nil {
+		wauo.SetWay(*et)
 	}
 	return wauo
 }

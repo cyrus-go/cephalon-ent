@@ -221,15 +221,15 @@ func (wac *WithdrawAccountCreate) SetNillableBank(s *string) *WithdrawAccountCre
 }
 
 // SetWay sets the "way" field.
-func (wac *WithdrawAccountCreate) SetWay(eot enums.TransferOrderType) *WithdrawAccountCreate {
-	wac.mutation.SetWay(eot)
+func (wac *WithdrawAccountCreate) SetWay(et enums.WithdrawType) *WithdrawAccountCreate {
+	wac.mutation.SetWay(et)
 	return wac
 }
 
 // SetNillableWay sets the "way" field if the given value is not nil.
-func (wac *WithdrawAccountCreate) SetNillableWay(eot *enums.TransferOrderType) *WithdrawAccountCreate {
-	if eot != nil {
-		wac.SetWay(*eot)
+func (wac *WithdrawAccountCreate) SetNillableWay(et *enums.WithdrawType) *WithdrawAccountCreate {
+	if et != nil {
+		wac.SetWay(*et)
 	}
 	return wac
 }
@@ -772,7 +772,7 @@ func (u *WithdrawAccountUpsert) UpdateBank() *WithdrawAccountUpsert {
 }
 
 // SetWay sets the "way" field.
-func (u *WithdrawAccountUpsert) SetWay(v enums.TransferOrderType) *WithdrawAccountUpsert {
+func (u *WithdrawAccountUpsert) SetWay(v enums.WithdrawType) *WithdrawAccountUpsert {
 	u.Set(withdrawaccount.FieldWay, v)
 	return u
 }
@@ -1050,7 +1050,7 @@ func (u *WithdrawAccountUpsertOne) UpdateBank() *WithdrawAccountUpsertOne {
 }
 
 // SetWay sets the "way" field.
-func (u *WithdrawAccountUpsertOne) SetWay(v enums.TransferOrderType) *WithdrawAccountUpsertOne {
+func (u *WithdrawAccountUpsertOne) SetWay(v enums.WithdrawType) *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.SetWay(v)
 	})
@@ -1498,7 +1498,7 @@ func (u *WithdrawAccountUpsertBulk) UpdateBank() *WithdrawAccountUpsertBulk {
 }
 
 // SetWay sets the "way" field.
-func (u *WithdrawAccountUpsertBulk) SetWay(v enums.TransferOrderType) *WithdrawAccountUpsertBulk {
+func (u *WithdrawAccountUpsertBulk) SetWay(v enums.WithdrawType) *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.SetWay(v)
 	})

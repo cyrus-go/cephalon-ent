@@ -139,12 +139,12 @@ func BusinessTypeValidator(bt enums.BusinessType) error {
 	}
 }
 
-const DefaultWay enums.TransferOrderType = "unknown"
+const DefaultWay enums.WithdrawType = "unknown"
 
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
-func WayValidator(w enums.TransferOrderType) error {
+func WayValidator(w enums.WithdrawType) error {
 	switch w {
-	case "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund":
+	case "unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card":
 		return nil
 	default:
 		return fmt.Errorf("withdrawaccount: invalid enum value for way field: %q", w)

@@ -78144,7 +78144,7 @@ type WithdrawAccountMutation struct {
 	phone            *string
 	bank_card_number *string
 	bank             *string
-	way              *enums.TransferOrderType
+	way              *enums.WithdrawType
 	alipay_card_no   *string
 	clearedFields    map[string]struct{}
 	user             *int64
@@ -78823,12 +78823,12 @@ func (m *WithdrawAccountMutation) ResetBank() {
 }
 
 // SetWay sets the "way" field.
-func (m *WithdrawAccountMutation) SetWay(eot enums.TransferOrderType) {
-	m.way = &eot
+func (m *WithdrawAccountMutation) SetWay(et enums.WithdrawType) {
+	m.way = &et
 }
 
 // Way returns the value of the "way" field in the mutation.
-func (m *WithdrawAccountMutation) Way() (r enums.TransferOrderType, exists bool) {
+func (m *WithdrawAccountMutation) Way() (r enums.WithdrawType, exists bool) {
 	v := m.way
 	if v == nil {
 		return
@@ -78839,7 +78839,7 @@ func (m *WithdrawAccountMutation) Way() (r enums.TransferOrderType, exists bool)
 // OldWay returns the old "way" field's value of the WithdrawAccount entity.
 // If the WithdrawAccount object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WithdrawAccountMutation) OldWay(ctx context.Context) (v enums.TransferOrderType, err error) {
+func (m *WithdrawAccountMutation) OldWay(ctx context.Context) (v enums.WithdrawType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldWay is only allowed on UpdateOne operations")
 	}
@@ -79193,7 +79193,7 @@ func (m *WithdrawAccountMutation) SetField(name string, value ent.Value) error {
 		m.SetBank(v)
 		return nil
 	case withdrawaccount.FieldWay:
-		v, ok := value.(enums.TransferOrderType)
+		v, ok := value.(enums.WithdrawType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

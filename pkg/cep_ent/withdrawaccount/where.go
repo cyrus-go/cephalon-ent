@@ -807,19 +807,19 @@ func BankContainsFold(v string) predicate.WithdrawAccount {
 }
 
 // WayEQ applies the EQ predicate on the "way" field.
-func WayEQ(v enums.TransferOrderType) predicate.WithdrawAccount {
+func WayEQ(v enums.WithdrawType) predicate.WithdrawAccount {
 	vc := v
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldWay, vc))
 }
 
 // WayNEQ applies the NEQ predicate on the "way" field.
-func WayNEQ(v enums.TransferOrderType) predicate.WithdrawAccount {
+func WayNEQ(v enums.WithdrawType) predicate.WithdrawAccount {
 	vc := v
 	return predicate.WithdrawAccount(sql.FieldNEQ(FieldWay, vc))
 }
 
 // WayIn applies the In predicate on the "way" field.
-func WayIn(vs ...enums.TransferOrderType) predicate.WithdrawAccount {
+func WayIn(vs ...enums.WithdrawType) predicate.WithdrawAccount {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -828,7 +828,7 @@ func WayIn(vs ...enums.TransferOrderType) predicate.WithdrawAccount {
 }
 
 // WayNotIn applies the NotIn predicate on the "way" field.
-func WayNotIn(vs ...enums.TransferOrderType) predicate.WithdrawAccount {
+func WayNotIn(vs ...enums.WithdrawType) predicate.WithdrawAccount {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
