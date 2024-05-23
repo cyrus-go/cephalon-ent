@@ -3094,6 +3094,10 @@ func init() {
 	userDescBaiduRefreshToken := userFields[16].Descriptor()
 	// user.DefaultBaiduRefreshToken holds the default value on creation for the baidu_refresh_token field.
 	user.DefaultBaiduRefreshToken = userDescBaiduRefreshToken.Default.(string)
+	// userDescBoundAt is the schema descriptor for bound_at field.
+	userDescBoundAt := userFields[17].Descriptor()
+	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
+	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

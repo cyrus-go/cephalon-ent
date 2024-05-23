@@ -59,6 +59,8 @@ const (
 	FieldBaiduAccessToken = "baidu_access_token"
 	// FieldBaiduRefreshToken holds the string denoting the baidu_refresh_token field in the database.
 	FieldBaiduRefreshToken = "baidu_refresh_token"
+	// FieldBoundAt holds the string denoting the bound_at field in the database.
+	FieldBoundAt = "bound_at"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -442,6 +444,7 @@ var Columns = []string{
 	FieldCloudSpace,
 	FieldBaiduAccessToken,
 	FieldBaiduRefreshToken,
+	FieldBoundAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -499,6 +502,8 @@ var (
 	DefaultBaiduAccessToken string
 	// DefaultBaiduRefreshToken holds the default value on creation for the "baidu_refresh_token" field.
 	DefaultBaiduRefreshToken string
+	// DefaultBoundAt holds the default value on creation for the "bound_at" field.
+	DefaultBoundAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -646,6 +651,11 @@ func ByBaiduAccessToken(opts ...sql.OrderTermOption) OrderOption {
 // ByBaiduRefreshToken orders the results by the baidu_refresh_token field.
 func ByBaiduRefreshToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBaiduRefreshToken, opts...).ToFunc()
+}
+
+// ByBoundAt orders the results by the bound_at field.
+func ByBoundAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBoundAt, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

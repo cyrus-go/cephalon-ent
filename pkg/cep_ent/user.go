@@ -65,6 +65,8 @@ type User struct {
 	BaiduAccessToken string `json:"-"`
 	// 百度网盘刷新 token
 	BaiduRefreshToken string `json:"-"`
+	// 用户绑定邀请码的时间
+	BoundAt *time.Time `json:"bound_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -545,7 +547,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldBoundAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -699,6 +701,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field baidu_refresh_token", values[i])
 			} else if value.Valid {
 				u.BaiduRefreshToken = value.String
+			}
+		case user.FieldBoundAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field bound_at", values[i])
+			} else if value.Valid {
+				u.BoundAt = new(time.Time)
+				*u.BoundAt = value.Time
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -997,6 +1006,11 @@ func (u *User) String() string {
 	builder.WriteString("baidu_access_token=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("baidu_refresh_token=<sensitive>")
+	builder.WriteString(", ")
+	if v := u.BoundAt; v != nil {
+		builder.WriteString("bound_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -363,6 +363,20 @@ func (uc *UserCreate) SetNillableBaiduRefreshToken(s *string) *UserCreate {
 	return uc
 }
 
+// SetBoundAt sets the "bound_at" field.
+func (uc *UserCreate) SetBoundAt(t time.Time) *UserCreate {
+	uc.mutation.SetBoundAt(t)
+	return uc
+}
+
+// SetNillableBoundAt sets the "bound_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBoundAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetBoundAt(*t)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1102,6 +1116,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultBaiduRefreshToken
 		uc.mutation.SetBaiduRefreshToken(v)
 	}
+	if _, ok := uc.mutation.BoundAt(); !ok {
+		v := user.DefaultBoundAt
+		uc.mutation.SetBoundAt(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1300,6 +1318,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.BaiduRefreshToken(); ok {
 		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
 		_node.BaiduRefreshToken = value
+	}
+	if value, ok := uc.mutation.BoundAt(); ok {
+		_spec.SetField(user.FieldBoundAt, field.TypeTime, value)
+		_node.BoundAt = &value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2264,6 +2286,24 @@ func (u *UserUpsert) UpdateBaiduRefreshToken() *UserUpsert {
 	return u
 }
 
+// SetBoundAt sets the "bound_at" field.
+func (u *UserUpsert) SetBoundAt(v time.Time) *UserUpsert {
+	u.Set(user.FieldBoundAt, v)
+	return u
+}
+
+// UpdateBoundAt sets the "bound_at" field to the value that was provided on create.
+func (u *UserUpsert) UpdateBoundAt() *UserUpsert {
+	u.SetExcluded(user.FieldBoundAt)
+	return u
+}
+
+// ClearBoundAt clears the value of the "bound_at" field.
+func (u *UserUpsert) ClearBoundAt() *UserUpsert {
+	u.SetNull(user.FieldBoundAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2627,6 +2667,27 @@ func (u *UserUpsertOne) SetBaiduRefreshToken(v string) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateBaiduRefreshToken() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateBaiduRefreshToken()
+	})
+}
+
+// SetBoundAt sets the "bound_at" field.
+func (u *UserUpsertOne) SetBoundAt(v time.Time) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetBoundAt(v)
+	})
+}
+
+// UpdateBoundAt sets the "bound_at" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateBoundAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateBoundAt()
+	})
+}
+
+// ClearBoundAt clears the value of the "bound_at" field.
+func (u *UserUpsertOne) ClearBoundAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearBoundAt()
 	})
 }
 
@@ -3159,6 +3220,27 @@ func (u *UserUpsertBulk) SetBaiduRefreshToken(v string) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateBaiduRefreshToken() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateBaiduRefreshToken()
+	})
+}
+
+// SetBoundAt sets the "bound_at" field.
+func (u *UserUpsertBulk) SetBoundAt(v time.Time) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetBoundAt(v)
+	})
+}
+
+// UpdateBoundAt sets the "bound_at" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateBoundAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateBoundAt()
+	})
+}
+
+// ClearBoundAt clears the value of the "bound_at" field.
+func (u *UserUpsertBulk) ClearBoundAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearBoundAt()
 	})
 }
 

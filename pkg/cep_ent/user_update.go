@@ -369,6 +369,26 @@ func (uu *UserUpdate) SetNillableBaiduRefreshToken(s *string) *UserUpdate {
 	return uu
 }
 
+// SetBoundAt sets the "bound_at" field.
+func (uu *UserUpdate) SetBoundAt(t time.Time) *UserUpdate {
+	uu.mutation.SetBoundAt(t)
+	return uu
+}
+
+// SetNillableBoundAt sets the "bound_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableBoundAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetBoundAt(*t)
+	}
+	return uu
+}
+
+// ClearBoundAt clears the value of the "bound_at" field.
+func (uu *UserUpdate) ClearBoundAt() *UserUpdate {
+	uu.mutation.ClearBoundAt()
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -1891,6 +1911,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.BaiduRefreshToken(); ok {
 		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.BoundAt(); ok {
+		_spec.SetField(user.FieldBoundAt, field.TypeTime, value)
+	}
+	if uu.mutation.BoundAtCleared() {
+		_spec.ClearField(user.FieldBoundAt, field.TypeTime)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -3957,6 +3983,26 @@ func (uuo *UserUpdateOne) SetNillableBaiduRefreshToken(s *string) *UserUpdateOne
 	return uuo
 }
 
+// SetBoundAt sets the "bound_at" field.
+func (uuo *UserUpdateOne) SetBoundAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetBoundAt(t)
+	return uuo
+}
+
+// SetNillableBoundAt sets the "bound_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableBoundAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetBoundAt(*t)
+	}
+	return uuo
+}
+
+// ClearBoundAt clears the value of the "bound_at" field.
+func (uuo *UserUpdateOne) ClearBoundAt() *UserUpdateOne {
+	uuo.mutation.ClearBoundAt()
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -5509,6 +5555,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.BaiduRefreshToken(); ok {
 		_spec.SetField(user.FieldBaiduRefreshToken, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.BoundAt(); ok {
+		_spec.SetField(user.FieldBoundAt, field.TypeTime, value)
+	}
+	if uuo.mutation.BoundAtCleared() {
+		_spec.ClearField(user.FieldBoundAt, field.TypeTime)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -160,6 +160,11 @@ func BaiduRefreshToken(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBaiduRefreshToken, v))
 }
 
+// BoundAt applies equality check predicate on the "bound_at" field. It's identical to BoundAtEQ.
+func BoundAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldBoundAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
@@ -1238,6 +1243,56 @@ func BaiduRefreshTokenEqualFold(v string) predicate.User {
 // BaiduRefreshTokenContainsFold applies the ContainsFold predicate on the "baidu_refresh_token" field.
 func BaiduRefreshTokenContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldBaiduRefreshToken, v))
+}
+
+// BoundAtEQ applies the EQ predicate on the "bound_at" field.
+func BoundAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldBoundAt, v))
+}
+
+// BoundAtNEQ applies the NEQ predicate on the "bound_at" field.
+func BoundAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldBoundAt, v))
+}
+
+// BoundAtIn applies the In predicate on the "bound_at" field.
+func BoundAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldBoundAt, vs...))
+}
+
+// BoundAtNotIn applies the NotIn predicate on the "bound_at" field.
+func BoundAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldBoundAt, vs...))
+}
+
+// BoundAtGT applies the GT predicate on the "bound_at" field.
+func BoundAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldBoundAt, v))
+}
+
+// BoundAtGTE applies the GTE predicate on the "bound_at" field.
+func BoundAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldBoundAt, v))
+}
+
+// BoundAtLT applies the LT predicate on the "bound_at" field.
+func BoundAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldBoundAt, v))
+}
+
+// BoundAtLTE applies the LTE predicate on the "bound_at" field.
+func BoundAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldBoundAt, v))
+}
+
+// BoundAtIsNil applies the IsNil predicate on the "bound_at" field.
+func BoundAtIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldBoundAt))
+}
+
+// BoundAtNotNil applies the NotNil predicate on the "bound_at" field.
+func BoundAtNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldBoundAt))
 }
 
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.

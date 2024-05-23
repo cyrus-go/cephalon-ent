@@ -69240,6 +69240,7 @@ type UserMutation struct {
 	addcloud_space                  *int64
 	baidu_access_token              *string
 	baidu_refresh_token             *string
+	bound_at                        *time.Time
 	clearedFields                   map[string]struct{}
 	vx_accounts                     map[int64]struct{}
 	removedvx_accounts              map[int64]struct{}
@@ -70316,6 +70317,55 @@ func (m *UserMutation) OldBaiduRefreshToken(ctx context.Context) (v string, err 
 // ResetBaiduRefreshToken resets all changes to the "baidu_refresh_token" field.
 func (m *UserMutation) ResetBaiduRefreshToken() {
 	m.baidu_refresh_token = nil
+}
+
+// SetBoundAt sets the "bound_at" field.
+func (m *UserMutation) SetBoundAt(t time.Time) {
+	m.bound_at = &t
+}
+
+// BoundAt returns the value of the "bound_at" field in the mutation.
+func (m *UserMutation) BoundAt() (r time.Time, exists bool) {
+	v := m.bound_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBoundAt returns the old "bound_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldBoundAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBoundAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBoundAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBoundAt: %w", err)
+	}
+	return oldValue.BoundAt, nil
+}
+
+// ClearBoundAt clears the value of the "bound_at" field.
+func (m *UserMutation) ClearBoundAt() {
+	m.bound_at = nil
+	m.clearedFields[user.FieldBoundAt] = struct{}{}
+}
+
+// BoundAtCleared returns if the "bound_at" field was cleared in this mutation.
+func (m *UserMutation) BoundAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldBoundAt]
+	return ok
+}
+
+// ResetBoundAt resets all changes to the "bound_at" field.
+func (m *UserMutation) ResetBoundAt() {
+	m.bound_at = nil
+	delete(m.clearedFields, user.FieldBoundAt)
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -72440,7 +72490,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 23)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -72507,6 +72557,9 @@ func (m *UserMutation) Fields() []string {
 	if m.baidu_refresh_token != nil {
 		fields = append(fields, user.FieldBaiduRefreshToken)
 	}
+	if m.bound_at != nil {
+		fields = append(fields, user.FieldBoundAt)
+	}
 	return fields
 }
 
@@ -72559,6 +72612,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.BaiduAccessToken()
 	case user.FieldBaiduRefreshToken:
 		return m.BaiduRefreshToken()
+	case user.FieldBoundAt:
+		return m.BoundAt()
 	}
 	return nil, false
 }
@@ -72612,6 +72667,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldBaiduAccessToken(ctx)
 	case user.FieldBaiduRefreshToken:
 		return m.OldBaiduRefreshToken(ctx)
+	case user.FieldBoundAt:
+		return m.OldBoundAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -72775,6 +72832,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBaiduRefreshToken(v)
 		return nil
+	case user.FieldBoundAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBoundAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -72843,7 +72907,11 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(user.FieldBoundAt) {
+		fields = append(fields, user.FieldBoundAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -72856,6 +72924,11 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
+	switch name {
+	case user.FieldBoundAt:
+		m.ClearBoundAt()
+		return nil
+	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
 
@@ -72928,6 +73001,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldBaiduRefreshToken:
 		m.ResetBaiduRefreshToken()
+		return nil
+	case user.FieldBoundAt:
+		m.ResetBoundAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
