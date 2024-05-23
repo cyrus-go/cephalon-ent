@@ -2932,6 +2932,26 @@ func init() {
 	transferorderDescOutTransactionID := transferorderFields[9].Descriptor()
 	// transferorder.DefaultOutTransactionID holds the default value on creation for the out_transaction_id field.
 	transferorder.DefaultOutTransactionID = transferorderDescOutTransactionID.Default.(string)
+	// transferorderDescWithdrawAccount is the schema descriptor for withdraw_account field.
+	transferorderDescWithdrawAccount := transferorderFields[10].Descriptor()
+	// transferorder.DefaultWithdrawAccount holds the default value on creation for the withdraw_account field.
+	transferorder.DefaultWithdrawAccount = transferorderDescWithdrawAccount.Default.(string)
+	// transferorderDescWithdrawRate is the schema descriptor for withdraw_rate field.
+	transferorderDescWithdrawRate := transferorderFields[11].Descriptor()
+	// transferorder.DefaultWithdrawRate holds the default value on creation for the withdraw_rate field.
+	transferorder.DefaultWithdrawRate = transferorderDescWithdrawRate.Default.(int64)
+	// transferorderDescWithdrawRealAmount is the schema descriptor for withdraw_real_amount field.
+	transferorderDescWithdrawRealAmount := transferorderFields[12].Descriptor()
+	// transferorder.DefaultWithdrawRealAmount holds the default value on creation for the withdraw_real_amount field.
+	transferorder.DefaultWithdrawRealAmount = transferorderDescWithdrawRealAmount.Default.(int64)
+	// transferorderDescOperateUserID is the schema descriptor for operate_user_id field.
+	transferorderDescOperateUserID := transferorderFields[13].Descriptor()
+	// transferorder.DefaultOperateUserID holds the default value on creation for the operate_user_id field.
+	transferorder.DefaultOperateUserID = transferorderDescOperateUserID.Default.(int64)
+	// transferorderDescRejectReason is the schema descriptor for reject_reason field.
+	transferorderDescRejectReason := transferorderFields[14].Descriptor()
+	// transferorder.DefaultRejectReason holds the default value on creation for the reject_reason field.
+	transferorder.DefaultRejectReason = transferorderDescRejectReason.Default.(string)
 	// transferorderDescID is the schema descriptor for id field.
 	transferorderDescID := transferorderMixinFields0[0].Descriptor()
 	// transferorder.DefaultID holds the default value on creation for the id field.

@@ -53,6 +53,16 @@ type TransferOrder struct {
 	ThirdAPIResp string `json:"third_api_resp"`
 	// 平台方订单号
 	OutTransactionID string `json:"out_transaction_id"`
+	// 提现账户（类型为提现才有数据）
+	WithdrawAccount string `json:"withdraw_account"`
+	// 提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%
+	WithdrawRate int64 `json:"withdraw_rate"`
+	// 提现实际到账，单位：cep
+	WithdrawRealAmount int64 `json:"withdraw_real_amount"`
+	// 操作的用户 id，手动充值或者提现审批才有数据，默认为 0
+	OperateUserID int64 `json:"operate_user_id,string"`
+	// 提现审批拒绝的理由
+	RejectReason string `json:"reject_reason"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransferOrderQuery when eager-loading is set.
 	Edges        TransferOrderEdges `json:"edges"`
@@ -157,9 +167,9 @@ func (*TransferOrder) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID:
+		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID, transferorder.FieldWithdrawRate, transferorder.FieldWithdrawRealAmount, transferorder.FieldOperateUserID:
 			values[i] = new(sql.NullInt64)
-		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID:
+		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID, transferorder.FieldWithdrawAccount, transferorder.FieldRejectReason:
 			values[i] = new(sql.NullString)
 		case transferorder.FieldCreatedAt, transferorder.FieldUpdatedAt, transferorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -274,6 +284,36 @@ func (to *TransferOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				to.OutTransactionID = value.String
 			}
+		case transferorder.FieldWithdrawAccount:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field withdraw_account", values[i])
+			} else if value.Valid {
+				to.WithdrawAccount = value.String
+			}
+		case transferorder.FieldWithdrawRate:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field withdraw_rate", values[i])
+			} else if value.Valid {
+				to.WithdrawRate = value.Int64
+			}
+		case transferorder.FieldWithdrawRealAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field withdraw_real_amount", values[i])
+			} else if value.Valid {
+				to.WithdrawRealAmount = value.Int64
+			}
+		case transferorder.FieldOperateUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field operate_user_id", values[i])
+			} else if value.Valid {
+				to.OperateUserID = value.Int64
+			}
+		case transferorder.FieldRejectReason:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field reject_reason", values[i])
+			} else if value.Valid {
+				to.RejectReason = value.String
+			}
 		default:
 			to.selectValues.Set(columns[i], values[i])
 		}
@@ -384,6 +424,21 @@ func (to *TransferOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("out_transaction_id=")
 	builder.WriteString(to.OutTransactionID)
+	builder.WriteString(", ")
+	builder.WriteString("withdraw_account=")
+	builder.WriteString(to.WithdrawAccount)
+	builder.WriteString(", ")
+	builder.WriteString("withdraw_rate=")
+	builder.WriteString(fmt.Sprintf("%v", to.WithdrawRate))
+	builder.WriteString(", ")
+	builder.WriteString("withdraw_real_amount=")
+	builder.WriteString(fmt.Sprintf("%v", to.WithdrawRealAmount))
+	builder.WriteString(", ")
+	builder.WriteString("operate_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", to.OperateUserID))
+	builder.WriteString(", ")
+	builder.WriteString("reject_reason=")
+	builder.WriteString(to.RejectReason)
 	builder.WriteByte(')')
 	return builder.String()
 }
