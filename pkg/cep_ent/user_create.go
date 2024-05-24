@@ -45,6 +45,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -252,15 +253,15 @@ func (uc *UserCreate) SetNillableIsRecharge(b *bool) *UserCreate {
 }
 
 // SetUserType sets the "user_type" field.
-func (uc *UserCreate) SetUserType(ut user.UserType) *UserCreate {
-	uc.mutation.SetUserType(ut)
+func (uc *UserCreate) SetUserType(et enums.UserType) *UserCreate {
+	uc.mutation.SetUserType(et)
 	return uc
 }
 
 // SetNillableUserType sets the "user_type" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUserType(ut *user.UserType) *UserCreate {
-	if ut != nil {
-		uc.SetUserType(*ut)
+func (uc *UserCreate) SetNillableUserType(et *enums.UserType) *UserCreate {
+	if et != nil {
+		uc.SetUserType(*et)
 	}
 	return uc
 }
@@ -2185,7 +2186,7 @@ func (u *UserUpsert) UpdateIsRecharge() *UserUpsert {
 }
 
 // SetUserType sets the "user_type" field.
-func (u *UserUpsert) SetUserType(v user.UserType) *UserUpsert {
+func (u *UserUpsert) SetUserType(v enums.UserType) *UserUpsert {
 	u.Set(user.FieldUserType, v)
 	return u
 }
@@ -2552,7 +2553,7 @@ func (u *UserUpsertOne) UpdateIsRecharge() *UserUpsertOne {
 }
 
 // SetUserType sets the "user_type" field.
-func (u *UserUpsertOne) SetUserType(v user.UserType) *UserUpsertOne {
+func (u *UserUpsertOne) SetUserType(v enums.UserType) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.SetUserType(v)
 	})
@@ -3105,7 +3106,7 @@ func (u *UserUpsertBulk) UpdateIsRecharge() *UserUpsertBulk {
 }
 
 // SetUserType sets the "user_type" field.
-func (u *UserUpsertBulk) SetUserType(v user.UserType) *UserUpsertBulk {
+func (u *UserUpsertBulk) SetUserType(v enums.UserType) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.SetUserType(v)
 	})

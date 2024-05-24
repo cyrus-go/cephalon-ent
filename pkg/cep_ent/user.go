@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 用户表
@@ -50,7 +51,7 @@ type User struct {
 	// 是否充值过
 	IsRecharge bool `json:"is_recharge"`
 	// 用户类型
-	UserType user.UserType `json:"user_type"`
+	UserType enums.UserType `json:"user_type"`
 	// 邀请人用户 id
 	ParentID int64 `json:"parent_id,string"`
 	// 用户最新弹窗版本
@@ -658,7 +659,7 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field user_type", values[i])
 			} else if value.Valid {
-				u.UserType = user.UserType(value.String)
+				u.UserType = enums.UserType(value.String)
 			}
 		case user.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

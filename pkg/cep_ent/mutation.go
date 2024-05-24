@@ -69232,7 +69232,7 @@ type UserMutation struct {
 	password                        *string
 	is_frozen                       *bool
 	is_recharge                     *bool
-	user_type                       *user.UserType
+	user_type                       *enums.UserType
 	pop_version                     *string
 	area_code                       *string
 	email                           *string
@@ -70012,12 +70012,12 @@ func (m *UserMutation) ResetIsRecharge() {
 }
 
 // SetUserType sets the "user_type" field.
-func (m *UserMutation) SetUserType(ut user.UserType) {
-	m.user_type = &ut
+func (m *UserMutation) SetUserType(et enums.UserType) {
+	m.user_type = &et
 }
 
 // UserType returns the value of the "user_type" field in the mutation.
-func (m *UserMutation) UserType() (r user.UserType, exists bool) {
+func (m *UserMutation) UserType() (r enums.UserType, exists bool) {
 	v := m.user_type
 	if v == nil {
 		return
@@ -70028,7 +70028,7 @@ func (m *UserMutation) UserType() (r user.UserType, exists bool) {
 // OldUserType returns the old "user_type" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldUserType(ctx context.Context) (v user.UserType, err error) {
+func (m *UserMutation) OldUserType(ctx context.Context) (v enums.UserType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserType is only allowed on UpdateOne operations")
 	}
@@ -72777,7 +72777,7 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetIsRecharge(v)
 		return nil
 	case user.FieldUserType:
-		v, ok := value.(user.UserType)
+		v, ok := value.(enums.UserType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

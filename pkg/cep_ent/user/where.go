@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -841,23 +842,33 @@ func IsRechargeNEQ(v bool) predicate.User {
 }
 
 // UserTypeEQ applies the EQ predicate on the "user_type" field.
-func UserTypeEQ(v UserType) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldUserType, v))
+func UserTypeEQ(v enums.UserType) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldEQ(FieldUserType, vc))
 }
 
 // UserTypeNEQ applies the NEQ predicate on the "user_type" field.
-func UserTypeNEQ(v UserType) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldUserType, v))
+func UserTypeNEQ(v enums.UserType) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldNEQ(FieldUserType, vc))
 }
 
 // UserTypeIn applies the In predicate on the "user_type" field.
-func UserTypeIn(vs ...UserType) predicate.User {
-	return predicate.User(sql.FieldIn(FieldUserType, vs...))
+func UserTypeIn(vs ...enums.UserType) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldIn(FieldUserType, v...))
 }
 
 // UserTypeNotIn applies the NotIn predicate on the "user_type" field.
-func UserTypeNotIn(vs ...UserType) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldUserType, vs...))
+func UserTypeNotIn(vs ...enums.UserType) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldNotIn(FieldUserType, v...))
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.

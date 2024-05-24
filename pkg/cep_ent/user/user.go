@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -508,27 +509,12 @@ var (
 	DefaultID func() int64
 )
 
-// UserType defines the type for the "user_type" enum field.
-type UserType string
-
-// UserTypePersonal is the default value of the UserType enum.
-const DefaultUserType = UserTypePersonal
-
-// UserType values.
-const (
-	UserTypePersonal   UserType = "personal"
-	UserTypeEnterprise UserType = "enterprise"
-	UserTypeAdmin      UserType = "admin"
-)
-
-func (ut UserType) String() string {
-	return string(ut)
-}
+const DefaultUserType enums.UserType = "personal"
 
 // UserTypeValidator is a validator for the "user_type" field enum values. It is called by the builders before save.
-func UserTypeValidator(ut UserType) error {
+func UserTypeValidator(ut enums.UserType) error {
 	switch ut {
-	case UserTypePersonal, UserTypeEnterprise, UserTypeAdmin:
+	case "personal", "enterprise", "admin":
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for user_type field: %q", ut)

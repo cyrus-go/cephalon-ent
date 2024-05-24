@@ -46,6 +46,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/withdrawrecord"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -251,15 +252,15 @@ func (uu *UserUpdate) SetNillableIsRecharge(b *bool) *UserUpdate {
 }
 
 // SetUserType sets the "user_type" field.
-func (uu *UserUpdate) SetUserType(ut user.UserType) *UserUpdate {
-	uu.mutation.SetUserType(ut)
+func (uu *UserUpdate) SetUserType(et enums.UserType) *UserUpdate {
+	uu.mutation.SetUserType(et)
 	return uu
 }
 
 // SetNillableUserType sets the "user_type" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUserType(ut *user.UserType) *UserUpdate {
-	if ut != nil {
-		uu.SetUserType(*ut)
+func (uu *UserUpdate) SetNillableUserType(et *enums.UserType) *UserUpdate {
+	if et != nil {
+		uu.SetUserType(*et)
 	}
 	return uu
 }
@@ -3865,15 +3866,15 @@ func (uuo *UserUpdateOne) SetNillableIsRecharge(b *bool) *UserUpdateOne {
 }
 
 // SetUserType sets the "user_type" field.
-func (uuo *UserUpdateOne) SetUserType(ut user.UserType) *UserUpdateOne {
-	uuo.mutation.SetUserType(ut)
+func (uuo *UserUpdateOne) SetUserType(et enums.UserType) *UserUpdateOne {
+	uuo.mutation.SetUserType(et)
 	return uuo
 }
 
 // SetNillableUserType sets the "user_type" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUserType(ut *user.UserType) *UserUpdateOne {
-	if ut != nil {
-		uuo.SetUserType(*ut)
+func (uuo *UserUpdateOne) SetNillableUserType(et *enums.UserType) *UserUpdateOne {
+	if et != nil {
+		uuo.SetUserType(*et)
 	}
 	return uuo
 }
