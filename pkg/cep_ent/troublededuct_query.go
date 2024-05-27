@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
 // TroubleDeductQuery is the builder for querying TroubleDeduct entities.
@@ -22,6 +23,7 @@ type TroubleDeductQuery struct {
 	order      []troublededuct.OrderOption
 	inters     []Interceptor
 	predicates []predicate.TroubleDeduct
+	withUser   *UserQuery
 	withDevice *DeviceQuery
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -58,6 +60,28 @@ func (tdq *TroubleDeductQuery) Unique(unique bool) *TroubleDeductQuery {
 func (tdq *TroubleDeductQuery) Order(o ...troublededuct.OrderOption) *TroubleDeductQuery {
 	tdq.order = append(tdq.order, o...)
 	return tdq
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (tdq *TroubleDeductQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: tdq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tdq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tdq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(troublededuct.Table, troublededuct.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, troublededuct.UserTable, troublededuct.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tdq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryDevice chains the current query on the "device" edge.
@@ -274,11 +298,23 @@ func (tdq *TroubleDeductQuery) Clone() *TroubleDeductQuery {
 		order:      append([]troublededuct.OrderOption{}, tdq.order...),
 		inters:     append([]Interceptor{}, tdq.inters...),
 		predicates: append([]predicate.TroubleDeduct{}, tdq.predicates...),
+		withUser:   tdq.withUser.Clone(),
 		withDevice: tdq.withDevice.Clone(),
 		// clone intermediate query.
 		sql:  tdq.sql.Clone(),
 		path: tdq.path,
 	}
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (tdq *TroubleDeductQuery) WithUser(opts ...func(*UserQuery)) *TroubleDeductQuery {
+	query := (&UserClient{config: tdq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tdq.withUser = query
+	return tdq
 }
 
 // WithDevice tells the query-builder to eager-load the nodes that are connected to
@@ -370,7 +406,8 @@ func (tdq *TroubleDeductQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	var (
 		nodes       = []*TroubleDeduct{}
 		_spec       = tdq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			tdq.withUser != nil,
 			tdq.withDevice != nil,
 		}
 	)
@@ -395,6 +432,12 @@ func (tdq *TroubleDeductQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := tdq.withUser; query != nil {
+		if err := tdq.loadUser(ctx, query, nodes, nil,
+			func(n *TroubleDeduct, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := tdq.withDevice; query != nil {
 		if err := tdq.loadDevice(ctx, query, nodes, nil,
 			func(n *TroubleDeduct, e *Device) { n.Edges.Device = e }); err != nil {
@@ -404,6 +447,35 @@ func (tdq *TroubleDeductQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	return nodes, nil
 }
 
+func (tdq *TroubleDeductQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*TroubleDeduct, init func(*TroubleDeduct), assign func(*TroubleDeduct, *User)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*TroubleDeduct)
+	for i := range nodes {
+		fk := nodes[i].UserID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (tdq *TroubleDeductQuery) loadDevice(ctx context.Context, query *DeviceQuery, nodes []*TroubleDeduct, init func(*TroubleDeduct), assign func(*TroubleDeduct, *Device)) error {
 	ids := make([]int64, 0, len(nodes))
 	nodeids := make(map[int64][]*TroubleDeduct)
@@ -461,6 +533,9 @@ func (tdq *TroubleDeductQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != troublededuct.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if tdq.withUser != nil {
+			_spec.Node.AddColumnOnce(troublededuct.FieldUserID)
 		}
 		if tdq.withDevice != nil {
 			_spec.Node.AddColumnOnce(troublededuct.FieldDeviceID)

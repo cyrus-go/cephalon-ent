@@ -10088,6 +10088,22 @@ func (c *TroubleDeductClient) GetX(ctx context.Context, id int64) *TroubleDeduct
 	return obj
 }
 
+// QueryUser queries the user edge of a TroubleDeduct.
+func (c *TroubleDeductClient) QueryUser(td *TroubleDeduct) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := td.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(troublededuct.Table, troublededuct.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, troublededuct.UserTable, troublededuct.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(td.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryDevice queries the device edge of a TroubleDeduct.
 func (c *TroubleDeductClient) QueryDevice(td *TroubleDeduct) *DeviceQuery {
 	query := (&DeviceClient{config: c.config}).Query()
@@ -10870,6 +10886,22 @@ func (c *UserClient) QueryOperateWithdrawRecords(u *User) *WithdrawRecordQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(withdrawrecord.Table, withdrawrecord.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateWithdrawRecordsTable, user.OperateWithdrawRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTroubleDeducts queries the trouble_deducts edge of a User.
+func (c *UserClient) QueryTroubleDeducts(u *User) *TroubleDeductQuery {
+	query := (&TroubleDeductClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(troublededuct.Table, troublededuct.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.TroubleDeductsTable, user.TroubleDeductsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

@@ -2967,36 +2967,40 @@ func init() {
 	troubledeductDescDeletedAt := troubledeductMixinFields0[5].Descriptor()
 	// troublededuct.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	troublededuct.DefaultDeletedAt = troubledeductDescDeletedAt.Default.(time.Time)
+	// troubledeductDescUserID is the schema descriptor for user_id field.
+	troubledeductDescUserID := troubledeductFields[0].Descriptor()
+	// troublededuct.DefaultUserID holds the default value on creation for the user_id field.
+	troublededuct.DefaultUserID = troubledeductDescUserID.Default.(int64)
 	// troubledeductDescDeviceID is the schema descriptor for device_id field.
-	troubledeductDescDeviceID := troubledeductFields[0].Descriptor()
+	troubledeductDescDeviceID := troubledeductFields[1].Descriptor()
 	// troublededuct.DefaultDeviceID holds the default value on creation for the device_id field.
 	troublededuct.DefaultDeviceID = troubledeductDescDeviceID.Default.(int64)
 	// troubledeductDescStartedAt is the schema descriptor for started_at field.
-	troubledeductDescStartedAt := troubledeductFields[1].Descriptor()
+	troubledeductDescStartedAt := troubledeductFields[2].Descriptor()
 	// troublededuct.DefaultStartedAt holds the default value on creation for the started_at field.
 	troublededuct.DefaultStartedAt = troubledeductDescStartedAt.Default.(time.Time)
 	// troubledeductDescFinishedAt is the schema descriptor for finished_at field.
-	troubledeductDescFinishedAt := troubledeductFields[2].Descriptor()
+	troubledeductDescFinishedAt := troubledeductFields[3].Descriptor()
 	// troublededuct.DefaultFinishedAt holds the default value on creation for the finished_at field.
 	troublededuct.DefaultFinishedAt = troubledeductDescFinishedAt.Default.(time.Time)
 	// troubledeductDescTimeOfDuration is the schema descriptor for time_of_duration field.
-	troubledeductDescTimeOfDuration := troubledeductFields[3].Descriptor()
+	troubledeductDescTimeOfDuration := troubledeductFields[4].Descriptor()
 	// troublededuct.DefaultTimeOfDuration holds the default value on creation for the time_of_duration field.
 	troublededuct.DefaultTimeOfDuration = troubledeductDescTimeOfDuration.Default.(float64)
 	// troubledeductDescDeductStandard is the schema descriptor for deduct_standard field.
-	troubledeductDescDeductStandard := troubledeductFields[4].Descriptor()
+	troubledeductDescDeductStandard := troubledeductFields[5].Descriptor()
 	// troublededuct.DefaultDeductStandard holds the default value on creation for the deduct_standard field.
 	troublededuct.DefaultDeductStandard = troubledeductDescDeductStandard.Default.(int64)
 	// troubledeductDescAmount is the schema descriptor for amount field.
-	troubledeductDescAmount := troubledeductFields[5].Descriptor()
+	troubledeductDescAmount := troubledeductFields[6].Descriptor()
 	// troublededuct.DefaultAmount holds the default value on creation for the amount field.
 	troublededuct.DefaultAmount = troubledeductDescAmount.Default.(int64)
 	// troubledeductDescReason is the schema descriptor for reason field.
-	troubledeductDescReason := troubledeductFields[7].Descriptor()
+	troubledeductDescReason := troubledeductFields[8].Descriptor()
 	// troublededuct.DefaultReason holds the default value on creation for the reason field.
 	troublededuct.DefaultReason = troubledeductDescReason.Default.(string)
 	// troubledeductDescRejectReason is the schema descriptor for reject_reason field.
-	troubledeductDescRejectReason := troubledeductFields[8].Descriptor()
+	troubledeductDescRejectReason := troubledeductFields[9].Descriptor()
 	// troublededuct.DefaultRejectReason holds the default value on creation for the reject_reason field.
 	troublededuct.DefaultRejectReason = troubledeductDescRejectReason.Default.(string)
 	// troubledeductDescID is the schema descriptor for id field.

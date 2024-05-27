@@ -38,6 +38,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
@@ -992,6 +993,21 @@ func (uc *UserCreate) AddOperateWithdrawRecords(w ...*WithdrawRecord) *UserCreat
 		ids[i] = w[i].ID
 	}
 	return uc.AddOperateWithdrawRecordIDs(ids...)
+}
+
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (uc *UserCreate) AddTroubleDeductIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddTroubleDeductIDs(ids...)
+	return uc
+}
+
+// AddTroubleDeducts adds the "trouble_deducts" edges to the TroubleDeduct entity.
+func (uc *UserCreate) AddTroubleDeducts(t ...*TroubleDeduct) *UserCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddTroubleDeductIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1958,6 +1974,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.TroubleDeductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/stark-sim/cephalon-ent/common"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -17,6 +18,7 @@ type TroubleDeduct struct {
 // Fields of the TroubleDeduct.
 func (TroubleDeduct) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("用戶 id"),
 		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("设备 id"),
 		field.Time("started_at").Default(common.ZeroTime).StructTag(`json:"started_at"`).Comment("故障开始时刻"),
 		field.Time("finished_at").Default(common.ZeroTime).StructTag(`json:"finished_at"`).Comment("故障结束时刻"),
@@ -33,13 +35,17 @@ func (TroubleDeduct) Fields() []ent.Field {
 func (TroubleDeduct) Edges() []ent.Edge {
 	return []ent.Edge{
 		// 逻辑外键
+		edge.From("user", User.Type).Ref("trouble_deducts").Field("user_id").Unique().Required(),
 		edge.From("device", Device.Type).Ref("trouble_deducts").Field("device_id").Unique().Required(),
 	}
 }
 
 // Indexes of the TroubleDeduct
 func (TroubleDeduct) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+		index.Fields("user_id"),
+		index.Fields("device_id"),
+	}
 }
 
 // Mixin of TroubleDeduct

@@ -26,6 +26,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldDeviceID holds the string denoting the device_id field in the database.
 	FieldDeviceID = "device_id"
 	// FieldStartedAt holds the string denoting the started_at field in the database.
@@ -44,10 +46,19 @@ const (
 	FieldReason = "reason"
 	// FieldRejectReason holds the string denoting the reject_reason field in the database.
 	FieldRejectReason = "reject_reason"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
 	EdgeDevice = "device"
 	// Table holds the table name of the troublededuct in the database.
 	Table = "trouble_deducts"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "trouble_deducts"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
 	// DeviceTable is the table that holds the device relation/edge.
 	DeviceTable = "trouble_deducts"
 	// DeviceInverseTable is the table name for the Device entity.
@@ -65,6 +76,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldUserID,
 	FieldDeviceID,
 	FieldStartedAt,
 	FieldFinishedAt,
@@ -99,6 +111,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt time.Time
+	// DefaultUserID holds the default value on creation for the "user_id" field.
+	DefaultUserID int64
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
 	DefaultDeviceID int64
 	// DefaultStartedAt holds the default value on creation for the "started_at" field.
@@ -164,6 +178,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
 // ByDeviceID orders the results by the device_id field.
 func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
@@ -209,11 +228,25 @@ func ByRejectReason(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRejectReason, opts...).ToFunc()
 }
 
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByDeviceField orders the results by device field.
 func ByDeviceField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newDeviceStep(), sql.OrderByField(field, opts...))
 	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
 }
 func newDeviceStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

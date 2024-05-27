@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -90,6 +91,20 @@ func (tdc *TroubleDeductCreate) SetDeletedAt(t time.Time) *TroubleDeductCreate {
 func (tdc *TroubleDeductCreate) SetNillableDeletedAt(t *time.Time) *TroubleDeductCreate {
 	if t != nil {
 		tdc.SetDeletedAt(*t)
+	}
+	return tdc
+}
+
+// SetUserID sets the "user_id" field.
+func (tdc *TroubleDeductCreate) SetUserID(i int64) *TroubleDeductCreate {
+	tdc.mutation.SetUserID(i)
+	return tdc
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tdc *TroubleDeductCreate) SetNillableUserID(i *int64) *TroubleDeductCreate {
+	if i != nil {
+		tdc.SetUserID(*i)
 	}
 	return tdc
 }
@@ -234,6 +249,11 @@ func (tdc *TroubleDeductCreate) SetNillableID(i *int64) *TroubleDeductCreate {
 	return tdc
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (tdc *TroubleDeductCreate) SetUser(u *User) *TroubleDeductCreate {
+	return tdc.SetUserID(u.ID)
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (tdc *TroubleDeductCreate) SetDevice(d *Device) *TroubleDeductCreate {
 	return tdc.SetDeviceID(d.ID)
@@ -294,6 +314,10 @@ func (tdc *TroubleDeductCreate) defaults() {
 		v := troublededuct.DefaultDeletedAt
 		tdc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := tdc.mutation.UserID(); !ok {
+		v := troublededuct.DefaultUserID
+		tdc.mutation.SetUserID(v)
+	}
 	if _, ok := tdc.mutation.DeviceID(); !ok {
 		v := troublededuct.DefaultDeviceID
 		tdc.mutation.SetDeviceID(v)
@@ -353,6 +377,9 @@ func (tdc *TroubleDeductCreate) check() error {
 	if _, ok := tdc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`cep_ent: missing required field "TroubleDeduct.deleted_at"`)}
 	}
+	if _, ok := tdc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "TroubleDeduct.user_id"`)}
+	}
 	if _, ok := tdc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device_id", err: errors.New(`cep_ent: missing required field "TroubleDeduct.device_id"`)}
 	}
@@ -384,6 +411,9 @@ func (tdc *TroubleDeductCreate) check() error {
 	}
 	if _, ok := tdc.mutation.RejectReason(); !ok {
 		return &ValidationError{Name: "reject_reason", err: errors.New(`cep_ent: missing required field "TroubleDeduct.reject_reason"`)}
+	}
+	if _, ok := tdc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "TroubleDeduct.user"`)}
 	}
 	if _, ok := tdc.mutation.DeviceID(); !ok {
 		return &ValidationError{Name: "device", err: errors.New(`cep_ent: missing required edge "TroubleDeduct.device"`)}
@@ -472,6 +502,23 @@ func (tdc *TroubleDeductCreate) createSpec() (*TroubleDeduct, *sqlgraph.CreateSp
 	if value, ok := tdc.mutation.RejectReason(); ok {
 		_spec.SetField(troublededuct.FieldRejectReason, field.TypeString, value)
 		_node.RejectReason = value
+	}
+	if nodes := tdc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   troublededuct.UserTable,
+			Columns: []string{troublededuct.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tdc.mutation.DeviceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -599,6 +646,18 @@ func (u *TroubleDeductUpsert) SetDeletedAt(v time.Time) *TroubleDeductUpsert {
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
 func (u *TroubleDeductUpsert) UpdateDeletedAt() *TroubleDeductUpsert {
 	u.SetExcluded(troublededuct.FieldDeletedAt)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *TroubleDeductUpsert) SetUserID(v int64) *TroubleDeductUpsert {
+	u.Set(troublededuct.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *TroubleDeductUpsert) UpdateUserID() *TroubleDeductUpsert {
+	u.SetExcluded(troublededuct.FieldUserID)
 	return u
 }
 
@@ -846,6 +905,20 @@ func (u *TroubleDeductUpsertOne) SetDeletedAt(v time.Time) *TroubleDeductUpsertO
 func (u *TroubleDeductUpsertOne) UpdateDeletedAt() *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *TroubleDeductUpsertOne) SetUserID(v int64) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *TroubleDeductUpsertOne) UpdateUserID() *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateUserID()
 	})
 }
 
@@ -1280,6 +1353,20 @@ func (u *TroubleDeductUpsertBulk) SetDeletedAt(v time.Time) *TroubleDeductUpsert
 func (u *TroubleDeductUpsertBulk) UpdateDeletedAt() *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *TroubleDeductUpsertBulk) SetUserID(v int64) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *TroubleDeductUpsertBulk) UpdateUserID() *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateUserID()
 	})
 }
 

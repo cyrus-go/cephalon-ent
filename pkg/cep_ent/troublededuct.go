@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -30,6 +31,8 @@ type TroubleDeduct struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
+	// 用戶 id
+	UserID int64 `json:"user_id,string"`
 	// 设备 id
 	DeviceID int64 `json:"device_id,string"`
 	// 故障开始时刻
@@ -56,17 +59,32 @@ type TroubleDeduct struct {
 
 // TroubleDeductEdges holds the relations/edges for other nodes in the graph.
 type TroubleDeductEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// Device holds the value of the device edge.
 	Device *Device `json:"device,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TroubleDeductEdges) UserOrErr() (*User, error) {
+	if e.loadedTypes[0] {
+		if e.User == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.User, nil
+	}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // DeviceOrErr returns the Device value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e TroubleDeductEdges) DeviceOrErr() (*Device, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.Device == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: device.Label}
@@ -83,7 +101,7 @@ func (*TroubleDeduct) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case troublededuct.FieldTimeOfDuration:
 			values[i] = new(sql.NullFloat64)
-		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldDeviceID, troublededuct.FieldDeductStandard, troublededuct.FieldAmount:
+		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldUserID, troublededuct.FieldDeviceID, troublededuct.FieldDeductStandard, troublededuct.FieldAmount:
 			values[i] = new(sql.NullInt64)
 		case troublededuct.FieldStatus, troublededuct.FieldReason, troublededuct.FieldRejectReason:
 			values[i] = new(sql.NullString)
@@ -139,6 +157,12 @@ func (td *TroubleDeduct) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				td.DeletedAt = value.Time
+			}
+		case troublededuct.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				td.UserID = value.Int64
 			}
 		case troublededuct.FieldDeviceID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -207,6 +231,11 @@ func (td *TroubleDeduct) Value(name string) (ent.Value, error) {
 	return td.selectValues.Get(name)
 }
 
+// QueryUser queries the "user" edge of the TroubleDeduct entity.
+func (td *TroubleDeduct) QueryUser() *UserQuery {
+	return NewTroubleDeductClient(td.config).QueryUser(td)
+}
+
 // QueryDevice queries the "device" edge of the TroubleDeduct entity.
 func (td *TroubleDeduct) QueryDevice() *DeviceQuery {
 	return NewTroubleDeductClient(td.config).QueryDevice(td)
@@ -249,6 +278,9 @@ func (td *TroubleDeduct) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(td.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", td.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("device_id=")
 	builder.WriteString(fmt.Sprintf("%v", td.DeviceID))

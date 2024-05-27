@@ -142,6 +142,8 @@ const (
 	EdgeWithdrawRecords = "withdraw_records"
 	// EdgeOperateWithdrawRecords holds the string denoting the operate_withdraw_records edge name in mutations.
 	EdgeOperateWithdrawRecords = "operate_withdraw_records"
+	// EdgeTroubleDeducts holds the string denoting the trouble_deducts edge name in mutations.
+	EdgeTroubleDeducts = "trouble_deducts"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -418,6 +420,13 @@ const (
 	OperateWithdrawRecordsInverseTable = "withdraw_records"
 	// OperateWithdrawRecordsColumn is the table column denoting the operate_withdraw_records relation/edge.
 	OperateWithdrawRecordsColumn = "operate_user_id"
+	// TroubleDeductsTable is the table that holds the trouble_deducts relation/edge.
+	TroubleDeductsTable = "trouble_deducts"
+	// TroubleDeductsInverseTable is the table name for the TroubleDeduct entity.
+	// It exists in this package in order to avoid circular dependency with the "troublededuct" package.
+	TroubleDeductsInverseTable = "trouble_deducts"
+	// TroubleDeductsColumn is the table column denoting the trouble_deducts relation/edge.
+	TroubleDeductsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1175,6 +1184,20 @@ func ByOperateWithdrawRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderO
 		sqlgraph.OrderByNeighborTerms(s, newOperateWithdrawRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTroubleDeductsCount orders the results by trouble_deducts count.
+func ByTroubleDeductsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTroubleDeductsStep(), opts...)
+	}
+}
+
+// ByTroubleDeducts orders the results by trouble_deducts terms.
+func ByTroubleDeducts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTroubleDeductsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1453,5 +1476,12 @@ func newOperateWithdrawRecordsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OperateWithdrawRecordsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, OperateWithdrawRecordsTable, OperateWithdrawRecordsColumn),
+	)
+}
+func newTroubleDeductsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TroubleDeductsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TroubleDeductsTable, TroubleDeductsColumn),
 	)
 }

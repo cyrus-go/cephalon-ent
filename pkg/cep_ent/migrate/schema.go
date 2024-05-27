@@ -2234,6 +2234,7 @@ var (
 		{Name: "reason", Type: field.TypeString, Comment: "扣费原因", Default: ""},
 		{Name: "reject_reason", Type: field.TypeString, Comment: "拒绝扣费原因", Default: ""},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "设备 id", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用戶 id", Default: 0},
 	}
 	// TroubleDeductsTable holds the schema information for the "trouble_deducts" table.
 	TroubleDeductsTable = &schema.Table{
@@ -2247,6 +2248,24 @@ var (
 				Columns:    []*schema.Column{TroubleDeductsColumns[14]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "trouble_deducts_users_trouble_deducts",
+				Columns:    []*schema.Column{TroubleDeductsColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "troublededuct_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{TroubleDeductsColumns[15]},
+			},
+			{
+				Name:    "troublededuct_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{TroubleDeductsColumns[14]},
 			},
 		},
 	}
@@ -2774,6 +2793,7 @@ func init() {
 	TransferOrdersTable.ForeignKeys[3].RefTable = VxSocialsTable
 	TransferOrdersTable.Annotation = &entsql.Annotation{}
 	TroubleDeductsTable.ForeignKeys[0].RefTable = DevicesTable
+	TroubleDeductsTable.ForeignKeys[1].RefTable = UsersTable
 	TroubleDeductsTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}

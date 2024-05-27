@@ -156,9 +156,11 @@ type UserEdges struct {
 	WithdrawRecords []*WithdrawRecord `json:"withdraw_records,omitempty"`
 	// OperateWithdrawRecords holds the value of the operate_withdraw_records edge.
 	OperateWithdrawRecords []*WithdrawRecord `json:"operate_withdraw_records,omitempty"`
+	// TroubleDeducts holds the value of the trouble_deducts edge.
+	TroubleDeducts []*TroubleDeduct `json:"trouble_deducts,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [40]bool
+	loadedTypes [41]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -535,6 +537,15 @@ func (e UserEdges) OperateWithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
 		return e.OperateWithdrawRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "operate_withdraw_records"}
+}
+
+// TroubleDeductsOrErr returns the TroubleDeducts value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
+	if e.loadedTypes[40] {
+		return e.TroubleDeducts, nil
+	}
+	return nil, &NotLoadedError{edge: "trouble_deducts"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -921,6 +932,11 @@ func (u *User) QueryWithdrawRecords() *WithdrawRecordQuery {
 // QueryOperateWithdrawRecords queries the "operate_withdraw_records" edge of the User entity.
 func (u *User) QueryOperateWithdrawRecords() *WithdrawRecordQuery {
 	return NewUserClient(u.config).QueryOperateWithdrawRecords(u)
+}
+
+// QueryTroubleDeducts queries the "trouble_deducts" edge of the User entity.
+func (u *User) QueryTroubleDeducts() *TroubleDeductQuery {
+	return NewUserClient(u.config).QueryTroubleDeducts(u)
 }
 
 // Update returns a builder for updating this User.

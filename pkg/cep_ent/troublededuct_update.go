@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -89,6 +90,20 @@ func (tdu *TroubleDeductUpdate) SetDeletedAt(t time.Time) *TroubleDeductUpdate {
 func (tdu *TroubleDeductUpdate) SetNillableDeletedAt(t *time.Time) *TroubleDeductUpdate {
 	if t != nil {
 		tdu.SetDeletedAt(*t)
+	}
+	return tdu
+}
+
+// SetUserID sets the "user_id" field.
+func (tdu *TroubleDeductUpdate) SetUserID(i int64) *TroubleDeductUpdate {
+	tdu.mutation.SetUserID(i)
+	return tdu
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tdu *TroubleDeductUpdate) SetNillableUserID(i *int64) *TroubleDeductUpdate {
+	if i != nil {
+		tdu.SetUserID(*i)
 	}
 	return tdu
 }
@@ -240,6 +255,11 @@ func (tdu *TroubleDeductUpdate) SetNillableRejectReason(s *string) *TroubleDeduc
 	return tdu
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (tdu *TroubleDeductUpdate) SetUser(u *User) *TroubleDeductUpdate {
+	return tdu.SetUserID(u.ID)
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (tdu *TroubleDeductUpdate) SetDevice(d *Device) *TroubleDeductUpdate {
 	return tdu.SetDeviceID(d.ID)
@@ -248,6 +268,12 @@ func (tdu *TroubleDeductUpdate) SetDevice(d *Device) *TroubleDeductUpdate {
 // Mutation returns the TroubleDeductMutation object of the builder.
 func (tdu *TroubleDeductUpdate) Mutation() *TroubleDeductMutation {
 	return tdu.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (tdu *TroubleDeductUpdate) ClearUser() *TroubleDeductUpdate {
+	tdu.mutation.ClearUser()
+	return tdu
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -298,6 +324,9 @@ func (tdu *TroubleDeductUpdate) check() error {
 		if err := troublededuct.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "TroubleDeduct.status": %w`, err)}
 		}
+	}
+	if _, ok := tdu.mutation.UserID(); tdu.mutation.UserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "TroubleDeduct.user"`)
 	}
 	if _, ok := tdu.mutation.DeviceID(); tdu.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TroubleDeduct.device"`)
@@ -373,6 +402,35 @@ func (tdu *TroubleDeductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tdu.mutation.RejectReason(); ok {
 		_spec.SetField(troublededuct.FieldRejectReason, field.TypeString, value)
+	}
+	if tdu.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   troublededuct.UserTable,
+			Columns: []string{troublededuct.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tdu.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   troublededuct.UserTable,
+			Columns: []string{troublededuct.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if tdu.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -483,6 +541,20 @@ func (tduo *TroubleDeductUpdateOne) SetDeletedAt(t time.Time) *TroubleDeductUpda
 func (tduo *TroubleDeductUpdateOne) SetNillableDeletedAt(t *time.Time) *TroubleDeductUpdateOne {
 	if t != nil {
 		tduo.SetDeletedAt(*t)
+	}
+	return tduo
+}
+
+// SetUserID sets the "user_id" field.
+func (tduo *TroubleDeductUpdateOne) SetUserID(i int64) *TroubleDeductUpdateOne {
+	tduo.mutation.SetUserID(i)
+	return tduo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tduo *TroubleDeductUpdateOne) SetNillableUserID(i *int64) *TroubleDeductUpdateOne {
+	if i != nil {
+		tduo.SetUserID(*i)
 	}
 	return tduo
 }
@@ -634,6 +706,11 @@ func (tduo *TroubleDeductUpdateOne) SetNillableRejectReason(s *string) *TroubleD
 	return tduo
 }
 
+// SetUser sets the "user" edge to the User entity.
+func (tduo *TroubleDeductUpdateOne) SetUser(u *User) *TroubleDeductUpdateOne {
+	return tduo.SetUserID(u.ID)
+}
+
 // SetDevice sets the "device" edge to the Device entity.
 func (tduo *TroubleDeductUpdateOne) SetDevice(d *Device) *TroubleDeductUpdateOne {
 	return tduo.SetDeviceID(d.ID)
@@ -642,6 +719,12 @@ func (tduo *TroubleDeductUpdateOne) SetDevice(d *Device) *TroubleDeductUpdateOne
 // Mutation returns the TroubleDeductMutation object of the builder.
 func (tduo *TroubleDeductUpdateOne) Mutation() *TroubleDeductMutation {
 	return tduo.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (tduo *TroubleDeductUpdateOne) ClearUser() *TroubleDeductUpdateOne {
+	tduo.mutation.ClearUser()
+	return tduo
 }
 
 // ClearDevice clears the "device" edge to the Device entity.
@@ -705,6 +788,9 @@ func (tduo *TroubleDeductUpdateOne) check() error {
 		if err := troublededuct.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "TroubleDeduct.status": %w`, err)}
 		}
+	}
+	if _, ok := tduo.mutation.UserID(); tduo.mutation.UserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "TroubleDeduct.user"`)
 	}
 	if _, ok := tduo.mutation.DeviceID(); tduo.mutation.DeviceCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TroubleDeduct.device"`)
@@ -797,6 +883,35 @@ func (tduo *TroubleDeductUpdateOne) sqlSave(ctx context.Context) (_node *Trouble
 	}
 	if value, ok := tduo.mutation.RejectReason(); ok {
 		_spec.SetField(troublededuct.FieldRejectReason, field.TypeString, value)
+	}
+	if tduo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   troublededuct.UserTable,
+			Columns: []string{troublededuct.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tduo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   troublededuct.UserTable,
+			Columns: []string{troublededuct.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if tduo.mutation.DeviceCleared() {
 		edge := &sqlgraph.EdgeSpec{

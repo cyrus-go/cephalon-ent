@@ -2226,6 +2226,29 @@ func HasOperateWithdrawRecordsWith(preds ...predicate.WithdrawRecord) predicate.
 	})
 }
 
+// HasTroubleDeducts applies the HasEdge predicate on the "trouble_deducts" edge.
+func HasTroubleDeducts() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TroubleDeductsTable, TroubleDeductsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTroubleDeductsWith applies the HasEdge predicate on the "trouble_deducts" edge with a given conditions (other predicates).
+func HasTroubleDeductsWith(preds ...predicate.TroubleDeduct) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newTroubleDeductsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

@@ -67979,6 +67979,8 @@ type TroubleDeductMutation struct {
 	reason              *string
 	reject_reason       *string
 	clearedFields       map[string]struct{}
+	user                *int64
+	cleareduser         bool
 	device              *int64
 	cleareddevice       bool
 	done                bool
@@ -68308,6 +68310,42 @@ func (m *TroubleDeductMutation) OldDeletedAt(ctx context.Context) (v time.Time, 
 // ResetDeletedAt resets all changes to the "deleted_at" field.
 func (m *TroubleDeductMutation) ResetDeletedAt() {
 	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *TroubleDeductMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *TroubleDeductMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *TroubleDeductMutation) ResetUserID() {
+	m.user = nil
 }
 
 // SetDeviceID sets the "device_id" field.
@@ -68694,6 +68732,33 @@ func (m *TroubleDeductMutation) ResetRejectReason() {
 	m.reject_reason = nil
 }
 
+// ClearUser clears the "user" edge to the User entity.
+func (m *TroubleDeductMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[troublededuct.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *TroubleDeductMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *TroubleDeductMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *TroubleDeductMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
 // ClearDevice clears the "device" edge to the Device entity.
 func (m *TroubleDeductMutation) ClearDevice() {
 	m.cleareddevice = true
@@ -68755,7 +68820,7 @@ func (m *TroubleDeductMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TroubleDeductMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_by != nil {
 		fields = append(fields, troublededuct.FieldCreatedBy)
 	}
@@ -68770,6 +68835,9 @@ func (m *TroubleDeductMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, troublededuct.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, troublededuct.FieldUserID)
 	}
 	if m.device != nil {
 		fields = append(fields, troublededuct.FieldDeviceID)
@@ -68816,6 +68884,8 @@ func (m *TroubleDeductMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case troublededuct.FieldDeletedAt:
 		return m.DeletedAt()
+	case troublededuct.FieldUserID:
+		return m.UserID()
 	case troublededuct.FieldDeviceID:
 		return m.DeviceID()
 	case troublededuct.FieldStartedAt:
@@ -68853,6 +68923,8 @@ func (m *TroubleDeductMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldUpdatedAt(ctx)
 	case troublededuct.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case troublededuct.FieldUserID:
+		return m.OldUserID(ctx)
 	case troublededuct.FieldDeviceID:
 		return m.OldDeviceID(ctx)
 	case troublededuct.FieldStartedAt:
@@ -68914,6 +68986,13 @@ func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case troublededuct.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
 		return nil
 	case troublededuct.FieldDeviceID:
 		v, ok := value.(int64)
@@ -69105,6 +69184,9 @@ func (m *TroubleDeductMutation) ResetField(name string) error {
 	case troublededuct.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
+	case troublededuct.FieldUserID:
+		m.ResetUserID()
+		return nil
 	case troublededuct.FieldDeviceID:
 		m.ResetDeviceID()
 		return nil
@@ -69138,7 +69220,10 @@ func (m *TroubleDeductMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TroubleDeductMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, troublededuct.EdgeUser)
+	}
 	if m.device != nil {
 		edges = append(edges, troublededuct.EdgeDevice)
 	}
@@ -69149,6 +69234,10 @@ func (m *TroubleDeductMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *TroubleDeductMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case troublededuct.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
 	case troublededuct.EdgeDevice:
 		if id := m.device; id != nil {
 			return []ent.Value{*id}
@@ -69159,7 +69248,7 @@ func (m *TroubleDeductMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TroubleDeductMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -69171,7 +69260,10 @@ func (m *TroubleDeductMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TroubleDeductMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, troublededuct.EdgeUser)
+	}
 	if m.cleareddevice {
 		edges = append(edges, troublededuct.EdgeDevice)
 	}
@@ -69182,6 +69274,8 @@ func (m *TroubleDeductMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *TroubleDeductMutation) EdgeCleared(name string) bool {
 	switch name {
+	case troublededuct.EdgeUser:
+		return m.cleareduser
 	case troublededuct.EdgeDevice:
 		return m.cleareddevice
 	}
@@ -69192,6 +69286,9 @@ func (m *TroubleDeductMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *TroubleDeductMutation) ClearEdge(name string) error {
 	switch name {
+	case troublededuct.EdgeUser:
+		m.ClearUser()
+		return nil
 	case troublededuct.EdgeDevice:
 		m.ClearDevice()
 		return nil
@@ -69203,6 +69300,9 @@ func (m *TroubleDeductMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *TroubleDeductMutation) ResetEdge(name string) error {
 	switch name {
+	case troublededuct.EdgeUser:
+		m.ResetUser()
+		return nil
 	case troublededuct.EdgeDevice:
 		m.ResetDevice()
 		return nil
@@ -69358,6 +69458,9 @@ type UserMutation struct {
 	operate_withdraw_records        map[int64]struct{}
 	removedoperate_withdraw_records map[int64]struct{}
 	clearedoperate_withdraw_records bool
+	trouble_deducts                 map[int64]struct{}
+	removedtrouble_deducts          map[int64]struct{}
+	clearedtrouble_deducts          bool
 	done                            bool
 	oldValue                        func(context.Context) (*User, error)
 	predicates                      []predicate.User
@@ -72456,6 +72559,60 @@ func (m *UserMutation) ResetOperateWithdrawRecords() {
 	m.removedoperate_withdraw_records = nil
 }
 
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by ids.
+func (m *UserMutation) AddTroubleDeductIDs(ids ...int64) {
+	if m.trouble_deducts == nil {
+		m.trouble_deducts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.trouble_deducts[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTroubleDeducts clears the "trouble_deducts" edge to the TroubleDeduct entity.
+func (m *UserMutation) ClearTroubleDeducts() {
+	m.clearedtrouble_deducts = true
+}
+
+// TroubleDeductsCleared reports if the "trouble_deducts" edge to the TroubleDeduct entity was cleared.
+func (m *UserMutation) TroubleDeductsCleared() bool {
+	return m.clearedtrouble_deducts
+}
+
+// RemoveTroubleDeductIDs removes the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (m *UserMutation) RemoveTroubleDeductIDs(ids ...int64) {
+	if m.removedtrouble_deducts == nil {
+		m.removedtrouble_deducts = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.trouble_deducts, ids[i])
+		m.removedtrouble_deducts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTroubleDeducts returns the removed IDs of the "trouble_deducts" edge to the TroubleDeduct entity.
+func (m *UserMutation) RemovedTroubleDeductsIDs() (ids []int64) {
+	for id := range m.removedtrouble_deducts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TroubleDeductsIDs returns the "trouble_deducts" edge IDs in the mutation.
+func (m *UserMutation) TroubleDeductsIDs() (ids []int64) {
+	for id := range m.trouble_deducts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTroubleDeducts resets all changes to the "trouble_deducts" edge.
+func (m *UserMutation) ResetTroubleDeducts() {
+	m.trouble_deducts = nil
+	m.clearedtrouble_deducts = false
+	m.removedtrouble_deducts = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -73011,7 +73168,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 40)
+	edges := make([]string, 0, 41)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -73131,6 +73288,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.operate_withdraw_records != nil {
 		edges = append(edges, user.EdgeOperateWithdrawRecords)
+	}
+	if m.trouble_deducts != nil {
+		edges = append(edges, user.EdgeTroubleDeducts)
 	}
 	return edges
 }
@@ -73371,13 +73531,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeTroubleDeducts:
+		ids := make([]ent.Value, 0, len(m.trouble_deducts))
+		for id := range m.trouble_deducts {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 40)
+	edges := make([]string, 0, 41)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -73485,6 +73651,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedoperate_withdraw_records != nil {
 		edges = append(edges, user.EdgeOperateWithdrawRecords)
+	}
+	if m.removedtrouble_deducts != nil {
+		edges = append(edges, user.EdgeTroubleDeducts)
 	}
 	return edges
 }
@@ -73709,13 +73878,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeTroubleDeducts:
+		ids := make([]ent.Value, 0, len(m.removedtrouble_deducts))
+		for id := range m.removedtrouble_deducts {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 40)
+	edges := make([]string, 0, 41)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -73836,6 +74011,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedoperate_withdraw_records {
 		edges = append(edges, user.EdgeOperateWithdrawRecords)
 	}
+	if m.clearedtrouble_deducts {
+		edges = append(edges, user.EdgeTroubleDeducts)
+	}
 	return edges
 }
 
@@ -73923,6 +74101,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedwithdraw_records
 	case user.EdgeOperateWithdrawRecords:
 		return m.clearedoperate_withdraw_records
+	case user.EdgeTroubleDeducts:
+		return m.clearedtrouble_deducts
 	}
 	return false
 }
@@ -74070,6 +74250,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeOperateWithdrawRecords:
 		m.ResetOperateWithdrawRecords()
+		return nil
+	case user.EdgeTroubleDeducts:
+		m.ResetTroubleDeducts()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

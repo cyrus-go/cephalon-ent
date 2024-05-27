@@ -39,6 +39,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
@@ -992,6 +993,21 @@ func (uu *UserUpdate) AddOperateWithdrawRecords(w ...*WithdrawRecord) *UserUpdat
 	return uu.AddOperateWithdrawRecordIDs(ids...)
 }
 
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (uu *UserUpdate) AddTroubleDeductIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddTroubleDeductIDs(ids...)
+	return uu
+}
+
+// AddTroubleDeducts adds the "trouble_deducts" edges to the TroubleDeduct entity.
+func (uu *UserUpdate) AddTroubleDeducts(t ...*TroubleDeduct) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddTroubleDeductIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1775,6 +1791,27 @@ func (uu *UserUpdate) RemoveOperateWithdrawRecords(w ...*WithdrawRecord) *UserUp
 		ids[i] = w[i].ID
 	}
 	return uu.RemoveOperateWithdrawRecordIDs(ids...)
+}
+
+// ClearTroubleDeducts clears all "trouble_deducts" edges to the TroubleDeduct entity.
+func (uu *UserUpdate) ClearTroubleDeducts() *UserUpdate {
+	uu.mutation.ClearTroubleDeducts()
+	return uu
+}
+
+// RemoveTroubleDeductIDs removes the "trouble_deducts" edge to TroubleDeduct entities by IDs.
+func (uu *UserUpdate) RemoveTroubleDeductIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveTroubleDeductIDs(ids...)
+	return uu
+}
+
+// RemoveTroubleDeducts removes "trouble_deducts" edges to TroubleDeduct entities.
+func (uu *UserUpdate) RemoveTroubleDeducts(t ...*TroubleDeduct) *UserUpdate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveTroubleDeductIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -3655,6 +3692,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedTroubleDeductsIDs(); len(nodes) > 0 && !uu.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TroubleDeductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -4606,6 +4688,21 @@ func (uuo *UserUpdateOne) AddOperateWithdrawRecords(w ...*WithdrawRecord) *UserU
 	return uuo.AddOperateWithdrawRecordIDs(ids...)
 }
 
+// AddTroubleDeductIDs adds the "trouble_deducts" edge to the TroubleDeduct entity by IDs.
+func (uuo *UserUpdateOne) AddTroubleDeductIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddTroubleDeductIDs(ids...)
+	return uuo
+}
+
+// AddTroubleDeducts adds the "trouble_deducts" edges to the TroubleDeduct entity.
+func (uuo *UserUpdateOne) AddTroubleDeducts(t ...*TroubleDeduct) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddTroubleDeductIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -5389,6 +5486,27 @@ func (uuo *UserUpdateOne) RemoveOperateWithdrawRecords(w ...*WithdrawRecord) *Us
 		ids[i] = w[i].ID
 	}
 	return uuo.RemoveOperateWithdrawRecordIDs(ids...)
+}
+
+// ClearTroubleDeducts clears all "trouble_deducts" edges to the TroubleDeduct entity.
+func (uuo *UserUpdateOne) ClearTroubleDeducts() *UserUpdateOne {
+	uuo.mutation.ClearTroubleDeducts()
+	return uuo
+}
+
+// RemoveTroubleDeductIDs removes the "trouble_deducts" edge to TroubleDeduct entities by IDs.
+func (uuo *UserUpdateOne) RemoveTroubleDeductIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveTroubleDeductIDs(ids...)
+	return uuo
+}
+
+// RemoveTroubleDeducts removes "trouble_deducts" edges to TroubleDeduct entities.
+func (uuo *UserUpdateOne) RemoveTroubleDeducts(t ...*TroubleDeduct) *UserUpdateOne {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveTroubleDeductIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -7292,6 +7410,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(withdrawrecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedTroubleDeductsIDs(); len(nodes) > 0 && !uuo.mutation.TroubleDeductsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TroubleDeductsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TroubleDeductsTable,
+			Columns: []string{user.TroubleDeductsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

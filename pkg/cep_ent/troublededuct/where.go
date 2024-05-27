@@ -81,6 +81,11 @@ func DeletedAt(v time.Time) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldDeletedAt, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldUserID, v))
+}
+
 // DeviceID applies equality check predicate on the "device_id" field. It's identical to DeviceIDEQ.
 func DeviceID(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldDeviceID, v))
@@ -319,6 +324,26 @@ func DeletedAtLT(v time.Time) predicate.TroubleDeduct {
 // DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
 func DeletedAtLTE(v time.Time) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // DeviceIDEQ applies the EQ predicate on the "device_id" field.
@@ -699,6 +724,29 @@ func RejectReasonEqualFold(v string) predicate.TroubleDeduct {
 // RejectReasonContainsFold applies the ContainsFold predicate on the "reject_reason" field.
 func RejectReasonContainsFold(v string) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldContainsFold(FieldRejectReason, v))
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // HasDevice applies the HasEdge predicate on the "device" edge.
