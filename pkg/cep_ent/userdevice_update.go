@@ -121,6 +121,46 @@ func (udu *UserDeviceUpdate) SetNillableDeviceID(i *int64) *UserDeviceUpdate {
 	return udu
 }
 
+// SetBindAt sets the "bind_at" field.
+func (udu *UserDeviceUpdate) SetBindAt(t time.Time) *UserDeviceUpdate {
+	udu.mutation.SetBindAt(t)
+	return udu
+}
+
+// SetNillableBindAt sets the "bind_at" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableBindAt(t *time.Time) *UserDeviceUpdate {
+	if t != nil {
+		udu.SetBindAt(*t)
+	}
+	return udu
+}
+
+// ClearBindAt clears the value of the "bind_at" field.
+func (udu *UserDeviceUpdate) ClearBindAt() *UserDeviceUpdate {
+	udu.mutation.ClearBindAt()
+	return udu
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (udu *UserDeviceUpdate) SetUnbindAt(t time.Time) *UserDeviceUpdate {
+	udu.mutation.SetUnbindAt(t)
+	return udu
+}
+
+// SetNillableUnbindAt sets the "unbind_at" field if the given value is not nil.
+func (udu *UserDeviceUpdate) SetNillableUnbindAt(t *time.Time) *UserDeviceUpdate {
+	if t != nil {
+		udu.SetUnbindAt(*t)
+	}
+	return udu
+}
+
+// ClearUnbindAt clears the value of the "unbind_at" field.
+func (udu *UserDeviceUpdate) ClearUnbindAt() *UserDeviceUpdate {
+	udu.mutation.ClearUnbindAt()
+	return udu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (udu *UserDeviceUpdate) SetUser(u *User) *UserDeviceUpdate {
 	return udu.SetUserID(u.ID)
@@ -230,6 +270,18 @@ func (udu *UserDeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := udu.mutation.DeletedAt(); ok {
 		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := udu.mutation.BindAt(); ok {
+		_spec.SetField(userdevice.FieldBindAt, field.TypeTime, value)
+	}
+	if udu.mutation.BindAtCleared() {
+		_spec.ClearField(userdevice.FieldBindAt, field.TypeTime)
+	}
+	if value, ok := udu.mutation.UnbindAt(); ok {
+		_spec.SetField(userdevice.FieldUnbindAt, field.TypeTime, value)
+	}
+	if udu.mutation.UnbindAtCleared() {
+		_spec.ClearField(userdevice.FieldUnbindAt, field.TypeTime)
 	}
 	if udu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -401,6 +453,46 @@ func (uduo *UserDeviceUpdateOne) SetNillableDeviceID(i *int64) *UserDeviceUpdate
 	return uduo
 }
 
+// SetBindAt sets the "bind_at" field.
+func (uduo *UserDeviceUpdateOne) SetBindAt(t time.Time) *UserDeviceUpdateOne {
+	uduo.mutation.SetBindAt(t)
+	return uduo
+}
+
+// SetNillableBindAt sets the "bind_at" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableBindAt(t *time.Time) *UserDeviceUpdateOne {
+	if t != nil {
+		uduo.SetBindAt(*t)
+	}
+	return uduo
+}
+
+// ClearBindAt clears the value of the "bind_at" field.
+func (uduo *UserDeviceUpdateOne) ClearBindAt() *UserDeviceUpdateOne {
+	uduo.mutation.ClearBindAt()
+	return uduo
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (uduo *UserDeviceUpdateOne) SetUnbindAt(t time.Time) *UserDeviceUpdateOne {
+	uduo.mutation.SetUnbindAt(t)
+	return uduo
+}
+
+// SetNillableUnbindAt sets the "unbind_at" field if the given value is not nil.
+func (uduo *UserDeviceUpdateOne) SetNillableUnbindAt(t *time.Time) *UserDeviceUpdateOne {
+	if t != nil {
+		uduo.SetUnbindAt(*t)
+	}
+	return uduo
+}
+
+// ClearUnbindAt clears the value of the "unbind_at" field.
+func (uduo *UserDeviceUpdateOne) ClearUnbindAt() *UserDeviceUpdateOne {
+	uduo.mutation.ClearUnbindAt()
+	return uduo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (uduo *UserDeviceUpdateOne) SetUser(u *User) *UserDeviceUpdateOne {
 	return uduo.SetUserID(u.ID)
@@ -540,6 +632,18 @@ func (uduo *UserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *UserDevice
 	}
 	if value, ok := uduo.mutation.DeletedAt(); ok {
 		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := uduo.mutation.BindAt(); ok {
+		_spec.SetField(userdevice.FieldBindAt, field.TypeTime, value)
+	}
+	if uduo.mutation.BindAtCleared() {
+		_spec.ClearField(userdevice.FieldBindAt, field.TypeTime)
+	}
+	if value, ok := uduo.mutation.UnbindAt(); ok {
+		_spec.SetField(userdevice.FieldUnbindAt, field.TypeTime, value)
+	}
+	if uduo.mutation.UnbindAtCleared() {
+		_spec.ClearField(userdevice.FieldUnbindAt, field.TypeTime)
 	}
 	if uduo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

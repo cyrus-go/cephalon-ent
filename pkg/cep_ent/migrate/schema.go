@@ -2300,6 +2300,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "bind_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定该设备的时间"},
+		{Name: "unbind_at", Type: field.TypeTime, Nullable: true, Comment: "用户解绑该设备的时间"},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
@@ -2312,13 +2314,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_devices_devices_user_devices",
-				Columns:    []*schema.Column{UserDevicesColumns[6]},
+				Columns:    []*schema.Column{UserDevicesColumns[8]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "user_devices_users_user_devices",
-				Columns:    []*schema.Column{UserDevicesColumns[7]},
+				Columns:    []*schema.Column{UserDevicesColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2327,12 +2329,12 @@ var (
 			{
 				Name:    "userdevice_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{UserDevicesColumns[7]},
+				Columns: []*schema.Column{UserDevicesColumns[9]},
 			},
 			{
 				Name:    "userdevice_device_id",
 				Unique:  false,
-				Columns: []*schema.Column{UserDevicesColumns[6]},
+				Columns: []*schema.Column{UserDevicesColumns[8]},
 			},
 		},
 	}

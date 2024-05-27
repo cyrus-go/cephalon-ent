@@ -90,6 +90,16 @@ func DeviceID(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldDeviceID, v))
 }
 
+// BindAt applies equality check predicate on the "bind_at" field. It's identical to BindAtEQ.
+func BindAt(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldBindAt, v))
+}
+
+// UnbindAt applies equality check predicate on the "unbind_at" field. It's identical to UnbindAtEQ.
+func UnbindAt(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldUnbindAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldEQ(FieldCreatedBy, v))
@@ -328,6 +338,106 @@ func DeviceIDIn(vs ...int64) predicate.UserDevice {
 // DeviceIDNotIn applies the NotIn predicate on the "device_id" field.
 func DeviceIDNotIn(vs ...int64) predicate.UserDevice {
 	return predicate.UserDevice(sql.FieldNotIn(FieldDeviceID, vs...))
+}
+
+// BindAtEQ applies the EQ predicate on the "bind_at" field.
+func BindAtEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldBindAt, v))
+}
+
+// BindAtNEQ applies the NEQ predicate on the "bind_at" field.
+func BindAtNEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldBindAt, v))
+}
+
+// BindAtIn applies the In predicate on the "bind_at" field.
+func BindAtIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldBindAt, vs...))
+}
+
+// BindAtNotIn applies the NotIn predicate on the "bind_at" field.
+func BindAtNotIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldBindAt, vs...))
+}
+
+// BindAtGT applies the GT predicate on the "bind_at" field.
+func BindAtGT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldBindAt, v))
+}
+
+// BindAtGTE applies the GTE predicate on the "bind_at" field.
+func BindAtGTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldBindAt, v))
+}
+
+// BindAtLT applies the LT predicate on the "bind_at" field.
+func BindAtLT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldBindAt, v))
+}
+
+// BindAtLTE applies the LTE predicate on the "bind_at" field.
+func BindAtLTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldBindAt, v))
+}
+
+// BindAtIsNil applies the IsNil predicate on the "bind_at" field.
+func BindAtIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldBindAt))
+}
+
+// BindAtNotNil applies the NotNil predicate on the "bind_at" field.
+func BindAtNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldBindAt))
+}
+
+// UnbindAtEQ applies the EQ predicate on the "unbind_at" field.
+func UnbindAtEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldEQ(FieldUnbindAt, v))
+}
+
+// UnbindAtNEQ applies the NEQ predicate on the "unbind_at" field.
+func UnbindAtNEQ(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNEQ(FieldUnbindAt, v))
+}
+
+// UnbindAtIn applies the In predicate on the "unbind_at" field.
+func UnbindAtIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIn(FieldUnbindAt, vs...))
+}
+
+// UnbindAtNotIn applies the NotIn predicate on the "unbind_at" field.
+func UnbindAtNotIn(vs ...time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotIn(FieldUnbindAt, vs...))
+}
+
+// UnbindAtGT applies the GT predicate on the "unbind_at" field.
+func UnbindAtGT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGT(FieldUnbindAt, v))
+}
+
+// UnbindAtGTE applies the GTE predicate on the "unbind_at" field.
+func UnbindAtGTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldGTE(FieldUnbindAt, v))
+}
+
+// UnbindAtLT applies the LT predicate on the "unbind_at" field.
+func UnbindAtLT(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLT(FieldUnbindAt, v))
+}
+
+// UnbindAtLTE applies the LTE predicate on the "unbind_at" field.
+func UnbindAtLTE(v time.Time) predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldLTE(FieldUnbindAt, v))
+}
+
+// UnbindAtIsNil applies the IsNil predicate on the "unbind_at" field.
+func UnbindAtIsNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldIsNull(FieldUnbindAt))
+}
+
+// UnbindAtNotNil applies the NotNil predicate on the "unbind_at" field.
+func UnbindAtNotNil() predicate.UserDevice {
+	return predicate.UserDevice(sql.FieldNotNull(FieldUnbindAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

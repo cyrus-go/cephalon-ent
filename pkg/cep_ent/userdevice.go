@@ -34,6 +34,10 @@ type UserDevice struct {
 	UserID int64 `json:"user_id,string"`
 	// 外键设备 id
 	DeviceID int64 `json:"device_id,string"`
+	// 用户绑定该设备的时间
+	BindAt *time.Time `json:"bind_at"`
+	// 用户解绑该设备的时间
+	UnbindAt *time.Time `json:"unbind_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserDeviceQuery when eager-loading is set.
 	Edges        UserDeviceEdges `json:"edges"`
@@ -84,7 +88,7 @@ func (*UserDevice) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userdevice.FieldID, userdevice.FieldCreatedBy, userdevice.FieldUpdatedBy, userdevice.FieldUserID, userdevice.FieldDeviceID:
 			values[i] = new(sql.NullInt64)
-		case userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt, userdevice.FieldDeletedAt:
+		case userdevice.FieldCreatedAt, userdevice.FieldUpdatedAt, userdevice.FieldDeletedAt, userdevice.FieldBindAt, userdevice.FieldUnbindAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -148,6 +152,20 @@ func (ud *UserDevice) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field device_id", values[i])
 			} else if value.Valid {
 				ud.DeviceID = value.Int64
+			}
+		case userdevice.FieldBindAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field bind_at", values[i])
+			} else if value.Valid {
+				ud.BindAt = new(time.Time)
+				*ud.BindAt = value.Time
+			}
+		case userdevice.FieldUnbindAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field unbind_at", values[i])
+			} else if value.Valid {
+				ud.UnbindAt = new(time.Time)
+				*ud.UnbindAt = value.Time
 			}
 		default:
 			ud.selectValues.Set(columns[i], values[i])
@@ -215,6 +233,16 @@ func (ud *UserDevice) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("device_id=")
 	builder.WriteString(fmt.Sprintf("%v", ud.DeviceID))
+	builder.WriteString(", ")
+	if v := ud.BindAt; v != nil {
+		builder.WriteString("bind_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := ud.UnbindAt; v != nil {
+		builder.WriteString("unbind_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

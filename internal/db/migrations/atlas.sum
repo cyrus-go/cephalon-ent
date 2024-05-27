@@ -1,4 +1,4 @@
-h1:OiK+O1G3YuredAvkKcvt5zjxxunF2bR8T3ZfFRfwUsk=
+h1:kkpiBD9+PpqEHCahHUSQyqX8c54FtAuchqVUE120F20=
 20240411071442_update.down.sql h1:/wDen5ey664eAzNn0mx6BJAeyJVz+V8Q3mUSZhHVP2g=
 20240411071442_update.up.sql h1:qRZho6nDvZX3+KYgq/8bHnRWxiqKrnG/SjHkWT+UE0Q=
 20240412063603_update.down.sql h1:uZsyLPqEYkag8YUMnnlhrQCG3tSgpvczauciVtWkCkk=
@@ -33,3 +33,5 @@ h1:OiK+O1G3YuredAvkKcvt5zjxxunF2bR8T3ZfFRfwUsk=
 20240523031903_update.up.sql h1:Kl01sMptpWANG0bNNYxneNjlRdEgb1rbG3ANlizLdpY=
 20240523094822_update.down.sql h1:WENiLWAtj+v/zyFixLij7CBfFXuNwt9tk9FbChjQNMc=
 20240523094822_update.up.sql h1:NIDzZjNxk69Ilig42xhfzKlapgEnm01u9GeWhgCZYRE=
+20240527023119_update.down.sql h1:2kcWhN2fHkKe5acHhY6iBkrcqdwKNpll+zWaRBM0rv4=
+20240527023119_update.up.sql h1:TUsKSdReJFmlzG7yMNTYeBi08ssgA7a2vlfGg6F/rkU=

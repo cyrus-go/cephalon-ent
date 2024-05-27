@@ -74088,6 +74088,8 @@ type UserDeviceMutation struct {
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
+	bind_at       *time.Time
+	unbind_at     *time.Time
 	clearedFields map[string]struct{}
 	user          *int64
 	cleareduser   bool
@@ -74494,6 +74496,104 @@ func (m *UserDeviceMutation) ResetDeviceID() {
 	m.device = nil
 }
 
+// SetBindAt sets the "bind_at" field.
+func (m *UserDeviceMutation) SetBindAt(t time.Time) {
+	m.bind_at = &t
+}
+
+// BindAt returns the value of the "bind_at" field in the mutation.
+func (m *UserDeviceMutation) BindAt() (r time.Time, exists bool) {
+	v := m.bind_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBindAt returns the old "bind_at" field's value of the UserDevice entity.
+// If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserDeviceMutation) OldBindAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBindAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBindAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBindAt: %w", err)
+	}
+	return oldValue.BindAt, nil
+}
+
+// ClearBindAt clears the value of the "bind_at" field.
+func (m *UserDeviceMutation) ClearBindAt() {
+	m.bind_at = nil
+	m.clearedFields[userdevice.FieldBindAt] = struct{}{}
+}
+
+// BindAtCleared returns if the "bind_at" field was cleared in this mutation.
+func (m *UserDeviceMutation) BindAtCleared() bool {
+	_, ok := m.clearedFields[userdevice.FieldBindAt]
+	return ok
+}
+
+// ResetBindAt resets all changes to the "bind_at" field.
+func (m *UserDeviceMutation) ResetBindAt() {
+	m.bind_at = nil
+	delete(m.clearedFields, userdevice.FieldBindAt)
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (m *UserDeviceMutation) SetUnbindAt(t time.Time) {
+	m.unbind_at = &t
+}
+
+// UnbindAt returns the value of the "unbind_at" field in the mutation.
+func (m *UserDeviceMutation) UnbindAt() (r time.Time, exists bool) {
+	v := m.unbind_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnbindAt returns the old "unbind_at" field's value of the UserDevice entity.
+// If the UserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserDeviceMutation) OldUnbindAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnbindAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnbindAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnbindAt: %w", err)
+	}
+	return oldValue.UnbindAt, nil
+}
+
+// ClearUnbindAt clears the value of the "unbind_at" field.
+func (m *UserDeviceMutation) ClearUnbindAt() {
+	m.unbind_at = nil
+	m.clearedFields[userdevice.FieldUnbindAt] = struct{}{}
+}
+
+// UnbindAtCleared returns if the "unbind_at" field was cleared in this mutation.
+func (m *UserDeviceMutation) UnbindAtCleared() bool {
+	_, ok := m.clearedFields[userdevice.FieldUnbindAt]
+	return ok
+}
+
+// ResetUnbindAt resets all changes to the "unbind_at" field.
+func (m *UserDeviceMutation) ResetUnbindAt() {
+	m.unbind_at = nil
+	delete(m.clearedFields, userdevice.FieldUnbindAt)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *UserDeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -74582,7 +74682,7 @@ func (m *UserDeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserDeviceMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.created_by != nil {
 		fields = append(fields, userdevice.FieldCreatedBy)
 	}
@@ -74603,6 +74703,12 @@ func (m *UserDeviceMutation) Fields() []string {
 	}
 	if m.device != nil {
 		fields = append(fields, userdevice.FieldDeviceID)
+	}
+	if m.bind_at != nil {
+		fields = append(fields, userdevice.FieldBindAt)
+	}
+	if m.unbind_at != nil {
+		fields = append(fields, userdevice.FieldUnbindAt)
 	}
 	return fields
 }
@@ -74626,6 +74732,10 @@ func (m *UserDeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case userdevice.FieldDeviceID:
 		return m.DeviceID()
+	case userdevice.FieldBindAt:
+		return m.BindAt()
+	case userdevice.FieldUnbindAt:
+		return m.UnbindAt()
 	}
 	return nil, false
 }
@@ -74649,6 +74759,10 @@ func (m *UserDeviceMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUserID(ctx)
 	case userdevice.FieldDeviceID:
 		return m.OldDeviceID(ctx)
+	case userdevice.FieldBindAt:
+		return m.OldBindAt(ctx)
+	case userdevice.FieldUnbindAt:
+		return m.OldUnbindAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown UserDevice field %s", name)
 }
@@ -74707,6 +74821,20 @@ func (m *UserDeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeviceID(v)
 		return nil
+	case userdevice.FieldBindAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBindAt(v)
+		return nil
+	case userdevice.FieldUnbindAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnbindAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown UserDevice field %s", name)
 }
@@ -74763,7 +74891,14 @@ func (m *UserDeviceMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserDeviceMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(userdevice.FieldBindAt) {
+		fields = append(fields, userdevice.FieldBindAt)
+	}
+	if m.FieldCleared(userdevice.FieldUnbindAt) {
+		fields = append(fields, userdevice.FieldUnbindAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -74776,6 +74911,14 @@ func (m *UserDeviceMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserDeviceMutation) ClearField(name string) error {
+	switch name {
+	case userdevice.FieldBindAt:
+		m.ClearBindAt()
+		return nil
+	case userdevice.FieldUnbindAt:
+		m.ClearUnbindAt()
+		return nil
+	}
 	return fmt.Errorf("unknown UserDevice nullable field %s", name)
 }
 
@@ -74803,6 +74946,12 @@ func (m *UserDeviceMutation) ResetField(name string) error {
 		return nil
 	case userdevice.FieldDeviceID:
 		m.ResetDeviceID()
+		return nil
+	case userdevice.FieldBindAt:
+		m.ResetBindAt()
+		return nil
+	case userdevice.FieldUnbindAt:
+		m.ResetUnbindAt()
 		return nil
 	}
 	return fmt.Errorf("unknown UserDevice field %s", name)

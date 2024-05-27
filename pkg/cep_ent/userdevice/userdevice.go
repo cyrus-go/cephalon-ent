@@ -28,6 +28,10 @@ const (
 	FieldUserID = "user_id"
 	// FieldDeviceID holds the string denoting the device_id field in the database.
 	FieldDeviceID = "device_id"
+	// FieldBindAt holds the string denoting the bind_at field in the database.
+	FieldBindAt = "bind_at"
+	// FieldUnbindAt holds the string denoting the unbind_at field in the database.
+	FieldUnbindAt = "unbind_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
@@ -60,6 +64,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldDeviceID,
+	FieldBindAt,
+	FieldUnbindAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -89,6 +95,10 @@ var (
 	DefaultUserID int64
 	// DefaultDeviceID holds the default value on creation for the "device_id" field.
 	DefaultDeviceID int64
+	// DefaultBindAt holds the default value on creation for the "bind_at" field.
+	DefaultBindAt time.Time
+	// DefaultUnbindAt holds the default value on creation for the "unbind_at" field.
+	DefaultUnbindAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -134,6 +144,16 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByDeviceID orders the results by the device_id field.
 func ByDeviceID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeviceID, opts...).ToFunc()
+}
+
+// ByBindAt orders the results by the bind_at field.
+func ByBindAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBindAt, opts...).ToFunc()
+}
+
+// ByUnbindAt orders the results by the unbind_at field.
+func ByUnbindAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUnbindAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

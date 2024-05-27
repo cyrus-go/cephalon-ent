@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/stark-sim/cephalon-ent/common"
 )
 
 // UserDevice holds the schema definition for the UserDevice entity.
@@ -18,6 +19,8 @@ func (UserDevice) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("外键用户 id"),
 		field.Int64("device_id").StructTag(`json:"device_id,string"`).Default(0).Comment("外键设备 id"),
+		field.Time("bind_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"bind_at"`).Comment("用户绑定该设备的时间"),
+		field.Time("unbind_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"unbind_at"`).Comment("用户解绑该设备的时间"),
 	}
 }
 

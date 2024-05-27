@@ -3137,6 +3137,14 @@ func init() {
 	userdeviceDescDeviceID := userdeviceFields[1].Descriptor()
 	// userdevice.DefaultDeviceID holds the default value on creation for the device_id field.
 	userdevice.DefaultDeviceID = userdeviceDescDeviceID.Default.(int64)
+	// userdeviceDescBindAt is the schema descriptor for bind_at field.
+	userdeviceDescBindAt := userdeviceFields[2].Descriptor()
+	// userdevice.DefaultBindAt holds the default value on creation for the bind_at field.
+	userdevice.DefaultBindAt = userdeviceDescBindAt.Default.(time.Time)
+	// userdeviceDescUnbindAt is the schema descriptor for unbind_at field.
+	userdeviceDescUnbindAt := userdeviceFields[3].Descriptor()
+	// userdevice.DefaultUnbindAt holds the default value on creation for the unbind_at field.
+	userdevice.DefaultUnbindAt = userdeviceDescUnbindAt.Default.(time.Time)
 	// userdeviceDescID is the schema descriptor for id field.
 	userdeviceDescID := userdeviceMixinFields0[0].Descriptor()
 	// userdevice.DefaultID holds the default value on creation for the id field.

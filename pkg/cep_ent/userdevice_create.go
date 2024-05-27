@@ -122,6 +122,34 @@ func (udc *UserDeviceCreate) SetNillableDeviceID(i *int64) *UserDeviceCreate {
 	return udc
 }
 
+// SetBindAt sets the "bind_at" field.
+func (udc *UserDeviceCreate) SetBindAt(t time.Time) *UserDeviceCreate {
+	udc.mutation.SetBindAt(t)
+	return udc
+}
+
+// SetNillableBindAt sets the "bind_at" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableBindAt(t *time.Time) *UserDeviceCreate {
+	if t != nil {
+		udc.SetBindAt(*t)
+	}
+	return udc
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (udc *UserDeviceCreate) SetUnbindAt(t time.Time) *UserDeviceCreate {
+	udc.mutation.SetUnbindAt(t)
+	return udc
+}
+
+// SetNillableUnbindAt sets the "unbind_at" field if the given value is not nil.
+func (udc *UserDeviceCreate) SetNillableUnbindAt(t *time.Time) *UserDeviceCreate {
+	if t != nil {
+		udc.SetUnbindAt(*t)
+	}
+	return udc
+}
+
 // SetID sets the "id" field.
 func (udc *UserDeviceCreate) SetID(i int64) *UserDeviceCreate {
 	udc.mutation.SetID(i)
@@ -208,6 +236,14 @@ func (udc *UserDeviceCreate) defaults() {
 	if _, ok := udc.mutation.DeviceID(); !ok {
 		v := userdevice.DefaultDeviceID
 		udc.mutation.SetDeviceID(v)
+	}
+	if _, ok := udc.mutation.BindAt(); !ok {
+		v := userdevice.DefaultBindAt
+		udc.mutation.SetBindAt(v)
+	}
+	if _, ok := udc.mutation.UnbindAt(); !ok {
+		v := userdevice.DefaultUnbindAt
+		udc.mutation.SetUnbindAt(v)
 	}
 	if _, ok := udc.mutation.ID(); !ok {
 		v := userdevice.DefaultID()
@@ -296,6 +332,14 @@ func (udc *UserDeviceCreate) createSpec() (*UserDevice, *sqlgraph.CreateSpec) {
 	if value, ok := udc.mutation.DeletedAt(); ok {
 		_spec.SetField(userdevice.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
+	}
+	if value, ok := udc.mutation.BindAt(); ok {
+		_spec.SetField(userdevice.FieldBindAt, field.TypeTime, value)
+		_node.BindAt = &value
+	}
+	if value, ok := udc.mutation.UnbindAt(); ok {
+		_spec.SetField(userdevice.FieldUnbindAt, field.TypeTime, value)
+		_node.UnbindAt = &value
 	}
 	if nodes := udc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -467,6 +511,42 @@ func (u *UserDeviceUpsert) UpdateDeviceID() *UserDeviceUpsert {
 	return u
 }
 
+// SetBindAt sets the "bind_at" field.
+func (u *UserDeviceUpsert) SetBindAt(v time.Time) *UserDeviceUpsert {
+	u.Set(userdevice.FieldBindAt, v)
+	return u
+}
+
+// UpdateBindAt sets the "bind_at" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateBindAt() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldBindAt)
+	return u
+}
+
+// ClearBindAt clears the value of the "bind_at" field.
+func (u *UserDeviceUpsert) ClearBindAt() *UserDeviceUpsert {
+	u.SetNull(userdevice.FieldBindAt)
+	return u
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (u *UserDeviceUpsert) SetUnbindAt(v time.Time) *UserDeviceUpsert {
+	u.Set(userdevice.FieldUnbindAt, v)
+	return u
+}
+
+// UpdateUnbindAt sets the "unbind_at" field to the value that was provided on create.
+func (u *UserDeviceUpsert) UpdateUnbindAt() *UserDeviceUpsert {
+	u.SetExcluded(userdevice.FieldUnbindAt)
+	return u
+}
+
+// ClearUnbindAt clears the value of the "unbind_at" field.
+func (u *UserDeviceUpsert) ClearUnbindAt() *UserDeviceUpsert {
+	u.SetNull(userdevice.FieldUnbindAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -613,6 +693,48 @@ func (u *UserDeviceUpsertOne) SetDeviceID(v int64) *UserDeviceUpsertOne {
 func (u *UserDeviceUpsertOne) UpdateDeviceID() *UserDeviceUpsertOne {
 	return u.Update(func(s *UserDeviceUpsert) {
 		s.UpdateDeviceID()
+	})
+}
+
+// SetBindAt sets the "bind_at" field.
+func (u *UserDeviceUpsertOne) SetBindAt(v time.Time) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetBindAt(v)
+	})
+}
+
+// UpdateBindAt sets the "bind_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateBindAt() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateBindAt()
+	})
+}
+
+// ClearBindAt clears the value of the "bind_at" field.
+func (u *UserDeviceUpsertOne) ClearBindAt() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.ClearBindAt()
+	})
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (u *UserDeviceUpsertOne) SetUnbindAt(v time.Time) *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUnbindAt(v)
+	})
+}
+
+// UpdateUnbindAt sets the "unbind_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertOne) UpdateUnbindAt() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUnbindAt()
+	})
+}
+
+// ClearUnbindAt clears the value of the "unbind_at" field.
+func (u *UserDeviceUpsertOne) ClearUnbindAt() *UserDeviceUpsertOne {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.ClearUnbindAt()
 	})
 }
 
@@ -928,6 +1050,48 @@ func (u *UserDeviceUpsertBulk) SetDeviceID(v int64) *UserDeviceUpsertBulk {
 func (u *UserDeviceUpsertBulk) UpdateDeviceID() *UserDeviceUpsertBulk {
 	return u.Update(func(s *UserDeviceUpsert) {
 		s.UpdateDeviceID()
+	})
+}
+
+// SetBindAt sets the "bind_at" field.
+func (u *UserDeviceUpsertBulk) SetBindAt(v time.Time) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetBindAt(v)
+	})
+}
+
+// UpdateBindAt sets the "bind_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateBindAt() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateBindAt()
+	})
+}
+
+// ClearBindAt clears the value of the "bind_at" field.
+func (u *UserDeviceUpsertBulk) ClearBindAt() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.ClearBindAt()
+	})
+}
+
+// SetUnbindAt sets the "unbind_at" field.
+func (u *UserDeviceUpsertBulk) SetUnbindAt(v time.Time) *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.SetUnbindAt(v)
+	})
+}
+
+// UpdateUnbindAt sets the "unbind_at" field to the value that was provided on create.
+func (u *UserDeviceUpsertBulk) UpdateUnbindAt() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.UpdateUnbindAt()
+	})
+}
+
+// ClearUnbindAt clears the value of the "unbind_at" field.
+func (u *UserDeviceUpsertBulk) ClearUnbindAt() *UserDeviceUpsertBulk {
+	return u.Update(func(s *UserDeviceUpsert) {
+		s.ClearUnbindAt()
 	})
 }
 
