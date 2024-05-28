@@ -11,6 +11,7 @@ const (
 	MissionCategorySSH           MissionCategory = "SSH"
 	MissionCategorySDTOMATO      MissionCategory = "SD_TOMATO"
 	MissionCategorySDCMD         MissionCategory = "SD_CMD"
+	MissionCategorySDTian        MissionCategory = "SD_TIAN"
 	MissionCategorySDBingo       MissionCategory = "SD_BINGO"
 	MissionCategoryFooocus       MissionCategory = "FOOOCUS"
 	MissionCategoryFooocusLanQue MissionCategory = "FOOOCUS_LAN_QUE"
@@ -47,6 +48,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategorySSH),
 		string(MissionCategorySDTOMATO),
 		string(MissionCategorySDCMD),
+		string(MissionCategorySDTian),
 		string(MissionCategorySDBingo),
 		string(MissionCategoryFooocus),
 		string(MissionCategoryFooocusLanQue),
