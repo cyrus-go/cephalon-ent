@@ -193,6 +193,20 @@ func (tdc *TroubleDeductCreate) SetNillableAmount(i *int64) *TroubleDeductCreate
 	return tdc
 }
 
+// SetCurrentBalance sets the "current_balance" field.
+func (tdc *TroubleDeductCreate) SetCurrentBalance(i int64) *TroubleDeductCreate {
+	tdc.mutation.SetCurrentBalance(i)
+	return tdc
+}
+
+// SetNillableCurrentBalance sets the "current_balance" field if the given value is not nil.
+func (tdc *TroubleDeductCreate) SetNillableCurrentBalance(i *int64) *TroubleDeductCreate {
+	if i != nil {
+		tdc.SetCurrentBalance(*i)
+	}
+	return tdc
+}
+
 // SetStatus sets the "status" field.
 func (tdc *TroubleDeductCreate) SetStatus(eds enums.TroubleDeductStatus) *TroubleDeductCreate {
 	tdc.mutation.SetStatus(eds)
@@ -342,6 +356,10 @@ func (tdc *TroubleDeductCreate) defaults() {
 		v := troublededuct.DefaultAmount
 		tdc.mutation.SetAmount(v)
 	}
+	if _, ok := tdc.mutation.CurrentBalance(); !ok {
+		v := troublededuct.DefaultCurrentBalance
+		tdc.mutation.SetCurrentBalance(v)
+	}
 	if _, ok := tdc.mutation.Status(); !ok {
 		v := troublededuct.DefaultStatus
 		tdc.mutation.SetStatus(v)
@@ -397,6 +415,9 @@ func (tdc *TroubleDeductCreate) check() error {
 	}
 	if _, ok := tdc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`cep_ent: missing required field "TroubleDeduct.amount"`)}
+	}
+	if _, ok := tdc.mutation.CurrentBalance(); !ok {
+		return &ValidationError{Name: "current_balance", err: errors.New(`cep_ent: missing required field "TroubleDeduct.current_balance"`)}
 	}
 	if _, ok := tdc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "TroubleDeduct.status"`)}
@@ -490,6 +511,10 @@ func (tdc *TroubleDeductCreate) createSpec() (*TroubleDeduct, *sqlgraph.CreateSp
 	if value, ok := tdc.mutation.Amount(); ok {
 		_spec.SetField(troublededuct.FieldAmount, field.TypeInt64, value)
 		_node.Amount = value
+	}
+	if value, ok := tdc.mutation.CurrentBalance(); ok {
+		_spec.SetField(troublededuct.FieldCurrentBalance, field.TypeInt64, value)
+		_node.CurrentBalance = value
 	}
 	if value, ok := tdc.mutation.Status(); ok {
 		_spec.SetField(troublededuct.FieldStatus, field.TypeEnum, value)
@@ -748,6 +773,24 @@ func (u *TroubleDeductUpsert) UpdateAmount() *TroubleDeductUpsert {
 // AddAmount adds v to the "amount" field.
 func (u *TroubleDeductUpsert) AddAmount(v int64) *TroubleDeductUpsert {
 	u.Add(troublededuct.FieldAmount, v)
+	return u
+}
+
+// SetCurrentBalance sets the "current_balance" field.
+func (u *TroubleDeductUpsert) SetCurrentBalance(v int64) *TroubleDeductUpsert {
+	u.Set(troublededuct.FieldCurrentBalance, v)
+	return u
+}
+
+// UpdateCurrentBalance sets the "current_balance" field to the value that was provided on create.
+func (u *TroubleDeductUpsert) UpdateCurrentBalance() *TroubleDeductUpsert {
+	u.SetExcluded(troublededuct.FieldCurrentBalance)
+	return u
+}
+
+// AddCurrentBalance adds v to the "current_balance" field.
+func (u *TroubleDeductUpsert) AddCurrentBalance(v int64) *TroubleDeductUpsert {
+	u.Add(troublededuct.FieldCurrentBalance, v)
 	return u
 }
 
@@ -1024,6 +1067,27 @@ func (u *TroubleDeductUpsertOne) AddAmount(v int64) *TroubleDeductUpsertOne {
 func (u *TroubleDeductUpsertOne) UpdateAmount() *TroubleDeductUpsertOne {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetCurrentBalance sets the "current_balance" field.
+func (u *TroubleDeductUpsertOne) SetCurrentBalance(v int64) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetCurrentBalance(v)
+	})
+}
+
+// AddCurrentBalance adds v to the "current_balance" field.
+func (u *TroubleDeductUpsertOne) AddCurrentBalance(v int64) *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.AddCurrentBalance(v)
+	})
+}
+
+// UpdateCurrentBalance sets the "current_balance" field to the value that was provided on create.
+func (u *TroubleDeductUpsertOne) UpdateCurrentBalance() *TroubleDeductUpsertOne {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateCurrentBalance()
 	})
 }
 
@@ -1472,6 +1536,27 @@ func (u *TroubleDeductUpsertBulk) AddAmount(v int64) *TroubleDeductUpsertBulk {
 func (u *TroubleDeductUpsertBulk) UpdateAmount() *TroubleDeductUpsertBulk {
 	return u.Update(func(s *TroubleDeductUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetCurrentBalance sets the "current_balance" field.
+func (u *TroubleDeductUpsertBulk) SetCurrentBalance(v int64) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.SetCurrentBalance(v)
+	})
+}
+
+// AddCurrentBalance adds v to the "current_balance" field.
+func (u *TroubleDeductUpsertBulk) AddCurrentBalance(v int64) *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.AddCurrentBalance(v)
+	})
+}
+
+// UpdateCurrentBalance sets the "current_balance" field to the value that was provided on create.
+func (u *TroubleDeductUpsertBulk) UpdateCurrentBalance() *TroubleDeductUpsertBulk {
+	return u.Update(func(s *TroubleDeductUpsert) {
+		s.UpdateCurrentBalance()
 	})
 }
 

@@ -67975,6 +67975,8 @@ type TroubleDeductMutation struct {
 	adddeduct_standard  *int64
 	amount              *int64
 	addamount           *int64
+	current_balance     *int64
+	addcurrent_balance  *int64
 	status              *enums.TroubleDeductStatus
 	reason              *string
 	reject_reason       *string
@@ -68624,6 +68626,62 @@ func (m *TroubleDeductMutation) ResetAmount() {
 	m.addamount = nil
 }
 
+// SetCurrentBalance sets the "current_balance" field.
+func (m *TroubleDeductMutation) SetCurrentBalance(i int64) {
+	m.current_balance = &i
+	m.addcurrent_balance = nil
+}
+
+// CurrentBalance returns the value of the "current_balance" field in the mutation.
+func (m *TroubleDeductMutation) CurrentBalance() (r int64, exists bool) {
+	v := m.current_balance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentBalance returns the old "current_balance" field's value of the TroubleDeduct entity.
+// If the TroubleDeduct object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TroubleDeductMutation) OldCurrentBalance(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentBalance is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentBalance requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentBalance: %w", err)
+	}
+	return oldValue.CurrentBalance, nil
+}
+
+// AddCurrentBalance adds i to the "current_balance" field.
+func (m *TroubleDeductMutation) AddCurrentBalance(i int64) {
+	if m.addcurrent_balance != nil {
+		*m.addcurrent_balance += i
+	} else {
+		m.addcurrent_balance = &i
+	}
+}
+
+// AddedCurrentBalance returns the value that was added to the "current_balance" field in this mutation.
+func (m *TroubleDeductMutation) AddedCurrentBalance() (r int64, exists bool) {
+	v := m.addcurrent_balance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentBalance resets all changes to the "current_balance" field.
+func (m *TroubleDeductMutation) ResetCurrentBalance() {
+	m.current_balance = nil
+	m.addcurrent_balance = nil
+}
+
 // SetStatus sets the "status" field.
 func (m *TroubleDeductMutation) SetStatus(eds enums.TroubleDeductStatus) {
 	m.status = &eds
@@ -68820,7 +68878,7 @@ func (m *TroubleDeductMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TroubleDeductMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, troublededuct.FieldCreatedBy)
 	}
@@ -68856,6 +68914,9 @@ func (m *TroubleDeductMutation) Fields() []string {
 	}
 	if m.amount != nil {
 		fields = append(fields, troublededuct.FieldAmount)
+	}
+	if m.current_balance != nil {
+		fields = append(fields, troublededuct.FieldCurrentBalance)
 	}
 	if m.status != nil {
 		fields = append(fields, troublededuct.FieldStatus)
@@ -68898,6 +68959,8 @@ func (m *TroubleDeductMutation) Field(name string) (ent.Value, bool) {
 		return m.DeductStandard()
 	case troublededuct.FieldAmount:
 		return m.Amount()
+	case troublededuct.FieldCurrentBalance:
+		return m.CurrentBalance()
 	case troublededuct.FieldStatus:
 		return m.Status()
 	case troublededuct.FieldReason:
@@ -68937,6 +69000,8 @@ func (m *TroubleDeductMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldDeductStandard(ctx)
 	case troublededuct.FieldAmount:
 		return m.OldAmount(ctx)
+	case troublededuct.FieldCurrentBalance:
+		return m.OldCurrentBalance(ctx)
 	case troublededuct.FieldStatus:
 		return m.OldStatus(ctx)
 	case troublededuct.FieldReason:
@@ -69036,6 +69101,13 @@ func (m *TroubleDeductMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAmount(v)
 		return nil
+	case troublededuct.FieldCurrentBalance:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentBalance(v)
+		return nil
 	case troublededuct.FieldStatus:
 		v, ok := value.(enums.TroubleDeductStatus)
 		if !ok {
@@ -69080,6 +69152,9 @@ func (m *TroubleDeductMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, troublededuct.FieldAmount)
 	}
+	if m.addcurrent_balance != nil {
+		fields = append(fields, troublededuct.FieldCurrentBalance)
+	}
 	return fields
 }
 
@@ -69098,6 +69173,8 @@ func (m *TroubleDeductMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeductStandard()
 	case troublededuct.FieldAmount:
 		return m.AddedAmount()
+	case troublededuct.FieldCurrentBalance:
+		return m.AddedCurrentBalance()
 	}
 	return nil, false
 }
@@ -69141,6 +69218,13 @@ func (m *TroubleDeductMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case troublededuct.FieldCurrentBalance:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentBalance(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TroubleDeduct numeric field %s", name)
@@ -69204,6 +69288,9 @@ func (m *TroubleDeductMutation) ResetField(name string) error {
 		return nil
 	case troublededuct.FieldAmount:
 		m.ResetAmount()
+		return nil
+	case troublededuct.FieldCurrentBalance:
+		m.ResetCurrentBalance()
 		return nil
 	case troublededuct.FieldStatus:
 		m.ResetStatus()

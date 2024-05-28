@@ -2995,12 +2995,16 @@ func init() {
 	troubledeductDescAmount := troubledeductFields[6].Descriptor()
 	// troublededuct.DefaultAmount holds the default value on creation for the amount field.
 	troublededuct.DefaultAmount = troubledeductDescAmount.Default.(int64)
+	// troubledeductDescCurrentBalance is the schema descriptor for current_balance field.
+	troubledeductDescCurrentBalance := troubledeductFields[7].Descriptor()
+	// troublededuct.DefaultCurrentBalance holds the default value on creation for the current_balance field.
+	troublededuct.DefaultCurrentBalance = troubledeductDescCurrentBalance.Default.(int64)
 	// troubledeductDescReason is the schema descriptor for reason field.
-	troubledeductDescReason := troubledeductFields[8].Descriptor()
+	troubledeductDescReason := troubledeductFields[9].Descriptor()
 	// troublededuct.DefaultReason holds the default value on creation for the reason field.
 	troublededuct.DefaultReason = troubledeductDescReason.Default.(string)
 	// troubledeductDescRejectReason is the schema descriptor for reject_reason field.
-	troubledeductDescRejectReason := troubledeductFields[9].Descriptor()
+	troubledeductDescRejectReason := troubledeductFields[10].Descriptor()
 	// troublededuct.DefaultRejectReason holds the default value on creation for the reject_reason field.
 	troublededuct.DefaultRejectReason = troubledeductDescRejectReason.Default.(string)
 	// troubledeductDescID is the schema descriptor for id field.

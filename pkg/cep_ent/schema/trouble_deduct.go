@@ -25,6 +25,7 @@ func (TroubleDeduct) Fields() []ent.Field {
 		field.Float("time_of_duration").Default(0).StructTag(`json:"time_of_duration"`).Comment("持续时长，单位：小时"),
 		field.Int64("deduct_standard").Default(0).StructTag(`json:"deduct_standard"`).Comment("扣费标准，单位：厘"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("扣费金额，单位：厘"),
+		field.Int64("current_balance").Default(0).StructTag(`json:"current_balance"`).Comment("当前余额（在生成这条记录时刻的余额），单位：厘"),
 		field.Enum("status").GoType(enums.TroubleDeductStatusPending).Default(string(enums.TroubleDeductStatusPending)).StructTag(`json:"status"`).Comment("状态"),
 		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("扣费原因"),
 		field.String("reject_reason").StructTag(`json:"reject_reason"`).Default("").Comment("拒绝扣费原因"),

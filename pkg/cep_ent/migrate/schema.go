@@ -2230,6 +2230,7 @@ var (
 		{Name: "time_of_duration", Type: field.TypeFloat64, Comment: "持续时长，单位：小时", Default: 0},
 		{Name: "deduct_standard", Type: field.TypeInt64, Comment: "扣费标准，单位：厘", Default: 0},
 		{Name: "amount", Type: field.TypeInt64, Comment: "扣费金额，单位：厘", Default: 0},
+		{Name: "current_balance", Type: field.TypeInt64, Comment: "当前余额（在生成这条记录时刻的余额），单位：厘", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
 		{Name: "reason", Type: field.TypeString, Comment: "扣费原因", Default: ""},
 		{Name: "reject_reason", Type: field.TypeString, Comment: "拒绝扣费原因", Default: ""},
@@ -2245,13 +2246,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "trouble_deducts_devices_trouble_deducts",
-				Columns:    []*schema.Column{TroubleDeductsColumns[14]},
+				Columns:    []*schema.Column{TroubleDeductsColumns[15]},
 				RefColumns: []*schema.Column{DevicesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "trouble_deducts_users_trouble_deducts",
-				Columns:    []*schema.Column{TroubleDeductsColumns[15]},
+				Columns:    []*schema.Column{TroubleDeductsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2260,12 +2261,12 @@ var (
 			{
 				Name:    "troublededuct_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{TroubleDeductsColumns[15]},
+				Columns: []*schema.Column{TroubleDeductsColumns[16]},
 			},
 			{
 				Name:    "troublededuct_device_id",
 				Unique:  false,
-				Columns: []*schema.Column{TroubleDeductsColumns[14]},
+				Columns: []*schema.Column{TroubleDeductsColumns[15]},
 			},
 		},
 	}

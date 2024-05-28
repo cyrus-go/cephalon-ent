@@ -45,6 +45,8 @@ type TroubleDeduct struct {
 	DeductStandard int64 `json:"deduct_standard"`
 	// 扣费金额，单位：厘
 	Amount int64 `json:"amount"`
+	// 当前余额（在生成这条记录时刻的余额），单位：厘
+	CurrentBalance int64 `json:"current_balance"`
 	// 状态
 	Status enums.TroubleDeductStatus `json:"status"`
 	// 扣费原因
@@ -101,7 +103,7 @@ func (*TroubleDeduct) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case troublededuct.FieldTimeOfDuration:
 			values[i] = new(sql.NullFloat64)
-		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldUserID, troublededuct.FieldDeviceID, troublededuct.FieldDeductStandard, troublededuct.FieldAmount:
+		case troublededuct.FieldID, troublededuct.FieldCreatedBy, troublededuct.FieldUpdatedBy, troublededuct.FieldUserID, troublededuct.FieldDeviceID, troublededuct.FieldDeductStandard, troublededuct.FieldAmount, troublededuct.FieldCurrentBalance:
 			values[i] = new(sql.NullInt64)
 		case troublededuct.FieldStatus, troublededuct.FieldReason, troublededuct.FieldRejectReason:
 			values[i] = new(sql.NullString)
@@ -199,6 +201,12 @@ func (td *TroubleDeduct) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
 				td.Amount = value.Int64
+			}
+		case troublededuct.FieldCurrentBalance:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_balance", values[i])
+			} else if value.Valid {
+				td.CurrentBalance = value.Int64
 			}
 		case troublededuct.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -299,6 +307,9 @@ func (td *TroubleDeduct) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", td.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("current_balance=")
+	builder.WriteString(fmt.Sprintf("%v", td.CurrentBalance))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", td.Status))

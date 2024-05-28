@@ -213,6 +213,27 @@ func (tdu *TroubleDeductUpdate) AddAmount(i int64) *TroubleDeductUpdate {
 	return tdu
 }
 
+// SetCurrentBalance sets the "current_balance" field.
+func (tdu *TroubleDeductUpdate) SetCurrentBalance(i int64) *TroubleDeductUpdate {
+	tdu.mutation.ResetCurrentBalance()
+	tdu.mutation.SetCurrentBalance(i)
+	return tdu
+}
+
+// SetNillableCurrentBalance sets the "current_balance" field if the given value is not nil.
+func (tdu *TroubleDeductUpdate) SetNillableCurrentBalance(i *int64) *TroubleDeductUpdate {
+	if i != nil {
+		tdu.SetCurrentBalance(*i)
+	}
+	return tdu
+}
+
+// AddCurrentBalance adds i to the "current_balance" field.
+func (tdu *TroubleDeductUpdate) AddCurrentBalance(i int64) *TroubleDeductUpdate {
+	tdu.mutation.AddCurrentBalance(i)
+	return tdu
+}
+
 // SetStatus sets the "status" field.
 func (tdu *TroubleDeductUpdate) SetStatus(eds enums.TroubleDeductStatus) *TroubleDeductUpdate {
 	tdu.mutation.SetStatus(eds)
@@ -393,6 +414,12 @@ func (tdu *TroubleDeductUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tdu.mutation.AddedAmount(); ok {
 		_spec.AddField(troublededuct.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := tdu.mutation.CurrentBalance(); ok {
+		_spec.SetField(troublededuct.FieldCurrentBalance, field.TypeInt64, value)
+	}
+	if value, ok := tdu.mutation.AddedCurrentBalance(); ok {
+		_spec.AddField(troublededuct.FieldCurrentBalance, field.TypeInt64, value)
 	}
 	if value, ok := tdu.mutation.Status(); ok {
 		_spec.SetField(troublededuct.FieldStatus, field.TypeEnum, value)
@@ -664,6 +691,27 @@ func (tduo *TroubleDeductUpdateOne) AddAmount(i int64) *TroubleDeductUpdateOne {
 	return tduo
 }
 
+// SetCurrentBalance sets the "current_balance" field.
+func (tduo *TroubleDeductUpdateOne) SetCurrentBalance(i int64) *TroubleDeductUpdateOne {
+	tduo.mutation.ResetCurrentBalance()
+	tduo.mutation.SetCurrentBalance(i)
+	return tduo
+}
+
+// SetNillableCurrentBalance sets the "current_balance" field if the given value is not nil.
+func (tduo *TroubleDeductUpdateOne) SetNillableCurrentBalance(i *int64) *TroubleDeductUpdateOne {
+	if i != nil {
+		tduo.SetCurrentBalance(*i)
+	}
+	return tduo
+}
+
+// AddCurrentBalance adds i to the "current_balance" field.
+func (tduo *TroubleDeductUpdateOne) AddCurrentBalance(i int64) *TroubleDeductUpdateOne {
+	tduo.mutation.AddCurrentBalance(i)
+	return tduo
+}
+
 // SetStatus sets the "status" field.
 func (tduo *TroubleDeductUpdateOne) SetStatus(eds enums.TroubleDeductStatus) *TroubleDeductUpdateOne {
 	tduo.mutation.SetStatus(eds)
@@ -874,6 +922,12 @@ func (tduo *TroubleDeductUpdateOne) sqlSave(ctx context.Context) (_node *Trouble
 	}
 	if value, ok := tduo.mutation.AddedAmount(); ok {
 		_spec.AddField(troublededuct.FieldAmount, field.TypeInt64, value)
+	}
+	if value, ok := tduo.mutation.CurrentBalance(); ok {
+		_spec.SetField(troublededuct.FieldCurrentBalance, field.TypeInt64, value)
+	}
+	if value, ok := tduo.mutation.AddedCurrentBalance(); ok {
+		_spec.AddField(troublededuct.FieldCurrentBalance, field.TypeInt64, value)
 	}
 	if value, ok := tduo.mutation.Status(); ok {
 		_spec.SetField(troublededuct.FieldStatus, field.TypeEnum, value)

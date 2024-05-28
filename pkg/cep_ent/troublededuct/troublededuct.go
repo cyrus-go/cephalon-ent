@@ -40,6 +40,8 @@ const (
 	FieldDeductStandard = "deduct_standard"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
+	// FieldCurrentBalance holds the string denoting the current_balance field in the database.
+	FieldCurrentBalance = "current_balance"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldReason holds the string denoting the reason field in the database.
@@ -83,6 +85,7 @@ var Columns = []string{
 	FieldTimeOfDuration,
 	FieldDeductStandard,
 	FieldAmount,
+	FieldCurrentBalance,
 	FieldStatus,
 	FieldReason,
 	FieldRejectReason,
@@ -125,6 +128,8 @@ var (
 	DefaultDeductStandard int64
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount int64
+	// DefaultCurrentBalance holds the default value on creation for the "current_balance" field.
+	DefaultCurrentBalance int64
 	// DefaultReason holds the default value on creation for the "reason" field.
 	DefaultReason string
 	// DefaultRejectReason holds the default value on creation for the "reject_reason" field.
@@ -211,6 +216,11 @@ func ByDeductStandard(opts ...sql.OrderTermOption) OrderOption {
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByCurrentBalance orders the results by the current_balance field.
+func ByCurrentBalance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrentBalance, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

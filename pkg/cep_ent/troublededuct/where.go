@@ -116,6 +116,11 @@ func Amount(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldAmount, v))
 }
 
+// CurrentBalance applies equality check predicate on the "current_balance" field. It's identical to CurrentBalanceEQ.
+func CurrentBalance(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldCurrentBalance, v))
+}
+
 // Reason applies equality check predicate on the "reason" field. It's identical to ReasonEQ.
 func Reason(v string) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldEQ(FieldReason, v))
@@ -564,6 +569,46 @@ func AmountLT(v int64) predicate.TroubleDeduct {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v int64) predicate.TroubleDeduct {
 	return predicate.TroubleDeduct(sql.FieldLTE(FieldAmount, v))
+}
+
+// CurrentBalanceEQ applies the EQ predicate on the "current_balance" field.
+func CurrentBalanceEQ(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldEQ(FieldCurrentBalance, v))
+}
+
+// CurrentBalanceNEQ applies the NEQ predicate on the "current_balance" field.
+func CurrentBalanceNEQ(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNEQ(FieldCurrentBalance, v))
+}
+
+// CurrentBalanceIn applies the In predicate on the "current_balance" field.
+func CurrentBalanceIn(vs ...int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldIn(FieldCurrentBalance, vs...))
+}
+
+// CurrentBalanceNotIn applies the NotIn predicate on the "current_balance" field.
+func CurrentBalanceNotIn(vs ...int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldNotIn(FieldCurrentBalance, vs...))
+}
+
+// CurrentBalanceGT applies the GT predicate on the "current_balance" field.
+func CurrentBalanceGT(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGT(FieldCurrentBalance, v))
+}
+
+// CurrentBalanceGTE applies the GTE predicate on the "current_balance" field.
+func CurrentBalanceGTE(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldGTE(FieldCurrentBalance, v))
+}
+
+// CurrentBalanceLT applies the LT predicate on the "current_balance" field.
+func CurrentBalanceLT(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLT(FieldCurrentBalance, v))
+}
+
+// CurrentBalanceLTE applies the LTE predicate on the "current_balance" field.
+func CurrentBalanceLTE(v int64) predicate.TroubleDeduct {
+	return predicate.TroubleDeduct(sql.FieldLTE(FieldCurrentBalance, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
