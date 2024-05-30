@@ -262,7 +262,7 @@ func (olq *OutputLogQuery) Clone() *OutputLogQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -285,7 +285,7 @@ func (olq *OutputLogQuery) GroupBy(field string, fields ...string) *OutputLogGro
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.OutputLog.Query().

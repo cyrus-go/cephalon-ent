@@ -406,7 +406,7 @@ func (esoq *ExtraServiceOrderQuery) WithMissionBatch(opts ...func(*MissionBatchQ
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -429,7 +429,7 @@ func (esoq *ExtraServiceOrderQuery) GroupBy(field string, fields ...string) *Ext
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.ExtraServiceOrder.Query().

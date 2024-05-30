@@ -298,7 +298,7 @@ func (vaq *VXAccountQuery) WithUser(opts ...func(*UserQuery)) *VXAccountQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (vaq *VXAccountQuery) GroupBy(field string, fields ...string) *VXAccountGro
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.VXAccount.Query().

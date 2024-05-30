@@ -334,7 +334,7 @@ func (lucq *LottoUserCountQuery) WithLotto(opts ...func(*LottoQuery)) *LottoUser
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (lucq *LottoUserCountQuery) GroupBy(field string, fields ...string) *LottoU
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.LottoUserCount.Query().

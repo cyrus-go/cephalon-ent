@@ -205,27 +205,6 @@ func (imu *IncomeManageUpdate) SetNillableLastEditedAt(t *time.Time) *IncomeMana
 	return imu
 }
 
-// SetLastEditedUserID sets the "last_edited_user_id" field.
-func (imu *IncomeManageUpdate) SetLastEditedUserID(i int64) *IncomeManageUpdate {
-	imu.mutation.ResetLastEditedUserID()
-	imu.mutation.SetLastEditedUserID(i)
-	return imu
-}
-
-// SetNillableLastEditedUserID sets the "last_edited_user_id" field if the given value is not nil.
-func (imu *IncomeManageUpdate) SetNillableLastEditedUserID(i *int64) *IncomeManageUpdate {
-	if i != nil {
-		imu.SetLastEditedUserID(*i)
-	}
-	return imu
-}
-
-// AddLastEditedUserID adds i to the "last_edited_user_id" field.
-func (imu *IncomeManageUpdate) AddLastEditedUserID(i int64) *IncomeManageUpdate {
-	imu.mutation.AddLastEditedUserID(i)
-	return imu
-}
-
 // SetRejectReason sets the "reject_reason" field.
 func (imu *IncomeManageUpdate) SetRejectReason(s string) *IncomeManageUpdate {
 	imu.mutation.SetRejectReason(s)
@@ -411,12 +390,6 @@ func (imu *IncomeManageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := imu.mutation.LastEditedAt(); ok {
 		_spec.SetField(incomemanage.FieldLastEditedAt, field.TypeTime, value)
-	}
-	if value, ok := imu.mutation.LastEditedUserID(); ok {
-		_spec.SetField(incomemanage.FieldLastEditedUserID, field.TypeInt64, value)
-	}
-	if value, ok := imu.mutation.AddedLastEditedUserID(); ok {
-		_spec.AddField(incomemanage.FieldLastEditedUserID, field.TypeInt64, value)
 	}
 	if value, ok := imu.mutation.RejectReason(); ok {
 		_spec.SetField(incomemanage.FieldRejectReason, field.TypeString, value)
@@ -678,27 +651,6 @@ func (imuo *IncomeManageUpdateOne) SetNillableLastEditedAt(t *time.Time) *Income
 	return imuo
 }
 
-// SetLastEditedUserID sets the "last_edited_user_id" field.
-func (imuo *IncomeManageUpdateOne) SetLastEditedUserID(i int64) *IncomeManageUpdateOne {
-	imuo.mutation.ResetLastEditedUserID()
-	imuo.mutation.SetLastEditedUserID(i)
-	return imuo
-}
-
-// SetNillableLastEditedUserID sets the "last_edited_user_id" field if the given value is not nil.
-func (imuo *IncomeManageUpdateOne) SetNillableLastEditedUserID(i *int64) *IncomeManageUpdateOne {
-	if i != nil {
-		imuo.SetLastEditedUserID(*i)
-	}
-	return imuo
-}
-
-// AddLastEditedUserID adds i to the "last_edited_user_id" field.
-func (imuo *IncomeManageUpdateOne) AddLastEditedUserID(i int64) *IncomeManageUpdateOne {
-	imuo.mutation.AddLastEditedUserID(i)
-	return imuo
-}
-
 // SetRejectReason sets the "reject_reason" field.
 func (imuo *IncomeManageUpdateOne) SetRejectReason(s string) *IncomeManageUpdateOne {
 	imuo.mutation.SetRejectReason(s)
@@ -914,12 +866,6 @@ func (imuo *IncomeManageUpdateOne) sqlSave(ctx context.Context) (_node *IncomeMa
 	}
 	if value, ok := imuo.mutation.LastEditedAt(); ok {
 		_spec.SetField(incomemanage.FieldLastEditedAt, field.TypeTime, value)
-	}
-	if value, ok := imuo.mutation.LastEditedUserID(); ok {
-		_spec.SetField(incomemanage.FieldLastEditedUserID, field.TypeInt64, value)
-	}
-	if value, ok := imuo.mutation.AddedLastEditedUserID(); ok {
-		_spec.AddField(incomemanage.FieldLastEditedUserID, field.TypeInt64, value)
 	}
 	if value, ok := imuo.mutation.RejectReason(); ok {
 		_spec.SetField(incomemanage.FieldRejectReason, field.TypeString, value)

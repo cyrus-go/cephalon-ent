@@ -334,7 +334,7 @@ func (mkpq *MissionKeyPairQuery) WithKeyPair(opts ...func(*HmacKeyPairQuery)) *M
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (mkpq *MissionKeyPairQuery) GroupBy(field string, fields ...string) *Missio
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.MissionKeyPair.Query().

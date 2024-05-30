@@ -21,9 +21,9 @@ type Device struct {
 	// 19 位雪花 ID
 	ID int64 `json:"id,string"`
 	// 创建者 ID
-	CreatedBy int64 `json:"created_by"`
+	CreatedBy int64 `json:"created_by,string"`
 	// 更新者 ID
-	UpdatedBy int64 `json:"updated_by"`
+	UpdatedBy int64 `json:"updated_by,string"`
 	// 创建时刻，带时区
 	CreatedAt time.Time `json:"created_at"`
 	// 更新时刻，带时区

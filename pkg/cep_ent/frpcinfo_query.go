@@ -334,7 +334,7 @@ func (fiq *FrpcInfoQuery) WithDevice(opts ...func(*DeviceQuery)) *FrpcInfoQuery 
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (fiq *FrpcInfoQuery) GroupBy(field string, fields ...string) *FrpcInfoGroup
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.FrpcInfo.Query().

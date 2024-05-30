@@ -298,7 +298,7 @@ func (drtq *DeviceRebootTimeQuery) WithDevice(opts ...func(*DeviceQuery)) *Devic
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (drtq *DeviceRebootTimeQuery) GroupBy(field string, fields ...string) *Devi
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.DeviceRebootTime.Query().

@@ -981,7 +981,6 @@ var (
 		{Name: "reason", Type: field.TypeString, Comment: "操作该用户收益钱包的原因", Default: ""},
 		{Name: "current_balance", Type: field.TypeInt64, Comment: "当前余额（在生成这条记录时刻的余额），单位：厘", Default: 0},
 		{Name: "last_edited_at", Type: field.TypeTime, Comment: "审批前最后一次编辑的时间"},
-		{Name: "last_edited_user_id", Type: field.TypeInt64, Comment: "审批前最后一次编辑的用戶 id", Default: 0},
 		{Name: "reject_reason", Type: field.TypeString, Comment: "拒绝此条记录原因", Default: ""},
 		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用戶 id", Default: 0},
@@ -996,13 +995,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "income_manages_users_income_manages",
-				Columns:    []*schema.Column{IncomeManagesColumns[15]},
+				Columns:    []*schema.Column{IncomeManagesColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "income_manages_users_approve_income_manages",
-				Columns:    []*schema.Column{IncomeManagesColumns[16]},
+				Columns:    []*schema.Column{IncomeManagesColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1011,12 +1010,12 @@ var (
 			{
 				Name:    "incomemanage_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncomeManagesColumns[15]},
+				Columns: []*schema.Column{IncomeManagesColumns[14]},
 			},
 			{
 				Name:    "incomemanage_approve_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncomeManagesColumns[16]},
+				Columns: []*schema.Column{IncomeManagesColumns[15]},
 			},
 		},
 	}

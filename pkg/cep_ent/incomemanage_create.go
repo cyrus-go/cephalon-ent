@@ -192,20 +192,6 @@ func (imc *IncomeManageCreate) SetNillableLastEditedAt(t *time.Time) *IncomeMana
 	return imc
 }
 
-// SetLastEditedUserID sets the "last_edited_user_id" field.
-func (imc *IncomeManageCreate) SetLastEditedUserID(i int64) *IncomeManageCreate {
-	imc.mutation.SetLastEditedUserID(i)
-	return imc
-}
-
-// SetNillableLastEditedUserID sets the "last_edited_user_id" field if the given value is not nil.
-func (imc *IncomeManageCreate) SetNillableLastEditedUserID(i *int64) *IncomeManageCreate {
-	if i != nil {
-		imc.SetLastEditedUserID(*i)
-	}
-	return imc
-}
-
 // SetRejectReason sets the "reject_reason" field.
 func (imc *IncomeManageCreate) SetRejectReason(s string) *IncomeManageCreate {
 	imc.mutation.SetRejectReason(s)
@@ -355,10 +341,6 @@ func (imc *IncomeManageCreate) defaults() {
 		v := incomemanage.DefaultLastEditedAt
 		imc.mutation.SetLastEditedAt(v)
 	}
-	if _, ok := imc.mutation.LastEditedUserID(); !ok {
-		v := incomemanage.DefaultLastEditedUserID
-		imc.mutation.SetLastEditedUserID(v)
-	}
 	if _, ok := imc.mutation.RejectReason(); !ok {
 		v := incomemanage.DefaultRejectReason
 		imc.mutation.SetRejectReason(v)
@@ -419,9 +401,6 @@ func (imc *IncomeManageCreate) check() error {
 	}
 	if _, ok := imc.mutation.LastEditedAt(); !ok {
 		return &ValidationError{Name: "last_edited_at", err: errors.New(`cep_ent: missing required field "IncomeManage.last_edited_at"`)}
-	}
-	if _, ok := imc.mutation.LastEditedUserID(); !ok {
-		return &ValidationError{Name: "last_edited_user_id", err: errors.New(`cep_ent: missing required field "IncomeManage.last_edited_user_id"`)}
 	}
 	if _, ok := imc.mutation.RejectReason(); !ok {
 		return &ValidationError{Name: "reject_reason", err: errors.New(`cep_ent: missing required field "IncomeManage.reject_reason"`)}
@@ -519,10 +498,6 @@ func (imc *IncomeManageCreate) createSpec() (*IncomeManage, *sqlgraph.CreateSpec
 	if value, ok := imc.mutation.LastEditedAt(); ok {
 		_spec.SetField(incomemanage.FieldLastEditedAt, field.TypeTime, value)
 		_node.LastEditedAt = value
-	}
-	if value, ok := imc.mutation.LastEditedUserID(); ok {
-		_spec.SetField(incomemanage.FieldLastEditedUserID, field.TypeInt64, value)
-		_node.LastEditedUserID = value
 	}
 	if value, ok := imc.mutation.RejectReason(); ok {
 		_spec.SetField(incomemanage.FieldRejectReason, field.TypeString, value)
@@ -771,24 +746,6 @@ func (u *IncomeManageUpsert) SetLastEditedAt(v time.Time) *IncomeManageUpsert {
 // UpdateLastEditedAt sets the "last_edited_at" field to the value that was provided on create.
 func (u *IncomeManageUpsert) UpdateLastEditedAt() *IncomeManageUpsert {
 	u.SetExcluded(incomemanage.FieldLastEditedAt)
-	return u
-}
-
-// SetLastEditedUserID sets the "last_edited_user_id" field.
-func (u *IncomeManageUpsert) SetLastEditedUserID(v int64) *IncomeManageUpsert {
-	u.Set(incomemanage.FieldLastEditedUserID, v)
-	return u
-}
-
-// UpdateLastEditedUserID sets the "last_edited_user_id" field to the value that was provided on create.
-func (u *IncomeManageUpsert) UpdateLastEditedUserID() *IncomeManageUpsert {
-	u.SetExcluded(incomemanage.FieldLastEditedUserID)
-	return u
-}
-
-// AddLastEditedUserID adds v to the "last_edited_user_id" field.
-func (u *IncomeManageUpsert) AddLastEditedUserID(v int64) *IncomeManageUpsert {
-	u.Add(incomemanage.FieldLastEditedUserID, v)
 	return u
 }
 
@@ -1058,27 +1015,6 @@ func (u *IncomeManageUpsertOne) SetLastEditedAt(v time.Time) *IncomeManageUpsert
 func (u *IncomeManageUpsertOne) UpdateLastEditedAt() *IncomeManageUpsertOne {
 	return u.Update(func(s *IncomeManageUpsert) {
 		s.UpdateLastEditedAt()
-	})
-}
-
-// SetLastEditedUserID sets the "last_edited_user_id" field.
-func (u *IncomeManageUpsertOne) SetLastEditedUserID(v int64) *IncomeManageUpsertOne {
-	return u.Update(func(s *IncomeManageUpsert) {
-		s.SetLastEditedUserID(v)
-	})
-}
-
-// AddLastEditedUserID adds v to the "last_edited_user_id" field.
-func (u *IncomeManageUpsertOne) AddLastEditedUserID(v int64) *IncomeManageUpsertOne {
-	return u.Update(func(s *IncomeManageUpsert) {
-		s.AddLastEditedUserID(v)
-	})
-}
-
-// UpdateLastEditedUserID sets the "last_edited_user_id" field to the value that was provided on create.
-func (u *IncomeManageUpsertOne) UpdateLastEditedUserID() *IncomeManageUpsertOne {
-	return u.Update(func(s *IncomeManageUpsert) {
-		s.UpdateLastEditedUserID()
 	})
 }
 
@@ -1520,27 +1456,6 @@ func (u *IncomeManageUpsertBulk) SetLastEditedAt(v time.Time) *IncomeManageUpser
 func (u *IncomeManageUpsertBulk) UpdateLastEditedAt() *IncomeManageUpsertBulk {
 	return u.Update(func(s *IncomeManageUpsert) {
 		s.UpdateLastEditedAt()
-	})
-}
-
-// SetLastEditedUserID sets the "last_edited_user_id" field.
-func (u *IncomeManageUpsertBulk) SetLastEditedUserID(v int64) *IncomeManageUpsertBulk {
-	return u.Update(func(s *IncomeManageUpsert) {
-		s.SetLastEditedUserID(v)
-	})
-}
-
-// AddLastEditedUserID adds v to the "last_edited_user_id" field.
-func (u *IncomeManageUpsertBulk) AddLastEditedUserID(v int64) *IncomeManageUpsertBulk {
-	return u.Update(func(s *IncomeManageUpsert) {
-		s.AddLastEditedUserID(v)
-	})
-}
-
-// UpdateLastEditedUserID sets the "last_edited_user_id" field to the value that was provided on create.
-func (u *IncomeManageUpsertBulk) UpdateLastEditedUserID() *IncomeManageUpsertBulk {
-	return u.Update(func(s *IncomeManageUpsert) {
-		s.UpdateLastEditedUserID()
 	})
 }
 

@@ -334,7 +334,7 @@ func (tdq *TroubleDeductQuery) WithDevice(opts ...func(*DeviceQuery)) *TroubleDe
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (tdq *TroubleDeductQuery) GroupBy(field string, fields ...string) *TroubleD
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.TroubleDeduct.Query().

@@ -111,11 +111,6 @@ func LastEditedAt(v time.Time) predicate.IncomeManage {
 	return predicate.IncomeManage(sql.FieldEQ(FieldLastEditedAt, v))
 }
 
-// LastEditedUserID applies equality check predicate on the "last_edited_user_id" field. It's identical to LastEditedUserIDEQ.
-func LastEditedUserID(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldEQ(FieldLastEditedUserID, v))
-}
-
 // RejectReason applies equality check predicate on the "reject_reason" field. It's identical to RejectReasonEQ.
 func RejectReason(v string) predicate.IncomeManage {
 	return predicate.IncomeManage(sql.FieldEQ(FieldRejectReason, v))
@@ -624,46 +619,6 @@ func LastEditedAtLT(v time.Time) predicate.IncomeManage {
 // LastEditedAtLTE applies the LTE predicate on the "last_edited_at" field.
 func LastEditedAtLTE(v time.Time) predicate.IncomeManage {
 	return predicate.IncomeManage(sql.FieldLTE(FieldLastEditedAt, v))
-}
-
-// LastEditedUserIDEQ applies the EQ predicate on the "last_edited_user_id" field.
-func LastEditedUserIDEQ(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldEQ(FieldLastEditedUserID, v))
-}
-
-// LastEditedUserIDNEQ applies the NEQ predicate on the "last_edited_user_id" field.
-func LastEditedUserIDNEQ(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldNEQ(FieldLastEditedUserID, v))
-}
-
-// LastEditedUserIDIn applies the In predicate on the "last_edited_user_id" field.
-func LastEditedUserIDIn(vs ...int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldIn(FieldLastEditedUserID, vs...))
-}
-
-// LastEditedUserIDNotIn applies the NotIn predicate on the "last_edited_user_id" field.
-func LastEditedUserIDNotIn(vs ...int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldNotIn(FieldLastEditedUserID, vs...))
-}
-
-// LastEditedUserIDGT applies the GT predicate on the "last_edited_user_id" field.
-func LastEditedUserIDGT(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldGT(FieldLastEditedUserID, v))
-}
-
-// LastEditedUserIDGTE applies the GTE predicate on the "last_edited_user_id" field.
-func LastEditedUserIDGTE(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldGTE(FieldLastEditedUserID, v))
-}
-
-// LastEditedUserIDLT applies the LT predicate on the "last_edited_user_id" field.
-func LastEditedUserIDLT(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldLT(FieldLastEditedUserID, v))
-}
-
-// LastEditedUserIDLTE applies the LTE predicate on the "last_edited_user_id" field.
-func LastEditedUserIDLTE(v int64) predicate.IncomeManage {
-	return predicate.IncomeManage(sql.FieldLTE(FieldLastEditedUserID, v))
 }
 
 // RejectReasonEQ applies the EQ predicate on the "reject_reason" field.

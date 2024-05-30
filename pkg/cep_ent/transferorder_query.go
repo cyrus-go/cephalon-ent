@@ -478,7 +478,7 @@ func (toq *TransferOrderQuery) WithWithdrawRecord(opts ...func(*WithdrawRecordQu
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -501,7 +501,7 @@ func (toq *TransferOrderQuery) GroupBy(field string, fields ...string) *Transfer
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.TransferOrder.Query().

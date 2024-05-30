@@ -334,7 +334,7 @@ func (lgcrq *LottoGetCountRecordQuery) WithLotto(opts ...func(*LottoQuery)) *Lot
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +357,7 @@ func (lgcrq *LottoGetCountRecordQuery) GroupBy(field string, fields ...string) *
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.LottoGetCountRecord.Query().

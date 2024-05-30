@@ -333,7 +333,7 @@ func (ciq *CDKInfoQuery) WithUseUser(opts ...func(*UserQuery)) *CDKInfoQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -356,7 +356,7 @@ func (ciq *CDKInfoQuery) GroupBy(field string, fields ...string) *CDKInfoGroupBy
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.CDKInfo.Query().

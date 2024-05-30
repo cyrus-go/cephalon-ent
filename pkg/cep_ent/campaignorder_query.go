@@ -407,7 +407,7 @@ func (coq *CampaignOrderQuery) WithRechargeOrder(opts ...func(*RechargeOrderQuer
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -430,7 +430,7 @@ func (coq *CampaignOrderQuery) GroupBy(field string, fields ...string) *Campaign
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.CampaignOrder.Query().

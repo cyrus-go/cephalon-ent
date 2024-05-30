@@ -298,7 +298,7 @@ func (espq *ExtraServicePriceQuery) WithExtraService(opts ...func(*ExtraServiceQ
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (espq *ExtraServicePriceQuery) GroupBy(field string, fields ...string) *Ext
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.ExtraServicePrice.Query().

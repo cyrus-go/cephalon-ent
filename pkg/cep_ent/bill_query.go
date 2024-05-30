@@ -512,7 +512,7 @@ func (bq *BillQuery) WithTargetSymbol(opts ...func(*SymbolQuery)) *BillQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -535,7 +535,7 @@ func (bq *BillQuery) GroupBy(field string, fields ...string) *BillGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.Bill.Query().

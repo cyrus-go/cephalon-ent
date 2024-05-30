@@ -298,7 +298,7 @@ func (cq *CollectQuery) WithUser(opts ...func(*UserQuery)) *CollectQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (cq *CollectQuery) GroupBy(field string, fields ...string) *CollectGroupBy 
 // Example:
 //
 //	var v []struct {
-//		CreatedBy int64 `json:"created_by"`
+//		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
 //	client.Collect.Query().
