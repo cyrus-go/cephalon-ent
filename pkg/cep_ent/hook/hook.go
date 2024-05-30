@@ -285,6 +285,18 @@ func (f HmacKeyPairFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.HmacKeyPairMutation", m)
 }
 
+// The IncomeWalletOperateFunc type is an adapter to allow the use of ordinary
+// function as IncomeWalletOperate mutator.
+type IncomeWalletOperateFunc func(context.Context, *cep_ent.IncomeWalletOperateMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f IncomeWalletOperateFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.IncomeWalletOperateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.IncomeWalletOperateMutation", m)
+}
+
 // The InputLogFunc type is an adapter to allow the use of ordinary
 // function as InputLog mutator.
 type InputLogFunc func(context.Context, *cep_ent.InputLogMutation) (cep_ent.Value, error)

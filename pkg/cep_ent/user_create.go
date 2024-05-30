@@ -22,6 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
@@ -1010,6 +1011,36 @@ func (uc *UserCreate) AddTroubleDeducts(t ...*TroubleDeduct) *UserCreate {
 	return uc.AddTroubleDeductIDs(ids...)
 }
 
+// AddIncomeWalletOperateIDs adds the "income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
+func (uc *UserCreate) AddIncomeWalletOperateIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddIncomeWalletOperateIDs(ids...)
+	return uc
+}
+
+// AddIncomeWalletOperates adds the "income_wallet_operates" edges to the IncomeWalletOperate entity.
+func (uc *UserCreate) AddIncomeWalletOperates(i ...*IncomeWalletOperate) *UserCreate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uc.AddIncomeWalletOperateIDs(ids...)
+}
+
+// AddApproveIncomeWalletOperateIDs adds the "approve_income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
+func (uc *UserCreate) AddApproveIncomeWalletOperateIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddApproveIncomeWalletOperateIDs(ids...)
+	return uc
+}
+
+// AddApproveIncomeWalletOperates adds the "approve_income_wallet_operates" edges to the IncomeWalletOperate entity.
+func (uc *UserCreate) AddApproveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserCreate {
+	ids := make([]int64, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return uc.AddApproveIncomeWalletOperateIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -1990,6 +2021,38 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.IncomeWalletOperatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.IncomeWalletOperatesTable,
+			Columns: []string{user.IncomeWalletOperatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ApproveIncomeWalletOperatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveIncomeWalletOperatesTable,
+			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

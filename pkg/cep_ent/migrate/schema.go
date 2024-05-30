@@ -967,6 +967,58 @@ var (
 			},
 		},
 	}
+	// IncomeWalletOperatesColumns holds the columns for the "income_wallet_operates" table.
+	IncomeWalletOperatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "phone", Type: field.TypeString, Comment: "用户手机号", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "类型", Enums: []string{"unknown", "income_replacement", "income_deduct"}, Default: "unknown"},
+		{Name: "amount", Type: field.TypeInt64, Comment: "金额，单位：厘", Default: 0},
+		{Name: "reason", Type: field.TypeString, Comment: "操作该用户收益钱包的原因", Default: ""},
+		{Name: "current_balance", Type: field.TypeInt64, Comment: "当前余额（在生成这条记录时刻的余额），单位：厘", Default: 0},
+		{Name: "last_edited_at", Type: field.TypeTime, Comment: "审批前最后一次编辑的时间"},
+		{Name: "reject_reason", Type: field.TypeString, Comment: "拒绝此条记录原因", Default: ""},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"pending", "canceled", "succeed", "failed", "reject"}, Default: "pending"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用戶 id", Default: 0},
+		{Name: "approve_user_id", Type: field.TypeInt64, Comment: "审批人 id", Default: 0},
+	}
+	// IncomeWalletOperatesTable holds the schema information for the "income_wallet_operates" table.
+	IncomeWalletOperatesTable = &schema.Table{
+		Name:       "income_wallet_operates",
+		Comment:    "收益补发记录，需要系统补发的收益，记录到这个表里",
+		Columns:    IncomeWalletOperatesColumns,
+		PrimaryKey: []*schema.Column{IncomeWalletOperatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "income_wallet_operates_users_income_wallet_operates",
+				Columns:    []*schema.Column{IncomeWalletOperatesColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "income_wallet_operates_users_approve_income_wallet_operates",
+				Columns:    []*schema.Column{IncomeWalletOperatesColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "incomewalletoperate_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{IncomeWalletOperatesColumns[14]},
+			},
+			{
+				Name:    "incomewalletoperate_approve_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{IncomeWalletOperatesColumns[15]},
+			},
+		},
+	}
 	// InputLogsColumns holds the columns for the "input_logs" table.
 	InputLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2606,6 +2658,7 @@ var (
 		FrpsInfosTable,
 		GpusTable,
 		HmacKeyPairsTable,
+		IncomeWalletOperatesTable,
 		InputLogsTable,
 		InvitesTable,
 		LoginRecordsTable,
@@ -2711,6 +2764,9 @@ func init() {
 	FrpsInfosTable.Annotation = &entsql.Annotation{}
 	GpusTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
+	IncomeWalletOperatesTable.ForeignKeys[0].RefTable = UsersTable
+	IncomeWalletOperatesTable.ForeignKeys[1].RefTable = UsersTable
+	IncomeWalletOperatesTable.Annotation = &entsql.Annotation{}
 	InputLogsTable.Annotation = &entsql.Annotation{}
 	InvitesTable.ForeignKeys[0].RefTable = CampaignsTable
 	InvitesTable.ForeignKeys[1].RefTable = UsersTable

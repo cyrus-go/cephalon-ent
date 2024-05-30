@@ -158,9 +158,13 @@ type UserEdges struct {
 	OperateWithdrawRecords []*WithdrawRecord `json:"operate_withdraw_records,omitempty"`
 	// TroubleDeducts holds the value of the trouble_deducts edge.
 	TroubleDeducts []*TroubleDeduct `json:"trouble_deducts,omitempty"`
+	// IncomeWalletOperates holds the value of the income_wallet_operates edge.
+	IncomeWalletOperates []*IncomeWalletOperate `json:"income_wallet_operates,omitempty"`
+	// ApproveIncomeWalletOperates holds the value of the approve_income_wallet_operates edge.
+	ApproveIncomeWalletOperates []*IncomeWalletOperate `json:"approve_income_wallet_operates,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [41]bool
+	loadedTypes [43]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -546,6 +550,24 @@ func (e UserEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
 		return e.TroubleDeducts, nil
 	}
 	return nil, &NotLoadedError{edge: "trouble_deducts"}
+}
+
+// IncomeWalletOperatesOrErr returns the IncomeWalletOperates value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) IncomeWalletOperatesOrErr() ([]*IncomeWalletOperate, error) {
+	if e.loadedTypes[41] {
+		return e.IncomeWalletOperates, nil
+	}
+	return nil, &NotLoadedError{edge: "income_wallet_operates"}
+}
+
+// ApproveIncomeWalletOperatesOrErr returns the ApproveIncomeWalletOperates value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ApproveIncomeWalletOperatesOrErr() ([]*IncomeWalletOperate, error) {
+	if e.loadedTypes[42] {
+		return e.ApproveIncomeWalletOperates, nil
+	}
+	return nil, &NotLoadedError{edge: "approve_income_wallet_operates"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -937,6 +959,16 @@ func (u *User) QueryOperateWithdrawRecords() *WithdrawRecordQuery {
 // QueryTroubleDeducts queries the "trouble_deducts" edge of the User entity.
 func (u *User) QueryTroubleDeducts() *TroubleDeductQuery {
 	return NewUserClient(u.config).QueryTroubleDeducts(u)
+}
+
+// QueryIncomeWalletOperates queries the "income_wallet_operates" edge of the User entity.
+func (u *User) QueryIncomeWalletOperates() *IncomeWalletOperateQuery {
+	return NewUserClient(u.config).QueryIncomeWalletOperates(u)
+}
+
+// QueryApproveIncomeWalletOperates queries the "approve_income_wallet_operates" edge of the User entity.
+func (u *User) QueryApproveIncomeWalletOperates() *IncomeWalletOperateQuery {
+	return NewUserClient(u.config).QueryApproveIncomeWalletOperates(u)
 }
 
 // Update returns a builder for updating this User.

@@ -2249,6 +2249,52 @@ func HasTroubleDeductsWith(preds ...predicate.TroubleDeduct) predicate.User {
 	})
 }
 
+// HasIncomeWalletOperates applies the HasEdge predicate on the "income_wallet_operates" edge.
+func HasIncomeWalletOperates() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncomeWalletOperatesTable, IncomeWalletOperatesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIncomeWalletOperatesWith applies the HasEdge predicate on the "income_wallet_operates" edge with a given conditions (other predicates).
+func HasIncomeWalletOperatesWith(preds ...predicate.IncomeWalletOperate) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newIncomeWalletOperatesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasApproveIncomeWalletOperates applies the HasEdge predicate on the "approve_income_wallet_operates" edge.
+func HasApproveIncomeWalletOperates() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ApproveIncomeWalletOperatesTable, ApproveIncomeWalletOperatesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasApproveIncomeWalletOperatesWith applies the HasEdge predicate on the "approve_income_wallet_operates" edge with a given conditions (other predicates).
+func HasApproveIncomeWalletOperatesWith(preds ...predicate.IncomeWalletOperate) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newApproveIncomeWalletOperatesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

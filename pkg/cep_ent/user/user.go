@@ -144,6 +144,10 @@ const (
 	EdgeOperateWithdrawRecords = "operate_withdraw_records"
 	// EdgeTroubleDeducts holds the string denoting the trouble_deducts edge name in mutations.
 	EdgeTroubleDeducts = "trouble_deducts"
+	// EdgeIncomeWalletOperates holds the string denoting the income_wallet_operates edge name in mutations.
+	EdgeIncomeWalletOperates = "income_wallet_operates"
+	// EdgeApproveIncomeWalletOperates holds the string denoting the approve_income_wallet_operates edge name in mutations.
+	EdgeApproveIncomeWalletOperates = "approve_income_wallet_operates"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -427,6 +431,20 @@ const (
 	TroubleDeductsInverseTable = "trouble_deducts"
 	// TroubleDeductsColumn is the table column denoting the trouble_deducts relation/edge.
 	TroubleDeductsColumn = "user_id"
+	// IncomeWalletOperatesTable is the table that holds the income_wallet_operates relation/edge.
+	IncomeWalletOperatesTable = "income_wallet_operates"
+	// IncomeWalletOperatesInverseTable is the table name for the IncomeWalletOperate entity.
+	// It exists in this package in order to avoid circular dependency with the "incomewalletoperate" package.
+	IncomeWalletOperatesInverseTable = "income_wallet_operates"
+	// IncomeWalletOperatesColumn is the table column denoting the income_wallet_operates relation/edge.
+	IncomeWalletOperatesColumn = "user_id"
+	// ApproveIncomeWalletOperatesTable is the table that holds the approve_income_wallet_operates relation/edge.
+	ApproveIncomeWalletOperatesTable = "income_wallet_operates"
+	// ApproveIncomeWalletOperatesInverseTable is the table name for the IncomeWalletOperate entity.
+	// It exists in this package in order to avoid circular dependency with the "incomewalletoperate" package.
+	ApproveIncomeWalletOperatesInverseTable = "income_wallet_operates"
+	// ApproveIncomeWalletOperatesColumn is the table column denoting the approve_income_wallet_operates relation/edge.
+	ApproveIncomeWalletOperatesColumn = "approve_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1198,6 +1216,34 @@ func ByTroubleDeducts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTroubleDeductsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByIncomeWalletOperatesCount orders the results by income_wallet_operates count.
+func ByIncomeWalletOperatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIncomeWalletOperatesStep(), opts...)
+	}
+}
+
+// ByIncomeWalletOperates orders the results by income_wallet_operates terms.
+func ByIncomeWalletOperates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIncomeWalletOperatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByApproveIncomeWalletOperatesCount orders the results by approve_income_wallet_operates count.
+func ByApproveIncomeWalletOperatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newApproveIncomeWalletOperatesStep(), opts...)
+	}
+}
+
+// ByApproveIncomeWalletOperates orders the results by approve_income_wallet_operates terms.
+func ByApproveIncomeWalletOperates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newApproveIncomeWalletOperatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1483,5 +1529,19 @@ func newTroubleDeductsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TroubleDeductsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TroubleDeductsTable, TroubleDeductsColumn),
+	)
+}
+func newIncomeWalletOperatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IncomeWalletOperatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IncomeWalletOperatesTable, IncomeWalletOperatesColumn),
+	)
+}
+func newApproveIncomeWalletOperatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ApproveIncomeWalletOperatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ApproveIncomeWalletOperatesTable, ApproveIncomeWalletOperatesColumn),
 	)
 }

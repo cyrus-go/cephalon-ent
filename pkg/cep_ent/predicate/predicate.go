@@ -97,6 +97,9 @@ type Gpu func(*sql.Selector)
 // HmacKeyPair is the predicate function for hmackeypair builders.
 type HmacKeyPair func(*sql.Selector)
 
+// IncomeWalletOperate is the predicate function for incomewalletoperate builders.
+type IncomeWalletOperate func(*sql.Selector)
+
 // InputLog is the predicate function for inputlog builders.
 type InputLog func(*sql.Selector)
 
