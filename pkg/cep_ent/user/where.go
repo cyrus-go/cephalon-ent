@@ -2249,21 +2249,21 @@ func HasTroubleDeductsWith(preds ...predicate.TroubleDeduct) predicate.User {
 	})
 }
 
-// HasIncomeWalletOperates applies the HasEdge predicate on the "income_wallet_operates" edge.
-func HasIncomeWalletOperates() predicate.User {
+// HasIncomeManages applies the HasEdge predicate on the "income_manages" edge.
+func HasIncomeManages() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, IncomeWalletOperatesTable, IncomeWalletOperatesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, IncomeManagesTable, IncomeManagesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasIncomeWalletOperatesWith applies the HasEdge predicate on the "income_wallet_operates" edge with a given conditions (other predicates).
-func HasIncomeWalletOperatesWith(preds ...predicate.IncomeWalletOperate) predicate.User {
+// HasIncomeManagesWith applies the HasEdge predicate on the "income_manages" edge with a given conditions (other predicates).
+func HasIncomeManagesWith(preds ...predicate.IncomeManage) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newIncomeWalletOperatesStep()
+		step := newIncomeManagesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -2272,21 +2272,21 @@ func HasIncomeWalletOperatesWith(preds ...predicate.IncomeWalletOperate) predica
 	})
 }
 
-// HasApproveIncomeWalletOperates applies the HasEdge predicate on the "approve_income_wallet_operates" edge.
-func HasApproveIncomeWalletOperates() predicate.User {
+// HasApproveIncomeManages applies the HasEdge predicate on the "approve_income_manages" edge.
+func HasApproveIncomeManages() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ApproveIncomeWalletOperatesTable, ApproveIncomeWalletOperatesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ApproveIncomeManagesTable, ApproveIncomeManagesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasApproveIncomeWalletOperatesWith applies the HasEdge predicate on the "approve_income_wallet_operates" edge with a given conditions (other predicates).
-func HasApproveIncomeWalletOperatesWith(preds ...predicate.IncomeWalletOperate) predicate.User {
+// HasApproveIncomeManagesWith applies the HasEdge predicate on the "approve_income_manages" edge with a given conditions (other predicates).
+func HasApproveIncomeManagesWith(preds ...predicate.IncomeManage) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newApproveIncomeWalletOperatesStep()
+		step := newApproveIncomeManagesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

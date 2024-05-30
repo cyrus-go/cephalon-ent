@@ -96,8 +96,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service", "cdk", "lotto", "node_trouble"}, Default: "unknown"},
-		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "withdraw_refund", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time", "cdk_exchange", "lotto_prize", "node_trouble"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service", "cdk", "lotto", "node_trouble", "income_manage"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "withdraw_refund", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time", "cdk_exchange", "lotto_prize", "node_trouble", "income_replacement", "income_deduct"}, Default: "unknown"},
 		{Name: "profit_symbol_id", Type: field.TypeInt64, Comment: "外键分润币种 id", Default: 3},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
 		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
@@ -967,8 +967,8 @@ var (
 			},
 		},
 	}
-	// IncomeWalletOperatesColumns holds the columns for the "income_wallet_operates" table.
-	IncomeWalletOperatesColumns = []*schema.Column{
+	// IncomeManagesColumns holds the columns for the "income_manages" table.
+	IncomeManagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
 		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
 		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
@@ -986,36 +986,36 @@ var (
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用戶 id", Default: 0},
 		{Name: "approve_user_id", Type: field.TypeInt64, Comment: "审批人 id", Default: 0},
 	}
-	// IncomeWalletOperatesTable holds the schema information for the "income_wallet_operates" table.
-	IncomeWalletOperatesTable = &schema.Table{
-		Name:       "income_wallet_operates",
+	// IncomeManagesTable holds the schema information for the "income_manages" table.
+	IncomeManagesTable = &schema.Table{
+		Name:       "income_manages",
 		Comment:    "收益补发记录，需要系统补发的收益，记录到这个表里",
-		Columns:    IncomeWalletOperatesColumns,
-		PrimaryKey: []*schema.Column{IncomeWalletOperatesColumns[0]},
+		Columns:    IncomeManagesColumns,
+		PrimaryKey: []*schema.Column{IncomeManagesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "income_wallet_operates_users_income_wallet_operates",
-				Columns:    []*schema.Column{IncomeWalletOperatesColumns[14]},
+				Symbol:     "income_manages_users_income_manages",
+				Columns:    []*schema.Column{IncomeManagesColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "income_wallet_operates_users_approve_income_wallet_operates",
-				Columns:    []*schema.Column{IncomeWalletOperatesColumns[15]},
+				Symbol:     "income_manages_users_approve_income_manages",
+				Columns:    []*schema.Column{IncomeManagesColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "incomewalletoperate_user_id",
+				Name:    "incomemanage_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncomeWalletOperatesColumns[14]},
+				Columns: []*schema.Column{IncomeManagesColumns[14]},
 			},
 			{
-				Name:    "incomewalletoperate_approve_user_id",
+				Name:    "incomemanage_approve_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{IncomeWalletOperatesColumns[15]},
+				Columns: []*schema.Column{IncomeManagesColumns[15]},
 			},
 		},
 	}
@@ -2658,7 +2658,7 @@ var (
 		FrpsInfosTable,
 		GpusTable,
 		HmacKeyPairsTable,
-		IncomeWalletOperatesTable,
+		IncomeManagesTable,
 		InputLogsTable,
 		InvitesTable,
 		LoginRecordsTable,
@@ -2764,9 +2764,9 @@ func init() {
 	FrpsInfosTable.Annotation = &entsql.Annotation{}
 	GpusTable.Annotation = &entsql.Annotation{}
 	HmacKeyPairsTable.Annotation = &entsql.Annotation{}
-	IncomeWalletOperatesTable.ForeignKeys[0].RefTable = UsersTable
-	IncomeWalletOperatesTable.ForeignKeys[1].RefTable = UsersTable
-	IncomeWalletOperatesTable.Annotation = &entsql.Annotation{}
+	IncomeManagesTable.ForeignKeys[0].RefTable = UsersTable
+	IncomeManagesTable.ForeignKeys[1].RefTable = UsersTable
+	IncomeManagesTable.Annotation = &entsql.Annotation{}
 	InputLogsTable.Annotation = &entsql.Annotation{}
 	InvitesTable.ForeignKeys[0].RefTable = CampaignsTable
 	InvitesTable.ForeignKeys[1].RefTable = UsersTable

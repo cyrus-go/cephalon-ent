@@ -82,8 +82,8 @@ func (User) Edges() []ent.Edge {
 		edge.To("withdraw_records", WithdrawRecord.Type),
 		edge.To("operate_withdraw_records", WithdrawRecord.Type),
 		edge.To("trouble_deducts", TroubleDeduct.Type),
-		edge.To("income_wallet_operates", IncomeWalletOperate.Type),
-		edge.To("approve_income_wallet_operates", IncomeWalletOperate.Type),
+		edge.To("income_manages", IncomeManage.Type),
+		edge.To("approve_income_manages", IncomeManage.Type),
 	}
 }
 

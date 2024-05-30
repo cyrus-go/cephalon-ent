@@ -35,7 +35,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
@@ -156,7 +156,7 @@ func checkColumn(table, column string) error {
 			frpsinfo.Table:             frpsinfo.ValidColumn,
 			gpu.Table:                  gpu.ValidColumn,
 			hmackeypair.Table:          hmackeypair.ValidColumn,
-			incomewalletoperate.Table:  incomewalletoperate.ValidColumn,
+			incomemanage.Table:         incomemanage.ValidColumn,
 			inputlog.Table:             inputlog.ValidColumn,
 			invite.Table:               invite.ValidColumn,
 			loginrecord.Table:          loginrecord.ValidColumn,

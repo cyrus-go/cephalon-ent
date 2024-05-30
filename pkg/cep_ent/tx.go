@@ -58,8 +58,8 @@ type Tx struct {
 	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
 	HmacKeyPair *HmacKeyPairClient
-	// IncomeWalletOperate is the client for interacting with the IncomeWalletOperate builders.
-	IncomeWalletOperate *IncomeWalletOperateClient
+	// IncomeManage is the client for interacting with the IncomeManage builders.
+	IncomeManage *IncomeManageClient
 	// InputLog is the client for interacting with the InputLog builders.
 	InputLog *InputLogClient
 	// Invite is the client for interacting with the Invite builders.
@@ -288,7 +288,7 @@ func (tx *Tx) init() {
 	tx.FrpsInfo = NewFrpsInfoClient(tx.config)
 	tx.Gpu = NewGpuClient(tx.config)
 	tx.HmacKeyPair = NewHmacKeyPairClient(tx.config)
-	tx.IncomeWalletOperate = NewIncomeWalletOperateClient(tx.config)
+	tx.IncomeManage = NewIncomeManageClient(tx.config)
 	tx.InputLog = NewInputLogClient(tx.config)
 	tx.Invite = NewInviteClient(tx.config)
 	tx.LoginRecord = NewLoginRecordClient(tx.config)

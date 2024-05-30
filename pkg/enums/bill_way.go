@@ -36,7 +36,9 @@ const (
 	BillWayWithdrawRefund            BillWay = "withdraw_refund"
 	BillWayCdkExchange               BillWay = "cdk_exchange"
 	BillWayLottoPrize                BillWay = "lotto_prize"
-	BillWayNodeTrouble               BillWay = "node_trouble" // 节点故障扣费
+	BillWayNodeTrouble               BillWay = "node_trouble"       // 节点故障扣费
+	BillWayIncomeReplacement         BillWay = "income_replacement" // 收益补发
+	BillWayIncomeDeduct              BillWay = "income_deduct"      // 收益扣除
 )
 
 func (BillWay) Values() []string {
@@ -75,6 +77,8 @@ func (BillWay) Values() []string {
 		string(BillWayCdkExchange),
 		string(BillWayLottoPrize),
 		string(BillWayNodeTrouble),
+		string(BillWayIncomeReplacement),
+		string(BillWayIncomeDeduct),
 	}
 }
 

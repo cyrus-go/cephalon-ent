@@ -22,7 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
@@ -53,54 +53,54 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                             *QueryContext
-	order                           []user.OrderOption
-	inters                          []Interceptor
-	predicates                      []predicate.User
-	withVxAccounts                  *VXAccountQuery
-	withCollects                    *CollectQuery
-	withDevices                     *DeviceQuery
-	withProfitSettings              *ProfitSettingQuery
-	withCostAccount                 *CostAccountQuery
-	withProfitAccount               *ProfitAccountQuery
-	withCostBills                   *CostBillQuery
-	withEarnBills                   *EarnBillQuery
-	withMissionConsumeOrders        *MissionConsumeOrderQuery
-	withMissionProduceOrders        *MissionProduceOrderQuery
-	withRechargeOrders              *RechargeOrderQuery
-	withVxSocials                   *VXSocialQuery
-	withMissionBatches              *MissionBatchQuery
-	withUserDevices                 *UserDeviceQuery
-	withParent                      *UserQuery
-	withChildren                    *UserQuery
-	withInvites                     *InviteQuery
-	withCampaignOrders              *CampaignOrderQuery
-	withWallets                     *WalletQuery
-	withWithdrawAccount             *WithdrawAccountQuery
-	withIncomeBills                 *BillQuery
-	withOutcomeBills                *BillQuery
-	withMissionProductions          *MissionProductionQuery
-	withMissions                    *MissionQuery
-	withIncomeTransferOrders        *TransferOrderQuery
-	withOutcomeTransferOrders       *TransferOrderQuery
-	withConsumeMissionOrders        *MissionOrderQuery
-	withProduceMissionOrders        *MissionOrderQuery
-	withLoginRecords                *LoginRecordQuery
-	withRenewalAgreements           *RenewalAgreementQuery
-	withArtworks                    *ArtworkQuery
-	withArtworkLikes                *ArtworkLikeQuery
-	withCdkInfos                    *CDKInfoQuery
-	withUseCdkInfos                 *CDKInfoQuery
-	withLottoRecords                *LottoRecordQuery
-	withLottoUserCounts             *LottoUserCountQuery
-	withLottoGetCountRecords        *LottoGetCountRecordQuery
-	withCloudFiles                  *CloudFileQuery
-	withWithdrawRecords             *WithdrawRecordQuery
-	withOperateWithdrawRecords      *WithdrawRecordQuery
-	withTroubleDeducts              *TroubleDeductQuery
-	withIncomeWalletOperates        *IncomeWalletOperateQuery
-	withApproveIncomeWalletOperates *IncomeWalletOperateQuery
-	modifiers                       []func(*sql.Selector)
+	ctx                        *QueryContext
+	order                      []user.OrderOption
+	inters                     []Interceptor
+	predicates                 []predicate.User
+	withVxAccounts             *VXAccountQuery
+	withCollects               *CollectQuery
+	withDevices                *DeviceQuery
+	withProfitSettings         *ProfitSettingQuery
+	withCostAccount            *CostAccountQuery
+	withProfitAccount          *ProfitAccountQuery
+	withCostBills              *CostBillQuery
+	withEarnBills              *EarnBillQuery
+	withMissionConsumeOrders   *MissionConsumeOrderQuery
+	withMissionProduceOrders   *MissionProduceOrderQuery
+	withRechargeOrders         *RechargeOrderQuery
+	withVxSocials              *VXSocialQuery
+	withMissionBatches         *MissionBatchQuery
+	withUserDevices            *UserDeviceQuery
+	withParent                 *UserQuery
+	withChildren               *UserQuery
+	withInvites                *InviteQuery
+	withCampaignOrders         *CampaignOrderQuery
+	withWallets                *WalletQuery
+	withWithdrawAccount        *WithdrawAccountQuery
+	withIncomeBills            *BillQuery
+	withOutcomeBills           *BillQuery
+	withMissionProductions     *MissionProductionQuery
+	withMissions               *MissionQuery
+	withIncomeTransferOrders   *TransferOrderQuery
+	withOutcomeTransferOrders  *TransferOrderQuery
+	withConsumeMissionOrders   *MissionOrderQuery
+	withProduceMissionOrders   *MissionOrderQuery
+	withLoginRecords           *LoginRecordQuery
+	withRenewalAgreements      *RenewalAgreementQuery
+	withArtworks               *ArtworkQuery
+	withArtworkLikes           *ArtworkLikeQuery
+	withCdkInfos               *CDKInfoQuery
+	withUseCdkInfos            *CDKInfoQuery
+	withLottoRecords           *LottoRecordQuery
+	withLottoUserCounts        *LottoUserCountQuery
+	withLottoGetCountRecords   *LottoGetCountRecordQuery
+	withCloudFiles             *CloudFileQuery
+	withWithdrawRecords        *WithdrawRecordQuery
+	withOperateWithdrawRecords *WithdrawRecordQuery
+	withTroubleDeducts         *TroubleDeductQuery
+	withIncomeManages          *IncomeManageQuery
+	withApproveIncomeManages   *IncomeManageQuery
+	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -1039,9 +1039,9 @@ func (uq *UserQuery) QueryTroubleDeducts() *TroubleDeductQuery {
 	return query
 }
 
-// QueryIncomeWalletOperates chains the current query on the "income_wallet_operates" edge.
-func (uq *UserQuery) QueryIncomeWalletOperates() *IncomeWalletOperateQuery {
-	query := (&IncomeWalletOperateClient{config: uq.config}).Query()
+// QueryIncomeManages chains the current query on the "income_manages" edge.
+func (uq *UserQuery) QueryIncomeManages() *IncomeManageQuery {
+	query := (&IncomeManageClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -1052,8 +1052,8 @@ func (uq *UserQuery) QueryIncomeWalletOperates() *IncomeWalletOperateQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(incomewalletoperate.Table, incomewalletoperate.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.IncomeWalletOperatesTable, user.IncomeWalletOperatesColumn),
+			sqlgraph.To(incomemanage.Table, incomemanage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.IncomeManagesTable, user.IncomeManagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -1061,9 +1061,9 @@ func (uq *UserQuery) QueryIncomeWalletOperates() *IncomeWalletOperateQuery {
 	return query
 }
 
-// QueryApproveIncomeWalletOperates chains the current query on the "approve_income_wallet_operates" edge.
-func (uq *UserQuery) QueryApproveIncomeWalletOperates() *IncomeWalletOperateQuery {
-	query := (&IncomeWalletOperateClient{config: uq.config}).Query()
+// QueryApproveIncomeManages chains the current query on the "approve_income_manages" edge.
+func (uq *UserQuery) QueryApproveIncomeManages() *IncomeManageQuery {
+	query := (&IncomeManageClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -1074,8 +1074,8 @@ func (uq *UserQuery) QueryApproveIncomeWalletOperates() *IncomeWalletOperateQuer
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(incomewalletoperate.Table, incomewalletoperate.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ApproveIncomeWalletOperatesTable, user.ApproveIncomeWalletOperatesColumn),
+			sqlgraph.To(incomemanage.Table, incomemanage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ApproveIncomeManagesTable, user.ApproveIncomeManagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -1270,54 +1270,54 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                          uq.config,
-		ctx:                             uq.ctx.Clone(),
-		order:                           append([]user.OrderOption{}, uq.order...),
-		inters:                          append([]Interceptor{}, uq.inters...),
-		predicates:                      append([]predicate.User{}, uq.predicates...),
-		withVxAccounts:                  uq.withVxAccounts.Clone(),
-		withCollects:                    uq.withCollects.Clone(),
-		withDevices:                     uq.withDevices.Clone(),
-		withProfitSettings:              uq.withProfitSettings.Clone(),
-		withCostAccount:                 uq.withCostAccount.Clone(),
-		withProfitAccount:               uq.withProfitAccount.Clone(),
-		withCostBills:                   uq.withCostBills.Clone(),
-		withEarnBills:                   uq.withEarnBills.Clone(),
-		withMissionConsumeOrders:        uq.withMissionConsumeOrders.Clone(),
-		withMissionProduceOrders:        uq.withMissionProduceOrders.Clone(),
-		withRechargeOrders:              uq.withRechargeOrders.Clone(),
-		withVxSocials:                   uq.withVxSocials.Clone(),
-		withMissionBatches:              uq.withMissionBatches.Clone(),
-		withUserDevices:                 uq.withUserDevices.Clone(),
-		withParent:                      uq.withParent.Clone(),
-		withChildren:                    uq.withChildren.Clone(),
-		withInvites:                     uq.withInvites.Clone(),
-		withCampaignOrders:              uq.withCampaignOrders.Clone(),
-		withWallets:                     uq.withWallets.Clone(),
-		withWithdrawAccount:             uq.withWithdrawAccount.Clone(),
-		withIncomeBills:                 uq.withIncomeBills.Clone(),
-		withOutcomeBills:                uq.withOutcomeBills.Clone(),
-		withMissionProductions:          uq.withMissionProductions.Clone(),
-		withMissions:                    uq.withMissions.Clone(),
-		withIncomeTransferOrders:        uq.withIncomeTransferOrders.Clone(),
-		withOutcomeTransferOrders:       uq.withOutcomeTransferOrders.Clone(),
-		withConsumeMissionOrders:        uq.withConsumeMissionOrders.Clone(),
-		withProduceMissionOrders:        uq.withProduceMissionOrders.Clone(),
-		withLoginRecords:                uq.withLoginRecords.Clone(),
-		withRenewalAgreements:           uq.withRenewalAgreements.Clone(),
-		withArtworks:                    uq.withArtworks.Clone(),
-		withArtworkLikes:                uq.withArtworkLikes.Clone(),
-		withCdkInfos:                    uq.withCdkInfos.Clone(),
-		withUseCdkInfos:                 uq.withUseCdkInfos.Clone(),
-		withLottoRecords:                uq.withLottoRecords.Clone(),
-		withLottoUserCounts:             uq.withLottoUserCounts.Clone(),
-		withLottoGetCountRecords:        uq.withLottoGetCountRecords.Clone(),
-		withCloudFiles:                  uq.withCloudFiles.Clone(),
-		withWithdrawRecords:             uq.withWithdrawRecords.Clone(),
-		withOperateWithdrawRecords:      uq.withOperateWithdrawRecords.Clone(),
-		withTroubleDeducts:              uq.withTroubleDeducts.Clone(),
-		withIncomeWalletOperates:        uq.withIncomeWalletOperates.Clone(),
-		withApproveIncomeWalletOperates: uq.withApproveIncomeWalletOperates.Clone(),
+		config:                     uq.config,
+		ctx:                        uq.ctx.Clone(),
+		order:                      append([]user.OrderOption{}, uq.order...),
+		inters:                     append([]Interceptor{}, uq.inters...),
+		predicates:                 append([]predicate.User{}, uq.predicates...),
+		withVxAccounts:             uq.withVxAccounts.Clone(),
+		withCollects:               uq.withCollects.Clone(),
+		withDevices:                uq.withDevices.Clone(),
+		withProfitSettings:         uq.withProfitSettings.Clone(),
+		withCostAccount:            uq.withCostAccount.Clone(),
+		withProfitAccount:          uq.withProfitAccount.Clone(),
+		withCostBills:              uq.withCostBills.Clone(),
+		withEarnBills:              uq.withEarnBills.Clone(),
+		withMissionConsumeOrders:   uq.withMissionConsumeOrders.Clone(),
+		withMissionProduceOrders:   uq.withMissionProduceOrders.Clone(),
+		withRechargeOrders:         uq.withRechargeOrders.Clone(),
+		withVxSocials:              uq.withVxSocials.Clone(),
+		withMissionBatches:         uq.withMissionBatches.Clone(),
+		withUserDevices:            uq.withUserDevices.Clone(),
+		withParent:                 uq.withParent.Clone(),
+		withChildren:               uq.withChildren.Clone(),
+		withInvites:                uq.withInvites.Clone(),
+		withCampaignOrders:         uq.withCampaignOrders.Clone(),
+		withWallets:                uq.withWallets.Clone(),
+		withWithdrawAccount:        uq.withWithdrawAccount.Clone(),
+		withIncomeBills:            uq.withIncomeBills.Clone(),
+		withOutcomeBills:           uq.withOutcomeBills.Clone(),
+		withMissionProductions:     uq.withMissionProductions.Clone(),
+		withMissions:               uq.withMissions.Clone(),
+		withIncomeTransferOrders:   uq.withIncomeTransferOrders.Clone(),
+		withOutcomeTransferOrders:  uq.withOutcomeTransferOrders.Clone(),
+		withConsumeMissionOrders:   uq.withConsumeMissionOrders.Clone(),
+		withProduceMissionOrders:   uq.withProduceMissionOrders.Clone(),
+		withLoginRecords:           uq.withLoginRecords.Clone(),
+		withRenewalAgreements:      uq.withRenewalAgreements.Clone(),
+		withArtworks:               uq.withArtworks.Clone(),
+		withArtworkLikes:           uq.withArtworkLikes.Clone(),
+		withCdkInfos:               uq.withCdkInfos.Clone(),
+		withUseCdkInfos:            uq.withUseCdkInfos.Clone(),
+		withLottoRecords:           uq.withLottoRecords.Clone(),
+		withLottoUserCounts:        uq.withLottoUserCounts.Clone(),
+		withLottoGetCountRecords:   uq.withLottoGetCountRecords.Clone(),
+		withCloudFiles:             uq.withCloudFiles.Clone(),
+		withWithdrawRecords:        uq.withWithdrawRecords.Clone(),
+		withOperateWithdrawRecords: uq.withOperateWithdrawRecords.Clone(),
+		withTroubleDeducts:         uq.withTroubleDeducts.Clone(),
+		withIncomeManages:          uq.withIncomeManages.Clone(),
+		withApproveIncomeManages:   uq.withApproveIncomeManages.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1775,25 +1775,25 @@ func (uq *UserQuery) WithTroubleDeducts(opts ...func(*TroubleDeductQuery)) *User
 	return uq
 }
 
-// WithIncomeWalletOperates tells the query-builder to eager-load the nodes that are connected to
-// the "income_wallet_operates" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithIncomeWalletOperates(opts ...func(*IncomeWalletOperateQuery)) *UserQuery {
-	query := (&IncomeWalletOperateClient{config: uq.config}).Query()
+// WithIncomeManages tells the query-builder to eager-load the nodes that are connected to
+// the "income_manages" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithIncomeManages(opts ...func(*IncomeManageQuery)) *UserQuery {
+	query := (&IncomeManageClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withIncomeWalletOperates = query
+	uq.withIncomeManages = query
 	return uq
 }
 
-// WithApproveIncomeWalletOperates tells the query-builder to eager-load the nodes that are connected to
-// the "approve_income_wallet_operates" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithApproveIncomeWalletOperates(opts ...func(*IncomeWalletOperateQuery)) *UserQuery {
-	query := (&IncomeWalletOperateClient{config: uq.config}).Query()
+// WithApproveIncomeManages tells the query-builder to eager-load the nodes that are connected to
+// the "approve_income_manages" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithApproveIncomeManages(opts ...func(*IncomeManageQuery)) *UserQuery {
+	query := (&IncomeManageClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withApproveIncomeWalletOperates = query
+	uq.withApproveIncomeManages = query
 	return uq
 }
 
@@ -1917,8 +1917,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withWithdrawRecords != nil,
 			uq.withOperateWithdrawRecords != nil,
 			uq.withTroubleDeducts != nil,
-			uq.withIncomeWalletOperates != nil,
-			uq.withApproveIncomeWalletOperates != nil,
+			uq.withIncomeManages != nil,
+			uq.withApproveIncomeManages != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2239,21 +2239,17 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withIncomeWalletOperates; query != nil {
-		if err := uq.loadIncomeWalletOperates(ctx, query, nodes,
-			func(n *User) { n.Edges.IncomeWalletOperates = []*IncomeWalletOperate{} },
-			func(n *User, e *IncomeWalletOperate) {
-				n.Edges.IncomeWalletOperates = append(n.Edges.IncomeWalletOperates, e)
-			}); err != nil {
+	if query := uq.withIncomeManages; query != nil {
+		if err := uq.loadIncomeManages(ctx, query, nodes,
+			func(n *User) { n.Edges.IncomeManages = []*IncomeManage{} },
+			func(n *User, e *IncomeManage) { n.Edges.IncomeManages = append(n.Edges.IncomeManages, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := uq.withApproveIncomeWalletOperates; query != nil {
-		if err := uq.loadApproveIncomeWalletOperates(ctx, query, nodes,
-			func(n *User) { n.Edges.ApproveIncomeWalletOperates = []*IncomeWalletOperate{} },
-			func(n *User, e *IncomeWalletOperate) {
-				n.Edges.ApproveIncomeWalletOperates = append(n.Edges.ApproveIncomeWalletOperates, e)
-			}); err != nil {
+	if query := uq.withApproveIncomeManages; query != nil {
+		if err := uq.loadApproveIncomeManages(ctx, query, nodes,
+			func(n *User) { n.Edges.ApproveIncomeManages = []*IncomeManage{} },
+			func(n *User, e *IncomeManage) { n.Edges.ApproveIncomeManages = append(n.Edges.ApproveIncomeManages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -3482,7 +3478,7 @@ func (uq *UserQuery) loadTroubleDeducts(ctx context.Context, query *TroubleDeduc
 	}
 	return nil
 }
-func (uq *UserQuery) loadIncomeWalletOperates(ctx context.Context, query *IncomeWalletOperateQuery, nodes []*User, init func(*User), assign func(*User, *IncomeWalletOperate)) error {
+func (uq *UserQuery) loadIncomeManages(ctx context.Context, query *IncomeManageQuery, nodes []*User, init func(*User), assign func(*User, *IncomeManage)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -3493,10 +3489,10 @@ func (uq *UserQuery) loadIncomeWalletOperates(ctx context.Context, query *Income
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(incomewalletoperate.FieldUserID)
+		query.ctx.AppendFieldOnce(incomemanage.FieldUserID)
 	}
-	query.Where(predicate.IncomeWalletOperate(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.IncomeWalletOperatesColumn), fks...))
+	query.Where(predicate.IncomeManage(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.IncomeManagesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -3512,7 +3508,7 @@ func (uq *UserQuery) loadIncomeWalletOperates(ctx context.Context, query *Income
 	}
 	return nil
 }
-func (uq *UserQuery) loadApproveIncomeWalletOperates(ctx context.Context, query *IncomeWalletOperateQuery, nodes []*User, init func(*User), assign func(*User, *IncomeWalletOperate)) error {
+func (uq *UserQuery) loadApproveIncomeManages(ctx context.Context, query *IncomeManageQuery, nodes []*User, init func(*User), assign func(*User, *IncomeManage)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -3523,10 +3519,10 @@ func (uq *UserQuery) loadApproveIncomeWalletOperates(ctx context.Context, query 
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(incomewalletoperate.FieldApproveUserID)
+		query.ctx.AppendFieldOnce(incomemanage.FieldApproveUserID)
 	}
-	query.Where(predicate.IncomeWalletOperate(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.ApproveIncomeWalletOperatesColumn), fks...))
+	query.Where(predicate.IncomeManage(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ApproveIncomeManagesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -22,7 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
@@ -1009,34 +1009,34 @@ func (uu *UserUpdate) AddTroubleDeducts(t ...*TroubleDeduct) *UserUpdate {
 	return uu.AddTroubleDeductIDs(ids...)
 }
 
-// AddIncomeWalletOperateIDs adds the "income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
-func (uu *UserUpdate) AddIncomeWalletOperateIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddIncomeWalletOperateIDs(ids...)
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by IDs.
+func (uu *UserUpdate) AddIncomeManageIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddIncomeManageIDs(ids...)
 	return uu
 }
 
-// AddIncomeWalletOperates adds the "income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uu *UserUpdate) AddIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdate {
+// AddIncomeManages adds the "income_manages" edges to the IncomeManage entity.
+func (uu *UserUpdate) AddIncomeManages(i ...*IncomeManage) *UserUpdate {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uu.AddIncomeWalletOperateIDs(ids...)
+	return uu.AddIncomeManageIDs(ids...)
 }
 
-// AddApproveIncomeWalletOperateIDs adds the "approve_income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
-func (uu *UserUpdate) AddApproveIncomeWalletOperateIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddApproveIncomeWalletOperateIDs(ids...)
+// AddApproveIncomeManageIDs adds the "approve_income_manages" edge to the IncomeManage entity by IDs.
+func (uu *UserUpdate) AddApproveIncomeManageIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddApproveIncomeManageIDs(ids...)
 	return uu
 }
 
-// AddApproveIncomeWalletOperates adds the "approve_income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uu *UserUpdate) AddApproveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdate {
+// AddApproveIncomeManages adds the "approve_income_manages" edges to the IncomeManage entity.
+func (uu *UserUpdate) AddApproveIncomeManages(i ...*IncomeManage) *UserUpdate {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uu.AddApproveIncomeWalletOperateIDs(ids...)
+	return uu.AddApproveIncomeManageIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1845,46 +1845,46 @@ func (uu *UserUpdate) RemoveTroubleDeducts(t ...*TroubleDeduct) *UserUpdate {
 	return uu.RemoveTroubleDeductIDs(ids...)
 }
 
-// ClearIncomeWalletOperates clears all "income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uu *UserUpdate) ClearIncomeWalletOperates() *UserUpdate {
-	uu.mutation.ClearIncomeWalletOperates()
+// ClearIncomeManages clears all "income_manages" edges to the IncomeManage entity.
+func (uu *UserUpdate) ClearIncomeManages() *UserUpdate {
+	uu.mutation.ClearIncomeManages()
 	return uu
 }
 
-// RemoveIncomeWalletOperateIDs removes the "income_wallet_operates" edge to IncomeWalletOperate entities by IDs.
-func (uu *UserUpdate) RemoveIncomeWalletOperateIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveIncomeWalletOperateIDs(ids...)
+// RemoveIncomeManageIDs removes the "income_manages" edge to IncomeManage entities by IDs.
+func (uu *UserUpdate) RemoveIncomeManageIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveIncomeManageIDs(ids...)
 	return uu
 }
 
-// RemoveIncomeWalletOperates removes "income_wallet_operates" edges to IncomeWalletOperate entities.
-func (uu *UserUpdate) RemoveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdate {
+// RemoveIncomeManages removes "income_manages" edges to IncomeManage entities.
+func (uu *UserUpdate) RemoveIncomeManages(i ...*IncomeManage) *UserUpdate {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uu.RemoveIncomeWalletOperateIDs(ids...)
+	return uu.RemoveIncomeManageIDs(ids...)
 }
 
-// ClearApproveIncomeWalletOperates clears all "approve_income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uu *UserUpdate) ClearApproveIncomeWalletOperates() *UserUpdate {
-	uu.mutation.ClearApproveIncomeWalletOperates()
+// ClearApproveIncomeManages clears all "approve_income_manages" edges to the IncomeManage entity.
+func (uu *UserUpdate) ClearApproveIncomeManages() *UserUpdate {
+	uu.mutation.ClearApproveIncomeManages()
 	return uu
 }
 
-// RemoveApproveIncomeWalletOperateIDs removes the "approve_income_wallet_operates" edge to IncomeWalletOperate entities by IDs.
-func (uu *UserUpdate) RemoveApproveIncomeWalletOperateIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveApproveIncomeWalletOperateIDs(ids...)
+// RemoveApproveIncomeManageIDs removes the "approve_income_manages" edge to IncomeManage entities by IDs.
+func (uu *UserUpdate) RemoveApproveIncomeManageIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveApproveIncomeManageIDs(ids...)
 	return uu
 }
 
-// RemoveApproveIncomeWalletOperates removes "approve_income_wallet_operates" edges to IncomeWalletOperate entities.
-func (uu *UserUpdate) RemoveApproveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdate {
+// RemoveApproveIncomeManages removes "approve_income_manages" edges to IncomeManage entities.
+func (uu *UserUpdate) RemoveApproveIncomeManages(i ...*IncomeManage) *UserUpdate {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uu.RemoveApproveIncomeWalletOperateIDs(ids...)
+	return uu.RemoveApproveIncomeManageIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -3810,28 +3810,28 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.IncomeWalletOperatesCleared() {
+	if uu.mutation.IncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedIncomeWalletOperatesIDs(); len(nodes) > 0 && !uu.mutation.IncomeWalletOperatesCleared() {
+	if nodes := uu.mutation.RemovedIncomeManagesIDs(); len(nodes) > 0 && !uu.mutation.IncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -3839,15 +3839,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.IncomeWalletOperatesIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.IncomeManagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -3855,28 +3855,28 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.ApproveIncomeWalletOperatesCleared() {
+	if uu.mutation.ApproveIncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedApproveIncomeWalletOperatesIDs(); len(nodes) > 0 && !uu.mutation.ApproveIncomeWalletOperatesCleared() {
+	if nodes := uu.mutation.RemovedApproveIncomeManagesIDs(); len(nodes) > 0 && !uu.mutation.ApproveIncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -3884,15 +3884,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.ApproveIncomeWalletOperatesIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.ApproveIncomeManagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -4866,34 +4866,34 @@ func (uuo *UserUpdateOne) AddTroubleDeducts(t ...*TroubleDeduct) *UserUpdateOne 
 	return uuo.AddTroubleDeductIDs(ids...)
 }
 
-// AddIncomeWalletOperateIDs adds the "income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
-func (uuo *UserUpdateOne) AddIncomeWalletOperateIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddIncomeWalletOperateIDs(ids...)
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by IDs.
+func (uuo *UserUpdateOne) AddIncomeManageIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddIncomeManageIDs(ids...)
 	return uuo
 }
 
-// AddIncomeWalletOperates adds the "income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uuo *UserUpdateOne) AddIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdateOne {
+// AddIncomeManages adds the "income_manages" edges to the IncomeManage entity.
+func (uuo *UserUpdateOne) AddIncomeManages(i ...*IncomeManage) *UserUpdateOne {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uuo.AddIncomeWalletOperateIDs(ids...)
+	return uuo.AddIncomeManageIDs(ids...)
 }
 
-// AddApproveIncomeWalletOperateIDs adds the "approve_income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
-func (uuo *UserUpdateOne) AddApproveIncomeWalletOperateIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddApproveIncomeWalletOperateIDs(ids...)
+// AddApproveIncomeManageIDs adds the "approve_income_manages" edge to the IncomeManage entity by IDs.
+func (uuo *UserUpdateOne) AddApproveIncomeManageIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddApproveIncomeManageIDs(ids...)
 	return uuo
 }
 
-// AddApproveIncomeWalletOperates adds the "approve_income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uuo *UserUpdateOne) AddApproveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdateOne {
+// AddApproveIncomeManages adds the "approve_income_manages" edges to the IncomeManage entity.
+func (uuo *UserUpdateOne) AddApproveIncomeManages(i ...*IncomeManage) *UserUpdateOne {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uuo.AddApproveIncomeWalletOperateIDs(ids...)
+	return uuo.AddApproveIncomeManageIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -5702,46 +5702,46 @@ func (uuo *UserUpdateOne) RemoveTroubleDeducts(t ...*TroubleDeduct) *UserUpdateO
 	return uuo.RemoveTroubleDeductIDs(ids...)
 }
 
-// ClearIncomeWalletOperates clears all "income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uuo *UserUpdateOne) ClearIncomeWalletOperates() *UserUpdateOne {
-	uuo.mutation.ClearIncomeWalletOperates()
+// ClearIncomeManages clears all "income_manages" edges to the IncomeManage entity.
+func (uuo *UserUpdateOne) ClearIncomeManages() *UserUpdateOne {
+	uuo.mutation.ClearIncomeManages()
 	return uuo
 }
 
-// RemoveIncomeWalletOperateIDs removes the "income_wallet_operates" edge to IncomeWalletOperate entities by IDs.
-func (uuo *UserUpdateOne) RemoveIncomeWalletOperateIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveIncomeWalletOperateIDs(ids...)
+// RemoveIncomeManageIDs removes the "income_manages" edge to IncomeManage entities by IDs.
+func (uuo *UserUpdateOne) RemoveIncomeManageIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveIncomeManageIDs(ids...)
 	return uuo
 }
 
-// RemoveIncomeWalletOperates removes "income_wallet_operates" edges to IncomeWalletOperate entities.
-func (uuo *UserUpdateOne) RemoveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdateOne {
+// RemoveIncomeManages removes "income_manages" edges to IncomeManage entities.
+func (uuo *UserUpdateOne) RemoveIncomeManages(i ...*IncomeManage) *UserUpdateOne {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uuo.RemoveIncomeWalletOperateIDs(ids...)
+	return uuo.RemoveIncomeManageIDs(ids...)
 }
 
-// ClearApproveIncomeWalletOperates clears all "approve_income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uuo *UserUpdateOne) ClearApproveIncomeWalletOperates() *UserUpdateOne {
-	uuo.mutation.ClearApproveIncomeWalletOperates()
+// ClearApproveIncomeManages clears all "approve_income_manages" edges to the IncomeManage entity.
+func (uuo *UserUpdateOne) ClearApproveIncomeManages() *UserUpdateOne {
+	uuo.mutation.ClearApproveIncomeManages()
 	return uuo
 }
 
-// RemoveApproveIncomeWalletOperateIDs removes the "approve_income_wallet_operates" edge to IncomeWalletOperate entities by IDs.
-func (uuo *UserUpdateOne) RemoveApproveIncomeWalletOperateIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveApproveIncomeWalletOperateIDs(ids...)
+// RemoveApproveIncomeManageIDs removes the "approve_income_manages" edge to IncomeManage entities by IDs.
+func (uuo *UserUpdateOne) RemoveApproveIncomeManageIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveApproveIncomeManageIDs(ids...)
 	return uuo
 }
 
-// RemoveApproveIncomeWalletOperates removes "approve_income_wallet_operates" edges to IncomeWalletOperate entities.
-func (uuo *UserUpdateOne) RemoveApproveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserUpdateOne {
+// RemoveApproveIncomeManages removes "approve_income_manages" edges to IncomeManage entities.
+func (uuo *UserUpdateOne) RemoveApproveIncomeManages(i ...*IncomeManage) *UserUpdateOne {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uuo.RemoveApproveIncomeWalletOperateIDs(ids...)
+	return uuo.RemoveApproveIncomeManageIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -7697,28 +7697,28 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.IncomeWalletOperatesCleared() {
+	if uuo.mutation.IncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedIncomeWalletOperatesIDs(); len(nodes) > 0 && !uuo.mutation.IncomeWalletOperatesCleared() {
+	if nodes := uuo.mutation.RemovedIncomeManagesIDs(); len(nodes) > 0 && !uuo.mutation.IncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -7726,15 +7726,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.IncomeWalletOperatesIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.IncomeManagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -7742,28 +7742,28 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.ApproveIncomeWalletOperatesCleared() {
+	if uuo.mutation.ApproveIncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedApproveIncomeWalletOperatesIDs(); len(nodes) > 0 && !uuo.mutation.ApproveIncomeWalletOperatesCleared() {
+	if nodes := uuo.mutation.RemovedApproveIncomeManagesIDs(); len(nodes) > 0 && !uuo.mutation.ApproveIncomeManagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -7771,15 +7771,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.ApproveIncomeWalletOperatesIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.ApproveIncomeManagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -38,7 +38,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
@@ -129,8 +129,8 @@ type Client struct {
 	Gpu *GpuClient
 	// HmacKeyPair is the client for interacting with the HmacKeyPair builders.
 	HmacKeyPair *HmacKeyPairClient
-	// IncomeWalletOperate is the client for interacting with the IncomeWalletOperate builders.
-	IncomeWalletOperate *IncomeWalletOperateClient
+	// IncomeManage is the client for interacting with the IncomeManage builders.
+	IncomeManage *IncomeManageClient
 	// InputLog is the client for interacting with the InputLog builders.
 	InputLog *InputLogClient
 	// Invite is the client for interacting with the Invite builders.
@@ -241,7 +241,7 @@ func (c *Client) init() {
 	c.FrpsInfo = NewFrpsInfoClient(c.config)
 	c.Gpu = NewGpuClient(c.config)
 	c.HmacKeyPair = NewHmacKeyPairClient(c.config)
-	c.IncomeWalletOperate = NewIncomeWalletOperateClient(c.config)
+	c.IncomeManage = NewIncomeManageClient(c.config)
 	c.InputLog = NewInputLogClient(c.config)
 	c.Invite = NewInviteClient(c.config)
 	c.LoginRecord = NewLoginRecordClient(c.config)
@@ -387,7 +387,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FrpsInfo:             NewFrpsInfoClient(cfg),
 		Gpu:                  NewGpuClient(cfg),
 		HmacKeyPair:          NewHmacKeyPairClient(cfg),
-		IncomeWalletOperate:  NewIncomeWalletOperateClient(cfg),
+		IncomeManage:         NewIncomeManageClient(cfg),
 		InputLog:             NewInputLogClient(cfg),
 		Invite:               NewInviteClient(cfg),
 		LoginRecord:          NewLoginRecordClient(cfg),
@@ -467,7 +467,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FrpsInfo:             NewFrpsInfoClient(cfg),
 		Gpu:                  NewGpuClient(cfg),
 		HmacKeyPair:          NewHmacKeyPairClient(cfg),
-		IncomeWalletOperate:  NewIncomeWalletOperateClient(cfg),
+		IncomeManage:         NewIncomeManageClient(cfg),
 		InputLog:             NewInputLogClient(cfg),
 		Invite:               NewInviteClient(cfg),
 		LoginRecord:          NewLoginRecordClient(cfg),
@@ -538,16 +538,15 @@ func (c *Client) Use(hooks ...Hook) {
 		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
 		c.DeviceGpuMission, c.DeviceRebootTime, c.EarnBill, c.EnumCondition,
 		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeWalletOperate,
-		c.InputLog, c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule,
-		c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord, c.LottoUserCount,
-		c.Mission, c.MissionBatch, c.MissionCategory, c.MissionConsumeOrder,
-		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
-		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
-		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
-		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder,
-		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount, c.WithdrawRecord,
+		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
+		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
+		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.MissionCategory, c.MissionConsumeOrder, c.MissionExtraService,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
+		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
 	}
@@ -561,16 +560,15 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
 		c.DeviceGpuMission, c.DeviceRebootTime, c.EarnBill, c.EnumCondition,
 		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeWalletOperate,
-		c.InputLog, c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule,
-		c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord, c.LottoUserCount,
-		c.Mission, c.MissionBatch, c.MissionCategory, c.MissionConsumeOrder,
-		c.MissionExtraService, c.MissionKeyPair, c.MissionKind, c.MissionOrder,
-		c.MissionProduceOrder, c.MissionProduction, c.OutputLog, c.PlatformAccount,
-		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
-		c.RechargeOrder, c.RenewalAgreement, c.Symbol, c.TransferOrder,
-		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount, c.WithdrawRecord,
+		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
+		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
+		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
+		c.MissionCategory, c.MissionConsumeOrder, c.MissionExtraService,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
+		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -625,8 +623,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Gpu.mutate(ctx, m)
 	case *HmacKeyPairMutation:
 		return c.HmacKeyPair.mutate(ctx, m)
-	case *IncomeWalletOperateMutation:
-		return c.IncomeWalletOperate.mutate(ctx, m)
+	case *IncomeManageMutation:
+		return c.IncomeManage.mutate(ctx, m)
 	case *InputLogMutation:
 		return c.InputLog.mutate(ctx, m)
 	case *InviteMutation:
@@ -4725,107 +4723,107 @@ func (c *HmacKeyPairClient) mutate(ctx context.Context, m *HmacKeyPairMutation) 
 	}
 }
 
-// IncomeWalletOperateClient is a client for the IncomeWalletOperate schema.
-type IncomeWalletOperateClient struct {
+// IncomeManageClient is a client for the IncomeManage schema.
+type IncomeManageClient struct {
 	config
 }
 
-// NewIncomeWalletOperateClient returns a client for the IncomeWalletOperate from the given config.
-func NewIncomeWalletOperateClient(c config) *IncomeWalletOperateClient {
-	return &IncomeWalletOperateClient{config: c}
+// NewIncomeManageClient returns a client for the IncomeManage from the given config.
+func NewIncomeManageClient(c config) *IncomeManageClient {
+	return &IncomeManageClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `incomewalletoperate.Hooks(f(g(h())))`.
-func (c *IncomeWalletOperateClient) Use(hooks ...Hook) {
-	c.hooks.IncomeWalletOperate = append(c.hooks.IncomeWalletOperate, hooks...)
+// A call to `Use(f, g, h)` equals to `incomemanage.Hooks(f(g(h())))`.
+func (c *IncomeManageClient) Use(hooks ...Hook) {
+	c.hooks.IncomeManage = append(c.hooks.IncomeManage, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `incomewalletoperate.Intercept(f(g(h())))`.
-func (c *IncomeWalletOperateClient) Intercept(interceptors ...Interceptor) {
-	c.inters.IncomeWalletOperate = append(c.inters.IncomeWalletOperate, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `incomemanage.Intercept(f(g(h())))`.
+func (c *IncomeManageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.IncomeManage = append(c.inters.IncomeManage, interceptors...)
 }
 
-// Create returns a builder for creating a IncomeWalletOperate entity.
-func (c *IncomeWalletOperateClient) Create() *IncomeWalletOperateCreate {
-	mutation := newIncomeWalletOperateMutation(c.config, OpCreate)
-	return &IncomeWalletOperateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a IncomeManage entity.
+func (c *IncomeManageClient) Create() *IncomeManageCreate {
+	mutation := newIncomeManageMutation(c.config, OpCreate)
+	return &IncomeManageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of IncomeWalletOperate entities.
-func (c *IncomeWalletOperateClient) CreateBulk(builders ...*IncomeWalletOperateCreate) *IncomeWalletOperateCreateBulk {
-	return &IncomeWalletOperateCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of IncomeManage entities.
+func (c *IncomeManageClient) CreateBulk(builders ...*IncomeManageCreate) *IncomeManageCreateBulk {
+	return &IncomeManageCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *IncomeWalletOperateClient) MapCreateBulk(slice any, setFunc func(*IncomeWalletOperateCreate, int)) *IncomeWalletOperateCreateBulk {
+func (c *IncomeManageClient) MapCreateBulk(slice any, setFunc func(*IncomeManageCreate, int)) *IncomeManageCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &IncomeWalletOperateCreateBulk{err: fmt.Errorf("calling to IncomeWalletOperateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &IncomeManageCreateBulk{err: fmt.Errorf("calling to IncomeManageClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*IncomeWalletOperateCreate, rv.Len())
+	builders := make([]*IncomeManageCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &IncomeWalletOperateCreateBulk{config: c.config, builders: builders}
+	return &IncomeManageCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for IncomeWalletOperate.
-func (c *IncomeWalletOperateClient) Update() *IncomeWalletOperateUpdate {
-	mutation := newIncomeWalletOperateMutation(c.config, OpUpdate)
-	return &IncomeWalletOperateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for IncomeManage.
+func (c *IncomeManageClient) Update() *IncomeManageUpdate {
+	mutation := newIncomeManageMutation(c.config, OpUpdate)
+	return &IncomeManageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *IncomeWalletOperateClient) UpdateOne(iwo *IncomeWalletOperate) *IncomeWalletOperateUpdateOne {
-	mutation := newIncomeWalletOperateMutation(c.config, OpUpdateOne, withIncomeWalletOperate(iwo))
-	return &IncomeWalletOperateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *IncomeManageClient) UpdateOne(im *IncomeManage) *IncomeManageUpdateOne {
+	mutation := newIncomeManageMutation(c.config, OpUpdateOne, withIncomeManage(im))
+	return &IncomeManageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *IncomeWalletOperateClient) UpdateOneID(id int64) *IncomeWalletOperateUpdateOne {
-	mutation := newIncomeWalletOperateMutation(c.config, OpUpdateOne, withIncomeWalletOperateID(id))
-	return &IncomeWalletOperateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *IncomeManageClient) UpdateOneID(id int64) *IncomeManageUpdateOne {
+	mutation := newIncomeManageMutation(c.config, OpUpdateOne, withIncomeManageID(id))
+	return &IncomeManageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for IncomeWalletOperate.
-func (c *IncomeWalletOperateClient) Delete() *IncomeWalletOperateDelete {
-	mutation := newIncomeWalletOperateMutation(c.config, OpDelete)
-	return &IncomeWalletOperateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for IncomeManage.
+func (c *IncomeManageClient) Delete() *IncomeManageDelete {
+	mutation := newIncomeManageMutation(c.config, OpDelete)
+	return &IncomeManageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *IncomeWalletOperateClient) DeleteOne(iwo *IncomeWalletOperate) *IncomeWalletOperateDeleteOne {
-	return c.DeleteOneID(iwo.ID)
+func (c *IncomeManageClient) DeleteOne(im *IncomeManage) *IncomeManageDeleteOne {
+	return c.DeleteOneID(im.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *IncomeWalletOperateClient) DeleteOneID(id int64) *IncomeWalletOperateDeleteOne {
-	builder := c.Delete().Where(incomewalletoperate.ID(id))
+func (c *IncomeManageClient) DeleteOneID(id int64) *IncomeManageDeleteOne {
+	builder := c.Delete().Where(incomemanage.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &IncomeWalletOperateDeleteOne{builder}
+	return &IncomeManageDeleteOne{builder}
 }
 
-// Query returns a query builder for IncomeWalletOperate.
-func (c *IncomeWalletOperateClient) Query() *IncomeWalletOperateQuery {
-	return &IncomeWalletOperateQuery{
+// Query returns a query builder for IncomeManage.
+func (c *IncomeManageClient) Query() *IncomeManageQuery {
+	return &IncomeManageQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeIncomeWalletOperate},
+		ctx:    &QueryContext{Type: TypeIncomeManage},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a IncomeWalletOperate entity by its id.
-func (c *IncomeWalletOperateClient) Get(ctx context.Context, id int64) (*IncomeWalletOperate, error) {
-	return c.Query().Where(incomewalletoperate.ID(id)).Only(ctx)
+// Get returns a IncomeManage entity by its id.
+func (c *IncomeManageClient) Get(ctx context.Context, id int64) (*IncomeManage, error) {
+	return c.Query().Where(incomemanage.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *IncomeWalletOperateClient) GetX(ctx context.Context, id int64) *IncomeWalletOperate {
+func (c *IncomeManageClient) GetX(ctx context.Context, id int64) *IncomeManage {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -4833,60 +4831,60 @@ func (c *IncomeWalletOperateClient) GetX(ctx context.Context, id int64) *IncomeW
 	return obj
 }
 
-// QueryUser queries the user edge of a IncomeWalletOperate.
-func (c *IncomeWalletOperateClient) QueryUser(iwo *IncomeWalletOperate) *UserQuery {
+// QueryUser queries the user edge of a IncomeManage.
+func (c *IncomeManageClient) QueryUser(im *IncomeManage) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := iwo.ID
+		id := im.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(incomewalletoperate.Table, incomewalletoperate.FieldID, id),
+			sqlgraph.From(incomemanage.Table, incomemanage.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, incomewalletoperate.UserTable, incomewalletoperate.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, incomemanage.UserTable, incomemanage.UserColumn),
 		)
-		fromV = sqlgraph.Neighbors(iwo.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(im.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
-// QueryApproveUser queries the approve_user edge of a IncomeWalletOperate.
-func (c *IncomeWalletOperateClient) QueryApproveUser(iwo *IncomeWalletOperate) *UserQuery {
+// QueryApproveUser queries the approve_user edge of a IncomeManage.
+func (c *IncomeManageClient) QueryApproveUser(im *IncomeManage) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := iwo.ID
+		id := im.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(incomewalletoperate.Table, incomewalletoperate.FieldID, id),
+			sqlgraph.From(incomemanage.Table, incomemanage.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, incomewalletoperate.ApproveUserTable, incomewalletoperate.ApproveUserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, incomemanage.ApproveUserTable, incomemanage.ApproveUserColumn),
 		)
-		fromV = sqlgraph.Neighbors(iwo.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(im.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *IncomeWalletOperateClient) Hooks() []Hook {
-	return c.hooks.IncomeWalletOperate
+func (c *IncomeManageClient) Hooks() []Hook {
+	return c.hooks.IncomeManage
 }
 
 // Interceptors returns the client interceptors.
-func (c *IncomeWalletOperateClient) Interceptors() []Interceptor {
-	return c.inters.IncomeWalletOperate
+func (c *IncomeManageClient) Interceptors() []Interceptor {
+	return c.inters.IncomeManage
 }
 
-func (c *IncomeWalletOperateClient) mutate(ctx context.Context, m *IncomeWalletOperateMutation) (Value, error) {
+func (c *IncomeManageClient) mutate(ctx context.Context, m *IncomeManageMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&IncomeWalletOperateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&IncomeManageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&IncomeWalletOperateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&IncomeManageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&IncomeWalletOperateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&IncomeManageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&IncomeWalletOperateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&IncomeManageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("cep_ent: unknown IncomeWalletOperate mutation op: %q", m.Op())
+		return nil, fmt.Errorf("cep_ent: unknown IncomeManage mutation op: %q", m.Op())
 	}
 }
 
@@ -11084,15 +11082,15 @@ func (c *UserClient) QueryTroubleDeducts(u *User) *TroubleDeductQuery {
 	return query
 }
 
-// QueryIncomeWalletOperates queries the income_wallet_operates edge of a User.
-func (c *UserClient) QueryIncomeWalletOperates(u *User) *IncomeWalletOperateQuery {
-	query := (&IncomeWalletOperateClient{config: c.config}).Query()
+// QueryIncomeManages queries the income_manages edge of a User.
+func (c *UserClient) QueryIncomeManages(u *User) *IncomeManageQuery {
+	query := (&IncomeManageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(incomewalletoperate.Table, incomewalletoperate.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.IncomeWalletOperatesTable, user.IncomeWalletOperatesColumn),
+			sqlgraph.To(incomemanage.Table, incomemanage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.IncomeManagesTable, user.IncomeManagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -11100,15 +11098,15 @@ func (c *UserClient) QueryIncomeWalletOperates(u *User) *IncomeWalletOperateQuer
 	return query
 }
 
-// QueryApproveIncomeWalletOperates queries the approve_income_wallet_operates edge of a User.
-func (c *UserClient) QueryApproveIncomeWalletOperates(u *User) *IncomeWalletOperateQuery {
-	query := (&IncomeWalletOperateClient{config: c.config}).Query()
+// QueryApproveIncomeManages queries the approve_income_manages edge of a User.
+func (c *UserClient) QueryApproveIncomeManages(u *User) *IncomeManageQuery {
+	query := (&IncomeManageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(incomewalletoperate.Table, incomewalletoperate.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ApproveIncomeWalletOperatesTable, user.ApproveIncomeWalletOperatesColumn),
+			sqlgraph.To(incomemanage.Table, incomemanage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ApproveIncomeManagesTable, user.ApproveIncomeManagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -12137,7 +12135,7 @@ type (
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceRebootTime,
 		EarnBill, EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
-		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeWalletOperate,
+		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage,
 		InputLog, Invite, LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord,
 		LottoPrize, LottoRecord, LottoUserCount, Mission, MissionBatch,
 		MissionCategory, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
@@ -12151,7 +12149,7 @@ type (
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceRebootTime,
 		EarnBill, EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
-		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeWalletOperate,
+		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage,
 		InputLog, Invite, LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord,
 		LottoPrize, LottoRecord, LottoUserCount, Mission, MissionBatch,
 		MissionCategory, MissionConsumeOrder, MissionExtraService, MissionKeyPair,

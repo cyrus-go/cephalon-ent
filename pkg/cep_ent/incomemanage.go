@@ -9,13 +9,13 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 收益补发记录，需要系统补发的收益，记录到这个表里
-type IncomeWalletOperate struct {
+type IncomeManage struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 19 位雪花 ID
@@ -35,7 +35,7 @@ type IncomeWalletOperate struct {
 	// 用户手机号
 	Phone string `json:"phone"`
 	// 类型
-	Type enums.IncomeWalletOperateType `json:"type"`
+	Type enums.IncomeManageType `json:"type"`
 	// 金额，单位：厘
 	Amount int64 `json:"amount"`
 	// 操作该用户收益钱包的原因
@@ -47,17 +47,17 @@ type IncomeWalletOperate struct {
 	// 拒绝此条记录原因
 	RejectReason string `json:"reject_reason"`
 	// 状态
-	Status enums.IncomeWalletOperateStatus `json:"status"`
+	Status enums.IncomeManageStatus `json:"status"`
 	// 审批人 id
 	ApproveUserID int64 `json:"approve_user_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the IncomeWalletOperateQuery when eager-loading is set.
-	Edges        IncomeWalletOperateEdges `json:"edges"`
+	// The values are being populated by the IncomeManageQuery when eager-loading is set.
+	Edges        IncomeManageEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// IncomeWalletOperateEdges holds the relations/edges for other nodes in the graph.
-type IncomeWalletOperateEdges struct {
+// IncomeManageEdges holds the relations/edges for other nodes in the graph.
+type IncomeManageEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// ApproveUser holds the value of the approve_user edge.
@@ -69,7 +69,7 @@ type IncomeWalletOperateEdges struct {
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e IncomeWalletOperateEdges) UserOrErr() (*User, error) {
+func (e IncomeManageEdges) UserOrErr() (*User, error) {
 	if e.loadedTypes[0] {
 		if e.User == nil {
 			// Edge was loaded but was not found.
@@ -82,7 +82,7 @@ func (e IncomeWalletOperateEdges) UserOrErr() (*User, error) {
 
 // ApproveUserOrErr returns the ApproveUser value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e IncomeWalletOperateEdges) ApproveUserOrErr() (*User, error) {
+func (e IncomeManageEdges) ApproveUserOrErr() (*User, error) {
 	if e.loadedTypes[1] {
 		if e.ApproveUser == nil {
 			// Edge was loaded but was not found.
@@ -94,15 +94,15 @@ func (e IncomeWalletOperateEdges) ApproveUserOrErr() (*User, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*IncomeWalletOperate) scanValues(columns []string) ([]any, error) {
+func (*IncomeManage) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case incomewalletoperate.FieldID, incomewalletoperate.FieldCreatedBy, incomewalletoperate.FieldUpdatedBy, incomewalletoperate.FieldUserID, incomewalletoperate.FieldAmount, incomewalletoperate.FieldCurrentBalance, incomewalletoperate.FieldApproveUserID:
+		case incomemanage.FieldID, incomemanage.FieldCreatedBy, incomemanage.FieldUpdatedBy, incomemanage.FieldUserID, incomemanage.FieldAmount, incomemanage.FieldCurrentBalance, incomemanage.FieldApproveUserID:
 			values[i] = new(sql.NullInt64)
-		case incomewalletoperate.FieldPhone, incomewalletoperate.FieldType, incomewalletoperate.FieldReason, incomewalletoperate.FieldRejectReason, incomewalletoperate.FieldStatus:
+		case incomemanage.FieldPhone, incomemanage.FieldType, incomemanage.FieldReason, incomemanage.FieldRejectReason, incomemanage.FieldStatus:
 			values[i] = new(sql.NullString)
-		case incomewalletoperate.FieldCreatedAt, incomewalletoperate.FieldUpdatedAt, incomewalletoperate.FieldDeletedAt, incomewalletoperate.FieldLastEditedAt:
+		case incomemanage.FieldCreatedAt, incomemanage.FieldUpdatedAt, incomemanage.FieldDeletedAt, incomemanage.FieldLastEditedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -112,202 +112,202 @@ func (*IncomeWalletOperate) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the IncomeWalletOperate fields.
-func (iwo *IncomeWalletOperate) assignValues(columns []string, values []any) error {
+// to the IncomeManage fields.
+func (im *IncomeManage) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case incomewalletoperate.FieldID:
+		case incomemanage.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			iwo.ID = int64(value.Int64)
-		case incomewalletoperate.FieldCreatedBy:
+			im.ID = int64(value.Int64)
+		case incomemanage.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				iwo.CreatedBy = value.Int64
+				im.CreatedBy = value.Int64
 			}
-		case incomewalletoperate.FieldUpdatedBy:
+		case incomemanage.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				iwo.UpdatedBy = value.Int64
+				im.UpdatedBy = value.Int64
 			}
-		case incomewalletoperate.FieldCreatedAt:
+		case incomemanage.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				iwo.CreatedAt = value.Time
+				im.CreatedAt = value.Time
 			}
-		case incomewalletoperate.FieldUpdatedAt:
+		case incomemanage.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				iwo.UpdatedAt = value.Time
+				im.UpdatedAt = value.Time
 			}
-		case incomewalletoperate.FieldDeletedAt:
+		case incomemanage.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				iwo.DeletedAt = value.Time
+				im.DeletedAt = value.Time
 			}
-		case incomewalletoperate.FieldUserID:
+		case incomemanage.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				iwo.UserID = value.Int64
+				im.UserID = value.Int64
 			}
-		case incomewalletoperate.FieldPhone:
+		case incomemanage.FieldPhone:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field phone", values[i])
 			} else if value.Valid {
-				iwo.Phone = value.String
+				im.Phone = value.String
 			}
-		case incomewalletoperate.FieldType:
+		case incomemanage.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				iwo.Type = enums.IncomeWalletOperateType(value.String)
+				im.Type = enums.IncomeManageType(value.String)
 			}
-		case incomewalletoperate.FieldAmount:
+		case incomemanage.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
-				iwo.Amount = value.Int64
+				im.Amount = value.Int64
 			}
-		case incomewalletoperate.FieldReason:
+		case incomemanage.FieldReason:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field reason", values[i])
 			} else if value.Valid {
-				iwo.Reason = value.String
+				im.Reason = value.String
 			}
-		case incomewalletoperate.FieldCurrentBalance:
+		case incomemanage.FieldCurrentBalance:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field current_balance", values[i])
 			} else if value.Valid {
-				iwo.CurrentBalance = value.Int64
+				im.CurrentBalance = value.Int64
 			}
-		case incomewalletoperate.FieldLastEditedAt:
+		case incomemanage.FieldLastEditedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field last_edited_at", values[i])
 			} else if value.Valid {
-				iwo.LastEditedAt = value.Time
+				im.LastEditedAt = value.Time
 			}
-		case incomewalletoperate.FieldRejectReason:
+		case incomemanage.FieldRejectReason:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field reject_reason", values[i])
 			} else if value.Valid {
-				iwo.RejectReason = value.String
+				im.RejectReason = value.String
 			}
-		case incomewalletoperate.FieldStatus:
+		case incomemanage.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				iwo.Status = enums.IncomeWalletOperateStatus(value.String)
+				im.Status = enums.IncomeManageStatus(value.String)
 			}
-		case incomewalletoperate.FieldApproveUserID:
+		case incomemanage.FieldApproveUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field approve_user_id", values[i])
 			} else if value.Valid {
-				iwo.ApproveUserID = value.Int64
+				im.ApproveUserID = value.Int64
 			}
 		default:
-			iwo.selectValues.Set(columns[i], values[i])
+			im.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the IncomeWalletOperate.
+// Value returns the ent.Value that was dynamically selected and assigned to the IncomeManage.
 // This includes values selected through modifiers, order, etc.
-func (iwo *IncomeWalletOperate) Value(name string) (ent.Value, error) {
-	return iwo.selectValues.Get(name)
+func (im *IncomeManage) Value(name string) (ent.Value, error) {
+	return im.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the IncomeWalletOperate entity.
-func (iwo *IncomeWalletOperate) QueryUser() *UserQuery {
-	return NewIncomeWalletOperateClient(iwo.config).QueryUser(iwo)
+// QueryUser queries the "user" edge of the IncomeManage entity.
+func (im *IncomeManage) QueryUser() *UserQuery {
+	return NewIncomeManageClient(im.config).QueryUser(im)
 }
 
-// QueryApproveUser queries the "approve_user" edge of the IncomeWalletOperate entity.
-func (iwo *IncomeWalletOperate) QueryApproveUser() *UserQuery {
-	return NewIncomeWalletOperateClient(iwo.config).QueryApproveUser(iwo)
+// QueryApproveUser queries the "approve_user" edge of the IncomeManage entity.
+func (im *IncomeManage) QueryApproveUser() *UserQuery {
+	return NewIncomeManageClient(im.config).QueryApproveUser(im)
 }
 
-// Update returns a builder for updating this IncomeWalletOperate.
-// Note that you need to call IncomeWalletOperate.Unwrap() before calling this method if this IncomeWalletOperate
+// Update returns a builder for updating this IncomeManage.
+// Note that you need to call IncomeManage.Unwrap() before calling this method if this IncomeManage
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (iwo *IncomeWalletOperate) Update() *IncomeWalletOperateUpdateOne {
-	return NewIncomeWalletOperateClient(iwo.config).UpdateOne(iwo)
+func (im *IncomeManage) Update() *IncomeManageUpdateOne {
+	return NewIncomeManageClient(im.config).UpdateOne(im)
 }
 
-// Unwrap unwraps the IncomeWalletOperate entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the IncomeManage entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (iwo *IncomeWalletOperate) Unwrap() *IncomeWalletOperate {
-	_tx, ok := iwo.config.driver.(*txDriver)
+func (im *IncomeManage) Unwrap() *IncomeManage {
+	_tx, ok := im.config.driver.(*txDriver)
 	if !ok {
-		panic("cep_ent: IncomeWalletOperate is not a transactional entity")
+		panic("cep_ent: IncomeManage is not a transactional entity")
 	}
-	iwo.config.driver = _tx.drv
-	return iwo
+	im.config.driver = _tx.drv
+	return im
 }
 
 // String implements the fmt.Stringer.
-func (iwo *IncomeWalletOperate) String() string {
+func (im *IncomeManage) String() string {
 	var builder strings.Builder
-	builder.WriteString("IncomeWalletOperate(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", iwo.ID))
+	builder.WriteString("IncomeManage(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", im.ID))
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.CreatedBy))
+	builder.WriteString(fmt.Sprintf("%v", im.CreatedBy))
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.UpdatedBy))
+	builder.WriteString(fmt.Sprintf("%v", im.UpdatedBy))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
-	builder.WriteString(iwo.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(im.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(iwo.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(im.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
-	builder.WriteString(iwo.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(im.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.UserID))
+	builder.WriteString(fmt.Sprintf("%v", im.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("phone=")
-	builder.WriteString(iwo.Phone)
+	builder.WriteString(im.Phone)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.Type))
+	builder.WriteString(fmt.Sprintf("%v", im.Type))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.Amount))
+	builder.WriteString(fmt.Sprintf("%v", im.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("reason=")
-	builder.WriteString(iwo.Reason)
+	builder.WriteString(im.Reason)
 	builder.WriteString(", ")
 	builder.WriteString("current_balance=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.CurrentBalance))
+	builder.WriteString(fmt.Sprintf("%v", im.CurrentBalance))
 	builder.WriteString(", ")
 	builder.WriteString("last_edited_at=")
-	builder.WriteString(iwo.LastEditedAt.Format(time.ANSIC))
+	builder.WriteString(im.LastEditedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("reject_reason=")
-	builder.WriteString(iwo.RejectReason)
+	builder.WriteString(im.RejectReason)
 	builder.WriteString(", ")
 	builder.WriteString("status=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.Status))
+	builder.WriteString(fmt.Sprintf("%v", im.Status))
 	builder.WriteString(", ")
 	builder.WriteString("approve_user_id=")
-	builder.WriteString(fmt.Sprintf("%v", iwo.ApproveUserID))
+	builder.WriteString(fmt.Sprintf("%v", im.ApproveUserID))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// IncomeWalletOperates is a parsable slice of IncomeWalletOperate.
-type IncomeWalletOperates []*IncomeWalletOperate
+// IncomeManages is a parsable slice of IncomeManage.
+type IncomeManages []*IncomeManage

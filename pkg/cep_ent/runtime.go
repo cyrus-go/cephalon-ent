@@ -29,7 +29,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpsinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/gpu"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/hmackeypair"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/inputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
@@ -1356,69 +1356,69 @@ func init() {
 	hmackeypairDescID := hmackeypairMixinFields0[0].Descriptor()
 	// hmackeypair.DefaultID holds the default value on creation for the id field.
 	hmackeypair.DefaultID = hmackeypairDescID.Default.(func() int64)
-	incomewalletoperateMixin := schema.IncomeWalletOperate{}.Mixin()
-	incomewalletoperateMixinFields0 := incomewalletoperateMixin[0].Fields()
-	_ = incomewalletoperateMixinFields0
-	incomewalletoperateFields := schema.IncomeWalletOperate{}.Fields()
-	_ = incomewalletoperateFields
-	// incomewalletoperateDescCreatedBy is the schema descriptor for created_by field.
-	incomewalletoperateDescCreatedBy := incomewalletoperateMixinFields0[1].Descriptor()
-	// incomewalletoperate.DefaultCreatedBy holds the default value on creation for the created_by field.
-	incomewalletoperate.DefaultCreatedBy = incomewalletoperateDescCreatedBy.Default.(int64)
-	// incomewalletoperateDescUpdatedBy is the schema descriptor for updated_by field.
-	incomewalletoperateDescUpdatedBy := incomewalletoperateMixinFields0[2].Descriptor()
-	// incomewalletoperate.DefaultUpdatedBy holds the default value on creation for the updated_by field.
-	incomewalletoperate.DefaultUpdatedBy = incomewalletoperateDescUpdatedBy.Default.(int64)
-	// incomewalletoperateDescCreatedAt is the schema descriptor for created_at field.
-	incomewalletoperateDescCreatedAt := incomewalletoperateMixinFields0[3].Descriptor()
-	// incomewalletoperate.DefaultCreatedAt holds the default value on creation for the created_at field.
-	incomewalletoperate.DefaultCreatedAt = incomewalletoperateDescCreatedAt.Default.(func() time.Time)
-	// incomewalletoperateDescUpdatedAt is the schema descriptor for updated_at field.
-	incomewalletoperateDescUpdatedAt := incomewalletoperateMixinFields0[4].Descriptor()
-	// incomewalletoperate.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	incomewalletoperate.DefaultUpdatedAt = incomewalletoperateDescUpdatedAt.Default.(func() time.Time)
-	// incomewalletoperate.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	incomewalletoperate.UpdateDefaultUpdatedAt = incomewalletoperateDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// incomewalletoperateDescDeletedAt is the schema descriptor for deleted_at field.
-	incomewalletoperateDescDeletedAt := incomewalletoperateMixinFields0[5].Descriptor()
-	// incomewalletoperate.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	incomewalletoperate.DefaultDeletedAt = incomewalletoperateDescDeletedAt.Default.(time.Time)
-	// incomewalletoperateDescUserID is the schema descriptor for user_id field.
-	incomewalletoperateDescUserID := incomewalletoperateFields[0].Descriptor()
-	// incomewalletoperate.DefaultUserID holds the default value on creation for the user_id field.
-	incomewalletoperate.DefaultUserID = incomewalletoperateDescUserID.Default.(int64)
-	// incomewalletoperateDescPhone is the schema descriptor for phone field.
-	incomewalletoperateDescPhone := incomewalletoperateFields[1].Descriptor()
-	// incomewalletoperate.DefaultPhone holds the default value on creation for the phone field.
-	incomewalletoperate.DefaultPhone = incomewalletoperateDescPhone.Default.(string)
-	// incomewalletoperateDescAmount is the schema descriptor for amount field.
-	incomewalletoperateDescAmount := incomewalletoperateFields[3].Descriptor()
-	// incomewalletoperate.DefaultAmount holds the default value on creation for the amount field.
-	incomewalletoperate.DefaultAmount = incomewalletoperateDescAmount.Default.(int64)
-	// incomewalletoperateDescReason is the schema descriptor for reason field.
-	incomewalletoperateDescReason := incomewalletoperateFields[4].Descriptor()
-	// incomewalletoperate.DefaultReason holds the default value on creation for the reason field.
-	incomewalletoperate.DefaultReason = incomewalletoperateDescReason.Default.(string)
-	// incomewalletoperateDescCurrentBalance is the schema descriptor for current_balance field.
-	incomewalletoperateDescCurrentBalance := incomewalletoperateFields[5].Descriptor()
-	// incomewalletoperate.DefaultCurrentBalance holds the default value on creation for the current_balance field.
-	incomewalletoperate.DefaultCurrentBalance = incomewalletoperateDescCurrentBalance.Default.(int64)
-	// incomewalletoperateDescLastEditedAt is the schema descriptor for last_edited_at field.
-	incomewalletoperateDescLastEditedAt := incomewalletoperateFields[6].Descriptor()
-	// incomewalletoperate.DefaultLastEditedAt holds the default value on creation for the last_edited_at field.
-	incomewalletoperate.DefaultLastEditedAt = incomewalletoperateDescLastEditedAt.Default.(time.Time)
-	// incomewalletoperateDescRejectReason is the schema descriptor for reject_reason field.
-	incomewalletoperateDescRejectReason := incomewalletoperateFields[7].Descriptor()
-	// incomewalletoperate.DefaultRejectReason holds the default value on creation for the reject_reason field.
-	incomewalletoperate.DefaultRejectReason = incomewalletoperateDescRejectReason.Default.(string)
-	// incomewalletoperateDescApproveUserID is the schema descriptor for approve_user_id field.
-	incomewalletoperateDescApproveUserID := incomewalletoperateFields[9].Descriptor()
-	// incomewalletoperate.DefaultApproveUserID holds the default value on creation for the approve_user_id field.
-	incomewalletoperate.DefaultApproveUserID = incomewalletoperateDescApproveUserID.Default.(int64)
-	// incomewalletoperateDescID is the schema descriptor for id field.
-	incomewalletoperateDescID := incomewalletoperateMixinFields0[0].Descriptor()
-	// incomewalletoperate.DefaultID holds the default value on creation for the id field.
-	incomewalletoperate.DefaultID = incomewalletoperateDescID.Default.(func() int64)
+	incomemanageMixin := schema.IncomeManage{}.Mixin()
+	incomemanageMixinFields0 := incomemanageMixin[0].Fields()
+	_ = incomemanageMixinFields0
+	incomemanageFields := schema.IncomeManage{}.Fields()
+	_ = incomemanageFields
+	// incomemanageDescCreatedBy is the schema descriptor for created_by field.
+	incomemanageDescCreatedBy := incomemanageMixinFields0[1].Descriptor()
+	// incomemanage.DefaultCreatedBy holds the default value on creation for the created_by field.
+	incomemanage.DefaultCreatedBy = incomemanageDescCreatedBy.Default.(int64)
+	// incomemanageDescUpdatedBy is the schema descriptor for updated_by field.
+	incomemanageDescUpdatedBy := incomemanageMixinFields0[2].Descriptor()
+	// incomemanage.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	incomemanage.DefaultUpdatedBy = incomemanageDescUpdatedBy.Default.(int64)
+	// incomemanageDescCreatedAt is the schema descriptor for created_at field.
+	incomemanageDescCreatedAt := incomemanageMixinFields0[3].Descriptor()
+	// incomemanage.DefaultCreatedAt holds the default value on creation for the created_at field.
+	incomemanage.DefaultCreatedAt = incomemanageDescCreatedAt.Default.(func() time.Time)
+	// incomemanageDescUpdatedAt is the schema descriptor for updated_at field.
+	incomemanageDescUpdatedAt := incomemanageMixinFields0[4].Descriptor()
+	// incomemanage.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	incomemanage.DefaultUpdatedAt = incomemanageDescUpdatedAt.Default.(func() time.Time)
+	// incomemanage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	incomemanage.UpdateDefaultUpdatedAt = incomemanageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// incomemanageDescDeletedAt is the schema descriptor for deleted_at field.
+	incomemanageDescDeletedAt := incomemanageMixinFields0[5].Descriptor()
+	// incomemanage.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	incomemanage.DefaultDeletedAt = incomemanageDescDeletedAt.Default.(time.Time)
+	// incomemanageDescUserID is the schema descriptor for user_id field.
+	incomemanageDescUserID := incomemanageFields[0].Descriptor()
+	// incomemanage.DefaultUserID holds the default value on creation for the user_id field.
+	incomemanage.DefaultUserID = incomemanageDescUserID.Default.(int64)
+	// incomemanageDescPhone is the schema descriptor for phone field.
+	incomemanageDescPhone := incomemanageFields[1].Descriptor()
+	// incomemanage.DefaultPhone holds the default value on creation for the phone field.
+	incomemanage.DefaultPhone = incomemanageDescPhone.Default.(string)
+	// incomemanageDescAmount is the schema descriptor for amount field.
+	incomemanageDescAmount := incomemanageFields[3].Descriptor()
+	// incomemanage.DefaultAmount holds the default value on creation for the amount field.
+	incomemanage.DefaultAmount = incomemanageDescAmount.Default.(int64)
+	// incomemanageDescReason is the schema descriptor for reason field.
+	incomemanageDescReason := incomemanageFields[4].Descriptor()
+	// incomemanage.DefaultReason holds the default value on creation for the reason field.
+	incomemanage.DefaultReason = incomemanageDescReason.Default.(string)
+	// incomemanageDescCurrentBalance is the schema descriptor for current_balance field.
+	incomemanageDescCurrentBalance := incomemanageFields[5].Descriptor()
+	// incomemanage.DefaultCurrentBalance holds the default value on creation for the current_balance field.
+	incomemanage.DefaultCurrentBalance = incomemanageDescCurrentBalance.Default.(int64)
+	// incomemanageDescLastEditedAt is the schema descriptor for last_edited_at field.
+	incomemanageDescLastEditedAt := incomemanageFields[6].Descriptor()
+	// incomemanage.DefaultLastEditedAt holds the default value on creation for the last_edited_at field.
+	incomemanage.DefaultLastEditedAt = incomemanageDescLastEditedAt.Default.(time.Time)
+	// incomemanageDescRejectReason is the schema descriptor for reject_reason field.
+	incomemanageDescRejectReason := incomemanageFields[7].Descriptor()
+	// incomemanage.DefaultRejectReason holds the default value on creation for the reject_reason field.
+	incomemanage.DefaultRejectReason = incomemanageDescRejectReason.Default.(string)
+	// incomemanageDescApproveUserID is the schema descriptor for approve_user_id field.
+	incomemanageDescApproveUserID := incomemanageFields[9].Descriptor()
+	// incomemanage.DefaultApproveUserID holds the default value on creation for the approve_user_id field.
+	incomemanage.DefaultApproveUserID = incomemanageDescApproveUserID.Default.(int64)
+	// incomemanageDescID is the schema descriptor for id field.
+	incomemanageDescID := incomemanageMixinFields0[0].Descriptor()
+	// incomemanage.DefaultID holds the default value on creation for the id field.
+	incomemanage.DefaultID = incomemanageDescID.Default.(func() int64)
 	inputlogMixin := schema.InputLog{}.Mixin()
 	inputlogMixinFields0 := inputlogMixin[0].Fields()
 	_ = inputlogMixinFields0

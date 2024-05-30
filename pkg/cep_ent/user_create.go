@@ -22,7 +22,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomewalletoperate"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/incomemanage"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/loginrecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/lottogetcountrecord"
@@ -1011,34 +1011,34 @@ func (uc *UserCreate) AddTroubleDeducts(t ...*TroubleDeduct) *UserCreate {
 	return uc.AddTroubleDeductIDs(ids...)
 }
 
-// AddIncomeWalletOperateIDs adds the "income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
-func (uc *UserCreate) AddIncomeWalletOperateIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddIncomeWalletOperateIDs(ids...)
+// AddIncomeManageIDs adds the "income_manages" edge to the IncomeManage entity by IDs.
+func (uc *UserCreate) AddIncomeManageIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddIncomeManageIDs(ids...)
 	return uc
 }
 
-// AddIncomeWalletOperates adds the "income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uc *UserCreate) AddIncomeWalletOperates(i ...*IncomeWalletOperate) *UserCreate {
+// AddIncomeManages adds the "income_manages" edges to the IncomeManage entity.
+func (uc *UserCreate) AddIncomeManages(i ...*IncomeManage) *UserCreate {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uc.AddIncomeWalletOperateIDs(ids...)
+	return uc.AddIncomeManageIDs(ids...)
 }
 
-// AddApproveIncomeWalletOperateIDs adds the "approve_income_wallet_operates" edge to the IncomeWalletOperate entity by IDs.
-func (uc *UserCreate) AddApproveIncomeWalletOperateIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddApproveIncomeWalletOperateIDs(ids...)
+// AddApproveIncomeManageIDs adds the "approve_income_manages" edge to the IncomeManage entity by IDs.
+func (uc *UserCreate) AddApproveIncomeManageIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddApproveIncomeManageIDs(ids...)
 	return uc
 }
 
-// AddApproveIncomeWalletOperates adds the "approve_income_wallet_operates" edges to the IncomeWalletOperate entity.
-func (uc *UserCreate) AddApproveIncomeWalletOperates(i ...*IncomeWalletOperate) *UserCreate {
+// AddApproveIncomeManages adds the "approve_income_manages" edges to the IncomeManage entity.
+func (uc *UserCreate) AddApproveIncomeManages(i ...*IncomeManage) *UserCreate {
 	ids := make([]int64, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
-	return uc.AddApproveIncomeWalletOperateIDs(ids...)
+	return uc.AddApproveIncomeManageIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -2028,15 +2028,15 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.IncomeWalletOperatesIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.IncomeManagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.IncomeWalletOperatesTable,
-			Columns: []string{user.IncomeWalletOperatesColumn},
+			Table:   user.IncomeManagesTable,
+			Columns: []string{user.IncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2044,15 +2044,15 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.ApproveIncomeWalletOperatesIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.ApproveIncomeManagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ApproveIncomeWalletOperatesTable,
-			Columns: []string{user.ApproveIncomeWalletOperatesColumn},
+			Table:   user.ApproveIncomeManagesTable,
+			Columns: []string{user.ApproveIncomeManagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(incomewalletoperate.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

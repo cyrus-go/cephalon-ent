@@ -158,10 +158,10 @@ type UserEdges struct {
 	OperateWithdrawRecords []*WithdrawRecord `json:"operate_withdraw_records,omitempty"`
 	// TroubleDeducts holds the value of the trouble_deducts edge.
 	TroubleDeducts []*TroubleDeduct `json:"trouble_deducts,omitempty"`
-	// IncomeWalletOperates holds the value of the income_wallet_operates edge.
-	IncomeWalletOperates []*IncomeWalletOperate `json:"income_wallet_operates,omitempty"`
-	// ApproveIncomeWalletOperates holds the value of the approve_income_wallet_operates edge.
-	ApproveIncomeWalletOperates []*IncomeWalletOperate `json:"approve_income_wallet_operates,omitempty"`
+	// IncomeManages holds the value of the income_manages edge.
+	IncomeManages []*IncomeManage `json:"income_manages,omitempty"`
+	// ApproveIncomeManages holds the value of the approve_income_manages edge.
+	ApproveIncomeManages []*IncomeManage `json:"approve_income_manages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [43]bool
@@ -552,22 +552,22 @@ func (e UserEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
 	return nil, &NotLoadedError{edge: "trouble_deducts"}
 }
 
-// IncomeWalletOperatesOrErr returns the IncomeWalletOperates value or an error if the edge
+// IncomeManagesOrErr returns the IncomeManages value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) IncomeWalletOperatesOrErr() ([]*IncomeWalletOperate, error) {
+func (e UserEdges) IncomeManagesOrErr() ([]*IncomeManage, error) {
 	if e.loadedTypes[41] {
-		return e.IncomeWalletOperates, nil
+		return e.IncomeManages, nil
 	}
-	return nil, &NotLoadedError{edge: "income_wallet_operates"}
+	return nil, &NotLoadedError{edge: "income_manages"}
 }
 
-// ApproveIncomeWalletOperatesOrErr returns the ApproveIncomeWalletOperates value or an error if the edge
+// ApproveIncomeManagesOrErr returns the ApproveIncomeManages value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ApproveIncomeWalletOperatesOrErr() ([]*IncomeWalletOperate, error) {
+func (e UserEdges) ApproveIncomeManagesOrErr() ([]*IncomeManage, error) {
 	if e.loadedTypes[42] {
-		return e.ApproveIncomeWalletOperates, nil
+		return e.ApproveIncomeManages, nil
 	}
-	return nil, &NotLoadedError{edge: "approve_income_wallet_operates"}
+	return nil, &NotLoadedError{edge: "approve_income_manages"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -961,14 +961,14 @@ func (u *User) QueryTroubleDeducts() *TroubleDeductQuery {
 	return NewUserClient(u.config).QueryTroubleDeducts(u)
 }
 
-// QueryIncomeWalletOperates queries the "income_wallet_operates" edge of the User entity.
-func (u *User) QueryIncomeWalletOperates() *IncomeWalletOperateQuery {
-	return NewUserClient(u.config).QueryIncomeWalletOperates(u)
+// QueryIncomeManages queries the "income_manages" edge of the User entity.
+func (u *User) QueryIncomeManages() *IncomeManageQuery {
+	return NewUserClient(u.config).QueryIncomeManages(u)
 }
 
-// QueryApproveIncomeWalletOperates queries the "approve_income_wallet_operates" edge of the User entity.
-func (u *User) QueryApproveIncomeWalletOperates() *IncomeWalletOperateQuery {
-	return NewUserClient(u.config).QueryApproveIncomeWalletOperates(u)
+// QueryApproveIncomeManages queries the "approve_income_manages" edge of the User entity.
+func (u *User) QueryApproveIncomeManages() *IncomeManageQuery {
+	return NewUserClient(u.config).QueryApproveIncomeManages(u)
 }
 
 // Update returns a builder for updating this User.
