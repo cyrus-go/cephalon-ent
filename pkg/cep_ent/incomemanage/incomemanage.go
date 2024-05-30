@@ -40,6 +40,8 @@ const (
 	FieldCurrentBalance = "current_balance"
 	// FieldLastEditedAt holds the string denoting the last_edited_at field in the database.
 	FieldLastEditedAt = "last_edited_at"
+	// FieldLastEditedUserID holds the string denoting the last_edited_user_id field in the database.
+	FieldLastEditedUserID = "last_edited_user_id"
 	// FieldRejectReason holds the string denoting the reject_reason field in the database.
 	FieldRejectReason = "reject_reason"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -83,6 +85,7 @@ var Columns = []string{
 	FieldReason,
 	FieldCurrentBalance,
 	FieldLastEditedAt,
+	FieldLastEditedUserID,
 	FieldRejectReason,
 	FieldStatus,
 	FieldApproveUserID,
@@ -123,6 +126,8 @@ var (
 	DefaultCurrentBalance int64
 	// DefaultLastEditedAt holds the default value on creation for the "last_edited_at" field.
 	DefaultLastEditedAt time.Time
+	// DefaultLastEditedUserID holds the default value on creation for the "last_edited_user_id" field.
+	DefaultLastEditedUserID int64
 	// DefaultRejectReason holds the default value on creation for the "reject_reason" field.
 	DefaultRejectReason string
 	// DefaultApproveUserID holds the default value on creation for the "approve_user_id" field.
@@ -221,6 +226,11 @@ func ByCurrentBalance(opts ...sql.OrderTermOption) OrderOption {
 // ByLastEditedAt orders the results by the last_edited_at field.
 func ByLastEditedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastEditedAt, opts...).ToFunc()
+}
+
+// ByLastEditedUserID orders the results by the last_edited_user_id field.
+func ByLastEditedUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastEditedUserID, opts...).ToFunc()
 }
 
 // ByRejectReason orders the results by the reject_reason field.

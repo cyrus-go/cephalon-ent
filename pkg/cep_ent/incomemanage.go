@@ -44,6 +44,8 @@ type IncomeManage struct {
 	CurrentBalance int64 `json:"current_balance"`
 	// 审批前最后一次编辑的时间
 	LastEditedAt time.Time `json:"last_updated_at"`
+	// 审批前最后一次编辑的用戶 id
+	LastEditedUserID int64 `json:"last_edited_user_id,string"`
 	// 拒绝此条记录原因
 	RejectReason string `json:"reject_reason"`
 	// 状态
@@ -98,7 +100,7 @@ func (*IncomeManage) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case incomemanage.FieldID, incomemanage.FieldCreatedBy, incomemanage.FieldUpdatedBy, incomemanage.FieldUserID, incomemanage.FieldAmount, incomemanage.FieldCurrentBalance, incomemanage.FieldApproveUserID:
+		case incomemanage.FieldID, incomemanage.FieldCreatedBy, incomemanage.FieldUpdatedBy, incomemanage.FieldUserID, incomemanage.FieldAmount, incomemanage.FieldCurrentBalance, incomemanage.FieldLastEditedUserID, incomemanage.FieldApproveUserID:
 			values[i] = new(sql.NullInt64)
 		case incomemanage.FieldPhone, incomemanage.FieldType, incomemanage.FieldReason, incomemanage.FieldRejectReason, incomemanage.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -196,6 +198,12 @@ func (im *IncomeManage) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field last_edited_at", values[i])
 			} else if value.Valid {
 				im.LastEditedAt = value.Time
+			}
+		case incomemanage.FieldLastEditedUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field last_edited_user_id", values[i])
+			} else if value.Valid {
+				im.LastEditedUserID = value.Int64
 			}
 		case incomemanage.FieldRejectReason:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -296,6 +304,9 @@ func (im *IncomeManage) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("last_edited_at=")
 	builder.WriteString(im.LastEditedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("last_edited_user_id=")
+	builder.WriteString(fmt.Sprintf("%v", im.LastEditedUserID))
 	builder.WriteString(", ")
 	builder.WriteString("reject_reason=")
 	builder.WriteString(im.RejectReason)

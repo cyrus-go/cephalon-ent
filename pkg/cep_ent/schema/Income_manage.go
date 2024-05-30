@@ -25,6 +25,7 @@ func (IncomeManage) Fields() []ent.Field {
 		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("操作该用户收益钱包的原因"),
 		field.Int64("current_balance").Default(0).StructTag(`json:"current_balance"`).Comment("当前余额（在生成这条记录时刻的余额），单位：厘"),
 		field.Time("last_edited_at").Default(common.ZeroTime).StructTag(`json:"last_updated_at"`).Comment("审批前最后一次编辑的时间"),
+		field.Int64("last_edited_user_id").StructTag(`json:"last_edited_user_id,string"`).Default(0).Comment("审批前最后一次编辑的用戶 id"),
 		field.String("reject_reason").StructTag(`json:"reject_reason"`).Default("").Comment("拒绝此条记录原因"),
 		field.Enum("status").GoType(enums.IncomeManageStatusPending).Default(string(enums.IncomeManageStatusPending)).StructTag(`json:"status"`).Comment("状态"),
 		field.Int64("approve_user_id").StructTag(`json:"approve_user_id,string"`).Default(0).Comment("审批人 id"),

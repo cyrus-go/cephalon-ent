@@ -1407,12 +1407,16 @@ func init() {
 	incomemanageDescLastEditedAt := incomemanageFields[6].Descriptor()
 	// incomemanage.DefaultLastEditedAt holds the default value on creation for the last_edited_at field.
 	incomemanage.DefaultLastEditedAt = incomemanageDescLastEditedAt.Default.(time.Time)
+	// incomemanageDescLastEditedUserID is the schema descriptor for last_edited_user_id field.
+	incomemanageDescLastEditedUserID := incomemanageFields[7].Descriptor()
+	// incomemanage.DefaultLastEditedUserID holds the default value on creation for the last_edited_user_id field.
+	incomemanage.DefaultLastEditedUserID = incomemanageDescLastEditedUserID.Default.(int64)
 	// incomemanageDescRejectReason is the schema descriptor for reject_reason field.
-	incomemanageDescRejectReason := incomemanageFields[7].Descriptor()
+	incomemanageDescRejectReason := incomemanageFields[8].Descriptor()
 	// incomemanage.DefaultRejectReason holds the default value on creation for the reject_reason field.
 	incomemanage.DefaultRejectReason = incomemanageDescRejectReason.Default.(string)
 	// incomemanageDescApproveUserID is the schema descriptor for approve_user_id field.
-	incomemanageDescApproveUserID := incomemanageFields[9].Descriptor()
+	incomemanageDescApproveUserID := incomemanageFields[10].Descriptor()
 	// incomemanage.DefaultApproveUserID holds the default value on creation for the approve_user_id field.
 	incomemanage.DefaultApproveUserID = incomemanageDescApproveUserID.Default.(int64)
 	// incomemanageDescID is the schema descriptor for id field.

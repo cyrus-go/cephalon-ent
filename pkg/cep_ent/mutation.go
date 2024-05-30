@@ -29273,34 +29273,36 @@ func (m *HmacKeyPairMutation) ResetEdge(name string) error {
 // IncomeManageMutation represents an operation that mutates the IncomeManage nodes in the graph.
 type IncomeManageMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int64
-	created_by          *int64
-	addcreated_by       *int64
-	updated_by          *int64
-	addupdated_by       *int64
-	created_at          *time.Time
-	updated_at          *time.Time
-	deleted_at          *time.Time
-	phone               *string
-	_type               *enums.IncomeManageType
-	amount              *int64
-	addamount           *int64
-	reason              *string
-	current_balance     *int64
-	addcurrent_balance  *int64
-	last_edited_at      *time.Time
-	reject_reason       *string
-	status              *enums.IncomeManageStatus
-	clearedFields       map[string]struct{}
-	user                *int64
-	cleareduser         bool
-	approve_user        *int64
-	clearedapprove_user bool
-	done                bool
-	oldValue            func(context.Context) (*IncomeManage, error)
-	predicates          []predicate.IncomeManage
+	op                     Op
+	typ                    string
+	id                     *int64
+	created_by             *int64
+	addcreated_by          *int64
+	updated_by             *int64
+	addupdated_by          *int64
+	created_at             *time.Time
+	updated_at             *time.Time
+	deleted_at             *time.Time
+	phone                  *string
+	_type                  *enums.IncomeManageType
+	amount                 *int64
+	addamount              *int64
+	reason                 *string
+	current_balance        *int64
+	addcurrent_balance     *int64
+	last_edited_at         *time.Time
+	last_edited_user_id    *int64
+	addlast_edited_user_id *int64
+	reject_reason          *string
+	status                 *enums.IncomeManageStatus
+	clearedFields          map[string]struct{}
+	user                   *int64
+	cleareduser            bool
+	approve_user           *int64
+	clearedapprove_user    bool
+	done                   bool
+	oldValue               func(context.Context) (*IncomeManage, error)
+	predicates             []predicate.IncomeManage
 }
 
 var _ ent.Mutation = (*IncomeManageMutation)(nil)
@@ -29919,6 +29921,62 @@ func (m *IncomeManageMutation) ResetLastEditedAt() {
 	m.last_edited_at = nil
 }
 
+// SetLastEditedUserID sets the "last_edited_user_id" field.
+func (m *IncomeManageMutation) SetLastEditedUserID(i int64) {
+	m.last_edited_user_id = &i
+	m.addlast_edited_user_id = nil
+}
+
+// LastEditedUserID returns the value of the "last_edited_user_id" field in the mutation.
+func (m *IncomeManageMutation) LastEditedUserID() (r int64, exists bool) {
+	v := m.last_edited_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastEditedUserID returns the old "last_edited_user_id" field's value of the IncomeManage entity.
+// If the IncomeManage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IncomeManageMutation) OldLastEditedUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastEditedUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastEditedUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastEditedUserID: %w", err)
+	}
+	return oldValue.LastEditedUserID, nil
+}
+
+// AddLastEditedUserID adds i to the "last_edited_user_id" field.
+func (m *IncomeManageMutation) AddLastEditedUserID(i int64) {
+	if m.addlast_edited_user_id != nil {
+		*m.addlast_edited_user_id += i
+	} else {
+		m.addlast_edited_user_id = &i
+	}
+}
+
+// AddedLastEditedUserID returns the value that was added to the "last_edited_user_id" field in this mutation.
+func (m *IncomeManageMutation) AddedLastEditedUserID() (r int64, exists bool) {
+	v := m.addlast_edited_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLastEditedUserID resets all changes to the "last_edited_user_id" field.
+func (m *IncomeManageMutation) ResetLastEditedUserID() {
+	m.last_edited_user_id = nil
+	m.addlast_edited_user_id = nil
+}
+
 // SetRejectReason sets the "reject_reason" field.
 func (m *IncomeManageMutation) SetRejectReason(s string) {
 	m.reject_reason = &s
@@ -30115,7 +30173,7 @@ func (m *IncomeManageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IncomeManageMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, incomemanage.FieldCreatedBy)
 	}
@@ -30151,6 +30209,9 @@ func (m *IncomeManageMutation) Fields() []string {
 	}
 	if m.last_edited_at != nil {
 		fields = append(fields, incomemanage.FieldLastEditedAt)
+	}
+	if m.last_edited_user_id != nil {
+		fields = append(fields, incomemanage.FieldLastEditedUserID)
 	}
 	if m.reject_reason != nil {
 		fields = append(fields, incomemanage.FieldRejectReason)
@@ -30193,6 +30254,8 @@ func (m *IncomeManageMutation) Field(name string) (ent.Value, bool) {
 		return m.CurrentBalance()
 	case incomemanage.FieldLastEditedAt:
 		return m.LastEditedAt()
+	case incomemanage.FieldLastEditedUserID:
+		return m.LastEditedUserID()
 	case incomemanage.FieldRejectReason:
 		return m.RejectReason()
 	case incomemanage.FieldStatus:
@@ -30232,6 +30295,8 @@ func (m *IncomeManageMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldCurrentBalance(ctx)
 	case incomemanage.FieldLastEditedAt:
 		return m.OldLastEditedAt(ctx)
+	case incomemanage.FieldLastEditedUserID:
+		return m.OldLastEditedUserID(ctx)
 	case incomemanage.FieldRejectReason:
 		return m.OldRejectReason(ctx)
 	case incomemanage.FieldStatus:
@@ -30331,6 +30396,13 @@ func (m *IncomeManageMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLastEditedAt(v)
 		return nil
+	case incomemanage.FieldLastEditedUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastEditedUserID(v)
+		return nil
 	case incomemanage.FieldRejectReason:
 		v, ok := value.(string)
 		if !ok {
@@ -30372,6 +30444,9 @@ func (m *IncomeManageMutation) AddedFields() []string {
 	if m.addcurrent_balance != nil {
 		fields = append(fields, incomemanage.FieldCurrentBalance)
 	}
+	if m.addlast_edited_user_id != nil {
+		fields = append(fields, incomemanage.FieldLastEditedUserID)
+	}
 	return fields
 }
 
@@ -30388,6 +30463,8 @@ func (m *IncomeManageMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedAmount()
 	case incomemanage.FieldCurrentBalance:
 		return m.AddedCurrentBalance()
+	case incomemanage.FieldLastEditedUserID:
+		return m.AddedLastEditedUserID()
 	}
 	return nil, false
 }
@@ -30424,6 +30501,13 @@ func (m *IncomeManageMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCurrentBalance(v)
+		return nil
+	case incomemanage.FieldLastEditedUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLastEditedUserID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown IncomeManage numeric field %s", name)
@@ -30487,6 +30571,9 @@ func (m *IncomeManageMutation) ResetField(name string) error {
 		return nil
 	case incomemanage.FieldLastEditedAt:
 		m.ResetLastEditedAt()
+		return nil
+	case incomemanage.FieldLastEditedUserID:
+		m.ResetLastEditedUserID()
 		return nil
 	case incomemanage.FieldRejectReason:
 		m.ResetRejectReason()
