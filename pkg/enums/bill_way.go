@@ -39,6 +39,7 @@ const (
 	BillWayNodeTrouble               BillWay = "node_trouble"       // 节点故障扣费
 	BillWayIncomeReplacement         BillWay = "income_replacement" // 收益补发
 	BillWayIncomeDeduct              BillWay = "income_deduct"      // 收益扣除
+	BillWayIllegalInvite             BillWay = "illegal_invite"     // 违规邀请
 )
 
 func (BillWay) Values() []string {
@@ -79,6 +80,7 @@ func (BillWay) Values() []string {
 		string(BillWayNodeTrouble),
 		string(BillWayIncomeReplacement),
 		string(BillWayIncomeDeduct),
+		string(BillWayIllegalInvite),
 	}
 }
 
