@@ -46,6 +46,8 @@ type Device struct {
 	Status device.Status `json:"status"`
 	// 设备名称
 	Name string `json:"name"`
+	// 运维管理设备名称
+	ManageName string `json:"manage_name"`
 	// 设备类型
 	Type enums.DeviceType `json:"type"`
 	// 核心数
@@ -185,7 +187,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldType, device.FieldCPU:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -289,6 +291,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				d.Name = value.String
+			}
+		case device.FieldManageName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field manage_name", values[i])
+			} else if value.Valid {
+				d.ManageName = value.String
 			}
 		case device.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -445,6 +453,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(d.Name)
+	builder.WriteString(", ")
+	builder.WriteString("manage_name=")
+	builder.WriteString(d.ManageName)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", d.Type))

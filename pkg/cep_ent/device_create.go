@@ -214,6 +214,20 @@ func (dc *DeviceCreate) SetNillableName(s *string) *DeviceCreate {
 	return dc
 }
 
+// SetManageName sets the "manage_name" field.
+func (dc *DeviceCreate) SetManageName(s string) *DeviceCreate {
+	dc.mutation.SetManageName(s)
+	return dc
+}
+
+// SetNillableManageName sets the "manage_name" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableManageName(s *string) *DeviceCreate {
+	if s != nil {
+		dc.SetManageName(*s)
+	}
+	return dc
+}
+
 // SetType sets the "type" field.
 func (dc *DeviceCreate) SetType(et enums.DeviceType) *DeviceCreate {
 	dc.mutation.SetType(et)
@@ -516,6 +530,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultName
 		dc.mutation.SetName(v)
 	}
+	if _, ok := dc.mutation.ManageName(); !ok {
+		v := device.DefaultManageName
+		dc.mutation.SetManageName(v)
+	}
 	if _, ok := dc.mutation.GetType(); !ok {
 		v := device.DefaultType
 		dc.mutation.SetType(v)
@@ -597,6 +615,9 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`cep_ent: missing required field "Device.name"`)}
+	}
+	if _, ok := dc.mutation.ManageName(); !ok {
+		return &ValidationError{Name: "manage_name", err: errors.New(`cep_ent: missing required field "Device.manage_name"`)}
 	}
 	if _, ok := dc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "Device.type"`)}
@@ -704,6 +725,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Name(); ok {
 		_spec.SetField(device.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := dc.mutation.ManageName(); ok {
+		_spec.SetField(device.FieldManageName, field.TypeString, value)
+		_node.ManageName = value
 	}
 	if value, ok := dc.mutation.GetType(); ok {
 		_spec.SetField(device.FieldType, field.TypeEnum, value)
@@ -1092,6 +1117,18 @@ func (u *DeviceUpsert) UpdateName() *DeviceUpsert {
 	return u
 }
 
+// SetManageName sets the "manage_name" field.
+func (u *DeviceUpsert) SetManageName(v string) *DeviceUpsert {
+	u.Set(device.FieldManageName, v)
+	return u
+}
+
+// UpdateManageName sets the "manage_name" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateManageName() *DeviceUpsert {
+	u.SetExcluded(device.FieldManageName)
+	return u
+}
+
 // SetType sets the "type" field.
 func (u *DeviceUpsert) SetType(v enums.DeviceType) *DeviceUpsert {
 	u.Set(device.FieldType, v)
@@ -1425,6 +1462,20 @@ func (u *DeviceUpsertOne) SetName(v string) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateName() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetManageName sets the "manage_name" field.
+func (u *DeviceUpsertOne) SetManageName(v string) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetManageName(v)
+	})
+}
+
+// UpdateManageName sets the "manage_name" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateManageName() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateManageName()
 	})
 }
 
@@ -1946,6 +1997,20 @@ func (u *DeviceUpsertBulk) SetName(v string) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateName() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateName()
+	})
+}
+
+// SetManageName sets the "manage_name" field.
+func (u *DeviceUpsertBulk) SetManageName(v string) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetManageName(v)
+	})
+}
+
+// UpdateManageName sets the "manage_name" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateManageName() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateManageName()
 	})
 }
 

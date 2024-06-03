@@ -106,6 +106,11 @@ func Name(v string) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldName, v))
 }
 
+// ManageName applies equality check predicate on the "manage_name" field. It's identical to ManageNameEQ.
+func ManageName(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldManageName, v))
+}
+
 // CoresNumber applies equality check predicate on the "cores_number" field. It's identical to CoresNumberEQ.
 func CoresNumber(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCoresNumber, v))
@@ -594,6 +599,71 @@ func NameEqualFold(v string) predicate.Device {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Device {
 	return predicate.Device(sql.FieldContainsFold(FieldName, v))
+}
+
+// ManageNameEQ applies the EQ predicate on the "manage_name" field.
+func ManageNameEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldManageName, v))
+}
+
+// ManageNameNEQ applies the NEQ predicate on the "manage_name" field.
+func ManageNameNEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldManageName, v))
+}
+
+// ManageNameIn applies the In predicate on the "manage_name" field.
+func ManageNameIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldManageName, vs...))
+}
+
+// ManageNameNotIn applies the NotIn predicate on the "manage_name" field.
+func ManageNameNotIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldManageName, vs...))
+}
+
+// ManageNameGT applies the GT predicate on the "manage_name" field.
+func ManageNameGT(v string) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldManageName, v))
+}
+
+// ManageNameGTE applies the GTE predicate on the "manage_name" field.
+func ManageNameGTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldManageName, v))
+}
+
+// ManageNameLT applies the LT predicate on the "manage_name" field.
+func ManageNameLT(v string) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldManageName, v))
+}
+
+// ManageNameLTE applies the LTE predicate on the "manage_name" field.
+func ManageNameLTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldManageName, v))
+}
+
+// ManageNameContains applies the Contains predicate on the "manage_name" field.
+func ManageNameContains(v string) predicate.Device {
+	return predicate.Device(sql.FieldContains(FieldManageName, v))
+}
+
+// ManageNameHasPrefix applies the HasPrefix predicate on the "manage_name" field.
+func ManageNameHasPrefix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasPrefix(FieldManageName, v))
+}
+
+// ManageNameHasSuffix applies the HasSuffix predicate on the "manage_name" field.
+func ManageNameHasSuffix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasSuffix(FieldManageName, v))
+}
+
+// ManageNameEqualFold applies the EqualFold predicate on the "manage_name" field.
+func ManageNameEqualFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldEqualFold(FieldManageName, v))
+}
+
+// ManageNameContainsFold applies the ContainsFold predicate on the "manage_name" field.
+func ManageNameContainsFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldContainsFold(FieldManageName, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.

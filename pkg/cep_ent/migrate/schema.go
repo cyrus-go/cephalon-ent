@@ -488,6 +488,7 @@ var (
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
 		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy"}, Default: "online"},
 		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: "默认设备名称"},
+		{Name: "manage_name", Type: field.TypeString, Comment: "运维管理设备名称", Default: "默认管理设备名称"},
 		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},
 		{Name: "cores_number", Type: field.TypeInt64, Comment: "核心数", Default: 0},
 		{Name: "cpu", Type: field.TypeString, Comment: "CPU型号", Default: ""},
@@ -505,7 +506,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[19]},
+				Columns:    []*schema.Column{DevicesColumns[20]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -514,7 +515,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[19]},
+				Columns: []*schema.Column{DevicesColumns[20]},
 			},
 		},
 	}

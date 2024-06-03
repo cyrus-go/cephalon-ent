@@ -220,6 +220,20 @@ func (du *DeviceUpdate) SetNillableName(s *string) *DeviceUpdate {
 	return du
 }
 
+// SetManageName sets the "manage_name" field.
+func (du *DeviceUpdate) SetManageName(s string) *DeviceUpdate {
+	du.mutation.SetManageName(s)
+	return du
+}
+
+// SetNillableManageName sets the "manage_name" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableManageName(s *string) *DeviceUpdate {
+	if s != nil {
+		du.SetManageName(*s)
+	}
+	return du
+}
+
 // SetType sets the "type" field.
 func (du *DeviceUpdate) SetType(et enums.DeviceType) *DeviceUpdate {
 	du.mutation.SetType(et)
@@ -750,6 +764,9 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Name(); ok {
 		_spec.SetField(device.FieldName, field.TypeString, value)
+	}
+	if value, ok := du.mutation.ManageName(); ok {
+		_spec.SetField(device.FieldManageName, field.TypeString, value)
 	}
 	if value, ok := du.mutation.GetType(); ok {
 		_spec.SetField(device.FieldType, field.TypeEnum, value)
@@ -1377,6 +1394,20 @@ func (duo *DeviceUpdateOne) SetNillableName(s *string) *DeviceUpdateOne {
 	return duo
 }
 
+// SetManageName sets the "manage_name" field.
+func (duo *DeviceUpdateOne) SetManageName(s string) *DeviceUpdateOne {
+	duo.mutation.SetManageName(s)
+	return duo
+}
+
+// SetNillableManageName sets the "manage_name" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableManageName(s *string) *DeviceUpdateOne {
+	if s != nil {
+		duo.SetManageName(*s)
+	}
+	return duo
+}
+
 // SetType sets the "type" field.
 func (duo *DeviceUpdateOne) SetType(et enums.DeviceType) *DeviceUpdateOne {
 	duo.mutation.SetType(et)
@@ -1937,6 +1968,9 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.Name(); ok {
 		_spec.SetField(device.FieldName, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.ManageName(); ok {
+		_spec.SetField(device.FieldManageName, field.TypeString, value)
 	}
 	if value, ok := duo.mutation.GetType(); ok {
 		_spec.SetField(device.FieldType, field.TypeEnum, value)

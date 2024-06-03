@@ -12683,6 +12683,7 @@ type DeviceMutation struct {
 	binding_status                *enums.DeviceBindingStatus
 	status                        *device.Status
 	name                          *string
+	manage_name                   *string
 	_type                         *enums.DeviceType
 	cores_number                  *int64
 	addcores_number               *int64
@@ -13354,6 +13355,42 @@ func (m *DeviceMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *DeviceMutation) ResetName() {
 	m.name = nil
+}
+
+// SetManageName sets the "manage_name" field.
+func (m *DeviceMutation) SetManageName(s string) {
+	m.manage_name = &s
+}
+
+// ManageName returns the value of the "manage_name" field in the mutation.
+func (m *DeviceMutation) ManageName() (r string, exists bool) {
+	v := m.manage_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldManageName returns the old "manage_name" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldManageName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldManageName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldManageName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldManageName: %w", err)
+	}
+	return oldValue.ManageName, nil
+}
+
+// ResetManageName resets all changes to the "manage_name" field.
+func (m *DeviceMutation) ResetManageName() {
+	m.manage_name = nil
 }
 
 // SetType sets the "type" field.
@@ -14138,7 +14175,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -14177,6 +14214,9 @@ func (m *DeviceMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, device.FieldName)
+	}
+	if m.manage_name != nil {
+		fields = append(fields, device.FieldManageName)
 	}
 	if m._type != nil {
 		fields = append(fields, device.FieldType)
@@ -14230,6 +14270,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case device.FieldName:
 		return m.Name()
+	case device.FieldManageName:
+		return m.ManageName()
 	case device.FieldType:
 		return m.GetType()
 	case device.FieldCoresNumber:
@@ -14277,6 +14319,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldStatus(ctx)
 	case device.FieldName:
 		return m.OldName(ctx)
+	case device.FieldManageName:
+		return m.OldManageName(ctx)
 	case device.FieldType:
 		return m.OldType(ctx)
 	case device.FieldCoresNumber:
@@ -14388,6 +14432,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case device.FieldManageName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetManageName(v)
 		return nil
 	case device.FieldType:
 		v, ok := value.(enums.DeviceType)
@@ -14602,6 +14653,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldName:
 		m.ResetName()
+		return nil
+	case device.FieldManageName:
+		m.ResetManageName()
 		return nil
 	case device.FieldType:
 		m.ResetType()

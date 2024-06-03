@@ -43,6 +43,8 @@ const (
 	FieldStatus = "status"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldManageName holds the string denoting the manage_name field in the database.
+	FieldManageName = "manage_name"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldCoresNumber holds the string denoting the cores_number field in the database.
@@ -156,6 +158,7 @@ var Columns = []string{
 	FieldBindingStatus,
 	FieldStatus,
 	FieldName,
+	FieldManageName,
 	FieldType,
 	FieldCoresNumber,
 	FieldCPU,
@@ -197,6 +200,8 @@ var (
 	DefaultLinking bool
 	// DefaultName holds the default value on creation for the "name" field.
 	DefaultName string
+	// DefaultManageName holds the default value on creation for the "manage_name" field.
+	DefaultManageName string
 	// DefaultCoresNumber holds the default value on creation for the "cores_number" field.
 	DefaultCoresNumber int64
 	// DefaultCPU holds the default value on creation for the "cpu" field.
@@ -362,6 +367,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByManageName orders the results by the manage_name field.
+func ByManageName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldManageName, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.

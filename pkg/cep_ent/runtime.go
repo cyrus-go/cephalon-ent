@@ -679,23 +679,27 @@ func init() {
 	deviceDescName := deviceFields[7].Descriptor()
 	// device.DefaultName holds the default value on creation for the name field.
 	device.DefaultName = deviceDescName.Default.(string)
+	// deviceDescManageName is the schema descriptor for manage_name field.
+	deviceDescManageName := deviceFields[8].Descriptor()
+	// device.DefaultManageName holds the default value on creation for the manage_name field.
+	device.DefaultManageName = deviceDescManageName.Default.(string)
 	// deviceDescCoresNumber is the schema descriptor for cores_number field.
-	deviceDescCoresNumber := deviceFields[9].Descriptor()
+	deviceDescCoresNumber := deviceFields[10].Descriptor()
 	// device.DefaultCoresNumber holds the default value on creation for the cores_number field.
 	device.DefaultCoresNumber = deviceDescCoresNumber.Default.(int64)
 	// deviceDescCPU is the schema descriptor for cpu field.
-	deviceDescCPU := deviceFields[10].Descriptor()
+	deviceDescCPU := deviceFields[11].Descriptor()
 	// device.DefaultCPU holds the default value on creation for the cpu field.
 	device.DefaultCPU = deviceDescCPU.Default.(string)
 	// deviceDescCpus is the schema descriptor for cpus field.
-	deviceDescCpus := deviceFields[11].Descriptor()
+	deviceDescCpus := deviceFields[12].Descriptor()
 	device.ValueScanner.Cpus = deviceDescCpus.ValueScanner.(field.TypeValueScanner[[]string])
 	// deviceDescMemory is the schema descriptor for memory field.
-	deviceDescMemory := deviceFields[12].Descriptor()
+	deviceDescMemory := deviceFields[13].Descriptor()
 	// device.DefaultMemory holds the default value on creation for the memory field.
 	device.DefaultMemory = deviceDescMemory.Default.(int64)
 	// deviceDescDisk is the schema descriptor for disk field.
-	deviceDescDisk := deviceFields[13].Descriptor()
+	deviceDescDisk := deviceFields[14].Descriptor()
 	// device.DefaultDisk holds the default value on creation for the disk field.
 	device.DefaultDisk = deviceDescDisk.Default.(float32)
 	// deviceDescID is the schema descriptor for id field.
