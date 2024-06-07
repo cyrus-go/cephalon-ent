@@ -31,7 +31,7 @@ type Device struct {
 	// 软删除时刻，带时区
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键用户 id
-	UserID int64 `json:"user_id,omitempty,string"`
+	UserID int64 `json:"user_id,string"`
 	// 设备唯一序列号
 	SerialNumber string `json:"serial_number"`
 	// 设备状态
