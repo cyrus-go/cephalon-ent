@@ -20,6 +20,7 @@ const (
 	MissionTypeSdBingoTime        MissionType = "sd_bingo_time"
 	MissionTypeFooocusTime        MissionType = "fooocus_time"
 	MissionTypeFooocusLanQueTime  MissionType = "fooocus_lan_que_time"
+	MissionTypeFooocusShaApiTime  MissionType = "fooocus_sha_api_time"
 	MissionTypeTabbyTime          MissionType = "tabby_time"
 	MissionTypeJpCondaTime        MissionType = "jp_conda_time"
 	MissionTypeJpMlTime           MissionType = "jp_ml_time"
@@ -43,7 +44,7 @@ const (
 	MissionTypeSdXiaoChunTime     MissionType = "sd_xiao_chun_time"
 	MissionTypeComfyuiWuTime      MissionType = "comfyui_wu_time"
 	MissionTypeComfyuiLiuTime     MissionType = "comfyui_liu_time"
-	MissionTypeWaitingTime        MissionType = "waiting_time" //等待任务
+	MissionTypeWaitingTime        MissionType = "waiting_time" // 等待任务
 
 	MissionTypeSdTimePlan            MissionType = "sd_time_plan"
 	MissionTypeWtTimePlan            MissionType = "wt_time_plan"
@@ -56,6 +57,7 @@ const (
 	MissionTypeSdBingoTimePlan       MissionType = "sd_bingo_time_plan"
 	MissionTypeFooocusTimePlan       MissionType = "fooocus_time_plan"
 	MissionTypeFooocusLanQueTimePlan MissionType = "fooocus_lan_que_time_plan"
+	MissionTypeFooocusShaApiTimePlan MissionType = "fooocus_sha_api_time_plan"
 	MissionTypeTabbyTimePlan         MissionType = "tabby_time_plan"
 	MissionTypeJpCondaTimePlan       MissionType = "jp_conda_time_plan"
 	MissionTypeJpMlTimePlan          MissionType = "jp_ml_time_plan"
@@ -79,7 +81,7 @@ const (
 	MissionTypeSdXiaoChunTimePlan    MissionType = "sd_xiao_chun_time_plan"
 	MissionTypeComfyuiWuTimePlan     MissionType = "comfyui_wu_time_plan"
 	MissionTypeComfyuiLiuTimePlan    MissionType = "comfyui_liu_time_plan"
-	MissionTypeWaitingTimePlan       MissionType = "waiting_time_plan" //等待任务
+	MissionTypeWaitingTimePlan       MissionType = "waiting_time_plan" // 等待任务
 )
 
 func (obj MissionType) Values() []string {
@@ -112,6 +114,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeFooocusTimePlan),
 		string(MissionTypeFooocusLanQueTime),
 		string(MissionTypeFooocusLanQueTimePlan),
+		string(MissionTypeFooocusShaApiTime),
+		string(MissionTypeFooocusShaApiTimePlan),
 		string(MissionTypeTabbyTime),
 		string(MissionTypeTabbyTimePlan),
 		string(MissionTypeJpCondaTime),
