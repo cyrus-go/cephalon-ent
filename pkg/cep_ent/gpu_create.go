@@ -207,6 +207,20 @@ func (gc *GpuCreate) SetNillableTroubleDeductAmount(i *int64) *GpuCreate {
 	return gc
 }
 
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (gc *GpuCreate) SetWithdrawRetainAmount(i int64) *GpuCreate {
+	gc.mutation.SetWithdrawRetainAmount(i)
+	return gc
+}
+
+// SetNillableWithdrawRetainAmount sets the "withdraw_retain_amount" field if the given value is not nil.
+func (gc *GpuCreate) SetNillableWithdrawRetainAmount(i *int64) *GpuCreate {
+	if i != nil {
+		gc.SetWithdrawRetainAmount(*i)
+	}
+	return gc
+}
+
 // SetID sets the "id" field.
 func (gc *GpuCreate) SetID(i int64) *GpuCreate {
 	gc.mutation.SetID(i)
@@ -338,6 +352,10 @@ func (gc *GpuCreate) defaults() {
 		v := gpu.DefaultTroubleDeductAmount
 		gc.mutation.SetTroubleDeductAmount(v)
 	}
+	if _, ok := gc.mutation.WithdrawRetainAmount(); !ok {
+		v := gpu.DefaultWithdrawRetainAmount
+		gc.mutation.SetWithdrawRetainAmount(v)
+	}
 	if _, ok := gc.mutation.ID(); !ok {
 		v := gpu.DefaultID()
 		gc.mutation.SetID(v)
@@ -389,6 +407,9 @@ func (gc *GpuCreate) check() error {
 	}
 	if _, ok := gc.mutation.TroubleDeductAmount(); !ok {
 		return &ValidationError{Name: "trouble_deduct_amount", err: errors.New(`cep_ent: missing required field "Gpu.trouble_deduct_amount"`)}
+	}
+	if _, ok := gc.mutation.WithdrawRetainAmount(); !ok {
+		return &ValidationError{Name: "withdraw_retain_amount", err: errors.New(`cep_ent: missing required field "Gpu.withdraw_retain_amount"`)}
 	}
 	return nil
 }
@@ -474,6 +495,10 @@ func (gc *GpuCreate) createSpec() (*Gpu, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.TroubleDeductAmount(); ok {
 		_spec.SetField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
 		_node.TroubleDeductAmount = value
+	}
+	if value, ok := gc.mutation.WithdrawRetainAmount(); ok {
+		_spec.SetField(gpu.FieldWithdrawRetainAmount, field.TypeInt64, value)
+		_node.WithdrawRetainAmount = value
 	}
 	if nodes := gc.mutation.DeviceGpuMissionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -757,6 +782,24 @@ func (u *GpuUpsert) AddTroubleDeductAmount(v int64) *GpuUpsert {
 	return u
 }
 
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (u *GpuUpsert) SetWithdrawRetainAmount(v int64) *GpuUpsert {
+	u.Set(gpu.FieldWithdrawRetainAmount, v)
+	return u
+}
+
+// UpdateWithdrawRetainAmount sets the "withdraw_retain_amount" field to the value that was provided on create.
+func (u *GpuUpsert) UpdateWithdrawRetainAmount() *GpuUpsert {
+	u.SetExcluded(gpu.FieldWithdrawRetainAmount)
+	return u
+}
+
+// AddWithdrawRetainAmount adds v to the "withdraw_retain_amount" field.
+func (u *GpuUpsert) AddWithdrawRetainAmount(v int64) *GpuUpsert {
+	u.Add(gpu.FieldWithdrawRetainAmount, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1036,6 +1079,27 @@ func (u *GpuUpsertOne) AddTroubleDeductAmount(v int64) *GpuUpsertOne {
 func (u *GpuUpsertOne) UpdateTroubleDeductAmount() *GpuUpsertOne {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateTroubleDeductAmount()
+	})
+}
+
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (u *GpuUpsertOne) SetWithdrawRetainAmount(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetWithdrawRetainAmount(v)
+	})
+}
+
+// AddWithdrawRetainAmount adds v to the "withdraw_retain_amount" field.
+func (u *GpuUpsertOne) AddWithdrawRetainAmount(v int64) *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddWithdrawRetainAmount(v)
+	})
+}
+
+// UpdateWithdrawRetainAmount sets the "withdraw_retain_amount" field to the value that was provided on create.
+func (u *GpuUpsertOne) UpdateWithdrawRetainAmount() *GpuUpsertOne {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateWithdrawRetainAmount()
 	})
 }
 
@@ -1484,6 +1548,27 @@ func (u *GpuUpsertBulk) AddTroubleDeductAmount(v int64) *GpuUpsertBulk {
 func (u *GpuUpsertBulk) UpdateTroubleDeductAmount() *GpuUpsertBulk {
 	return u.Update(func(s *GpuUpsert) {
 		s.UpdateTroubleDeductAmount()
+	})
+}
+
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (u *GpuUpsertBulk) SetWithdrawRetainAmount(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.SetWithdrawRetainAmount(v)
+	})
+}
+
+// AddWithdrawRetainAmount adds v to the "withdraw_retain_amount" field.
+func (u *GpuUpsertBulk) AddWithdrawRetainAmount(v int64) *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.AddWithdrawRetainAmount(v)
+	})
+}
+
+// UpdateWithdrawRetainAmount sets the "withdraw_retain_amount" field to the value that was provided on create.
+func (u *GpuUpsertBulk) UpdateWithdrawRetainAmount() *GpuUpsertBulk {
+	return u.Update(func(s *GpuUpsert) {
+		s.UpdateWithdrawRetainAmount()
 	})
 }
 

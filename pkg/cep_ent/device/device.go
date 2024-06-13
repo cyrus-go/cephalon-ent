@@ -257,27 +257,12 @@ func BindingStatusValidator(bs enums.DeviceBindingStatus) error {
 	}
 }
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusOnline is the default value of the Status enum.
-const DefaultStatus = StatusOnline
-
-// Status values.
-const (
-	StatusOnline  Status = "online"
-	StatusOffline Status = "offline"
-	StatusBusy    Status = "busy"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.DeviceStatus = "offline"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
+func StatusValidator(s enums.DeviceStatus) error {
 	switch s {
-	case StatusOnline, StatusOffline, StatusBusy:
+	case "online", "offline", "busy", "free", "exit":
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for status field: %q", s)

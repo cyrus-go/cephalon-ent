@@ -43,7 +43,7 @@ type Device struct {
 	// 设备的绑定状态
 	BindingStatus enums.DeviceBindingStatus `json:"binding_status"`
 	// 设备状态
-	Status device.Status `json:"status"`
+	Status enums.DeviceStatus `json:"status"`
 	// 设备名称
 	Name string `json:"name"`
 	// 运维管理设备名称
@@ -284,7 +284,7 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				d.Status = device.Status(value.String)
+				d.Status = enums.DeviceStatus(value.String)
 			}
 		case device.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {

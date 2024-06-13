@@ -45,6 +45,8 @@ type Gpu struct {
 	HighestEarnMonth int64 `json:"highest_earn_month"`
 	// 故障扣费金额，单位：厘/小时
 	TroubleDeductAmount int64 `json:"trouble_deduct_amount"`
+	// 提现保留最低金额（押金），单位：厘
+	WithdrawRetainAmount int64 `json:"withdraw_retain_amount"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GpuQuery when eager-loading is set.
 	Edges        GpuEdges `json:"edges"`
@@ -85,7 +87,7 @@ func (*Gpu) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower, gpu.FieldVideoMemory, gpu.FieldCPU, gpu.FieldMemory, gpu.FieldLowestEarnMonth, gpu.FieldHighestEarnMonth, gpu.FieldTroubleDeductAmount:
+		case gpu.FieldID, gpu.FieldCreatedBy, gpu.FieldUpdatedBy, gpu.FieldPower, gpu.FieldVideoMemory, gpu.FieldCPU, gpu.FieldMemory, gpu.FieldLowestEarnMonth, gpu.FieldHighestEarnMonth, gpu.FieldTroubleDeductAmount, gpu.FieldWithdrawRetainAmount:
 			values[i] = new(sql.NullInt64)
 		case gpu.FieldVersion:
 			values[i] = new(sql.NullString)
@@ -190,6 +192,12 @@ func (gp *Gpu) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gp.TroubleDeductAmount = value.Int64
 			}
+		case gpu.FieldWithdrawRetainAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field withdraw_retain_amount", values[i])
+			} else if value.Valid {
+				gp.WithdrawRetainAmount = value.Int64
+			}
 		default:
 			gp.selectValues.Set(columns[i], values[i])
 		}
@@ -274,6 +282,9 @@ func (gp *Gpu) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("trouble_deduct_amount=")
 	builder.WriteString(fmt.Sprintf("%v", gp.TroubleDeductAmount))
+	builder.WriteString(", ")
+	builder.WriteString("withdraw_retain_amount=")
+	builder.WriteString(fmt.Sprintf("%v", gp.WithdrawRetainAmount))
 	builder.WriteByte(')')
 	return builder.String()
 }

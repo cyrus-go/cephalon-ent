@@ -7,6 +7,7 @@ const (
 	GpuStatusOffline GpuStatus = "offline"
 	GpuStatusBusy    GpuStatus = "busy"
 	GpuStatusFree    GpuStatus = "free"
+	GpuStatusExit    GpuStatus = "exit" // 退出节点网络
 )
 
 func (GpuStatus) Values() []string {
@@ -15,6 +16,7 @@ func (GpuStatus) Values() []string {
 		string(GpuStatusOffline),
 		string(GpuStatusBusy),
 		string(GpuStatusFree),
+		string(GpuStatusExit),
 	}
 }
 

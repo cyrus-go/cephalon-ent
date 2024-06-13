@@ -255,6 +255,27 @@ func (gu *GpuUpdate) AddTroubleDeductAmount(i int64) *GpuUpdate {
 	return gu
 }
 
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (gu *GpuUpdate) SetWithdrawRetainAmount(i int64) *GpuUpdate {
+	gu.mutation.ResetWithdrawRetainAmount()
+	gu.mutation.SetWithdrawRetainAmount(i)
+	return gu
+}
+
+// SetNillableWithdrawRetainAmount sets the "withdraw_retain_amount" field if the given value is not nil.
+func (gu *GpuUpdate) SetNillableWithdrawRetainAmount(i *int64) *GpuUpdate {
+	if i != nil {
+		gu.SetWithdrawRetainAmount(*i)
+	}
+	return gu
+}
+
+// AddWithdrawRetainAmount adds i to the "withdraw_retain_amount" field.
+func (gu *GpuUpdate) AddWithdrawRetainAmount(i int64) *GpuUpdate {
+	gu.mutation.AddWithdrawRetainAmount(i)
+	return gu
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (gu *GpuUpdate) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdate {
 	gu.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -458,6 +479,12 @@ func (gu *GpuUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.AddedTroubleDeductAmount(); ok {
 		_spec.AddField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.WithdrawRetainAmount(); ok {
+		_spec.SetField(gpu.FieldWithdrawRetainAmount, field.TypeInt64, value)
+	}
+	if value, ok := gu.mutation.AddedWithdrawRetainAmount(); ok {
+		_spec.AddField(gpu.FieldWithdrawRetainAmount, field.TypeInt64, value)
 	}
 	if gu.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -794,6 +821,27 @@ func (guo *GpuUpdateOne) AddTroubleDeductAmount(i int64) *GpuUpdateOne {
 	return guo
 }
 
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (guo *GpuUpdateOne) SetWithdrawRetainAmount(i int64) *GpuUpdateOne {
+	guo.mutation.ResetWithdrawRetainAmount()
+	guo.mutation.SetWithdrawRetainAmount(i)
+	return guo
+}
+
+// SetNillableWithdrawRetainAmount sets the "withdraw_retain_amount" field if the given value is not nil.
+func (guo *GpuUpdateOne) SetNillableWithdrawRetainAmount(i *int64) *GpuUpdateOne {
+	if i != nil {
+		guo.SetWithdrawRetainAmount(*i)
+	}
+	return guo
+}
+
+// AddWithdrawRetainAmount adds i to the "withdraw_retain_amount" field.
+func (guo *GpuUpdateOne) AddWithdrawRetainAmount(i int64) *GpuUpdateOne {
+	guo.mutation.AddWithdrawRetainAmount(i)
+	return guo
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by IDs.
 func (guo *GpuUpdateOne) AddDeviceGpuMissionIDs(ids ...int64) *GpuUpdateOne {
 	guo.mutation.AddDeviceGpuMissionIDs(ids...)
@@ -1027,6 +1075,12 @@ func (guo *GpuUpdateOne) sqlSave(ctx context.Context) (_node *Gpu, err error) {
 	}
 	if value, ok := guo.mutation.AddedTroubleDeductAmount(); ok {
 		_spec.AddField(gpu.FieldTroubleDeductAmount, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.WithdrawRetainAmount(); ok {
+		_spec.SetField(gpu.FieldWithdrawRetainAmount, field.TypeInt64, value)
+	}
+	if value, ok := guo.mutation.AddedWithdrawRetainAmount(); ok {
+		_spec.AddField(gpu.FieldWithdrawRetainAmount, field.TypeInt64, value)
 	}
 	if guo.mutation.DeviceGpuMissionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

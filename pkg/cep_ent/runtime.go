@@ -1321,6 +1321,10 @@ func init() {
 	gpuDescTroubleDeductAmount := gpuFields[7].Descriptor()
 	// gpu.DefaultTroubleDeductAmount holds the default value on creation for the trouble_deduct_amount field.
 	gpu.DefaultTroubleDeductAmount = gpuDescTroubleDeductAmount.Default.(int64)
+	// gpuDescWithdrawRetainAmount is the schema descriptor for withdraw_retain_amount field.
+	gpuDescWithdrawRetainAmount := gpuFields[8].Descriptor()
+	// gpu.DefaultWithdrawRetainAmount holds the default value on creation for the withdraw_retain_amount field.
+	gpu.DefaultWithdrawRetainAmount = gpuDescWithdrawRetainAmount.Default.(int64)
 	// gpuDescID is the schema descriptor for id field.
 	gpuDescID := gpuMixinFields0[0].Descriptor()
 	// gpu.DefaultID holds the default value on creation for the id field.

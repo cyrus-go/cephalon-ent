@@ -486,7 +486,7 @@ var (
 		{Name: "sum_cep", Type: field.TypeInt64, Comment: "该设备总获得利润", Default: 0},
 		{Name: "linking", Type: field.TypeBool, Comment: "设备是否正在对接中", Default: false},
 		{Name: "binding_status", Type: field.TypeEnum, Comment: "设备的绑定状态", Enums: []string{"init", "bound", "unbound", "rebinding"}, Default: "init"},
-		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy"}, Default: "online"},
+		{Name: "status", Type: field.TypeEnum, Comment: "设备状态", Enums: []string{"online", "offline", "busy", "free", "exit"}, Default: "offline"},
 		{Name: "name", Type: field.TypeString, Comment: "设备名称", Default: "默认设备名称"},
 		{Name: "manage_name", Type: field.TypeString, Comment: "运维管理设备名称", Default: "默认管理设备名称"},
 		{Name: "type", Type: field.TypeEnum, Comment: "设备类型", Enums: []string{"official", "ordinary"}, Default: "ordinary"},
@@ -530,7 +530,7 @@ var (
 		{Name: "able_mission_kind", Type: field.TypeString, Nullable: true, Comment: "可以接的任务类型", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "device_slot", Type: field.TypeInt8, Comment: "显卡占用设备的插槽", Default: 0},
 		{Name: "max_online_mission", Type: field.TypeInt8, Comment: "最大同时在线任务", Default: 0},
-		{Name: "gpu_status", Type: field.TypeEnum, Comment: "gpu 当前状态", Enums: []string{"online", "offline", "busy", "free"}, Default: "offline"},
+		{Name: "gpu_status", Type: field.TypeEnum, Comment: "gpu 当前状态", Enums: []string{"online", "offline", "busy", "free", "exit"}, Default: "offline"},
 		{Name: "mission_id", Type: field.TypeString, Nullable: true, Comment: "正在做的任务 id", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
 		{Name: "gpu_id", Type: field.TypeInt64, Comment: "外键 gpu id", Default: 0},
@@ -934,6 +934,7 @@ var (
 		{Name: "lowest_earn_month", Type: field.TypeInt64, Comment: "保底最低月收益", Default: 0},
 		{Name: "highest_earn_month", Type: field.TypeInt64, Comment: "保底最高月收益", Default: 0},
 		{Name: "trouble_deduct_amount", Type: field.TypeInt64, Comment: "故障扣费金额，单位：厘/小时", Default: 0},
+		{Name: "withdraw_retain_amount", Type: field.TypeInt64, Comment: "提现保留最低金额（押金），单位：厘", Default: 0},
 	}
 	// GpusTable holds the schema information for the "gpus" table.
 	GpusTable = &schema.Table{

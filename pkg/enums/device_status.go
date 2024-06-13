@@ -7,6 +7,7 @@ const (
 	DeviceStatusOffline DeviceStatus = "offline"
 	DeviceStatusBusy    DeviceStatus = "busy"
 	DeviceStatusFree    DeviceStatus = "free"
+	DeviceStatusExit    DeviceStatus = "exit" // 退出节点
 )
 
 func (DeviceStatus) Values() []string {
@@ -15,6 +16,7 @@ func (DeviceStatus) Values() []string {
 		string(DeviceStatusOffline),
 		string(DeviceStatusBusy),
 		string(DeviceStatusFree),
+		string(DeviceStatusExit),
 	}
 }
 

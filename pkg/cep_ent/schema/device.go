@@ -23,7 +23,7 @@ func (Device) Fields() []ent.Field {
 		field.Int64("sum_cep").StructTag(`json:"sum_cep"`).Default(0).Comment("该设备总获得利润"),
 		field.Bool("linking").Default(false).StructTag(`json:"linking"`).Comment("设备是否正在对接中"),
 		field.Enum("binding_status").GoType(enums.DeviceBindingStatusInit).Default(string(enums.DeviceBindingStatusInit)).StructTag(`json:"binding_status"`).Comment("设备的绑定状态"),
-		field.Enum("status").Values("online", "offline", "busy").Default("online").StructTag(`json:"status"`).Comment("设备状态"),
+		field.Enum("status").GoType(enums.DeviceStatusFree).Default(string(enums.DeviceStatusOffline)).StructTag(`json:"status"`).Comment("设备状态"),
 		field.String("name").StructTag(`json:"name"`).Default("默认设备名称").Comment("设备名称"),
 		field.String("manage_name").StructTag(`json:"manage_name"`).Default("默认管理设备名称").Comment("运维管理设备名称"),
 		field.Enum("type").GoType(enums.DeviceTypeOrdinary).Default(string(enums.DeviceTypeOrdinary)).StructTag(`json:"type"`).Comment("设备类型"),

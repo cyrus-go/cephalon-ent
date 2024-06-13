@@ -116,6 +116,11 @@ func TroubleDeductAmount(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldTroubleDeductAmount, v))
 }
 
+// WithdrawRetainAmount applies equality check predicate on the "withdraw_retain_amount" field. It's identical to WithdrawRetainAmountEQ.
+func WithdrawRetainAmount(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldWithdrawRetainAmount, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldEQ(FieldCreatedBy, v))
@@ -624,6 +629,46 @@ func TroubleDeductAmountLT(v int64) predicate.Gpu {
 // TroubleDeductAmountLTE applies the LTE predicate on the "trouble_deduct_amount" field.
 func TroubleDeductAmountLTE(v int64) predicate.Gpu {
 	return predicate.Gpu(sql.FieldLTE(FieldTroubleDeductAmount, v))
+}
+
+// WithdrawRetainAmountEQ applies the EQ predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountEQ(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldEQ(FieldWithdrawRetainAmount, v))
+}
+
+// WithdrawRetainAmountNEQ applies the NEQ predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountNEQ(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNEQ(FieldWithdrawRetainAmount, v))
+}
+
+// WithdrawRetainAmountIn applies the In predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountIn(vs ...int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldIn(FieldWithdrawRetainAmount, vs...))
+}
+
+// WithdrawRetainAmountNotIn applies the NotIn predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountNotIn(vs ...int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldNotIn(FieldWithdrawRetainAmount, vs...))
+}
+
+// WithdrawRetainAmountGT applies the GT predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountGT(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGT(FieldWithdrawRetainAmount, v))
+}
+
+// WithdrawRetainAmountGTE applies the GTE predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountGTE(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldGTE(FieldWithdrawRetainAmount, v))
+}
+
+// WithdrawRetainAmountLT applies the LT predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountLT(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLT(FieldWithdrawRetainAmount, v))
+}
+
+// WithdrawRetainAmountLTE applies the LTE predicate on the "withdraw_retain_amount" field.
+func WithdrawRetainAmountLTE(v int64) predicate.Gpu {
+	return predicate.Gpu(sql.FieldLTE(FieldWithdrawRetainAmount, v))
 }
 
 // HasDeviceGpuMissions applies the HasEdge predicate on the "device_gpu_missions" edge.

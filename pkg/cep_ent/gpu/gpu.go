@@ -42,6 +42,8 @@ const (
 	FieldHighestEarnMonth = "highest_earn_month"
 	// FieldTroubleDeductAmount holds the string denoting the trouble_deduct_amount field in the database.
 	FieldTroubleDeductAmount = "trouble_deduct_amount"
+	// FieldWithdrawRetainAmount holds the string denoting the withdraw_retain_amount field in the database.
+	FieldWithdrawRetainAmount = "withdraw_retain_amount"
 	// EdgeDeviceGpuMissions holds the string denoting the device_gpu_missions edge name in mutations.
 	EdgeDeviceGpuMissions = "device_gpu_missions"
 	// EdgePrices holds the string denoting the prices edge name in mutations.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldLowestEarnMonth,
 	FieldHighestEarnMonth,
 	FieldTroubleDeductAmount,
+	FieldWithdrawRetainAmount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -119,6 +122,8 @@ var (
 	DefaultHighestEarnMonth int64
 	// DefaultTroubleDeductAmount holds the default value on creation for the "trouble_deduct_amount" field.
 	DefaultTroubleDeductAmount int64
+	// DefaultWithdrawRetainAmount holds the default value on creation for the "withdraw_retain_amount" field.
+	DefaultWithdrawRetainAmount int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -206,6 +211,11 @@ func ByHighestEarnMonth(opts ...sql.OrderTermOption) OrderOption {
 // ByTroubleDeductAmount orders the results by the trouble_deduct_amount field.
 func ByTroubleDeductAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTroubleDeductAmount, opts...).ToFunc()
+}
+
+// ByWithdrawRetainAmount orders the results by the withdraw_retain_amount field.
+func ByWithdrawRetainAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldWithdrawRetainAmount, opts...).ToFunc()
 }
 
 // ByDeviceGpuMissionsCount orders the results by device_gpu_missions count.

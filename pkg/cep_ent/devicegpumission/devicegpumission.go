@@ -125,7 +125,7 @@ const DefaultGpuStatus enums.GpuStatus = "offline"
 // GpuStatusValidator is a validator for the "gpu_status" field enum values. It is called by the builders before save.
 func GpuStatusValidator(gs enums.GpuStatus) error {
 	switch gs {
-	case "online", "offline", "busy", "free":
+	case "online", "offline", "busy", "free", "exit":
 		return nil
 	default:
 		return fmt.Errorf("devicegpumission: invalid enum value for gpu_status field: %q", gs)

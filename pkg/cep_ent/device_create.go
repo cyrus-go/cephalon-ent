@@ -187,15 +187,15 @@ func (dc *DeviceCreate) SetNillableBindingStatus(ebs *enums.DeviceBindingStatus)
 }
 
 // SetStatus sets the "status" field.
-func (dc *DeviceCreate) SetStatus(d device.Status) *DeviceCreate {
-	dc.mutation.SetStatus(d)
+func (dc *DeviceCreate) SetStatus(es enums.DeviceStatus) *DeviceCreate {
+	dc.mutation.SetStatus(es)
 	return dc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableStatus(d *device.Status) *DeviceCreate {
-	if d != nil {
-		dc.SetStatus(*d)
+func (dc *DeviceCreate) SetNillableStatus(es *enums.DeviceStatus) *DeviceCreate {
+	if es != nil {
+		dc.SetStatus(*es)
 	}
 	return dc
 }
@@ -1094,7 +1094,7 @@ func (u *DeviceUpsert) UpdateBindingStatus() *DeviceUpsert {
 }
 
 // SetStatus sets the "status" field.
-func (u *DeviceUpsert) SetStatus(v device.Status) *DeviceUpsert {
+func (u *DeviceUpsert) SetStatus(v enums.DeviceStatus) *DeviceUpsert {
 	u.Set(device.FieldStatus, v)
 	return u
 }
@@ -1438,7 +1438,7 @@ func (u *DeviceUpsertOne) UpdateBindingStatus() *DeviceUpsertOne {
 }
 
 // SetStatus sets the "status" field.
-func (u *DeviceUpsertOne) SetStatus(v device.Status) *DeviceUpsertOne {
+func (u *DeviceUpsertOne) SetStatus(v enums.DeviceStatus) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.SetStatus(v)
 	})
@@ -1973,7 +1973,7 @@ func (u *DeviceUpsertBulk) UpdateBindingStatus() *DeviceUpsertBulk {
 }
 
 // SetStatus sets the "status" field.
-func (u *DeviceUpsertBulk) SetStatus(v device.Status) *DeviceUpsertBulk {
+func (u *DeviceUpsertBulk) SetStatus(v enums.DeviceStatus) *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.SetStatus(v)
 	})

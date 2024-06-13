@@ -12681,7 +12681,7 @@ type DeviceMutation struct {
 	addsum_cep                    *int64
 	linking                       *bool
 	binding_status                *enums.DeviceBindingStatus
-	status                        *device.Status
+	status                        *enums.DeviceStatus
 	name                          *string
 	manage_name                   *string
 	_type                         *enums.DeviceType
@@ -13286,12 +13286,12 @@ func (m *DeviceMutation) ResetBindingStatus() {
 }
 
 // SetStatus sets the "status" field.
-func (m *DeviceMutation) SetStatus(d device.Status) {
-	m.status = &d
+func (m *DeviceMutation) SetStatus(es enums.DeviceStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *DeviceMutation) Status() (r device.Status, exists bool) {
+func (m *DeviceMutation) Status() (r enums.DeviceStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -13302,7 +13302,7 @@ func (m *DeviceMutation) Status() (r device.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldStatus(ctx context.Context) (v device.Status, err error) {
+func (m *DeviceMutation) OldStatus(ctx context.Context) (v enums.DeviceStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -14420,7 +14420,7 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		m.SetBindingStatus(v)
 		return nil
 	case device.FieldStatus:
-		v, ok := value.(device.Status)
+		v, ok := value.(enums.DeviceStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -26941,6 +26941,8 @@ type GpuMutation struct {
 	addhighest_earn_month      *int64
 	trouble_deduct_amount      *int64
 	addtrouble_deduct_amount   *int64
+	withdraw_retain_amount     *int64
+	addwithdraw_retain_amount  *int64
 	clearedFields              map[string]struct{}
 	device_gpu_missions        map[int64]struct{}
 	removeddevice_gpu_missions map[int64]struct{}
@@ -27705,6 +27707,62 @@ func (m *GpuMutation) ResetTroubleDeductAmount() {
 	m.addtrouble_deduct_amount = nil
 }
 
+// SetWithdrawRetainAmount sets the "withdraw_retain_amount" field.
+func (m *GpuMutation) SetWithdrawRetainAmount(i int64) {
+	m.withdraw_retain_amount = &i
+	m.addwithdraw_retain_amount = nil
+}
+
+// WithdrawRetainAmount returns the value of the "withdraw_retain_amount" field in the mutation.
+func (m *GpuMutation) WithdrawRetainAmount() (r int64, exists bool) {
+	v := m.withdraw_retain_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWithdrawRetainAmount returns the old "withdraw_retain_amount" field's value of the Gpu entity.
+// If the Gpu object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GpuMutation) OldWithdrawRetainAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWithdrawRetainAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWithdrawRetainAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWithdrawRetainAmount: %w", err)
+	}
+	return oldValue.WithdrawRetainAmount, nil
+}
+
+// AddWithdrawRetainAmount adds i to the "withdraw_retain_amount" field.
+func (m *GpuMutation) AddWithdrawRetainAmount(i int64) {
+	if m.addwithdraw_retain_amount != nil {
+		*m.addwithdraw_retain_amount += i
+	} else {
+		m.addwithdraw_retain_amount = &i
+	}
+}
+
+// AddedWithdrawRetainAmount returns the value that was added to the "withdraw_retain_amount" field in this mutation.
+func (m *GpuMutation) AddedWithdrawRetainAmount() (r int64, exists bool) {
+	v := m.addwithdraw_retain_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWithdrawRetainAmount resets all changes to the "withdraw_retain_amount" field.
+func (m *GpuMutation) ResetWithdrawRetainAmount() {
+	m.withdraw_retain_amount = nil
+	m.addwithdraw_retain_amount = nil
+}
+
 // AddDeviceGpuMissionIDs adds the "device_gpu_missions" edge to the DeviceGpuMission entity by ids.
 func (m *GpuMutation) AddDeviceGpuMissionIDs(ids ...int64) {
 	if m.device_gpu_missions == nil {
@@ -27847,7 +27905,7 @@ func (m *GpuMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GpuMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, gpu.FieldCreatedBy)
 	}
@@ -27887,6 +27945,9 @@ func (m *GpuMutation) Fields() []string {
 	if m.trouble_deduct_amount != nil {
 		fields = append(fields, gpu.FieldTroubleDeductAmount)
 	}
+	if m.withdraw_retain_amount != nil {
+		fields = append(fields, gpu.FieldWithdrawRetainAmount)
+	}
 	return fields
 }
 
@@ -27921,6 +27982,8 @@ func (m *GpuMutation) Field(name string) (ent.Value, bool) {
 		return m.HighestEarnMonth()
 	case gpu.FieldTroubleDeductAmount:
 		return m.TroubleDeductAmount()
+	case gpu.FieldWithdrawRetainAmount:
+		return m.WithdrawRetainAmount()
 	}
 	return nil, false
 }
@@ -27956,6 +28019,8 @@ func (m *GpuMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldHighestEarnMonth(ctx)
 	case gpu.FieldTroubleDeductAmount:
 		return m.OldTroubleDeductAmount(ctx)
+	case gpu.FieldWithdrawRetainAmount:
+		return m.OldWithdrawRetainAmount(ctx)
 	}
 	return nil, fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -28056,6 +28121,13 @@ func (m *GpuMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTroubleDeductAmount(v)
 		return nil
+	case gpu.FieldWithdrawRetainAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWithdrawRetainAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
 }
@@ -28091,6 +28163,9 @@ func (m *GpuMutation) AddedFields() []string {
 	if m.addtrouble_deduct_amount != nil {
 		fields = append(fields, gpu.FieldTroubleDeductAmount)
 	}
+	if m.addwithdraw_retain_amount != nil {
+		fields = append(fields, gpu.FieldWithdrawRetainAmount)
+	}
 	return fields
 }
 
@@ -28117,6 +28192,8 @@ func (m *GpuMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedHighestEarnMonth()
 	case gpu.FieldTroubleDeductAmount:
 		return m.AddedTroubleDeductAmount()
+	case gpu.FieldWithdrawRetainAmount:
+		return m.AddedWithdrawRetainAmount()
 	}
 	return nil, false
 }
@@ -28189,6 +28266,13 @@ func (m *GpuMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddTroubleDeductAmount(v)
 		return nil
+	case gpu.FieldWithdrawRetainAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWithdrawRetainAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Gpu numeric field %s", name)
 }
@@ -28254,6 +28338,9 @@ func (m *GpuMutation) ResetField(name string) error {
 		return nil
 	case gpu.FieldTroubleDeductAmount:
 		m.ResetTroubleDeductAmount()
+		return nil
+	case gpu.FieldWithdrawRetainAmount:
+		m.ResetWithdrawRetainAmount()
 		return nil
 	}
 	return fmt.Errorf("unknown Gpu field %s", name)
