@@ -3453,6 +3453,10 @@ func init() {
 	withdrawaccountDescAlipayCardNo := withdrawaccountFields[10].Descriptor()
 	// withdrawaccount.DefaultAlipayCardNo holds the default value on creation for the alipay_card_no field.
 	withdrawaccount.DefaultAlipayCardNo = withdrawaccountDescAlipayCardNo.Default.(string)
+	// withdrawaccountDescCompanyAccount is the schema descriptor for company_account field.
+	withdrawaccountDescCompanyAccount := withdrawaccountFields[11].Descriptor()
+	// withdrawaccount.DefaultCompanyAccount holds the default value on creation for the company_account field.
+	withdrawaccount.DefaultCompanyAccount = withdrawaccountDescCompanyAccount.Default.(string)
 	// withdrawaccountDescID is the schema descriptor for id field.
 	withdrawaccountDescID := withdrawaccountMixinFields0[0].Descriptor()
 	// withdrawaccount.DefaultID holds the default value on creation for the id field.

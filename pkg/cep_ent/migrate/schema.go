@@ -97,7 +97,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "type", Type: field.TypeEnum, Comment: "流水的类型，对应的 order_id 关联哪张表依赖于该字段", Enums: []string{"withdraw", "unknown", "recharge", "mission_consume", "mission_produce", "transfer", "active", "mission", "gas", "extra_service", "cdk", "lotto", "node_trouble", "income_manage", "illegal"}, Default: "unknown"},
-		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "withdraw_refund", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time", "cdk_exchange", "lotto_prize", "node_trouble", "income_replacement", "income_deduct", "illegal_invite"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "额度账户流水的产生方式，微信、支付宝、计时消耗等，偏向于业务展示", Enums: []string{"withdraw_bank_card", "withdraw_alipay", "withdraw_wechat", "withdraw_refund", "withdraw_company", "unknown", "recharge_wechat", "recharge_alipay", "mission_time", "mission_time_plan_hour", "mission_time_plan_day", "mission_time_plan_week", "mission_time_plan_month", "mission_count", "active_bind", "mission_hold", "mission_volume", "active_register", "active_share", "active_recharge", "transfer_manual", "first_invite_recharge", "transfer_withdraw", "special_channel_recharge", "extra_service_time_plan_hour", "extra_service_time_plan_day", "extra_service_time_plan_week", "extra_service_time_plan_month", "extra_service_hold", "extra_service_volume", "active_invite_recharge", "extra_service_time", "cdk_exchange", "lotto_prize", "node_trouble", "income_replacement", "income_deduct", "illegal_invite"}, Default: "unknown"},
 		{Name: "profit_symbol_id", Type: field.TypeInt64, Comment: "外键分润币种 id", Default: 3},
 		{Name: "amount", Type: field.TypeInt64, Comment: "消耗多少货币金额", Default: 0},
 		{Name: "target_before_amount", Type: field.TypeInt64, Comment: "目标钱包期初金额", Default: 0},
@@ -2547,16 +2547,17 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "business_name", Type: field.TypeString, Comment: "威付通商户名称", Default: ""},
+		{Name: "business_name", Type: field.TypeString, Comment: "威付通商户名称，对公时为户名", Default: ""},
 		{Name: "business_id", Type: field.TypeInt64, Comment: "商户 id", Default: 0},
-		{Name: "business_type", Type: field.TypeEnum, Comment: "商户类型", Enums: []string{"yun", "wft"}, Default: "yun"},
+		{Name: "business_type", Type: field.TypeEnum, Comment: "商户类型", Enums: []string{"yun", "wft", "company"}, Default: "yun"},
 		{Name: "id_card", Type: field.TypeString, Comment: "身份证号码", Default: ""},
 		{Name: "personal_name", Type: field.TypeString, Comment: "个人商户名称", Default: "未设置昵称"},
 		{Name: "phone", Type: field.TypeString, Comment: "个人商户手机号", Default: ""},
 		{Name: "bank_card_number", Type: field.TypeString, Comment: "银行卡号", Default: ""},
 		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
-		{Name: "way", Type: field.TypeEnum, Comment: "提现方式", Enums: []string{"unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card"}, Default: "unknown"},
+		{Name: "way", Type: field.TypeEnum, Comment: "提现方式", Enums: []string{"unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "withdraw_company"}, Default: "unknown"},
 		{Name: "alipay_card_no", Type: field.TypeString, Comment: "支付宝账户", Default: ""},
+		{Name: "company_account", Type: field.TypeString, Comment: "对公账号", Default: ""},
 		{Name: "user_id", Type: field.TypeInt64, Unique: true, Comment: "外键用户 id", Default: 0},
 	}
 	// WithdrawAccountsTable holds the schema information for the "withdraw_accounts" table.
@@ -2568,7 +2569,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "withdraw_accounts_users_withdraw_account",
-				Columns:    []*schema.Column{WithdrawAccountsColumns[16]},
+				Columns:    []*schema.Column{WithdrawAccountsColumns[17]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2577,7 +2578,7 @@ var (
 			{
 				Name:    "withdrawaccount_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{WithdrawAccountsColumns[16]},
+				Columns: []*schema.Column{WithdrawAccountsColumns[17]},
 			},
 		},
 	}
@@ -2590,7 +2591,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "withdraw_account", Type: field.TypeString, Comment: "提现账户", Default: ""},
-		{Name: "type", Type: field.TypeEnum, Comment: "提现类型", Enums: []string{"unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "提现类型", Enums: []string{"unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "withdraw_company"}, Default: "unknown"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "提现金额，单位：厘", Default: 0},
 		{Name: "remain_amount", Type: field.TypeInt64, Comment: "本次提现后余额，单位：厘", Default: 0},
 		{Name: "rate", Type: field.TypeInt64, Comment: "提现手续费率，100 为基准，比如手续费 7%，值就应该为 7，最大值不能超过 100, 默认 7%", Default: 7},

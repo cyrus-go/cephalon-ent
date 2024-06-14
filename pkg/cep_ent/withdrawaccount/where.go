@@ -126,6 +126,11 @@ func AlipayCardNo(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldAlipayCardNo, v))
 }
 
+// CompanyAccount applies equality check predicate on the "company_account" field. It's identical to CompanyAccountEQ.
+func CompanyAccount(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldCompanyAccount, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldEQ(FieldCreatedBy, v))
@@ -899,6 +904,71 @@ func AlipayCardNoEqualFold(v string) predicate.WithdrawAccount {
 // AlipayCardNoContainsFold applies the ContainsFold predicate on the "alipay_card_no" field.
 func AlipayCardNoContainsFold(v string) predicate.WithdrawAccount {
 	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldAlipayCardNo, v))
+}
+
+// CompanyAccountEQ applies the EQ predicate on the "company_account" field.
+func CompanyAccountEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEQ(FieldCompanyAccount, v))
+}
+
+// CompanyAccountNEQ applies the NEQ predicate on the "company_account" field.
+func CompanyAccountNEQ(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNEQ(FieldCompanyAccount, v))
+}
+
+// CompanyAccountIn applies the In predicate on the "company_account" field.
+func CompanyAccountIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldIn(FieldCompanyAccount, vs...))
+}
+
+// CompanyAccountNotIn applies the NotIn predicate on the "company_account" field.
+func CompanyAccountNotIn(vs ...string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldNotIn(FieldCompanyAccount, vs...))
+}
+
+// CompanyAccountGT applies the GT predicate on the "company_account" field.
+func CompanyAccountGT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGT(FieldCompanyAccount, v))
+}
+
+// CompanyAccountGTE applies the GTE predicate on the "company_account" field.
+func CompanyAccountGTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldGTE(FieldCompanyAccount, v))
+}
+
+// CompanyAccountLT applies the LT predicate on the "company_account" field.
+func CompanyAccountLT(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLT(FieldCompanyAccount, v))
+}
+
+// CompanyAccountLTE applies the LTE predicate on the "company_account" field.
+func CompanyAccountLTE(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldLTE(FieldCompanyAccount, v))
+}
+
+// CompanyAccountContains applies the Contains predicate on the "company_account" field.
+func CompanyAccountContains(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContains(FieldCompanyAccount, v))
+}
+
+// CompanyAccountHasPrefix applies the HasPrefix predicate on the "company_account" field.
+func CompanyAccountHasPrefix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasPrefix(FieldCompanyAccount, v))
+}
+
+// CompanyAccountHasSuffix applies the HasSuffix predicate on the "company_account" field.
+func CompanyAccountHasSuffix(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldHasSuffix(FieldCompanyAccount, v))
+}
+
+// CompanyAccountEqualFold applies the EqualFold predicate on the "company_account" field.
+func CompanyAccountEqualFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldEqualFold(FieldCompanyAccount, v))
+}
+
+// CompanyAccountContainsFold applies the ContainsFold predicate on the "company_account" field.
+func CompanyAccountContainsFold(v string) predicate.WithdrawAccount {
+	return predicate.WithdrawAccount(sql.FieldContainsFold(FieldCompanyAccount, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

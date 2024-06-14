@@ -18,7 +18,7 @@ type WithdrawAccount struct {
 func (WithdrawAccount) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").Default(0).StructTag(`json:"user_id,string"`).Comment("外键用户 id"),
-		field.String("business_name").Default("").StructTag(`json:"business_name"`).Comment("威付通商户名称"),
+		field.String("business_name").Default("").StructTag(`json:"business_name"`).Comment("威付通商户名称，对公时为户名"),
 		field.Int64("business_id").Default(0).StructTag(`json:"business_id"`).Comment("商户 id"),
 		field.Enum("business_type").GoType(enums.BusinessTypeYun).Default(string(enums.BusinessTypeYun)).StructTag(`json:"business_type"`).Comment("商户类型"),
 		field.String("id_card").Default("").StructTag(`json:"id_card"`).Comment("身份证号码"),
@@ -28,6 +28,7 @@ func (WithdrawAccount) Fields() []ent.Field {
 		field.String("bank").Default("未知银行").StructTag(`json:"bank"`).Comment("开户支行"),
 		field.Enum("way").GoType(enums.WithdrawTypeWithdrawAlipay).Default(string(enums.WithdrawTypeUnknown)).StructTag(`json:"way"`).Comment("提现方式"),
 		field.String("alipay_card_no").Default("").StructTag(`json:"alipay_card_no"`).Comment("支付宝账户"),
+		field.String("company_account").Default("").StructTag(`json:"company_account"`).Comment("对公账号"),
 	}
 }
 

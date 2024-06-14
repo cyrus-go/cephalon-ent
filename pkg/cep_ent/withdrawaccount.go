@@ -32,7 +32,7 @@ type WithdrawAccount struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 外键用户 id
 	UserID int64 `json:"user_id,string"`
-	// 威付通商户名称
+	// 威付通商户名称，对公时为户名
 	BusinessName string `json:"business_name"`
 	// 商户 id
 	BusinessID int64 `json:"business_id"`
@@ -52,6 +52,8 @@ type WithdrawAccount struct {
 	Way enums.WithdrawType `json:"way"`
 	// 支付宝账户
 	AlipayCardNo string `json:"alipay_card_no"`
+	// 对公账号
+	CompanyAccount string `json:"company_account"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WithdrawAccountQuery when eager-loading is set.
 	Edges        WithdrawAccountEdges `json:"edges"`
@@ -87,7 +89,7 @@ func (*WithdrawAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case withdrawaccount.FieldID, withdrawaccount.FieldCreatedBy, withdrawaccount.FieldUpdatedBy, withdrawaccount.FieldUserID, withdrawaccount.FieldBusinessID:
 			values[i] = new(sql.NullInt64)
-		case withdrawaccount.FieldBusinessName, withdrawaccount.FieldBusinessType, withdrawaccount.FieldIDCard, withdrawaccount.FieldPersonalName, withdrawaccount.FieldPhone, withdrawaccount.FieldBankCardNumber, withdrawaccount.FieldBank, withdrawaccount.FieldWay, withdrawaccount.FieldAlipayCardNo:
+		case withdrawaccount.FieldBusinessName, withdrawaccount.FieldBusinessType, withdrawaccount.FieldIDCard, withdrawaccount.FieldPersonalName, withdrawaccount.FieldPhone, withdrawaccount.FieldBankCardNumber, withdrawaccount.FieldBank, withdrawaccount.FieldWay, withdrawaccount.FieldAlipayCardNo, withdrawaccount.FieldCompanyAccount:
 			values[i] = new(sql.NullString)
 		case withdrawaccount.FieldCreatedAt, withdrawaccount.FieldUpdatedAt, withdrawaccount.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -208,6 +210,12 @@ func (wa *WithdrawAccount) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				wa.AlipayCardNo = value.String
 			}
+		case withdrawaccount.FieldCompanyAccount:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field company_account", values[i])
+			} else if value.Valid {
+				wa.CompanyAccount = value.String
+			}
 		default:
 			wa.selectValues.Set(columns[i], values[i])
 		}
@@ -296,6 +304,9 @@ func (wa *WithdrawAccount) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("alipay_card_no=")
 	builder.WriteString(wa.AlipayCardNo)
+	builder.WriteString(", ")
+	builder.WriteString("company_account=")
+	builder.WriteString(wa.CompanyAccount)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -248,6 +248,20 @@ func (wac *WithdrawAccountCreate) SetNillableAlipayCardNo(s *string) *WithdrawAc
 	return wac
 }
 
+// SetCompanyAccount sets the "company_account" field.
+func (wac *WithdrawAccountCreate) SetCompanyAccount(s string) *WithdrawAccountCreate {
+	wac.mutation.SetCompanyAccount(s)
+	return wac
+}
+
+// SetNillableCompanyAccount sets the "company_account" field if the given value is not nil.
+func (wac *WithdrawAccountCreate) SetNillableCompanyAccount(s *string) *WithdrawAccountCreate {
+	if s != nil {
+		wac.SetCompanyAccount(*s)
+	}
+	return wac
+}
+
 // SetID sets the "id" field.
 func (wac *WithdrawAccountCreate) SetID(i int64) *WithdrawAccountCreate {
 	wac.mutation.SetID(i)
@@ -366,6 +380,10 @@ func (wac *WithdrawAccountCreate) defaults() {
 		v := withdrawaccount.DefaultAlipayCardNo
 		wac.mutation.SetAlipayCardNo(v)
 	}
+	if _, ok := wac.mutation.CompanyAccount(); !ok {
+		v := withdrawaccount.DefaultCompanyAccount
+		wac.mutation.SetCompanyAccount(v)
+	}
 	if _, ok := wac.mutation.ID(); !ok {
 		v := withdrawaccount.DefaultID()
 		wac.mutation.SetID(v)
@@ -431,6 +449,9 @@ func (wac *WithdrawAccountCreate) check() error {
 	}
 	if _, ok := wac.mutation.AlipayCardNo(); !ok {
 		return &ValidationError{Name: "alipay_card_no", err: errors.New(`cep_ent: missing required field "WithdrawAccount.alipay_card_no"`)}
+	}
+	if _, ok := wac.mutation.CompanyAccount(); !ok {
+		return &ValidationError{Name: "company_account", err: errors.New(`cep_ent: missing required field "WithdrawAccount.company_account"`)}
 	}
 	if _, ok := wac.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "WithdrawAccount.user"`)}
@@ -527,6 +548,10 @@ func (wac *WithdrawAccountCreate) createSpec() (*WithdrawAccount, *sqlgraph.Crea
 	if value, ok := wac.mutation.AlipayCardNo(); ok {
 		_spec.SetField(withdrawaccount.FieldAlipayCardNo, field.TypeString, value)
 		_node.AlipayCardNo = value
+	}
+	if value, ok := wac.mutation.CompanyAccount(); ok {
+		_spec.SetField(withdrawaccount.FieldCompanyAccount, field.TypeString, value)
+		_node.CompanyAccount = value
 	}
 	if nodes := wac.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -792,6 +817,18 @@ func (u *WithdrawAccountUpsert) SetAlipayCardNo(v string) *WithdrawAccountUpsert
 // UpdateAlipayCardNo sets the "alipay_card_no" field to the value that was provided on create.
 func (u *WithdrawAccountUpsert) UpdateAlipayCardNo() *WithdrawAccountUpsert {
 	u.SetExcluded(withdrawaccount.FieldAlipayCardNo)
+	return u
+}
+
+// SetCompanyAccount sets the "company_account" field.
+func (u *WithdrawAccountUpsert) SetCompanyAccount(v string) *WithdrawAccountUpsert {
+	u.Set(withdrawaccount.FieldCompanyAccount, v)
+	return u
+}
+
+// UpdateCompanyAccount sets the "company_account" field to the value that was provided on create.
+func (u *WithdrawAccountUpsert) UpdateCompanyAccount() *WithdrawAccountUpsert {
+	u.SetExcluded(withdrawaccount.FieldCompanyAccount)
 	return u
 }
 
@@ -1074,6 +1111,20 @@ func (u *WithdrawAccountUpsertOne) SetAlipayCardNo(v string) *WithdrawAccountUps
 func (u *WithdrawAccountUpsertOne) UpdateAlipayCardNo() *WithdrawAccountUpsertOne {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateAlipayCardNo()
+	})
+}
+
+// SetCompanyAccount sets the "company_account" field.
+func (u *WithdrawAccountUpsertOne) SetCompanyAccount(v string) *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetCompanyAccount(v)
+	})
+}
+
+// UpdateCompanyAccount sets the "company_account" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertOne) UpdateCompanyAccount() *WithdrawAccountUpsertOne {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateCompanyAccount()
 	})
 }
 
@@ -1522,6 +1573,20 @@ func (u *WithdrawAccountUpsertBulk) SetAlipayCardNo(v string) *WithdrawAccountUp
 func (u *WithdrawAccountUpsertBulk) UpdateAlipayCardNo() *WithdrawAccountUpsertBulk {
 	return u.Update(func(s *WithdrawAccountUpsert) {
 		s.UpdateAlipayCardNo()
+	})
+}
+
+// SetCompanyAccount sets the "company_account" field.
+func (u *WithdrawAccountUpsertBulk) SetCompanyAccount(v string) *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.SetCompanyAccount(v)
+	})
+}
+
+// UpdateCompanyAccount sets the "company_account" field to the value that was provided on create.
+func (u *WithdrawAccountUpsertBulk) UpdateCompanyAccount() *WithdrawAccountUpsertBulk {
+	return u.Update(func(s *WithdrawAccountUpsert) {
+		s.UpdateCompanyAccount()
 	})
 }
 

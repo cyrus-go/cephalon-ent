@@ -150,7 +150,7 @@ const DefaultType enums.WithdrawType = "unknown"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.WithdrawType) error {
 	switch _type {
-	case "unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card":
+	case "unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "withdraw_company":
 		return nil
 	default:
 		return fmt.Errorf("withdrawrecord: invalid enum value for type field: %q", _type)

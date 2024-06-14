@@ -34,6 +34,7 @@ const (
 	BillWayWithdrawAlipay            BillWay = "withdraw_alipay"
 	BillWayBankCard                  BillWay = "withdraw_bank_card"
 	BillWayWithdrawRefund            BillWay = "withdraw_refund"
+	BillWayWithdrawCompany           BillWay = "withdraw_company" // 对公提现
 	BillWayCdkExchange               BillWay = "cdk_exchange"
 	BillWayLottoPrize                BillWay = "lotto_prize"
 	BillWayNodeTrouble               BillWay = "node_trouble"       // 节点故障扣费
@@ -48,6 +49,7 @@ func (BillWay) Values() []string {
 		string(BillWayWithdrawAlipay),
 		string(BillWayWithdrawVX),
 		string(BillWayWithdrawRefund),
+		string(BillWayWithdrawCompany),
 		string(BillWayUnknown),
 		string(BillWayRechargeWechat),
 		string(BillWayRechargeAlipay),

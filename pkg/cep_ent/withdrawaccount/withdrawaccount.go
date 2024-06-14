@@ -48,6 +48,8 @@ const (
 	FieldWay = "way"
 	// FieldAlipayCardNo holds the string denoting the alipay_card_no field in the database.
 	FieldAlipayCardNo = "alipay_card_no"
+	// FieldCompanyAccount holds the string denoting the company_account field in the database.
+	FieldCompanyAccount = "company_account"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the withdrawaccount in the database.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldBank,
 	FieldWay,
 	FieldAlipayCardNo,
+	FieldCompanyAccount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -123,6 +126,8 @@ var (
 	DefaultBank string
 	// DefaultAlipayCardNo holds the default value on creation for the "alipay_card_no" field.
 	DefaultAlipayCardNo string
+	// DefaultCompanyAccount holds the default value on creation for the "company_account" field.
+	DefaultCompanyAccount string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -132,7 +137,7 @@ const DefaultBusinessType enums.BusinessType = "yun"
 // BusinessTypeValidator is a validator for the "business_type" field enum values. It is called by the builders before save.
 func BusinessTypeValidator(bt enums.BusinessType) error {
 	switch bt {
-	case "yun", "wft":
+	case "yun", "wft", "company":
 		return nil
 	default:
 		return fmt.Errorf("withdrawaccount: invalid enum value for business_type field: %q", bt)
@@ -144,7 +149,7 @@ const DefaultWay enums.WithdrawType = "unknown"
 // WayValidator is a validator for the "way" field enum values. It is called by the builders before save.
 func WayValidator(w enums.WithdrawType) error {
 	switch w {
-	case "unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card":
+	case "unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "withdraw_company":
 		return nil
 	default:
 		return fmt.Errorf("withdrawaccount: invalid enum value for way field: %q", w)
@@ -237,6 +242,11 @@ func ByWay(opts ...sql.OrderTermOption) OrderOption {
 // ByAlipayCardNo orders the results by the alipay_card_no field.
 func ByAlipayCardNo(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAlipayCardNo, opts...).ToFunc()
+}
+
+// ByCompanyAccount orders the results by the company_account field.
+func ByCompanyAccount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCompanyAccount, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

@@ -8,6 +8,7 @@ const (
 	WithdrawTypeWithdrawWX     WithdrawType = "withdraw_vx"
 	WithdrawTypeWithdrawAlipay WithdrawType = "withdraw_alipay"
 	WithdrawTypeBankCard       WithdrawType = "withdraw_bank_card"
+	WithdrawTypeCompany        WithdrawType = "withdraw_company" // 对公提现
 )
 
 func (WithdrawType) Values() []string {
@@ -17,6 +18,7 @@ func (WithdrawType) Values() []string {
 		string(WithdrawTypeWithdrawWX),
 		string(WithdrawTypeWithdrawAlipay),
 		string(WithdrawTypeBankCard),
+		string(WithdrawTypeCompany),
 	}
 }
 
