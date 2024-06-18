@@ -13,6 +13,7 @@ const (
 	TransferOrderTypeWithdrawWX     TransferOrderType = "withdraw_vx"
 	TransferOrderTypeWithdrawAlipay TransferOrderType = "withdraw_alipay"
 	TransferOrderTypeBankCard       TransferOrderType = "withdraw_bank_card"
+	TransferOrderTypeCompany        TransferOrderType = "withdraw_company"
 )
 
 func (TransferOrderType) Values() []string {
@@ -27,6 +28,7 @@ func (TransferOrderType) Values() []string {
 		string(TransferOrderTypeManual),
 		string(TransferOrderTypeWithdraw),
 		string(TransferOrderTypeRefund),
+		string(TransferOrderTypeCompany),
 	}
 }
 

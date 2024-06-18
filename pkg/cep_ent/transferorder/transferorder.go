@@ -209,7 +209,7 @@ const DefaultType enums.TransferOrderType = "unknown"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.TransferOrderType) error {
 	switch _type {
-	case "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund":
+	case "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "unknown", "recharge", "recharge_vx", "recharge_alipay", "manual", "withdraw", "recharge_refund", "withdraw_company":
 		return nil
 	default:
 		return fmt.Errorf("transferorder: invalid enum value for type field: %q", _type)
