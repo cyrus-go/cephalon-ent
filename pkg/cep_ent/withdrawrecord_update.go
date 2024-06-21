@@ -122,6 +122,34 @@ func (wru *WithdrawRecordUpdate) SetNillableWithdrawAccount(s *string) *Withdraw
 	return wru
 }
 
+// SetBusinessName sets the "business_name" field.
+func (wru *WithdrawRecordUpdate) SetBusinessName(s string) *WithdrawRecordUpdate {
+	wru.mutation.SetBusinessName(s)
+	return wru
+}
+
+// SetNillableBusinessName sets the "business_name" field if the given value is not nil.
+func (wru *WithdrawRecordUpdate) SetNillableBusinessName(s *string) *WithdrawRecordUpdate {
+	if s != nil {
+		wru.SetBusinessName(*s)
+	}
+	return wru
+}
+
+// SetBank sets the "bank" field.
+func (wru *WithdrawRecordUpdate) SetBank(s string) *WithdrawRecordUpdate {
+	wru.mutation.SetBank(s)
+	return wru
+}
+
+// SetNillableBank sets the "bank" field if the given value is not nil.
+func (wru *WithdrawRecordUpdate) SetNillableBank(s *string) *WithdrawRecordUpdate {
+	if s != nil {
+		wru.SetBank(*s)
+	}
+	return wru
+}
+
 // SetType sets the "type" field.
 func (wru *WithdrawRecordUpdate) SetType(et enums.WithdrawType) *WithdrawRecordUpdate {
 	wru.mutation.SetType(et)
@@ -413,6 +441,12 @@ func (wru *WithdrawRecordUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if value, ok := wru.mutation.WithdrawAccount(); ok {
 		_spec.SetField(withdrawrecord.FieldWithdrawAccount, field.TypeString, value)
 	}
+	if value, ok := wru.mutation.BusinessName(); ok {
+		_spec.SetField(withdrawrecord.FieldBusinessName, field.TypeString, value)
+	}
+	if value, ok := wru.mutation.Bank(); ok {
+		_spec.SetField(withdrawrecord.FieldBank, field.TypeString, value)
+	}
 	if value, ok := wru.mutation.GetType(); ok {
 		_spec.SetField(withdrawrecord.FieldType, field.TypeEnum, value)
 	}
@@ -641,6 +675,34 @@ func (wruo *WithdrawRecordUpdateOne) SetWithdrawAccount(s string) *WithdrawRecor
 func (wruo *WithdrawRecordUpdateOne) SetNillableWithdrawAccount(s *string) *WithdrawRecordUpdateOne {
 	if s != nil {
 		wruo.SetWithdrawAccount(*s)
+	}
+	return wruo
+}
+
+// SetBusinessName sets the "business_name" field.
+func (wruo *WithdrawRecordUpdateOne) SetBusinessName(s string) *WithdrawRecordUpdateOne {
+	wruo.mutation.SetBusinessName(s)
+	return wruo
+}
+
+// SetNillableBusinessName sets the "business_name" field if the given value is not nil.
+func (wruo *WithdrawRecordUpdateOne) SetNillableBusinessName(s *string) *WithdrawRecordUpdateOne {
+	if s != nil {
+		wruo.SetBusinessName(*s)
+	}
+	return wruo
+}
+
+// SetBank sets the "bank" field.
+func (wruo *WithdrawRecordUpdateOne) SetBank(s string) *WithdrawRecordUpdateOne {
+	wruo.mutation.SetBank(s)
+	return wruo
+}
+
+// SetNillableBank sets the "bank" field if the given value is not nil.
+func (wruo *WithdrawRecordUpdateOne) SetNillableBank(s *string) *WithdrawRecordUpdateOne {
+	if s != nil {
+		wruo.SetBank(*s)
 	}
 	return wruo
 }
@@ -965,6 +1027,12 @@ func (wruo *WithdrawRecordUpdateOne) sqlSave(ctx context.Context) (_node *Withdr
 	}
 	if value, ok := wruo.mutation.WithdrawAccount(); ok {
 		_spec.SetField(withdrawrecord.FieldWithdrawAccount, field.TypeString, value)
+	}
+	if value, ok := wruo.mutation.BusinessName(); ok {
+		_spec.SetField(withdrawrecord.FieldBusinessName, field.TypeString, value)
+	}
+	if value, ok := wruo.mutation.Bank(); ok {
+		_spec.SetField(withdrawrecord.FieldBank, field.TypeString, value)
 	}
 	if value, ok := wruo.mutation.GetType(); ok {
 		_spec.SetField(withdrawrecord.FieldType, field.TypeEnum, value)

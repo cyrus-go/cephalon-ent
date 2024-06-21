@@ -91,6 +91,16 @@ func WithdrawAccount(v string) predicate.WithdrawRecord {
 	return predicate.WithdrawRecord(sql.FieldEQ(FieldWithdrawAccount, v))
 }
 
+// BusinessName applies equality check predicate on the "business_name" field. It's identical to BusinessNameEQ.
+func BusinessName(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEQ(FieldBusinessName, v))
+}
+
+// Bank applies equality check predicate on the "bank" field. It's identical to BankEQ.
+func Bank(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEQ(FieldBank, v))
+}
+
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v int64) predicate.WithdrawRecord {
 	return predicate.WithdrawRecord(sql.FieldEQ(FieldAmount, v))
@@ -409,6 +419,136 @@ func WithdrawAccountEqualFold(v string) predicate.WithdrawRecord {
 // WithdrawAccountContainsFold applies the ContainsFold predicate on the "withdraw_account" field.
 func WithdrawAccountContainsFold(v string) predicate.WithdrawRecord {
 	return predicate.WithdrawRecord(sql.FieldContainsFold(FieldWithdrawAccount, v))
+}
+
+// BusinessNameEQ applies the EQ predicate on the "business_name" field.
+func BusinessNameEQ(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEQ(FieldBusinessName, v))
+}
+
+// BusinessNameNEQ applies the NEQ predicate on the "business_name" field.
+func BusinessNameNEQ(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldNEQ(FieldBusinessName, v))
+}
+
+// BusinessNameIn applies the In predicate on the "business_name" field.
+func BusinessNameIn(vs ...string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldIn(FieldBusinessName, vs...))
+}
+
+// BusinessNameNotIn applies the NotIn predicate on the "business_name" field.
+func BusinessNameNotIn(vs ...string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldNotIn(FieldBusinessName, vs...))
+}
+
+// BusinessNameGT applies the GT predicate on the "business_name" field.
+func BusinessNameGT(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldGT(FieldBusinessName, v))
+}
+
+// BusinessNameGTE applies the GTE predicate on the "business_name" field.
+func BusinessNameGTE(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldGTE(FieldBusinessName, v))
+}
+
+// BusinessNameLT applies the LT predicate on the "business_name" field.
+func BusinessNameLT(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldLT(FieldBusinessName, v))
+}
+
+// BusinessNameLTE applies the LTE predicate on the "business_name" field.
+func BusinessNameLTE(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldLTE(FieldBusinessName, v))
+}
+
+// BusinessNameContains applies the Contains predicate on the "business_name" field.
+func BusinessNameContains(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldContains(FieldBusinessName, v))
+}
+
+// BusinessNameHasPrefix applies the HasPrefix predicate on the "business_name" field.
+func BusinessNameHasPrefix(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldHasPrefix(FieldBusinessName, v))
+}
+
+// BusinessNameHasSuffix applies the HasSuffix predicate on the "business_name" field.
+func BusinessNameHasSuffix(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldHasSuffix(FieldBusinessName, v))
+}
+
+// BusinessNameEqualFold applies the EqualFold predicate on the "business_name" field.
+func BusinessNameEqualFold(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEqualFold(FieldBusinessName, v))
+}
+
+// BusinessNameContainsFold applies the ContainsFold predicate on the "business_name" field.
+func BusinessNameContainsFold(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldContainsFold(FieldBusinessName, v))
+}
+
+// BankEQ applies the EQ predicate on the "bank" field.
+func BankEQ(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEQ(FieldBank, v))
+}
+
+// BankNEQ applies the NEQ predicate on the "bank" field.
+func BankNEQ(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldNEQ(FieldBank, v))
+}
+
+// BankIn applies the In predicate on the "bank" field.
+func BankIn(vs ...string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldIn(FieldBank, vs...))
+}
+
+// BankNotIn applies the NotIn predicate on the "bank" field.
+func BankNotIn(vs ...string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldNotIn(FieldBank, vs...))
+}
+
+// BankGT applies the GT predicate on the "bank" field.
+func BankGT(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldGT(FieldBank, v))
+}
+
+// BankGTE applies the GTE predicate on the "bank" field.
+func BankGTE(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldGTE(FieldBank, v))
+}
+
+// BankLT applies the LT predicate on the "bank" field.
+func BankLT(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldLT(FieldBank, v))
+}
+
+// BankLTE applies the LTE predicate on the "bank" field.
+func BankLTE(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldLTE(FieldBank, v))
+}
+
+// BankContains applies the Contains predicate on the "bank" field.
+func BankContains(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldContains(FieldBank, v))
+}
+
+// BankHasPrefix applies the HasPrefix predicate on the "bank" field.
+func BankHasPrefix(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldHasPrefix(FieldBank, v))
+}
+
+// BankHasSuffix applies the HasSuffix predicate on the "bank" field.
+func BankHasSuffix(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldHasSuffix(FieldBank, v))
+}
+
+// BankEqualFold applies the EqualFold predicate on the "bank" field.
+func BankEqualFold(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldEqualFold(FieldBank, v))
+}
+
+// BankContainsFold applies the ContainsFold predicate on the "bank" field.
+func BankContainsFold(v string) predicate.WithdrawRecord {
+	return predicate.WithdrawRecord(sql.FieldContainsFold(FieldBank, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.

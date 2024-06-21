@@ -30,6 +30,10 @@ const (
 	FieldUserID = "user_id"
 	// FieldWithdrawAccount holds the string denoting the withdraw_account field in the database.
 	FieldWithdrawAccount = "withdraw_account"
+	// FieldBusinessName holds the string denoting the business_name field in the database.
+	FieldBusinessName = "business_name"
+	// FieldBank holds the string denoting the bank field in the database.
+	FieldBank = "bank"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldAmount holds the string denoting the amount field in the database.
@@ -89,6 +93,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldWithdrawAccount,
+	FieldBusinessName,
+	FieldBank,
 	FieldType,
 	FieldAmount,
 	FieldRemainAmount,
@@ -127,6 +133,10 @@ var (
 	DefaultUserID int64
 	// DefaultWithdrawAccount holds the default value on creation for the "withdraw_account" field.
 	DefaultWithdrawAccount string
+	// DefaultBusinessName holds the default value on creation for the "business_name" field.
+	DefaultBusinessName string
+	// DefaultBank holds the default value on creation for the "bank" field.
+	DefaultBank string
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount int64
 	// DefaultRemainAmount holds the default value on creation for the "remain_amount" field.
@@ -210,6 +220,16 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByWithdrawAccount orders the results by the withdraw_account field.
 func ByWithdrawAccount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWithdrawAccount, opts...).ToFunc()
+}
+
+// ByBusinessName orders the results by the business_name field.
+func ByBusinessName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBusinessName, opts...).ToFunc()
+}
+
+// ByBank orders the results by the bank field.
+func ByBank(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBank, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.

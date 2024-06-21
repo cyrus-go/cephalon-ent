@@ -123,6 +123,34 @@ func (wrc *WithdrawRecordCreate) SetNillableWithdrawAccount(s *string) *Withdraw
 	return wrc
 }
 
+// SetBusinessName sets the "business_name" field.
+func (wrc *WithdrawRecordCreate) SetBusinessName(s string) *WithdrawRecordCreate {
+	wrc.mutation.SetBusinessName(s)
+	return wrc
+}
+
+// SetNillableBusinessName sets the "business_name" field if the given value is not nil.
+func (wrc *WithdrawRecordCreate) SetNillableBusinessName(s *string) *WithdrawRecordCreate {
+	if s != nil {
+		wrc.SetBusinessName(*s)
+	}
+	return wrc
+}
+
+// SetBank sets the "bank" field.
+func (wrc *WithdrawRecordCreate) SetBank(s string) *WithdrawRecordCreate {
+	wrc.mutation.SetBank(s)
+	return wrc
+}
+
+// SetNillableBank sets the "bank" field if the given value is not nil.
+func (wrc *WithdrawRecordCreate) SetNillableBank(s *string) *WithdrawRecordCreate {
+	if s != nil {
+		wrc.SetBank(*s)
+	}
+	return wrc
+}
+
 // SetType sets the "type" field.
 func (wrc *WithdrawRecordCreate) SetType(et enums.WithdrawType) *WithdrawRecordCreate {
 	wrc.mutation.SetType(et)
@@ -341,6 +369,14 @@ func (wrc *WithdrawRecordCreate) defaults() {
 		v := withdrawrecord.DefaultWithdrawAccount
 		wrc.mutation.SetWithdrawAccount(v)
 	}
+	if _, ok := wrc.mutation.BusinessName(); !ok {
+		v := withdrawrecord.DefaultBusinessName
+		wrc.mutation.SetBusinessName(v)
+	}
+	if _, ok := wrc.mutation.Bank(); !ok {
+		v := withdrawrecord.DefaultBank
+		wrc.mutation.SetBank(v)
+	}
 	if _, ok := wrc.mutation.GetType(); !ok {
 		v := withdrawrecord.DefaultType
 		wrc.mutation.SetType(v)
@@ -405,6 +441,12 @@ func (wrc *WithdrawRecordCreate) check() error {
 	}
 	if _, ok := wrc.mutation.WithdrawAccount(); !ok {
 		return &ValidationError{Name: "withdraw_account", err: errors.New(`cep_ent: missing required field "WithdrawRecord.withdraw_account"`)}
+	}
+	if _, ok := wrc.mutation.BusinessName(); !ok {
+		return &ValidationError{Name: "business_name", err: errors.New(`cep_ent: missing required field "WithdrawRecord.business_name"`)}
+	}
+	if _, ok := wrc.mutation.Bank(); !ok {
+		return &ValidationError{Name: "bank", err: errors.New(`cep_ent: missing required field "WithdrawRecord.bank"`)}
 	}
 	if _, ok := wrc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "WithdrawRecord.type"`)}
@@ -508,6 +550,14 @@ func (wrc *WithdrawRecordCreate) createSpec() (*WithdrawRecord, *sqlgraph.Create
 	if value, ok := wrc.mutation.WithdrawAccount(); ok {
 		_spec.SetField(withdrawrecord.FieldWithdrawAccount, field.TypeString, value)
 		_node.WithdrawAccount = value
+	}
+	if value, ok := wrc.mutation.BusinessName(); ok {
+		_spec.SetField(withdrawrecord.FieldBusinessName, field.TypeString, value)
+		_node.BusinessName = value
+	}
+	if value, ok := wrc.mutation.Bank(); ok {
+		_spec.SetField(withdrawrecord.FieldBank, field.TypeString, value)
+		_node.Bank = value
 	}
 	if value, ok := wrc.mutation.GetType(); ok {
 		_spec.SetField(withdrawrecord.FieldType, field.TypeEnum, value)
@@ -721,6 +771,30 @@ func (u *WithdrawRecordUpsert) SetWithdrawAccount(v string) *WithdrawRecordUpser
 // UpdateWithdrawAccount sets the "withdraw_account" field to the value that was provided on create.
 func (u *WithdrawRecordUpsert) UpdateWithdrawAccount() *WithdrawRecordUpsert {
 	u.SetExcluded(withdrawrecord.FieldWithdrawAccount)
+	return u
+}
+
+// SetBusinessName sets the "business_name" field.
+func (u *WithdrawRecordUpsert) SetBusinessName(v string) *WithdrawRecordUpsert {
+	u.Set(withdrawrecord.FieldBusinessName, v)
+	return u
+}
+
+// UpdateBusinessName sets the "business_name" field to the value that was provided on create.
+func (u *WithdrawRecordUpsert) UpdateBusinessName() *WithdrawRecordUpsert {
+	u.SetExcluded(withdrawrecord.FieldBusinessName)
+	return u
+}
+
+// SetBank sets the "bank" field.
+func (u *WithdrawRecordUpsert) SetBank(v string) *WithdrawRecordUpsert {
+	u.Set(withdrawrecord.FieldBank, v)
+	return u
+}
+
+// UpdateBank sets the "bank" field to the value that was provided on create.
+func (u *WithdrawRecordUpsert) UpdateBank() *WithdrawRecordUpsert {
+	u.SetExcluded(withdrawrecord.FieldBank)
 	return u
 }
 
@@ -1002,6 +1076,34 @@ func (u *WithdrawRecordUpsertOne) SetWithdrawAccount(v string) *WithdrawRecordUp
 func (u *WithdrawRecordUpsertOne) UpdateWithdrawAccount() *WithdrawRecordUpsertOne {
 	return u.Update(func(s *WithdrawRecordUpsert) {
 		s.UpdateWithdrawAccount()
+	})
+}
+
+// SetBusinessName sets the "business_name" field.
+func (u *WithdrawRecordUpsertOne) SetBusinessName(v string) *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.SetBusinessName(v)
+	})
+}
+
+// UpdateBusinessName sets the "business_name" field to the value that was provided on create.
+func (u *WithdrawRecordUpsertOne) UpdateBusinessName() *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.UpdateBusinessName()
+	})
+}
+
+// SetBank sets the "bank" field.
+func (u *WithdrawRecordUpsertOne) SetBank(v string) *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.SetBank(v)
+	})
+}
+
+// UpdateBank sets the "bank" field to the value that was provided on create.
+func (u *WithdrawRecordUpsertOne) UpdateBank() *WithdrawRecordUpsertOne {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.UpdateBank()
 	})
 }
 
@@ -1471,6 +1573,34 @@ func (u *WithdrawRecordUpsertBulk) SetWithdrawAccount(v string) *WithdrawRecordU
 func (u *WithdrawRecordUpsertBulk) UpdateWithdrawAccount() *WithdrawRecordUpsertBulk {
 	return u.Update(func(s *WithdrawRecordUpsert) {
 		s.UpdateWithdrawAccount()
+	})
+}
+
+// SetBusinessName sets the "business_name" field.
+func (u *WithdrawRecordUpsertBulk) SetBusinessName(v string) *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.SetBusinessName(v)
+	})
+}
+
+// UpdateBusinessName sets the "business_name" field to the value that was provided on create.
+func (u *WithdrawRecordUpsertBulk) UpdateBusinessName() *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.UpdateBusinessName()
+	})
+}
+
+// SetBank sets the "bank" field.
+func (u *WithdrawRecordUpsertBulk) SetBank(v string) *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.SetBank(v)
+	})
+}
+
+// UpdateBank sets the "bank" field to the value that was provided on create.
+func (u *WithdrawRecordUpsertBulk) UpdateBank() *WithdrawRecordUpsertBulk {
+	return u.Update(func(s *WithdrawRecordUpsert) {
+		s.UpdateBank()
 	})
 }
 

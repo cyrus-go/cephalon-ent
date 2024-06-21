@@ -35,6 +35,10 @@ type WithdrawRecord struct {
 	UserID int64 `json:"user_id,string"`
 	// 提现账户
 	WithdrawAccount string `json:"withdraw_account"`
+	// 威付通商户名称，对公时为户名
+	BusinessName string `json:"business_name"`
+	// 开户支行
+	Bank string `json:"bank"`
 	// 提现类型
 	Type enums.WithdrawType `json:"type"`
 	// 提现金额，单位：厘
@@ -118,7 +122,7 @@ func (*WithdrawRecord) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case withdrawrecord.FieldID, withdrawrecord.FieldCreatedBy, withdrawrecord.FieldUpdatedBy, withdrawrecord.FieldUserID, withdrawrecord.FieldAmount, withdrawrecord.FieldRemainAmount, withdrawrecord.FieldRate, withdrawrecord.FieldRealAmount, withdrawrecord.FieldOperateUserID, withdrawrecord.FieldTransferOrderID:
 			values[i] = new(sql.NullInt64)
-		case withdrawrecord.FieldWithdrawAccount, withdrawrecord.FieldType, withdrawrecord.FieldStatus, withdrawrecord.FieldRejectReason:
+		case withdrawrecord.FieldWithdrawAccount, withdrawrecord.FieldBusinessName, withdrawrecord.FieldBank, withdrawrecord.FieldType, withdrawrecord.FieldStatus, withdrawrecord.FieldRejectReason:
 			values[i] = new(sql.NullString)
 		case withdrawrecord.FieldCreatedAt, withdrawrecord.FieldUpdatedAt, withdrawrecord.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -184,6 +188,18 @@ func (wr *WithdrawRecord) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field withdraw_account", values[i])
 			} else if value.Valid {
 				wr.WithdrawAccount = value.String
+			}
+		case withdrawrecord.FieldBusinessName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field business_name", values[i])
+			} else if value.Valid {
+				wr.BusinessName = value.String
+			}
+		case withdrawrecord.FieldBank:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field bank", values[i])
+			} else if value.Valid {
+				wr.Bank = value.String
 			}
 		case withdrawrecord.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -310,6 +326,12 @@ func (wr *WithdrawRecord) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("withdraw_account=")
 	builder.WriteString(wr.WithdrawAccount)
+	builder.WriteString(", ")
+	builder.WriteString("business_name=")
+	builder.WriteString(wr.BusinessName)
+	builder.WriteString(", ")
+	builder.WriteString("bank=")
+	builder.WriteString(wr.Bank)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", wr.Type))

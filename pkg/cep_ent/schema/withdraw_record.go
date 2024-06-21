@@ -19,6 +19,8 @@ func (WithdrawRecord) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("提现的用户 id"),
 		field.String("withdraw_account").Default("").StructTag(`json:"withdraw_account"`).Comment("提现账户"),
+		field.String("business_name").Default("").StructTag(`json:"business_name"`).Comment("威付通商户名称，对公时为户名"),
+		field.String("bank").Default("未知银行").StructTag(`json:"bank"`).Comment("开户支行"),
 		field.Enum("type").GoType(enums.WithdrawTypeWithdrawWX).Default(string(enums.WithdrawTypeUnknown)).StructTag(`json:"type"`).Comment("提现类型"),
 		field.Int64("amount").Default(0).StructTag(`json:"amount"`).Comment("提现金额，单位：厘"),
 		field.Int64("remain_amount").Default(0).StructTag(`json:"remain_amount"`).Comment("本次提现后余额，单位：厘"),

@@ -2591,6 +2591,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "withdraw_account", Type: field.TypeString, Comment: "提现账户", Default: ""},
+		{Name: "business_name", Type: field.TypeString, Comment: "威付通商户名称，对公时为户名", Default: ""},
+		{Name: "bank", Type: field.TypeString, Comment: "开户支行", Default: "未知银行"},
 		{Name: "type", Type: field.TypeEnum, Comment: "提现类型", Enums: []string{"unknown", "withdraw", "withdraw_vx", "withdraw_alipay", "withdraw_bank_card", "withdraw_company"}, Default: "unknown"},
 		{Name: "amount", Type: field.TypeInt64, Comment: "提现金额，单位：厘", Default: 0},
 		{Name: "remain_amount", Type: field.TypeInt64, Comment: "本次提现后余额，单位：厘", Default: 0},
@@ -2611,19 +2613,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "withdraw_records_transfer_orders_withdraw_record",
-				Columns:    []*schema.Column{WithdrawRecordsColumns[14]},
+				Columns:    []*schema.Column{WithdrawRecordsColumns[16]},
 				RefColumns: []*schema.Column{TransferOrdersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "withdraw_records_users_withdraw_records",
-				Columns:    []*schema.Column{WithdrawRecordsColumns[15]},
+				Columns:    []*schema.Column{WithdrawRecordsColumns[17]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "withdraw_records_users_operate_withdraw_records",
-				Columns:    []*schema.Column{WithdrawRecordsColumns[16]},
+				Columns:    []*schema.Column{WithdrawRecordsColumns[18]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2632,7 +2634,7 @@ var (
 			{
 				Name:    "withdrawrecord_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{WithdrawRecordsColumns[15]},
+				Columns: []*schema.Column{WithdrawRecordsColumns[17]},
 			},
 		},
 	}

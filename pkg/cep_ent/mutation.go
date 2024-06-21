@@ -81615,6 +81615,8 @@ type WithdrawRecordMutation struct {
 	updated_at            *time.Time
 	deleted_at            *time.Time
 	withdraw_account      *string
+	business_name         *string
+	bank                  *string
 	_type                 *enums.WithdrawType
 	amount                *int64
 	addamount             *int64
@@ -82032,6 +82034,78 @@ func (m *WithdrawRecordMutation) OldWithdrawAccount(ctx context.Context) (v stri
 // ResetWithdrawAccount resets all changes to the "withdraw_account" field.
 func (m *WithdrawRecordMutation) ResetWithdrawAccount() {
 	m.withdraw_account = nil
+}
+
+// SetBusinessName sets the "business_name" field.
+func (m *WithdrawRecordMutation) SetBusinessName(s string) {
+	m.business_name = &s
+}
+
+// BusinessName returns the value of the "business_name" field in the mutation.
+func (m *WithdrawRecordMutation) BusinessName() (r string, exists bool) {
+	v := m.business_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBusinessName returns the old "business_name" field's value of the WithdrawRecord entity.
+// If the WithdrawRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawRecordMutation) OldBusinessName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBusinessName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBusinessName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBusinessName: %w", err)
+	}
+	return oldValue.BusinessName, nil
+}
+
+// ResetBusinessName resets all changes to the "business_name" field.
+func (m *WithdrawRecordMutation) ResetBusinessName() {
+	m.business_name = nil
+}
+
+// SetBank sets the "bank" field.
+func (m *WithdrawRecordMutation) SetBank(s string) {
+	m.bank = &s
+}
+
+// Bank returns the value of the "bank" field in the mutation.
+func (m *WithdrawRecordMutation) Bank() (r string, exists bool) {
+	v := m.bank
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBank returns the old "bank" field's value of the WithdrawRecord entity.
+// If the WithdrawRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawRecordMutation) OldBank(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBank is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBank requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBank: %w", err)
+	}
+	return oldValue.Bank, nil
+}
+
+// ResetBank resets all changes to the "bank" field.
+func (m *WithdrawRecordMutation) ResetBank() {
+	m.bank = nil
 }
 
 // SetType sets the "type" field.
@@ -82553,7 +82627,7 @@ func (m *WithdrawRecordMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawRecordMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 18)
 	if m.created_by != nil {
 		fields = append(fields, withdrawrecord.FieldCreatedBy)
 	}
@@ -82574,6 +82648,12 @@ func (m *WithdrawRecordMutation) Fields() []string {
 	}
 	if m.withdraw_account != nil {
 		fields = append(fields, withdrawrecord.FieldWithdrawAccount)
+	}
+	if m.business_name != nil {
+		fields = append(fields, withdrawrecord.FieldBusinessName)
+	}
+	if m.bank != nil {
+		fields = append(fields, withdrawrecord.FieldBank)
 	}
 	if m._type != nil {
 		fields = append(fields, withdrawrecord.FieldType)
@@ -82624,6 +82704,10 @@ func (m *WithdrawRecordMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case withdrawrecord.FieldWithdrawAccount:
 		return m.WithdrawAccount()
+	case withdrawrecord.FieldBusinessName:
+		return m.BusinessName()
+	case withdrawrecord.FieldBank:
+		return m.Bank()
 	case withdrawrecord.FieldType:
 		return m.GetType()
 	case withdrawrecord.FieldAmount:
@@ -82665,6 +82749,10 @@ func (m *WithdrawRecordMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldUserID(ctx)
 	case withdrawrecord.FieldWithdrawAccount:
 		return m.OldWithdrawAccount(ctx)
+	case withdrawrecord.FieldBusinessName:
+		return m.OldBusinessName(ctx)
+	case withdrawrecord.FieldBank:
+		return m.OldBank(ctx)
 	case withdrawrecord.FieldType:
 		return m.OldType(ctx)
 	case withdrawrecord.FieldAmount:
@@ -82740,6 +82828,20 @@ func (m *WithdrawRecordMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWithdrawAccount(v)
+		return nil
+	case withdrawrecord.FieldBusinessName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBusinessName(v)
+		return nil
+	case withdrawrecord.FieldBank:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBank(v)
 		return nil
 	case withdrawrecord.FieldType:
 		v, ok := value.(enums.WithdrawType)
@@ -82948,6 +83050,12 @@ func (m *WithdrawRecordMutation) ResetField(name string) error {
 		return nil
 	case withdrawrecord.FieldWithdrawAccount:
 		m.ResetWithdrawAccount()
+		return nil
+	case withdrawrecord.FieldBusinessName:
+		m.ResetBusinessName()
+		return nil
+	case withdrawrecord.FieldBank:
+		m.ResetBank()
 		return nil
 	case withdrawrecord.FieldType:
 		m.ResetType()
