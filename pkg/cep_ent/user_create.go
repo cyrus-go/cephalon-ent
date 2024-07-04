@@ -41,6 +41,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -1053,6 +1054,36 @@ func (uc *UserCreate) AddApproveIncomeManages(i ...*IncomeManage) *UserCreate {
 		ids[j] = i[j].ID
 	}
 	return uc.AddApproveIncomeManageIDs(ids...)
+}
+
+// AddUserCloseRecordIDs adds the "user_close_records" edge to the UserCloseRecord entity by IDs.
+func (uc *UserCreate) AddUserCloseRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddUserCloseRecordIDs(ids...)
+	return uc
+}
+
+// AddUserCloseRecords adds the "user_close_records" edges to the UserCloseRecord entity.
+func (uc *UserCreate) AddUserCloseRecords(u ...*UserCloseRecord) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUserCloseRecordIDs(ids...)
+}
+
+// AddOperateUserCloseRecordIDs adds the "operate_user_close_records" edge to the UserCloseRecord entity by IDs.
+func (uc *UserCreate) AddOperateUserCloseRecordIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddOperateUserCloseRecordIDs(ids...)
+	return uc
+}
+
+// AddOperateUserCloseRecords adds the "operate_user_close_records" edges to the UserCloseRecord entity.
+func (uc *UserCreate) AddOperateUserCloseRecords(u ...*UserCloseRecord) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddOperateUserCloseRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -2083,6 +2114,38 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserCloseRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserCloseRecordsTable,
+			Columns: []string{user.UserCloseRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OperateUserCloseRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OperateUserCloseRecordsTable,
+			Columns: []string{user.OperateUserCloseRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

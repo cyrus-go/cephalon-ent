@@ -164,9 +164,13 @@ type UserEdges struct {
 	IncomeManages []*IncomeManage `json:"income_manages,omitempty"`
 	// ApproveIncomeManages holds the value of the approve_income_manages edge.
 	ApproveIncomeManages []*IncomeManage `json:"approve_income_manages,omitempty"`
+	// UserCloseRecords holds the value of the user_close_records edge.
+	UserCloseRecords []*UserCloseRecord `json:"user_close_records,omitempty"`
+	// OperateUserCloseRecords holds the value of the operate_user_close_records edge.
+	OperateUserCloseRecords []*UserCloseRecord `json:"operate_user_close_records,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [43]bool
+	loadedTypes [45]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -570,6 +574,24 @@ func (e UserEdges) ApproveIncomeManagesOrErr() ([]*IncomeManage, error) {
 		return e.ApproveIncomeManages, nil
 	}
 	return nil, &NotLoadedError{edge: "approve_income_manages"}
+}
+
+// UserCloseRecordsOrErr returns the UserCloseRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserCloseRecordsOrErr() ([]*UserCloseRecord, error) {
+	if e.loadedTypes[43] {
+		return e.UserCloseRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "user_close_records"}
+}
+
+// OperateUserCloseRecordsOrErr returns the OperateUserCloseRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OperateUserCloseRecordsOrErr() ([]*UserCloseRecord, error) {
+	if e.loadedTypes[44] {
+		return e.OperateUserCloseRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "operate_user_close_records"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -977,6 +999,16 @@ func (u *User) QueryIncomeManages() *IncomeManageQuery {
 // QueryApproveIncomeManages queries the "approve_income_manages" edge of the User entity.
 func (u *User) QueryApproveIncomeManages() *IncomeManageQuery {
 	return NewUserClient(u.config).QueryApproveIncomeManages(u)
+}
+
+// QueryUserCloseRecords queries the "user_close_records" edge of the User entity.
+func (u *User) QueryUserCloseRecords() *UserCloseRecordQuery {
+	return NewUserClient(u.config).QueryUserCloseRecords(u)
+}
+
+// QueryOperateUserCloseRecords queries the "operate_user_close_records" edge of the User entity.
+func (u *User) QueryOperateUserCloseRecords() *UserCloseRecordQuery {
+	return NewUserClient(u.config).QueryOperateUserCloseRecords(u)
 }
 
 // Update returns a builder for updating this User.

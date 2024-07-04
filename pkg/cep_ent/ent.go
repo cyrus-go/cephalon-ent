@@ -67,6 +67,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -188,6 +189,7 @@ func checkColumn(table, column string) error {
 			transferorder.Table:        transferorder.ValidColumn,
 			troublededuct.Table:        troublededuct.ValidColumn,
 			user.Table:                 user.ValidColumn,
+			usercloserecord.Table:      usercloserecord.ValidColumn,
 			userdevice.Table:           userdevice.ValidColumn,
 			vxaccount.Table:            vxaccount.ValidColumn,
 			vxsocial.Table:             vxsocial.ValidColumn,

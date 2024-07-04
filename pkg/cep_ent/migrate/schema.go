@@ -2367,6 +2367,41 @@ var (
 			},
 		},
 	}
+	// UserCloseRecordsColumns holds the columns for the "user_close_records" table.
+	UserCloseRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "registered_at", Type: field.TypeTime, Comment: "本次注销时的注册时间"},
+		{Name: "closed_at", Type: field.TypeTime, Comment: "本次注销的时间"},
+		{Name: "type", Type: field.TypeEnum, Comment: "注销类型，用户自己注销或管理人员注销等", Enums: []string{"unknown", "self", "admin"}, Default: "unknown"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 id", Default: 0},
+		{Name: "operate_user_id", Type: field.TypeInt64, Comment: "操作人用户 id（只有管理人员注销时才有值）", Default: 0},
+	}
+	// UserCloseRecordsTable holds the schema information for the "user_close_records" table.
+	UserCloseRecordsTable = &schema.Table{
+		Name:       "user_close_records",
+		Comment:    "用户注销记录表",
+		Columns:    UserCloseRecordsColumns,
+		PrimaryKey: []*schema.Column{UserCloseRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_close_records_users_user_close_records",
+				Columns:    []*schema.Column{UserCloseRecordsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_close_records_users_operate_user_close_records",
+				Columns:    []*schema.Column{UserCloseRecordsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// UserDevicesColumns holds the columns for the "user_devices" table.
 	UserDevicesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2696,6 +2731,7 @@ var (
 		TransferOrdersTable,
 		TroubleDeductsTable,
 		UsersTable,
+		UserCloseRecordsTable,
 		UserDevicesTable,
 		VxAccountsTable,
 		VxSocialsTable,
@@ -2860,6 +2896,9 @@ func init() {
 	TroubleDeductsTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}
+	UserCloseRecordsTable.ForeignKeys[0].RefTable = UsersTable
+	UserCloseRecordsTable.ForeignKeys[1].RefTable = UsersTable
+	UserCloseRecordsTable.Annotation = &entsql.Annotation{}
 	UserDevicesTable.ForeignKeys[0].RefTable = DevicesTable
 	UserDevicesTable.ForeignKeys[1].RefTable = UsersTable
 	UserDevicesTable.Annotation = &entsql.Annotation{}

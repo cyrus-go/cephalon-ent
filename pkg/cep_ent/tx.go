@@ -122,6 +122,8 @@ type Tx struct {
 	TroubleDeduct *TroubleDeductClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserCloseRecord is the client for interacting with the UserCloseRecord builders.
+	UserCloseRecord *UserCloseRecordClient
 	// UserDevice is the client for interacting with the UserDevice builders.
 	UserDevice *UserDeviceClient
 	// VXAccount is the client for interacting with the VXAccount builders.
@@ -320,6 +322,7 @@ func (tx *Tx) init() {
 	tx.TransferOrder = NewTransferOrderClient(tx.config)
 	tx.TroubleDeduct = NewTroubleDeductClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserCloseRecord = NewUserCloseRecordClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)
 	tx.VXAccount = NewVXAccountClient(tx.config)
 	tx.VXSocial = NewVXSocialClient(tx.config)

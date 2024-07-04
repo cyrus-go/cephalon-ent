@@ -67,6 +67,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -140,6 +141,7 @@ const (
 	TypeTransferOrder        = "TransferOrder"
 	TypeTroubleDeduct        = "TroubleDeduct"
 	TypeUser                 = "User"
+	TypeUserCloseRecord      = "UserCloseRecord"
 	TypeUserDevice           = "UserDevice"
 	TypeVXAccount            = "VXAccount"
 	TypeVXSocial             = "VXSocial"
@@ -70866,164 +70868,170 @@ func (m *TroubleDeductMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                              Op
-	typ                             string
-	id                              *int64
-	created_by                      *int64
-	addcreated_by                   *int64
-	updated_by                      *int64
-	addupdated_by                   *int64
-	created_at                      *time.Time
-	updated_at                      *time.Time
-	deleted_at                      *time.Time
-	name                            *string
-	nick_name                       *string
-	jpg_url                         *string
-	key                             *string
-	secret                          *string
-	phone                           *string
-	password                        *string
-	is_frozen                       *bool
-	is_recharge                     *bool
-	user_type                       *enums.UserType
-	pop_version                     *string
-	area_code                       *string
-	email                           *string
-	cloud_space                     *int64
-	addcloud_space                  *int64
-	baidu_access_token              *string
-	baidu_refresh_token             *string
-	bound_at                        *time.Time
-	user_status                     *enums.UserStatus
-	clearedFields                   map[string]struct{}
-	vx_accounts                     map[int64]struct{}
-	removedvx_accounts              map[int64]struct{}
-	clearedvx_accounts              bool
-	collects                        map[int64]struct{}
-	removedcollects                 map[int64]struct{}
-	clearedcollects                 bool
-	devices                         map[int64]struct{}
-	removeddevices                  map[int64]struct{}
-	cleareddevices                  bool
-	profit_settings                 map[int64]struct{}
-	removedprofit_settings          map[int64]struct{}
-	clearedprofit_settings          bool
-	cost_account                    *int64
-	clearedcost_account             bool
-	profit_account                  *int64
-	clearedprofit_account           bool
-	cost_bills                      map[int64]struct{}
-	removedcost_bills               map[int64]struct{}
-	clearedcost_bills               bool
-	earn_bills                      map[int64]struct{}
-	removedearn_bills               map[int64]struct{}
-	clearedearn_bills               bool
-	mission_consume_orders          map[int64]struct{}
-	removedmission_consume_orders   map[int64]struct{}
-	clearedmission_consume_orders   bool
-	mission_produce_orders          map[int64]struct{}
-	removedmission_produce_orders   map[int64]struct{}
-	clearedmission_produce_orders   bool
-	recharge_orders                 map[int64]struct{}
-	removedrecharge_orders          map[int64]struct{}
-	clearedrecharge_orders          bool
-	vx_socials                      map[int64]struct{}
-	removedvx_socials               map[int64]struct{}
-	clearedvx_socials               bool
-	mission_batches                 map[int64]struct{}
-	removedmission_batches          map[int64]struct{}
-	clearedmission_batches          bool
-	user_devices                    map[int64]struct{}
-	removeduser_devices             map[int64]struct{}
-	cleareduser_devices             bool
-	parent                          *int64
-	clearedparent                   bool
-	children                        map[int64]struct{}
-	removedchildren                 map[int64]struct{}
-	clearedchildren                 bool
-	invites                         map[int64]struct{}
-	removedinvites                  map[int64]struct{}
-	clearedinvites                  bool
-	campaign_orders                 map[int64]struct{}
-	removedcampaign_orders          map[int64]struct{}
-	clearedcampaign_orders          bool
-	wallets                         map[int64]struct{}
-	removedwallets                  map[int64]struct{}
-	clearedwallets                  bool
-	withdraw_account                *int64
-	clearedwithdraw_account         bool
-	income_bills                    map[int64]struct{}
-	removedincome_bills             map[int64]struct{}
-	clearedincome_bills             bool
-	outcome_bills                   map[int64]struct{}
-	removedoutcome_bills            map[int64]struct{}
-	clearedoutcome_bills            bool
-	mission_productions             map[int64]struct{}
-	removedmission_productions      map[int64]struct{}
-	clearedmission_productions      bool
-	missions                        map[int64]struct{}
-	removedmissions                 map[int64]struct{}
-	clearedmissions                 bool
-	income_transfer_orders          map[int64]struct{}
-	removedincome_transfer_orders   map[int64]struct{}
-	clearedincome_transfer_orders   bool
-	outcome_transfer_orders         map[int64]struct{}
-	removedoutcome_transfer_orders  map[int64]struct{}
-	clearedoutcome_transfer_orders  bool
-	consume_mission_orders          map[int64]struct{}
-	removedconsume_mission_orders   map[int64]struct{}
-	clearedconsume_mission_orders   bool
-	produce_mission_orders          map[int64]struct{}
-	removedproduce_mission_orders   map[int64]struct{}
-	clearedproduce_mission_orders   bool
-	login_records                   map[int64]struct{}
-	removedlogin_records            map[int64]struct{}
-	clearedlogin_records            bool
-	renewal_agreements              map[int64]struct{}
-	removedrenewal_agreements       map[int64]struct{}
-	clearedrenewal_agreements       bool
-	artworks                        map[int64]struct{}
-	removedartworks                 map[int64]struct{}
-	clearedartworks                 bool
-	artwork_likes                   map[int64]struct{}
-	removedartwork_likes            map[int64]struct{}
-	clearedartwork_likes            bool
-	cdk_infos                       map[int64]struct{}
-	removedcdk_infos                map[int64]struct{}
-	clearedcdk_infos                bool
-	use_cdk_infos                   map[int64]struct{}
-	removeduse_cdk_infos            map[int64]struct{}
-	cleareduse_cdk_infos            bool
-	lotto_records                   map[int64]struct{}
-	removedlotto_records            map[int64]struct{}
-	clearedlotto_records            bool
-	lotto_user_counts               map[int64]struct{}
-	removedlotto_user_counts        map[int64]struct{}
-	clearedlotto_user_counts        bool
-	lotto_get_count_records         map[int64]struct{}
-	removedlotto_get_count_records  map[int64]struct{}
-	clearedlotto_get_count_records  bool
-	cloud_files                     map[int64]struct{}
-	removedcloud_files              map[int64]struct{}
-	clearedcloud_files              bool
-	withdraw_records                map[int64]struct{}
-	removedwithdraw_records         map[int64]struct{}
-	clearedwithdraw_records         bool
-	operate_withdraw_records        map[int64]struct{}
-	removedoperate_withdraw_records map[int64]struct{}
-	clearedoperate_withdraw_records bool
-	trouble_deducts                 map[int64]struct{}
-	removedtrouble_deducts          map[int64]struct{}
-	clearedtrouble_deducts          bool
-	income_manages                  map[int64]struct{}
-	removedincome_manages           map[int64]struct{}
-	clearedincome_manages           bool
-	approve_income_manages          map[int64]struct{}
-	removedapprove_income_manages   map[int64]struct{}
-	clearedapprove_income_manages   bool
-	done                            bool
-	oldValue                        func(context.Context) (*User, error)
-	predicates                      []predicate.User
+	op                                Op
+	typ                               string
+	id                                *int64
+	created_by                        *int64
+	addcreated_by                     *int64
+	updated_by                        *int64
+	addupdated_by                     *int64
+	created_at                        *time.Time
+	updated_at                        *time.Time
+	deleted_at                        *time.Time
+	name                              *string
+	nick_name                         *string
+	jpg_url                           *string
+	key                               *string
+	secret                            *string
+	phone                             *string
+	password                          *string
+	is_frozen                         *bool
+	is_recharge                       *bool
+	user_type                         *enums.UserType
+	pop_version                       *string
+	area_code                         *string
+	email                             *string
+	cloud_space                       *int64
+	addcloud_space                    *int64
+	baidu_access_token                *string
+	baidu_refresh_token               *string
+	bound_at                          *time.Time
+	user_status                       *enums.UserStatus
+	clearedFields                     map[string]struct{}
+	vx_accounts                       map[int64]struct{}
+	removedvx_accounts                map[int64]struct{}
+	clearedvx_accounts                bool
+	collects                          map[int64]struct{}
+	removedcollects                   map[int64]struct{}
+	clearedcollects                   bool
+	devices                           map[int64]struct{}
+	removeddevices                    map[int64]struct{}
+	cleareddevices                    bool
+	profit_settings                   map[int64]struct{}
+	removedprofit_settings            map[int64]struct{}
+	clearedprofit_settings            bool
+	cost_account                      *int64
+	clearedcost_account               bool
+	profit_account                    *int64
+	clearedprofit_account             bool
+	cost_bills                        map[int64]struct{}
+	removedcost_bills                 map[int64]struct{}
+	clearedcost_bills                 bool
+	earn_bills                        map[int64]struct{}
+	removedearn_bills                 map[int64]struct{}
+	clearedearn_bills                 bool
+	mission_consume_orders            map[int64]struct{}
+	removedmission_consume_orders     map[int64]struct{}
+	clearedmission_consume_orders     bool
+	mission_produce_orders            map[int64]struct{}
+	removedmission_produce_orders     map[int64]struct{}
+	clearedmission_produce_orders     bool
+	recharge_orders                   map[int64]struct{}
+	removedrecharge_orders            map[int64]struct{}
+	clearedrecharge_orders            bool
+	vx_socials                        map[int64]struct{}
+	removedvx_socials                 map[int64]struct{}
+	clearedvx_socials                 bool
+	mission_batches                   map[int64]struct{}
+	removedmission_batches            map[int64]struct{}
+	clearedmission_batches            bool
+	user_devices                      map[int64]struct{}
+	removeduser_devices               map[int64]struct{}
+	cleareduser_devices               bool
+	parent                            *int64
+	clearedparent                     bool
+	children                          map[int64]struct{}
+	removedchildren                   map[int64]struct{}
+	clearedchildren                   bool
+	invites                           map[int64]struct{}
+	removedinvites                    map[int64]struct{}
+	clearedinvites                    bool
+	campaign_orders                   map[int64]struct{}
+	removedcampaign_orders            map[int64]struct{}
+	clearedcampaign_orders            bool
+	wallets                           map[int64]struct{}
+	removedwallets                    map[int64]struct{}
+	clearedwallets                    bool
+	withdraw_account                  *int64
+	clearedwithdraw_account           bool
+	income_bills                      map[int64]struct{}
+	removedincome_bills               map[int64]struct{}
+	clearedincome_bills               bool
+	outcome_bills                     map[int64]struct{}
+	removedoutcome_bills              map[int64]struct{}
+	clearedoutcome_bills              bool
+	mission_productions               map[int64]struct{}
+	removedmission_productions        map[int64]struct{}
+	clearedmission_productions        bool
+	missions                          map[int64]struct{}
+	removedmissions                   map[int64]struct{}
+	clearedmissions                   bool
+	income_transfer_orders            map[int64]struct{}
+	removedincome_transfer_orders     map[int64]struct{}
+	clearedincome_transfer_orders     bool
+	outcome_transfer_orders           map[int64]struct{}
+	removedoutcome_transfer_orders    map[int64]struct{}
+	clearedoutcome_transfer_orders    bool
+	consume_mission_orders            map[int64]struct{}
+	removedconsume_mission_orders     map[int64]struct{}
+	clearedconsume_mission_orders     bool
+	produce_mission_orders            map[int64]struct{}
+	removedproduce_mission_orders     map[int64]struct{}
+	clearedproduce_mission_orders     bool
+	login_records                     map[int64]struct{}
+	removedlogin_records              map[int64]struct{}
+	clearedlogin_records              bool
+	renewal_agreements                map[int64]struct{}
+	removedrenewal_agreements         map[int64]struct{}
+	clearedrenewal_agreements         bool
+	artworks                          map[int64]struct{}
+	removedartworks                   map[int64]struct{}
+	clearedartworks                   bool
+	artwork_likes                     map[int64]struct{}
+	removedartwork_likes              map[int64]struct{}
+	clearedartwork_likes              bool
+	cdk_infos                         map[int64]struct{}
+	removedcdk_infos                  map[int64]struct{}
+	clearedcdk_infos                  bool
+	use_cdk_infos                     map[int64]struct{}
+	removeduse_cdk_infos              map[int64]struct{}
+	cleareduse_cdk_infos              bool
+	lotto_records                     map[int64]struct{}
+	removedlotto_records              map[int64]struct{}
+	clearedlotto_records              bool
+	lotto_user_counts                 map[int64]struct{}
+	removedlotto_user_counts          map[int64]struct{}
+	clearedlotto_user_counts          bool
+	lotto_get_count_records           map[int64]struct{}
+	removedlotto_get_count_records    map[int64]struct{}
+	clearedlotto_get_count_records    bool
+	cloud_files                       map[int64]struct{}
+	removedcloud_files                map[int64]struct{}
+	clearedcloud_files                bool
+	withdraw_records                  map[int64]struct{}
+	removedwithdraw_records           map[int64]struct{}
+	clearedwithdraw_records           bool
+	operate_withdraw_records          map[int64]struct{}
+	removedoperate_withdraw_records   map[int64]struct{}
+	clearedoperate_withdraw_records   bool
+	trouble_deducts                   map[int64]struct{}
+	removedtrouble_deducts            map[int64]struct{}
+	clearedtrouble_deducts            bool
+	income_manages                    map[int64]struct{}
+	removedincome_manages             map[int64]struct{}
+	clearedincome_manages             bool
+	approve_income_manages            map[int64]struct{}
+	removedapprove_income_manages     map[int64]struct{}
+	clearedapprove_income_manages     bool
+	user_close_records                map[int64]struct{}
+	removeduser_close_records         map[int64]struct{}
+	cleareduser_close_records         bool
+	operate_user_close_records        map[int64]struct{}
+	removedoperate_user_close_records map[int64]struct{}
+	clearedoperate_user_close_records bool
+	done                              bool
+	oldValue                          func(context.Context) (*User, error)
+	predicates                        []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -74317,6 +74325,114 @@ func (m *UserMutation) ResetApproveIncomeManages() {
 	m.removedapprove_income_manages = nil
 }
 
+// AddUserCloseRecordIDs adds the "user_close_records" edge to the UserCloseRecord entity by ids.
+func (m *UserMutation) AddUserCloseRecordIDs(ids ...int64) {
+	if m.user_close_records == nil {
+		m.user_close_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.user_close_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUserCloseRecords clears the "user_close_records" edge to the UserCloseRecord entity.
+func (m *UserMutation) ClearUserCloseRecords() {
+	m.cleareduser_close_records = true
+}
+
+// UserCloseRecordsCleared reports if the "user_close_records" edge to the UserCloseRecord entity was cleared.
+func (m *UserMutation) UserCloseRecordsCleared() bool {
+	return m.cleareduser_close_records
+}
+
+// RemoveUserCloseRecordIDs removes the "user_close_records" edge to the UserCloseRecord entity by IDs.
+func (m *UserMutation) RemoveUserCloseRecordIDs(ids ...int64) {
+	if m.removeduser_close_records == nil {
+		m.removeduser_close_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.user_close_records, ids[i])
+		m.removeduser_close_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUserCloseRecords returns the removed IDs of the "user_close_records" edge to the UserCloseRecord entity.
+func (m *UserMutation) RemovedUserCloseRecordsIDs() (ids []int64) {
+	for id := range m.removeduser_close_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UserCloseRecordsIDs returns the "user_close_records" edge IDs in the mutation.
+func (m *UserMutation) UserCloseRecordsIDs() (ids []int64) {
+	for id := range m.user_close_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUserCloseRecords resets all changes to the "user_close_records" edge.
+func (m *UserMutation) ResetUserCloseRecords() {
+	m.user_close_records = nil
+	m.cleareduser_close_records = false
+	m.removeduser_close_records = nil
+}
+
+// AddOperateUserCloseRecordIDs adds the "operate_user_close_records" edge to the UserCloseRecord entity by ids.
+func (m *UserMutation) AddOperateUserCloseRecordIDs(ids ...int64) {
+	if m.operate_user_close_records == nil {
+		m.operate_user_close_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.operate_user_close_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOperateUserCloseRecords clears the "operate_user_close_records" edge to the UserCloseRecord entity.
+func (m *UserMutation) ClearOperateUserCloseRecords() {
+	m.clearedoperate_user_close_records = true
+}
+
+// OperateUserCloseRecordsCleared reports if the "operate_user_close_records" edge to the UserCloseRecord entity was cleared.
+func (m *UserMutation) OperateUserCloseRecordsCleared() bool {
+	return m.clearedoperate_user_close_records
+}
+
+// RemoveOperateUserCloseRecordIDs removes the "operate_user_close_records" edge to the UserCloseRecord entity by IDs.
+func (m *UserMutation) RemoveOperateUserCloseRecordIDs(ids ...int64) {
+	if m.removedoperate_user_close_records == nil {
+		m.removedoperate_user_close_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.operate_user_close_records, ids[i])
+		m.removedoperate_user_close_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOperateUserCloseRecords returns the removed IDs of the "operate_user_close_records" edge to the UserCloseRecord entity.
+func (m *UserMutation) RemovedOperateUserCloseRecordsIDs() (ids []int64) {
+	for id := range m.removedoperate_user_close_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OperateUserCloseRecordsIDs returns the "operate_user_close_records" edge IDs in the mutation.
+func (m *UserMutation) OperateUserCloseRecordsIDs() (ids []int64) {
+	for id := range m.operate_user_close_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOperateUserCloseRecords resets all changes to the "operate_user_close_records" edge.
+func (m *UserMutation) ResetOperateUserCloseRecords() {
+	m.operate_user_close_records = nil
+	m.clearedoperate_user_close_records = false
+	m.removedoperate_user_close_records = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -74889,7 +75005,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 43)
+	edges := make([]string, 0, 45)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -75018,6 +75134,12 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.approve_income_manages != nil {
 		edges = append(edges, user.EdgeApproveIncomeManages)
+	}
+	if m.user_close_records != nil {
+		edges = append(edges, user.EdgeUserCloseRecords)
+	}
+	if m.operate_user_close_records != nil {
+		edges = append(edges, user.EdgeOperateUserCloseRecords)
 	}
 	return edges
 }
@@ -75276,13 +75398,25 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeUserCloseRecords:
+		ids := make([]ent.Value, 0, len(m.user_close_records))
+		for id := range m.user_close_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeOperateUserCloseRecords:
+		ids := make([]ent.Value, 0, len(m.operate_user_close_records))
+		for id := range m.operate_user_close_records {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 43)
+	edges := make([]string, 0, 45)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -75399,6 +75533,12 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedapprove_income_manages != nil {
 		edges = append(edges, user.EdgeApproveIncomeManages)
+	}
+	if m.removeduser_close_records != nil {
+		edges = append(edges, user.EdgeUserCloseRecords)
+	}
+	if m.removedoperate_user_close_records != nil {
+		edges = append(edges, user.EdgeOperateUserCloseRecords)
 	}
 	return edges
 }
@@ -75641,13 +75781,25 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeUserCloseRecords:
+		ids := make([]ent.Value, 0, len(m.removeduser_close_records))
+		for id := range m.removeduser_close_records {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeOperateUserCloseRecords:
+		ids := make([]ent.Value, 0, len(m.removedoperate_user_close_records))
+		for id := range m.removedoperate_user_close_records {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 43)
+	edges := make([]string, 0, 45)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -75777,6 +75929,12 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedapprove_income_manages {
 		edges = append(edges, user.EdgeApproveIncomeManages)
 	}
+	if m.cleareduser_close_records {
+		edges = append(edges, user.EdgeUserCloseRecords)
+	}
+	if m.clearedoperate_user_close_records {
+		edges = append(edges, user.EdgeOperateUserCloseRecords)
+	}
 	return edges
 }
 
@@ -75870,6 +76028,10 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedincome_manages
 	case user.EdgeApproveIncomeManages:
 		return m.clearedapprove_income_manages
+	case user.EdgeUserCloseRecords:
+		return m.cleareduser_close_records
+	case user.EdgeOperateUserCloseRecords:
+		return m.clearedoperate_user_close_records
 	}
 	return false
 }
@@ -76027,8 +76189,1001 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeApproveIncomeManages:
 		m.ResetApproveIncomeManages()
 		return nil
+	case user.EdgeUserCloseRecords:
+		m.ResetUserCloseRecords()
+		return nil
+	case user.EdgeOperateUserCloseRecords:
+		m.ResetOperateUserCloseRecords()
+		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
+}
+
+// UserCloseRecordMutation represents an operation that mutates the UserCloseRecord nodes in the graph.
+type UserCloseRecordMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *int64
+	created_by          *int64
+	addcreated_by       *int64
+	updated_by          *int64
+	addupdated_by       *int64
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	registered_at       *time.Time
+	closed_at           *time.Time
+	_type               *enums.UserCloseType
+	clearedFields       map[string]struct{}
+	user                *int64
+	cleareduser         bool
+	operate_user        *int64
+	clearedoperate_user bool
+	done                bool
+	oldValue            func(context.Context) (*UserCloseRecord, error)
+	predicates          []predicate.UserCloseRecord
+}
+
+var _ ent.Mutation = (*UserCloseRecordMutation)(nil)
+
+// usercloserecordOption allows management of the mutation configuration using functional options.
+type usercloserecordOption func(*UserCloseRecordMutation)
+
+// newUserCloseRecordMutation creates new mutation for the UserCloseRecord entity.
+func newUserCloseRecordMutation(c config, op Op, opts ...usercloserecordOption) *UserCloseRecordMutation {
+	m := &UserCloseRecordMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUserCloseRecord,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUserCloseRecordID sets the ID field of the mutation.
+func withUserCloseRecordID(id int64) usercloserecordOption {
+	return func(m *UserCloseRecordMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UserCloseRecord
+		)
+		m.oldValue = func(ctx context.Context) (*UserCloseRecord, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UserCloseRecord.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUserCloseRecord sets the old UserCloseRecord of the mutation.
+func withUserCloseRecord(node *UserCloseRecord) usercloserecordOption {
+	return func(m *UserCloseRecordMutation) {
+		m.oldValue = func(context.Context) (*UserCloseRecord, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UserCloseRecordMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UserCloseRecordMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of UserCloseRecord entities.
+func (m *UserCloseRecordMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UserCloseRecordMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *UserCloseRecordMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().UserCloseRecord.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *UserCloseRecordMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *UserCloseRecordMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *UserCloseRecordMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *UserCloseRecordMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *UserCloseRecordMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *UserCloseRecordMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *UserCloseRecordMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *UserCloseRecordMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *UserCloseRecordMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *UserCloseRecordMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *UserCloseRecordMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *UserCloseRecordMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *UserCloseRecordMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserCloseRecordMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserCloseRecordMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserCloseRecordMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserCloseRecordMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserCloseRecordMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserCloseRecordMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *UserCloseRecordMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *UserCloseRecordMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *UserCloseRecordMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetRegisteredAt sets the "registered_at" field.
+func (m *UserCloseRecordMutation) SetRegisteredAt(t time.Time) {
+	m.registered_at = &t
+}
+
+// RegisteredAt returns the value of the "registered_at" field in the mutation.
+func (m *UserCloseRecordMutation) RegisteredAt() (r time.Time, exists bool) {
+	v := m.registered_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRegisteredAt returns the old "registered_at" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldRegisteredAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRegisteredAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRegisteredAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRegisteredAt: %w", err)
+	}
+	return oldValue.RegisteredAt, nil
+}
+
+// ResetRegisteredAt resets all changes to the "registered_at" field.
+func (m *UserCloseRecordMutation) ResetRegisteredAt() {
+	m.registered_at = nil
+}
+
+// SetClosedAt sets the "closed_at" field.
+func (m *UserCloseRecordMutation) SetClosedAt(t time.Time) {
+	m.closed_at = &t
+}
+
+// ClosedAt returns the value of the "closed_at" field in the mutation.
+func (m *UserCloseRecordMutation) ClosedAt() (r time.Time, exists bool) {
+	v := m.closed_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClosedAt returns the old "closed_at" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldClosedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClosedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClosedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClosedAt: %w", err)
+	}
+	return oldValue.ClosedAt, nil
+}
+
+// ResetClosedAt resets all changes to the "closed_at" field.
+func (m *UserCloseRecordMutation) ResetClosedAt() {
+	m.closed_at = nil
+}
+
+// SetType sets the "type" field.
+func (m *UserCloseRecordMutation) SetType(ect enums.UserCloseType) {
+	m._type = &ect
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *UserCloseRecordMutation) GetType() (r enums.UserCloseType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldType(ctx context.Context) (v enums.UserCloseType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *UserCloseRecordMutation) ResetType() {
+	m._type = nil
+}
+
+// SetOperateUserID sets the "operate_user_id" field.
+func (m *UserCloseRecordMutation) SetOperateUserID(i int64) {
+	m.operate_user = &i
+}
+
+// OperateUserID returns the value of the "operate_user_id" field in the mutation.
+func (m *UserCloseRecordMutation) OperateUserID() (r int64, exists bool) {
+	v := m.operate_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperateUserID returns the old "operate_user_id" field's value of the UserCloseRecord entity.
+// If the UserCloseRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCloseRecordMutation) OldOperateUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperateUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperateUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperateUserID: %w", err)
+	}
+	return oldValue.OperateUserID, nil
+}
+
+// ResetOperateUserID resets all changes to the "operate_user_id" field.
+func (m *UserCloseRecordMutation) ResetOperateUserID() {
+	m.operate_user = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *UserCloseRecordMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[usercloserecord.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *UserCloseRecordMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *UserCloseRecordMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *UserCloseRecordMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearOperateUser clears the "operate_user" edge to the User entity.
+func (m *UserCloseRecordMutation) ClearOperateUser() {
+	m.clearedoperate_user = true
+	m.clearedFields[usercloserecord.FieldOperateUserID] = struct{}{}
+}
+
+// OperateUserCleared reports if the "operate_user" edge to the User entity was cleared.
+func (m *UserCloseRecordMutation) OperateUserCleared() bool {
+	return m.clearedoperate_user
+}
+
+// OperateUserIDs returns the "operate_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OperateUserID instead. It exists only for internal usage by the builders.
+func (m *UserCloseRecordMutation) OperateUserIDs() (ids []int64) {
+	if id := m.operate_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOperateUser resets all changes to the "operate_user" edge.
+func (m *UserCloseRecordMutation) ResetOperateUser() {
+	m.operate_user = nil
+	m.clearedoperate_user = false
+}
+
+// Where appends a list predicates to the UserCloseRecordMutation builder.
+func (m *UserCloseRecordMutation) Where(ps ...predicate.UserCloseRecord) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the UserCloseRecordMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserCloseRecordMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.UserCloseRecord, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *UserCloseRecordMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserCloseRecordMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (UserCloseRecord).
+func (m *UserCloseRecordMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UserCloseRecordMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_by != nil {
+		fields = append(fields, usercloserecord.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, usercloserecord.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, usercloserecord.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, usercloserecord.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, usercloserecord.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, usercloserecord.FieldUserID)
+	}
+	if m.registered_at != nil {
+		fields = append(fields, usercloserecord.FieldRegisteredAt)
+	}
+	if m.closed_at != nil {
+		fields = append(fields, usercloserecord.FieldClosedAt)
+	}
+	if m._type != nil {
+		fields = append(fields, usercloserecord.FieldType)
+	}
+	if m.operate_user != nil {
+		fields = append(fields, usercloserecord.FieldOperateUserID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UserCloseRecordMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case usercloserecord.FieldCreatedBy:
+		return m.CreatedBy()
+	case usercloserecord.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case usercloserecord.FieldCreatedAt:
+		return m.CreatedAt()
+	case usercloserecord.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case usercloserecord.FieldDeletedAt:
+		return m.DeletedAt()
+	case usercloserecord.FieldUserID:
+		return m.UserID()
+	case usercloserecord.FieldRegisteredAt:
+		return m.RegisteredAt()
+	case usercloserecord.FieldClosedAt:
+		return m.ClosedAt()
+	case usercloserecord.FieldType:
+		return m.GetType()
+	case usercloserecord.FieldOperateUserID:
+		return m.OperateUserID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UserCloseRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case usercloserecord.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case usercloserecord.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case usercloserecord.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case usercloserecord.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case usercloserecord.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case usercloserecord.FieldUserID:
+		return m.OldUserID(ctx)
+	case usercloserecord.FieldRegisteredAt:
+		return m.OldRegisteredAt(ctx)
+	case usercloserecord.FieldClosedAt:
+		return m.OldClosedAt(ctx)
+	case usercloserecord.FieldType:
+		return m.OldType(ctx)
+	case usercloserecord.FieldOperateUserID:
+		return m.OldOperateUserID(ctx)
+	}
+	return nil, fmt.Errorf("unknown UserCloseRecord field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UserCloseRecordMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case usercloserecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case usercloserecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case usercloserecord.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case usercloserecord.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case usercloserecord.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case usercloserecord.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case usercloserecord.FieldRegisteredAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRegisteredAt(v)
+		return nil
+	case usercloserecord.FieldClosedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClosedAt(v)
+		return nil
+	case usercloserecord.FieldType:
+		v, ok := value.(enums.UserCloseType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case usercloserecord.FieldOperateUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperateUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UserCloseRecord field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UserCloseRecordMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, usercloserecord.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, usercloserecord.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UserCloseRecordMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case usercloserecord.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case usercloserecord.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UserCloseRecordMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case usercloserecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case usercloserecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UserCloseRecord numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UserCloseRecordMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UserCloseRecordMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UserCloseRecordMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UserCloseRecord nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UserCloseRecordMutation) ResetField(name string) error {
+	switch name {
+	case usercloserecord.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case usercloserecord.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case usercloserecord.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case usercloserecord.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case usercloserecord.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case usercloserecord.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case usercloserecord.FieldRegisteredAt:
+		m.ResetRegisteredAt()
+		return nil
+	case usercloserecord.FieldClosedAt:
+		m.ResetClosedAt()
+		return nil
+	case usercloserecord.FieldType:
+		m.ResetType()
+		return nil
+	case usercloserecord.FieldOperateUserID:
+		m.ResetOperateUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown UserCloseRecord field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UserCloseRecordMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, usercloserecord.EdgeUser)
+	}
+	if m.operate_user != nil {
+		edges = append(edges, usercloserecord.EdgeOperateUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UserCloseRecordMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case usercloserecord.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case usercloserecord.EdgeOperateUser:
+		if id := m.operate_user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UserCloseRecordMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UserCloseRecordMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UserCloseRecordMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, usercloserecord.EdgeUser)
+	}
+	if m.clearedoperate_user {
+		edges = append(edges, usercloserecord.EdgeOperateUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UserCloseRecordMutation) EdgeCleared(name string) bool {
+	switch name {
+	case usercloserecord.EdgeUser:
+		return m.cleareduser
+	case usercloserecord.EdgeOperateUser:
+		return m.clearedoperate_user
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UserCloseRecordMutation) ClearEdge(name string) error {
+	switch name {
+	case usercloserecord.EdgeUser:
+		m.ClearUser()
+		return nil
+	case usercloserecord.EdgeOperateUser:
+		m.ClearOperateUser()
+		return nil
+	}
+	return fmt.Errorf("unknown UserCloseRecord unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UserCloseRecordMutation) ResetEdge(name string) error {
+	switch name {
+	case usercloserecord.EdgeUser:
+		m.ResetUser()
+		return nil
+	case usercloserecord.EdgeOperateUser:
+		m.ResetOperateUser()
+		return nil
+	}
+	return fmt.Errorf("unknown UserCloseRecord edge %s", name)
 }
 
 // UserDeviceMutation represents an operation that mutates the UserDevice nodes in the graph.

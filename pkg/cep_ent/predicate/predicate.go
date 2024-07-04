@@ -204,6 +204,9 @@ type TroubleDeduct func(*sql.Selector)
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
+// UserCloseRecord is the predicate function for usercloserecord builders.
+type UserCloseRecord func(*sql.Selector)
+
 // UserDevice is the predicate function for userdevice builders.
 type UserDevice func(*sql.Selector)
 

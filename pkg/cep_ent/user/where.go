@@ -2325,6 +2325,52 @@ func HasApproveIncomeManagesWith(preds ...predicate.IncomeManage) predicate.User
 	})
 }
 
+// HasUserCloseRecords applies the HasEdge predicate on the "user_close_records" edge.
+func HasUserCloseRecords() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserCloseRecordsTable, UserCloseRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserCloseRecordsWith applies the HasEdge predicate on the "user_close_records" edge with a given conditions (other predicates).
+func HasUserCloseRecordsWith(preds ...predicate.UserCloseRecord) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newUserCloseRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOperateUserCloseRecords applies the HasEdge predicate on the "operate_user_close_records" edge.
+func HasOperateUserCloseRecords() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, OperateUserCloseRecordsTable, OperateUserCloseRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOperateUserCloseRecordsWith applies the HasEdge predicate on the "operate_user_close_records" edge with a given conditions (other predicates).
+func HasOperateUserCloseRecordsWith(preds ...predicate.UserCloseRecord) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newOperateUserCloseRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

@@ -85,6 +85,8 @@ func (User) Edges() []ent.Edge {
 		edge.To("trouble_deducts", TroubleDeduct.Type),
 		edge.To("income_manages", IncomeManage.Type),
 		edge.To("approve_income_manages", IncomeManage.Type),
+		edge.To("user_close_records", UserCloseRecord.Type),
+		edge.To("operate_user_close_records", UserCloseRecord.Type),
 	}
 }
 

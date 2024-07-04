@@ -70,6 +70,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -193,6 +194,8 @@ type Client struct {
 	TroubleDeduct *TroubleDeductClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserCloseRecord is the client for interacting with the UserCloseRecord builders.
+	UserCloseRecord *UserCloseRecordClient
 	// UserDevice is the client for interacting with the UserDevice builders.
 	UserDevice *UserDeviceClient
 	// VXAccount is the client for interacting with the VXAccount builders.
@@ -273,6 +276,7 @@ func (c *Client) init() {
 	c.TransferOrder = NewTransferOrderClient(c.config)
 	c.TroubleDeduct = NewTroubleDeductClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserCloseRecord = NewUserCloseRecordClient(c.config)
 	c.UserDevice = NewUserDeviceClient(c.config)
 	c.VXAccount = NewVXAccountClient(c.config)
 	c.VXSocial = NewVXSocialClient(c.config)
@@ -419,6 +423,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TransferOrder:        NewTransferOrderClient(cfg),
 		TroubleDeduct:        NewTroubleDeductClient(cfg),
 		User:                 NewUserClient(cfg),
+		UserCloseRecord:      NewUserCloseRecordClient(cfg),
 		UserDevice:           NewUserDeviceClient(cfg),
 		VXAccount:            NewVXAccountClient(cfg),
 		VXSocial:             NewVXSocialClient(cfg),
@@ -499,6 +504,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TransferOrder:        NewTransferOrderClient(cfg),
 		TroubleDeduct:        NewTroubleDeductClient(cfg),
 		User:                 NewUserClient(cfg),
+		UserCloseRecord:      NewUserCloseRecordClient(cfg),
 		UserDevice:           NewUserDeviceClient(cfg),
 		VXAccount:            NewVXAccountClient(cfg),
 		VXSocial:             NewVXSocialClient(cfg),
@@ -545,8 +551,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
+		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserCloseRecord,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
+		c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
 	}
@@ -567,8 +574,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
+		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserCloseRecord,
+		c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet, c.WithdrawAccount,
+		c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -687,6 +695,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.TroubleDeduct.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *UserCloseRecordMutation:
+		return c.UserCloseRecord.mutate(ctx, m)
 	case *UserDeviceMutation:
 		return c.UserDevice.mutate(ctx, m)
 	case *VXAccountMutation:
@@ -11114,6 +11124,38 @@ func (c *UserClient) QueryApproveIncomeManages(u *User) *IncomeManageQuery {
 	return query
 }
 
+// QueryUserCloseRecords queries the user_close_records edge of a User.
+func (c *UserClient) QueryUserCloseRecords(u *User) *UserCloseRecordQuery {
+	query := (&UserCloseRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(usercloserecord.Table, usercloserecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserCloseRecordsTable, user.UserCloseRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOperateUserCloseRecords queries the operate_user_close_records edge of a User.
+func (c *UserClient) QueryOperateUserCloseRecords(u *User) *UserCloseRecordQuery {
+	query := (&UserCloseRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(usercloserecord.Table, usercloserecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateUserCloseRecordsTable, user.OperateUserCloseRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -11136,6 +11178,171 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 		return (&UserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown User mutation op: %q", m.Op())
+	}
+}
+
+// UserCloseRecordClient is a client for the UserCloseRecord schema.
+type UserCloseRecordClient struct {
+	config
+}
+
+// NewUserCloseRecordClient returns a client for the UserCloseRecord from the given config.
+func NewUserCloseRecordClient(c config) *UserCloseRecordClient {
+	return &UserCloseRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usercloserecord.Hooks(f(g(h())))`.
+func (c *UserCloseRecordClient) Use(hooks ...Hook) {
+	c.hooks.UserCloseRecord = append(c.hooks.UserCloseRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usercloserecord.Intercept(f(g(h())))`.
+func (c *UserCloseRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserCloseRecord = append(c.inters.UserCloseRecord, interceptors...)
+}
+
+// Create returns a builder for creating a UserCloseRecord entity.
+func (c *UserCloseRecordClient) Create() *UserCloseRecordCreate {
+	mutation := newUserCloseRecordMutation(c.config, OpCreate)
+	return &UserCloseRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserCloseRecord entities.
+func (c *UserCloseRecordClient) CreateBulk(builders ...*UserCloseRecordCreate) *UserCloseRecordCreateBulk {
+	return &UserCloseRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserCloseRecordClient) MapCreateBulk(slice any, setFunc func(*UserCloseRecordCreate, int)) *UserCloseRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserCloseRecordCreateBulk{err: fmt.Errorf("calling to UserCloseRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserCloseRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserCloseRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserCloseRecord.
+func (c *UserCloseRecordClient) Update() *UserCloseRecordUpdate {
+	mutation := newUserCloseRecordMutation(c.config, OpUpdate)
+	return &UserCloseRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserCloseRecordClient) UpdateOne(ucr *UserCloseRecord) *UserCloseRecordUpdateOne {
+	mutation := newUserCloseRecordMutation(c.config, OpUpdateOne, withUserCloseRecord(ucr))
+	return &UserCloseRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserCloseRecordClient) UpdateOneID(id int64) *UserCloseRecordUpdateOne {
+	mutation := newUserCloseRecordMutation(c.config, OpUpdateOne, withUserCloseRecordID(id))
+	return &UserCloseRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserCloseRecord.
+func (c *UserCloseRecordClient) Delete() *UserCloseRecordDelete {
+	mutation := newUserCloseRecordMutation(c.config, OpDelete)
+	return &UserCloseRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserCloseRecordClient) DeleteOne(ucr *UserCloseRecord) *UserCloseRecordDeleteOne {
+	return c.DeleteOneID(ucr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserCloseRecordClient) DeleteOneID(id int64) *UserCloseRecordDeleteOne {
+	builder := c.Delete().Where(usercloserecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserCloseRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for UserCloseRecord.
+func (c *UserCloseRecordClient) Query() *UserCloseRecordQuery {
+	return &UserCloseRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserCloseRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserCloseRecord entity by its id.
+func (c *UserCloseRecordClient) Get(ctx context.Context, id int64) (*UserCloseRecord, error) {
+	return c.Query().Where(usercloserecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserCloseRecordClient) GetX(ctx context.Context, id int64) *UserCloseRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserCloseRecord.
+func (c *UserCloseRecordClient) QueryUser(ucr *UserCloseRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ucr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usercloserecord.Table, usercloserecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, usercloserecord.UserTable, usercloserecord.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ucr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOperateUser queries the operate_user edge of a UserCloseRecord.
+func (c *UserCloseRecordClient) QueryOperateUser(ucr *UserCloseRecord) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ucr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usercloserecord.Table, usercloserecord.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, usercloserecord.OperateUserTable, usercloserecord.OperateUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ucr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserCloseRecordClient) Hooks() []Hook {
+	return c.hooks.UserCloseRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserCloseRecordClient) Interceptors() []Interceptor {
+	return c.inters.UserCloseRecord
+}
+
+func (c *UserCloseRecordClient) mutate(ctx context.Context, m *UserCloseRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserCloseRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserCloseRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserCloseRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserCloseRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown UserCloseRecord mutation op: %q", m.Op())
 	}
 }
 
@@ -12142,7 +12349,7 @@ type (
 		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
-		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		UserCloseRecord, UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
 		WithdrawRecord []ent.Hook
 	}
 	inters struct {
@@ -12156,7 +12363,7 @@ type (
 		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
 		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
-		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		UserCloseRecord, UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
 		WithdrawRecord []ent.Interceptor
 	}
 )
