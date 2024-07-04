@@ -41,7 +41,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -391,20 +390,6 @@ func (uc *UserCreate) SetUserStatus(es enums.UserStatus) *UserCreate {
 func (uc *UserCreate) SetNillableUserStatus(es *enums.UserStatus) *UserCreate {
 	if es != nil {
 		uc.SetUserStatus(*es)
-	}
-	return uc
-}
-
-// SetReRegisterAt sets the "re_register_at" field.
-func (uc *UserCreate) SetReRegisterAt(t time.Time) *UserCreate {
-	uc.mutation.SetReRegisterAt(t)
-	return uc
-}
-
-// SetNillableReRegisterAt sets the "re_register_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableReRegisterAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetReRegisterAt(*t)
 	}
 	return uc
 }
@@ -1070,36 +1055,6 @@ func (uc *UserCreate) AddApproveIncomeManages(i ...*IncomeManage) *UserCreate {
 	return uc.AddApproveIncomeManageIDs(ids...)
 }
 
-// AddUserCloseRecordIDs adds the "user_close_records" edge to the UserCloseRecord entity by IDs.
-func (uc *UserCreate) AddUserCloseRecordIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddUserCloseRecordIDs(ids...)
-	return uc
-}
-
-// AddUserCloseRecords adds the "user_close_records" edges to the UserCloseRecord entity.
-func (uc *UserCreate) AddUserCloseRecords(u ...*UserCloseRecord) *UserCreate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uc.AddUserCloseRecordIDs(ids...)
-}
-
-// AddOperateUserCloseRecordIDs adds the "operate_user_close_records" edge to the UserCloseRecord entity by IDs.
-func (uc *UserCreate) AddOperateUserCloseRecordIDs(ids ...int64) *UserCreate {
-	uc.mutation.AddOperateUserCloseRecordIDs(ids...)
-	return uc
-}
-
-// AddOperateUserCloseRecords adds the "operate_user_close_records" edges to the UserCloseRecord entity.
-func (uc *UserCreate) AddOperateUserCloseRecords(u ...*UserCloseRecord) *UserCreate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uc.AddOperateUserCloseRecordIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -1230,10 +1185,6 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.UserStatus(); !ok {
 		v := user.DefaultUserStatus
 		uc.mutation.SetUserStatus(v)
-	}
-	if _, ok := uc.mutation.ReRegisterAt(); !ok {
-		v := user.DefaultReRegisterAt
-		uc.mutation.SetReRegisterAt(v)
 	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
@@ -1449,10 +1400,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
 		_node.UserStatus = value
-	}
-	if value, ok := uc.mutation.ReRegisterAt(); ok {
-		_spec.SetField(user.FieldReRegisterAt, field.TypeTime, value)
-		_node.ReRegisterAt = &value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2143,38 +2090,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.UserCloseRecordsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.OperateUserCloseRecordsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	return _node, _spec
 }
 
@@ -2524,24 +2439,6 @@ func (u *UserUpsert) SetUserStatus(v enums.UserStatus) *UserUpsert {
 // UpdateUserStatus sets the "user_status" field to the value that was provided on create.
 func (u *UserUpsert) UpdateUserStatus() *UserUpsert {
 	u.SetExcluded(user.FieldUserStatus)
-	return u
-}
-
-// SetReRegisterAt sets the "re_register_at" field.
-func (u *UserUpsert) SetReRegisterAt(v time.Time) *UserUpsert {
-	u.Set(user.FieldReRegisterAt, v)
-	return u
-}
-
-// UpdateReRegisterAt sets the "re_register_at" field to the value that was provided on create.
-func (u *UserUpsert) UpdateReRegisterAt() *UserUpsert {
-	u.SetExcluded(user.FieldReRegisterAt)
-	return u
-}
-
-// ClearReRegisterAt clears the value of the "re_register_at" field.
-func (u *UserUpsert) ClearReRegisterAt() *UserUpsert {
-	u.SetNull(user.FieldReRegisterAt)
 	return u
 }
 
@@ -2943,27 +2840,6 @@ func (u *UserUpsertOne) SetUserStatus(v enums.UserStatus) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateUserStatus() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateUserStatus()
-	})
-}
-
-// SetReRegisterAt sets the "re_register_at" field.
-func (u *UserUpsertOne) SetReRegisterAt(v time.Time) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.SetReRegisterAt(v)
-	})
-}
-
-// UpdateReRegisterAt sets the "re_register_at" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateReRegisterAt() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateReRegisterAt()
-	})
-}
-
-// ClearReRegisterAt clears the value of the "re_register_at" field.
-func (u *UserUpsertOne) ClearReRegisterAt() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearReRegisterAt()
 	})
 }
 
@@ -3531,27 +3407,6 @@ func (u *UserUpsertBulk) SetUserStatus(v enums.UserStatus) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateUserStatus() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateUserStatus()
-	})
-}
-
-// SetReRegisterAt sets the "re_register_at" field.
-func (u *UserUpsertBulk) SetReRegisterAt(v time.Time) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.SetReRegisterAt(v)
-	})
-}
-
-// UpdateReRegisterAt sets the "re_register_at" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateReRegisterAt() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateReRegisterAt()
-	})
-}
-
-// ClearReRegisterAt clears the value of the "re_register_at" field.
-func (u *UserUpsertBulk) ClearReRegisterAt() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearReRegisterAt()
 	})
 }
 

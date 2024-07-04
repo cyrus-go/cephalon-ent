@@ -64,8 +64,6 @@ const (
 	FieldBoundAt = "bound_at"
 	// FieldUserStatus holds the string denoting the user_status field in the database.
 	FieldUserStatus = "user_status"
-	// FieldReRegisterAt holds the string denoting the re_register_at field in the database.
-	FieldReRegisterAt = "re_register_at"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -152,10 +150,6 @@ const (
 	EdgeIncomeManages = "income_manages"
 	// EdgeApproveIncomeManages holds the string denoting the approve_income_manages edge name in mutations.
 	EdgeApproveIncomeManages = "approve_income_manages"
-	// EdgeUserCloseRecords holds the string denoting the user_close_records edge name in mutations.
-	EdgeUserCloseRecords = "user_close_records"
-	// EdgeOperateUserCloseRecords holds the string denoting the operate_user_close_records edge name in mutations.
-	EdgeOperateUserCloseRecords = "operate_user_close_records"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -453,20 +447,6 @@ const (
 	ApproveIncomeManagesInverseTable = "income_manages"
 	// ApproveIncomeManagesColumn is the table column denoting the approve_income_manages relation/edge.
 	ApproveIncomeManagesColumn = "approve_user_id"
-	// UserCloseRecordsTable is the table that holds the user_close_records relation/edge.
-	UserCloseRecordsTable = "user_close_records"
-	// UserCloseRecordsInverseTable is the table name for the UserCloseRecord entity.
-	// It exists in this package in order to avoid circular dependency with the "usercloserecord" package.
-	UserCloseRecordsInverseTable = "user_close_records"
-	// UserCloseRecordsColumn is the table column denoting the user_close_records relation/edge.
-	UserCloseRecordsColumn = "user_id"
-	// OperateUserCloseRecordsTable is the table that holds the operate_user_close_records relation/edge.
-	OperateUserCloseRecordsTable = "user_close_records"
-	// OperateUserCloseRecordsInverseTable is the table name for the UserCloseRecord entity.
-	// It exists in this package in order to avoid circular dependency with the "usercloserecord" package.
-	OperateUserCloseRecordsInverseTable = "user_close_records"
-	// OperateUserCloseRecordsColumn is the table column denoting the operate_user_close_records relation/edge.
-	OperateUserCloseRecordsColumn = "operate_user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -496,7 +476,6 @@ var Columns = []string{
 	FieldBaiduRefreshToken,
 	FieldBoundAt,
 	FieldUserStatus,
-	FieldReRegisterAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -556,8 +535,6 @@ var (
 	DefaultBaiduRefreshToken string
 	// DefaultBoundAt holds the default value on creation for the "bound_at" field.
 	DefaultBoundAt time.Time
-	// DefaultReRegisterAt holds the default value on creation for the "re_register_at" field.
-	DefaultReRegisterAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -712,11 +689,6 @@ func ByBoundAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUserStatus orders the results by the user_status field.
 func ByUserStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserStatus, opts...).ToFunc()
-}
-
-// ByReRegisterAt orders the results by the re_register_at field.
-func ByReRegisterAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldReRegisterAt, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.
@@ -1292,34 +1264,6 @@ func ByApproveIncomeManages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newApproveIncomeManagesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByUserCloseRecordsCount orders the results by user_close_records count.
-func ByUserCloseRecordsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newUserCloseRecordsStep(), opts...)
-	}
-}
-
-// ByUserCloseRecords orders the results by user_close_records terms.
-func ByUserCloseRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserCloseRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByOperateUserCloseRecordsCount orders the results by operate_user_close_records count.
-func ByOperateUserCloseRecordsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newOperateUserCloseRecordsStep(), opts...)
-	}
-}
-
-// ByOperateUserCloseRecords orders the results by operate_user_close_records terms.
-func ByOperateUserCloseRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOperateUserCloseRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1619,19 +1563,5 @@ func newApproveIncomeManagesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ApproveIncomeManagesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ApproveIncomeManagesTable, ApproveIncomeManagesColumn),
-	)
-}
-func newUserCloseRecordsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserCloseRecordsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, UserCloseRecordsTable, UserCloseRecordsColumn),
-	)
-}
-func newOperateUserCloseRecordsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OperateUserCloseRecordsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, OperateUserCloseRecordsTable, OperateUserCloseRecordsColumn),
 	)
 }

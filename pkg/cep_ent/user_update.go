@@ -42,7 +42,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -404,26 +403,6 @@ func (uu *UserUpdate) SetNillableUserStatus(es *enums.UserStatus) *UserUpdate {
 	if es != nil {
 		uu.SetUserStatus(*es)
 	}
-	return uu
-}
-
-// SetReRegisterAt sets the "re_register_at" field.
-func (uu *UserUpdate) SetReRegisterAt(t time.Time) *UserUpdate {
-	uu.mutation.SetReRegisterAt(t)
-	return uu
-}
-
-// SetNillableReRegisterAt sets the "re_register_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableReRegisterAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetReRegisterAt(*t)
-	}
-	return uu
-}
-
-// ClearReRegisterAt clears the value of the "re_register_at" field.
-func (uu *UserUpdate) ClearReRegisterAt() *UserUpdate {
-	uu.mutation.ClearReRegisterAt()
 	return uu
 }
 
@@ -1072,36 +1051,6 @@ func (uu *UserUpdate) AddApproveIncomeManages(i ...*IncomeManage) *UserUpdate {
 		ids[j] = i[j].ID
 	}
 	return uu.AddApproveIncomeManageIDs(ids...)
-}
-
-// AddUserCloseRecordIDs adds the "user_close_records" edge to the UserCloseRecord entity by IDs.
-func (uu *UserUpdate) AddUserCloseRecordIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddUserCloseRecordIDs(ids...)
-	return uu
-}
-
-// AddUserCloseRecords adds the "user_close_records" edges to the UserCloseRecord entity.
-func (uu *UserUpdate) AddUserCloseRecords(u ...*UserCloseRecord) *UserUpdate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uu.AddUserCloseRecordIDs(ids...)
-}
-
-// AddOperateUserCloseRecordIDs adds the "operate_user_close_records" edge to the UserCloseRecord entity by IDs.
-func (uu *UserUpdate) AddOperateUserCloseRecordIDs(ids ...int64) *UserUpdate {
-	uu.mutation.AddOperateUserCloseRecordIDs(ids...)
-	return uu
-}
-
-// AddOperateUserCloseRecords adds the "operate_user_close_records" edges to the UserCloseRecord entity.
-func (uu *UserUpdate) AddOperateUserCloseRecords(u ...*UserCloseRecord) *UserUpdate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uu.AddOperateUserCloseRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1952,48 +1901,6 @@ func (uu *UserUpdate) RemoveApproveIncomeManages(i ...*IncomeManage) *UserUpdate
 	return uu.RemoveApproveIncomeManageIDs(ids...)
 }
 
-// ClearUserCloseRecords clears all "user_close_records" edges to the UserCloseRecord entity.
-func (uu *UserUpdate) ClearUserCloseRecords() *UserUpdate {
-	uu.mutation.ClearUserCloseRecords()
-	return uu
-}
-
-// RemoveUserCloseRecordIDs removes the "user_close_records" edge to UserCloseRecord entities by IDs.
-func (uu *UserUpdate) RemoveUserCloseRecordIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveUserCloseRecordIDs(ids...)
-	return uu
-}
-
-// RemoveUserCloseRecords removes "user_close_records" edges to UserCloseRecord entities.
-func (uu *UserUpdate) RemoveUserCloseRecords(u ...*UserCloseRecord) *UserUpdate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uu.RemoveUserCloseRecordIDs(ids...)
-}
-
-// ClearOperateUserCloseRecords clears all "operate_user_close_records" edges to the UserCloseRecord entity.
-func (uu *UserUpdate) ClearOperateUserCloseRecords() *UserUpdate {
-	uu.mutation.ClearOperateUserCloseRecords()
-	return uu
-}
-
-// RemoveOperateUserCloseRecordIDs removes the "operate_user_close_records" edge to UserCloseRecord entities by IDs.
-func (uu *UserUpdate) RemoveOperateUserCloseRecordIDs(ids ...int64) *UserUpdate {
-	uu.mutation.RemoveOperateUserCloseRecordIDs(ids...)
-	return uu
-}
-
-// RemoveOperateUserCloseRecords removes "operate_user_close_records" edges to UserCloseRecord entities.
-func (uu *UserUpdate) RemoveOperateUserCloseRecords(u ...*UserCloseRecord) *UserUpdate {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uu.RemoveOperateUserCloseRecordIDs(ids...)
-}
-
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 	uu.defaults()
@@ -2143,12 +2050,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
-	}
-	if value, ok := uu.mutation.ReRegisterAt(); ok {
-		_spec.SetField(user.FieldReRegisterAt, field.TypeTime, value)
-	}
-	if uu.mutation.ReRegisterAtCleared() {
-		_spec.ClearField(user.FieldReRegisterAt, field.TypeTime)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4021,96 +3922,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.UserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedUserCloseRecordsIDs(); len(nodes) > 0 && !uu.mutation.UserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.UserCloseRecordsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uu.mutation.OperateUserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedOperateUserCloseRecordsIDs(); len(nodes) > 0 && !uu.mutation.OperateUserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.OperateUserCloseRecordsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -4471,26 +4282,6 @@ func (uuo *UserUpdateOne) SetNillableUserStatus(es *enums.UserStatus) *UserUpdat
 	if es != nil {
 		uuo.SetUserStatus(*es)
 	}
-	return uuo
-}
-
-// SetReRegisterAt sets the "re_register_at" field.
-func (uuo *UserUpdateOne) SetReRegisterAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetReRegisterAt(t)
-	return uuo
-}
-
-// SetNillableReRegisterAt sets the "re_register_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableReRegisterAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetReRegisterAt(*t)
-	}
-	return uuo
-}
-
-// ClearReRegisterAt clears the value of the "re_register_at" field.
-func (uuo *UserUpdateOne) ClearReRegisterAt() *UserUpdateOne {
-	uuo.mutation.ClearReRegisterAt()
 	return uuo
 }
 
@@ -5139,36 +4930,6 @@ func (uuo *UserUpdateOne) AddApproveIncomeManages(i ...*IncomeManage) *UserUpdat
 		ids[j] = i[j].ID
 	}
 	return uuo.AddApproveIncomeManageIDs(ids...)
-}
-
-// AddUserCloseRecordIDs adds the "user_close_records" edge to the UserCloseRecord entity by IDs.
-func (uuo *UserUpdateOne) AddUserCloseRecordIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddUserCloseRecordIDs(ids...)
-	return uuo
-}
-
-// AddUserCloseRecords adds the "user_close_records" edges to the UserCloseRecord entity.
-func (uuo *UserUpdateOne) AddUserCloseRecords(u ...*UserCloseRecord) *UserUpdateOne {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uuo.AddUserCloseRecordIDs(ids...)
-}
-
-// AddOperateUserCloseRecordIDs adds the "operate_user_close_records" edge to the UserCloseRecord entity by IDs.
-func (uuo *UserUpdateOne) AddOperateUserCloseRecordIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.AddOperateUserCloseRecordIDs(ids...)
-	return uuo
-}
-
-// AddOperateUserCloseRecords adds the "operate_user_close_records" edges to the UserCloseRecord entity.
-func (uuo *UserUpdateOne) AddOperateUserCloseRecords(u ...*UserCloseRecord) *UserUpdateOne {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uuo.AddOperateUserCloseRecordIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -6019,48 +5780,6 @@ func (uuo *UserUpdateOne) RemoveApproveIncomeManages(i ...*IncomeManage) *UserUp
 	return uuo.RemoveApproveIncomeManageIDs(ids...)
 }
 
-// ClearUserCloseRecords clears all "user_close_records" edges to the UserCloseRecord entity.
-func (uuo *UserUpdateOne) ClearUserCloseRecords() *UserUpdateOne {
-	uuo.mutation.ClearUserCloseRecords()
-	return uuo
-}
-
-// RemoveUserCloseRecordIDs removes the "user_close_records" edge to UserCloseRecord entities by IDs.
-func (uuo *UserUpdateOne) RemoveUserCloseRecordIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveUserCloseRecordIDs(ids...)
-	return uuo
-}
-
-// RemoveUserCloseRecords removes "user_close_records" edges to UserCloseRecord entities.
-func (uuo *UserUpdateOne) RemoveUserCloseRecords(u ...*UserCloseRecord) *UserUpdateOne {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uuo.RemoveUserCloseRecordIDs(ids...)
-}
-
-// ClearOperateUserCloseRecords clears all "operate_user_close_records" edges to the UserCloseRecord entity.
-func (uuo *UserUpdateOne) ClearOperateUserCloseRecords() *UserUpdateOne {
-	uuo.mutation.ClearOperateUserCloseRecords()
-	return uuo
-}
-
-// RemoveOperateUserCloseRecordIDs removes the "operate_user_close_records" edge to UserCloseRecord entities by IDs.
-func (uuo *UserUpdateOne) RemoveOperateUserCloseRecordIDs(ids ...int64) *UserUpdateOne {
-	uuo.mutation.RemoveOperateUserCloseRecordIDs(ids...)
-	return uuo
-}
-
-// RemoveOperateUserCloseRecords removes "operate_user_close_records" edges to UserCloseRecord entities.
-func (uuo *UserUpdateOne) RemoveOperateUserCloseRecords(u ...*UserCloseRecord) *UserUpdateOne {
-	ids := make([]int64, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return uuo.RemoveOperateUserCloseRecordIDs(ids...)
-}
-
 // Where appends a list predicates to the UserUpdate builder.
 func (uuo *UserUpdateOne) Where(ps ...predicate.User) *UserUpdateOne {
 	uuo.mutation.Where(ps...)
@@ -6240,12 +5959,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
-	}
-	if value, ok := uuo.mutation.ReRegisterAt(); ok {
-		_spec.SetField(user.FieldReRegisterAt, field.TypeTime, value)
-	}
-	if uuo.mutation.ReRegisterAtCleared() {
-		_spec.ClearField(user.FieldReRegisterAt, field.TypeTime)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -8111,96 +7824,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.UserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedUserCloseRecordsIDs(); len(nodes) > 0 && !uuo.mutation.UserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.UserCloseRecordsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.UserCloseRecordsTable,
-			Columns: []string{user.UserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.OperateUserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedOperateUserCloseRecordsIDs(); len(nodes) > 0 && !uuo.mutation.OperateUserCloseRecordsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.OperateUserCloseRecordsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OperateUserCloseRecordsTable,
-			Columns: []string{user.OperateUserCloseRecordsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usercloserecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

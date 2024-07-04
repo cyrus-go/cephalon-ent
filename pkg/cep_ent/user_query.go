@@ -42,7 +42,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -54,56 +53,54 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                         *QueryContext
-	order                       []user.OrderOption
-	inters                      []Interceptor
-	predicates                  []predicate.User
-	withVxAccounts              *VXAccountQuery
-	withCollects                *CollectQuery
-	withDevices                 *DeviceQuery
-	withProfitSettings          *ProfitSettingQuery
-	withCostAccount             *CostAccountQuery
-	withProfitAccount           *ProfitAccountQuery
-	withCostBills               *CostBillQuery
-	withEarnBills               *EarnBillQuery
-	withMissionConsumeOrders    *MissionConsumeOrderQuery
-	withMissionProduceOrders    *MissionProduceOrderQuery
-	withRechargeOrders          *RechargeOrderQuery
-	withVxSocials               *VXSocialQuery
-	withMissionBatches          *MissionBatchQuery
-	withUserDevices             *UserDeviceQuery
-	withParent                  *UserQuery
-	withChildren                *UserQuery
-	withInvites                 *InviteQuery
-	withCampaignOrders          *CampaignOrderQuery
-	withWallets                 *WalletQuery
-	withWithdrawAccount         *WithdrawAccountQuery
-	withIncomeBills             *BillQuery
-	withOutcomeBills            *BillQuery
-	withMissionProductions      *MissionProductionQuery
-	withMissions                *MissionQuery
-	withIncomeTransferOrders    *TransferOrderQuery
-	withOutcomeTransferOrders   *TransferOrderQuery
-	withConsumeMissionOrders    *MissionOrderQuery
-	withProduceMissionOrders    *MissionOrderQuery
-	withLoginRecords            *LoginRecordQuery
-	withRenewalAgreements       *RenewalAgreementQuery
-	withArtworks                *ArtworkQuery
-	withArtworkLikes            *ArtworkLikeQuery
-	withCdkInfos                *CDKInfoQuery
-	withUseCdkInfos             *CDKInfoQuery
-	withLottoRecords            *LottoRecordQuery
-	withLottoUserCounts         *LottoUserCountQuery
-	withLottoGetCountRecords    *LottoGetCountRecordQuery
-	withCloudFiles              *CloudFileQuery
-	withWithdrawRecords         *WithdrawRecordQuery
-	withOperateWithdrawRecords  *WithdrawRecordQuery
-	withTroubleDeducts          *TroubleDeductQuery
-	withIncomeManages           *IncomeManageQuery
-	withApproveIncomeManages    *IncomeManageQuery
-	withUserCloseRecords        *UserCloseRecordQuery
-	withOperateUserCloseRecords *UserCloseRecordQuery
-	modifiers                   []func(*sql.Selector)
+	ctx                        *QueryContext
+	order                      []user.OrderOption
+	inters                     []Interceptor
+	predicates                 []predicate.User
+	withVxAccounts             *VXAccountQuery
+	withCollects               *CollectQuery
+	withDevices                *DeviceQuery
+	withProfitSettings         *ProfitSettingQuery
+	withCostAccount            *CostAccountQuery
+	withProfitAccount          *ProfitAccountQuery
+	withCostBills              *CostBillQuery
+	withEarnBills              *EarnBillQuery
+	withMissionConsumeOrders   *MissionConsumeOrderQuery
+	withMissionProduceOrders   *MissionProduceOrderQuery
+	withRechargeOrders         *RechargeOrderQuery
+	withVxSocials              *VXSocialQuery
+	withMissionBatches         *MissionBatchQuery
+	withUserDevices            *UserDeviceQuery
+	withParent                 *UserQuery
+	withChildren               *UserQuery
+	withInvites                *InviteQuery
+	withCampaignOrders         *CampaignOrderQuery
+	withWallets                *WalletQuery
+	withWithdrawAccount        *WithdrawAccountQuery
+	withIncomeBills            *BillQuery
+	withOutcomeBills           *BillQuery
+	withMissionProductions     *MissionProductionQuery
+	withMissions               *MissionQuery
+	withIncomeTransferOrders   *TransferOrderQuery
+	withOutcomeTransferOrders  *TransferOrderQuery
+	withConsumeMissionOrders   *MissionOrderQuery
+	withProduceMissionOrders   *MissionOrderQuery
+	withLoginRecords           *LoginRecordQuery
+	withRenewalAgreements      *RenewalAgreementQuery
+	withArtworks               *ArtworkQuery
+	withArtworkLikes           *ArtworkLikeQuery
+	withCdkInfos               *CDKInfoQuery
+	withUseCdkInfos            *CDKInfoQuery
+	withLottoRecords           *LottoRecordQuery
+	withLottoUserCounts        *LottoUserCountQuery
+	withLottoGetCountRecords   *LottoGetCountRecordQuery
+	withCloudFiles             *CloudFileQuery
+	withWithdrawRecords        *WithdrawRecordQuery
+	withOperateWithdrawRecords *WithdrawRecordQuery
+	withTroubleDeducts         *TroubleDeductQuery
+	withIncomeManages          *IncomeManageQuery
+	withApproveIncomeManages   *IncomeManageQuery
+	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -1086,50 +1083,6 @@ func (uq *UserQuery) QueryApproveIncomeManages() *IncomeManageQuery {
 	return query
 }
 
-// QueryUserCloseRecords chains the current query on the "user_close_records" edge.
-func (uq *UserQuery) QueryUserCloseRecords() *UserCloseRecordQuery {
-	query := (&UserCloseRecordClient{config: uq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(usercloserecord.Table, usercloserecord.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserCloseRecordsTable, user.UserCloseRecordsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryOperateUserCloseRecords chains the current query on the "operate_user_close_records" edge.
-func (uq *UserQuery) QueryOperateUserCloseRecords() *UserCloseRecordQuery {
-	query := (&UserCloseRecordClient{config: uq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(usercloserecord.Table, usercloserecord.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.OperateUserCloseRecordsTable, user.OperateUserCloseRecordsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1317,56 +1270,54 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                      uq.config,
-		ctx:                         uq.ctx.Clone(),
-		order:                       append([]user.OrderOption{}, uq.order...),
-		inters:                      append([]Interceptor{}, uq.inters...),
-		predicates:                  append([]predicate.User{}, uq.predicates...),
-		withVxAccounts:              uq.withVxAccounts.Clone(),
-		withCollects:                uq.withCollects.Clone(),
-		withDevices:                 uq.withDevices.Clone(),
-		withProfitSettings:          uq.withProfitSettings.Clone(),
-		withCostAccount:             uq.withCostAccount.Clone(),
-		withProfitAccount:           uq.withProfitAccount.Clone(),
-		withCostBills:               uq.withCostBills.Clone(),
-		withEarnBills:               uq.withEarnBills.Clone(),
-		withMissionConsumeOrders:    uq.withMissionConsumeOrders.Clone(),
-		withMissionProduceOrders:    uq.withMissionProduceOrders.Clone(),
-		withRechargeOrders:          uq.withRechargeOrders.Clone(),
-		withVxSocials:               uq.withVxSocials.Clone(),
-		withMissionBatches:          uq.withMissionBatches.Clone(),
-		withUserDevices:             uq.withUserDevices.Clone(),
-		withParent:                  uq.withParent.Clone(),
-		withChildren:                uq.withChildren.Clone(),
-		withInvites:                 uq.withInvites.Clone(),
-		withCampaignOrders:          uq.withCampaignOrders.Clone(),
-		withWallets:                 uq.withWallets.Clone(),
-		withWithdrawAccount:         uq.withWithdrawAccount.Clone(),
-		withIncomeBills:             uq.withIncomeBills.Clone(),
-		withOutcomeBills:            uq.withOutcomeBills.Clone(),
-		withMissionProductions:      uq.withMissionProductions.Clone(),
-		withMissions:                uq.withMissions.Clone(),
-		withIncomeTransferOrders:    uq.withIncomeTransferOrders.Clone(),
-		withOutcomeTransferOrders:   uq.withOutcomeTransferOrders.Clone(),
-		withConsumeMissionOrders:    uq.withConsumeMissionOrders.Clone(),
-		withProduceMissionOrders:    uq.withProduceMissionOrders.Clone(),
-		withLoginRecords:            uq.withLoginRecords.Clone(),
-		withRenewalAgreements:       uq.withRenewalAgreements.Clone(),
-		withArtworks:                uq.withArtworks.Clone(),
-		withArtworkLikes:            uq.withArtworkLikes.Clone(),
-		withCdkInfos:                uq.withCdkInfos.Clone(),
-		withUseCdkInfos:             uq.withUseCdkInfos.Clone(),
-		withLottoRecords:            uq.withLottoRecords.Clone(),
-		withLottoUserCounts:         uq.withLottoUserCounts.Clone(),
-		withLottoGetCountRecords:    uq.withLottoGetCountRecords.Clone(),
-		withCloudFiles:              uq.withCloudFiles.Clone(),
-		withWithdrawRecords:         uq.withWithdrawRecords.Clone(),
-		withOperateWithdrawRecords:  uq.withOperateWithdrawRecords.Clone(),
-		withTroubleDeducts:          uq.withTroubleDeducts.Clone(),
-		withIncomeManages:           uq.withIncomeManages.Clone(),
-		withApproveIncomeManages:    uq.withApproveIncomeManages.Clone(),
-		withUserCloseRecords:        uq.withUserCloseRecords.Clone(),
-		withOperateUserCloseRecords: uq.withOperateUserCloseRecords.Clone(),
+		config:                     uq.config,
+		ctx:                        uq.ctx.Clone(),
+		order:                      append([]user.OrderOption{}, uq.order...),
+		inters:                     append([]Interceptor{}, uq.inters...),
+		predicates:                 append([]predicate.User{}, uq.predicates...),
+		withVxAccounts:             uq.withVxAccounts.Clone(),
+		withCollects:               uq.withCollects.Clone(),
+		withDevices:                uq.withDevices.Clone(),
+		withProfitSettings:         uq.withProfitSettings.Clone(),
+		withCostAccount:            uq.withCostAccount.Clone(),
+		withProfitAccount:          uq.withProfitAccount.Clone(),
+		withCostBills:              uq.withCostBills.Clone(),
+		withEarnBills:              uq.withEarnBills.Clone(),
+		withMissionConsumeOrders:   uq.withMissionConsumeOrders.Clone(),
+		withMissionProduceOrders:   uq.withMissionProduceOrders.Clone(),
+		withRechargeOrders:         uq.withRechargeOrders.Clone(),
+		withVxSocials:              uq.withVxSocials.Clone(),
+		withMissionBatches:         uq.withMissionBatches.Clone(),
+		withUserDevices:            uq.withUserDevices.Clone(),
+		withParent:                 uq.withParent.Clone(),
+		withChildren:               uq.withChildren.Clone(),
+		withInvites:                uq.withInvites.Clone(),
+		withCampaignOrders:         uq.withCampaignOrders.Clone(),
+		withWallets:                uq.withWallets.Clone(),
+		withWithdrawAccount:        uq.withWithdrawAccount.Clone(),
+		withIncomeBills:            uq.withIncomeBills.Clone(),
+		withOutcomeBills:           uq.withOutcomeBills.Clone(),
+		withMissionProductions:     uq.withMissionProductions.Clone(),
+		withMissions:               uq.withMissions.Clone(),
+		withIncomeTransferOrders:   uq.withIncomeTransferOrders.Clone(),
+		withOutcomeTransferOrders:  uq.withOutcomeTransferOrders.Clone(),
+		withConsumeMissionOrders:   uq.withConsumeMissionOrders.Clone(),
+		withProduceMissionOrders:   uq.withProduceMissionOrders.Clone(),
+		withLoginRecords:           uq.withLoginRecords.Clone(),
+		withRenewalAgreements:      uq.withRenewalAgreements.Clone(),
+		withArtworks:               uq.withArtworks.Clone(),
+		withArtworkLikes:           uq.withArtworkLikes.Clone(),
+		withCdkInfos:               uq.withCdkInfos.Clone(),
+		withUseCdkInfos:            uq.withUseCdkInfos.Clone(),
+		withLottoRecords:           uq.withLottoRecords.Clone(),
+		withLottoUserCounts:        uq.withLottoUserCounts.Clone(),
+		withLottoGetCountRecords:   uq.withLottoGetCountRecords.Clone(),
+		withCloudFiles:             uq.withCloudFiles.Clone(),
+		withWithdrawRecords:        uq.withWithdrawRecords.Clone(),
+		withOperateWithdrawRecords: uq.withOperateWithdrawRecords.Clone(),
+		withTroubleDeducts:         uq.withTroubleDeducts.Clone(),
+		withIncomeManages:          uq.withIncomeManages.Clone(),
+		withApproveIncomeManages:   uq.withApproveIncomeManages.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1846,28 +1797,6 @@ func (uq *UserQuery) WithApproveIncomeManages(opts ...func(*IncomeManageQuery)) 
 	return uq
 }
 
-// WithUserCloseRecords tells the query-builder to eager-load the nodes that are connected to
-// the "user_close_records" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithUserCloseRecords(opts ...func(*UserCloseRecordQuery)) *UserQuery {
-	query := (&UserCloseRecordClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withUserCloseRecords = query
-	return uq
-}
-
-// WithOperateUserCloseRecords tells the query-builder to eager-load the nodes that are connected to
-// the "operate_user_close_records" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithOperateUserCloseRecords(opts ...func(*UserCloseRecordQuery)) *UserQuery {
-	query := (&UserCloseRecordClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withOperateUserCloseRecords = query
-	return uq
-}
-
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1946,7 +1875,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [45]bool{
+		loadedTypes = [43]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1990,8 +1919,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withTroubleDeducts != nil,
 			uq.withIncomeManages != nil,
 			uq.withApproveIncomeManages != nil,
-			uq.withUserCloseRecords != nil,
-			uq.withOperateUserCloseRecords != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2323,22 +2250,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadApproveIncomeManages(ctx, query, nodes,
 			func(n *User) { n.Edges.ApproveIncomeManages = []*IncomeManage{} },
 			func(n *User, e *IncomeManage) { n.Edges.ApproveIncomeManages = append(n.Edges.ApproveIncomeManages, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := uq.withUserCloseRecords; query != nil {
-		if err := uq.loadUserCloseRecords(ctx, query, nodes,
-			func(n *User) { n.Edges.UserCloseRecords = []*UserCloseRecord{} },
-			func(n *User, e *UserCloseRecord) { n.Edges.UserCloseRecords = append(n.Edges.UserCloseRecords, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := uq.withOperateUserCloseRecords; query != nil {
-		if err := uq.loadOperateUserCloseRecords(ctx, query, nodes,
-			func(n *User) { n.Edges.OperateUserCloseRecords = []*UserCloseRecord{} },
-			func(n *User, e *UserCloseRecord) {
-				n.Edges.OperateUserCloseRecords = append(n.Edges.OperateUserCloseRecords, e)
-			}); err != nil {
 			return nil, err
 		}
 	}
@@ -3622,66 +3533,6 @@ func (uq *UserQuery) loadApproveIncomeManages(ctx context.Context, query *Income
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "approve_user_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (uq *UserQuery) loadUserCloseRecords(ctx context.Context, query *UserCloseRecordQuery, nodes []*User, init func(*User), assign func(*User, *UserCloseRecord)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(usercloserecord.FieldUserID)
-	}
-	query.Where(predicate.UserCloseRecord(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.UserCloseRecordsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (uq *UserQuery) loadOperateUserCloseRecords(ctx context.Context, query *UserCloseRecordQuery, nodes []*User, init func(*User), assign func(*User, *UserCloseRecord)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(usercloserecord.FieldOperateUserID)
-	}
-	query.Where(predicate.UserCloseRecord(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.OperateUserCloseRecordsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.OperateUserID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "operate_user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

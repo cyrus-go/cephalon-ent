@@ -62,7 +62,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usercloserecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
@@ -3179,61 +3178,10 @@ func init() {
 	userDescBoundAt := userFields[17].Descriptor()
 	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
 	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
-	// userDescReRegisterAt is the schema descriptor for re_register_at field.
-	userDescReRegisterAt := userFields[19].Descriptor()
-	// user.DefaultReRegisterAt holds the default value on creation for the re_register_at field.
-	user.DefaultReRegisterAt = userDescReRegisterAt.Default.(time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() int64)
-	usercloserecordMixin := schema.UserCloseRecord{}.Mixin()
-	usercloserecordMixinFields0 := usercloserecordMixin[0].Fields()
-	_ = usercloserecordMixinFields0
-	usercloserecordFields := schema.UserCloseRecord{}.Fields()
-	_ = usercloserecordFields
-	// usercloserecordDescCreatedBy is the schema descriptor for created_by field.
-	usercloserecordDescCreatedBy := usercloserecordMixinFields0[1].Descriptor()
-	// usercloserecord.DefaultCreatedBy holds the default value on creation for the created_by field.
-	usercloserecord.DefaultCreatedBy = usercloserecordDescCreatedBy.Default.(int64)
-	// usercloserecordDescUpdatedBy is the schema descriptor for updated_by field.
-	usercloserecordDescUpdatedBy := usercloserecordMixinFields0[2].Descriptor()
-	// usercloserecord.DefaultUpdatedBy holds the default value on creation for the updated_by field.
-	usercloserecord.DefaultUpdatedBy = usercloserecordDescUpdatedBy.Default.(int64)
-	// usercloserecordDescCreatedAt is the schema descriptor for created_at field.
-	usercloserecordDescCreatedAt := usercloserecordMixinFields0[3].Descriptor()
-	// usercloserecord.DefaultCreatedAt holds the default value on creation for the created_at field.
-	usercloserecord.DefaultCreatedAt = usercloserecordDescCreatedAt.Default.(func() time.Time)
-	// usercloserecordDescUpdatedAt is the schema descriptor for updated_at field.
-	usercloserecordDescUpdatedAt := usercloserecordMixinFields0[4].Descriptor()
-	// usercloserecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	usercloserecord.DefaultUpdatedAt = usercloserecordDescUpdatedAt.Default.(func() time.Time)
-	// usercloserecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	usercloserecord.UpdateDefaultUpdatedAt = usercloserecordDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// usercloserecordDescDeletedAt is the schema descriptor for deleted_at field.
-	usercloserecordDescDeletedAt := usercloserecordMixinFields0[5].Descriptor()
-	// usercloserecord.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	usercloserecord.DefaultDeletedAt = usercloserecordDescDeletedAt.Default.(time.Time)
-	// usercloserecordDescUserID is the schema descriptor for user_id field.
-	usercloserecordDescUserID := usercloserecordFields[0].Descriptor()
-	// usercloserecord.DefaultUserID holds the default value on creation for the user_id field.
-	usercloserecord.DefaultUserID = usercloserecordDescUserID.Default.(int64)
-	// usercloserecordDescRegisteredAt is the schema descriptor for registered_at field.
-	usercloserecordDescRegisteredAt := usercloserecordFields[1].Descriptor()
-	// usercloserecord.DefaultRegisteredAt holds the default value on creation for the registered_at field.
-	usercloserecord.DefaultRegisteredAt = usercloserecordDescRegisteredAt.Default.(time.Time)
-	// usercloserecordDescClosedAt is the schema descriptor for closed_at field.
-	usercloserecordDescClosedAt := usercloserecordFields[2].Descriptor()
-	// usercloserecord.DefaultClosedAt holds the default value on creation for the closed_at field.
-	usercloserecord.DefaultClosedAt = usercloserecordDescClosedAt.Default.(time.Time)
-	// usercloserecordDescOperateUserID is the schema descriptor for operate_user_id field.
-	usercloserecordDescOperateUserID := usercloserecordFields[4].Descriptor()
-	// usercloserecord.DefaultOperateUserID holds the default value on creation for the operate_user_id field.
-	usercloserecord.DefaultOperateUserID = usercloserecordDescOperateUserID.Default.(int64)
-	// usercloserecordDescID is the schema descriptor for id field.
-	usercloserecordDescID := usercloserecordMixinFields0[0].Descriptor()
-	// usercloserecord.DefaultID holds the default value on creation for the id field.
-	usercloserecord.DefaultID = usercloserecordDescID.Default.(func() int64)
 	userdeviceMixin := schema.UserDevice{}.Mixin()
 	userdeviceMixinFields0 := userdeviceMixin[0].Fields()
 	_ = userdeviceMixinFields0

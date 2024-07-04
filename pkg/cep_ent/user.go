@@ -70,8 +70,6 @@ type User struct {
 	BoundAt *time.Time `json:"bound_at"`
 	// 用户状态
 	UserStatus enums.UserStatus `json:"user_status"`
-	// 用户注销之后重新注册的时间
-	ReRegisterAt *time.Time `json:"re_register_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -166,13 +164,9 @@ type UserEdges struct {
 	IncomeManages []*IncomeManage `json:"income_manages,omitempty"`
 	// ApproveIncomeManages holds the value of the approve_income_manages edge.
 	ApproveIncomeManages []*IncomeManage `json:"approve_income_manages,omitempty"`
-	// UserCloseRecords holds the value of the user_close_records edge.
-	UserCloseRecords []*UserCloseRecord `json:"user_close_records,omitempty"`
-	// OperateUserCloseRecords holds the value of the operate_user_close_records edge.
-	OperateUserCloseRecords []*UserCloseRecord `json:"operate_user_close_records,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [45]bool
+	loadedTypes [43]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -578,24 +572,6 @@ func (e UserEdges) ApproveIncomeManagesOrErr() ([]*IncomeManage, error) {
 	return nil, &NotLoadedError{edge: "approve_income_manages"}
 }
 
-// UserCloseRecordsOrErr returns the UserCloseRecords value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) UserCloseRecordsOrErr() ([]*UserCloseRecord, error) {
-	if e.loadedTypes[43] {
-		return e.UserCloseRecords, nil
-	}
-	return nil, &NotLoadedError{edge: "user_close_records"}
-}
-
-// OperateUserCloseRecordsOrErr returns the OperateUserCloseRecords value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) OperateUserCloseRecordsOrErr() ([]*UserCloseRecord, error) {
-	if e.loadedTypes[44] {
-		return e.OperateUserCloseRecords, nil
-	}
-	return nil, &NotLoadedError{edge: "operate_user_close_records"}
-}
-
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -607,7 +583,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldBoundAt, user.FieldReRegisterAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldBoundAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -774,13 +750,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field user_status", values[i])
 			} else if value.Valid {
 				u.UserStatus = enums.UserStatus(value.String)
-			}
-		case user.FieldReRegisterAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field re_register_at", values[i])
-			} else if value.Valid {
-				u.ReRegisterAt = new(time.Time)
-				*u.ReRegisterAt = value.Time
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -1010,16 +979,6 @@ func (u *User) QueryApproveIncomeManages() *IncomeManageQuery {
 	return NewUserClient(u.config).QueryApproveIncomeManages(u)
 }
 
-// QueryUserCloseRecords queries the "user_close_records" edge of the User entity.
-func (u *User) QueryUserCloseRecords() *UserCloseRecordQuery {
-	return NewUserClient(u.config).QueryUserCloseRecords(u)
-}
-
-// QueryOperateUserCloseRecords queries the "operate_user_close_records" edge of the User entity.
-func (u *User) QueryOperateUserCloseRecords() *UserCloseRecordQuery {
-	return NewUserClient(u.config).QueryOperateUserCloseRecords(u)
-}
-
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -1112,11 +1071,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_status=")
 	builder.WriteString(fmt.Sprintf("%v", u.UserStatus))
-	builder.WriteString(", ")
-	if v := u.ReRegisterAt; v != nil {
-		builder.WriteString("re_register_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteByte(')')
 	return builder.String()
 }

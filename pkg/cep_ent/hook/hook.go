@@ -669,18 +669,6 @@ func (f UserFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.UserMutation", m)
 }
 
-// The UserCloseRecordFunc type is an adapter to allow the use of ordinary
-// function as UserCloseRecord mutator.
-type UserCloseRecordFunc func(context.Context, *cep_ent.UserCloseRecordMutation) (cep_ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f UserCloseRecordFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
-	if mv, ok := m.(*cep_ent.UserCloseRecordMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.UserCloseRecordMutation", m)
-}
-
 // The UserDeviceFunc type is an adapter to allow the use of ordinary
 // function as UserDevice mutator.
 type UserDeviceFunc func(context.Context, *cep_ent.UserDeviceMutation) (cep_ent.Value, error)
