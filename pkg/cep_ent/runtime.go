@@ -3179,6 +3179,10 @@ func init() {
 	userDescBoundAt := userFields[17].Descriptor()
 	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
 	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
+	// userDescReRegisterAt is the schema descriptor for re_register_at field.
+	userDescReRegisterAt := userFields[19].Descriptor()
+	// user.DefaultReRegisterAt holds the default value on creation for the re_register_at field.
+	user.DefaultReRegisterAt = userDescReRegisterAt.Default.(time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

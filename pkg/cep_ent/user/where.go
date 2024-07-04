@@ -166,6 +166,11 @@ func BoundAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBoundAt, v))
 }
 
+// ReRegisterAt applies equality check predicate on the "re_register_at" field. It's identical to ReRegisterAtEQ.
+func ReRegisterAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldReRegisterAt, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
@@ -1334,6 +1339,56 @@ func UserStatusNotIn(vs ...enums.UserStatus) predicate.User {
 		v[i] = vs[i]
 	}
 	return predicate.User(sql.FieldNotIn(FieldUserStatus, v...))
+}
+
+// ReRegisterAtEQ applies the EQ predicate on the "re_register_at" field.
+func ReRegisterAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldReRegisterAt, v))
+}
+
+// ReRegisterAtNEQ applies the NEQ predicate on the "re_register_at" field.
+func ReRegisterAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldReRegisterAt, v))
+}
+
+// ReRegisterAtIn applies the In predicate on the "re_register_at" field.
+func ReRegisterAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldReRegisterAt, vs...))
+}
+
+// ReRegisterAtNotIn applies the NotIn predicate on the "re_register_at" field.
+func ReRegisterAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldReRegisterAt, vs...))
+}
+
+// ReRegisterAtGT applies the GT predicate on the "re_register_at" field.
+func ReRegisterAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldReRegisterAt, v))
+}
+
+// ReRegisterAtGTE applies the GTE predicate on the "re_register_at" field.
+func ReRegisterAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldReRegisterAt, v))
+}
+
+// ReRegisterAtLT applies the LT predicate on the "re_register_at" field.
+func ReRegisterAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldReRegisterAt, v))
+}
+
+// ReRegisterAtLTE applies the LTE predicate on the "re_register_at" field.
+func ReRegisterAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldReRegisterAt, v))
+}
+
+// ReRegisterAtIsNil applies the IsNil predicate on the "re_register_at" field.
+func ReRegisterAtIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldReRegisterAt))
+}
+
+// ReRegisterAtNotNil applies the NotNil predicate on the "re_register_at" field.
+func ReRegisterAtNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldReRegisterAt))
 }
 
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.

@@ -64,6 +64,8 @@ const (
 	FieldBoundAt = "bound_at"
 	// FieldUserStatus holds the string denoting the user_status field in the database.
 	FieldUserStatus = "user_status"
+	// FieldReRegisterAt holds the string denoting the re_register_at field in the database.
+	FieldReRegisterAt = "re_register_at"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -494,6 +496,7 @@ var Columns = []string{
 	FieldBaiduRefreshToken,
 	FieldBoundAt,
 	FieldUserStatus,
+	FieldReRegisterAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -553,6 +556,8 @@ var (
 	DefaultBaiduRefreshToken string
 	// DefaultBoundAt holds the default value on creation for the "bound_at" field.
 	DefaultBoundAt time.Time
+	// DefaultReRegisterAt holds the default value on creation for the "re_register_at" field.
+	DefaultReRegisterAt time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -707,6 +712,11 @@ func ByBoundAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUserStatus orders the results by the user_status field.
 func ByUserStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserStatus, opts...).ToFunc()
+}
+
+// ByReRegisterAt orders the results by the re_register_at field.
+func ByReRegisterAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReRegisterAt, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

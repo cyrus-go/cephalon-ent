@@ -70,6 +70,8 @@ type User struct {
 	BoundAt *time.Time `json:"bound_at"`
 	// 用户状态
 	UserStatus enums.UserStatus `json:"user_status"`
+	// 用户注销之后重新注册的时间
+	ReRegisterAt *time.Time `json:"re_register_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -605,7 +607,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldBoundAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldBoundAt, user.FieldReRegisterAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -772,6 +774,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field user_status", values[i])
 			} else if value.Valid {
 				u.UserStatus = enums.UserStatus(value.String)
+			}
+		case user.FieldReRegisterAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field re_register_at", values[i])
+			} else if value.Valid {
+				u.ReRegisterAt = new(time.Time)
+				*u.ReRegisterAt = value.Time
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -1103,6 +1112,11 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_status=")
 	builder.WriteString(fmt.Sprintf("%v", u.UserStatus))
+	builder.WriteString(", ")
+	if v := u.ReRegisterAt; v != nil {
+		builder.WriteString("re_register_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

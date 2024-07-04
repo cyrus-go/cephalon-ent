@@ -70897,6 +70897,7 @@ type UserMutation struct {
 	baidu_refresh_token               *string
 	bound_at                          *time.Time
 	user_status                       *enums.UserStatus
+	re_register_at                    *time.Time
 	clearedFields                     map[string]struct{}
 	vx_accounts                       map[int64]struct{}
 	removedvx_accounts                map[int64]struct{}
@@ -72073,6 +72074,55 @@ func (m *UserMutation) OldUserStatus(ctx context.Context) (v enums.UserStatus, e
 // ResetUserStatus resets all changes to the "user_status" field.
 func (m *UserMutation) ResetUserStatus() {
 	m.user_status = nil
+}
+
+// SetReRegisterAt sets the "re_register_at" field.
+func (m *UserMutation) SetReRegisterAt(t time.Time) {
+	m.re_register_at = &t
+}
+
+// ReRegisterAt returns the value of the "re_register_at" field in the mutation.
+func (m *UserMutation) ReRegisterAt() (r time.Time, exists bool) {
+	v := m.re_register_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReRegisterAt returns the old "re_register_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldReRegisterAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReRegisterAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReRegisterAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReRegisterAt: %w", err)
+	}
+	return oldValue.ReRegisterAt, nil
+}
+
+// ClearReRegisterAt clears the value of the "re_register_at" field.
+func (m *UserMutation) ClearReRegisterAt() {
+	m.re_register_at = nil
+	m.clearedFields[user.FieldReRegisterAt] = struct{}{}
+}
+
+// ReRegisterAtCleared returns if the "re_register_at" field was cleared in this mutation.
+func (m *UserMutation) ReRegisterAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldReRegisterAt]
+	return ok
+}
+
+// ResetReRegisterAt resets all changes to the "re_register_at" field.
+func (m *UserMutation) ResetReRegisterAt() {
+	m.re_register_at = nil
+	delete(m.clearedFields, user.FieldReRegisterAt)
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -74467,7 +74517,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -74540,6 +74590,9 @@ func (m *UserMutation) Fields() []string {
 	if m.user_status != nil {
 		fields = append(fields, user.FieldUserStatus)
 	}
+	if m.re_register_at != nil {
+		fields = append(fields, user.FieldReRegisterAt)
+	}
 	return fields
 }
 
@@ -74596,6 +74649,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.BoundAt()
 	case user.FieldUserStatus:
 		return m.UserStatus()
+	case user.FieldReRegisterAt:
+		return m.ReRegisterAt()
 	}
 	return nil, false
 }
@@ -74653,6 +74708,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldBoundAt(ctx)
 	case user.FieldUserStatus:
 		return m.OldUserStatus(ctx)
+	case user.FieldReRegisterAt:
+		return m.OldReRegisterAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -74830,6 +74887,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserStatus(v)
 		return nil
+	case user.FieldReRegisterAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReRegisterAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -74902,6 +74966,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldBoundAt) {
 		fields = append(fields, user.FieldBoundAt)
 	}
+	if m.FieldCleared(user.FieldReRegisterAt) {
+		fields = append(fields, user.FieldReRegisterAt)
+	}
 	return fields
 }
 
@@ -74918,6 +74985,9 @@ func (m *UserMutation) ClearField(name string) error {
 	switch name {
 	case user.FieldBoundAt:
 		m.ClearBoundAt()
+		return nil
+	case user.FieldReRegisterAt:
+		m.ClearReRegisterAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -74998,6 +75068,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldUserStatus:
 		m.ResetUserStatus()
+		return nil
+	case user.FieldReRegisterAt:
+		m.ResetReRegisterAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

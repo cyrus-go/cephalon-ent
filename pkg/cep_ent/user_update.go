@@ -407,6 +407,26 @@ func (uu *UserUpdate) SetNillableUserStatus(es *enums.UserStatus) *UserUpdate {
 	return uu
 }
 
+// SetReRegisterAt sets the "re_register_at" field.
+func (uu *UserUpdate) SetReRegisterAt(t time.Time) *UserUpdate {
+	uu.mutation.SetReRegisterAt(t)
+	return uu
+}
+
+// SetNillableReRegisterAt sets the "re_register_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableReRegisterAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetReRegisterAt(*t)
+	}
+	return uu
+}
+
+// ClearReRegisterAt clears the value of the "re_register_at" field.
+func (uu *UserUpdate) ClearReRegisterAt() *UserUpdate {
+	uu.mutation.ClearReRegisterAt()
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -2123,6 +2143,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
+	}
+	if value, ok := uu.mutation.ReRegisterAt(); ok {
+		_spec.SetField(user.FieldReRegisterAt, field.TypeTime, value)
+	}
+	if uu.mutation.ReRegisterAtCleared() {
+		_spec.ClearField(user.FieldReRegisterAt, field.TypeTime)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4448,6 +4474,26 @@ func (uuo *UserUpdateOne) SetNillableUserStatus(es *enums.UserStatus) *UserUpdat
 	return uuo
 }
 
+// SetReRegisterAt sets the "re_register_at" field.
+func (uuo *UserUpdateOne) SetReRegisterAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetReRegisterAt(t)
+	return uuo
+}
+
+// SetNillableReRegisterAt sets the "re_register_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableReRegisterAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetReRegisterAt(*t)
+	}
+	return uuo
+}
+
+// ClearReRegisterAt clears the value of the "re_register_at" field.
+func (uuo *UserUpdateOne) ClearReRegisterAt() *UserUpdateOne {
+	uuo.mutation.ClearReRegisterAt()
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -6194,6 +6240,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
+	}
+	if value, ok := uuo.mutation.ReRegisterAt(); ok {
+		_spec.SetField(user.FieldReRegisterAt, field.TypeTime, value)
+	}
+	if uuo.mutation.ReRegisterAtCleared() {
+		_spec.ClearField(user.FieldReRegisterAt, field.TypeTime)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

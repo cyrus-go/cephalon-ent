@@ -395,6 +395,20 @@ func (uc *UserCreate) SetNillableUserStatus(es *enums.UserStatus) *UserCreate {
 	return uc
 }
 
+// SetReRegisterAt sets the "re_register_at" field.
+func (uc *UserCreate) SetReRegisterAt(t time.Time) *UserCreate {
+	uc.mutation.SetReRegisterAt(t)
+	return uc
+}
+
+// SetNillableReRegisterAt sets the "re_register_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableReRegisterAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetReRegisterAt(*t)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1217,6 +1231,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultUserStatus
 		uc.mutation.SetUserStatus(v)
 	}
+	if _, ok := uc.mutation.ReRegisterAt(); !ok {
+		v := user.DefaultReRegisterAt
+		uc.mutation.SetReRegisterAt(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1431,6 +1449,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.UserStatus(); ok {
 		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
 		_node.UserStatus = value
+	}
+	if value, ok := uc.mutation.ReRegisterAt(); ok {
+		_spec.SetField(user.FieldReRegisterAt, field.TypeTime, value)
+		_node.ReRegisterAt = &value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2505,6 +2527,24 @@ func (u *UserUpsert) UpdateUserStatus() *UserUpsert {
 	return u
 }
 
+// SetReRegisterAt sets the "re_register_at" field.
+func (u *UserUpsert) SetReRegisterAt(v time.Time) *UserUpsert {
+	u.Set(user.FieldReRegisterAt, v)
+	return u
+}
+
+// UpdateReRegisterAt sets the "re_register_at" field to the value that was provided on create.
+func (u *UserUpsert) UpdateReRegisterAt() *UserUpsert {
+	u.SetExcluded(user.FieldReRegisterAt)
+	return u
+}
+
+// ClearReRegisterAt clears the value of the "re_register_at" field.
+func (u *UserUpsert) ClearReRegisterAt() *UserUpsert {
+	u.SetNull(user.FieldReRegisterAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2903,6 +2943,27 @@ func (u *UserUpsertOne) SetUserStatus(v enums.UserStatus) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateUserStatus() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateUserStatus()
+	})
+}
+
+// SetReRegisterAt sets the "re_register_at" field.
+func (u *UserUpsertOne) SetReRegisterAt(v time.Time) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetReRegisterAt(v)
+	})
+}
+
+// UpdateReRegisterAt sets the "re_register_at" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateReRegisterAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateReRegisterAt()
+	})
+}
+
+// ClearReRegisterAt clears the value of the "re_register_at" field.
+func (u *UserUpsertOne) ClearReRegisterAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearReRegisterAt()
 	})
 }
 
@@ -3470,6 +3531,27 @@ func (u *UserUpsertBulk) SetUserStatus(v enums.UserStatus) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateUserStatus() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateUserStatus()
+	})
+}
+
+// SetReRegisterAt sets the "re_register_at" field.
+func (u *UserUpsertBulk) SetReRegisterAt(v time.Time) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetReRegisterAt(v)
+	})
+}
+
+// UpdateReRegisterAt sets the "re_register_at" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateReRegisterAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateReRegisterAt()
+	})
+}
+
+// ClearReRegisterAt clears the value of the "re_register_at" field.
+func (u *UserUpsertBulk) ClearReRegisterAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearReRegisterAt()
 	})
 }
 
