@@ -62,6 +62,8 @@ const (
 	FieldBaiduRefreshToken = "baidu_refresh_token"
 	// FieldBoundAt holds the string denoting the bound_at field in the database.
 	FieldBoundAt = "bound_at"
+	// FieldUserStatus holds the string denoting the user_status field in the database.
+	FieldUserStatus = "user_status"
 	// EdgeVxAccounts holds the string denoting the vx_accounts edge name in mutations.
 	EdgeVxAccounts = "vx_accounts"
 	// EdgeCollects holds the string denoting the collects edge name in mutations.
@@ -473,6 +475,7 @@ var Columns = []string{
 	FieldBaiduAccessToken,
 	FieldBaiduRefreshToken,
 	FieldBoundAt,
+	FieldUserStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -545,6 +548,18 @@ func UserTypeValidator(ut enums.UserType) error {
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for user_type field: %q", ut)
+	}
+}
+
+const DefaultUserStatus enums.UserStatus = "normal"
+
+// UserStatusValidator is a validator for the "user_status" field enum values. It is called by the builders before save.
+func UserStatusValidator(us enums.UserStatus) error {
+	switch us {
+	case "normal", "frozen", "closed":
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for user_status field: %q", us)
 	}
 }
 
@@ -669,6 +684,11 @@ func ByBaiduRefreshToken(opts ...sql.OrderTermOption) OrderOption {
 // ByBoundAt orders the results by the bound_at field.
 func ByBoundAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBoundAt, opts...).ToFunc()
+}
+
+// ByUserStatus orders the results by the user_status field.
+func ByUserStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserStatus, opts...).ToFunc()
 }
 
 // ByVxAccountsCount orders the results by vx_accounts count.

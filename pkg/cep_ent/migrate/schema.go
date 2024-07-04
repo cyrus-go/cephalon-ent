@@ -2349,6 +2349,7 @@ var (
 		{Name: "baidu_access_token", Type: field.TypeString, Comment: "百度网盘 token", Default: ""},
 		{Name: "baidu_refresh_token", Type: field.TypeString, Comment: "百度网盘刷新 token", Default: ""},
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
+		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -2360,7 +2361,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_users_children",
-				Columns:    []*schema.Column{UsersColumns[23]},
+				Columns:    []*schema.Column{UsersColumns[24]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

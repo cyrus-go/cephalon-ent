@@ -380,6 +380,20 @@ func (uc *UserCreate) SetNillableBoundAt(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetUserStatus sets the "user_status" field.
+func (uc *UserCreate) SetUserStatus(es enums.UserStatus) *UserCreate {
+	uc.mutation.SetUserStatus(es)
+	return uc
+}
+
+// SetNillableUserStatus sets the "user_status" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUserStatus(es *enums.UserStatus) *UserCreate {
+	if es != nil {
+		uc.SetUserStatus(*es)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int64) *UserCreate {
 	uc.mutation.SetID(i)
@@ -1168,6 +1182,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultBoundAt
 		uc.mutation.SetBoundAt(v)
 	}
+	if _, ok := uc.mutation.UserStatus(); !ok {
+		v := user.DefaultUserStatus
+		uc.mutation.SetUserStatus(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -1246,6 +1264,14 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.BaiduRefreshToken(); !ok {
 		return &ValidationError{Name: "baidu_refresh_token", err: errors.New(`cep_ent: missing required field "User.baidu_refresh_token"`)}
+	}
+	if _, ok := uc.mutation.UserStatus(); !ok {
+		return &ValidationError{Name: "user_status", err: errors.New(`cep_ent: missing required field "User.user_status"`)}
+	}
+	if v, ok := uc.mutation.UserStatus(); ok {
+		if err := user.UserStatusValidator(v); err != nil {
+			return &ValidationError{Name: "user_status", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_status": %w`, err)}
+		}
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
@@ -1370,6 +1396,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.BoundAt(); ok {
 		_spec.SetField(user.FieldBoundAt, field.TypeTime, value)
 		_node.BoundAt = &value
+	}
+	if value, ok := uc.mutation.UserStatus(); ok {
+		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
+		_node.UserStatus = value
 	}
 	if nodes := uc.mutation.VxAccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2400,6 +2430,18 @@ func (u *UserUpsert) ClearBoundAt() *UserUpsert {
 	return u
 }
 
+// SetUserStatus sets the "user_status" field.
+func (u *UserUpsert) SetUserStatus(v enums.UserStatus) *UserUpsert {
+	u.Set(user.FieldUserStatus, v)
+	return u
+}
+
+// UpdateUserStatus sets the "user_status" field to the value that was provided on create.
+func (u *UserUpsert) UpdateUserStatus() *UserUpsert {
+	u.SetExcluded(user.FieldUserStatus)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2784,6 +2826,20 @@ func (u *UserUpsertOne) UpdateBoundAt() *UserUpsertOne {
 func (u *UserUpsertOne) ClearBoundAt() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearBoundAt()
+	})
+}
+
+// SetUserStatus sets the "user_status" field.
+func (u *UserUpsertOne) SetUserStatus(v enums.UserStatus) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetUserStatus(v)
+	})
+}
+
+// UpdateUserStatus sets the "user_status" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateUserStatus() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateUserStatus()
 	})
 }
 
@@ -3337,6 +3393,20 @@ func (u *UserUpsertBulk) UpdateBoundAt() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearBoundAt() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearBoundAt()
+	})
+}
+
+// SetUserStatus sets the "user_status" field.
+func (u *UserUpsertBulk) SetUserStatus(v enums.UserStatus) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetUserStatus(v)
+	})
+}
+
+// UpdateUserStatus sets the "user_status" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateUserStatus() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateUserStatus()
 	})
 }
 

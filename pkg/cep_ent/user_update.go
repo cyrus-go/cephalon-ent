@@ -392,6 +392,20 @@ func (uu *UserUpdate) ClearBoundAt() *UserUpdate {
 	return uu
 }
 
+// SetUserStatus sets the "user_status" field.
+func (uu *UserUpdate) SetUserStatus(es enums.UserStatus) *UserUpdate {
+	uu.mutation.SetUserStatus(es)
+	return uu
+}
+
+// SetNillableUserStatus sets the "user_status" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUserStatus(es *enums.UserStatus) *UserUpdate {
+	if es != nil {
+		uu.SetUserStatus(*es)
+	}
+	return uu
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uu *UserUpdate) AddVxAccountIDs(ids ...int64) *UserUpdate {
 	uu.mutation.AddVxAccountIDs(ids...)
@@ -1930,6 +1944,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "user_type", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_type": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.UserStatus(); ok {
+		if err := user.UserStatusValidator(v); err != nil {
+			return &ValidationError{Name: "user_status", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_status": %w`, err)}
+		}
+	}
 	if _, ok := uu.mutation.ParentID(); uu.mutation.ParentCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
 	}
@@ -2028,6 +2047,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.BoundAtCleared() {
 		_spec.ClearField(user.FieldBoundAt, field.TypeTime)
+	}
+	if value, ok := uu.mutation.UserStatus(); ok {
+		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
 	}
 	if uu.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4249,6 +4271,20 @@ func (uuo *UserUpdateOne) ClearBoundAt() *UserUpdateOne {
 	return uuo
 }
 
+// SetUserStatus sets the "user_status" field.
+func (uuo *UserUpdateOne) SetUserStatus(es enums.UserStatus) *UserUpdateOne {
+	uuo.mutation.SetUserStatus(es)
+	return uuo
+}
+
+// SetNillableUserStatus sets the "user_status" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUserStatus(es *enums.UserStatus) *UserUpdateOne {
+	if es != nil {
+		uuo.SetUserStatus(*es)
+	}
+	return uuo
+}
+
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by IDs.
 func (uuo *UserUpdateOne) AddVxAccountIDs(ids ...int64) *UserUpdateOne {
 	uuo.mutation.AddVxAccountIDs(ids...)
@@ -5800,6 +5836,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "user_type", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_type": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.UserStatus(); ok {
+		if err := user.UserStatusValidator(v); err != nil {
+			return &ValidationError{Name: "user_status", err: fmt.Errorf(`cep_ent: validator failed for field "User.user_status": %w`, err)}
+		}
+	}
 	if _, ok := uuo.mutation.ParentID(); uuo.mutation.ParentCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
 	}
@@ -5915,6 +5956,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.BoundAtCleared() {
 		_spec.ClearField(user.FieldBoundAt, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.UserStatus(); ok {
+		_spec.SetField(user.FieldUserStatus, field.TypeEnum, value)
 	}
 	if uuo.mutation.VxAccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

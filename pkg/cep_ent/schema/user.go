@@ -35,6 +35,7 @@ func (User) Fields() []ent.Field {
 		field.String("baidu_access_token").Default("").Sensitive().Comment("百度网盘 token"),
 		field.String("baidu_refresh_token").Default("").Sensitive().Comment("百度网盘刷新 token"),
 		field.Time("bound_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"bound_at"`).Comment("用户绑定邀请码的时间"),
+		field.Enum("user_status").GoType(enums.UserStatusNormal).Default(string(enums.UserStatusNormal)).StructTag(`json:"user_status"`).Comment("用户状态"),
 	}
 }
 

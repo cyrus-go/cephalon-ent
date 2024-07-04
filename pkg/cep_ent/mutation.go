@@ -70894,6 +70894,7 @@ type UserMutation struct {
 	baidu_access_token              *string
 	baidu_refresh_token             *string
 	bound_at                        *time.Time
+	user_status                     *enums.UserStatus
 	clearedFields                   map[string]struct{}
 	vx_accounts                     map[int64]struct{}
 	removedvx_accounts              map[int64]struct{}
@@ -72028,6 +72029,42 @@ func (m *UserMutation) BoundAtCleared() bool {
 func (m *UserMutation) ResetBoundAt() {
 	m.bound_at = nil
 	delete(m.clearedFields, user.FieldBoundAt)
+}
+
+// SetUserStatus sets the "user_status" field.
+func (m *UserMutation) SetUserStatus(es enums.UserStatus) {
+	m.user_status = &es
+}
+
+// UserStatus returns the value of the "user_status" field in the mutation.
+func (m *UserMutation) UserStatus() (r enums.UserStatus, exists bool) {
+	v := m.user_status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserStatus returns the old "user_status" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUserStatus(ctx context.Context) (v enums.UserStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserStatus: %w", err)
+	}
+	return oldValue.UserStatus, nil
+}
+
+// ResetUserStatus resets all changes to the "user_status" field.
+func (m *UserMutation) ResetUserStatus() {
+	m.user_status = nil
 }
 
 // AddVxAccountIDs adds the "vx_accounts" edge to the VXAccount entity by ids.
@@ -74314,7 +74351,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -74384,6 +74421,9 @@ func (m *UserMutation) Fields() []string {
 	if m.bound_at != nil {
 		fields = append(fields, user.FieldBoundAt)
 	}
+	if m.user_status != nil {
+		fields = append(fields, user.FieldUserStatus)
+	}
 	return fields
 }
 
@@ -74438,6 +74478,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.BaiduRefreshToken()
 	case user.FieldBoundAt:
 		return m.BoundAt()
+	case user.FieldUserStatus:
+		return m.UserStatus()
 	}
 	return nil, false
 }
@@ -74493,6 +74535,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldBaiduRefreshToken(ctx)
 	case user.FieldBoundAt:
 		return m.OldBoundAt(ctx)
+	case user.FieldUserStatus:
+		return m.OldUserStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -74663,6 +74707,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBoundAt(v)
 		return nil
+	case user.FieldUserStatus:
+		v, ok := value.(enums.UserStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserStatus(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -74828,6 +74879,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldBoundAt:
 		m.ResetBoundAt()
+		return nil
+	case user.FieldUserStatus:
+		m.ResetUserStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

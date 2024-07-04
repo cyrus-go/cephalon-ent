@@ -1306,6 +1306,36 @@ func BoundAtNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldBoundAt))
 }
 
+// UserStatusEQ applies the EQ predicate on the "user_status" field.
+func UserStatusEQ(v enums.UserStatus) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldEQ(FieldUserStatus, vc))
+}
+
+// UserStatusNEQ applies the NEQ predicate on the "user_status" field.
+func UserStatusNEQ(v enums.UserStatus) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldNEQ(FieldUserStatus, vc))
+}
+
+// UserStatusIn applies the In predicate on the "user_status" field.
+func UserStatusIn(vs ...enums.UserStatus) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldIn(FieldUserStatus, v...))
+}
+
+// UserStatusNotIn applies the NotIn predicate on the "user_status" field.
+func UserStatusNotIn(vs ...enums.UserStatus) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldNotIn(FieldUserStatus, v...))
+}
+
 // HasVxAccounts applies the HasEdge predicate on the "vx_accounts" edge.
 func HasVxAccounts() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
