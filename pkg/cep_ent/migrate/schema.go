@@ -2172,6 +2172,116 @@ var (
 			},
 		},
 	}
+	// SurveysColumns holds the columns for the "surveys" table.
+	SurveysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "title", Type: field.TypeString, Comment: "标题", Default: ""},
+	}
+	// SurveysTable holds the schema information for the "surveys" table.
+	SurveysTable = &schema.Table{
+		Name:       "surveys",
+		Comment:    "问卷表",
+		Columns:    SurveysColumns,
+		PrimaryKey: []*schema.Column{SurveysColumns[0]},
+	}
+	// SurveyAnswersColumns holds the columns for the "survey_answers" table.
+	SurveyAnswersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "survey_answer", Type: field.TypeString, Size: 2147483647, Comment: "答案的内容", Default: ""},
+		{Name: "survey_question_id", Type: field.TypeInt64, Comment: "问题 id", Default: 0},
+		{Name: "survey_response_id", Type: field.TypeInt64, Comment: "问卷用户调查结果 ID，一个用户同一个问卷只能回答一次，这个问卷会有多个问题和答案", Default: 0},
+	}
+	// SurveyAnswersTable holds the schema information for the "survey_answers" table.
+	SurveyAnswersTable = &schema.Table{
+		Name:       "survey_answers",
+		Comment:    "问卷问题答案表",
+		Columns:    SurveyAnswersColumns,
+		PrimaryKey: []*schema.Column{SurveyAnswersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "survey_answers_survey_questions_survey_answers",
+				Columns:    []*schema.Column{SurveyAnswersColumns[7]},
+				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "survey_answers_survey_responses_survey_answers",
+				Columns:    []*schema.Column{SurveyAnswersColumns[8]},
+				RefColumns: []*schema.Column{SurveyResponsesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// SurveyQuestionsColumns holds the columns for the "survey_questions" table.
+	SurveyQuestionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "text", Type: field.TypeString, Size: 2147483647, Comment: "问题的内容", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "问题类型，单选/多选等", Enums: []string{"unknown", "single", "multiple"}, Default: "unknown"},
+		{Name: "options", Type: field.TypeString, Nullable: true, Comment: "选项内容，单选/多选的内容", SchemaType: map[string]string{"postgres": "bytea"}},
+		{Name: "survey_id", Type: field.TypeInt64, Comment: "问卷 ID", Default: 0},
+	}
+	// SurveyQuestionsTable holds the schema information for the "survey_questions" table.
+	SurveyQuestionsTable = &schema.Table{
+		Name:       "survey_questions",
+		Comment:    "问卷问题表",
+		Columns:    SurveyQuestionsColumns,
+		PrimaryKey: []*schema.Column{SurveyQuestionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "survey_questions_surveys_survey_questions",
+				Columns:    []*schema.Column{SurveyQuestionsColumns[9]},
+				RefColumns: []*schema.Column{SurveysColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// SurveyResponsesColumns holds the columns for the "survey_responses" table.
+	SurveyResponsesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "survey_id", Type: field.TypeInt64, Comment: "问卷 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 ID", Default: 0},
+	}
+	// SurveyResponsesTable holds the schema information for the "survey_responses" table.
+	SurveyResponsesTable = &schema.Table{
+		Name:       "survey_responses",
+		Comment:    "问卷调查结果储存表",
+		Columns:    SurveyResponsesColumns,
+		PrimaryKey: []*schema.Column{SurveyResponsesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "survey_responses_surveys_survey_responses",
+				Columns:    []*schema.Column{SurveyResponsesColumns[6]},
+				RefColumns: []*schema.Column{SurveysColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "survey_responses_users_survey_responses",
+				Columns:    []*schema.Column{SurveyResponsesColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// SymbolsColumns holds the columns for the "symbols" table.
 	SymbolsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2692,6 +2802,10 @@ var (
 		RechargeCampaignRulesTable,
 		RechargeOrdersTable,
 		RenewalAgreementsTable,
+		SurveysTable,
+		SurveyAnswersTable,
+		SurveyQuestionsTable,
+		SurveyResponsesTable,
 		SymbolsTable,
 		TransferOrdersTable,
 		TroubleDeductsTable,
@@ -2849,6 +2963,15 @@ func init() {
 	RenewalAgreementsTable.ForeignKeys[0].RefTable = MissionsTable
 	RenewalAgreementsTable.ForeignKeys[1].RefTable = UsersTable
 	RenewalAgreementsTable.Annotation = &entsql.Annotation{}
+	SurveysTable.Annotation = &entsql.Annotation{}
+	SurveyAnswersTable.ForeignKeys[0].RefTable = SurveyQuestionsTable
+	SurveyAnswersTable.ForeignKeys[1].RefTable = SurveyResponsesTable
+	SurveyAnswersTable.Annotation = &entsql.Annotation{}
+	SurveyQuestionsTable.ForeignKeys[0].RefTable = SurveysTable
+	SurveyQuestionsTable.Annotation = &entsql.Annotation{}
+	SurveyResponsesTable.ForeignKeys[0].RefTable = SurveysTable
+	SurveyResponsesTable.ForeignKeys[1].RefTable = UsersTable
+	SurveyResponsesTable.Annotation = &entsql.Annotation{}
 	SymbolsTable.Annotation = &entsql.Annotation{}
 	TransferOrdersTable.ForeignKeys[0].RefTable = SymbolsTable
 	TransferOrdersTable.ForeignKeys[1].RefTable = UsersTable

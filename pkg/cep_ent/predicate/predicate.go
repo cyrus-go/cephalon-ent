@@ -192,6 +192,29 @@ type RechargeOrder func(*sql.Selector)
 // RenewalAgreement is the predicate function for renewalagreement builders.
 type RenewalAgreement func(*sql.Selector)
 
+// Survey is the predicate function for survey builders.
+type Survey func(*sql.Selector)
+
+// SurveyAnswer is the predicate function for surveyanswer builders.
+type SurveyAnswer func(*sql.Selector)
+
+// SurveyQuestion is the predicate function for surveyquestion builders.
+type SurveyQuestion func(*sql.Selector)
+
+// SurveyQuestionOrErr calls the predicate only if the error is not nit.
+func SurveyQuestionOrErr(p SurveyQuestion, err error) SurveyQuestion {
+	return func(s *sql.Selector) {
+		if err != nil {
+			s.AddError(err)
+			return
+		}
+		p(s)
+	}
+}
+
+// SurveyResponse is the predicate function for surveyresponse builders.
+type SurveyResponse func(*sql.Selector)
+
 // Symbol is the predicate function for symbol builders.
 type Symbol func(*sql.Selector)
 

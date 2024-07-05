@@ -114,6 +114,14 @@ type Tx struct {
 	RechargeOrder *RechargeOrderClient
 	// RenewalAgreement is the client for interacting with the RenewalAgreement builders.
 	RenewalAgreement *RenewalAgreementClient
+	// Survey is the client for interacting with the Survey builders.
+	Survey *SurveyClient
+	// SurveyAnswer is the client for interacting with the SurveyAnswer builders.
+	SurveyAnswer *SurveyAnswerClient
+	// SurveyQuestion is the client for interacting with the SurveyQuestion builders.
+	SurveyQuestion *SurveyQuestionClient
+	// SurveyResponse is the client for interacting with the SurveyResponse builders.
+	SurveyResponse *SurveyResponseClient
 	// Symbol is the client for interacting with the Symbol builders.
 	Symbol *SymbolClient
 	// TransferOrder is the client for interacting with the TransferOrder builders.
@@ -316,6 +324,10 @@ func (tx *Tx) init() {
 	tx.RechargeCampaignRule = NewRechargeCampaignRuleClient(tx.config)
 	tx.RechargeOrder = NewRechargeOrderClient(tx.config)
 	tx.RenewalAgreement = NewRenewalAgreementClient(tx.config)
+	tx.Survey = NewSurveyClient(tx.config)
+	tx.SurveyAnswer = NewSurveyAnswerClient(tx.config)
+	tx.SurveyQuestion = NewSurveyQuestionClient(tx.config)
+	tx.SurveyResponse = NewSurveyResponseClient(tx.config)
 	tx.Symbol = NewSymbolClient(tx.config)
 	tx.TransferOrder = NewTransferOrderClient(tx.config)
 	tx.TroubleDeduct = NewTroubleDeductClient(tx.config)

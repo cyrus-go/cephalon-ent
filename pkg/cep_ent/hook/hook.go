@@ -621,6 +621,54 @@ func (f RenewalAgreementFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (c
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.RenewalAgreementMutation", m)
 }
 
+// The SurveyFunc type is an adapter to allow the use of ordinary
+// function as Survey mutator.
+type SurveyFunc func(context.Context, *cep_ent.SurveyMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SurveyFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.SurveyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.SurveyMutation", m)
+}
+
+// The SurveyAnswerFunc type is an adapter to allow the use of ordinary
+// function as SurveyAnswer mutator.
+type SurveyAnswerFunc func(context.Context, *cep_ent.SurveyAnswerMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SurveyAnswerFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.SurveyAnswerMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.SurveyAnswerMutation", m)
+}
+
+// The SurveyQuestionFunc type is an adapter to allow the use of ordinary
+// function as SurveyQuestion mutator.
+type SurveyQuestionFunc func(context.Context, *cep_ent.SurveyQuestionMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SurveyQuestionFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.SurveyQuestionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.SurveyQuestionMutation", m)
+}
+
+// The SurveyResponseFunc type is an adapter to allow the use of ordinary
+// function as SurveyResponse mutator.
+type SurveyResponseFunc func(context.Context, *cep_ent.SurveyResponseMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SurveyResponseFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.SurveyResponseMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.SurveyResponseMutation", m)
+}
+
 // The SymbolFunc type is an adapter to allow the use of ordinary
 // function as Symbol mutator.
 type SymbolFunc func(context.Context, *cep_ent.SymbolMutation) (cep_ent.Value, error)

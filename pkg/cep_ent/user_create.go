@@ -38,6 +38,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -1053,6 +1054,21 @@ func (uc *UserCreate) AddApproveIncomeManages(i ...*IncomeManage) *UserCreate {
 		ids[j] = i[j].ID
 	}
 	return uc.AddApproveIncomeManageIDs(ids...)
+}
+
+// AddSurveyResponseIDs adds the "survey_responses" edge to the SurveyResponse entity by IDs.
+func (uc *UserCreate) AddSurveyResponseIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddSurveyResponseIDs(ids...)
+	return uc
+}
+
+// AddSurveyResponses adds the "survey_responses" edges to the SurveyResponse entity.
+func (uc *UserCreate) AddSurveyResponses(s ...*SurveyResponse) *UserCreate {
+	ids := make([]int64, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddSurveyResponseIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -2083,6 +2099,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(incomemanage.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.SurveyResponsesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SurveyResponsesTable,
+			Columns: []string{user.SurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -85,6 +85,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("trouble_deducts", TroubleDeduct.Type),
 		edge.To("income_manages", IncomeManage.Type),
 		edge.To("approve_income_manages", IncomeManage.Type),
+		edge.To("survey_responses", SurveyResponse.Type),
 	}
 }
 

@@ -58,6 +58,10 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/schema"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyanswer"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyquestion"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
@@ -2910,6 +2914,165 @@ func init() {
 	renewalagreementDescID := renewalagreementMixinFields0[0].Descriptor()
 	// renewalagreement.DefaultID holds the default value on creation for the id field.
 	renewalagreement.DefaultID = renewalagreementDescID.Default.(func() int64)
+	surveyMixin := schema.Survey{}.Mixin()
+	surveyMixinFields0 := surveyMixin[0].Fields()
+	_ = surveyMixinFields0
+	surveyFields := schema.Survey{}.Fields()
+	_ = surveyFields
+	// surveyDescCreatedBy is the schema descriptor for created_by field.
+	surveyDescCreatedBy := surveyMixinFields0[1].Descriptor()
+	// survey.DefaultCreatedBy holds the default value on creation for the created_by field.
+	survey.DefaultCreatedBy = surveyDescCreatedBy.Default.(int64)
+	// surveyDescUpdatedBy is the schema descriptor for updated_by field.
+	surveyDescUpdatedBy := surveyMixinFields0[2].Descriptor()
+	// survey.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	survey.DefaultUpdatedBy = surveyDescUpdatedBy.Default.(int64)
+	// surveyDescCreatedAt is the schema descriptor for created_at field.
+	surveyDescCreatedAt := surveyMixinFields0[3].Descriptor()
+	// survey.DefaultCreatedAt holds the default value on creation for the created_at field.
+	survey.DefaultCreatedAt = surveyDescCreatedAt.Default.(func() time.Time)
+	// surveyDescUpdatedAt is the schema descriptor for updated_at field.
+	surveyDescUpdatedAt := surveyMixinFields0[4].Descriptor()
+	// survey.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	survey.DefaultUpdatedAt = surveyDescUpdatedAt.Default.(func() time.Time)
+	// survey.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	survey.UpdateDefaultUpdatedAt = surveyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// surveyDescDeletedAt is the schema descriptor for deleted_at field.
+	surveyDescDeletedAt := surveyMixinFields0[5].Descriptor()
+	// survey.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	survey.DefaultDeletedAt = surveyDescDeletedAt.Default.(time.Time)
+	// surveyDescTitle is the schema descriptor for title field.
+	surveyDescTitle := surveyFields[0].Descriptor()
+	// survey.DefaultTitle holds the default value on creation for the title field.
+	survey.DefaultTitle = surveyDescTitle.Default.(string)
+	// surveyDescID is the schema descriptor for id field.
+	surveyDescID := surveyMixinFields0[0].Descriptor()
+	// survey.DefaultID holds the default value on creation for the id field.
+	survey.DefaultID = surveyDescID.Default.(func() int64)
+	surveyanswerMixin := schema.SurveyAnswer{}.Mixin()
+	surveyanswerMixinFields0 := surveyanswerMixin[0].Fields()
+	_ = surveyanswerMixinFields0
+	surveyanswerFields := schema.SurveyAnswer{}.Fields()
+	_ = surveyanswerFields
+	// surveyanswerDescCreatedBy is the schema descriptor for created_by field.
+	surveyanswerDescCreatedBy := surveyanswerMixinFields0[1].Descriptor()
+	// surveyanswer.DefaultCreatedBy holds the default value on creation for the created_by field.
+	surveyanswer.DefaultCreatedBy = surveyanswerDescCreatedBy.Default.(int64)
+	// surveyanswerDescUpdatedBy is the schema descriptor for updated_by field.
+	surveyanswerDescUpdatedBy := surveyanswerMixinFields0[2].Descriptor()
+	// surveyanswer.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	surveyanswer.DefaultUpdatedBy = surveyanswerDescUpdatedBy.Default.(int64)
+	// surveyanswerDescCreatedAt is the schema descriptor for created_at field.
+	surveyanswerDescCreatedAt := surveyanswerMixinFields0[3].Descriptor()
+	// surveyanswer.DefaultCreatedAt holds the default value on creation for the created_at field.
+	surveyanswer.DefaultCreatedAt = surveyanswerDescCreatedAt.Default.(func() time.Time)
+	// surveyanswerDescUpdatedAt is the schema descriptor for updated_at field.
+	surveyanswerDescUpdatedAt := surveyanswerMixinFields0[4].Descriptor()
+	// surveyanswer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	surveyanswer.DefaultUpdatedAt = surveyanswerDescUpdatedAt.Default.(func() time.Time)
+	// surveyanswer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	surveyanswer.UpdateDefaultUpdatedAt = surveyanswerDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// surveyanswerDescDeletedAt is the schema descriptor for deleted_at field.
+	surveyanswerDescDeletedAt := surveyanswerMixinFields0[5].Descriptor()
+	// surveyanswer.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	surveyanswer.DefaultDeletedAt = surveyanswerDescDeletedAt.Default.(time.Time)
+	// surveyanswerDescSurveyResponseID is the schema descriptor for survey_response_id field.
+	surveyanswerDescSurveyResponseID := surveyanswerFields[0].Descriptor()
+	// surveyanswer.DefaultSurveyResponseID holds the default value on creation for the survey_response_id field.
+	surveyanswer.DefaultSurveyResponseID = surveyanswerDescSurveyResponseID.Default.(int64)
+	// surveyanswerDescSurveyQuestionID is the schema descriptor for survey_question_id field.
+	surveyanswerDescSurveyQuestionID := surveyanswerFields[1].Descriptor()
+	// surveyanswer.DefaultSurveyQuestionID holds the default value on creation for the survey_question_id field.
+	surveyanswer.DefaultSurveyQuestionID = surveyanswerDescSurveyQuestionID.Default.(int64)
+	// surveyanswerDescSurveyAnswer is the schema descriptor for SurveyAnswer field.
+	surveyanswerDescSurveyAnswer := surveyanswerFields[2].Descriptor()
+	// surveyanswer.DefaultSurveyAnswer holds the default value on creation for the SurveyAnswer field.
+	surveyanswer.DefaultSurveyAnswer = surveyanswerDescSurveyAnswer.Default.(string)
+	// surveyanswerDescID is the schema descriptor for id field.
+	surveyanswerDescID := surveyanswerMixinFields0[0].Descriptor()
+	// surveyanswer.DefaultID holds the default value on creation for the id field.
+	surveyanswer.DefaultID = surveyanswerDescID.Default.(func() int64)
+	surveyquestionMixin := schema.SurveyQuestion{}.Mixin()
+	surveyquestionMixinFields0 := surveyquestionMixin[0].Fields()
+	_ = surveyquestionMixinFields0
+	surveyquestionFields := schema.SurveyQuestion{}.Fields()
+	_ = surveyquestionFields
+	// surveyquestionDescCreatedBy is the schema descriptor for created_by field.
+	surveyquestionDescCreatedBy := surveyquestionMixinFields0[1].Descriptor()
+	// surveyquestion.DefaultCreatedBy holds the default value on creation for the created_by field.
+	surveyquestion.DefaultCreatedBy = surveyquestionDescCreatedBy.Default.(int64)
+	// surveyquestionDescUpdatedBy is the schema descriptor for updated_by field.
+	surveyquestionDescUpdatedBy := surveyquestionMixinFields0[2].Descriptor()
+	// surveyquestion.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	surveyquestion.DefaultUpdatedBy = surveyquestionDescUpdatedBy.Default.(int64)
+	// surveyquestionDescCreatedAt is the schema descriptor for created_at field.
+	surveyquestionDescCreatedAt := surveyquestionMixinFields0[3].Descriptor()
+	// surveyquestion.DefaultCreatedAt holds the default value on creation for the created_at field.
+	surveyquestion.DefaultCreatedAt = surveyquestionDescCreatedAt.Default.(func() time.Time)
+	// surveyquestionDescUpdatedAt is the schema descriptor for updated_at field.
+	surveyquestionDescUpdatedAt := surveyquestionMixinFields0[4].Descriptor()
+	// surveyquestion.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	surveyquestion.DefaultUpdatedAt = surveyquestionDescUpdatedAt.Default.(func() time.Time)
+	// surveyquestion.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	surveyquestion.UpdateDefaultUpdatedAt = surveyquestionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// surveyquestionDescDeletedAt is the schema descriptor for deleted_at field.
+	surveyquestionDescDeletedAt := surveyquestionMixinFields0[5].Descriptor()
+	// surveyquestion.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	surveyquestion.DefaultDeletedAt = surveyquestionDescDeletedAt.Default.(time.Time)
+	// surveyquestionDescSurveyID is the schema descriptor for survey_id field.
+	surveyquestionDescSurveyID := surveyquestionFields[0].Descriptor()
+	// surveyquestion.DefaultSurveyID holds the default value on creation for the survey_id field.
+	surveyquestion.DefaultSurveyID = surveyquestionDescSurveyID.Default.(int64)
+	// surveyquestionDescText is the schema descriptor for text field.
+	surveyquestionDescText := surveyquestionFields[1].Descriptor()
+	// surveyquestion.DefaultText holds the default value on creation for the text field.
+	surveyquestion.DefaultText = surveyquestionDescText.Default.(string)
+	// surveyquestionDescOptions is the schema descriptor for options field.
+	surveyquestionDescOptions := surveyquestionFields[3].Descriptor()
+	surveyquestion.ValueScanner.Options = surveyquestionDescOptions.ValueScanner.(field.TypeValueScanner[[]string])
+	// surveyquestionDescID is the schema descriptor for id field.
+	surveyquestionDescID := surveyquestionMixinFields0[0].Descriptor()
+	// surveyquestion.DefaultID holds the default value on creation for the id field.
+	surveyquestion.DefaultID = surveyquestionDescID.Default.(func() int64)
+	surveyresponseMixin := schema.SurveyResponse{}.Mixin()
+	surveyresponseMixinFields0 := surveyresponseMixin[0].Fields()
+	_ = surveyresponseMixinFields0
+	surveyresponseFields := schema.SurveyResponse{}.Fields()
+	_ = surveyresponseFields
+	// surveyresponseDescCreatedBy is the schema descriptor for created_by field.
+	surveyresponseDescCreatedBy := surveyresponseMixinFields0[1].Descriptor()
+	// surveyresponse.DefaultCreatedBy holds the default value on creation for the created_by field.
+	surveyresponse.DefaultCreatedBy = surveyresponseDescCreatedBy.Default.(int64)
+	// surveyresponseDescUpdatedBy is the schema descriptor for updated_by field.
+	surveyresponseDescUpdatedBy := surveyresponseMixinFields0[2].Descriptor()
+	// surveyresponse.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	surveyresponse.DefaultUpdatedBy = surveyresponseDescUpdatedBy.Default.(int64)
+	// surveyresponseDescCreatedAt is the schema descriptor for created_at field.
+	surveyresponseDescCreatedAt := surveyresponseMixinFields0[3].Descriptor()
+	// surveyresponse.DefaultCreatedAt holds the default value on creation for the created_at field.
+	surveyresponse.DefaultCreatedAt = surveyresponseDescCreatedAt.Default.(func() time.Time)
+	// surveyresponseDescUpdatedAt is the schema descriptor for updated_at field.
+	surveyresponseDescUpdatedAt := surveyresponseMixinFields0[4].Descriptor()
+	// surveyresponse.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	surveyresponse.DefaultUpdatedAt = surveyresponseDescUpdatedAt.Default.(func() time.Time)
+	// surveyresponse.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	surveyresponse.UpdateDefaultUpdatedAt = surveyresponseDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// surveyresponseDescDeletedAt is the schema descriptor for deleted_at field.
+	surveyresponseDescDeletedAt := surveyresponseMixinFields0[5].Descriptor()
+	// surveyresponse.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	surveyresponse.DefaultDeletedAt = surveyresponseDescDeletedAt.Default.(time.Time)
+	// surveyresponseDescUserID is the schema descriptor for user_id field.
+	surveyresponseDescUserID := surveyresponseFields[0].Descriptor()
+	// surveyresponse.DefaultUserID holds the default value on creation for the user_id field.
+	surveyresponse.DefaultUserID = surveyresponseDescUserID.Default.(int64)
+	// surveyresponseDescSurveyID is the schema descriptor for survey_id field.
+	surveyresponseDescSurveyID := surveyresponseFields[1].Descriptor()
+	// surveyresponse.DefaultSurveyID holds the default value on creation for the survey_id field.
+	surveyresponse.DefaultSurveyID = surveyresponseDescSurveyID.Default.(int64)
+	// surveyresponseDescID is the schema descriptor for id field.
+	surveyresponseDescID := surveyresponseMixinFields0[0].Descriptor()
+	// surveyresponse.DefaultID holds the default value on creation for the id field.
+	surveyresponse.DefaultID = surveyresponseDescID.Default.(func() int64)
 	symbolMixin := schema.Symbol{}.Mixin()
 	symbolMixinFields0 := symbolMixin[0].Fields()
 	_ = symbolMixinFields0

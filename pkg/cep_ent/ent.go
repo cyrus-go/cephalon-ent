@@ -63,6 +63,10 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyanswer"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyquestion"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
@@ -184,6 +188,10 @@ func checkColumn(table, column string) error {
 			rechargecampaignrule.Table: rechargecampaignrule.ValidColumn,
 			rechargeorder.Table:        rechargeorder.ValidColumn,
 			renewalagreement.Table:     renewalagreement.ValidColumn,
+			survey.Table:               survey.ValidColumn,
+			surveyanswer.Table:         surveyanswer.ValidColumn,
+			surveyquestion.Table:       surveyquestion.ValidColumn,
+			surveyresponse.Table:       surveyresponse.ValidColumn,
 			symbol.Table:               symbol.ValidColumn,
 			transferorder.Table:        transferorder.ValidColumn,
 			troublededuct.Table:        troublededuct.ValidColumn,

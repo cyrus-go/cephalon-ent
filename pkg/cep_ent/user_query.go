@@ -39,6 +39,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
@@ -100,6 +101,7 @@ type UserQuery struct {
 	withTroubleDeducts         *TroubleDeductQuery
 	withIncomeManages          *IncomeManageQuery
 	withApproveIncomeManages   *IncomeManageQuery
+	withSurveyResponses        *SurveyResponseQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -1083,6 +1085,28 @@ func (uq *UserQuery) QueryApproveIncomeManages() *IncomeManageQuery {
 	return query
 }
 
+// QuerySurveyResponses chains the current query on the "survey_responses" edge.
+func (uq *UserQuery) QuerySurveyResponses() *SurveyResponseQuery {
+	query := (&SurveyResponseClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.SurveyResponsesTable, user.SurveyResponsesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1318,6 +1342,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withTroubleDeducts:         uq.withTroubleDeducts.Clone(),
 		withIncomeManages:          uq.withIncomeManages.Clone(),
 		withApproveIncomeManages:   uq.withApproveIncomeManages.Clone(),
+		withSurveyResponses:        uq.withSurveyResponses.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1797,6 +1822,17 @@ func (uq *UserQuery) WithApproveIncomeManages(opts ...func(*IncomeManageQuery)) 
 	return uq
 }
 
+// WithSurveyResponses tells the query-builder to eager-load the nodes that are connected to
+// the "survey_responses" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithSurveyResponses(opts ...func(*SurveyResponseQuery)) *UserQuery {
+	query := (&SurveyResponseClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withSurveyResponses = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1875,7 +1911,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [43]bool{
+		loadedTypes = [44]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1919,6 +1955,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withTroubleDeducts != nil,
 			uq.withIncomeManages != nil,
 			uq.withApproveIncomeManages != nil,
+			uq.withSurveyResponses != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2250,6 +2287,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadApproveIncomeManages(ctx, query, nodes,
 			func(n *User) { n.Edges.ApproveIncomeManages = []*IncomeManage{} },
 			func(n *User, e *IncomeManage) { n.Edges.ApproveIncomeManages = append(n.Edges.ApproveIncomeManages, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withSurveyResponses; query != nil {
+		if err := uq.loadSurveyResponses(ctx, query, nodes,
+			func(n *User) { n.Edges.SurveyResponses = []*SurveyResponse{} },
+			func(n *User, e *SurveyResponse) { n.Edges.SurveyResponses = append(n.Edges.SurveyResponses, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -3533,6 +3577,36 @@ func (uq *UserQuery) loadApproveIncomeManages(ctx context.Context, query *Income
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "approve_user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadSurveyResponses(ctx context.Context, query *SurveyResponseQuery, nodes []*User, init func(*User), assign func(*User, *SurveyResponse)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(surveyresponse.FieldUserID)
+	}
+	query.Where(predicate.SurveyResponse(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.SurveyResponsesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

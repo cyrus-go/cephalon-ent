@@ -66,6 +66,10 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargecampaignrule"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/renewalagreement"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyanswer"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyquestion"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/symbol"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/transferorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
@@ -185,6 +189,14 @@ type Client struct {
 	RechargeOrder *RechargeOrderClient
 	// RenewalAgreement is the client for interacting with the RenewalAgreement builders.
 	RenewalAgreement *RenewalAgreementClient
+	// Survey is the client for interacting with the Survey builders.
+	Survey *SurveyClient
+	// SurveyAnswer is the client for interacting with the SurveyAnswer builders.
+	SurveyAnswer *SurveyAnswerClient
+	// SurveyQuestion is the client for interacting with the SurveyQuestion builders.
+	SurveyQuestion *SurveyQuestionClient
+	// SurveyResponse is the client for interacting with the SurveyResponse builders.
+	SurveyResponse *SurveyResponseClient
 	// Symbol is the client for interacting with the Symbol builders.
 	Symbol *SymbolClient
 	// TransferOrder is the client for interacting with the TransferOrder builders.
@@ -269,6 +281,10 @@ func (c *Client) init() {
 	c.RechargeCampaignRule = NewRechargeCampaignRuleClient(c.config)
 	c.RechargeOrder = NewRechargeOrderClient(c.config)
 	c.RenewalAgreement = NewRenewalAgreementClient(c.config)
+	c.Survey = NewSurveyClient(c.config)
+	c.SurveyAnswer = NewSurveyAnswerClient(c.config)
+	c.SurveyQuestion = NewSurveyQuestionClient(c.config)
+	c.SurveyResponse = NewSurveyResponseClient(c.config)
 	c.Symbol = NewSymbolClient(c.config)
 	c.TransferOrder = NewTransferOrderClient(c.config)
 	c.TroubleDeduct = NewTroubleDeductClient(c.config)
@@ -415,6 +431,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
 		RechargeOrder:        NewRechargeOrderClient(cfg),
 		RenewalAgreement:     NewRenewalAgreementClient(cfg),
+		Survey:               NewSurveyClient(cfg),
+		SurveyAnswer:         NewSurveyAnswerClient(cfg),
+		SurveyQuestion:       NewSurveyQuestionClient(cfg),
+		SurveyResponse:       NewSurveyResponseClient(cfg),
 		Symbol:               NewSymbolClient(cfg),
 		TransferOrder:        NewTransferOrderClient(cfg),
 		TroubleDeduct:        NewTroubleDeductClient(cfg),
@@ -495,6 +515,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
 		RechargeOrder:        NewRechargeOrderClient(cfg),
 		RenewalAgreement:     NewRenewalAgreementClient(cfg),
+		Survey:               NewSurveyClient(cfg),
+		SurveyAnswer:         NewSurveyAnswerClient(cfg),
+		SurveyQuestion:       NewSurveyQuestionClient(cfg),
+		SurveyResponse:       NewSurveyResponseClient(cfg),
 		Symbol:               NewSymbolClient(cfg),
 		TransferOrder:        NewTransferOrderClient(cfg),
 		TroubleDeduct:        NewTroubleDeductClient(cfg),
@@ -545,7 +569,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.Survey, c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol,
+		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
 		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
@@ -567,7 +592,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
 		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
 		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Symbol, c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.Survey, c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol,
+		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
 		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
@@ -679,6 +705,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RechargeOrder.mutate(ctx, m)
 	case *RenewalAgreementMutation:
 		return c.RenewalAgreement.mutate(ctx, m)
+	case *SurveyMutation:
+		return c.Survey.mutate(ctx, m)
+	case *SurveyAnswerMutation:
+		return c.SurveyAnswer.mutate(ctx, m)
+	case *SurveyQuestionMutation:
+		return c.SurveyQuestion.mutate(ctx, m)
+	case *SurveyResponseMutation:
+		return c.SurveyResponse.mutate(ctx, m)
 	case *SymbolMutation:
 		return c.Symbol.mutate(ctx, m)
 	case *TransferOrderMutation:
@@ -9695,6 +9729,682 @@ func (c *RenewalAgreementClient) mutate(ctx context.Context, m *RenewalAgreement
 	}
 }
 
+// SurveyClient is a client for the Survey schema.
+type SurveyClient struct {
+	config
+}
+
+// NewSurveyClient returns a client for the Survey from the given config.
+func NewSurveyClient(c config) *SurveyClient {
+	return &SurveyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `survey.Hooks(f(g(h())))`.
+func (c *SurveyClient) Use(hooks ...Hook) {
+	c.hooks.Survey = append(c.hooks.Survey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `survey.Intercept(f(g(h())))`.
+func (c *SurveyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Survey = append(c.inters.Survey, interceptors...)
+}
+
+// Create returns a builder for creating a Survey entity.
+func (c *SurveyClient) Create() *SurveyCreate {
+	mutation := newSurveyMutation(c.config, OpCreate)
+	return &SurveyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Survey entities.
+func (c *SurveyClient) CreateBulk(builders ...*SurveyCreate) *SurveyCreateBulk {
+	return &SurveyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SurveyClient) MapCreateBulk(slice any, setFunc func(*SurveyCreate, int)) *SurveyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SurveyCreateBulk{err: fmt.Errorf("calling to SurveyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SurveyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SurveyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Survey.
+func (c *SurveyClient) Update() *SurveyUpdate {
+	mutation := newSurveyMutation(c.config, OpUpdate)
+	return &SurveyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SurveyClient) UpdateOne(s *Survey) *SurveyUpdateOne {
+	mutation := newSurveyMutation(c.config, OpUpdateOne, withSurvey(s))
+	return &SurveyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SurveyClient) UpdateOneID(id int64) *SurveyUpdateOne {
+	mutation := newSurveyMutation(c.config, OpUpdateOne, withSurveyID(id))
+	return &SurveyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Survey.
+func (c *SurveyClient) Delete() *SurveyDelete {
+	mutation := newSurveyMutation(c.config, OpDelete)
+	return &SurveyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SurveyClient) DeleteOne(s *Survey) *SurveyDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SurveyClient) DeleteOneID(id int64) *SurveyDeleteOne {
+	builder := c.Delete().Where(survey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SurveyDeleteOne{builder}
+}
+
+// Query returns a query builder for Survey.
+func (c *SurveyClient) Query() *SurveyQuery {
+	return &SurveyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSurvey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Survey entity by its id.
+func (c *SurveyClient) Get(ctx context.Context, id int64) (*Survey, error) {
+	return c.Query().Where(survey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SurveyClient) GetX(ctx context.Context, id int64) *Survey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QuerySurveyQuestions queries the survey_questions edge of a Survey.
+func (c *SurveyClient) QuerySurveyQuestions(s *Survey) *SurveyQuestionQuery {
+	query := (&SurveyQuestionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(survey.Table, survey.FieldID, id),
+			sqlgraph.To(surveyquestion.Table, surveyquestion.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, survey.SurveyQuestionsTable, survey.SurveyQuestionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySurveyResponses queries the survey_responses edge of a Survey.
+func (c *SurveyClient) QuerySurveyResponses(s *Survey) *SurveyResponseQuery {
+	query := (&SurveyResponseClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(survey.Table, survey.FieldID, id),
+			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, survey.SurveyResponsesTable, survey.SurveyResponsesColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SurveyClient) Hooks() []Hook {
+	return c.hooks.Survey
+}
+
+// Interceptors returns the client interceptors.
+func (c *SurveyClient) Interceptors() []Interceptor {
+	return c.inters.Survey
+}
+
+func (c *SurveyClient) mutate(ctx context.Context, m *SurveyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SurveyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SurveyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SurveyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SurveyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown Survey mutation op: %q", m.Op())
+	}
+}
+
+// SurveyAnswerClient is a client for the SurveyAnswer schema.
+type SurveyAnswerClient struct {
+	config
+}
+
+// NewSurveyAnswerClient returns a client for the SurveyAnswer from the given config.
+func NewSurveyAnswerClient(c config) *SurveyAnswerClient {
+	return &SurveyAnswerClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `surveyanswer.Hooks(f(g(h())))`.
+func (c *SurveyAnswerClient) Use(hooks ...Hook) {
+	c.hooks.SurveyAnswer = append(c.hooks.SurveyAnswer, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `surveyanswer.Intercept(f(g(h())))`.
+func (c *SurveyAnswerClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SurveyAnswer = append(c.inters.SurveyAnswer, interceptors...)
+}
+
+// Create returns a builder for creating a SurveyAnswer entity.
+func (c *SurveyAnswerClient) Create() *SurveyAnswerCreate {
+	mutation := newSurveyAnswerMutation(c.config, OpCreate)
+	return &SurveyAnswerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SurveyAnswer entities.
+func (c *SurveyAnswerClient) CreateBulk(builders ...*SurveyAnswerCreate) *SurveyAnswerCreateBulk {
+	return &SurveyAnswerCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SurveyAnswerClient) MapCreateBulk(slice any, setFunc func(*SurveyAnswerCreate, int)) *SurveyAnswerCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SurveyAnswerCreateBulk{err: fmt.Errorf("calling to SurveyAnswerClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SurveyAnswerCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SurveyAnswerCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SurveyAnswer.
+func (c *SurveyAnswerClient) Update() *SurveyAnswerUpdate {
+	mutation := newSurveyAnswerMutation(c.config, OpUpdate)
+	return &SurveyAnswerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SurveyAnswerClient) UpdateOne(sa *SurveyAnswer) *SurveyAnswerUpdateOne {
+	mutation := newSurveyAnswerMutation(c.config, OpUpdateOne, withSurveyAnswer(sa))
+	return &SurveyAnswerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SurveyAnswerClient) UpdateOneID(id int64) *SurveyAnswerUpdateOne {
+	mutation := newSurveyAnswerMutation(c.config, OpUpdateOne, withSurveyAnswerID(id))
+	return &SurveyAnswerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SurveyAnswer.
+func (c *SurveyAnswerClient) Delete() *SurveyAnswerDelete {
+	mutation := newSurveyAnswerMutation(c.config, OpDelete)
+	return &SurveyAnswerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SurveyAnswerClient) DeleteOne(sa *SurveyAnswer) *SurveyAnswerDeleteOne {
+	return c.DeleteOneID(sa.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SurveyAnswerClient) DeleteOneID(id int64) *SurveyAnswerDeleteOne {
+	builder := c.Delete().Where(surveyanswer.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SurveyAnswerDeleteOne{builder}
+}
+
+// Query returns a query builder for SurveyAnswer.
+func (c *SurveyAnswerClient) Query() *SurveyAnswerQuery {
+	return &SurveyAnswerQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSurveyAnswer},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SurveyAnswer entity by its id.
+func (c *SurveyAnswerClient) Get(ctx context.Context, id int64) (*SurveyAnswer, error) {
+	return c.Query().Where(surveyanswer.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SurveyAnswerClient) GetX(ctx context.Context, id int64) *SurveyAnswer {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QuerySurveyResponse queries the survey_response edge of a SurveyAnswer.
+func (c *SurveyAnswerClient) QuerySurveyResponse(sa *SurveyAnswer) *SurveyResponseQuery {
+	query := (&SurveyResponseClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyanswer.Table, surveyanswer.FieldID, id),
+			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyanswer.SurveyResponseTable, surveyanswer.SurveyResponseColumn),
+		)
+		fromV = sqlgraph.Neighbors(sa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySurveyQuestion queries the survey_question edge of a SurveyAnswer.
+func (c *SurveyAnswerClient) QuerySurveyQuestion(sa *SurveyAnswer) *SurveyQuestionQuery {
+	query := (&SurveyQuestionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyanswer.Table, surveyanswer.FieldID, id),
+			sqlgraph.To(surveyquestion.Table, surveyquestion.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyanswer.SurveyQuestionTable, surveyanswer.SurveyQuestionColumn),
+		)
+		fromV = sqlgraph.Neighbors(sa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SurveyAnswerClient) Hooks() []Hook {
+	return c.hooks.SurveyAnswer
+}
+
+// Interceptors returns the client interceptors.
+func (c *SurveyAnswerClient) Interceptors() []Interceptor {
+	return c.inters.SurveyAnswer
+}
+
+func (c *SurveyAnswerClient) mutate(ctx context.Context, m *SurveyAnswerMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SurveyAnswerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SurveyAnswerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SurveyAnswerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SurveyAnswerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown SurveyAnswer mutation op: %q", m.Op())
+	}
+}
+
+// SurveyQuestionClient is a client for the SurveyQuestion schema.
+type SurveyQuestionClient struct {
+	config
+}
+
+// NewSurveyQuestionClient returns a client for the SurveyQuestion from the given config.
+func NewSurveyQuestionClient(c config) *SurveyQuestionClient {
+	return &SurveyQuestionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `surveyquestion.Hooks(f(g(h())))`.
+func (c *SurveyQuestionClient) Use(hooks ...Hook) {
+	c.hooks.SurveyQuestion = append(c.hooks.SurveyQuestion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `surveyquestion.Intercept(f(g(h())))`.
+func (c *SurveyQuestionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SurveyQuestion = append(c.inters.SurveyQuestion, interceptors...)
+}
+
+// Create returns a builder for creating a SurveyQuestion entity.
+func (c *SurveyQuestionClient) Create() *SurveyQuestionCreate {
+	mutation := newSurveyQuestionMutation(c.config, OpCreate)
+	return &SurveyQuestionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SurveyQuestion entities.
+func (c *SurveyQuestionClient) CreateBulk(builders ...*SurveyQuestionCreate) *SurveyQuestionCreateBulk {
+	return &SurveyQuestionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SurveyQuestionClient) MapCreateBulk(slice any, setFunc func(*SurveyQuestionCreate, int)) *SurveyQuestionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SurveyQuestionCreateBulk{err: fmt.Errorf("calling to SurveyQuestionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SurveyQuestionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SurveyQuestionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SurveyQuestion.
+func (c *SurveyQuestionClient) Update() *SurveyQuestionUpdate {
+	mutation := newSurveyQuestionMutation(c.config, OpUpdate)
+	return &SurveyQuestionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SurveyQuestionClient) UpdateOne(sq *SurveyQuestion) *SurveyQuestionUpdateOne {
+	mutation := newSurveyQuestionMutation(c.config, OpUpdateOne, withSurveyQuestion(sq))
+	return &SurveyQuestionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SurveyQuestionClient) UpdateOneID(id int64) *SurveyQuestionUpdateOne {
+	mutation := newSurveyQuestionMutation(c.config, OpUpdateOne, withSurveyQuestionID(id))
+	return &SurveyQuestionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SurveyQuestion.
+func (c *SurveyQuestionClient) Delete() *SurveyQuestionDelete {
+	mutation := newSurveyQuestionMutation(c.config, OpDelete)
+	return &SurveyQuestionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SurveyQuestionClient) DeleteOne(sq *SurveyQuestion) *SurveyQuestionDeleteOne {
+	return c.DeleteOneID(sq.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SurveyQuestionClient) DeleteOneID(id int64) *SurveyQuestionDeleteOne {
+	builder := c.Delete().Where(surveyquestion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SurveyQuestionDeleteOne{builder}
+}
+
+// Query returns a query builder for SurveyQuestion.
+func (c *SurveyQuestionClient) Query() *SurveyQuestionQuery {
+	return &SurveyQuestionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSurveyQuestion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SurveyQuestion entity by its id.
+func (c *SurveyQuestionClient) Get(ctx context.Context, id int64) (*SurveyQuestion, error) {
+	return c.Query().Where(surveyquestion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SurveyQuestionClient) GetX(ctx context.Context, id int64) *SurveyQuestion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QuerySurvey queries the survey edge of a SurveyQuestion.
+func (c *SurveyQuestionClient) QuerySurvey(sq *SurveyQuestion) *SurveyQuery {
+	query := (&SurveyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sq.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, id),
+			sqlgraph.To(survey.Table, survey.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyquestion.SurveyTable, surveyquestion.SurveyColumn),
+		)
+		fromV = sqlgraph.Neighbors(sq.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySurveyAnswers queries the survey_answers edge of a SurveyQuestion.
+func (c *SurveyQuestionClient) QuerySurveyAnswers(sq *SurveyQuestion) *SurveyAnswerQuery {
+	query := (&SurveyAnswerClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sq.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, id),
+			sqlgraph.To(surveyanswer.Table, surveyanswer.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, surveyquestion.SurveyAnswersTable, surveyquestion.SurveyAnswersColumn),
+		)
+		fromV = sqlgraph.Neighbors(sq.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SurveyQuestionClient) Hooks() []Hook {
+	return c.hooks.SurveyQuestion
+}
+
+// Interceptors returns the client interceptors.
+func (c *SurveyQuestionClient) Interceptors() []Interceptor {
+	return c.inters.SurveyQuestion
+}
+
+func (c *SurveyQuestionClient) mutate(ctx context.Context, m *SurveyQuestionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SurveyQuestionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SurveyQuestionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SurveyQuestionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SurveyQuestionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown SurveyQuestion mutation op: %q", m.Op())
+	}
+}
+
+// SurveyResponseClient is a client for the SurveyResponse schema.
+type SurveyResponseClient struct {
+	config
+}
+
+// NewSurveyResponseClient returns a client for the SurveyResponse from the given config.
+func NewSurveyResponseClient(c config) *SurveyResponseClient {
+	return &SurveyResponseClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `surveyresponse.Hooks(f(g(h())))`.
+func (c *SurveyResponseClient) Use(hooks ...Hook) {
+	c.hooks.SurveyResponse = append(c.hooks.SurveyResponse, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `surveyresponse.Intercept(f(g(h())))`.
+func (c *SurveyResponseClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SurveyResponse = append(c.inters.SurveyResponse, interceptors...)
+}
+
+// Create returns a builder for creating a SurveyResponse entity.
+func (c *SurveyResponseClient) Create() *SurveyResponseCreate {
+	mutation := newSurveyResponseMutation(c.config, OpCreate)
+	return &SurveyResponseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SurveyResponse entities.
+func (c *SurveyResponseClient) CreateBulk(builders ...*SurveyResponseCreate) *SurveyResponseCreateBulk {
+	return &SurveyResponseCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SurveyResponseClient) MapCreateBulk(slice any, setFunc func(*SurveyResponseCreate, int)) *SurveyResponseCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SurveyResponseCreateBulk{err: fmt.Errorf("calling to SurveyResponseClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SurveyResponseCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SurveyResponseCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SurveyResponse.
+func (c *SurveyResponseClient) Update() *SurveyResponseUpdate {
+	mutation := newSurveyResponseMutation(c.config, OpUpdate)
+	return &SurveyResponseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SurveyResponseClient) UpdateOne(sr *SurveyResponse) *SurveyResponseUpdateOne {
+	mutation := newSurveyResponseMutation(c.config, OpUpdateOne, withSurveyResponse(sr))
+	return &SurveyResponseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SurveyResponseClient) UpdateOneID(id int64) *SurveyResponseUpdateOne {
+	mutation := newSurveyResponseMutation(c.config, OpUpdateOne, withSurveyResponseID(id))
+	return &SurveyResponseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SurveyResponse.
+func (c *SurveyResponseClient) Delete() *SurveyResponseDelete {
+	mutation := newSurveyResponseMutation(c.config, OpDelete)
+	return &SurveyResponseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SurveyResponseClient) DeleteOne(sr *SurveyResponse) *SurveyResponseDeleteOne {
+	return c.DeleteOneID(sr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SurveyResponseClient) DeleteOneID(id int64) *SurveyResponseDeleteOne {
+	builder := c.Delete().Where(surveyresponse.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SurveyResponseDeleteOne{builder}
+}
+
+// Query returns a query builder for SurveyResponse.
+func (c *SurveyResponseClient) Query() *SurveyResponseQuery {
+	return &SurveyResponseQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSurveyResponse},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SurveyResponse entity by its id.
+func (c *SurveyResponseClient) Get(ctx context.Context, id int64) (*SurveyResponse, error) {
+	return c.Query().Where(surveyresponse.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SurveyResponseClient) GetX(ctx context.Context, id int64) *SurveyResponse {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a SurveyResponse.
+func (c *SurveyResponseClient) QueryUser(sr *SurveyResponse) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyresponse.Table, surveyresponse.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyresponse.UserTable, surveyresponse.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySurvey queries the survey edge of a SurveyResponse.
+func (c *SurveyResponseClient) QuerySurvey(sr *SurveyResponse) *SurveyQuery {
+	query := (&SurveyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyresponse.Table, surveyresponse.FieldID, id),
+			sqlgraph.To(survey.Table, survey.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyresponse.SurveyTable, surveyresponse.SurveyColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySurveyAnswers queries the survey_answers edge of a SurveyResponse.
+func (c *SurveyResponseClient) QuerySurveyAnswers(sr *SurveyResponse) *SurveyAnswerQuery {
+	query := (&SurveyAnswerClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyresponse.Table, surveyresponse.FieldID, id),
+			sqlgraph.To(surveyanswer.Table, surveyanswer.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, surveyresponse.SurveyAnswersTable, surveyresponse.SurveyAnswersColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SurveyResponseClient) Hooks() []Hook {
+	return c.hooks.SurveyResponse
+}
+
+// Interceptors returns the client interceptors.
+func (c *SurveyResponseClient) Interceptors() []Interceptor {
+	return c.inters.SurveyResponse
+}
+
+func (c *SurveyResponseClient) mutate(ctx context.Context, m *SurveyResponseMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SurveyResponseCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SurveyResponseUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SurveyResponseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SurveyResponseDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown SurveyResponse mutation op: %q", m.Op())
+	}
+}
+
 // SymbolClient is a client for the Symbol schema.
 type SymbolClient struct {
 	config
@@ -11114,6 +11824,22 @@ func (c *UserClient) QueryApproveIncomeManages(u *User) *IncomeManageQuery {
 	return query
 }
 
+// QuerySurveyResponses queries the survey_responses edge of a User.
+func (c *UserClient) QuerySurveyResponses(u *User) *SurveyResponseQuery {
+	query := (&SurveyResponseClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.SurveyResponsesTable, user.SurveyResponsesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -12141,9 +12867,9 @@ type (
 		MissionCategory, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
 		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
-		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
-		WithdrawRecord []ent.Hook
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount, WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
@@ -12155,8 +12881,8 @@ type (
 		MissionCategory, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
 		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
 		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Symbol, TransferOrder, TroubleDeduct, User,
-		UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
-		WithdrawRecord []ent.Interceptor
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount, WithdrawRecord []ent.Interceptor
 	}
 )
