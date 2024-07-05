@@ -111,7 +111,7 @@ const DefaultType enums.SurveyQuestionType = "unknown"
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enums.SurveyQuestionType) error {
 	switch _type {
-	case "unknown", "single", "multiple":
+	case "unknown", "text", "single", "multiple":
 		return nil
 	default:
 		return fmt.Errorf("surveyquestion: invalid enum value for type field: %q", _type)

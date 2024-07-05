@@ -2231,7 +2231,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "text", Type: field.TypeString, Size: 2147483647, Comment: "问题的内容", Default: ""},
-		{Name: "type", Type: field.TypeEnum, Comment: "问题类型，单选/多选等", Enums: []string{"unknown", "single", "multiple"}, Default: "unknown"},
+		{Name: "type", Type: field.TypeEnum, Comment: "问题类型，单选/多选等", Enums: []string{"unknown", "text", "single", "multiple"}, Default: "unknown"},
 		{Name: "options", Type: field.TypeString, Nullable: true, Comment: "选项内容，单选/多选的内容", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "survey_id", Type: field.TypeInt64, Comment: "问卷 ID", Default: 0},
 	}
