@@ -108,6 +108,62 @@ func (sc *SurveyCreate) SetNillableTitle(s *string) *SurveyCreate {
 	return sc
 }
 
+// SetStartedAt sets the "started_at" field.
+func (sc *SurveyCreate) SetStartedAt(t time.Time) *SurveyCreate {
+	sc.mutation.SetStartedAt(t)
+	return sc
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableStartedAt(t *time.Time) *SurveyCreate {
+	if t != nil {
+		sc.SetStartedAt(*t)
+	}
+	return sc
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (sc *SurveyCreate) SetEndedAt(t time.Time) *SurveyCreate {
+	sc.mutation.SetEndedAt(t)
+	return sc
+}
+
+// SetNillableEndedAt sets the "ended_at" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableEndedAt(t *time.Time) *SurveyCreate {
+	if t != nil {
+		sc.SetEndedAt(*t)
+	}
+	return sc
+}
+
+// SetSortNum sets the "sort_num" field.
+func (sc *SurveyCreate) SetSortNum(i int64) *SurveyCreate {
+	sc.mutation.SetSortNum(i)
+	return sc
+}
+
+// SetNillableSortNum sets the "sort_num" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableSortNum(i *int64) *SurveyCreate {
+	if i != nil {
+		sc.SetSortNum(*i)
+	}
+	return sc
+}
+
+// SetGroup sets the "group" field.
+func (sc *SurveyCreate) SetGroup(s string) *SurveyCreate {
+	sc.mutation.SetGroup(s)
+	return sc
+}
+
+// SetNillableGroup sets the "group" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableGroup(s *string) *SurveyCreate {
+	if s != nil {
+		sc.SetGroup(*s)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *SurveyCreate) SetID(i int64) *SurveyCreate {
 	sc.mutation.SetID(i)
@@ -211,6 +267,22 @@ func (sc *SurveyCreate) defaults() {
 		v := survey.DefaultTitle
 		sc.mutation.SetTitle(v)
 	}
+	if _, ok := sc.mutation.StartedAt(); !ok {
+		v := survey.DefaultStartedAt
+		sc.mutation.SetStartedAt(v)
+	}
+	if _, ok := sc.mutation.EndedAt(); !ok {
+		v := survey.DefaultEndedAt
+		sc.mutation.SetEndedAt(v)
+	}
+	if _, ok := sc.mutation.SortNum(); !ok {
+		v := survey.DefaultSortNum
+		sc.mutation.SetSortNum(v)
+	}
+	if _, ok := sc.mutation.Group(); !ok {
+		v := survey.DefaultGroup
+		sc.mutation.SetGroup(v)
+	}
 	if _, ok := sc.mutation.ID(); !ok {
 		v := survey.DefaultID()
 		sc.mutation.SetID(v)
@@ -236,6 +308,12 @@ func (sc *SurveyCreate) check() error {
 	}
 	if _, ok := sc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`cep_ent: missing required field "Survey.title"`)}
+	}
+	if _, ok := sc.mutation.SortNum(); !ok {
+		return &ValidationError{Name: "sort_num", err: errors.New(`cep_ent: missing required field "Survey.sort_num"`)}
+	}
+	if _, ok := sc.mutation.Group(); !ok {
+		return &ValidationError{Name: "group", err: errors.New(`cep_ent: missing required field "Survey.group"`)}
 	}
 	return nil
 }
@@ -293,6 +371,22 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.Title(); ok {
 		_spec.SetField(survey.FieldTitle, field.TypeString, value)
 		_node.Title = value
+	}
+	if value, ok := sc.mutation.StartedAt(); ok {
+		_spec.SetField(survey.FieldStartedAt, field.TypeTime, value)
+		_node.StartedAt = &value
+	}
+	if value, ok := sc.mutation.EndedAt(); ok {
+		_spec.SetField(survey.FieldEndedAt, field.TypeTime, value)
+		_node.EndedAt = &value
+	}
+	if value, ok := sc.mutation.SortNum(); ok {
+		_spec.SetField(survey.FieldSortNum, field.TypeInt64, value)
+		_node.SortNum = value
+	}
+	if value, ok := sc.mutation.Group(); ok {
+		_spec.SetField(survey.FieldGroup, field.TypeString, value)
+		_node.Group = value
 	}
 	if nodes := sc.mutation.SurveyQuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -450,6 +544,72 @@ func (u *SurveyUpsert) UpdateTitle() *SurveyUpsert {
 	return u
 }
 
+// SetStartedAt sets the "started_at" field.
+func (u *SurveyUpsert) SetStartedAt(v time.Time) *SurveyUpsert {
+	u.Set(survey.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateStartedAt() *SurveyUpsert {
+	u.SetExcluded(survey.FieldStartedAt)
+	return u
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *SurveyUpsert) ClearStartedAt() *SurveyUpsert {
+	u.SetNull(survey.FieldStartedAt)
+	return u
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (u *SurveyUpsert) SetEndedAt(v time.Time) *SurveyUpsert {
+	u.Set(survey.FieldEndedAt, v)
+	return u
+}
+
+// UpdateEndedAt sets the "ended_at" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateEndedAt() *SurveyUpsert {
+	u.SetExcluded(survey.FieldEndedAt)
+	return u
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (u *SurveyUpsert) ClearEndedAt() *SurveyUpsert {
+	u.SetNull(survey.FieldEndedAt)
+	return u
+}
+
+// SetSortNum sets the "sort_num" field.
+func (u *SurveyUpsert) SetSortNum(v int64) *SurveyUpsert {
+	u.Set(survey.FieldSortNum, v)
+	return u
+}
+
+// UpdateSortNum sets the "sort_num" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateSortNum() *SurveyUpsert {
+	u.SetExcluded(survey.FieldSortNum)
+	return u
+}
+
+// AddSortNum adds v to the "sort_num" field.
+func (u *SurveyUpsert) AddSortNum(v int64) *SurveyUpsert {
+	u.Add(survey.FieldSortNum, v)
+	return u
+}
+
+// SetGroup sets the "group" field.
+func (u *SurveyUpsert) SetGroup(v string) *SurveyUpsert {
+	u.Set(survey.FieldGroup, v)
+	return u
+}
+
+// UpdateGroup sets the "group" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateGroup() *SurveyUpsert {
+	u.SetExcluded(survey.FieldGroup)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -582,6 +742,83 @@ func (u *SurveyUpsertOne) SetTitle(v string) *SurveyUpsertOne {
 func (u *SurveyUpsertOne) UpdateTitle() *SurveyUpsertOne {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateTitle()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *SurveyUpsertOne) SetStartedAt(v time.Time) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateStartedAt() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *SurveyUpsertOne) ClearStartedAt() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (u *SurveyUpsertOne) SetEndedAt(v time.Time) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetEndedAt(v)
+	})
+}
+
+// UpdateEndedAt sets the "ended_at" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateEndedAt() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateEndedAt()
+	})
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (u *SurveyUpsertOne) ClearEndedAt() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.ClearEndedAt()
+	})
+}
+
+// SetSortNum sets the "sort_num" field.
+func (u *SurveyUpsertOne) SetSortNum(v int64) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetSortNum(v)
+	})
+}
+
+// AddSortNum adds v to the "sort_num" field.
+func (u *SurveyUpsertOne) AddSortNum(v int64) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.AddSortNum(v)
+	})
+}
+
+// UpdateSortNum sets the "sort_num" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateSortNum() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateSortNum()
+	})
+}
+
+// SetGroup sets the "group" field.
+func (u *SurveyUpsertOne) SetGroup(v string) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetGroup(v)
+	})
+}
+
+// UpdateGroup sets the "group" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateGroup() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateGroup()
 	})
 }
 
@@ -883,6 +1120,83 @@ func (u *SurveyUpsertBulk) SetTitle(v string) *SurveyUpsertBulk {
 func (u *SurveyUpsertBulk) UpdateTitle() *SurveyUpsertBulk {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateTitle()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *SurveyUpsertBulk) SetStartedAt(v time.Time) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateStartedAt() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *SurveyUpsertBulk) ClearStartedAt() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (u *SurveyUpsertBulk) SetEndedAt(v time.Time) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetEndedAt(v)
+	})
+}
+
+// UpdateEndedAt sets the "ended_at" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateEndedAt() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateEndedAt()
+	})
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (u *SurveyUpsertBulk) ClearEndedAt() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.ClearEndedAt()
+	})
+}
+
+// SetSortNum sets the "sort_num" field.
+func (u *SurveyUpsertBulk) SetSortNum(v int64) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetSortNum(v)
+	})
+}
+
+// AddSortNum adds v to the "sort_num" field.
+func (u *SurveyUpsertBulk) AddSortNum(v int64) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.AddSortNum(v)
+	})
+}
+
+// UpdateSortNum sets the "sort_num" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateSortNum() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateSortNum()
+	})
+}
+
+// SetGroup sets the "group" field.
+func (u *SurveyUpsertBulk) SetGroup(v string) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetGroup(v)
+	})
+}
+
+// UpdateGroup sets the "group" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateGroup() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateGroup()
 	})
 }
 

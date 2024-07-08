@@ -66615,6 +66615,11 @@ type SurveyMutation struct {
 	updated_at              *time.Time
 	deleted_at              *time.Time
 	title                   *string
+	started_at              *time.Time
+	ended_at                *time.Time
+	sort_num                *int64
+	addsort_num             *int64
+	group                   *string
 	clearedFields           map[string]struct{}
 	survey_questions        map[int64]struct{}
 	removedsurvey_questions map[int64]struct{}
@@ -66987,6 +66992,196 @@ func (m *SurveyMutation) ResetTitle() {
 	m.title = nil
 }
 
+// SetStartedAt sets the "started_at" field.
+func (m *SurveyMutation) SetStartedAt(t time.Time) {
+	m.started_at = &t
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *SurveyMutation) StartedAt() (r time.Time, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldStartedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *SurveyMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[survey.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *SurveyMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[survey.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *SurveyMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, survey.FieldStartedAt)
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (m *SurveyMutation) SetEndedAt(t time.Time) {
+	m.ended_at = &t
+}
+
+// EndedAt returns the value of the "ended_at" field in the mutation.
+func (m *SurveyMutation) EndedAt() (r time.Time, exists bool) {
+	v := m.ended_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndedAt returns the old "ended_at" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldEndedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEndedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEndedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndedAt: %w", err)
+	}
+	return oldValue.EndedAt, nil
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (m *SurveyMutation) ClearEndedAt() {
+	m.ended_at = nil
+	m.clearedFields[survey.FieldEndedAt] = struct{}{}
+}
+
+// EndedAtCleared returns if the "ended_at" field was cleared in this mutation.
+func (m *SurveyMutation) EndedAtCleared() bool {
+	_, ok := m.clearedFields[survey.FieldEndedAt]
+	return ok
+}
+
+// ResetEndedAt resets all changes to the "ended_at" field.
+func (m *SurveyMutation) ResetEndedAt() {
+	m.ended_at = nil
+	delete(m.clearedFields, survey.FieldEndedAt)
+}
+
+// SetSortNum sets the "sort_num" field.
+func (m *SurveyMutation) SetSortNum(i int64) {
+	m.sort_num = &i
+	m.addsort_num = nil
+}
+
+// SortNum returns the value of the "sort_num" field in the mutation.
+func (m *SurveyMutation) SortNum() (r int64, exists bool) {
+	v := m.sort_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSortNum returns the old "sort_num" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldSortNum(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSortNum is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSortNum requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSortNum: %w", err)
+	}
+	return oldValue.SortNum, nil
+}
+
+// AddSortNum adds i to the "sort_num" field.
+func (m *SurveyMutation) AddSortNum(i int64) {
+	if m.addsort_num != nil {
+		*m.addsort_num += i
+	} else {
+		m.addsort_num = &i
+	}
+}
+
+// AddedSortNum returns the value that was added to the "sort_num" field in this mutation.
+func (m *SurveyMutation) AddedSortNum() (r int64, exists bool) {
+	v := m.addsort_num
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSortNum resets all changes to the "sort_num" field.
+func (m *SurveyMutation) ResetSortNum() {
+	m.sort_num = nil
+	m.addsort_num = nil
+}
+
+// SetGroup sets the "group" field.
+func (m *SurveyMutation) SetGroup(s string) {
+	m.group = &s
+}
+
+// Group returns the value of the "group" field in the mutation.
+func (m *SurveyMutation) Group() (r string, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroup returns the old "group" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldGroup(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroup is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroup requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroup: %w", err)
+	}
+	return oldValue.Group, nil
+}
+
+// ResetGroup resets all changes to the "group" field.
+func (m *SurveyMutation) ResetGroup() {
+	m.group = nil
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by ids.
 func (m *SurveyMutation) AddSurveyQuestionIDs(ids ...int64) {
 	if m.survey_questions == nil {
@@ -67129,7 +67324,7 @@ func (m *SurveyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SurveyMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, survey.FieldCreatedBy)
 	}
@@ -67147,6 +67342,18 @@ func (m *SurveyMutation) Fields() []string {
 	}
 	if m.title != nil {
 		fields = append(fields, survey.FieldTitle)
+	}
+	if m.started_at != nil {
+		fields = append(fields, survey.FieldStartedAt)
+	}
+	if m.ended_at != nil {
+		fields = append(fields, survey.FieldEndedAt)
+	}
+	if m.sort_num != nil {
+		fields = append(fields, survey.FieldSortNum)
+	}
+	if m.group != nil {
+		fields = append(fields, survey.FieldGroup)
 	}
 	return fields
 }
@@ -67168,6 +67375,14 @@ func (m *SurveyMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case survey.FieldTitle:
 		return m.Title()
+	case survey.FieldStartedAt:
+		return m.StartedAt()
+	case survey.FieldEndedAt:
+		return m.EndedAt()
+	case survey.FieldSortNum:
+		return m.SortNum()
+	case survey.FieldGroup:
+		return m.Group()
 	}
 	return nil, false
 }
@@ -67189,6 +67404,14 @@ func (m *SurveyMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDeletedAt(ctx)
 	case survey.FieldTitle:
 		return m.OldTitle(ctx)
+	case survey.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case survey.FieldEndedAt:
+		return m.OldEndedAt(ctx)
+	case survey.FieldSortNum:
+		return m.OldSortNum(ctx)
+	case survey.FieldGroup:
+		return m.OldGroup(ctx)
 	}
 	return nil, fmt.Errorf("unknown Survey field %s", name)
 }
@@ -67240,6 +67463,34 @@ func (m *SurveyMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTitle(v)
 		return nil
+	case survey.FieldStartedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case survey.FieldEndedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndedAt(v)
+		return nil
+	case survey.FieldSortNum:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSortNum(v)
+		return nil
+	case survey.FieldGroup:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroup(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)
 }
@@ -67254,6 +67505,9 @@ func (m *SurveyMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, survey.FieldUpdatedBy)
 	}
+	if m.addsort_num != nil {
+		fields = append(fields, survey.FieldSortNum)
+	}
 	return fields
 }
 
@@ -67266,6 +67520,8 @@ func (m *SurveyMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case survey.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case survey.FieldSortNum:
+		return m.AddedSortNum()
 	}
 	return nil, false
 }
@@ -67289,6 +67545,13 @@ func (m *SurveyMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddUpdatedBy(v)
 		return nil
+	case survey.FieldSortNum:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSortNum(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Survey numeric field %s", name)
 }
@@ -67296,7 +67559,14 @@ func (m *SurveyMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *SurveyMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(survey.FieldStartedAt) {
+		fields = append(fields, survey.FieldStartedAt)
+	}
+	if m.FieldCleared(survey.FieldEndedAt) {
+		fields = append(fields, survey.FieldEndedAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -67309,6 +67579,14 @@ func (m *SurveyMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *SurveyMutation) ClearField(name string) error {
+	switch name {
+	case survey.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case survey.FieldEndedAt:
+		m.ClearEndedAt()
+		return nil
+	}
 	return fmt.Errorf("unknown Survey nullable field %s", name)
 }
 
@@ -67333,6 +67611,18 @@ func (m *SurveyMutation) ResetField(name string) error {
 		return nil
 	case survey.FieldTitle:
 		m.ResetTitle()
+		return nil
+	case survey.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case survey.FieldEndedAt:
+		m.ResetEndedAt()
+		return nil
+	case survey.FieldSortNum:
+		m.ResetSortNum()
+		return nil
+	case survey.FieldGroup:
+		m.ResetGroup()
 		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)

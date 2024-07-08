@@ -30,6 +30,14 @@ type Survey struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	// 标题
 	Title string `json:"title"`
+	// 填写问卷开始的时间
+	StartedAt *time.Time `json:"started_at"`
+	// 填写问卷结束的时间
+	EndedAt *time.Time `json:"ended_at"`
+	// 分组排序序列号
+	SortNum int64 `json:"sort_num"`
+	// 问卷分组（自定义，可以为空），同组问卷可以根据序号强关联
+	Group string `json:"group"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyQuery when eager-loading is set.
 	Edges        SurveyEdges `json:"edges"`
@@ -70,11 +78,11 @@ func (*Survey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy:
+		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy, survey.FieldSortNum:
 			values[i] = new(sql.NullInt64)
-		case survey.FieldTitle:
+		case survey.FieldTitle, survey.FieldGroup:
 			values[i] = new(sql.NullString)
-		case survey.FieldCreatedAt, survey.FieldUpdatedAt, survey.FieldDeletedAt:
+		case survey.FieldCreatedAt, survey.FieldUpdatedAt, survey.FieldDeletedAt, survey.FieldStartedAt, survey.FieldEndedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -132,6 +140,32 @@ func (s *Survey) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
 				s.Title = value.String
+			}
+		case survey.FieldStartedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field started_at", values[i])
+			} else if value.Valid {
+				s.StartedAt = new(time.Time)
+				*s.StartedAt = value.Time
+			}
+		case survey.FieldEndedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field ended_at", values[i])
+			} else if value.Valid {
+				s.EndedAt = new(time.Time)
+				*s.EndedAt = value.Time
+			}
+		case survey.FieldSortNum:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field sort_num", values[i])
+			} else if value.Valid {
+				s.SortNum = value.Int64
+			}
+		case survey.FieldGroup:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field group", values[i])
+			} else if value.Valid {
+				s.Group = value.String
 			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
@@ -196,6 +230,22 @@ func (s *Survey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(s.Title)
+	builder.WriteString(", ")
+	if v := s.StartedAt; v != nil {
+		builder.WriteString("started_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := s.EndedAt; v != nil {
+		builder.WriteString("ended_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("sort_num=")
+	builder.WriteString(fmt.Sprintf("%v", s.SortNum))
+	builder.WriteString(", ")
+	builder.WriteString("group=")
+	builder.WriteString(s.Group)
 	builder.WriteByte(')')
 	return builder.String()
 }

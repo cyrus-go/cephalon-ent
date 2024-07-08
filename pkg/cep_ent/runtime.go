@@ -2945,6 +2945,22 @@ func init() {
 	surveyDescTitle := surveyFields[0].Descriptor()
 	// survey.DefaultTitle holds the default value on creation for the title field.
 	survey.DefaultTitle = surveyDescTitle.Default.(string)
+	// surveyDescStartedAt is the schema descriptor for started_at field.
+	surveyDescStartedAt := surveyFields[1].Descriptor()
+	// survey.DefaultStartedAt holds the default value on creation for the started_at field.
+	survey.DefaultStartedAt = surveyDescStartedAt.Default.(time.Time)
+	// surveyDescEndedAt is the schema descriptor for ended_at field.
+	surveyDescEndedAt := surveyFields[2].Descriptor()
+	// survey.DefaultEndedAt holds the default value on creation for the ended_at field.
+	survey.DefaultEndedAt = surveyDescEndedAt.Default.(time.Time)
+	// surveyDescSortNum is the schema descriptor for sort_num field.
+	surveyDescSortNum := surveyFields[3].Descriptor()
+	// survey.DefaultSortNum holds the default value on creation for the sort_num field.
+	survey.DefaultSortNum = surveyDescSortNum.Default.(int64)
+	// surveyDescGroup is the schema descriptor for group field.
+	surveyDescGroup := surveyFields[4].Descriptor()
+	// survey.DefaultGroup holds the default value on creation for the group field.
+	survey.DefaultGroup = surveyDescGroup.Default.(string)
 	// surveyDescID is the schema descriptor for id field.
 	surveyDescID := surveyMixinFields0[0].Descriptor()
 	// survey.DefaultID holds the default value on creation for the id field.

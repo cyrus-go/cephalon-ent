@@ -107,6 +107,81 @@ func (su *SurveyUpdate) SetNillableTitle(s *string) *SurveyUpdate {
 	return su
 }
 
+// SetStartedAt sets the "started_at" field.
+func (su *SurveyUpdate) SetStartedAt(t time.Time) *SurveyUpdate {
+	su.mutation.SetStartedAt(t)
+	return su
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableStartedAt(t *time.Time) *SurveyUpdate {
+	if t != nil {
+		su.SetStartedAt(*t)
+	}
+	return su
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (su *SurveyUpdate) ClearStartedAt() *SurveyUpdate {
+	su.mutation.ClearStartedAt()
+	return su
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (su *SurveyUpdate) SetEndedAt(t time.Time) *SurveyUpdate {
+	su.mutation.SetEndedAt(t)
+	return su
+}
+
+// SetNillableEndedAt sets the "ended_at" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableEndedAt(t *time.Time) *SurveyUpdate {
+	if t != nil {
+		su.SetEndedAt(*t)
+	}
+	return su
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (su *SurveyUpdate) ClearEndedAt() *SurveyUpdate {
+	su.mutation.ClearEndedAt()
+	return su
+}
+
+// SetSortNum sets the "sort_num" field.
+func (su *SurveyUpdate) SetSortNum(i int64) *SurveyUpdate {
+	su.mutation.ResetSortNum()
+	su.mutation.SetSortNum(i)
+	return su
+}
+
+// SetNillableSortNum sets the "sort_num" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableSortNum(i *int64) *SurveyUpdate {
+	if i != nil {
+		su.SetSortNum(*i)
+	}
+	return su
+}
+
+// AddSortNum adds i to the "sort_num" field.
+func (su *SurveyUpdate) AddSortNum(i int64) *SurveyUpdate {
+	su.mutation.AddSortNum(i)
+	return su
+}
+
+// SetGroup sets the "group" field.
+func (su *SurveyUpdate) SetGroup(s string) *SurveyUpdate {
+	su.mutation.SetGroup(s)
+	return su
+}
+
+// SetNillableGroup sets the "group" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableGroup(s *string) *SurveyUpdate {
+	if s != nil {
+		su.SetGroup(*s)
+	}
+	return su
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by IDs.
 func (su *SurveyUpdate) AddSurveyQuestionIDs(ids ...int64) *SurveyUpdate {
 	su.mutation.AddSurveyQuestionIDs(ids...)
@@ -255,6 +330,27 @@ func (su *SurveyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.Title(); ok {
 		_spec.SetField(survey.FieldTitle, field.TypeString, value)
+	}
+	if value, ok := su.mutation.StartedAt(); ok {
+		_spec.SetField(survey.FieldStartedAt, field.TypeTime, value)
+	}
+	if su.mutation.StartedAtCleared() {
+		_spec.ClearField(survey.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := su.mutation.EndedAt(); ok {
+		_spec.SetField(survey.FieldEndedAt, field.TypeTime, value)
+	}
+	if su.mutation.EndedAtCleared() {
+		_spec.ClearField(survey.FieldEndedAt, field.TypeTime)
+	}
+	if value, ok := su.mutation.SortNum(); ok {
+		_spec.SetField(survey.FieldSortNum, field.TypeInt64, value)
+	}
+	if value, ok := su.mutation.AddedSortNum(); ok {
+		_spec.AddField(survey.FieldSortNum, field.TypeInt64, value)
+	}
+	if value, ok := su.mutation.Group(); ok {
+		_spec.SetField(survey.FieldGroup, field.TypeString, value)
 	}
 	if su.mutation.SurveyQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -444,6 +540,81 @@ func (suo *SurveyUpdateOne) SetNillableTitle(s *string) *SurveyUpdateOne {
 	return suo
 }
 
+// SetStartedAt sets the "started_at" field.
+func (suo *SurveyUpdateOne) SetStartedAt(t time.Time) *SurveyUpdateOne {
+	suo.mutation.SetStartedAt(t)
+	return suo
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableStartedAt(t *time.Time) *SurveyUpdateOne {
+	if t != nil {
+		suo.SetStartedAt(*t)
+	}
+	return suo
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (suo *SurveyUpdateOne) ClearStartedAt() *SurveyUpdateOne {
+	suo.mutation.ClearStartedAt()
+	return suo
+}
+
+// SetEndedAt sets the "ended_at" field.
+func (suo *SurveyUpdateOne) SetEndedAt(t time.Time) *SurveyUpdateOne {
+	suo.mutation.SetEndedAt(t)
+	return suo
+}
+
+// SetNillableEndedAt sets the "ended_at" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableEndedAt(t *time.Time) *SurveyUpdateOne {
+	if t != nil {
+		suo.SetEndedAt(*t)
+	}
+	return suo
+}
+
+// ClearEndedAt clears the value of the "ended_at" field.
+func (suo *SurveyUpdateOne) ClearEndedAt() *SurveyUpdateOne {
+	suo.mutation.ClearEndedAt()
+	return suo
+}
+
+// SetSortNum sets the "sort_num" field.
+func (suo *SurveyUpdateOne) SetSortNum(i int64) *SurveyUpdateOne {
+	suo.mutation.ResetSortNum()
+	suo.mutation.SetSortNum(i)
+	return suo
+}
+
+// SetNillableSortNum sets the "sort_num" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableSortNum(i *int64) *SurveyUpdateOne {
+	if i != nil {
+		suo.SetSortNum(*i)
+	}
+	return suo
+}
+
+// AddSortNum adds i to the "sort_num" field.
+func (suo *SurveyUpdateOne) AddSortNum(i int64) *SurveyUpdateOne {
+	suo.mutation.AddSortNum(i)
+	return suo
+}
+
+// SetGroup sets the "group" field.
+func (suo *SurveyUpdateOne) SetGroup(s string) *SurveyUpdateOne {
+	suo.mutation.SetGroup(s)
+	return suo
+}
+
+// SetNillableGroup sets the "group" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableGroup(s *string) *SurveyUpdateOne {
+	if s != nil {
+		suo.SetGroup(*s)
+	}
+	return suo
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by IDs.
 func (suo *SurveyUpdateOne) AddSurveyQuestionIDs(ids ...int64) *SurveyUpdateOne {
 	suo.mutation.AddSurveyQuestionIDs(ids...)
@@ -622,6 +793,27 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (_node *Survey, err err
 	}
 	if value, ok := suo.mutation.Title(); ok {
 		_spec.SetField(survey.FieldTitle, field.TypeString, value)
+	}
+	if value, ok := suo.mutation.StartedAt(); ok {
+		_spec.SetField(survey.FieldStartedAt, field.TypeTime, value)
+	}
+	if suo.mutation.StartedAtCleared() {
+		_spec.ClearField(survey.FieldStartedAt, field.TypeTime)
+	}
+	if value, ok := suo.mutation.EndedAt(); ok {
+		_spec.SetField(survey.FieldEndedAt, field.TypeTime, value)
+	}
+	if suo.mutation.EndedAtCleared() {
+		_spec.ClearField(survey.FieldEndedAt, field.TypeTime)
+	}
+	if value, ok := suo.mutation.SortNum(); ok {
+		_spec.SetField(survey.FieldSortNum, field.TypeInt64, value)
+	}
+	if value, ok := suo.mutation.AddedSortNum(); ok {
+		_spec.AddField(survey.FieldSortNum, field.TypeInt64, value)
+	}
+	if value, ok := suo.mutation.Group(); ok {
+		_spec.SetField(survey.FieldGroup, field.TypeString, value)
 	}
 	if suo.mutation.SurveyQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/common"
 )
 
 type Survey struct {
@@ -14,6 +15,10 @@ type Survey struct {
 func (Survey) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title").StructTag(`json:"title"`).Default("").Comment("标题"),
+		field.Time("started_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"started_at"`).Comment("填写问卷开始的时间"),
+		field.Time("ended_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"ended_at"`).Comment("填写问卷结束的时间"),
+		field.Int64("sort_num").StructTag(`json:"sort_num"`).Default(1).Comment("分组排序序列号"),
+		field.String("group").StructTag(`json:"group"`).Default("").Comment("问卷分组（自定义，可以为空），同组问卷可以根据序号强关联"),
 	}
 }
 

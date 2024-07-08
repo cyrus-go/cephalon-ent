@@ -26,6 +26,14 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldEndedAt holds the string denoting the ended_at field in the database.
+	FieldEndedAt = "ended_at"
+	// FieldSortNum holds the string denoting the sort_num field in the database.
+	FieldSortNum = "sort_num"
+	// FieldGroup holds the string denoting the group field in the database.
+	FieldGroup = "group"
 	// EdgeSurveyQuestions holds the string denoting the survey_questions edge name in mutations.
 	EdgeSurveyQuestions = "survey_questions"
 	// EdgeSurveyResponses holds the string denoting the survey_responses edge name in mutations.
@@ -57,6 +65,10 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldTitle,
+	FieldStartedAt,
+	FieldEndedAt,
+	FieldSortNum,
+	FieldGroup,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -84,6 +96,14 @@ var (
 	DefaultDeletedAt time.Time
 	// DefaultTitle holds the default value on creation for the "title" field.
 	DefaultTitle string
+	// DefaultStartedAt holds the default value on creation for the "started_at" field.
+	DefaultStartedAt time.Time
+	// DefaultEndedAt holds the default value on creation for the "ended_at" field.
+	DefaultEndedAt time.Time
+	// DefaultSortNum holds the default value on creation for the "sort_num" field.
+	DefaultSortNum int64
+	// DefaultGroup holds the default value on creation for the "group" field.
+	DefaultGroup string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -124,6 +144,26 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByTitle orders the results by the title field.
 func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTitle, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByEndedAt orders the results by the ended_at field.
+func ByEndedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEndedAt, opts...).ToFunc()
+}
+
+// BySortNum orders the results by the sort_num field.
+func BySortNum(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSortNum, opts...).ToFunc()
+}
+
+// ByGroup orders the results by the group field.
+func ByGroup(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGroup, opts...).ToFunc()
 }
 
 // BySurveyQuestionsCount orders the results by survey_questions count.

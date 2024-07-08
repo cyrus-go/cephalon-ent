@@ -2181,6 +2181,10 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "title", Type: field.TypeString, Comment: "标题", Default: ""},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, Comment: "填写问卷开始的时间"},
+		{Name: "ended_at", Type: field.TypeTime, Nullable: true, Comment: "填写问卷结束的时间"},
+		{Name: "sort_num", Type: field.TypeInt64, Comment: "分组排序序列号", Default: 1},
+		{Name: "group", Type: field.TypeString, Comment: "问卷分组（自定义，可以为空），同组问卷可以根据序号强关联", Default: ""},
 	}
 	// SurveysTable holds the schema information for the "surveys" table.
 	SurveysTable = &schema.Table{

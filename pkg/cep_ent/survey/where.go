@@ -85,6 +85,26 @@ func Title(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldTitle, v))
 }
 
+// StartedAt applies equality check predicate on the "started_at" field. It's identical to StartedAtEQ.
+func StartedAt(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldStartedAt, v))
+}
+
+// EndedAt applies equality check predicate on the "ended_at" field. It's identical to EndedAtEQ.
+func EndedAt(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldEndedAt, v))
+}
+
+// SortNum applies equality check predicate on the "sort_num" field. It's identical to SortNumEQ.
+func SortNum(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldSortNum, v))
+}
+
+// Group applies equality check predicate on the "group" field. It's identical to GroupEQ.
+func Group(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldGroup, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldCreatedBy, v))
@@ -348,6 +368,211 @@ func TitleEqualFold(v string) predicate.Survey {
 // TitleContainsFold applies the ContainsFold predicate on the "title" field.
 func TitleContainsFold(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldContainsFold(FieldTitle, v))
+}
+
+// StartedAtEQ applies the EQ predicate on the "started_at" field.
+func StartedAtEQ(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldStartedAt, v))
+}
+
+// StartedAtNEQ applies the NEQ predicate on the "started_at" field.
+func StartedAtNEQ(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldStartedAt, v))
+}
+
+// StartedAtIn applies the In predicate on the "started_at" field.
+func StartedAtIn(vs ...time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldStartedAt, vs...))
+}
+
+// StartedAtNotIn applies the NotIn predicate on the "started_at" field.
+func StartedAtNotIn(vs ...time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldStartedAt, vs...))
+}
+
+// StartedAtGT applies the GT predicate on the "started_at" field.
+func StartedAtGT(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldStartedAt, v))
+}
+
+// StartedAtGTE applies the GTE predicate on the "started_at" field.
+func StartedAtGTE(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldStartedAt, v))
+}
+
+// StartedAtLT applies the LT predicate on the "started_at" field.
+func StartedAtLT(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldStartedAt, v))
+}
+
+// StartedAtLTE applies the LTE predicate on the "started_at" field.
+func StartedAtLTE(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldStartedAt, v))
+}
+
+// StartedAtIsNil applies the IsNil predicate on the "started_at" field.
+func StartedAtIsNil() predicate.Survey {
+	return predicate.Survey(sql.FieldIsNull(FieldStartedAt))
+}
+
+// StartedAtNotNil applies the NotNil predicate on the "started_at" field.
+func StartedAtNotNil() predicate.Survey {
+	return predicate.Survey(sql.FieldNotNull(FieldStartedAt))
+}
+
+// EndedAtEQ applies the EQ predicate on the "ended_at" field.
+func EndedAtEQ(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldEndedAt, v))
+}
+
+// EndedAtNEQ applies the NEQ predicate on the "ended_at" field.
+func EndedAtNEQ(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldEndedAt, v))
+}
+
+// EndedAtIn applies the In predicate on the "ended_at" field.
+func EndedAtIn(vs ...time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldEndedAt, vs...))
+}
+
+// EndedAtNotIn applies the NotIn predicate on the "ended_at" field.
+func EndedAtNotIn(vs ...time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldEndedAt, vs...))
+}
+
+// EndedAtGT applies the GT predicate on the "ended_at" field.
+func EndedAtGT(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldEndedAt, v))
+}
+
+// EndedAtGTE applies the GTE predicate on the "ended_at" field.
+func EndedAtGTE(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldEndedAt, v))
+}
+
+// EndedAtLT applies the LT predicate on the "ended_at" field.
+func EndedAtLT(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldEndedAt, v))
+}
+
+// EndedAtLTE applies the LTE predicate on the "ended_at" field.
+func EndedAtLTE(v time.Time) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldEndedAt, v))
+}
+
+// EndedAtIsNil applies the IsNil predicate on the "ended_at" field.
+func EndedAtIsNil() predicate.Survey {
+	return predicate.Survey(sql.FieldIsNull(FieldEndedAt))
+}
+
+// EndedAtNotNil applies the NotNil predicate on the "ended_at" field.
+func EndedAtNotNil() predicate.Survey {
+	return predicate.Survey(sql.FieldNotNull(FieldEndedAt))
+}
+
+// SortNumEQ applies the EQ predicate on the "sort_num" field.
+func SortNumEQ(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldSortNum, v))
+}
+
+// SortNumNEQ applies the NEQ predicate on the "sort_num" field.
+func SortNumNEQ(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldSortNum, v))
+}
+
+// SortNumIn applies the In predicate on the "sort_num" field.
+func SortNumIn(vs ...int64) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldSortNum, vs...))
+}
+
+// SortNumNotIn applies the NotIn predicate on the "sort_num" field.
+func SortNumNotIn(vs ...int64) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldSortNum, vs...))
+}
+
+// SortNumGT applies the GT predicate on the "sort_num" field.
+func SortNumGT(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldSortNum, v))
+}
+
+// SortNumGTE applies the GTE predicate on the "sort_num" field.
+func SortNumGTE(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldSortNum, v))
+}
+
+// SortNumLT applies the LT predicate on the "sort_num" field.
+func SortNumLT(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldSortNum, v))
+}
+
+// SortNumLTE applies the LTE predicate on the "sort_num" field.
+func SortNumLTE(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldSortNum, v))
+}
+
+// GroupEQ applies the EQ predicate on the "group" field.
+func GroupEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldGroup, v))
+}
+
+// GroupNEQ applies the NEQ predicate on the "group" field.
+func GroupNEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldGroup, v))
+}
+
+// GroupIn applies the In predicate on the "group" field.
+func GroupIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldGroup, vs...))
+}
+
+// GroupNotIn applies the NotIn predicate on the "group" field.
+func GroupNotIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldGroup, vs...))
+}
+
+// GroupGT applies the GT predicate on the "group" field.
+func GroupGT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldGroup, v))
+}
+
+// GroupGTE applies the GTE predicate on the "group" field.
+func GroupGTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldGroup, v))
+}
+
+// GroupLT applies the LT predicate on the "group" field.
+func GroupLT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldGroup, v))
+}
+
+// GroupLTE applies the LTE predicate on the "group" field.
+func GroupLTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldGroup, v))
+}
+
+// GroupContains applies the Contains predicate on the "group" field.
+func GroupContains(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContains(FieldGroup, v))
+}
+
+// GroupHasPrefix applies the HasPrefix predicate on the "group" field.
+func GroupHasPrefix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasPrefix(FieldGroup, v))
+}
+
+// GroupHasSuffix applies the HasSuffix predicate on the "group" field.
+func GroupHasSuffix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasSuffix(FieldGroup, v))
+}
+
+// GroupEqualFold applies the EqualFold predicate on the "group" field.
+func GroupEqualFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEqualFold(FieldGroup, v))
+}
+
+// GroupContainsFold applies the ContainsFold predicate on the "group" field.
+func GroupContainsFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContainsFold(FieldGroup, v))
 }
 
 // HasSurveyQuestions applies the HasEdge predicate on the "survey_questions" edge.
