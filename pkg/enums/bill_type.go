@@ -18,6 +18,7 @@ const (
 	BillTypeNodeTrouble    BillType = "node_trouble"  // 节点故障扣费
 	BillTypeIncomeManage   BillType = "income_manage" // 收益管理
 	BillTypeIllegal        BillType = "illegal"       // 违规操作
+	BillTypeSurvey         BillType = "survey"        // 问卷调查
 )
 
 func (BillType) Values() []string {
@@ -37,6 +38,7 @@ func (BillType) Values() []string {
 		string(BillTypeNodeTrouble),
 		string(BillTypeIncomeManage),
 		string(BillTypeIllegal),
+		string(BillTypeSurvey),
 	}
 }
 

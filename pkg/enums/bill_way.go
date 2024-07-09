@@ -41,6 +41,7 @@ const (
 	BillWayIncomeReplacement         BillWay = "income_replacement" // 收益补发
 	BillWayIncomeDeduct              BillWay = "income_deduct"      // 收益扣除
 	BillWayIllegalInvite             BillWay = "illegal_invite"     // 违规邀请
+	BillWaySurveySubmit              BillWay = "survey_submit"      // 提交问卷调查
 )
 
 func (BillWay) Values() []string {
@@ -83,6 +84,7 @@ func (BillWay) Values() []string {
 		string(BillWayIncomeReplacement),
 		string(BillWayIncomeDeduct),
 		string(BillWayIllegalInvite),
+		string(BillWaySurveySubmit),
 	}
 }
 
