@@ -3,10 +3,12 @@
 package surveyresponse
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -28,10 +30,16 @@ const (
 	FieldUserID = "user_id"
 	// FieldSurveyID holds the string denoting the survey_id field in the database.
 	FieldSurveyID = "survey_id"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
+	// FieldApprovedBy holds the string denoting the approved_by field in the database.
+	FieldApprovedBy = "approved_by"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeSurvey holds the string denoting the survey edge name in mutations.
 	EdgeSurvey = "survey"
+	// EdgeApprovedUser holds the string denoting the approved_user edge name in mutations.
+	EdgeApprovedUser = "approved_user"
 	// EdgeSurveyAnswers holds the string denoting the survey_answers edge name in mutations.
 	EdgeSurveyAnswers = "survey_answers"
 	// Table holds the table name of the surveyresponse in the database.
@@ -50,6 +58,13 @@ const (
 	SurveyInverseTable = "surveys"
 	// SurveyColumn is the table column denoting the survey relation/edge.
 	SurveyColumn = "survey_id"
+	// ApprovedUserTable is the table that holds the approved_user relation/edge.
+	ApprovedUserTable = "survey_responses"
+	// ApprovedUserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	ApprovedUserInverseTable = "users"
+	// ApprovedUserColumn is the table column denoting the approved_user relation/edge.
+	ApprovedUserColumn = "approved_by"
 	// SurveyAnswersTable is the table that holds the survey_answers relation/edge.
 	SurveyAnswersTable = "survey_answers"
 	// SurveyAnswersInverseTable is the table name for the SurveyAnswer entity.
@@ -69,6 +84,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldUserID,
 	FieldSurveyID,
+	FieldStatus,
+	FieldApprovedBy,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -98,9 +115,23 @@ var (
 	DefaultUserID int64
 	// DefaultSurveyID holds the default value on creation for the "survey_id" field.
 	DefaultSurveyID int64
+	// DefaultApprovedBy holds the default value on creation for the "approved_by" field.
+	DefaultApprovedBy int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultStatus enums.SurveyResponseStatus = "pending"
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s enums.SurveyResponseStatus) error {
+	switch s {
+	case "pending", "pass", "reject":
+		return nil
+	default:
+		return fmt.Errorf("surveyresponse: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the SurveyResponse queries.
 type OrderOption func(*sql.Selector)
@@ -145,6 +176,16 @@ func BySurveyID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSurveyID, opts...).ToFunc()
 }
 
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByApprovedBy orders the results by the approved_by field.
+func ByApprovedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldApprovedBy, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -156,6 +197,13 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 func BySurveyField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newSurveyStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByApprovedUserField orders the results by approved_user field.
+func ByApprovedUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newApprovedUserStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -184,6 +232,13 @@ func newSurveyStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SurveyInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, SurveyTable, SurveyColumn),
+	)
+}
+func newApprovedUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ApprovedUserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ApprovedUserTable, ApprovedUserColumn),
 	)
 }
 func newSurveyAnswersStep() *sqlgraph.Step {

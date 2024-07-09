@@ -152,6 +152,8 @@ const (
 	EdgeApproveIncomeManages = "approve_income_manages"
 	// EdgeSurveyResponses holds the string denoting the survey_responses edge name in mutations.
 	EdgeSurveyResponses = "survey_responses"
+	// EdgeApproveSurveyResponses holds the string denoting the approve_survey_responses edge name in mutations.
+	EdgeApproveSurveyResponses = "approve_survey_responses"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -456,6 +458,13 @@ const (
 	SurveyResponsesInverseTable = "survey_responses"
 	// SurveyResponsesColumn is the table column denoting the survey_responses relation/edge.
 	SurveyResponsesColumn = "user_id"
+	// ApproveSurveyResponsesTable is the table that holds the approve_survey_responses relation/edge.
+	ApproveSurveyResponsesTable = "survey_responses"
+	// ApproveSurveyResponsesInverseTable is the table name for the SurveyResponse entity.
+	// It exists in this package in order to avoid circular dependency with the "surveyresponse" package.
+	ApproveSurveyResponsesInverseTable = "survey_responses"
+	// ApproveSurveyResponsesColumn is the table column denoting the approve_survey_responses relation/edge.
+	ApproveSurveyResponsesColumn = "approved_by"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1287,6 +1296,20 @@ func BySurveyResponses(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSurveyResponsesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByApproveSurveyResponsesCount orders the results by approve_survey_responses count.
+func ByApproveSurveyResponsesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newApproveSurveyResponsesStep(), opts...)
+	}
+}
+
+// ByApproveSurveyResponses orders the results by approve_survey_responses terms.
+func ByApproveSurveyResponses(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newApproveSurveyResponsesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1593,5 +1616,12 @@ func newSurveyResponsesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SurveyResponsesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, SurveyResponsesTable, SurveyResponsesColumn),
+	)
+}
+func newApproveSurveyResponsesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ApproveSurveyResponsesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ApproveSurveyResponsesTable, ApproveSurveyResponsesColumn),
 	)
 }

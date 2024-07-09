@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyanswer"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // SurveyResponseUpdate is the builder for updating SurveyResponse entities.
@@ -122,6 +123,34 @@ func (sru *SurveyResponseUpdate) SetNillableSurveyID(i *int64) *SurveyResponseUp
 	return sru
 }
 
+// SetStatus sets the "status" field.
+func (sru *SurveyResponseUpdate) SetStatus(ers enums.SurveyResponseStatus) *SurveyResponseUpdate {
+	sru.mutation.SetStatus(ers)
+	return sru
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (sru *SurveyResponseUpdate) SetNillableStatus(ers *enums.SurveyResponseStatus) *SurveyResponseUpdate {
+	if ers != nil {
+		sru.SetStatus(*ers)
+	}
+	return sru
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (sru *SurveyResponseUpdate) SetApprovedBy(i int64) *SurveyResponseUpdate {
+	sru.mutation.SetApprovedBy(i)
+	return sru
+}
+
+// SetNillableApprovedBy sets the "approved_by" field if the given value is not nil.
+func (sru *SurveyResponseUpdate) SetNillableApprovedBy(i *int64) *SurveyResponseUpdate {
+	if i != nil {
+		sru.SetApprovedBy(*i)
+	}
+	return sru
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (sru *SurveyResponseUpdate) SetUser(u *User) *SurveyResponseUpdate {
 	return sru.SetUserID(u.ID)
@@ -130,6 +159,17 @@ func (sru *SurveyResponseUpdate) SetUser(u *User) *SurveyResponseUpdate {
 // SetSurvey sets the "survey" edge to the Survey entity.
 func (sru *SurveyResponseUpdate) SetSurvey(s *Survey) *SurveyResponseUpdate {
 	return sru.SetSurveyID(s.ID)
+}
+
+// SetApprovedUserID sets the "approved_user" edge to the User entity by ID.
+func (sru *SurveyResponseUpdate) SetApprovedUserID(id int64) *SurveyResponseUpdate {
+	sru.mutation.SetApprovedUserID(id)
+	return sru
+}
+
+// SetApprovedUser sets the "approved_user" edge to the User entity.
+func (sru *SurveyResponseUpdate) SetApprovedUser(u *User) *SurveyResponseUpdate {
+	return sru.SetApprovedUserID(u.ID)
 }
 
 // AddSurveyAnswerIDs adds the "survey_answers" edge to the SurveyAnswer entity by IDs.
@@ -161,6 +201,12 @@ func (sru *SurveyResponseUpdate) ClearUser() *SurveyResponseUpdate {
 // ClearSurvey clears the "survey" edge to the Survey entity.
 func (sru *SurveyResponseUpdate) ClearSurvey() *SurveyResponseUpdate {
 	sru.mutation.ClearSurvey()
+	return sru
+}
+
+// ClearApprovedUser clears the "approved_user" edge to the User entity.
+func (sru *SurveyResponseUpdate) ClearApprovedUser() *SurveyResponseUpdate {
+	sru.mutation.ClearApprovedUser()
 	return sru
 }
 
@@ -223,11 +269,19 @@ func (sru *SurveyResponseUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sru *SurveyResponseUpdate) check() error {
+	if v, ok := sru.mutation.Status(); ok {
+		if err := surveyresponse.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "SurveyResponse.status": %w`, err)}
+		}
+	}
 	if _, ok := sru.mutation.UserID(); sru.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "SurveyResponse.user"`)
 	}
 	if _, ok := sru.mutation.SurveyID(); sru.mutation.SurveyCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "SurveyResponse.survey"`)
+	}
+	if _, ok := sru.mutation.ApprovedUserID(); sru.mutation.ApprovedUserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "SurveyResponse.approved_user"`)
 	}
 	return nil
 }
@@ -267,6 +321,9 @@ func (sru *SurveyResponseUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if value, ok := sru.mutation.DeletedAt(); ok {
 		_spec.SetField(surveyresponse.FieldDeletedAt, field.TypeTime, value)
+	}
+	if value, ok := sru.mutation.Status(); ok {
+		_spec.SetField(surveyresponse.FieldStatus, field.TypeEnum, value)
 	}
 	if sru.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -319,6 +376,35 @@ func (sru *SurveyResponseUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(survey.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if sru.mutation.ApprovedUserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   surveyresponse.ApprovedUserTable,
+			Columns: []string{surveyresponse.ApprovedUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := sru.mutation.ApprovedUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   surveyresponse.ApprovedUserTable,
+			Columns: []string{surveyresponse.ApprovedUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -483,6 +569,34 @@ func (sruo *SurveyResponseUpdateOne) SetNillableSurveyID(i *int64) *SurveyRespon
 	return sruo
 }
 
+// SetStatus sets the "status" field.
+func (sruo *SurveyResponseUpdateOne) SetStatus(ers enums.SurveyResponseStatus) *SurveyResponseUpdateOne {
+	sruo.mutation.SetStatus(ers)
+	return sruo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (sruo *SurveyResponseUpdateOne) SetNillableStatus(ers *enums.SurveyResponseStatus) *SurveyResponseUpdateOne {
+	if ers != nil {
+		sruo.SetStatus(*ers)
+	}
+	return sruo
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (sruo *SurveyResponseUpdateOne) SetApprovedBy(i int64) *SurveyResponseUpdateOne {
+	sruo.mutation.SetApprovedBy(i)
+	return sruo
+}
+
+// SetNillableApprovedBy sets the "approved_by" field if the given value is not nil.
+func (sruo *SurveyResponseUpdateOne) SetNillableApprovedBy(i *int64) *SurveyResponseUpdateOne {
+	if i != nil {
+		sruo.SetApprovedBy(*i)
+	}
+	return sruo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (sruo *SurveyResponseUpdateOne) SetUser(u *User) *SurveyResponseUpdateOne {
 	return sruo.SetUserID(u.ID)
@@ -491,6 +605,17 @@ func (sruo *SurveyResponseUpdateOne) SetUser(u *User) *SurveyResponseUpdateOne {
 // SetSurvey sets the "survey" edge to the Survey entity.
 func (sruo *SurveyResponseUpdateOne) SetSurvey(s *Survey) *SurveyResponseUpdateOne {
 	return sruo.SetSurveyID(s.ID)
+}
+
+// SetApprovedUserID sets the "approved_user" edge to the User entity by ID.
+func (sruo *SurveyResponseUpdateOne) SetApprovedUserID(id int64) *SurveyResponseUpdateOne {
+	sruo.mutation.SetApprovedUserID(id)
+	return sruo
+}
+
+// SetApprovedUser sets the "approved_user" edge to the User entity.
+func (sruo *SurveyResponseUpdateOne) SetApprovedUser(u *User) *SurveyResponseUpdateOne {
+	return sruo.SetApprovedUserID(u.ID)
 }
 
 // AddSurveyAnswerIDs adds the "survey_answers" edge to the SurveyAnswer entity by IDs.
@@ -522,6 +647,12 @@ func (sruo *SurveyResponseUpdateOne) ClearUser() *SurveyResponseUpdateOne {
 // ClearSurvey clears the "survey" edge to the Survey entity.
 func (sruo *SurveyResponseUpdateOne) ClearSurvey() *SurveyResponseUpdateOne {
 	sruo.mutation.ClearSurvey()
+	return sruo
+}
+
+// ClearApprovedUser clears the "approved_user" edge to the User entity.
+func (sruo *SurveyResponseUpdateOne) ClearApprovedUser() *SurveyResponseUpdateOne {
+	sruo.mutation.ClearApprovedUser()
 	return sruo
 }
 
@@ -597,11 +728,19 @@ func (sruo *SurveyResponseUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sruo *SurveyResponseUpdateOne) check() error {
+	if v, ok := sruo.mutation.Status(); ok {
+		if err := surveyresponse.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "SurveyResponse.status": %w`, err)}
+		}
+	}
 	if _, ok := sruo.mutation.UserID(); sruo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "SurveyResponse.user"`)
 	}
 	if _, ok := sruo.mutation.SurveyID(); sruo.mutation.SurveyCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "SurveyResponse.survey"`)
+	}
+	if _, ok := sruo.mutation.ApprovedUserID(); sruo.mutation.ApprovedUserCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "SurveyResponse.approved_user"`)
 	}
 	return nil
 }
@@ -659,6 +798,9 @@ func (sruo *SurveyResponseUpdateOne) sqlSave(ctx context.Context) (_node *Survey
 	if value, ok := sruo.mutation.DeletedAt(); ok {
 		_spec.SetField(surveyresponse.FieldDeletedAt, field.TypeTime, value)
 	}
+	if value, ok := sruo.mutation.Status(); ok {
+		_spec.SetField(surveyresponse.FieldStatus, field.TypeEnum, value)
+	}
 	if sruo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -710,6 +852,35 @@ func (sruo *SurveyResponseUpdateOne) sqlSave(ctx context.Context) (_node *Survey
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(survey.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if sruo.mutation.ApprovedUserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   surveyresponse.ApprovedUserTable,
+			Columns: []string{surveyresponse.ApprovedUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := sruo.mutation.ApprovedUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   surveyresponse.ApprovedUserTable,
+			Columns: []string{surveyresponse.ApprovedUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -2348,6 +2348,29 @@ func HasSurveyResponsesWith(preds ...predicate.SurveyResponse) predicate.User {
 	})
 }
 
+// HasApproveSurveyResponses applies the HasEdge predicate on the "approve_survey_responses" edge.
+func HasApproveSurveyResponses() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ApproveSurveyResponsesTable, ApproveSurveyResponsesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasApproveSurveyResponsesWith applies the HasEdge predicate on the "approve_survey_responses" edge with a given conditions (other predicates).
+func HasApproveSurveyResponsesWith(preds ...predicate.SurveyResponse) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newApproveSurveyResponsesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

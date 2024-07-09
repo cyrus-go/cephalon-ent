@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -103,6 +104,16 @@ func SortNum(v int64) predicate.Survey {
 // Group applies equality check predicate on the "group" field. It's identical to GroupEQ.
 func Group(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldGroup, v))
+}
+
+// GiftCepAmount applies equality check predicate on the "gift_cep_amount" field. It's identical to GiftCepAmountEQ.
+func GiftCepAmount(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldGiftCepAmount, v))
+}
+
+// Desc applies equality check predicate on the "desc" field. It's identical to DescEQ.
+func Desc(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldDesc, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -573,6 +584,141 @@ func GroupEqualFold(v string) predicate.Survey {
 // GroupContainsFold applies the ContainsFold predicate on the "group" field.
 func GroupContainsFold(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldContainsFold(FieldGroup, v))
+}
+
+// GiftCepAmountEQ applies the EQ predicate on the "gift_cep_amount" field.
+func GiftCepAmountEQ(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldGiftCepAmount, v))
+}
+
+// GiftCepAmountNEQ applies the NEQ predicate on the "gift_cep_amount" field.
+func GiftCepAmountNEQ(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldGiftCepAmount, v))
+}
+
+// GiftCepAmountIn applies the In predicate on the "gift_cep_amount" field.
+func GiftCepAmountIn(vs ...int64) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldGiftCepAmount, vs...))
+}
+
+// GiftCepAmountNotIn applies the NotIn predicate on the "gift_cep_amount" field.
+func GiftCepAmountNotIn(vs ...int64) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldGiftCepAmount, vs...))
+}
+
+// GiftCepAmountGT applies the GT predicate on the "gift_cep_amount" field.
+func GiftCepAmountGT(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldGiftCepAmount, v))
+}
+
+// GiftCepAmountGTE applies the GTE predicate on the "gift_cep_amount" field.
+func GiftCepAmountGTE(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldGiftCepAmount, v))
+}
+
+// GiftCepAmountLT applies the LT predicate on the "gift_cep_amount" field.
+func GiftCepAmountLT(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldGiftCepAmount, v))
+}
+
+// GiftCepAmountLTE applies the LTE predicate on the "gift_cep_amount" field.
+func GiftCepAmountLTE(v int64) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldGiftCepAmount, v))
+}
+
+// GiftTypeEQ applies the EQ predicate on the "gift_type" field.
+func GiftTypeEQ(v enums.SurveyGiftType) predicate.Survey {
+	vc := v
+	return predicate.Survey(sql.FieldEQ(FieldGiftType, vc))
+}
+
+// GiftTypeNEQ applies the NEQ predicate on the "gift_type" field.
+func GiftTypeNEQ(v enums.SurveyGiftType) predicate.Survey {
+	vc := v
+	return predicate.Survey(sql.FieldNEQ(FieldGiftType, vc))
+}
+
+// GiftTypeIn applies the In predicate on the "gift_type" field.
+func GiftTypeIn(vs ...enums.SurveyGiftType) predicate.Survey {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Survey(sql.FieldIn(FieldGiftType, v...))
+}
+
+// GiftTypeNotIn applies the NotIn predicate on the "gift_type" field.
+func GiftTypeNotIn(vs ...enums.SurveyGiftType) predicate.Survey {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Survey(sql.FieldNotIn(FieldGiftType, v...))
+}
+
+// DescEQ applies the EQ predicate on the "desc" field.
+func DescEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldDesc, v))
+}
+
+// DescNEQ applies the NEQ predicate on the "desc" field.
+func DescNEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldDesc, v))
+}
+
+// DescIn applies the In predicate on the "desc" field.
+func DescIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldDesc, vs...))
+}
+
+// DescNotIn applies the NotIn predicate on the "desc" field.
+func DescNotIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldDesc, vs...))
+}
+
+// DescGT applies the GT predicate on the "desc" field.
+func DescGT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldDesc, v))
+}
+
+// DescGTE applies the GTE predicate on the "desc" field.
+func DescGTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldDesc, v))
+}
+
+// DescLT applies the LT predicate on the "desc" field.
+func DescLT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldDesc, v))
+}
+
+// DescLTE applies the LTE predicate on the "desc" field.
+func DescLTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldDesc, v))
+}
+
+// DescContains applies the Contains predicate on the "desc" field.
+func DescContains(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContains(FieldDesc, v))
+}
+
+// DescHasPrefix applies the HasPrefix predicate on the "desc" field.
+func DescHasPrefix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasPrefix(FieldDesc, v))
+}
+
+// DescHasSuffix applies the HasSuffix predicate on the "desc" field.
+func DescHasSuffix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasSuffix(FieldDesc, v))
+}
+
+// DescEqualFold applies the EqualFold predicate on the "desc" field.
+func DescEqualFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEqualFold(FieldDesc, v))
+}
+
+// DescContainsFold applies the ContainsFold predicate on the "desc" field.
+func DescContainsFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContainsFold(FieldDesc, v))
 }
 
 // HasSurveyQuestions applies the HasEdge predicate on the "survey_questions" edge.

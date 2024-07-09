@@ -27,6 +27,7 @@ type SurveyResponseQuery struct {
 	predicates        []predicate.SurveyResponse
 	withUser          *UserQuery
 	withSurvey        *SurveyQuery
+	withApprovedUser  *UserQuery
 	withSurveyAnswers *SurveyAnswerQuery
 	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -102,6 +103,28 @@ func (srq *SurveyResponseQuery) QuerySurvey() *SurveyQuery {
 			sqlgraph.From(surveyresponse.Table, surveyresponse.FieldID, selector),
 			sqlgraph.To(survey.Table, survey.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, surveyresponse.SurveyTable, surveyresponse.SurveyColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(srq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryApprovedUser chains the current query on the "approved_user" edge.
+func (srq *SurveyResponseQuery) QueryApprovedUser() *UserQuery {
+	query := (&UserClient{config: srq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := srq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := srq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyresponse.Table, surveyresponse.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyresponse.ApprovedUserTable, surveyresponse.ApprovedUserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(srq.driver.Dialect(), step)
 		return fromU, nil
@@ -325,6 +348,7 @@ func (srq *SurveyResponseQuery) Clone() *SurveyResponseQuery {
 		predicates:        append([]predicate.SurveyResponse{}, srq.predicates...),
 		withUser:          srq.withUser.Clone(),
 		withSurvey:        srq.withSurvey.Clone(),
+		withApprovedUser:  srq.withApprovedUser.Clone(),
 		withSurveyAnswers: srq.withSurveyAnswers.Clone(),
 		// clone intermediate query.
 		sql:  srq.sql.Clone(),
@@ -351,6 +375,17 @@ func (srq *SurveyResponseQuery) WithSurvey(opts ...func(*SurveyQuery)) *SurveyRe
 		opt(query)
 	}
 	srq.withSurvey = query
+	return srq
+}
+
+// WithApprovedUser tells the query-builder to eager-load the nodes that are connected to
+// the "approved_user" edge. The optional arguments are used to configure the query builder of the edge.
+func (srq *SurveyResponseQuery) WithApprovedUser(opts ...func(*UserQuery)) *SurveyResponseQuery {
+	query := (&UserClient{config: srq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	srq.withApprovedUser = query
 	return srq
 }
 
@@ -443,9 +478,10 @@ func (srq *SurveyResponseQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	var (
 		nodes       = []*SurveyResponse{}
 		_spec       = srq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			srq.withUser != nil,
 			srq.withSurvey != nil,
+			srq.withApprovedUser != nil,
 			srq.withSurveyAnswers != nil,
 		}
 	)
@@ -479,6 +515,12 @@ func (srq *SurveyResponseQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	if query := srq.withSurvey; query != nil {
 		if err := srq.loadSurvey(ctx, query, nodes, nil,
 			func(n *SurveyResponse, e *Survey) { n.Edges.Survey = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := srq.withApprovedUser; query != nil {
+		if err := srq.loadApprovedUser(ctx, query, nodes, nil,
+			func(n *SurveyResponse, e *User) { n.Edges.ApprovedUser = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -550,6 +592,35 @@ func (srq *SurveyResponseQuery) loadSurvey(ctx context.Context, query *SurveyQue
 	}
 	return nil
 }
+func (srq *SurveyResponseQuery) loadApprovedUser(ctx context.Context, query *UserQuery, nodes []*SurveyResponse, init func(*SurveyResponse), assign func(*SurveyResponse, *User)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*SurveyResponse)
+	for i := range nodes {
+		fk := nodes[i].ApprovedBy
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "approved_by" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (srq *SurveyResponseQuery) loadSurveyAnswers(ctx context.Context, query *SurveyAnswerQuery, nodes []*SurveyResponse, init func(*SurveyResponse), assign func(*SurveyResponse, *SurveyAnswer)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*SurveyResponse)
@@ -614,6 +685,9 @@ func (srq *SurveyResponseQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if srq.withSurvey != nil {
 			_spec.Node.AddColumnOnce(surveyresponse.FieldSurveyID)
+		}
+		if srq.withApprovedUser != nil {
+			_spec.Node.AddColumnOnce(surveyresponse.FieldApprovedBy)
 		}
 	}
 	if ps := srq.predicates; len(ps) > 0 {

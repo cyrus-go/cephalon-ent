@@ -10364,6 +10364,22 @@ func (c *SurveyResponseClient) QuerySurvey(sr *SurveyResponse) *SurveyQuery {
 	return query
 }
 
+// QueryApprovedUser queries the approved_user edge of a SurveyResponse.
+func (c *SurveyResponseClient) QueryApprovedUser(sr *SurveyResponse) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(surveyresponse.Table, surveyresponse.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, surveyresponse.ApprovedUserTable, surveyresponse.ApprovedUserColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QuerySurveyAnswers queries the survey_answers edge of a SurveyResponse.
 func (c *SurveyResponseClient) QuerySurveyAnswers(sr *SurveyResponse) *SurveyAnswerQuery {
 	query := (&SurveyAnswerClient{config: c.config}).Query()
@@ -11833,6 +11849,22 @@ func (c *UserClient) QuerySurveyResponses(u *User) *SurveyResponseQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.SurveyResponsesTable, user.SurveyResponsesColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryApproveSurveyResponses queries the approve_survey_responses edge of a User.
+func (c *UserClient) QueryApproveSurveyResponses(u *User) *SurveyResponseQuery {
+	query := (&SurveyResponseClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ApproveSurveyResponsesTable, user.ApproveSurveyResponsesColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

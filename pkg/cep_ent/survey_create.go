@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyquestion"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // SurveyCreate is the builder for creating a Survey entity.
@@ -164,6 +165,48 @@ func (sc *SurveyCreate) SetNillableGroup(s *string) *SurveyCreate {
 	return sc
 }
 
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (sc *SurveyCreate) SetGiftCepAmount(i int64) *SurveyCreate {
+	sc.mutation.SetGiftCepAmount(i)
+	return sc
+}
+
+// SetNillableGiftCepAmount sets the "gift_cep_amount" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableGiftCepAmount(i *int64) *SurveyCreate {
+	if i != nil {
+		sc.SetGiftCepAmount(*i)
+	}
+	return sc
+}
+
+// SetGiftType sets the "gift_type" field.
+func (sc *SurveyCreate) SetGiftType(egt enums.SurveyGiftType) *SurveyCreate {
+	sc.mutation.SetGiftType(egt)
+	return sc
+}
+
+// SetNillableGiftType sets the "gift_type" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableGiftType(egt *enums.SurveyGiftType) *SurveyCreate {
+	if egt != nil {
+		sc.SetGiftType(*egt)
+	}
+	return sc
+}
+
+// SetDesc sets the "desc" field.
+func (sc *SurveyCreate) SetDesc(s string) *SurveyCreate {
+	sc.mutation.SetDesc(s)
+	return sc
+}
+
+// SetNillableDesc sets the "desc" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableDesc(s *string) *SurveyCreate {
+	if s != nil {
+		sc.SetDesc(*s)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *SurveyCreate) SetID(i int64) *SurveyCreate {
 	sc.mutation.SetID(i)
@@ -283,6 +326,18 @@ func (sc *SurveyCreate) defaults() {
 		v := survey.DefaultGroup
 		sc.mutation.SetGroup(v)
 	}
+	if _, ok := sc.mutation.GiftCepAmount(); !ok {
+		v := survey.DefaultGiftCepAmount
+		sc.mutation.SetGiftCepAmount(v)
+	}
+	if _, ok := sc.mutation.GiftType(); !ok {
+		v := survey.DefaultGiftType
+		sc.mutation.SetGiftType(v)
+	}
+	if _, ok := sc.mutation.Desc(); !ok {
+		v := survey.DefaultDesc
+		sc.mutation.SetDesc(v)
+	}
 	if _, ok := sc.mutation.ID(); !ok {
 		v := survey.DefaultID()
 		sc.mutation.SetID(v)
@@ -314,6 +369,20 @@ func (sc *SurveyCreate) check() error {
 	}
 	if _, ok := sc.mutation.Group(); !ok {
 		return &ValidationError{Name: "group", err: errors.New(`cep_ent: missing required field "Survey.group"`)}
+	}
+	if _, ok := sc.mutation.GiftCepAmount(); !ok {
+		return &ValidationError{Name: "gift_cep_amount", err: errors.New(`cep_ent: missing required field "Survey.gift_cep_amount"`)}
+	}
+	if _, ok := sc.mutation.GiftType(); !ok {
+		return &ValidationError{Name: "gift_type", err: errors.New(`cep_ent: missing required field "Survey.gift_type"`)}
+	}
+	if v, ok := sc.mutation.GiftType(); ok {
+		if err := survey.GiftTypeValidator(v); err != nil {
+			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "Survey.gift_type": %w`, err)}
+		}
+	}
+	if _, ok := sc.mutation.Desc(); !ok {
+		return &ValidationError{Name: "desc", err: errors.New(`cep_ent: missing required field "Survey.desc"`)}
 	}
 	return nil
 }
@@ -387,6 +456,18 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.Group(); ok {
 		_spec.SetField(survey.FieldGroup, field.TypeString, value)
 		_node.Group = value
+	}
+	if value, ok := sc.mutation.GiftCepAmount(); ok {
+		_spec.SetField(survey.FieldGiftCepAmount, field.TypeInt64, value)
+		_node.GiftCepAmount = value
+	}
+	if value, ok := sc.mutation.GiftType(); ok {
+		_spec.SetField(survey.FieldGiftType, field.TypeEnum, value)
+		_node.GiftType = value
+	}
+	if value, ok := sc.mutation.Desc(); ok {
+		_spec.SetField(survey.FieldDesc, field.TypeString, value)
+		_node.Desc = value
 	}
 	if nodes := sc.mutation.SurveyQuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -610,6 +691,48 @@ func (u *SurveyUpsert) UpdateGroup() *SurveyUpsert {
 	return u
 }
 
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (u *SurveyUpsert) SetGiftCepAmount(v int64) *SurveyUpsert {
+	u.Set(survey.FieldGiftCepAmount, v)
+	return u
+}
+
+// UpdateGiftCepAmount sets the "gift_cep_amount" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateGiftCepAmount() *SurveyUpsert {
+	u.SetExcluded(survey.FieldGiftCepAmount)
+	return u
+}
+
+// AddGiftCepAmount adds v to the "gift_cep_amount" field.
+func (u *SurveyUpsert) AddGiftCepAmount(v int64) *SurveyUpsert {
+	u.Add(survey.FieldGiftCepAmount, v)
+	return u
+}
+
+// SetGiftType sets the "gift_type" field.
+func (u *SurveyUpsert) SetGiftType(v enums.SurveyGiftType) *SurveyUpsert {
+	u.Set(survey.FieldGiftType, v)
+	return u
+}
+
+// UpdateGiftType sets the "gift_type" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateGiftType() *SurveyUpsert {
+	u.SetExcluded(survey.FieldGiftType)
+	return u
+}
+
+// SetDesc sets the "desc" field.
+func (u *SurveyUpsert) SetDesc(v string) *SurveyUpsert {
+	u.Set(survey.FieldDesc, v)
+	return u
+}
+
+// UpdateDesc sets the "desc" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateDesc() *SurveyUpsert {
+	u.SetExcluded(survey.FieldDesc)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -819,6 +942,55 @@ func (u *SurveyUpsertOne) SetGroup(v string) *SurveyUpsertOne {
 func (u *SurveyUpsertOne) UpdateGroup() *SurveyUpsertOne {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateGroup()
+	})
+}
+
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (u *SurveyUpsertOne) SetGiftCepAmount(v int64) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetGiftCepAmount(v)
+	})
+}
+
+// AddGiftCepAmount adds v to the "gift_cep_amount" field.
+func (u *SurveyUpsertOne) AddGiftCepAmount(v int64) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.AddGiftCepAmount(v)
+	})
+}
+
+// UpdateGiftCepAmount sets the "gift_cep_amount" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateGiftCepAmount() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateGiftCepAmount()
+	})
+}
+
+// SetGiftType sets the "gift_type" field.
+func (u *SurveyUpsertOne) SetGiftType(v enums.SurveyGiftType) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetGiftType(v)
+	})
+}
+
+// UpdateGiftType sets the "gift_type" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateGiftType() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateGiftType()
+	})
+}
+
+// SetDesc sets the "desc" field.
+func (u *SurveyUpsertOne) SetDesc(v string) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetDesc(v)
+	})
+}
+
+// UpdateDesc sets the "desc" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateDesc() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateDesc()
 	})
 }
 
@@ -1197,6 +1369,55 @@ func (u *SurveyUpsertBulk) SetGroup(v string) *SurveyUpsertBulk {
 func (u *SurveyUpsertBulk) UpdateGroup() *SurveyUpsertBulk {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateGroup()
+	})
+}
+
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (u *SurveyUpsertBulk) SetGiftCepAmount(v int64) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetGiftCepAmount(v)
+	})
+}
+
+// AddGiftCepAmount adds v to the "gift_cep_amount" field.
+func (u *SurveyUpsertBulk) AddGiftCepAmount(v int64) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.AddGiftCepAmount(v)
+	})
+}
+
+// UpdateGiftCepAmount sets the "gift_cep_amount" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateGiftCepAmount() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateGiftCepAmount()
+	})
+}
+
+// SetGiftType sets the "gift_type" field.
+func (u *SurveyUpsertBulk) SetGiftType(v enums.SurveyGiftType) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetGiftType(v)
+	})
+}
+
+// UpdateGiftType sets the "gift_type" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateGiftType() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateGiftType()
+	})
+}
+
+// SetDesc sets the "desc" field.
+func (u *SurveyUpsertBulk) SetDesc(v string) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetDesc(v)
+	})
+}
+
+// UpdateDesc sets the "desc" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateDesc() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateDesc()
 	})
 }
 

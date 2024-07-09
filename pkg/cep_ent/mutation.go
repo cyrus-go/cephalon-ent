@@ -66620,6 +66620,10 @@ type SurveyMutation struct {
 	sort_num                *int64
 	addsort_num             *int64
 	group                   *string
+	gift_cep_amount         *int64
+	addgift_cep_amount      *int64
+	gift_type               *enums.SurveyGiftType
+	desc                    *string
 	clearedFields           map[string]struct{}
 	survey_questions        map[int64]struct{}
 	removedsurvey_questions map[int64]struct{}
@@ -67182,6 +67186,134 @@ func (m *SurveyMutation) ResetGroup() {
 	m.group = nil
 }
 
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (m *SurveyMutation) SetGiftCepAmount(i int64) {
+	m.gift_cep_amount = &i
+	m.addgift_cep_amount = nil
+}
+
+// GiftCepAmount returns the value of the "gift_cep_amount" field in the mutation.
+func (m *SurveyMutation) GiftCepAmount() (r int64, exists bool) {
+	v := m.gift_cep_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGiftCepAmount returns the old "gift_cep_amount" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldGiftCepAmount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGiftCepAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGiftCepAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGiftCepAmount: %w", err)
+	}
+	return oldValue.GiftCepAmount, nil
+}
+
+// AddGiftCepAmount adds i to the "gift_cep_amount" field.
+func (m *SurveyMutation) AddGiftCepAmount(i int64) {
+	if m.addgift_cep_amount != nil {
+		*m.addgift_cep_amount += i
+	} else {
+		m.addgift_cep_amount = &i
+	}
+}
+
+// AddedGiftCepAmount returns the value that was added to the "gift_cep_amount" field in this mutation.
+func (m *SurveyMutation) AddedGiftCepAmount() (r int64, exists bool) {
+	v := m.addgift_cep_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGiftCepAmount resets all changes to the "gift_cep_amount" field.
+func (m *SurveyMutation) ResetGiftCepAmount() {
+	m.gift_cep_amount = nil
+	m.addgift_cep_amount = nil
+}
+
+// SetGiftType sets the "gift_type" field.
+func (m *SurveyMutation) SetGiftType(egt enums.SurveyGiftType) {
+	m.gift_type = &egt
+}
+
+// GiftType returns the value of the "gift_type" field in the mutation.
+func (m *SurveyMutation) GiftType() (r enums.SurveyGiftType, exists bool) {
+	v := m.gift_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGiftType returns the old "gift_type" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldGiftType(ctx context.Context) (v enums.SurveyGiftType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGiftType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGiftType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGiftType: %w", err)
+	}
+	return oldValue.GiftType, nil
+}
+
+// ResetGiftType resets all changes to the "gift_type" field.
+func (m *SurveyMutation) ResetGiftType() {
+	m.gift_type = nil
+}
+
+// SetDesc sets the "desc" field.
+func (m *SurveyMutation) SetDesc(s string) {
+	m.desc = &s
+}
+
+// Desc returns the value of the "desc" field in the mutation.
+func (m *SurveyMutation) Desc() (r string, exists bool) {
+	v := m.desc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDesc returns the old "desc" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldDesc(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDesc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDesc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDesc: %w", err)
+	}
+	return oldValue.Desc, nil
+}
+
+// ResetDesc resets all changes to the "desc" field.
+func (m *SurveyMutation) ResetDesc() {
+	m.desc = nil
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by ids.
 func (m *SurveyMutation) AddSurveyQuestionIDs(ids ...int64) {
 	if m.survey_questions == nil {
@@ -67324,7 +67456,7 @@ func (m *SurveyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SurveyMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 13)
 	if m.created_by != nil {
 		fields = append(fields, survey.FieldCreatedBy)
 	}
@@ -67355,6 +67487,15 @@ func (m *SurveyMutation) Fields() []string {
 	if m.group != nil {
 		fields = append(fields, survey.FieldGroup)
 	}
+	if m.gift_cep_amount != nil {
+		fields = append(fields, survey.FieldGiftCepAmount)
+	}
+	if m.gift_type != nil {
+		fields = append(fields, survey.FieldGiftType)
+	}
+	if m.desc != nil {
+		fields = append(fields, survey.FieldDesc)
+	}
 	return fields
 }
 
@@ -67383,6 +67524,12 @@ func (m *SurveyMutation) Field(name string) (ent.Value, bool) {
 		return m.SortNum()
 	case survey.FieldGroup:
 		return m.Group()
+	case survey.FieldGiftCepAmount:
+		return m.GiftCepAmount()
+	case survey.FieldGiftType:
+		return m.GiftType()
+	case survey.FieldDesc:
+		return m.Desc()
 	}
 	return nil, false
 }
@@ -67412,6 +67559,12 @@ func (m *SurveyMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldSortNum(ctx)
 	case survey.FieldGroup:
 		return m.OldGroup(ctx)
+	case survey.FieldGiftCepAmount:
+		return m.OldGiftCepAmount(ctx)
+	case survey.FieldGiftType:
+		return m.OldGiftType(ctx)
+	case survey.FieldDesc:
+		return m.OldDesc(ctx)
 	}
 	return nil, fmt.Errorf("unknown Survey field %s", name)
 }
@@ -67491,6 +67644,27 @@ func (m *SurveyMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGroup(v)
 		return nil
+	case survey.FieldGiftCepAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGiftCepAmount(v)
+		return nil
+	case survey.FieldGiftType:
+		v, ok := value.(enums.SurveyGiftType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGiftType(v)
+		return nil
+	case survey.FieldDesc:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDesc(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)
 }
@@ -67508,6 +67682,9 @@ func (m *SurveyMutation) AddedFields() []string {
 	if m.addsort_num != nil {
 		fields = append(fields, survey.FieldSortNum)
 	}
+	if m.addgift_cep_amount != nil {
+		fields = append(fields, survey.FieldGiftCepAmount)
+	}
 	return fields
 }
 
@@ -67522,6 +67699,8 @@ func (m *SurveyMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case survey.FieldSortNum:
 		return m.AddedSortNum()
+	case survey.FieldGiftCepAmount:
+		return m.AddedGiftCepAmount()
 	}
 	return nil, false
 }
@@ -67551,6 +67730,13 @@ func (m *SurveyMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddSortNum(v)
+		return nil
+	case survey.FieldGiftCepAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGiftCepAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Survey numeric field %s", name)
@@ -67623,6 +67809,15 @@ func (m *SurveyMutation) ResetField(name string) error {
 		return nil
 	case survey.FieldGroup:
 		m.ResetGroup()
+		return nil
+	case survey.FieldGiftCepAmount:
+		m.ResetGiftCepAmount()
+		return nil
+	case survey.FieldGiftType:
+		m.ResetGiftType()
+		return nil
+	case survey.FieldDesc:
+		m.ResetDesc()
 		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)
@@ -69624,11 +69819,14 @@ type SurveyResponseMutation struct {
 	created_at            *time.Time
 	updated_at            *time.Time
 	deleted_at            *time.Time
+	status                *enums.SurveyResponseStatus
 	clearedFields         map[string]struct{}
 	user                  *int64
 	cleareduser           bool
 	survey                *int64
 	clearedsurvey         bool
+	approved_user         *int64
+	clearedapproved_user  bool
 	survey_answers        map[int64]struct{}
 	removedsurvey_answers map[int64]struct{}
 	clearedsurvey_answers bool
@@ -70033,6 +70231,78 @@ func (m *SurveyResponseMutation) ResetSurveyID() {
 	m.survey = nil
 }
 
+// SetStatus sets the "status" field.
+func (m *SurveyResponseMutation) SetStatus(ers enums.SurveyResponseStatus) {
+	m.status = &ers
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *SurveyResponseMutation) Status() (r enums.SurveyResponseStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the SurveyResponse entity.
+// If the SurveyResponse object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyResponseMutation) OldStatus(ctx context.Context) (v enums.SurveyResponseStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *SurveyResponseMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (m *SurveyResponseMutation) SetApprovedBy(i int64) {
+	m.approved_user = &i
+}
+
+// ApprovedBy returns the value of the "approved_by" field in the mutation.
+func (m *SurveyResponseMutation) ApprovedBy() (r int64, exists bool) {
+	v := m.approved_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldApprovedBy returns the old "approved_by" field's value of the SurveyResponse entity.
+// If the SurveyResponse object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyResponseMutation) OldApprovedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldApprovedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldApprovedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldApprovedBy: %w", err)
+	}
+	return oldValue.ApprovedBy, nil
+}
+
+// ResetApprovedBy resets all changes to the "approved_by" field.
+func (m *SurveyResponseMutation) ResetApprovedBy() {
+	m.approved_user = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *SurveyResponseMutation) ClearUser() {
 	m.cleareduser = true
@@ -70085,6 +70355,46 @@ func (m *SurveyResponseMutation) SurveyIDs() (ids []int64) {
 func (m *SurveyResponseMutation) ResetSurvey() {
 	m.survey = nil
 	m.clearedsurvey = false
+}
+
+// SetApprovedUserID sets the "approved_user" edge to the User entity by id.
+func (m *SurveyResponseMutation) SetApprovedUserID(id int64) {
+	m.approved_user = &id
+}
+
+// ClearApprovedUser clears the "approved_user" edge to the User entity.
+func (m *SurveyResponseMutation) ClearApprovedUser() {
+	m.clearedapproved_user = true
+	m.clearedFields[surveyresponse.FieldApprovedBy] = struct{}{}
+}
+
+// ApprovedUserCleared reports if the "approved_user" edge to the User entity was cleared.
+func (m *SurveyResponseMutation) ApprovedUserCleared() bool {
+	return m.clearedapproved_user
+}
+
+// ApprovedUserID returns the "approved_user" edge ID in the mutation.
+func (m *SurveyResponseMutation) ApprovedUserID() (id int64, exists bool) {
+	if m.approved_user != nil {
+		return *m.approved_user, true
+	}
+	return
+}
+
+// ApprovedUserIDs returns the "approved_user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ApprovedUserID instead. It exists only for internal usage by the builders.
+func (m *SurveyResponseMutation) ApprovedUserIDs() (ids []int64) {
+	if id := m.approved_user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetApprovedUser resets all changes to the "approved_user" edge.
+func (m *SurveyResponseMutation) ResetApprovedUser() {
+	m.approved_user = nil
+	m.clearedapproved_user = false
 }
 
 // AddSurveyAnswerIDs adds the "survey_answers" edge to the SurveyAnswer entity by ids.
@@ -70175,7 +70485,7 @@ func (m *SurveyResponseMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SurveyResponseMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.created_by != nil {
 		fields = append(fields, surveyresponse.FieldCreatedBy)
 	}
@@ -70196,6 +70506,12 @@ func (m *SurveyResponseMutation) Fields() []string {
 	}
 	if m.survey != nil {
 		fields = append(fields, surveyresponse.FieldSurveyID)
+	}
+	if m.status != nil {
+		fields = append(fields, surveyresponse.FieldStatus)
+	}
+	if m.approved_user != nil {
+		fields = append(fields, surveyresponse.FieldApprovedBy)
 	}
 	return fields
 }
@@ -70219,6 +70535,10 @@ func (m *SurveyResponseMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case surveyresponse.FieldSurveyID:
 		return m.SurveyID()
+	case surveyresponse.FieldStatus:
+		return m.Status()
+	case surveyresponse.FieldApprovedBy:
+		return m.ApprovedBy()
 	}
 	return nil, false
 }
@@ -70242,6 +70562,10 @@ func (m *SurveyResponseMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldUserID(ctx)
 	case surveyresponse.FieldSurveyID:
 		return m.OldSurveyID(ctx)
+	case surveyresponse.FieldStatus:
+		return m.OldStatus(ctx)
+	case surveyresponse.FieldApprovedBy:
+		return m.OldApprovedBy(ctx)
 	}
 	return nil, fmt.Errorf("unknown SurveyResponse field %s", name)
 }
@@ -70299,6 +70623,20 @@ func (m *SurveyResponseMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSurveyID(v)
+		return nil
+	case surveyresponse.FieldStatus:
+		v, ok := value.(enums.SurveyResponseStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case surveyresponse.FieldApprovedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetApprovedBy(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SurveyResponse field %s", name)
@@ -70397,18 +70735,27 @@ func (m *SurveyResponseMutation) ResetField(name string) error {
 	case surveyresponse.FieldSurveyID:
 		m.ResetSurveyID()
 		return nil
+	case surveyresponse.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case surveyresponse.FieldApprovedBy:
+		m.ResetApprovedBy()
+		return nil
 	}
 	return fmt.Errorf("unknown SurveyResponse field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SurveyResponseMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.user != nil {
 		edges = append(edges, surveyresponse.EdgeUser)
 	}
 	if m.survey != nil {
 		edges = append(edges, surveyresponse.EdgeSurvey)
+	}
+	if m.approved_user != nil {
+		edges = append(edges, surveyresponse.EdgeApprovedUser)
 	}
 	if m.survey_answers != nil {
 		edges = append(edges, surveyresponse.EdgeSurveyAnswers)
@@ -70428,6 +70775,10 @@ func (m *SurveyResponseMutation) AddedIDs(name string) []ent.Value {
 		if id := m.survey; id != nil {
 			return []ent.Value{*id}
 		}
+	case surveyresponse.EdgeApprovedUser:
+		if id := m.approved_user; id != nil {
+			return []ent.Value{*id}
+		}
 	case surveyresponse.EdgeSurveyAnswers:
 		ids := make([]ent.Value, 0, len(m.survey_answers))
 		for id := range m.survey_answers {
@@ -70440,7 +70791,7 @@ func (m *SurveyResponseMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SurveyResponseMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedsurvey_answers != nil {
 		edges = append(edges, surveyresponse.EdgeSurveyAnswers)
 	}
@@ -70463,12 +70814,15 @@ func (m *SurveyResponseMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SurveyResponseMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareduser {
 		edges = append(edges, surveyresponse.EdgeUser)
 	}
 	if m.clearedsurvey {
 		edges = append(edges, surveyresponse.EdgeSurvey)
+	}
+	if m.clearedapproved_user {
+		edges = append(edges, surveyresponse.EdgeApprovedUser)
 	}
 	if m.clearedsurvey_answers {
 		edges = append(edges, surveyresponse.EdgeSurveyAnswers)
@@ -70484,6 +70838,8 @@ func (m *SurveyResponseMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case surveyresponse.EdgeSurvey:
 		return m.clearedsurvey
+	case surveyresponse.EdgeApprovedUser:
+		return m.clearedapproved_user
 	case surveyresponse.EdgeSurveyAnswers:
 		return m.clearedsurvey_answers
 	}
@@ -70500,6 +70856,9 @@ func (m *SurveyResponseMutation) ClearEdge(name string) error {
 	case surveyresponse.EdgeSurvey:
 		m.ClearSurvey()
 		return nil
+	case surveyresponse.EdgeApprovedUser:
+		m.ClearApprovedUser()
+		return nil
 	}
 	return fmt.Errorf("unknown SurveyResponse unique edge %s", name)
 }
@@ -70513,6 +70872,9 @@ func (m *SurveyResponseMutation) ResetEdge(name string) error {
 		return nil
 	case surveyresponse.EdgeSurvey:
 		m.ResetSurvey()
+		return nil
+	case surveyresponse.EdgeApprovedUser:
+		m.ResetApprovedUser()
 		return nil
 	case surveyresponse.EdgeSurveyAnswers:
 		m.ResetSurveyAnswers()
@@ -74952,6 +75314,9 @@ type UserMutation struct {
 	survey_responses                map[int64]struct{}
 	removedsurvey_responses         map[int64]struct{}
 	clearedsurvey_responses         bool
+	approve_survey_responses        map[int64]struct{}
+	removedapprove_survey_responses map[int64]struct{}
+	clearedapprove_survey_responses bool
 	done                            bool
 	oldValue                        func(context.Context) (*User, error)
 	predicates                      []predicate.User
@@ -78302,6 +78667,60 @@ func (m *UserMutation) ResetSurveyResponses() {
 	m.removedsurvey_responses = nil
 }
 
+// AddApproveSurveyResponseIDs adds the "approve_survey_responses" edge to the SurveyResponse entity by ids.
+func (m *UserMutation) AddApproveSurveyResponseIDs(ids ...int64) {
+	if m.approve_survey_responses == nil {
+		m.approve_survey_responses = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.approve_survey_responses[ids[i]] = struct{}{}
+	}
+}
+
+// ClearApproveSurveyResponses clears the "approve_survey_responses" edge to the SurveyResponse entity.
+func (m *UserMutation) ClearApproveSurveyResponses() {
+	m.clearedapprove_survey_responses = true
+}
+
+// ApproveSurveyResponsesCleared reports if the "approve_survey_responses" edge to the SurveyResponse entity was cleared.
+func (m *UserMutation) ApproveSurveyResponsesCleared() bool {
+	return m.clearedapprove_survey_responses
+}
+
+// RemoveApproveSurveyResponseIDs removes the "approve_survey_responses" edge to the SurveyResponse entity by IDs.
+func (m *UserMutation) RemoveApproveSurveyResponseIDs(ids ...int64) {
+	if m.removedapprove_survey_responses == nil {
+		m.removedapprove_survey_responses = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.approve_survey_responses, ids[i])
+		m.removedapprove_survey_responses[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedApproveSurveyResponses returns the removed IDs of the "approve_survey_responses" edge to the SurveyResponse entity.
+func (m *UserMutation) RemovedApproveSurveyResponsesIDs() (ids []int64) {
+	for id := range m.removedapprove_survey_responses {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ApproveSurveyResponsesIDs returns the "approve_survey_responses" edge IDs in the mutation.
+func (m *UserMutation) ApproveSurveyResponsesIDs() (ids []int64) {
+	for id := range m.approve_survey_responses {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetApproveSurveyResponses resets all changes to the "approve_survey_responses" edge.
+func (m *UserMutation) ResetApproveSurveyResponses() {
+	m.approve_survey_responses = nil
+	m.clearedapprove_survey_responses = false
+	m.removedapprove_survey_responses = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -78874,7 +79293,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 44)
+	edges := make([]string, 0, 45)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -79006,6 +79425,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.survey_responses != nil {
 		edges = append(edges, user.EdgeSurveyResponses)
+	}
+	if m.approve_survey_responses != nil {
+		edges = append(edges, user.EdgeApproveSurveyResponses)
 	}
 	return edges
 }
@@ -79270,13 +79692,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeApproveSurveyResponses:
+		ids := make([]ent.Value, 0, len(m.approve_survey_responses))
+		for id := range m.approve_survey_responses {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 44)
+	edges := make([]string, 0, 45)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -79396,6 +79824,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedsurvey_responses != nil {
 		edges = append(edges, user.EdgeSurveyResponses)
+	}
+	if m.removedapprove_survey_responses != nil {
+		edges = append(edges, user.EdgeApproveSurveyResponses)
 	}
 	return edges
 }
@@ -79644,13 +80075,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeApproveSurveyResponses:
+		ids := make([]ent.Value, 0, len(m.removedapprove_survey_responses))
+		for id := range m.removedapprove_survey_responses {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 44)
+	edges := make([]string, 0, 45)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -79783,6 +80220,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedsurvey_responses {
 		edges = append(edges, user.EdgeSurveyResponses)
 	}
+	if m.clearedapprove_survey_responses {
+		edges = append(edges, user.EdgeApproveSurveyResponses)
+	}
 	return edges
 }
 
@@ -79878,6 +80318,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedapprove_income_manages
 	case user.EdgeSurveyResponses:
 		return m.clearedsurvey_responses
+	case user.EdgeApproveSurveyResponses:
+		return m.clearedapprove_survey_responses
 	}
 	return false
 }
@@ -80037,6 +80479,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeSurveyResponses:
 		m.ResetSurveyResponses()
+		return nil
+	case user.EdgeApproveSurveyResponses:
+		m.ResetApproveSurveyResponses()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

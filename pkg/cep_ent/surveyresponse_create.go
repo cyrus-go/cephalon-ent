@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyanswer"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // SurveyResponseCreate is the builder for creating a SurveyResponse entity.
@@ -123,6 +124,34 @@ func (src *SurveyResponseCreate) SetNillableSurveyID(i *int64) *SurveyResponseCr
 	return src
 }
 
+// SetStatus sets the "status" field.
+func (src *SurveyResponseCreate) SetStatus(ers enums.SurveyResponseStatus) *SurveyResponseCreate {
+	src.mutation.SetStatus(ers)
+	return src
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (src *SurveyResponseCreate) SetNillableStatus(ers *enums.SurveyResponseStatus) *SurveyResponseCreate {
+	if ers != nil {
+		src.SetStatus(*ers)
+	}
+	return src
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (src *SurveyResponseCreate) SetApprovedBy(i int64) *SurveyResponseCreate {
+	src.mutation.SetApprovedBy(i)
+	return src
+}
+
+// SetNillableApprovedBy sets the "approved_by" field if the given value is not nil.
+func (src *SurveyResponseCreate) SetNillableApprovedBy(i *int64) *SurveyResponseCreate {
+	if i != nil {
+		src.SetApprovedBy(*i)
+	}
+	return src
+}
+
 // SetID sets the "id" field.
 func (src *SurveyResponseCreate) SetID(i int64) *SurveyResponseCreate {
 	src.mutation.SetID(i)
@@ -145,6 +174,17 @@ func (src *SurveyResponseCreate) SetUser(u *User) *SurveyResponseCreate {
 // SetSurvey sets the "survey" edge to the Survey entity.
 func (src *SurveyResponseCreate) SetSurvey(s *Survey) *SurveyResponseCreate {
 	return src.SetSurveyID(s.ID)
+}
+
+// SetApprovedUserID sets the "approved_user" edge to the User entity by ID.
+func (src *SurveyResponseCreate) SetApprovedUserID(id int64) *SurveyResponseCreate {
+	src.mutation.SetApprovedUserID(id)
+	return src
+}
+
+// SetApprovedUser sets the "approved_user" edge to the User entity.
+func (src *SurveyResponseCreate) SetApprovedUser(u *User) *SurveyResponseCreate {
+	return src.SetApprovedUserID(u.ID)
 }
 
 // AddSurveyAnswerIDs adds the "survey_answers" edge to the SurveyAnswer entity by IDs.
@@ -225,6 +265,14 @@ func (src *SurveyResponseCreate) defaults() {
 		v := surveyresponse.DefaultSurveyID
 		src.mutation.SetSurveyID(v)
 	}
+	if _, ok := src.mutation.Status(); !ok {
+		v := surveyresponse.DefaultStatus
+		src.mutation.SetStatus(v)
+	}
+	if _, ok := src.mutation.ApprovedBy(); !ok {
+		v := surveyresponse.DefaultApprovedBy
+		src.mutation.SetApprovedBy(v)
+	}
 	if _, ok := src.mutation.ID(); !ok {
 		v := surveyresponse.DefaultID()
 		src.mutation.SetID(v)
@@ -254,11 +302,25 @@ func (src *SurveyResponseCreate) check() error {
 	if _, ok := src.mutation.SurveyID(); !ok {
 		return &ValidationError{Name: "survey_id", err: errors.New(`cep_ent: missing required field "SurveyResponse.survey_id"`)}
 	}
+	if _, ok := src.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "SurveyResponse.status"`)}
+	}
+	if v, ok := src.mutation.Status(); ok {
+		if err := surveyresponse.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "SurveyResponse.status": %w`, err)}
+		}
+	}
+	if _, ok := src.mutation.ApprovedBy(); !ok {
+		return &ValidationError{Name: "approved_by", err: errors.New(`cep_ent: missing required field "SurveyResponse.approved_by"`)}
+	}
 	if _, ok := src.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "SurveyResponse.user"`)}
 	}
 	if _, ok := src.mutation.SurveyID(); !ok {
 		return &ValidationError{Name: "survey", err: errors.New(`cep_ent: missing required edge "SurveyResponse.survey"`)}
+	}
+	if _, ok := src.mutation.ApprovedUserID(); !ok {
+		return &ValidationError{Name: "approved_user", err: errors.New(`cep_ent: missing required edge "SurveyResponse.approved_user"`)}
 	}
 	return nil
 }
@@ -313,6 +375,10 @@ func (src *SurveyResponseCreate) createSpec() (*SurveyResponse, *sqlgraph.Create
 		_spec.SetField(surveyresponse.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
+	if value, ok := src.mutation.Status(); ok {
+		_spec.SetField(surveyresponse.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
+	}
 	if nodes := src.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -345,6 +411,23 @@ func (src *SurveyResponseCreate) createSpec() (*SurveyResponse, *sqlgraph.Create
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.SurveyID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := src.mutation.ApprovedUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   surveyresponse.ApprovedUserTable,
+			Columns: []string{surveyresponse.ApprovedUserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ApprovedBy = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := src.mutation.SurveyAnswersIDs(); len(nodes) > 0 {
@@ -499,6 +582,30 @@ func (u *SurveyResponseUpsert) UpdateSurveyID() *SurveyResponseUpsert {
 	return u
 }
 
+// SetStatus sets the "status" field.
+func (u *SurveyResponseUpsert) SetStatus(v enums.SurveyResponseStatus) *SurveyResponseUpsert {
+	u.Set(surveyresponse.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *SurveyResponseUpsert) UpdateStatus() *SurveyResponseUpsert {
+	u.SetExcluded(surveyresponse.FieldStatus)
+	return u
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (u *SurveyResponseUpsert) SetApprovedBy(v int64) *SurveyResponseUpsert {
+	u.Set(surveyresponse.FieldApprovedBy, v)
+	return u
+}
+
+// UpdateApprovedBy sets the "approved_by" field to the value that was provided on create.
+func (u *SurveyResponseUpsert) UpdateApprovedBy() *SurveyResponseUpsert {
+	u.SetExcluded(surveyresponse.FieldApprovedBy)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -645,6 +752,34 @@ func (u *SurveyResponseUpsertOne) SetSurveyID(v int64) *SurveyResponseUpsertOne 
 func (u *SurveyResponseUpsertOne) UpdateSurveyID() *SurveyResponseUpsertOne {
 	return u.Update(func(s *SurveyResponseUpsert) {
 		s.UpdateSurveyID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *SurveyResponseUpsertOne) SetStatus(v enums.SurveyResponseStatus) *SurveyResponseUpsertOne {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *SurveyResponseUpsertOne) UpdateStatus() *SurveyResponseUpsertOne {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (u *SurveyResponseUpsertOne) SetApprovedBy(v int64) *SurveyResponseUpsertOne {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.SetApprovedBy(v)
+	})
+}
+
+// UpdateApprovedBy sets the "approved_by" field to the value that was provided on create.
+func (u *SurveyResponseUpsertOne) UpdateApprovedBy() *SurveyResponseUpsertOne {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.UpdateApprovedBy()
 	})
 }
 
@@ -960,6 +1095,34 @@ func (u *SurveyResponseUpsertBulk) SetSurveyID(v int64) *SurveyResponseUpsertBul
 func (u *SurveyResponseUpsertBulk) UpdateSurveyID() *SurveyResponseUpsertBulk {
 	return u.Update(func(s *SurveyResponseUpsert) {
 		s.UpdateSurveyID()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *SurveyResponseUpsertBulk) SetStatus(v enums.SurveyResponseStatus) *SurveyResponseUpsertBulk {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *SurveyResponseUpsertBulk) UpdateStatus() *SurveyResponseUpsertBulk {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// SetApprovedBy sets the "approved_by" field.
+func (u *SurveyResponseUpsertBulk) SetApprovedBy(v int64) *SurveyResponseUpsertBulk {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.SetApprovedBy(v)
+	})
+}
+
+// UpdateApprovedBy sets the "approved_by" field to the value that was provided on create.
+func (u *SurveyResponseUpsertBulk) UpdateApprovedBy() *SurveyResponseUpsertBulk {
+	return u.Update(func(s *SurveyResponseUpsert) {
+		s.UpdateApprovedBy()
 	})
 }
 

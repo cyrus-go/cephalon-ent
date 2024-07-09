@@ -1071,6 +1071,21 @@ func (uc *UserCreate) AddSurveyResponses(s ...*SurveyResponse) *UserCreate {
 	return uc.AddSurveyResponseIDs(ids...)
 }
 
+// AddApproveSurveyResponseIDs adds the "approve_survey_responses" edge to the SurveyResponse entity by IDs.
+func (uc *UserCreate) AddApproveSurveyResponseIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddApproveSurveyResponseIDs(ids...)
+	return uc
+}
+
+// AddApproveSurveyResponses adds the "approve_survey_responses" edges to the SurveyResponse entity.
+func (uc *UserCreate) AddApproveSurveyResponses(s ...*SurveyResponse) *UserCreate {
+	ids := make([]int64, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddApproveSurveyResponseIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -2112,6 +2127,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Inverse: false,
 			Table:   user.SurveyResponsesTable,
 			Columns: []string{user.SurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ApproveSurveyResponsesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),

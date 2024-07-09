@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 问卷调查结果储存表
@@ -34,6 +35,10 @@ type SurveyResponse struct {
 	UserID int64 `json:"user_id,string"`
 	// 问卷 ID
 	SurveyID int64 `json:"survey_id,string"`
+	// 调查问卷结果状态
+	Status enums.SurveyResponseStatus `json:"status"`
+	// 审批用户 ID
+	ApprovedBy int64 `json:"approved_by,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyResponseQuery when eager-loading is set.
 	Edges        SurveyResponseEdges `json:"edges"`
@@ -46,11 +51,13 @@ type SurveyResponseEdges struct {
 	User *User `json:"user,omitempty"`
 	// Survey holds the value of the survey edge.
 	Survey *Survey `json:"survey,omitempty"`
+	// ApprovedUser holds the value of the approved_user edge.
+	ApprovedUser *User `json:"approved_user,omitempty"`
 	// SurveyAnswers holds the value of the survey_answers edge.
 	SurveyAnswers []*SurveyAnswer `json:"survey_answers,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -79,10 +86,23 @@ func (e SurveyResponseEdges) SurveyOrErr() (*Survey, error) {
 	return nil, &NotLoadedError{edge: "survey"}
 }
 
+// ApprovedUserOrErr returns the ApprovedUser value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e SurveyResponseEdges) ApprovedUserOrErr() (*User, error) {
+	if e.loadedTypes[2] {
+		if e.ApprovedUser == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.ApprovedUser, nil
+	}
+	return nil, &NotLoadedError{edge: "approved_user"}
+}
+
 // SurveyAnswersOrErr returns the SurveyAnswers value or an error if the edge
 // was not loaded in eager-loading.
 func (e SurveyResponseEdges) SurveyAnswersOrErr() ([]*SurveyAnswer, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.SurveyAnswers, nil
 	}
 	return nil, &NotLoadedError{edge: "survey_answers"}
@@ -93,8 +113,10 @@ func (*SurveyResponse) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case surveyresponse.FieldID, surveyresponse.FieldCreatedBy, surveyresponse.FieldUpdatedBy, surveyresponse.FieldUserID, surveyresponse.FieldSurveyID:
+		case surveyresponse.FieldID, surveyresponse.FieldCreatedBy, surveyresponse.FieldUpdatedBy, surveyresponse.FieldUserID, surveyresponse.FieldSurveyID, surveyresponse.FieldApprovedBy:
 			values[i] = new(sql.NullInt64)
+		case surveyresponse.FieldStatus:
+			values[i] = new(sql.NullString)
 		case surveyresponse.FieldCreatedAt, surveyresponse.FieldUpdatedAt, surveyresponse.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
@@ -160,6 +182,18 @@ func (sr *SurveyResponse) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sr.SurveyID = value.Int64
 			}
+		case surveyresponse.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				sr.Status = enums.SurveyResponseStatus(value.String)
+			}
+		case surveyresponse.FieldApprovedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field approved_by", values[i])
+			} else if value.Valid {
+				sr.ApprovedBy = value.Int64
+			}
 		default:
 			sr.selectValues.Set(columns[i], values[i])
 		}
@@ -181,6 +215,11 @@ func (sr *SurveyResponse) QueryUser() *UserQuery {
 // QuerySurvey queries the "survey" edge of the SurveyResponse entity.
 func (sr *SurveyResponse) QuerySurvey() *SurveyQuery {
 	return NewSurveyResponseClient(sr.config).QuerySurvey(sr)
+}
+
+// QueryApprovedUser queries the "approved_user" edge of the SurveyResponse entity.
+func (sr *SurveyResponse) QueryApprovedUser() *UserQuery {
+	return NewSurveyResponseClient(sr.config).QueryApprovedUser(sr)
 }
 
 // QuerySurveyAnswers queries the "survey_answers" edge of the SurveyResponse entity.
@@ -231,6 +270,12 @@ func (sr *SurveyResponse) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("survey_id=")
 	builder.WriteString(fmt.Sprintf("%v", sr.SurveyID))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", sr.Status))
+	builder.WriteString(", ")
+	builder.WriteString("approved_by=")
+	builder.WriteString(fmt.Sprintf("%v", sr.ApprovedBy))
 	builder.WriteByte(')')
 	return builder.String()
 }

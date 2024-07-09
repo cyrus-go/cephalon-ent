@@ -166,9 +166,11 @@ type UserEdges struct {
 	ApproveIncomeManages []*IncomeManage `json:"approve_income_manages,omitempty"`
 	// SurveyResponses holds the value of the survey_responses edge.
 	SurveyResponses []*SurveyResponse `json:"survey_responses,omitempty"`
+	// ApproveSurveyResponses holds the value of the approve_survey_responses edge.
+	ApproveSurveyResponses []*SurveyResponse `json:"approve_survey_responses,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [44]bool
+	loadedTypes [45]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -583,6 +585,15 @@ func (e UserEdges) SurveyResponsesOrErr() ([]*SurveyResponse, error) {
 	return nil, &NotLoadedError{edge: "survey_responses"}
 }
 
+// ApproveSurveyResponsesOrErr returns the ApproveSurveyResponses value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ApproveSurveyResponsesOrErr() ([]*SurveyResponse, error) {
+	if e.loadedTypes[44] {
+		return e.ApproveSurveyResponses, nil
+	}
+	return nil, &NotLoadedError{edge: "approve_survey_responses"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -993,6 +1004,11 @@ func (u *User) QueryApproveIncomeManages() *IncomeManageQuery {
 // QuerySurveyResponses queries the "survey_responses" edge of the User entity.
 func (u *User) QuerySurveyResponses() *SurveyResponseQuery {
 	return NewUserClient(u.config).QuerySurveyResponses(u)
+}
+
+// QueryApproveSurveyResponses queries the "approve_survey_responses" edge of the User entity.
+func (u *User) QueryApproveSurveyResponses() *SurveyResponseQuery {
+	return NewUserClient(u.config).QueryApproveSurveyResponses(u)
 }
 
 // Update returns a builder for updating this User.

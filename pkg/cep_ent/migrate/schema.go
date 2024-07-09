@@ -2185,6 +2185,9 @@ var (
 		{Name: "ended_at", Type: field.TypeTime, Nullable: true, Comment: "填写问卷结束的时间"},
 		{Name: "sort_num", Type: field.TypeInt64, Comment: "分组排序序列号", Default: 1},
 		{Name: "group", Type: field.TypeString, Comment: "问卷分组（自定义，可以为空），同组问卷可以根据序号强关联", Default: ""},
+		{Name: "gift_cep_amount", Type: field.TypeInt64, Comment: "提交问卷赠送的脑力值数量", Default: 0},
+		{Name: "gift_type", Type: field.TypeEnum, Comment: "问卷赠送类型，提交赠送或审批赠送等", Enums: []string{"unknown", "submit", "approve"}, Default: "unknown"},
+		{Name: "desc", Type: field.TypeString, Comment: "问卷描述信息", Default: ""},
 	}
 	// SurveysTable holds the schema information for the "surveys" table.
 	SurveysTable = &schema.Table{
@@ -2262,8 +2265,10 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "status", Type: field.TypeEnum, Comment: "调查问卷结果状态", Enums: []string{"pending", "pass", "reject"}, Default: "pending"},
 		{Name: "survey_id", Type: field.TypeInt64, Comment: "问卷 ID", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户 ID", Default: 0},
+		{Name: "approved_by", Type: field.TypeInt64, Comment: "审批用户 ID", Default: 0},
 	}
 	// SurveyResponsesTable holds the schema information for the "survey_responses" table.
 	SurveyResponsesTable = &schema.Table{
@@ -2274,13 +2279,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "survey_responses_surveys_survey_responses",
-				Columns:    []*schema.Column{SurveyResponsesColumns[6]},
+				Columns:    []*schema.Column{SurveyResponsesColumns[7]},
 				RefColumns: []*schema.Column{SurveysColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "survey_responses_users_survey_responses",
-				Columns:    []*schema.Column{SurveyResponsesColumns[7]},
+				Columns:    []*schema.Column{SurveyResponsesColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "survey_responses_users_approve_survey_responses",
+				Columns:    []*schema.Column{SurveyResponsesColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -2975,6 +2986,7 @@ func init() {
 	SurveyQuestionsTable.Annotation = &entsql.Annotation{}
 	SurveyResponsesTable.ForeignKeys[0].RefTable = SurveysTable
 	SurveyResponsesTable.ForeignKeys[1].RefTable = UsersTable
+	SurveyResponsesTable.ForeignKeys[2].RefTable = UsersTable
 	SurveyResponsesTable.Annotation = &entsql.Annotation{}
 	SymbolsTable.Annotation = &entsql.Annotation{}
 	TransferOrdersTable.ForeignKeys[0].RefTable = SymbolsTable

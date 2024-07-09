@@ -1069,6 +1069,21 @@ func (uu *UserUpdate) AddSurveyResponses(s ...*SurveyResponse) *UserUpdate {
 	return uu.AddSurveyResponseIDs(ids...)
 }
 
+// AddApproveSurveyResponseIDs adds the "approve_survey_responses" edge to the SurveyResponse entity by IDs.
+func (uu *UserUpdate) AddApproveSurveyResponseIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddApproveSurveyResponseIDs(ids...)
+	return uu
+}
+
+// AddApproveSurveyResponses adds the "approve_survey_responses" edges to the SurveyResponse entity.
+func (uu *UserUpdate) AddApproveSurveyResponses(s ...*SurveyResponse) *UserUpdate {
+	ids := make([]int64, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uu.AddApproveSurveyResponseIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -1936,6 +1951,27 @@ func (uu *UserUpdate) RemoveSurveyResponses(s ...*SurveyResponse) *UserUpdate {
 		ids[i] = s[i].ID
 	}
 	return uu.RemoveSurveyResponseIDs(ids...)
+}
+
+// ClearApproveSurveyResponses clears all "approve_survey_responses" edges to the SurveyResponse entity.
+func (uu *UserUpdate) ClearApproveSurveyResponses() *UserUpdate {
+	uu.mutation.ClearApproveSurveyResponses()
+	return uu
+}
+
+// RemoveApproveSurveyResponseIDs removes the "approve_survey_responses" edge to SurveyResponse entities by IDs.
+func (uu *UserUpdate) RemoveApproveSurveyResponseIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveApproveSurveyResponseIDs(ids...)
+	return uu
+}
+
+// RemoveApproveSurveyResponses removes "approve_survey_responses" edges to SurveyResponse entities.
+func (uu *UserUpdate) RemoveApproveSurveyResponses(s ...*SurveyResponse) *UserUpdate {
+	ids := make([]int64, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uu.RemoveApproveSurveyResponseIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -4004,6 +4040,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.ApproveSurveyResponsesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedApproveSurveyResponsesIDs(); len(nodes) > 0 && !uu.mutation.ApproveSurveyResponsesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ApproveSurveyResponsesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -5029,6 +5110,21 @@ func (uuo *UserUpdateOne) AddSurveyResponses(s ...*SurveyResponse) *UserUpdateOn
 	return uuo.AddSurveyResponseIDs(ids...)
 }
 
+// AddApproveSurveyResponseIDs adds the "approve_survey_responses" edge to the SurveyResponse entity by IDs.
+func (uuo *UserUpdateOne) AddApproveSurveyResponseIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddApproveSurveyResponseIDs(ids...)
+	return uuo
+}
+
+// AddApproveSurveyResponses adds the "approve_survey_responses" edges to the SurveyResponse entity.
+func (uuo *UserUpdateOne) AddApproveSurveyResponses(s ...*SurveyResponse) *UserUpdateOne {
+	ids := make([]int64, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uuo.AddApproveSurveyResponseIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -5896,6 +5992,27 @@ func (uuo *UserUpdateOne) RemoveSurveyResponses(s ...*SurveyResponse) *UserUpdat
 		ids[i] = s[i].ID
 	}
 	return uuo.RemoveSurveyResponseIDs(ids...)
+}
+
+// ClearApproveSurveyResponses clears all "approve_survey_responses" edges to the SurveyResponse entity.
+func (uuo *UserUpdateOne) ClearApproveSurveyResponses() *UserUpdateOne {
+	uuo.mutation.ClearApproveSurveyResponses()
+	return uuo
+}
+
+// RemoveApproveSurveyResponseIDs removes the "approve_survey_responses" edge to SurveyResponse entities by IDs.
+func (uuo *UserUpdateOne) RemoveApproveSurveyResponseIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveApproveSurveyResponseIDs(ids...)
+	return uuo
+}
+
+// RemoveApproveSurveyResponses removes "approve_survey_responses" edges to SurveyResponse entities.
+func (uuo *UserUpdateOne) RemoveApproveSurveyResponses(s ...*SurveyResponse) *UserUpdateOne {
+	ids := make([]int64, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uuo.RemoveApproveSurveyResponseIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -7984,6 +8101,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Inverse: false,
 			Table:   user.SurveyResponsesTable,
 			Columns: []string{user.SurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ApproveSurveyResponsesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedApproveSurveyResponsesIDs(); len(nodes) > 0 && !uuo.mutation.ApproveSurveyResponsesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ApproveSurveyResponsesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ApproveSurveyResponsesTable,
+			Columns: []string{user.ApproveSurveyResponsesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),

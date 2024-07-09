@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/common"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 type Survey struct {
@@ -19,6 +20,9 @@ func (Survey) Fields() []ent.Field {
 		field.Time("ended_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"ended_at"`).Comment("填写问卷结束的时间"),
 		field.Int64("sort_num").StructTag(`json:"sort_num"`).Default(1).Comment("分组排序序列号"),
 		field.String("group").StructTag(`json:"group"`).Default("").Comment("问卷分组（自定义，可以为空），同组问卷可以根据序号强关联"),
+		field.Int64("gift_cep_amount").StructTag(`json:"gift_cep_amount"`).Default(0).Comment("提交问卷赠送的脑力值数量"),
+		field.Enum("gift_type").GoType(enums.SurveyGiftTypeSubmit).Default(string(enums.SurveyGiftTypeUnknown)).StructTag(`json:"gift_type"`).Comment("问卷赠送类型，提交赠送或审批赠送等"),
+		field.String("desc").StructTag(`json:"desc"`).Default("").Comment("问卷描述信息"),
 	}
 }
 

@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -88,6 +89,11 @@ func UserID(v int64) predicate.SurveyResponse {
 // SurveyID applies equality check predicate on the "survey_id" field. It's identical to SurveyIDEQ.
 func SurveyID(v int64) predicate.SurveyResponse {
 	return predicate.SurveyResponse(sql.FieldEQ(FieldSurveyID, v))
+}
+
+// ApprovedBy applies equality check predicate on the "approved_by" field. It's identical to ApprovedByEQ.
+func ApprovedBy(v int64) predicate.SurveyResponse {
+	return predicate.SurveyResponse(sql.FieldEQ(FieldApprovedBy, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -330,6 +336,56 @@ func SurveyIDNotIn(vs ...int64) predicate.SurveyResponse {
 	return predicate.SurveyResponse(sql.FieldNotIn(FieldSurveyID, vs...))
 }
 
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v enums.SurveyResponseStatus) predicate.SurveyResponse {
+	vc := v
+	return predicate.SurveyResponse(sql.FieldEQ(FieldStatus, vc))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v enums.SurveyResponseStatus) predicate.SurveyResponse {
+	vc := v
+	return predicate.SurveyResponse(sql.FieldNEQ(FieldStatus, vc))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...enums.SurveyResponseStatus) predicate.SurveyResponse {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyResponse(sql.FieldIn(FieldStatus, v...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...enums.SurveyResponseStatus) predicate.SurveyResponse {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyResponse(sql.FieldNotIn(FieldStatus, v...))
+}
+
+// ApprovedByEQ applies the EQ predicate on the "approved_by" field.
+func ApprovedByEQ(v int64) predicate.SurveyResponse {
+	return predicate.SurveyResponse(sql.FieldEQ(FieldApprovedBy, v))
+}
+
+// ApprovedByNEQ applies the NEQ predicate on the "approved_by" field.
+func ApprovedByNEQ(v int64) predicate.SurveyResponse {
+	return predicate.SurveyResponse(sql.FieldNEQ(FieldApprovedBy, v))
+}
+
+// ApprovedByIn applies the In predicate on the "approved_by" field.
+func ApprovedByIn(vs ...int64) predicate.SurveyResponse {
+	return predicate.SurveyResponse(sql.FieldIn(FieldApprovedBy, vs...))
+}
+
+// ApprovedByNotIn applies the NotIn predicate on the "approved_by" field.
+func ApprovedByNotIn(vs ...int64) predicate.SurveyResponse {
+	return predicate.SurveyResponse(sql.FieldNotIn(FieldApprovedBy, vs...))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.SurveyResponse {
 	return predicate.SurveyResponse(func(s *sql.Selector) {
@@ -368,6 +424,29 @@ func HasSurvey() predicate.SurveyResponse {
 func HasSurveyWith(preds ...predicate.Survey) predicate.SurveyResponse {
 	return predicate.SurveyResponse(func(s *sql.Selector) {
 		step := newSurveyStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasApprovedUser applies the HasEdge predicate on the "approved_user" edge.
+func HasApprovedUser() predicate.SurveyResponse {
+	return predicate.SurveyResponse(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ApprovedUserTable, ApprovedUserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasApprovedUserWith applies the HasEdge predicate on the "approved_user" edge with a given conditions (other predicates).
+func HasApprovedUserWith(preds ...predicate.User) predicate.SurveyResponse {
+	return predicate.SurveyResponse(func(s *sql.Selector) {
+		step := newApprovedUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

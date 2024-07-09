@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 问卷表
@@ -38,6 +39,12 @@ type Survey struct {
 	SortNum int64 `json:"sort_num"`
 	// 问卷分组（自定义，可以为空），同组问卷可以根据序号强关联
 	Group string `json:"group"`
+	// 提交问卷赠送的脑力值数量
+	GiftCepAmount int64 `json:"gift_cep_amount"`
+	// 问卷赠送类型，提交赠送或审批赠送等
+	GiftType enums.SurveyGiftType `json:"gift_type"`
+	// 问卷描述信息
+	Desc string `json:"desc"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyQuery when eager-loading is set.
 	Edges        SurveyEdges `json:"edges"`
@@ -78,9 +85,9 @@ func (*Survey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy, survey.FieldSortNum:
+		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy, survey.FieldSortNum, survey.FieldGiftCepAmount:
 			values[i] = new(sql.NullInt64)
-		case survey.FieldTitle, survey.FieldGroup:
+		case survey.FieldTitle, survey.FieldGroup, survey.FieldGiftType, survey.FieldDesc:
 			values[i] = new(sql.NullString)
 		case survey.FieldCreatedAt, survey.FieldUpdatedAt, survey.FieldDeletedAt, survey.FieldStartedAt, survey.FieldEndedAt:
 			values[i] = new(sql.NullTime)
@@ -167,6 +174,24 @@ func (s *Survey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.Group = value.String
 			}
+		case survey.FieldGiftCepAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field gift_cep_amount", values[i])
+			} else if value.Valid {
+				s.GiftCepAmount = value.Int64
+			}
+		case survey.FieldGiftType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gift_type", values[i])
+			} else if value.Valid {
+				s.GiftType = enums.SurveyGiftType(value.String)
+			}
+		case survey.FieldDesc:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field desc", values[i])
+			} else if value.Valid {
+				s.Desc = value.String
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -246,6 +271,15 @@ func (s *Survey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("group=")
 	builder.WriteString(s.Group)
+	builder.WriteString(", ")
+	builder.WriteString("gift_cep_amount=")
+	builder.WriteString(fmt.Sprintf("%v", s.GiftCepAmount))
+	builder.WriteString(", ")
+	builder.WriteString("gift_type=")
+	builder.WriteString(fmt.Sprintf("%v", s.GiftType))
+	builder.WriteString(", ")
+	builder.WriteString("desc=")
+	builder.WriteString(s.Desc)
 	builder.WriteByte(')')
 	return builder.String()
 }

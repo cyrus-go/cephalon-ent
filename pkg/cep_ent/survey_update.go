@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/survey"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyquestion"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/surveyresponse"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // SurveyUpdate is the builder for updating Survey entities.
@@ -182,6 +183,55 @@ func (su *SurveyUpdate) SetNillableGroup(s *string) *SurveyUpdate {
 	return su
 }
 
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (su *SurveyUpdate) SetGiftCepAmount(i int64) *SurveyUpdate {
+	su.mutation.ResetGiftCepAmount()
+	su.mutation.SetGiftCepAmount(i)
+	return su
+}
+
+// SetNillableGiftCepAmount sets the "gift_cep_amount" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableGiftCepAmount(i *int64) *SurveyUpdate {
+	if i != nil {
+		su.SetGiftCepAmount(*i)
+	}
+	return su
+}
+
+// AddGiftCepAmount adds i to the "gift_cep_amount" field.
+func (su *SurveyUpdate) AddGiftCepAmount(i int64) *SurveyUpdate {
+	su.mutation.AddGiftCepAmount(i)
+	return su
+}
+
+// SetGiftType sets the "gift_type" field.
+func (su *SurveyUpdate) SetGiftType(egt enums.SurveyGiftType) *SurveyUpdate {
+	su.mutation.SetGiftType(egt)
+	return su
+}
+
+// SetNillableGiftType sets the "gift_type" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableGiftType(egt *enums.SurveyGiftType) *SurveyUpdate {
+	if egt != nil {
+		su.SetGiftType(*egt)
+	}
+	return su
+}
+
+// SetDesc sets the "desc" field.
+func (su *SurveyUpdate) SetDesc(s string) *SurveyUpdate {
+	su.mutation.SetDesc(s)
+	return su
+}
+
+// SetNillableDesc sets the "desc" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableDesc(s *string) *SurveyUpdate {
+	if s != nil {
+		su.SetDesc(*s)
+	}
+	return su
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by IDs.
 func (su *SurveyUpdate) AddSurveyQuestionIDs(ids ...int64) *SurveyUpdate {
 	su.mutation.AddSurveyQuestionIDs(ids...)
@@ -295,6 +345,16 @@ func (su *SurveyUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (su *SurveyUpdate) check() error {
+	if v, ok := su.mutation.GiftType(); ok {
+		if err := survey.GiftTypeValidator(v); err != nil {
+			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "Survey.gift_type": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (su *SurveyUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SurveyUpdate {
 	su.modifiers = append(su.modifiers, modifiers...)
@@ -302,6 +362,9 @@ func (su *SurveyUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SurveyU
 }
 
 func (su *SurveyUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := su.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(survey.Table, survey.Columns, sqlgraph.NewFieldSpec(survey.FieldID, field.TypeInt64))
 	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -351,6 +414,18 @@ func (su *SurveyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.Group(); ok {
 		_spec.SetField(survey.FieldGroup, field.TypeString, value)
+	}
+	if value, ok := su.mutation.GiftCepAmount(); ok {
+		_spec.SetField(survey.FieldGiftCepAmount, field.TypeInt64, value)
+	}
+	if value, ok := su.mutation.AddedGiftCepAmount(); ok {
+		_spec.AddField(survey.FieldGiftCepAmount, field.TypeInt64, value)
+	}
+	if value, ok := su.mutation.GiftType(); ok {
+		_spec.SetField(survey.FieldGiftType, field.TypeEnum, value)
+	}
+	if value, ok := su.mutation.Desc(); ok {
+		_spec.SetField(survey.FieldDesc, field.TypeString, value)
 	}
 	if su.mutation.SurveyQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -615,6 +690,55 @@ func (suo *SurveyUpdateOne) SetNillableGroup(s *string) *SurveyUpdateOne {
 	return suo
 }
 
+// SetGiftCepAmount sets the "gift_cep_amount" field.
+func (suo *SurveyUpdateOne) SetGiftCepAmount(i int64) *SurveyUpdateOne {
+	suo.mutation.ResetGiftCepAmount()
+	suo.mutation.SetGiftCepAmount(i)
+	return suo
+}
+
+// SetNillableGiftCepAmount sets the "gift_cep_amount" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableGiftCepAmount(i *int64) *SurveyUpdateOne {
+	if i != nil {
+		suo.SetGiftCepAmount(*i)
+	}
+	return suo
+}
+
+// AddGiftCepAmount adds i to the "gift_cep_amount" field.
+func (suo *SurveyUpdateOne) AddGiftCepAmount(i int64) *SurveyUpdateOne {
+	suo.mutation.AddGiftCepAmount(i)
+	return suo
+}
+
+// SetGiftType sets the "gift_type" field.
+func (suo *SurveyUpdateOne) SetGiftType(egt enums.SurveyGiftType) *SurveyUpdateOne {
+	suo.mutation.SetGiftType(egt)
+	return suo
+}
+
+// SetNillableGiftType sets the "gift_type" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableGiftType(egt *enums.SurveyGiftType) *SurveyUpdateOne {
+	if egt != nil {
+		suo.SetGiftType(*egt)
+	}
+	return suo
+}
+
+// SetDesc sets the "desc" field.
+func (suo *SurveyUpdateOne) SetDesc(s string) *SurveyUpdateOne {
+	suo.mutation.SetDesc(s)
+	return suo
+}
+
+// SetNillableDesc sets the "desc" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableDesc(s *string) *SurveyUpdateOne {
+	if s != nil {
+		suo.SetDesc(*s)
+	}
+	return suo
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by IDs.
 func (suo *SurveyUpdateOne) AddSurveyQuestionIDs(ids ...int64) *SurveyUpdateOne {
 	suo.mutation.AddSurveyQuestionIDs(ids...)
@@ -741,6 +865,16 @@ func (suo *SurveyUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (suo *SurveyUpdateOne) check() error {
+	if v, ok := suo.mutation.GiftType(); ok {
+		if err := survey.GiftTypeValidator(v); err != nil {
+			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "Survey.gift_type": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (suo *SurveyUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SurveyUpdateOne {
 	suo.modifiers = append(suo.modifiers, modifiers...)
@@ -748,6 +882,9 @@ func (suo *SurveyUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Sur
 }
 
 func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (_node *Survey, err error) {
+	if err := suo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(survey.Table, survey.Columns, sqlgraph.NewFieldSpec(survey.FieldID, field.TypeInt64))
 	id, ok := suo.mutation.ID()
 	if !ok {
@@ -814,6 +951,18 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (_node *Survey, err err
 	}
 	if value, ok := suo.mutation.Group(); ok {
 		_spec.SetField(survey.FieldGroup, field.TypeString, value)
+	}
+	if value, ok := suo.mutation.GiftCepAmount(); ok {
+		_spec.SetField(survey.FieldGiftCepAmount, field.TypeInt64, value)
+	}
+	if value, ok := suo.mutation.AddedGiftCepAmount(); ok {
+		_spec.AddField(survey.FieldGiftCepAmount, field.TypeInt64, value)
+	}
+	if value, ok := suo.mutation.GiftType(); ok {
+		_spec.SetField(survey.FieldGiftType, field.TypeEnum, value)
+	}
+	if value, ok := suo.mutation.Desc(); ok {
+		_spec.SetField(survey.FieldDesc, field.TypeString, value)
 	}
 	if suo.mutation.SurveyQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

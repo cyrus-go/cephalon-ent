@@ -3,10 +3,12 @@
 package survey
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -34,6 +36,12 @@ const (
 	FieldSortNum = "sort_num"
 	// FieldGroup holds the string denoting the group field in the database.
 	FieldGroup = "group"
+	// FieldGiftCepAmount holds the string denoting the gift_cep_amount field in the database.
+	FieldGiftCepAmount = "gift_cep_amount"
+	// FieldGiftType holds the string denoting the gift_type field in the database.
+	FieldGiftType = "gift_type"
+	// FieldDesc holds the string denoting the desc field in the database.
+	FieldDesc = "desc"
 	// EdgeSurveyQuestions holds the string denoting the survey_questions edge name in mutations.
 	EdgeSurveyQuestions = "survey_questions"
 	// EdgeSurveyResponses holds the string denoting the survey_responses edge name in mutations.
@@ -69,6 +77,9 @@ var Columns = []string{
 	FieldEndedAt,
 	FieldSortNum,
 	FieldGroup,
+	FieldGiftCepAmount,
+	FieldGiftType,
+	FieldDesc,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -104,9 +115,25 @@ var (
 	DefaultSortNum int64
 	// DefaultGroup holds the default value on creation for the "group" field.
 	DefaultGroup string
+	// DefaultGiftCepAmount holds the default value on creation for the "gift_cep_amount" field.
+	DefaultGiftCepAmount int64
+	// DefaultDesc holds the default value on creation for the "desc" field.
+	DefaultDesc string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultGiftType enums.SurveyGiftType = "unknown"
+
+// GiftTypeValidator is a validator for the "gift_type" field enum values. It is called by the builders before save.
+func GiftTypeValidator(gt enums.SurveyGiftType) error {
+	switch gt {
+	case "unknown", "submit", "approve":
+		return nil
+	default:
+		return fmt.Errorf("survey: invalid enum value for gift_type field: %q", gt)
+	}
+}
 
 // OrderOption defines the ordering options for the Survey queries.
 type OrderOption func(*sql.Selector)
@@ -164,6 +191,21 @@ func BySortNum(opts ...sql.OrderTermOption) OrderOption {
 // ByGroup orders the results by the group field.
 func ByGroup(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGroup, opts...).ToFunc()
+}
+
+// ByGiftCepAmount orders the results by the gift_cep_amount field.
+func ByGiftCepAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftCepAmount, opts...).ToFunc()
+}
+
+// ByGiftType orders the results by the gift_type field.
+func ByGiftType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftType, opts...).ToFunc()
+}
+
+// ByDesc orders the results by the desc field.
+func ByDesc(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDesc, opts...).ToFunc()
 }
 
 // BySurveyQuestionsCount orders the results by survey_questions count.

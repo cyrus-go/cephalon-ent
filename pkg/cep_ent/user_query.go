@@ -102,6 +102,7 @@ type UserQuery struct {
 	withIncomeManages          *IncomeManageQuery
 	withApproveIncomeManages   *IncomeManageQuery
 	withSurveyResponses        *SurveyResponseQuery
+	withApproveSurveyResponses *SurveyResponseQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -1107,6 +1108,28 @@ func (uq *UserQuery) QuerySurveyResponses() *SurveyResponseQuery {
 	return query
 }
 
+// QueryApproveSurveyResponses chains the current query on the "approve_survey_responses" edge.
+func (uq *UserQuery) QueryApproveSurveyResponses() *SurveyResponseQuery {
+	query := (&SurveyResponseClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(surveyresponse.Table, surveyresponse.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ApproveSurveyResponsesTable, user.ApproveSurveyResponsesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1343,6 +1366,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withIncomeManages:          uq.withIncomeManages.Clone(),
 		withApproveIncomeManages:   uq.withApproveIncomeManages.Clone(),
 		withSurveyResponses:        uq.withSurveyResponses.Clone(),
+		withApproveSurveyResponses: uq.withApproveSurveyResponses.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1833,6 +1857,17 @@ func (uq *UserQuery) WithSurveyResponses(opts ...func(*SurveyResponseQuery)) *Us
 	return uq
 }
 
+// WithApproveSurveyResponses tells the query-builder to eager-load the nodes that are connected to
+// the "approve_survey_responses" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithApproveSurveyResponses(opts ...func(*SurveyResponseQuery)) *UserQuery {
+	query := (&SurveyResponseClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withApproveSurveyResponses = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1911,7 +1946,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [44]bool{
+		loadedTypes = [45]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1956,6 +1991,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withIncomeManages != nil,
 			uq.withApproveIncomeManages != nil,
 			uq.withSurveyResponses != nil,
+			uq.withApproveSurveyResponses != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2294,6 +2330,15 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadSurveyResponses(ctx, query, nodes,
 			func(n *User) { n.Edges.SurveyResponses = []*SurveyResponse{} },
 			func(n *User, e *SurveyResponse) { n.Edges.SurveyResponses = append(n.Edges.SurveyResponses, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withApproveSurveyResponses; query != nil {
+		if err := uq.loadApproveSurveyResponses(ctx, query, nodes,
+			func(n *User) { n.Edges.ApproveSurveyResponses = []*SurveyResponse{} },
+			func(n *User, e *SurveyResponse) {
+				n.Edges.ApproveSurveyResponses = append(n.Edges.ApproveSurveyResponses, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -3607,6 +3652,36 @@ func (uq *UserQuery) loadSurveyResponses(ctx context.Context, query *SurveyRespo
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadApproveSurveyResponses(ctx context.Context, query *SurveyResponseQuery, nodes []*User, init func(*User), assign func(*User, *SurveyResponse)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(surveyresponse.FieldApprovedBy)
+	}
+	query.Where(predicate.SurveyResponse(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ApproveSurveyResponsesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ApprovedBy
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "approved_by" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

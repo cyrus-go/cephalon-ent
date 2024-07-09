@@ -2961,6 +2961,14 @@ func init() {
 	surveyDescGroup := surveyFields[4].Descriptor()
 	// survey.DefaultGroup holds the default value on creation for the group field.
 	survey.DefaultGroup = surveyDescGroup.Default.(string)
+	// surveyDescGiftCepAmount is the schema descriptor for gift_cep_amount field.
+	surveyDescGiftCepAmount := surveyFields[5].Descriptor()
+	// survey.DefaultGiftCepAmount holds the default value on creation for the gift_cep_amount field.
+	survey.DefaultGiftCepAmount = surveyDescGiftCepAmount.Default.(int64)
+	// surveyDescDesc is the schema descriptor for desc field.
+	surveyDescDesc := surveyFields[7].Descriptor()
+	// survey.DefaultDesc holds the default value on creation for the desc field.
+	survey.DefaultDesc = surveyDescDesc.Default.(string)
 	// surveyDescID is the schema descriptor for id field.
 	surveyDescID := surveyMixinFields0[0].Descriptor()
 	// survey.DefaultID holds the default value on creation for the id field.
@@ -3085,6 +3093,10 @@ func init() {
 	surveyresponseDescSurveyID := surveyresponseFields[1].Descriptor()
 	// surveyresponse.DefaultSurveyID holds the default value on creation for the survey_id field.
 	surveyresponse.DefaultSurveyID = surveyresponseDescSurveyID.Default.(int64)
+	// surveyresponseDescApprovedBy is the schema descriptor for approved_by field.
+	surveyresponseDescApprovedBy := surveyresponseFields[3].Descriptor()
+	// surveyresponse.DefaultApprovedBy holds the default value on creation for the approved_by field.
+	surveyresponse.DefaultApprovedBy = surveyresponseDescApprovedBy.Default.(int64)
 	// surveyresponseDescID is the schema descriptor for id field.
 	surveyresponseDescID := surveyresponseMixinFields0[0].Descriptor()
 	// surveyresponse.DefaultID holds the default value on creation for the id field.
