@@ -35,7 +35,7 @@ type SurveyAnswer struct {
 	// 问题 id
 	SurveyQuestionID int64 `json:"survey_question_id,string"`
 	// 答案的内容
-	SurveyAnswer string `json:"SurveyAnswer"`
+	SurveyAnswer string `json:"survey_answer"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyAnswerQuery when eager-loading is set.
 	Edges        SurveyAnswerEdges `json:"edges"`
@@ -155,7 +155,7 @@ func (sa *SurveyAnswer) assignValues(columns []string, values []any) error {
 			}
 		case surveyanswer.FieldSurveyAnswer:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field SurveyAnswer", values[i])
+				return fmt.Errorf("unexpected type %T for field survey_answer", values[i])
 			} else if value.Valid {
 				sa.SurveyAnswer = value.String
 			}
@@ -226,7 +226,7 @@ func (sa *SurveyAnswer) String() string {
 	builder.WriteString("survey_question_id=")
 	builder.WriteString(fmt.Sprintf("%v", sa.SurveyQuestionID))
 	builder.WriteString(", ")
-	builder.WriteString("SurveyAnswer=")
+	builder.WriteString("survey_answer=")
 	builder.WriteString(sa.SurveyAnswer)
 	builder.WriteByte(')')
 	return builder.String()

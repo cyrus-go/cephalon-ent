@@ -28,7 +28,7 @@ const (
 	FieldSurveyResponseID = "survey_response_id"
 	// FieldSurveyQuestionID holds the string denoting the survey_question_id field in the database.
 	FieldSurveyQuestionID = "survey_question_id"
-	// FieldSurveyAnswer holds the string denoting the surveyanswer field in the database.
+	// FieldSurveyAnswer holds the string denoting the survey_answer field in the database.
 	FieldSurveyAnswer = "survey_answer"
 	// EdgeSurveyResponse holds the string denoting the survey_response edge name in mutations.
 	EdgeSurveyResponse = "survey_response"
@@ -92,7 +92,7 @@ var (
 	DefaultSurveyResponseID int64
 	// DefaultSurveyQuestionID holds the default value on creation for the "survey_question_id" field.
 	DefaultSurveyQuestionID int64
-	// DefaultSurveyAnswer holds the default value on creation for the "SurveyAnswer" field.
+	// DefaultSurveyAnswer holds the default value on creation for the "survey_answer" field.
 	DefaultSurveyAnswer string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
@@ -141,7 +141,7 @@ func BySurveyQuestionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSurveyQuestionID, opts...).ToFunc()
 }
 
-// BySurveyAnswer orders the results by the SurveyAnswer field.
+// BySurveyAnswer orders the results by the survey_answer field.
 func BySurveyAnswer(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSurveyAnswer, opts...).ToFunc()
 }

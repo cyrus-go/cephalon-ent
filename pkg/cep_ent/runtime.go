@@ -3008,9 +3008,9 @@ func init() {
 	surveyanswerDescSurveyQuestionID := surveyanswerFields[1].Descriptor()
 	// surveyanswer.DefaultSurveyQuestionID holds the default value on creation for the survey_question_id field.
 	surveyanswer.DefaultSurveyQuestionID = surveyanswerDescSurveyQuestionID.Default.(int64)
-	// surveyanswerDescSurveyAnswer is the schema descriptor for SurveyAnswer field.
+	// surveyanswerDescSurveyAnswer is the schema descriptor for survey_answer field.
 	surveyanswerDescSurveyAnswer := surveyanswerFields[2].Descriptor()
-	// surveyanswer.DefaultSurveyAnswer holds the default value on creation for the SurveyAnswer field.
+	// surveyanswer.DefaultSurveyAnswer holds the default value on creation for the survey_answer field.
 	surveyanswer.DefaultSurveyAnswer = surveyanswerDescSurveyAnswer.Default.(string)
 	// surveyanswerDescID is the schema descriptor for id field.
 	surveyanswerDescID := surveyanswerMixinFields0[0].Descriptor()

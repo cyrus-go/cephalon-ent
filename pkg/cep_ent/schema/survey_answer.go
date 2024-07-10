@@ -15,7 +15,7 @@ func (SurveyAnswer) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("survey_response_id").StructTag(`json:"survey_response_id,string"`).Default(0).Comment("问卷用户调查结果 ID，一个用户同一个问卷只能回答一次，这个问卷会有多个问题和答案"),
 		field.Int64("survey_question_id").StructTag(`json:"survey_question_id,string"`).Default(0).Comment("问题 id"),
-		field.Text("SurveyAnswer").StructTag(`json:"SurveyAnswer"`).Default("").Comment("答案的内容"),
+		field.Text("survey_answer").StructTag(`json:"survey_answer"`).Default("").Comment("答案的内容"),
 	}
 }
 

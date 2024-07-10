@@ -67946,7 +67946,7 @@ type SurveyAnswerMutation struct {
 	created_at             *time.Time
 	updated_at             *time.Time
 	deleted_at             *time.Time
-	_SurveyAnswer          *string
+	survey_answer          *string
 	clearedFields          map[string]struct{}
 	survey_response        *int64
 	clearedsurvey_response bool
@@ -68353,21 +68353,21 @@ func (m *SurveyAnswerMutation) ResetSurveyQuestionID() {
 	m.survey_question = nil
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (m *SurveyAnswerMutation) SetSurveyAnswer(s string) {
-	m._SurveyAnswer = &s
+	m.survey_answer = &s
 }
 
-// SurveyAnswer returns the value of the "SurveyAnswer" field in the mutation.
+// SurveyAnswer returns the value of the "survey_answer" field in the mutation.
 func (m *SurveyAnswerMutation) SurveyAnswer() (r string, exists bool) {
-	v := m._SurveyAnswer
+	v := m.survey_answer
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSurveyAnswer returns the old "SurveyAnswer" field's value of the SurveyAnswer entity.
+// OldSurveyAnswer returns the old "survey_answer" field's value of the SurveyAnswer entity.
 // If the SurveyAnswer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *SurveyAnswerMutation) OldSurveyAnswer(ctx context.Context) (v string, err error) {
@@ -68384,9 +68384,9 @@ func (m *SurveyAnswerMutation) OldSurveyAnswer(ctx context.Context) (v string, e
 	return oldValue.SurveyAnswer, nil
 }
 
-// ResetSurveyAnswer resets all changes to the "SurveyAnswer" field.
+// ResetSurveyAnswer resets all changes to the "survey_answer" field.
 func (m *SurveyAnswerMutation) ResetSurveyAnswer() {
-	m._SurveyAnswer = nil
+	m.survey_answer = nil
 }
 
 // ClearSurveyResponse clears the "survey_response" edge to the SurveyResponse entity.
@@ -68499,7 +68499,7 @@ func (m *SurveyAnswerMutation) Fields() []string {
 	if m.survey_question != nil {
 		fields = append(fields, surveyanswer.FieldSurveyQuestionID)
 	}
-	if m._SurveyAnswer != nil {
+	if m.survey_answer != nil {
 		fields = append(fields, surveyanswer.FieldSurveyAnswer)
 	}
 	return fields

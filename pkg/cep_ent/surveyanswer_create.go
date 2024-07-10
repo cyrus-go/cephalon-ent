@@ -122,13 +122,13 @@ func (sac *SurveyAnswerCreate) SetNillableSurveyQuestionID(i *int64) *SurveyAnsw
 	return sac
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (sac *SurveyAnswerCreate) SetSurveyAnswer(s string) *SurveyAnswerCreate {
 	sac.mutation.SetSurveyAnswer(s)
 	return sac
 }
 
-// SetNillableSurveyAnswer sets the "SurveyAnswer" field if the given value is not nil.
+// SetNillableSurveyAnswer sets the "survey_answer" field if the given value is not nil.
 func (sac *SurveyAnswerCreate) SetNillableSurveyAnswer(s *string) *SurveyAnswerCreate {
 	if s != nil {
 		sac.SetSurveyAnswer(*s)
@@ -257,7 +257,7 @@ func (sac *SurveyAnswerCreate) check() error {
 		return &ValidationError{Name: "survey_question_id", err: errors.New(`cep_ent: missing required field "SurveyAnswer.survey_question_id"`)}
 	}
 	if _, ok := sac.mutation.SurveyAnswer(); !ok {
-		return &ValidationError{Name: "SurveyAnswer", err: errors.New(`cep_ent: missing required field "SurveyAnswer.SurveyAnswer"`)}
+		return &ValidationError{Name: "survey_answer", err: errors.New(`cep_ent: missing required field "SurveyAnswer.survey_answer"`)}
 	}
 	if _, ok := sac.mutation.SurveyResponseID(); !ok {
 		return &ValidationError{Name: "survey_response", err: errors.New(`cep_ent: missing required edge "SurveyAnswer.survey_response"`)}
@@ -492,13 +492,13 @@ func (u *SurveyAnswerUpsert) UpdateSurveyQuestionID() *SurveyAnswerUpsert {
 	return u
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (u *SurveyAnswerUpsert) SetSurveyAnswer(v string) *SurveyAnswerUpsert {
 	u.Set(surveyanswer.FieldSurveyAnswer, v)
 	return u
 }
 
-// UpdateSurveyAnswer sets the "SurveyAnswer" field to the value that was provided on create.
+// UpdateSurveyAnswer sets the "survey_answer" field to the value that was provided on create.
 func (u *SurveyAnswerUpsert) UpdateSurveyAnswer() *SurveyAnswerUpsert {
 	u.SetExcluded(surveyanswer.FieldSurveyAnswer)
 	return u
@@ -653,14 +653,14 @@ func (u *SurveyAnswerUpsertOne) UpdateSurveyQuestionID() *SurveyAnswerUpsertOne 
 	})
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (u *SurveyAnswerUpsertOne) SetSurveyAnswer(v string) *SurveyAnswerUpsertOne {
 	return u.Update(func(s *SurveyAnswerUpsert) {
 		s.SetSurveyAnswer(v)
 	})
 }
 
-// UpdateSurveyAnswer sets the "SurveyAnswer" field to the value that was provided on create.
+// UpdateSurveyAnswer sets the "survey_answer" field to the value that was provided on create.
 func (u *SurveyAnswerUpsertOne) UpdateSurveyAnswer() *SurveyAnswerUpsertOne {
 	return u.Update(func(s *SurveyAnswerUpsert) {
 		s.UpdateSurveyAnswer()
@@ -982,14 +982,14 @@ func (u *SurveyAnswerUpsertBulk) UpdateSurveyQuestionID() *SurveyAnswerUpsertBul
 	})
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (u *SurveyAnswerUpsertBulk) SetSurveyAnswer(v string) *SurveyAnswerUpsertBulk {
 	return u.Update(func(s *SurveyAnswerUpsert) {
 		s.SetSurveyAnswer(v)
 	})
 }
 
-// UpdateSurveyAnswer sets the "SurveyAnswer" field to the value that was provided on create.
+// UpdateSurveyAnswer sets the "survey_answer" field to the value that was provided on create.
 func (u *SurveyAnswerUpsertBulk) UpdateSurveyAnswer() *SurveyAnswerUpsertBulk {
 	return u.Update(func(s *SurveyAnswerUpsert) {
 		s.UpdateSurveyAnswer()

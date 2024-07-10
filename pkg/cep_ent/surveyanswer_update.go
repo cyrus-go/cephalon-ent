@@ -121,13 +121,13 @@ func (sau *SurveyAnswerUpdate) SetNillableSurveyQuestionID(i *int64) *SurveyAnsw
 	return sau
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (sau *SurveyAnswerUpdate) SetSurveyAnswer(s string) *SurveyAnswerUpdate {
 	sau.mutation.SetSurveyAnswer(s)
 	return sau
 }
 
-// SetNillableSurveyAnswer sets the "SurveyAnswer" field if the given value is not nil.
+// SetNillableSurveyAnswer sets the "survey_answer" field if the given value is not nil.
 func (sau *SurveyAnswerUpdate) SetNillableSurveyAnswer(s *string) *SurveyAnswerUpdate {
 	if s != nil {
 		sau.SetSurveyAnswer(*s)
@@ -418,13 +418,13 @@ func (sauo *SurveyAnswerUpdateOne) SetNillableSurveyQuestionID(i *int64) *Survey
 	return sauo
 }
 
-// SetSurveyAnswer sets the "SurveyAnswer" field.
+// SetSurveyAnswer sets the "survey_answer" field.
 func (sauo *SurveyAnswerUpdateOne) SetSurveyAnswer(s string) *SurveyAnswerUpdateOne {
 	sauo.mutation.SetSurveyAnswer(s)
 	return sauo
 }
 
-// SetNillableSurveyAnswer sets the "SurveyAnswer" field if the given value is not nil.
+// SetNillableSurveyAnswer sets the "survey_answer" field if the given value is not nil.
 func (sauo *SurveyAnswerUpdateOne) SetNillableSurveyAnswer(s *string) *SurveyAnswerUpdateOne {
 	if s != nil {
 		sauo.SetSurveyAnswer(*s)

@@ -90,7 +90,7 @@ func SurveyQuestionID(v int64) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldEQ(FieldSurveyQuestionID, v))
 }
 
-// SurveyAnswer applies equality check predicate on the "SurveyAnswer" field. It's identical to SurveyAnswerEQ.
+// SurveyAnswer applies equality check predicate on the "survey_answer" field. It's identical to SurveyAnswerEQ.
 func SurveyAnswer(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldEQ(FieldSurveyAnswer, v))
 }
@@ -335,67 +335,67 @@ func SurveyQuestionIDNotIn(vs ...int64) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldNotIn(FieldSurveyQuestionID, vs...))
 }
 
-// SurveyAnswerEQ applies the EQ predicate on the "SurveyAnswer" field.
+// SurveyAnswerEQ applies the EQ predicate on the "survey_answer" field.
 func SurveyAnswerEQ(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldEQ(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerNEQ applies the NEQ predicate on the "SurveyAnswer" field.
+// SurveyAnswerNEQ applies the NEQ predicate on the "survey_answer" field.
 func SurveyAnswerNEQ(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldNEQ(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerIn applies the In predicate on the "SurveyAnswer" field.
+// SurveyAnswerIn applies the In predicate on the "survey_answer" field.
 func SurveyAnswerIn(vs ...string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldIn(FieldSurveyAnswer, vs...))
 }
 
-// SurveyAnswerNotIn applies the NotIn predicate on the "SurveyAnswer" field.
+// SurveyAnswerNotIn applies the NotIn predicate on the "survey_answer" field.
 func SurveyAnswerNotIn(vs ...string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldNotIn(FieldSurveyAnswer, vs...))
 }
 
-// SurveyAnswerGT applies the GT predicate on the "SurveyAnswer" field.
+// SurveyAnswerGT applies the GT predicate on the "survey_answer" field.
 func SurveyAnswerGT(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldGT(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerGTE applies the GTE predicate on the "SurveyAnswer" field.
+// SurveyAnswerGTE applies the GTE predicate on the "survey_answer" field.
 func SurveyAnswerGTE(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldGTE(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerLT applies the LT predicate on the "SurveyAnswer" field.
+// SurveyAnswerLT applies the LT predicate on the "survey_answer" field.
 func SurveyAnswerLT(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldLT(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerLTE applies the LTE predicate on the "SurveyAnswer" field.
+// SurveyAnswerLTE applies the LTE predicate on the "survey_answer" field.
 func SurveyAnswerLTE(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldLTE(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerContains applies the Contains predicate on the "SurveyAnswer" field.
+// SurveyAnswerContains applies the Contains predicate on the "survey_answer" field.
 func SurveyAnswerContains(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldContains(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerHasPrefix applies the HasPrefix predicate on the "SurveyAnswer" field.
+// SurveyAnswerHasPrefix applies the HasPrefix predicate on the "survey_answer" field.
 func SurveyAnswerHasPrefix(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldHasPrefix(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerHasSuffix applies the HasSuffix predicate on the "SurveyAnswer" field.
+// SurveyAnswerHasSuffix applies the HasSuffix predicate on the "survey_answer" field.
 func SurveyAnswerHasSuffix(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldHasSuffix(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerEqualFold applies the EqualFold predicate on the "SurveyAnswer" field.
+// SurveyAnswerEqualFold applies the EqualFold predicate on the "survey_answer" field.
 func SurveyAnswerEqualFold(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldEqualFold(FieldSurveyAnswer, v))
 }
 
-// SurveyAnswerContainsFold applies the ContainsFold predicate on the "SurveyAnswer" field.
+// SurveyAnswerContainsFold applies the ContainsFold predicate on the "survey_answer" field.
 func SurveyAnswerContainsFold(v string) predicate.SurveyAnswer {
 	return predicate.SurveyAnswer(sql.FieldContainsFold(FieldSurveyAnswer, v))
 }
