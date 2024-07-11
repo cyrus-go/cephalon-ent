@@ -741,6 +741,36 @@ func OperateUserIDLTE(v int64) predicate.TransferOrder {
 	return predicate.TransferOrder(sql.FieldLTE(FieldOperateUserID, v))
 }
 
+// GiftTypeEQ applies the EQ predicate on the "gift_type" field.
+func GiftTypeEQ(v enums.TransferOrderGiftType) predicate.TransferOrder {
+	vc := v
+	return predicate.TransferOrder(sql.FieldEQ(FieldGiftType, vc))
+}
+
+// GiftTypeNEQ applies the NEQ predicate on the "gift_type" field.
+func GiftTypeNEQ(v enums.TransferOrderGiftType) predicate.TransferOrder {
+	vc := v
+	return predicate.TransferOrder(sql.FieldNEQ(FieldGiftType, vc))
+}
+
+// GiftTypeIn applies the In predicate on the "gift_type" field.
+func GiftTypeIn(vs ...enums.TransferOrderGiftType) predicate.TransferOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TransferOrder(sql.FieldIn(FieldGiftType, v...))
+}
+
+// GiftTypeNotIn applies the NotIn predicate on the "gift_type" field.
+func GiftTypeNotIn(vs ...enums.TransferOrderGiftType) predicate.TransferOrder {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TransferOrder(sql.FieldNotIn(FieldGiftType, v...))
+}
+
 // HasSourceUser applies the HasEdge predicate on the "source_user" edge.
 func HasSourceUser() predicate.TransferOrder {
 	return predicate.TransferOrder(func(s *sql.Selector) {

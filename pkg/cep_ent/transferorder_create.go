@@ -252,6 +252,20 @@ func (toc *TransferOrderCreate) SetNillableOperateUserID(i *int64) *TransferOrde
 	return toc
 }
 
+// SetGiftType sets the "gift_type" field.
+func (toc *TransferOrderCreate) SetGiftType(eogt enums.TransferOrderGiftType) *TransferOrderCreate {
+	toc.mutation.SetGiftType(eogt)
+	return toc
+}
+
+// SetNillableGiftType sets the "gift_type" field if the given value is not nil.
+func (toc *TransferOrderCreate) SetNillableGiftType(eogt *enums.TransferOrderGiftType) *TransferOrderCreate {
+	if eogt != nil {
+		toc.SetGiftType(*eogt)
+	}
+	return toc
+}
+
 // SetID sets the "id" field.
 func (toc *TransferOrderCreate) SetID(i int64) *TransferOrderCreate {
 	toc.mutation.SetID(i)
@@ -433,6 +447,10 @@ func (toc *TransferOrderCreate) defaults() {
 		v := transferorder.DefaultOperateUserID
 		toc.mutation.SetOperateUserID(v)
 	}
+	if _, ok := toc.mutation.GiftType(); !ok {
+		v := transferorder.DefaultGiftType
+		toc.mutation.SetGiftType(v)
+	}
 	if _, ok := toc.mutation.ID(); !ok {
 		v := transferorder.DefaultID()
 		toc.mutation.SetID(v)
@@ -495,6 +513,14 @@ func (toc *TransferOrderCreate) check() error {
 	}
 	if _, ok := toc.mutation.OperateUserID(); !ok {
 		return &ValidationError{Name: "operate_user_id", err: errors.New(`cep_ent: missing required field "TransferOrder.operate_user_id"`)}
+	}
+	if _, ok := toc.mutation.GiftType(); !ok {
+		return &ValidationError{Name: "gift_type", err: errors.New(`cep_ent: missing required field "TransferOrder.gift_type"`)}
+	}
+	if v, ok := toc.mutation.GiftType(); ok {
+		if err := transferorder.GiftTypeValidator(v); err != nil {
+			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "TransferOrder.gift_type": %w`, err)}
+		}
 	}
 	if _, ok := toc.mutation.SourceUserID(); !ok {
 		return &ValidationError{Name: "source_user", err: errors.New(`cep_ent: missing required edge "TransferOrder.source_user"`)}
@@ -585,6 +611,10 @@ func (toc *TransferOrderCreate) createSpec() (*TransferOrder, *sqlgraph.CreateSp
 	if value, ok := toc.mutation.OperateUserID(); ok {
 		_spec.SetField(transferorder.FieldOperateUserID, field.TypeInt64, value)
 		_node.OperateUserID = value
+	}
+	if value, ok := toc.mutation.GiftType(); ok {
+		_spec.SetField(transferorder.FieldGiftType, field.TypeEnum, value)
+		_node.GiftType = value
 	}
 	if nodes := toc.mutation.SourceUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -948,6 +978,18 @@ func (u *TransferOrderUpsert) AddOperateUserID(v int64) *TransferOrderUpsert {
 	return u
 }
 
+// SetGiftType sets the "gift_type" field.
+func (u *TransferOrderUpsert) SetGiftType(v enums.TransferOrderGiftType) *TransferOrderUpsert {
+	u.Set(transferorder.FieldGiftType, v)
+	return u
+}
+
+// UpdateGiftType sets the "gift_type" field to the value that was provided on create.
+func (u *TransferOrderUpsert) UpdateGiftType() *TransferOrderUpsert {
+	u.SetExcluded(transferorder.FieldGiftType)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1241,6 +1283,20 @@ func (u *TransferOrderUpsertOne) AddOperateUserID(v int64) *TransferOrderUpsertO
 func (u *TransferOrderUpsertOne) UpdateOperateUserID() *TransferOrderUpsertOne {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOperateUserID()
+	})
+}
+
+// SetGiftType sets the "gift_type" field.
+func (u *TransferOrderUpsertOne) SetGiftType(v enums.TransferOrderGiftType) *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetGiftType(v)
+	})
+}
+
+// UpdateGiftType sets the "gift_type" field to the value that was provided on create.
+func (u *TransferOrderUpsertOne) UpdateGiftType() *TransferOrderUpsertOne {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateGiftType()
 	})
 }
 
@@ -1703,6 +1759,20 @@ func (u *TransferOrderUpsertBulk) AddOperateUserID(v int64) *TransferOrderUpsert
 func (u *TransferOrderUpsertBulk) UpdateOperateUserID() *TransferOrderUpsertBulk {
 	return u.Update(func(s *TransferOrderUpsert) {
 		s.UpdateOperateUserID()
+	})
+}
+
+// SetGiftType sets the "gift_type" field.
+func (u *TransferOrderUpsertBulk) SetGiftType(v enums.TransferOrderGiftType) *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.SetGiftType(v)
+	})
+}
+
+// UpdateGiftType sets the "gift_type" field to the value that was provided on create.
+func (u *TransferOrderUpsertBulk) UpdateGiftType() *TransferOrderUpsertBulk {
+	return u.Update(func(s *TransferOrderUpsert) {
+		s.UpdateGiftType()
 	})
 }
 

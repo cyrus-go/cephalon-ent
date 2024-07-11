@@ -55,6 +55,8 @@ type TransferOrder struct {
 	OutTransactionID string `json:"out_transaction_id"`
 	// 操作的用户 id，管理后台手动充值才有数据，默认为 0
 	OperateUserID int64 `json:"operate_user_id,string"`
+	// 充值订单活动赠送的类型
+	GiftType enums.TransferOrderGiftType `json:"gift_type"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransferOrderQuery when eager-loading is set.
 	Edges        TransferOrderEdges `json:"edges"`
@@ -161,7 +163,7 @@ func (*TransferOrder) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transferorder.FieldID, transferorder.FieldCreatedBy, transferorder.FieldUpdatedBy, transferorder.FieldSourceUserID, transferorder.FieldTargetUserID, transferorder.FieldSymbolID, transferorder.FieldAmount, transferorder.FieldSocialID, transferorder.FieldOperateUserID:
 			values[i] = new(sql.NullInt64)
-		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID:
+		case transferorder.FieldStatus, transferorder.FieldType, transferorder.FieldSerialNumber, transferorder.FieldThirdAPIResp, transferorder.FieldOutTransactionID, transferorder.FieldGiftType:
 			values[i] = new(sql.NullString)
 		case transferorder.FieldCreatedAt, transferorder.FieldUpdatedAt, transferorder.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -282,6 +284,12 @@ func (to *TransferOrder) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				to.OperateUserID = value.Int64
 			}
+		case transferorder.FieldGiftType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gift_type", values[i])
+			} else if value.Valid {
+				to.GiftType = enums.TransferOrderGiftType(value.String)
+			}
 		default:
 			to.selectValues.Set(columns[i], values[i])
 		}
@@ -395,6 +403,9 @@ func (to *TransferOrder) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("operate_user_id=")
 	builder.WriteString(fmt.Sprintf("%v", to.OperateUserID))
+	builder.WriteString(", ")
+	builder.WriteString("gift_type=")
+	builder.WriteString(fmt.Sprintf("%v", to.GiftType))
 	builder.WriteByte(')')
 	return builder.String()
 }

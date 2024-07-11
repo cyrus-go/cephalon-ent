@@ -72084,6 +72084,7 @@ type TransferOrderMutation struct {
 	out_transaction_id     *string
 	operate_user_id        *int64
 	addoperate_user_id     *int64
+	gift_type              *enums.TransferOrderGiftType
 	clearedFields          map[string]struct{}
 	source_user            *int64
 	clearedsource_user     bool
@@ -72876,6 +72877,42 @@ func (m *TransferOrderMutation) ResetOperateUserID() {
 	m.addoperate_user_id = nil
 }
 
+// SetGiftType sets the "gift_type" field.
+func (m *TransferOrderMutation) SetGiftType(eogt enums.TransferOrderGiftType) {
+	m.gift_type = &eogt
+}
+
+// GiftType returns the value of the "gift_type" field in the mutation.
+func (m *TransferOrderMutation) GiftType() (r enums.TransferOrderGiftType, exists bool) {
+	v := m.gift_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGiftType returns the old "gift_type" field's value of the TransferOrder entity.
+// If the TransferOrder object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferOrderMutation) OldGiftType(ctx context.Context) (v enums.TransferOrderGiftType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGiftType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGiftType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGiftType: %w", err)
+	}
+	return oldValue.GiftType, nil
+}
+
+// ResetGiftType resets all changes to the "gift_type" field.
+func (m *TransferOrderMutation) ResetGiftType() {
+	m.gift_type = nil
+}
+
 // ClearSourceUser clears the "source_user" edge to the User entity.
 func (m *TransferOrderMutation) ClearSourceUser() {
 	m.clearedsource_user = true
@@ -73124,7 +73161,7 @@ func (m *TransferOrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferOrderMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_by != nil {
 		fields = append(fields, transferorder.FieldCreatedBy)
 	}
@@ -73173,6 +73210,9 @@ func (m *TransferOrderMutation) Fields() []string {
 	if m.operate_user_id != nil {
 		fields = append(fields, transferorder.FieldOperateUserID)
 	}
+	if m.gift_type != nil {
+		fields = append(fields, transferorder.FieldGiftType)
+	}
 	return fields
 }
 
@@ -73213,6 +73253,8 @@ func (m *TransferOrderMutation) Field(name string) (ent.Value, bool) {
 		return m.OutTransactionID()
 	case transferorder.FieldOperateUserID:
 		return m.OperateUserID()
+	case transferorder.FieldGiftType:
+		return m.GiftType()
 	}
 	return nil, false
 }
@@ -73254,6 +73296,8 @@ func (m *TransferOrderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldOutTransactionID(ctx)
 	case transferorder.FieldOperateUserID:
 		return m.OldOperateUserID(ctx)
+	case transferorder.FieldGiftType:
+		return m.OldGiftType(ctx)
 	}
 	return nil, fmt.Errorf("unknown TransferOrder field %s", name)
 }
@@ -73374,6 +73418,13 @@ func (m *TransferOrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOperateUserID(v)
+		return nil
+	case transferorder.FieldGiftType:
+		v, ok := value.(enums.TransferOrderGiftType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGiftType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)
@@ -73531,6 +73582,9 @@ func (m *TransferOrderMutation) ResetField(name string) error {
 		return nil
 	case transferorder.FieldOperateUserID:
 		m.ResetOperateUserID()
+		return nil
+	case transferorder.FieldGiftType:
+		m.ResetGiftType()
 		return nil
 	}
 	return fmt.Errorf("unknown TransferOrder field %s", name)

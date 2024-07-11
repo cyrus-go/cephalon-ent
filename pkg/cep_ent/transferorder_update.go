@@ -271,6 +271,20 @@ func (tou *TransferOrderUpdate) AddOperateUserID(i int64) *TransferOrderUpdate {
 	return tou
 }
 
+// SetGiftType sets the "gift_type" field.
+func (tou *TransferOrderUpdate) SetGiftType(eogt enums.TransferOrderGiftType) *TransferOrderUpdate {
+	tou.mutation.SetGiftType(eogt)
+	return tou
+}
+
+// SetNillableGiftType sets the "gift_type" field if the given value is not nil.
+func (tou *TransferOrderUpdate) SetNillableGiftType(eogt *enums.TransferOrderGiftType) *TransferOrderUpdate {
+	if eogt != nil {
+		tou.SetGiftType(*eogt)
+	}
+	return tou
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (tou *TransferOrderUpdate) SetSourceUser(u *User) *TransferOrderUpdate {
 	return tou.SetSourceUserID(u.ID)
@@ -443,6 +457,11 @@ func (tou *TransferOrderUpdate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "TransferOrder.type": %w`, err)}
 		}
 	}
+	if v, ok := tou.mutation.GiftType(); ok {
+		if err := transferorder.GiftTypeValidator(v); err != nil {
+			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "TransferOrder.gift_type": %w`, err)}
+		}
+	}
 	if _, ok := tou.mutation.SourceUserID(); tou.mutation.SourceUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.source_user"`)
 	}
@@ -517,6 +536,9 @@ func (tou *TransferOrderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tou.mutation.AddedOperateUserID(); ok {
 		_spec.AddField(transferorder.FieldOperateUserID, field.TypeInt64, value)
+	}
+	if value, ok := tou.mutation.GiftType(); ok {
+		_spec.SetField(transferorder.FieldGiftType, field.TypeEnum, value)
 	}
 	if tou.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -966,6 +988,20 @@ func (touo *TransferOrderUpdateOne) AddOperateUserID(i int64) *TransferOrderUpda
 	return touo
 }
 
+// SetGiftType sets the "gift_type" field.
+func (touo *TransferOrderUpdateOne) SetGiftType(eogt enums.TransferOrderGiftType) *TransferOrderUpdateOne {
+	touo.mutation.SetGiftType(eogt)
+	return touo
+}
+
+// SetNillableGiftType sets the "gift_type" field if the given value is not nil.
+func (touo *TransferOrderUpdateOne) SetNillableGiftType(eogt *enums.TransferOrderGiftType) *TransferOrderUpdateOne {
+	if eogt != nil {
+		touo.SetGiftType(*eogt)
+	}
+	return touo
+}
+
 // SetSourceUser sets the "source_user" edge to the User entity.
 func (touo *TransferOrderUpdateOne) SetSourceUser(u *User) *TransferOrderUpdateOne {
 	return touo.SetSourceUserID(u.ID)
@@ -1151,6 +1187,11 @@ func (touo *TransferOrderUpdateOne) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "TransferOrder.type": %w`, err)}
 		}
 	}
+	if v, ok := touo.mutation.GiftType(); ok {
+		if err := transferorder.GiftTypeValidator(v); err != nil {
+			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "TransferOrder.gift_type": %w`, err)}
+		}
+	}
 	if _, ok := touo.mutation.SourceUserID(); touo.mutation.SourceUserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "TransferOrder.source_user"`)
 	}
@@ -1242,6 +1283,9 @@ func (touo *TransferOrderUpdateOne) sqlSave(ctx context.Context) (_node *Transfe
 	}
 	if value, ok := touo.mutation.AddedOperateUserID(); ok {
 		_spec.AddField(transferorder.FieldOperateUserID, field.TypeInt64, value)
+	}
+	if value, ok := touo.mutation.GiftType(); ok {
+		_spec.SetField(transferorder.FieldGiftType, field.TypeEnum, value)
 	}
 	if touo.mutation.SourceUserCleared() {
 		edge := &sqlgraph.EdgeSpec{

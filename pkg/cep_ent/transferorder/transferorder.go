@@ -48,6 +48,8 @@ const (
 	FieldOutTransactionID = "out_transaction_id"
 	// FieldOperateUserID holds the string denoting the operate_user_id field in the database.
 	FieldOperateUserID = "operate_user_id"
+	// FieldGiftType holds the string denoting the gift_type field in the database.
+	FieldGiftType = "gift_type"
 	// EdgeSourceUser holds the string denoting the source_user edge name in mutations.
 	EdgeSourceUser = "source_user"
 	// EdgeTargetUser holds the string denoting the target_user edge name in mutations.
@@ -125,6 +127,7 @@ var Columns = []string{
 	FieldThirdAPIResp,
 	FieldOutTransactionID,
 	FieldOperateUserID,
+	FieldGiftType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -216,6 +219,18 @@ func TypeValidator(_type enums.TransferOrderType) error {
 	}
 }
 
+const DefaultGiftType enums.TransferOrderGiftType = "no"
+
+// GiftTypeValidator is a validator for the "gift_type" field enum values. It is called by the builders before save.
+func GiftTypeValidator(gt enums.TransferOrderGiftType) error {
+	switch gt {
+	case "no", "register", "survey":
+		return nil
+	default:
+		return fmt.Errorf("transferorder: invalid enum value for gift_type field: %q", gt)
+	}
+}
+
 // OrderOption defines the ordering options for the TransferOrder queries.
 type OrderOption func(*sql.Selector)
 
@@ -302,6 +317,11 @@ func ByOutTransactionID(opts ...sql.OrderTermOption) OrderOption {
 // ByOperateUserID orders the results by the operate_user_id field.
 func ByOperateUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOperateUserID, opts...).ToFunc()
+}
+
+// ByGiftType orders the results by the gift_type field.
+func ByGiftType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGiftType, opts...).ToFunc()
 }
 
 // BySourceUserField orders the results by source_user field.
