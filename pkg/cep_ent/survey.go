@@ -45,6 +45,8 @@ type Survey struct {
 	GiftType enums.SurveyGiftType `json:"gift_type"`
 	// 问卷描述信息
 	Desc string `json:"desc"`
+	// 问卷是否参加充值活动
+	IsGiftRecharge bool `json:"is_gift_recharge"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyQuery when eager-loading is set.
 	Edges        SurveyEdges `json:"edges"`
@@ -85,6 +87,8 @@ func (*Survey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case survey.FieldIsGiftRecharge:
+			values[i] = new(sql.NullBool)
 		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy, survey.FieldSortNum, survey.FieldGiftCepAmount:
 			values[i] = new(sql.NullInt64)
 		case survey.FieldTitle, survey.FieldGroup, survey.FieldGiftType, survey.FieldDesc:
@@ -192,6 +196,12 @@ func (s *Survey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.Desc = value.String
 			}
+		case survey.FieldIsGiftRecharge:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_gift_recharge", values[i])
+			} else if value.Valid {
+				s.IsGiftRecharge = value.Bool
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -280,6 +290,9 @@ func (s *Survey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("desc=")
 	builder.WriteString(s.Desc)
+	builder.WriteString(", ")
+	builder.WriteString("is_gift_recharge=")
+	builder.WriteString(fmt.Sprintf("%v", s.IsGiftRecharge))
 	builder.WriteByte(')')
 	return builder.String()
 }

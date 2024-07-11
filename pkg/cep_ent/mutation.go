@@ -66624,6 +66624,7 @@ type SurveyMutation struct {
 	addgift_cep_amount      *int64
 	gift_type               *enums.SurveyGiftType
 	desc                    *string
+	is_gift_recharge        *bool
 	clearedFields           map[string]struct{}
 	survey_questions        map[int64]struct{}
 	removedsurvey_questions map[int64]struct{}
@@ -67314,6 +67315,42 @@ func (m *SurveyMutation) ResetDesc() {
 	m.desc = nil
 }
 
+// SetIsGiftRecharge sets the "is_gift_recharge" field.
+func (m *SurveyMutation) SetIsGiftRecharge(b bool) {
+	m.is_gift_recharge = &b
+}
+
+// IsGiftRecharge returns the value of the "is_gift_recharge" field in the mutation.
+func (m *SurveyMutation) IsGiftRecharge() (r bool, exists bool) {
+	v := m.is_gift_recharge
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsGiftRecharge returns the old "is_gift_recharge" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldIsGiftRecharge(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsGiftRecharge is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsGiftRecharge requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsGiftRecharge: %w", err)
+	}
+	return oldValue.IsGiftRecharge, nil
+}
+
+// ResetIsGiftRecharge resets all changes to the "is_gift_recharge" field.
+func (m *SurveyMutation) ResetIsGiftRecharge() {
+	m.is_gift_recharge = nil
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by ids.
 func (m *SurveyMutation) AddSurveyQuestionIDs(ids ...int64) {
 	if m.survey_questions == nil {
@@ -67456,7 +67493,7 @@ func (m *SurveyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SurveyMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_by != nil {
 		fields = append(fields, survey.FieldCreatedBy)
 	}
@@ -67496,6 +67533,9 @@ func (m *SurveyMutation) Fields() []string {
 	if m.desc != nil {
 		fields = append(fields, survey.FieldDesc)
 	}
+	if m.is_gift_recharge != nil {
+		fields = append(fields, survey.FieldIsGiftRecharge)
+	}
 	return fields
 }
 
@@ -67530,6 +67570,8 @@ func (m *SurveyMutation) Field(name string) (ent.Value, bool) {
 		return m.GiftType()
 	case survey.FieldDesc:
 		return m.Desc()
+	case survey.FieldIsGiftRecharge:
+		return m.IsGiftRecharge()
 	}
 	return nil, false
 }
@@ -67565,6 +67607,8 @@ func (m *SurveyMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldGiftType(ctx)
 	case survey.FieldDesc:
 		return m.OldDesc(ctx)
+	case survey.FieldIsGiftRecharge:
+		return m.OldIsGiftRecharge(ctx)
 	}
 	return nil, fmt.Errorf("unknown Survey field %s", name)
 }
@@ -67664,6 +67708,13 @@ func (m *SurveyMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDesc(v)
+		return nil
+	case survey.FieldIsGiftRecharge:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsGiftRecharge(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)
@@ -67818,6 +67869,9 @@ func (m *SurveyMutation) ResetField(name string) error {
 		return nil
 	case survey.FieldDesc:
 		m.ResetDesc()
+		return nil
+	case survey.FieldIsGiftRecharge:
+		m.ResetIsGiftRecharge()
 		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)

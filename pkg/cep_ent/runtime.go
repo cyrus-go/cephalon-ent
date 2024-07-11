@@ -2969,6 +2969,10 @@ func init() {
 	surveyDescDesc := surveyFields[7].Descriptor()
 	// survey.DefaultDesc holds the default value on creation for the desc field.
 	survey.DefaultDesc = surveyDescDesc.Default.(string)
+	// surveyDescIsGiftRecharge is the schema descriptor for is_gift_recharge field.
+	surveyDescIsGiftRecharge := surveyFields[8].Descriptor()
+	// survey.DefaultIsGiftRecharge holds the default value on creation for the is_gift_recharge field.
+	survey.DefaultIsGiftRecharge = surveyDescIsGiftRecharge.Default.(bool)
 	// surveyDescID is the schema descriptor for id field.
 	surveyDescID := surveyMixinFields0[0].Descriptor()
 	// survey.DefaultID holds the default value on creation for the id field.

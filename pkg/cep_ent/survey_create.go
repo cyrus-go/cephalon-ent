@@ -207,6 +207,20 @@ func (sc *SurveyCreate) SetNillableDesc(s *string) *SurveyCreate {
 	return sc
 }
 
+// SetIsGiftRecharge sets the "is_gift_recharge" field.
+func (sc *SurveyCreate) SetIsGiftRecharge(b bool) *SurveyCreate {
+	sc.mutation.SetIsGiftRecharge(b)
+	return sc
+}
+
+// SetNillableIsGiftRecharge sets the "is_gift_recharge" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableIsGiftRecharge(b *bool) *SurveyCreate {
+	if b != nil {
+		sc.SetIsGiftRecharge(*b)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *SurveyCreate) SetID(i int64) *SurveyCreate {
 	sc.mutation.SetID(i)
@@ -338,6 +352,10 @@ func (sc *SurveyCreate) defaults() {
 		v := survey.DefaultDesc
 		sc.mutation.SetDesc(v)
 	}
+	if _, ok := sc.mutation.IsGiftRecharge(); !ok {
+		v := survey.DefaultIsGiftRecharge
+		sc.mutation.SetIsGiftRecharge(v)
+	}
 	if _, ok := sc.mutation.ID(); !ok {
 		v := survey.DefaultID()
 		sc.mutation.SetID(v)
@@ -383,6 +401,9 @@ func (sc *SurveyCreate) check() error {
 	}
 	if _, ok := sc.mutation.Desc(); !ok {
 		return &ValidationError{Name: "desc", err: errors.New(`cep_ent: missing required field "Survey.desc"`)}
+	}
+	if _, ok := sc.mutation.IsGiftRecharge(); !ok {
+		return &ValidationError{Name: "is_gift_recharge", err: errors.New(`cep_ent: missing required field "Survey.is_gift_recharge"`)}
 	}
 	return nil
 }
@@ -468,6 +489,10 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.Desc(); ok {
 		_spec.SetField(survey.FieldDesc, field.TypeString, value)
 		_node.Desc = value
+	}
+	if value, ok := sc.mutation.IsGiftRecharge(); ok {
+		_spec.SetField(survey.FieldIsGiftRecharge, field.TypeBool, value)
+		_node.IsGiftRecharge = value
 	}
 	if nodes := sc.mutation.SurveyQuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -733,6 +758,18 @@ func (u *SurveyUpsert) UpdateDesc() *SurveyUpsert {
 	return u
 }
 
+// SetIsGiftRecharge sets the "is_gift_recharge" field.
+func (u *SurveyUpsert) SetIsGiftRecharge(v bool) *SurveyUpsert {
+	u.Set(survey.FieldIsGiftRecharge, v)
+	return u
+}
+
+// UpdateIsGiftRecharge sets the "is_gift_recharge" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateIsGiftRecharge() *SurveyUpsert {
+	u.SetExcluded(survey.FieldIsGiftRecharge)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -991,6 +1028,20 @@ func (u *SurveyUpsertOne) SetDesc(v string) *SurveyUpsertOne {
 func (u *SurveyUpsertOne) UpdateDesc() *SurveyUpsertOne {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateDesc()
+	})
+}
+
+// SetIsGiftRecharge sets the "is_gift_recharge" field.
+func (u *SurveyUpsertOne) SetIsGiftRecharge(v bool) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetIsGiftRecharge(v)
+	})
+}
+
+// UpdateIsGiftRecharge sets the "is_gift_recharge" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateIsGiftRecharge() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateIsGiftRecharge()
 	})
 }
 
@@ -1418,6 +1469,20 @@ func (u *SurveyUpsertBulk) SetDesc(v string) *SurveyUpsertBulk {
 func (u *SurveyUpsertBulk) UpdateDesc() *SurveyUpsertBulk {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateDesc()
+	})
+}
+
+// SetIsGiftRecharge sets the "is_gift_recharge" field.
+func (u *SurveyUpsertBulk) SetIsGiftRecharge(v bool) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetIsGiftRecharge(v)
+	})
+}
+
+// UpdateIsGiftRecharge sets the "is_gift_recharge" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateIsGiftRecharge() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateIsGiftRecharge()
 	})
 }
 

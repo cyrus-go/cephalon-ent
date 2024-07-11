@@ -42,6 +42,8 @@ const (
 	FieldGiftType = "gift_type"
 	// FieldDesc holds the string denoting the desc field in the database.
 	FieldDesc = "desc"
+	// FieldIsGiftRecharge holds the string denoting the is_gift_recharge field in the database.
+	FieldIsGiftRecharge = "is_gift_recharge"
 	// EdgeSurveyQuestions holds the string denoting the survey_questions edge name in mutations.
 	EdgeSurveyQuestions = "survey_questions"
 	// EdgeSurveyResponses holds the string denoting the survey_responses edge name in mutations.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldGiftCepAmount,
 	FieldGiftType,
 	FieldDesc,
+	FieldIsGiftRecharge,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -119,6 +122,8 @@ var (
 	DefaultGiftCepAmount int64
 	// DefaultDesc holds the default value on creation for the "desc" field.
 	DefaultDesc string
+	// DefaultIsGiftRecharge holds the default value on creation for the "is_gift_recharge" field.
+	DefaultIsGiftRecharge bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -206,6 +211,11 @@ func ByGiftType(opts ...sql.OrderTermOption) OrderOption {
 // ByDesc orders the results by the desc field.
 func ByDesc(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDesc, opts...).ToFunc()
+}
+
+// ByIsGiftRecharge orders the results by the is_gift_recharge field.
+func ByIsGiftRecharge(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsGiftRecharge, opts...).ToFunc()
 }
 
 // BySurveyQuestionsCount orders the results by survey_questions count.

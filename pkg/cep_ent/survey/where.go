@@ -116,6 +116,11 @@ func Desc(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldDesc, v))
 }
 
+// IsGiftRecharge applies equality check predicate on the "is_gift_recharge" field. It's identical to IsGiftRechargeEQ.
+func IsGiftRecharge(v bool) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldIsGiftRecharge, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldCreatedBy, v))
@@ -719,6 +724,16 @@ func DescEqualFold(v string) predicate.Survey {
 // DescContainsFold applies the ContainsFold predicate on the "desc" field.
 func DescContainsFold(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldContainsFold(FieldDesc, v))
+}
+
+// IsGiftRechargeEQ applies the EQ predicate on the "is_gift_recharge" field.
+func IsGiftRechargeEQ(v bool) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldIsGiftRecharge, v))
+}
+
+// IsGiftRechargeNEQ applies the NEQ predicate on the "is_gift_recharge" field.
+func IsGiftRechargeNEQ(v bool) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldIsGiftRecharge, v))
 }
 
 // HasSurveyQuestions applies the HasEdge predicate on the "survey_questions" edge.

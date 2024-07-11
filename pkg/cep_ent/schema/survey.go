@@ -23,6 +23,7 @@ func (Survey) Fields() []ent.Field {
 		field.Int64("gift_cep_amount").StructTag(`json:"gift_cep_amount"`).Default(0).Comment("提交问卷赠送的脑力值数量"),
 		field.Enum("gift_type").GoType(enums.SurveyGiftTypeSubmit).Default(string(enums.SurveyGiftTypeUnknown)).StructTag(`json:"gift_type"`).Comment("问卷赠送类型，提交赠送或审批赠送等"),
 		field.String("desc").StructTag(`json:"desc"`).Default("").Comment("问卷描述信息"),
+		field.Bool("is_gift_recharge").StructTag(`json:"is_gift_recharge"`).Default(false).Comment("问卷是否参加充值活动"),
 	}
 }
 
