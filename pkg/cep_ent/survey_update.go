@@ -260,6 +260,20 @@ func (su *SurveyUpdate) SetNillableIsGiftRecharge(b *bool) *SurveyUpdate {
 	return su
 }
 
+// SetBackgroundImage sets the "background_image" field.
+func (su *SurveyUpdate) SetBackgroundImage(s string) *SurveyUpdate {
+	su.mutation.SetBackgroundImage(s)
+	return su
+}
+
+// SetNillableBackgroundImage sets the "background_image" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableBackgroundImage(s *string) *SurveyUpdate {
+	if s != nil {
+		su.SetBackgroundImage(*s)
+	}
+	return su
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by IDs.
 func (su *SurveyUpdate) AddSurveyQuestionIDs(ids ...int64) *SurveyUpdate {
 	su.mutation.AddSurveyQuestionIDs(ids...)
@@ -460,6 +474,9 @@ func (su *SurveyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.IsGiftRecharge(); ok {
 		_spec.SetField(survey.FieldIsGiftRecharge, field.TypeBool, value)
+	}
+	if value, ok := su.mutation.BackgroundImage(); ok {
+		_spec.SetField(survey.FieldBackgroundImage, field.TypeString, value)
 	}
 	if su.mutation.SurveyQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -801,6 +818,20 @@ func (suo *SurveyUpdateOne) SetNillableIsGiftRecharge(b *bool) *SurveyUpdateOne 
 	return suo
 }
 
+// SetBackgroundImage sets the "background_image" field.
+func (suo *SurveyUpdateOne) SetBackgroundImage(s string) *SurveyUpdateOne {
+	suo.mutation.SetBackgroundImage(s)
+	return suo
+}
+
+// SetNillableBackgroundImage sets the "background_image" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableBackgroundImage(s *string) *SurveyUpdateOne {
+	if s != nil {
+		suo.SetBackgroundImage(*s)
+	}
+	return suo
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by IDs.
 func (suo *SurveyUpdateOne) AddSurveyQuestionIDs(ids ...int64) *SurveyUpdateOne {
 	suo.mutation.AddSurveyQuestionIDs(ids...)
@@ -1031,6 +1062,9 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (_node *Survey, err err
 	}
 	if value, ok := suo.mutation.IsGiftRecharge(); ok {
 		_spec.SetField(survey.FieldIsGiftRecharge, field.TypeBool, value)
+	}
+	if value, ok := suo.mutation.BackgroundImage(); ok {
+		_spec.SetField(survey.FieldBackgroundImage, field.TypeString, value)
 	}
 	if suo.mutation.SurveyQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -126,6 +126,11 @@ func IsGiftRecharge(v bool) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldIsGiftRecharge, v))
 }
 
+// BackgroundImage applies equality check predicate on the "background_image" field. It's identical to BackgroundImageEQ.
+func BackgroundImage(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldBackgroundImage, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldCreatedBy, v))
@@ -804,6 +809,71 @@ func IsGiftRechargeEQ(v bool) predicate.Survey {
 // IsGiftRechargeNEQ applies the NEQ predicate on the "is_gift_recharge" field.
 func IsGiftRechargeNEQ(v bool) predicate.Survey {
 	return predicate.Survey(sql.FieldNEQ(FieldIsGiftRecharge, v))
+}
+
+// BackgroundImageEQ applies the EQ predicate on the "background_image" field.
+func BackgroundImageEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldBackgroundImage, v))
+}
+
+// BackgroundImageNEQ applies the NEQ predicate on the "background_image" field.
+func BackgroundImageNEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldBackgroundImage, v))
+}
+
+// BackgroundImageIn applies the In predicate on the "background_image" field.
+func BackgroundImageIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldBackgroundImage, vs...))
+}
+
+// BackgroundImageNotIn applies the NotIn predicate on the "background_image" field.
+func BackgroundImageNotIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldBackgroundImage, vs...))
+}
+
+// BackgroundImageGT applies the GT predicate on the "background_image" field.
+func BackgroundImageGT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldBackgroundImage, v))
+}
+
+// BackgroundImageGTE applies the GTE predicate on the "background_image" field.
+func BackgroundImageGTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldBackgroundImage, v))
+}
+
+// BackgroundImageLT applies the LT predicate on the "background_image" field.
+func BackgroundImageLT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldBackgroundImage, v))
+}
+
+// BackgroundImageLTE applies the LTE predicate on the "background_image" field.
+func BackgroundImageLTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldBackgroundImage, v))
+}
+
+// BackgroundImageContains applies the Contains predicate on the "background_image" field.
+func BackgroundImageContains(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContains(FieldBackgroundImage, v))
+}
+
+// BackgroundImageHasPrefix applies the HasPrefix predicate on the "background_image" field.
+func BackgroundImageHasPrefix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasPrefix(FieldBackgroundImage, v))
+}
+
+// BackgroundImageHasSuffix applies the HasSuffix predicate on the "background_image" field.
+func BackgroundImageHasSuffix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasSuffix(FieldBackgroundImage, v))
+}
+
+// BackgroundImageEqualFold applies the EqualFold predicate on the "background_image" field.
+func BackgroundImageEqualFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEqualFold(FieldBackgroundImage, v))
+}
+
+// BackgroundImageContainsFold applies the ContainsFold predicate on the "background_image" field.
+func BackgroundImageContainsFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContainsFold(FieldBackgroundImage, v))
 }
 
 // HasSurveyQuestions applies the HasEdge predicate on the "survey_questions" edge.

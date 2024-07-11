@@ -235,6 +235,20 @@ func (sc *SurveyCreate) SetNillableIsGiftRecharge(b *bool) *SurveyCreate {
 	return sc
 }
 
+// SetBackgroundImage sets the "background_image" field.
+func (sc *SurveyCreate) SetBackgroundImage(s string) *SurveyCreate {
+	sc.mutation.SetBackgroundImage(s)
+	return sc
+}
+
+// SetNillableBackgroundImage sets the "background_image" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableBackgroundImage(s *string) *SurveyCreate {
+	if s != nil {
+		sc.SetBackgroundImage(*s)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *SurveyCreate) SetID(i int64) *SurveyCreate {
 	sc.mutation.SetID(i)
@@ -374,6 +388,10 @@ func (sc *SurveyCreate) defaults() {
 		v := survey.DefaultIsGiftRecharge
 		sc.mutation.SetIsGiftRecharge(v)
 	}
+	if _, ok := sc.mutation.BackgroundImage(); !ok {
+		v := survey.DefaultBackgroundImage
+		sc.mutation.SetBackgroundImage(v)
+	}
 	if _, ok := sc.mutation.ID(); !ok {
 		v := survey.DefaultID()
 		sc.mutation.SetID(v)
@@ -425,6 +443,9 @@ func (sc *SurveyCreate) check() error {
 	}
 	if _, ok := sc.mutation.IsGiftRecharge(); !ok {
 		return &ValidationError{Name: "is_gift_recharge", err: errors.New(`cep_ent: missing required field "Survey.is_gift_recharge"`)}
+	}
+	if _, ok := sc.mutation.BackgroundImage(); !ok {
+		return &ValidationError{Name: "background_image", err: errors.New(`cep_ent: missing required field "Survey.background_image"`)}
 	}
 	return nil
 }
@@ -518,6 +539,10 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.IsGiftRecharge(); ok {
 		_spec.SetField(survey.FieldIsGiftRecharge, field.TypeBool, value)
 		_node.IsGiftRecharge = value
+	}
+	if value, ok := sc.mutation.BackgroundImage(); ok {
+		_spec.SetField(survey.FieldBackgroundImage, field.TypeString, value)
+		_node.BackgroundImage = value
 	}
 	if nodes := sc.mutation.SurveyQuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -807,6 +832,18 @@ func (u *SurveyUpsert) UpdateIsGiftRecharge() *SurveyUpsert {
 	return u
 }
 
+// SetBackgroundImage sets the "background_image" field.
+func (u *SurveyUpsert) SetBackgroundImage(v string) *SurveyUpsert {
+	u.Set(survey.FieldBackgroundImage, v)
+	return u
+}
+
+// UpdateBackgroundImage sets the "background_image" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateBackgroundImage() *SurveyUpsert {
+	u.SetExcluded(survey.FieldBackgroundImage)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1093,6 +1130,20 @@ func (u *SurveyUpsertOne) SetIsGiftRecharge(v bool) *SurveyUpsertOne {
 func (u *SurveyUpsertOne) UpdateIsGiftRecharge() *SurveyUpsertOne {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateIsGiftRecharge()
+	})
+}
+
+// SetBackgroundImage sets the "background_image" field.
+func (u *SurveyUpsertOne) SetBackgroundImage(v string) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetBackgroundImage(v)
+	})
+}
+
+// UpdateBackgroundImage sets the "background_image" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateBackgroundImage() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateBackgroundImage()
 	})
 }
 
@@ -1548,6 +1599,20 @@ func (u *SurveyUpsertBulk) SetIsGiftRecharge(v bool) *SurveyUpsertBulk {
 func (u *SurveyUpsertBulk) UpdateIsGiftRecharge() *SurveyUpsertBulk {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateIsGiftRecharge()
+	})
+}
+
+// SetBackgroundImage sets the "background_image" field.
+func (u *SurveyUpsertBulk) SetBackgroundImage(v string) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetBackgroundImage(v)
+	})
+}
+
+// UpdateBackgroundImage sets the "background_image" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateBackgroundImage() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateBackgroundImage()
 	})
 }
 

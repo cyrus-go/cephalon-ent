@@ -2190,6 +2190,7 @@ var (
 		{Name: "hint", Type: field.TypeString, Comment: "问卷提示信息", Default: ""},
 		{Name: "desc", Type: field.TypeString, Comment: "问卷描述信息", Default: ""},
 		{Name: "is_gift_recharge", Type: field.TypeBool, Comment: "问卷是否参加充值活动", Default: false},
+		{Name: "background_image", Type: field.TypeString, Comment: "问卷背景图", Default: ""},
 	}
 	// SurveysTable holds the schema information for the "surveys" table.
 	SurveysTable = &schema.Table{

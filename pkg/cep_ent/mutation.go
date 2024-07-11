@@ -66626,6 +66626,7 @@ type SurveyMutation struct {
 	hint                    *string
 	desc                    *string
 	is_gift_recharge        *bool
+	background_image        *string
 	clearedFields           map[string]struct{}
 	survey_questions        map[int64]struct{}
 	removedsurvey_questions map[int64]struct{}
@@ -67388,6 +67389,42 @@ func (m *SurveyMutation) ResetIsGiftRecharge() {
 	m.is_gift_recharge = nil
 }
 
+// SetBackgroundImage sets the "background_image" field.
+func (m *SurveyMutation) SetBackgroundImage(s string) {
+	m.background_image = &s
+}
+
+// BackgroundImage returns the value of the "background_image" field in the mutation.
+func (m *SurveyMutation) BackgroundImage() (r string, exists bool) {
+	v := m.background_image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBackgroundImage returns the old "background_image" field's value of the Survey entity.
+// If the Survey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SurveyMutation) OldBackgroundImage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBackgroundImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBackgroundImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBackgroundImage: %w", err)
+	}
+	return oldValue.BackgroundImage, nil
+}
+
+// ResetBackgroundImage resets all changes to the "background_image" field.
+func (m *SurveyMutation) ResetBackgroundImage() {
+	m.background_image = nil
+}
+
 // AddSurveyQuestionIDs adds the "survey_questions" edge to the SurveyQuestion entity by ids.
 func (m *SurveyMutation) AddSurveyQuestionIDs(ids ...int64) {
 	if m.survey_questions == nil {
@@ -67530,7 +67567,7 @@ func (m *SurveyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SurveyMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_by != nil {
 		fields = append(fields, survey.FieldCreatedBy)
 	}
@@ -67576,6 +67613,9 @@ func (m *SurveyMutation) Fields() []string {
 	if m.is_gift_recharge != nil {
 		fields = append(fields, survey.FieldIsGiftRecharge)
 	}
+	if m.background_image != nil {
+		fields = append(fields, survey.FieldBackgroundImage)
+	}
 	return fields
 }
 
@@ -67614,6 +67654,8 @@ func (m *SurveyMutation) Field(name string) (ent.Value, bool) {
 		return m.Desc()
 	case survey.FieldIsGiftRecharge:
 		return m.IsGiftRecharge()
+	case survey.FieldBackgroundImage:
+		return m.BackgroundImage()
 	}
 	return nil, false
 }
@@ -67653,6 +67695,8 @@ func (m *SurveyMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDesc(ctx)
 	case survey.FieldIsGiftRecharge:
 		return m.OldIsGiftRecharge(ctx)
+	case survey.FieldBackgroundImage:
+		return m.OldBackgroundImage(ctx)
 	}
 	return nil, fmt.Errorf("unknown Survey field %s", name)
 }
@@ -67766,6 +67810,13 @@ func (m *SurveyMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsGiftRecharge(v)
+		return nil
+	case survey.FieldBackgroundImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBackgroundImage(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)
@@ -67926,6 +67977,9 @@ func (m *SurveyMutation) ResetField(name string) error {
 		return nil
 	case survey.FieldIsGiftRecharge:
 		m.ResetIsGiftRecharge()
+		return nil
+	case survey.FieldBackgroundImage:
+		m.ResetBackgroundImage()
 		return nil
 	}
 	return fmt.Errorf("unknown Survey field %s", name)

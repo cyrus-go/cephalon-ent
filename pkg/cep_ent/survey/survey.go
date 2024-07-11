@@ -46,6 +46,8 @@ const (
 	FieldDesc = "desc"
 	// FieldIsGiftRecharge holds the string denoting the is_gift_recharge field in the database.
 	FieldIsGiftRecharge = "is_gift_recharge"
+	// FieldBackgroundImage holds the string denoting the background_image field in the database.
+	FieldBackgroundImage = "background_image"
 	// EdgeSurveyQuestions holds the string denoting the survey_questions edge name in mutations.
 	EdgeSurveyQuestions = "survey_questions"
 	// EdgeSurveyResponses holds the string denoting the survey_responses edge name in mutations.
@@ -86,6 +88,7 @@ var Columns = []string{
 	FieldHint,
 	FieldDesc,
 	FieldIsGiftRecharge,
+	FieldBackgroundImage,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -129,6 +132,8 @@ var (
 	DefaultDesc string
 	// DefaultIsGiftRecharge holds the default value on creation for the "is_gift_recharge" field.
 	DefaultIsGiftRecharge bool
+	// DefaultBackgroundImage holds the default value on creation for the "background_image" field.
+	DefaultBackgroundImage string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -226,6 +231,11 @@ func ByDesc(opts ...sql.OrderTermOption) OrderOption {
 // ByIsGiftRecharge orders the results by the is_gift_recharge field.
 func ByIsGiftRecharge(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsGiftRecharge, opts...).ToFunc()
+}
+
+// ByBackgroundImage orders the results by the background_image field.
+func ByBackgroundImage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBackgroundImage, opts...).ToFunc()
 }
 
 // BySurveyQuestionsCount orders the results by survey_questions count.

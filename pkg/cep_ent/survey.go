@@ -49,6 +49,8 @@ type Survey struct {
 	Desc string `json:"desc"`
 	// 问卷是否参加充值活动
 	IsGiftRecharge bool `json:"is_gift_recharge"`
+	// 问卷背景图
+	BackgroundImage string `json:"background_image"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyQuery when eager-loading is set.
 	Edges        SurveyEdges `json:"edges"`
@@ -93,7 +95,7 @@ func (*Survey) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy, survey.FieldSortNum, survey.FieldGiftCepAmount:
 			values[i] = new(sql.NullInt64)
-		case survey.FieldTitle, survey.FieldGroup, survey.FieldGiftType, survey.FieldHint, survey.FieldDesc:
+		case survey.FieldTitle, survey.FieldGroup, survey.FieldGiftType, survey.FieldHint, survey.FieldDesc, survey.FieldBackgroundImage:
 			values[i] = new(sql.NullString)
 		case survey.FieldCreatedAt, survey.FieldUpdatedAt, survey.FieldDeletedAt, survey.FieldStartedAt, survey.FieldEndedAt:
 			values[i] = new(sql.NullTime)
@@ -210,6 +212,12 @@ func (s *Survey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.IsGiftRecharge = value.Bool
 			}
+		case survey.FieldBackgroundImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field background_image", values[i])
+			} else if value.Valid {
+				s.BackgroundImage = value.String
+			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
 		}
@@ -304,6 +312,9 @@ func (s *Survey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_gift_recharge=")
 	builder.WriteString(fmt.Sprintf("%v", s.IsGiftRecharge))
+	builder.WriteString(", ")
+	builder.WriteString("background_image=")
+	builder.WriteString(s.BackgroundImage)
 	builder.WriteByte(')')
 	return builder.String()
 }

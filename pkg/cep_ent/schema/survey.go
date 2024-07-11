@@ -25,6 +25,7 @@ func (Survey) Fields() []ent.Field {
 		field.String("hint").StructTag(`json:"hint"`).Default("").Comment("问卷提示信息"),
 		field.String("desc").StructTag(`json:"desc"`).Default("").Comment("问卷描述信息"),
 		field.Bool("is_gift_recharge").StructTag(`json:"is_gift_recharge"`).Default(false).Comment("问卷是否参加充值活动"),
+		field.String("background_image").StructTag(`json:"background_image"`).Default("").Comment("问卷背景图"),
 	}
 }
 
