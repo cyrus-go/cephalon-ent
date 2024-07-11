@@ -40,6 +40,8 @@ const (
 	FieldGiftCepAmount = "gift_cep_amount"
 	// FieldGiftType holds the string denoting the gift_type field in the database.
 	FieldGiftType = "gift_type"
+	// FieldHint holds the string denoting the hint field in the database.
+	FieldHint = "hint"
 	// FieldDesc holds the string denoting the desc field in the database.
 	FieldDesc = "desc"
 	// FieldIsGiftRecharge holds the string denoting the is_gift_recharge field in the database.
@@ -81,6 +83,7 @@ var Columns = []string{
 	FieldGroup,
 	FieldGiftCepAmount,
 	FieldGiftType,
+	FieldHint,
 	FieldDesc,
 	FieldIsGiftRecharge,
 }
@@ -120,6 +123,8 @@ var (
 	DefaultGroup string
 	// DefaultGiftCepAmount holds the default value on creation for the "gift_cep_amount" field.
 	DefaultGiftCepAmount int64
+	// DefaultHint holds the default value on creation for the "hint" field.
+	DefaultHint string
 	// DefaultDesc holds the default value on creation for the "desc" field.
 	DefaultDesc string
 	// DefaultIsGiftRecharge holds the default value on creation for the "is_gift_recharge" field.
@@ -206,6 +211,11 @@ func ByGiftCepAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByGiftType orders the results by the gift_type field.
 func ByGiftType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGiftType, opts...).ToFunc()
+}
+
+// ByHint orders the results by the hint field.
+func ByHint(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHint, opts...).ToFunc()
 }
 
 // ByDesc orders the results by the desc field.

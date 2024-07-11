@@ -2187,6 +2187,7 @@ var (
 		{Name: "group", Type: field.TypeString, Comment: "问卷分组（自定义，可以为空），同组问卷可以根据序号强关联", Default: ""},
 		{Name: "gift_cep_amount", Type: field.TypeInt64, Comment: "提交问卷赠送的脑力值数量", Default: 0},
 		{Name: "gift_type", Type: field.TypeEnum, Comment: "问卷赠送类型，提交赠送或审批赠送等", Enums: []string{"unknown", "submit", "approve"}, Default: "unknown"},
+		{Name: "hint", Type: field.TypeString, Comment: "问卷提示信息", Default: ""},
 		{Name: "desc", Type: field.TypeString, Comment: "问卷描述信息", Default: ""},
 		{Name: "is_gift_recharge", Type: field.TypeBool, Comment: "问卷是否参加充值活动", Default: false},
 	}

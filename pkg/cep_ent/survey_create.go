@@ -193,6 +193,20 @@ func (sc *SurveyCreate) SetNillableGiftType(egt *enums.SurveyGiftType) *SurveyCr
 	return sc
 }
 
+// SetHint sets the "hint" field.
+func (sc *SurveyCreate) SetHint(s string) *SurveyCreate {
+	sc.mutation.SetHint(s)
+	return sc
+}
+
+// SetNillableHint sets the "hint" field if the given value is not nil.
+func (sc *SurveyCreate) SetNillableHint(s *string) *SurveyCreate {
+	if s != nil {
+		sc.SetHint(*s)
+	}
+	return sc
+}
+
 // SetDesc sets the "desc" field.
 func (sc *SurveyCreate) SetDesc(s string) *SurveyCreate {
 	sc.mutation.SetDesc(s)
@@ -348,6 +362,10 @@ func (sc *SurveyCreate) defaults() {
 		v := survey.DefaultGiftType
 		sc.mutation.SetGiftType(v)
 	}
+	if _, ok := sc.mutation.Hint(); !ok {
+		v := survey.DefaultHint
+		sc.mutation.SetHint(v)
+	}
 	if _, ok := sc.mutation.Desc(); !ok {
 		v := survey.DefaultDesc
 		sc.mutation.SetDesc(v)
@@ -398,6 +416,9 @@ func (sc *SurveyCreate) check() error {
 		if err := survey.GiftTypeValidator(v); err != nil {
 			return &ValidationError{Name: "gift_type", err: fmt.Errorf(`cep_ent: validator failed for field "Survey.gift_type": %w`, err)}
 		}
+	}
+	if _, ok := sc.mutation.Hint(); !ok {
+		return &ValidationError{Name: "hint", err: errors.New(`cep_ent: missing required field "Survey.hint"`)}
 	}
 	if _, ok := sc.mutation.Desc(); !ok {
 		return &ValidationError{Name: "desc", err: errors.New(`cep_ent: missing required field "Survey.desc"`)}
@@ -485,6 +506,10 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.GiftType(); ok {
 		_spec.SetField(survey.FieldGiftType, field.TypeEnum, value)
 		_node.GiftType = value
+	}
+	if value, ok := sc.mutation.Hint(); ok {
+		_spec.SetField(survey.FieldHint, field.TypeString, value)
+		_node.Hint = value
 	}
 	if value, ok := sc.mutation.Desc(); ok {
 		_spec.SetField(survey.FieldDesc, field.TypeString, value)
@@ -743,6 +768,18 @@ func (u *SurveyUpsert) SetGiftType(v enums.SurveyGiftType) *SurveyUpsert {
 // UpdateGiftType sets the "gift_type" field to the value that was provided on create.
 func (u *SurveyUpsert) UpdateGiftType() *SurveyUpsert {
 	u.SetExcluded(survey.FieldGiftType)
+	return u
+}
+
+// SetHint sets the "hint" field.
+func (u *SurveyUpsert) SetHint(v string) *SurveyUpsert {
+	u.Set(survey.FieldHint, v)
+	return u
+}
+
+// UpdateHint sets the "hint" field to the value that was provided on create.
+func (u *SurveyUpsert) UpdateHint() *SurveyUpsert {
+	u.SetExcluded(survey.FieldHint)
 	return u
 }
 
@@ -1014,6 +1051,20 @@ func (u *SurveyUpsertOne) SetGiftType(v enums.SurveyGiftType) *SurveyUpsertOne {
 func (u *SurveyUpsertOne) UpdateGiftType() *SurveyUpsertOne {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateGiftType()
+	})
+}
+
+// SetHint sets the "hint" field.
+func (u *SurveyUpsertOne) SetHint(v string) *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetHint(v)
+	})
+}
+
+// UpdateHint sets the "hint" field to the value that was provided on create.
+func (u *SurveyUpsertOne) UpdateHint() *SurveyUpsertOne {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateHint()
 	})
 }
 
@@ -1455,6 +1506,20 @@ func (u *SurveyUpsertBulk) SetGiftType(v enums.SurveyGiftType) *SurveyUpsertBulk
 func (u *SurveyUpsertBulk) UpdateGiftType() *SurveyUpsertBulk {
 	return u.Update(func(s *SurveyUpsert) {
 		s.UpdateGiftType()
+	})
+}
+
+// SetHint sets the "hint" field.
+func (u *SurveyUpsertBulk) SetHint(v string) *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.SetHint(v)
+	})
+}
+
+// UpdateHint sets the "hint" field to the value that was provided on create.
+func (u *SurveyUpsertBulk) UpdateHint() *SurveyUpsertBulk {
+	return u.Update(func(s *SurveyUpsert) {
+		s.UpdateHint()
 	})
 }
 

@@ -218,6 +218,20 @@ func (su *SurveyUpdate) SetNillableGiftType(egt *enums.SurveyGiftType) *SurveyUp
 	return su
 }
 
+// SetHint sets the "hint" field.
+func (su *SurveyUpdate) SetHint(s string) *SurveyUpdate {
+	su.mutation.SetHint(s)
+	return su
+}
+
+// SetNillableHint sets the "hint" field if the given value is not nil.
+func (su *SurveyUpdate) SetNillableHint(s *string) *SurveyUpdate {
+	if s != nil {
+		su.SetHint(*s)
+	}
+	return su
+}
+
 // SetDesc sets the "desc" field.
 func (su *SurveyUpdate) SetDesc(s string) *SurveyUpdate {
 	su.mutation.SetDesc(s)
@@ -437,6 +451,9 @@ func (su *SurveyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.GiftType(); ok {
 		_spec.SetField(survey.FieldGiftType, field.TypeEnum, value)
+	}
+	if value, ok := su.mutation.Hint(); ok {
+		_spec.SetField(survey.FieldHint, field.TypeString, value)
 	}
 	if value, ok := su.mutation.Desc(); ok {
 		_spec.SetField(survey.FieldDesc, field.TypeString, value)
@@ -742,6 +759,20 @@ func (suo *SurveyUpdateOne) SetNillableGiftType(egt *enums.SurveyGiftType) *Surv
 	return suo
 }
 
+// SetHint sets the "hint" field.
+func (suo *SurveyUpdateOne) SetHint(s string) *SurveyUpdateOne {
+	suo.mutation.SetHint(s)
+	return suo
+}
+
+// SetNillableHint sets the "hint" field if the given value is not nil.
+func (suo *SurveyUpdateOne) SetNillableHint(s *string) *SurveyUpdateOne {
+	if s != nil {
+		suo.SetHint(*s)
+	}
+	return suo
+}
+
 // SetDesc sets the "desc" field.
 func (suo *SurveyUpdateOne) SetDesc(s string) *SurveyUpdateOne {
 	suo.mutation.SetDesc(s)
@@ -991,6 +1022,9 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (_node *Survey, err err
 	}
 	if value, ok := suo.mutation.GiftType(); ok {
 		_spec.SetField(survey.FieldGiftType, field.TypeEnum, value)
+	}
+	if value, ok := suo.mutation.Hint(); ok {
+		_spec.SetField(survey.FieldHint, field.TypeString, value)
 	}
 	if value, ok := suo.mutation.Desc(); ok {
 		_spec.SetField(survey.FieldDesc, field.TypeString, value)

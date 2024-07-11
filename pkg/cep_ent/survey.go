@@ -43,6 +43,8 @@ type Survey struct {
 	GiftCepAmount int64 `json:"gift_cep_amount"`
 	// 问卷赠送类型，提交赠送或审批赠送等
 	GiftType enums.SurveyGiftType `json:"gift_type"`
+	// 问卷提示信息
+	Hint string `json:"hint"`
 	// 问卷描述信息
 	Desc string `json:"desc"`
 	// 问卷是否参加充值活动
@@ -91,7 +93,7 @@ func (*Survey) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case survey.FieldID, survey.FieldCreatedBy, survey.FieldUpdatedBy, survey.FieldSortNum, survey.FieldGiftCepAmount:
 			values[i] = new(sql.NullInt64)
-		case survey.FieldTitle, survey.FieldGroup, survey.FieldGiftType, survey.FieldDesc:
+		case survey.FieldTitle, survey.FieldGroup, survey.FieldGiftType, survey.FieldHint, survey.FieldDesc:
 			values[i] = new(sql.NullString)
 		case survey.FieldCreatedAt, survey.FieldUpdatedAt, survey.FieldDeletedAt, survey.FieldStartedAt, survey.FieldEndedAt:
 			values[i] = new(sql.NullTime)
@@ -190,6 +192,12 @@ func (s *Survey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.GiftType = enums.SurveyGiftType(value.String)
 			}
+		case survey.FieldHint:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field hint", values[i])
+			} else if value.Valid {
+				s.Hint = value.String
+			}
 		case survey.FieldDesc:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field desc", values[i])
@@ -287,6 +295,9 @@ func (s *Survey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("gift_type=")
 	builder.WriteString(fmt.Sprintf("%v", s.GiftType))
+	builder.WriteString(", ")
+	builder.WriteString("hint=")
+	builder.WriteString(s.Hint)
 	builder.WriteString(", ")
 	builder.WriteString("desc=")
 	builder.WriteString(s.Desc)

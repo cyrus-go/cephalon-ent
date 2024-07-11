@@ -111,6 +111,11 @@ func GiftCepAmount(v int64) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldGiftCepAmount, v))
 }
 
+// Hint applies equality check predicate on the "hint" field. It's identical to HintEQ.
+func Hint(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldHint, v))
+}
+
 // Desc applies equality check predicate on the "desc" field. It's identical to DescEQ.
 func Desc(v string) predicate.Survey {
 	return predicate.Survey(sql.FieldEQ(FieldDesc, v))
@@ -659,6 +664,71 @@ func GiftTypeNotIn(vs ...enums.SurveyGiftType) predicate.Survey {
 		v[i] = vs[i]
 	}
 	return predicate.Survey(sql.FieldNotIn(FieldGiftType, v...))
+}
+
+// HintEQ applies the EQ predicate on the "hint" field.
+func HintEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEQ(FieldHint, v))
+}
+
+// HintNEQ applies the NEQ predicate on the "hint" field.
+func HintNEQ(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldNEQ(FieldHint, v))
+}
+
+// HintIn applies the In predicate on the "hint" field.
+func HintIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldIn(FieldHint, vs...))
+}
+
+// HintNotIn applies the NotIn predicate on the "hint" field.
+func HintNotIn(vs ...string) predicate.Survey {
+	return predicate.Survey(sql.FieldNotIn(FieldHint, vs...))
+}
+
+// HintGT applies the GT predicate on the "hint" field.
+func HintGT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGT(FieldHint, v))
+}
+
+// HintGTE applies the GTE predicate on the "hint" field.
+func HintGTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldGTE(FieldHint, v))
+}
+
+// HintLT applies the LT predicate on the "hint" field.
+func HintLT(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLT(FieldHint, v))
+}
+
+// HintLTE applies the LTE predicate on the "hint" field.
+func HintLTE(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldLTE(FieldHint, v))
+}
+
+// HintContains applies the Contains predicate on the "hint" field.
+func HintContains(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContains(FieldHint, v))
+}
+
+// HintHasPrefix applies the HasPrefix predicate on the "hint" field.
+func HintHasPrefix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasPrefix(FieldHint, v))
+}
+
+// HintHasSuffix applies the HasSuffix predicate on the "hint" field.
+func HintHasSuffix(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldHasSuffix(FieldHint, v))
+}
+
+// HintEqualFold applies the EqualFold predicate on the "hint" field.
+func HintEqualFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldEqualFold(FieldHint, v))
+}
+
+// HintContainsFold applies the ContainsFold predicate on the "hint" field.
+func HintContainsFold(v string) predicate.Survey {
+	return predicate.Survey(sql.FieldContainsFold(FieldHint, v))
 }
 
 // DescEQ applies the EQ predicate on the "desc" field.
