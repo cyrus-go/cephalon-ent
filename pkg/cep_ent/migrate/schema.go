@@ -1378,6 +1378,7 @@ var (
 		{Name: "close_way", Type: field.TypeEnum, Comment: "任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭", Enums: []string{"unknown", "user", "balance_not_enough", "expired", "admin"}, Default: "unknown"},
 		{Name: "closed_at", Type: field.TypeTime, Nullable: true, Comment: "用戶关闭任务时间"},
 		{Name: "warning_times", Type: field.TypeInt64, Comment: "预警次数，任务运行时间超过一定时间会发送预警消息", Default: 0},
+		{Name: "remark", Type: field.TypeString, Comment: "备注信息", Default: ""},
 		{Name: "extra_service_missions", Type: field.TypeInt64, Nullable: true},
 		{Name: "key_pair_id", Type: field.TypeInt64, Comment: "任务创建者的密钥对 ID", Default: 0},
 		{Name: "mission_batch_id", Type: field.TypeInt64, Comment: "外键关联任务批次", Default: 0},
@@ -1393,31 +1394,31 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "missions_extra_services_missions",
-				Columns:    []*schema.Column{MissionsColumns[37]},
+				Columns:    []*schema.Column{MissionsColumns[38]},
 				RefColumns: []*schema.Column{ExtraServicesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "missions_hmac_key_pairs_created_missions",
-				Columns:    []*schema.Column{MissionsColumns[38]},
+				Columns:    []*schema.Column{MissionsColumns[39]},
 				RefColumns: []*schema.Column{HmacKeyPairsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_batches_missions",
-				Columns:    []*schema.Column{MissionsColumns[39]},
+				Columns:    []*schema.Column{MissionsColumns[40]},
 				RefColumns: []*schema.Column{MissionBatchesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_mission_kinds_missions",
-				Columns:    []*schema.Column{MissionsColumns[40]},
+				Columns:    []*schema.Column{MissionsColumns[41]},
 				RefColumns: []*schema.Column{MissionKindsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "missions_users_missions",
-				Columns:    []*schema.Column{MissionsColumns[41]},
+				Columns:    []*schema.Column{MissionsColumns[42]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -1426,17 +1427,17 @@ var (
 			{
 				Name:    "mission_mission_kind_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[40]},
+				Columns: []*schema.Column{MissionsColumns[41]},
 			},
 			{
 				Name:    "mission_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[41]},
+				Columns: []*schema.Column{MissionsColumns[42]},
 			},
 			{
 				Name:    "mission_mission_batch_id",
 				Unique:  false,
-				Columns: []*schema.Column{MissionsColumns[39]},
+				Columns: []*schema.Column{MissionsColumns[40]},
 			},
 		},
 	}

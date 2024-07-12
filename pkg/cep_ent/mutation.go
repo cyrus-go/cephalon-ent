@@ -40735,6 +40735,7 @@ type MissionMutation struct {
 	closed_at                     *time.Time
 	warning_times                 *int64
 	addwarning_times              *int64
+	remark                        *string
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
@@ -42552,6 +42553,42 @@ func (m *MissionMutation) ResetWarningTimes() {
 	m.addwarning_times = nil
 }
 
+// SetRemark sets the "remark" field.
+func (m *MissionMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *MissionMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldRemark(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *MissionMutation) ResetRemark() {
+	m.remark = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -43165,7 +43202,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 40)
+	fields := make([]string, 0, 41)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -43286,6 +43323,9 @@ func (m *MissionMutation) Fields() []string {
 	if m.warning_times != nil {
 		fields = append(fields, mission.FieldWarningTimes)
 	}
+	if m.remark != nil {
+		fields = append(fields, mission.FieldRemark)
+	}
 	return fields
 }
 
@@ -43374,6 +43414,8 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.ClosedAt()
 	case mission.FieldWarningTimes:
 		return m.WarningTimes()
+	case mission.FieldRemark:
+		return m.Remark()
 	}
 	return nil, false
 }
@@ -43463,6 +43505,8 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldClosedAt(ctx)
 	case mission.FieldWarningTimes:
 		return m.OldWarningTimes(ctx)
+	case mission.FieldRemark:
+		return m.OldRemark(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -43752,6 +43796,13 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetWarningTimes(v)
 		return nil
+	case mission.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -44040,6 +44091,9 @@ func (m *MissionMutation) ResetField(name string) error {
 		return nil
 	case mission.FieldWarningTimes:
 		m.ResetWarningTimes()
+		return nil
+	case mission.FieldRemark:
+		m.ResetRemark()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)

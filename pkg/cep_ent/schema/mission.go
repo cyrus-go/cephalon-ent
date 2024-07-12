@@ -55,6 +55,7 @@ func (Mission) Fields() []ent.Field {
 		field.Enum("close_way").GoType(enums.CloseWayUser).Default(string(enums.CloseWayUnknown)).StructTag(`json:"close_way"`).Comment("任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭"),
 		field.Time("closed_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"closed_at"`).Comment("用戶关闭任务时间"),
 		field.Int64("warning_times").Default(0).StructTag(`json:"warning_times"`).Comment("预警次数，任务运行时间超过一定时间会发送预警消息"),
+		field.String("remark").Default("").StructTag(`json:"remark"`).Comment("备注信息"),
 	}
 }
 

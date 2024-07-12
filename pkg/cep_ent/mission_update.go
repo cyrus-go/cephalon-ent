@@ -645,6 +645,20 @@ func (mu *MissionUpdate) AddWarningTimes(i int64) *MissionUpdate {
 	return mu
 }
 
+// SetRemark sets the "remark" field.
+func (mu *MissionUpdate) SetRemark(s string) *MissionUpdate {
+	mu.mutation.SetRemark(s)
+	return mu
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (mu *MissionUpdate) SetNillableRemark(s *string) *MissionUpdate {
+	if s != nil {
+		mu.SetRemark(*s)
+	}
+	return mu
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (mu *MissionUpdate) SetMissionKind(m *MissionKind) *MissionUpdate {
 	return mu.SetMissionKindID(m.ID)
@@ -1272,6 +1286,9 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.AddedWarningTimes(); ok {
 		_spec.AddField(mission.FieldWarningTimes, field.TypeInt64, value)
+	}
+	if value, ok := mu.mutation.Remark(); ok {
+		_spec.SetField(mission.FieldRemark, field.TypeString, value)
 	}
 	if mu.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2401,6 +2418,20 @@ func (muo *MissionUpdateOne) AddWarningTimes(i int64) *MissionUpdateOne {
 	return muo
 }
 
+// SetRemark sets the "remark" field.
+func (muo *MissionUpdateOne) SetRemark(s string) *MissionUpdateOne {
+	muo.mutation.SetRemark(s)
+	return muo
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableRemark(s *string) *MissionUpdateOne {
+	if s != nil {
+		muo.SetRemark(*s)
+	}
+	return muo
+}
+
 // SetMissionKind sets the "mission_kind" edge to the MissionKind entity.
 func (muo *MissionUpdateOne) SetMissionKind(m *MissionKind) *MissionUpdateOne {
 	return muo.SetMissionKindID(m.ID)
@@ -3058,6 +3089,9 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 	}
 	if value, ok := muo.mutation.AddedWarningTimes(); ok {
 		_spec.AddField(mission.FieldWarningTimes, field.TypeInt64, value)
+	}
+	if value, ok := muo.mutation.Remark(); ok {
+		_spec.SetField(mission.FieldRemark, field.TypeString, value)
 	}
 	if muo.mutation.MissionKindCleared() {
 		edge := &sqlgraph.EdgeSpec{

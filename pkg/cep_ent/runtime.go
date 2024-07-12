@@ -1991,6 +1991,10 @@ func init() {
 	missionDescWarningTimes := missionFields[34].Descriptor()
 	// mission.DefaultWarningTimes holds the default value on creation for the warning_times field.
 	mission.DefaultWarningTimes = missionDescWarningTimes.Default.(int64)
+	// missionDescRemark is the schema descriptor for remark field.
+	missionDescRemark := missionFields[35].Descriptor()
+	// mission.DefaultRemark holds the default value on creation for the remark field.
+	mission.DefaultRemark = missionDescRemark.Default.(string)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

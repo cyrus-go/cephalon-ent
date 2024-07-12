@@ -105,6 +105,8 @@ type Mission struct {
 	ClosedAt *time.Time `json:"closed_at"`
 	// 预警次数，任务运行时间超过一定时间会发送预警消息
 	WarningTimes int64 `json:"warning_times"`
+	// 备注信息
+	Remark string `json:"remark"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges                  MissionEdges `json:"edges"`
@@ -291,7 +293,7 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode, mission.FieldWarningTimes:
 			values[i] = new(sql.NullInt64)
-		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay:
+		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay, mission.FieldRemark:
 			values[i] = new(sql.NullString)
 		case mission.FieldCreatedAt, mission.FieldUpdatedAt, mission.FieldDeletedAt, mission.FieldStartedAt, mission.FieldFinishedAt, mission.FieldExpiredAt, mission.FieldFreeAt, mission.FieldClosedAt:
 			values[i] = new(sql.NullTime)
@@ -569,6 +571,12 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.WarningTimes = value.Int64
 			}
+		case mission.FieldRemark:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field remark", values[i])
+			} else if value.Valid {
+				m.Remark = value.String
+			}
 		case mission.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
@@ -804,6 +812,9 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("warning_times=")
 	builder.WriteString(fmt.Sprintf("%v", m.WarningTimes))
+	builder.WriteString(", ")
+	builder.WriteString("remark=")
+	builder.WriteString(m.Remark)
 	builder.WriteByte(')')
 	return builder.String()
 }

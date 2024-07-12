@@ -97,6 +97,8 @@ const (
 	FieldClosedAt = "closed_at"
 	// FieldWarningTimes holds the string denoting the warning_times field in the database.
 	FieldWarningTimes = "warning_times"
+	// FieldRemark holds the string denoting the remark field in the database.
+	FieldRemark = "remark"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -261,6 +263,7 @@ var Columns = []string{
 	FieldCloseWay,
 	FieldClosedAt,
 	FieldWarningTimes,
+	FieldRemark,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
@@ -343,6 +346,8 @@ var (
 	DefaultClosedAt time.Time
 	// DefaultWarningTimes holds the default value on creation for the "warning_times" field.
 	DefaultWarningTimes int64
+	// DefaultRemark holds the default value on creation for the "remark" field.
+	DefaultRemark string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -632,6 +637,11 @@ func ByClosedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByWarningTimes orders the results by the warning_times field.
 func ByWarningTimes(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWarningTimes, opts...).ToFunc()
+}
+
+// ByRemark orders the results by the remark field.
+func ByRemark(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRemark, opts...).ToFunc()
 }
 
 // ByMissionKindField orders the results by mission_kind field.

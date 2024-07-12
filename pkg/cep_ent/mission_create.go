@@ -564,6 +564,20 @@ func (mc *MissionCreate) SetNillableWarningTimes(i *int64) *MissionCreate {
 	return mc
 }
 
+// SetRemark sets the "remark" field.
+func (mc *MissionCreate) SetRemark(s string) *MissionCreate {
+	mc.mutation.SetRemark(s)
+	return mc
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableRemark(s *string) *MissionCreate {
+	if s != nil {
+		mc.SetRemark(*s)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -912,6 +926,10 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultWarningTimes
 		mc.mutation.SetWarningTimes(v)
 	}
+	if _, ok := mc.mutation.Remark(); !ok {
+		v := mission.DefaultRemark
+		mc.mutation.SetRemark(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -1047,6 +1065,9 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.WarningTimes(); !ok {
 		return &ValidationError{Name: "warning_times", err: errors.New(`cep_ent: missing required field "Mission.warning_times"`)}
+	}
+	if _, ok := mc.mutation.Remark(); !ok {
+		return &ValidationError{Name: "remark", err: errors.New(`cep_ent: missing required field "Mission.remark"`)}
 	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
@@ -1247,6 +1268,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 	if value, ok := mc.mutation.WarningTimes(); ok {
 		_spec.SetField(mission.FieldWarningTimes, field.TypeInt64, value)
 		_node.WarningTimes = value
+	}
+	if value, ok := mc.mutation.Remark(); ok {
+		_spec.SetField(mission.FieldRemark, field.TypeString, value)
+		_node.Remark = value
 	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -2064,6 +2089,18 @@ func (u *MissionUpsert) AddWarningTimes(v int64) *MissionUpsert {
 	return u
 }
 
+// SetRemark sets the "remark" field.
+func (u *MissionUpsert) SetRemark(v string) *MissionUpsert {
+	u.Set(mission.FieldRemark, v)
+	return u
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateRemark() *MissionUpsert {
+	u.SetExcluded(mission.FieldRemark)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -2756,6 +2793,20 @@ func (u *MissionUpsertOne) AddWarningTimes(v int64) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateWarningTimes() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateWarningTimes()
+	})
+}
+
+// SetRemark sets the "remark" field.
+func (u *MissionUpsertOne) SetRemark(v string) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetRemark(v)
+	})
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateRemark() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateRemark()
 	})
 }
 
@@ -3620,6 +3671,20 @@ func (u *MissionUpsertBulk) AddWarningTimes(v int64) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateWarningTimes() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateWarningTimes()
+	})
+}
+
+// SetRemark sets the "remark" field.
+func (u *MissionUpsertBulk) SetRemark(v string) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetRemark(v)
+	})
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateRemark() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateRemark()
 	})
 }
 
