@@ -131,6 +131,11 @@ func ParentID(v int64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldParentID, v))
 }
 
+// AppletParentID applies equality check predicate on the "applet_parent_id" field. It's identical to AppletParentIDEQ.
+func AppletParentID(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAppletParentID, v))
+}
+
 // PopVersion applies equality check predicate on the "pop_version" field. It's identical to PopVersionEQ.
 func PopVersion(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPopVersion, v))
@@ -889,6 +894,26 @@ func ParentIDIn(vs ...int64) predicate.User {
 // ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
 func ParentIDNotIn(vs ...int64) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldParentID, vs...))
+}
+
+// AppletParentIDEQ applies the EQ predicate on the "applet_parent_id" field.
+func AppletParentIDEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAppletParentID, v))
+}
+
+// AppletParentIDNEQ applies the NEQ predicate on the "applet_parent_id" field.
+func AppletParentIDNEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldAppletParentID, v))
+}
+
+// AppletParentIDIn applies the In predicate on the "applet_parent_id" field.
+func AppletParentIDIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldAppletParentID, vs...))
+}
+
+// AppletParentIDNotIn applies the NotIn predicate on the "applet_parent_id" field.
+func AppletParentIDNotIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldAppletParentID, vs...))
 }
 
 // PopVersionEQ applies the EQ predicate on the "pop_version" field.
@@ -1696,6 +1721,52 @@ func HasChildren() predicate.User {
 func HasChildrenWith(preds ...predicate.User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := newChildrenStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAppletParent applies the HasEdge predicate on the "applet_parent" edge.
+func HasAppletParent() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, AppletParentTable, AppletParentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAppletParentWith applies the HasEdge predicate on the "applet_parent" edge with a given conditions (other predicates).
+func HasAppletParentWith(preds ...predicate.User) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAppletParentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAppletChildren applies the HasEdge predicate on the "applet_children" edge.
+func HasAppletChildren() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AppletChildrenTable, AppletChildrenColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAppletChildrenWith applies the HasEdge predicate on the "applet_children" edge with a given conditions (other predicates).
+func HasAppletChildrenWith(preds ...predicate.User) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAppletChildrenStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -74,6 +74,8 @@ type UserQuery struct {
 	withUserDevices            *UserDeviceQuery
 	withParent                 *UserQuery
 	withChildren               *UserQuery
+	withAppletParent           *UserQuery
+	withAppletChildren         *UserQuery
 	withInvites                *InviteQuery
 	withCampaignOrders         *CampaignOrderQuery
 	withWallets                *WalletQuery
@@ -485,6 +487,50 @@ func (uq *UserQuery) QueryChildren() *UserQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.ChildrenTable, user.ChildrenColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAppletParent chains the current query on the "applet_parent" edge.
+func (uq *UserQuery) QueryAppletParent() *UserQuery {
+	query := (&UserClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.AppletParentTable, user.AppletParentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAppletChildren chains the current query on the "applet_children" edge.
+func (uq *UserQuery) QueryAppletChildren() *UserQuery {
+	query := (&UserClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AppletChildrenTable, user.AppletChildrenColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -1338,6 +1384,8 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withUserDevices:            uq.withUserDevices.Clone(),
 		withParent:                 uq.withParent.Clone(),
 		withChildren:               uq.withChildren.Clone(),
+		withAppletParent:           uq.withAppletParent.Clone(),
+		withAppletChildren:         uq.withAppletChildren.Clone(),
 		withInvites:                uq.withInvites.Clone(),
 		withCampaignOrders:         uq.withCampaignOrders.Clone(),
 		withWallets:                uq.withWallets.Clone(),
@@ -1546,6 +1594,28 @@ func (uq *UserQuery) WithChildren(opts ...func(*UserQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withChildren = query
+	return uq
+}
+
+// WithAppletParent tells the query-builder to eager-load the nodes that are connected to
+// the "applet_parent" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAppletParent(opts ...func(*UserQuery)) *UserQuery {
+	query := (&UserClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAppletParent = query
+	return uq
+}
+
+// WithAppletChildren tells the query-builder to eager-load the nodes that are connected to
+// the "applet_children" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAppletChildren(opts ...func(*UserQuery)) *UserQuery {
+	query := (&UserClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAppletChildren = query
 	return uq
 }
 
@@ -1946,7 +2016,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [45]bool{
+		loadedTypes = [47]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -1963,6 +2033,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withUserDevices != nil,
 			uq.withParent != nil,
 			uq.withChildren != nil,
+			uq.withAppletParent != nil,
+			uq.withAppletChildren != nil,
 			uq.withInvites != nil,
 			uq.withCampaignOrders != nil,
 			uq.withWallets != nil,
@@ -2125,6 +2197,19 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadChildren(ctx, query, nodes,
 			func(n *User) { n.Edges.Children = []*User{} },
 			func(n *User, e *User) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withAppletParent; query != nil {
+		if err := uq.loadAppletParent(ctx, query, nodes, nil,
+			func(n *User, e *User) { n.Edges.AppletParent = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withAppletChildren; query != nil {
+		if err := uq.loadAppletChildren(ctx, query, nodes,
+			func(n *User) { n.Edges.AppletChildren = []*User{} },
+			func(n *User, e *User) { n.Edges.AppletChildren = append(n.Edges.AppletChildren, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2814,6 +2899,65 @@ func (uq *UserQuery) loadChildren(ctx context.Context, query *UserQuery, nodes [
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "parent_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadAppletParent(ctx context.Context, query *UserQuery, nodes []*User, init func(*User), assign func(*User, *User)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*User)
+	for i := range nodes {
+		fk := nodes[i].AppletParentID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "applet_parent_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (uq *UserQuery) loadAppletChildren(ctx context.Context, query *UserQuery, nodes []*User, init func(*User), assign func(*User, *User)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(user.FieldAppletParentID)
+	}
+	query.Where(predicate.User(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.AppletChildrenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.AppletParentID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "applet_parent_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -3718,6 +3862,9 @@ func (uq *UserQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if uq.withParent != nil {
 			_spec.Node.AddColumnOnce(user.FieldParentID)
+		}
+		if uq.withAppletParent != nil {
+			_spec.Node.AddColumnOnce(user.FieldAppletParentID)
 		}
 	}
 	if ps := uq.predicates; len(ps) > 0 {

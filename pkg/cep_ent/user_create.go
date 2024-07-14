@@ -283,6 +283,20 @@ func (uc *UserCreate) SetNillableParentID(i *int64) *UserCreate {
 	return uc
 }
 
+// SetAppletParentID sets the "applet_parent_id" field.
+func (uc *UserCreate) SetAppletParentID(i int64) *UserCreate {
+	uc.mutation.SetAppletParentID(i)
+	return uc
+}
+
+// SetNillableAppletParentID sets the "applet_parent_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAppletParentID(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetAppletParentID(*i)
+	}
+	return uc
+}
+
 // SetPopVersion sets the "pop_version" field.
 func (uc *UserCreate) SetPopVersion(s string) *UserCreate {
 	uc.mutation.SetPopVersion(s)
@@ -645,6 +659,26 @@ func (uc *UserCreate) AddChildren(u ...*User) *UserCreate {
 		ids[i] = u[i].ID
 	}
 	return uc.AddChildIDs(ids...)
+}
+
+// SetAppletParent sets the "applet_parent" edge to the User entity.
+func (uc *UserCreate) SetAppletParent(u *User) *UserCreate {
+	return uc.SetAppletParentID(u.ID)
+}
+
+// AddAppletChildIDs adds the "applet_children" edge to the User entity by IDs.
+func (uc *UserCreate) AddAppletChildIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddAppletChildIDs(ids...)
+	return uc
+}
+
+// AddAppletChildren adds the "applet_children" edges to the User entity.
+func (uc *UserCreate) AddAppletChildren(u ...*User) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddAppletChildIDs(ids...)
 }
 
 // AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
@@ -1185,6 +1219,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultParentID
 		uc.mutation.SetParentID(v)
 	}
+	if _, ok := uc.mutation.AppletParentID(); !ok {
+		v := user.DefaultAppletParentID
+		uc.mutation.SetAppletParentID(v)
+	}
 	if _, ok := uc.mutation.PopVersion(); !ok {
 		v := user.DefaultPopVersion
 		uc.mutation.SetPopVersion(v)
@@ -1278,6 +1316,9 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent_id", err: errors.New(`cep_ent: missing required field "User.parent_id"`)}
 	}
+	if _, ok := uc.mutation.AppletParentID(); !ok {
+		return &ValidationError{Name: "applet_parent_id", err: errors.New(`cep_ent: missing required field "User.applet_parent_id"`)}
+	}
 	if _, ok := uc.mutation.PopVersion(); !ok {
 		return &ValidationError{Name: "pop_version", err: errors.New(`cep_ent: missing required field "User.pop_version"`)}
 	}
@@ -1306,6 +1347,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.ParentID(); !ok {
 		return &ValidationError{Name: "parent", err: errors.New(`cep_ent: missing required edge "User.parent"`)}
+	}
+	if _, ok := uc.mutation.AppletParentID(); !ok {
+		return &ValidationError{Name: "applet_parent", err: errors.New(`cep_ent: missing required edge "User.applet_parent"`)}
 	}
 	return nil
 }
@@ -1679,6 +1723,39 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Inverse: false,
 			Table:   user.ChildrenTable,
 			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AppletParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.AppletParentTable,
+			Columns: []string{user.AppletParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.AppletParentID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AppletChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -2397,6 +2474,18 @@ func (u *UserUpsert) UpdateParentID() *UserUpsert {
 	return u
 }
 
+// SetAppletParentID sets the "applet_parent_id" field.
+func (u *UserUpsert) SetAppletParentID(v int64) *UserUpsert {
+	u.Set(user.FieldAppletParentID, v)
+	return u
+}
+
+// UpdateAppletParentID sets the "applet_parent_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateAppletParentID() *UserUpsert {
+	u.SetExcluded(user.FieldAppletParentID)
+	return u
+}
+
 // SetPopVersion sets the "pop_version" field.
 func (u *UserUpsert) SetPopVersion(v string) *UserUpsert {
 	u.Set(user.FieldPopVersion, v)
@@ -2777,6 +2866,20 @@ func (u *UserUpsertOne) SetParentID(v int64) *UserUpsertOne {
 func (u *UserUpsertOne) UpdateParentID() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateParentID()
+	})
+}
+
+// SetAppletParentID sets the "applet_parent_id" field.
+func (u *UserUpsertOne) SetAppletParentID(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAppletParentID(v)
+	})
+}
+
+// UpdateAppletParentID sets the "applet_parent_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateAppletParentID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAppletParentID()
 	})
 }
 
@@ -3344,6 +3447,20 @@ func (u *UserUpsertBulk) SetParentID(v int64) *UserUpsertBulk {
 func (u *UserUpsertBulk) UpdateParentID() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.UpdateParentID()
+	})
+}
+
+// SetAppletParentID sets the "applet_parent_id" field.
+func (u *UserUpsertBulk) SetAppletParentID(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAppletParentID(v)
+	})
+}
+
+// UpdateAppletParentID sets the "applet_parent_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateAppletParentID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAppletParentID()
 	})
 }
 

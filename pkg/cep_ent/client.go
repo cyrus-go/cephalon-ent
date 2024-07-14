@@ -11408,6 +11408,38 @@ func (c *UserClient) QueryChildren(u *User) *UserQuery {
 	return query
 }
 
+// QueryAppletParent queries the applet_parent edge of a User.
+func (c *UserClient) QueryAppletParent(u *User) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.AppletParentTable, user.AppletParentColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppletChildren queries the applet_children edge of a User.
+func (c *UserClient) QueryAppletChildren(u *User) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AppletChildrenTable, user.AppletChildrenColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryInvites queries the invites edge of a User.
 func (c *UserClient) QueryInvites(u *User) *InviteQuery {
 	query := (&InviteClient{config: c.config}).Query()

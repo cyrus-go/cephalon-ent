@@ -2481,6 +2481,7 @@ var (
 		{Name: "bound_at", Type: field.TypeTime, Nullable: true, Comment: "用户绑定邀请码的时间"},
 		{Name: "user_status", Type: field.TypeEnum, Comment: "用户状态", Enums: []string{"normal", "frozen", "closed"}, Default: "normal"},
 		{Name: "parent_id", Type: field.TypeInt64, Nullable: true, Comment: "邀请人用户 id", Default: 0},
+		{Name: "applet_parent_id", Type: field.TypeInt64, Nullable: true, Comment: "小程序邀请人用户 id", Default: 0},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -2492,6 +2493,12 @@ var (
 			{
 				Symbol:     "users_users_children",
 				Columns:    []*schema.Column{UsersColumns[24]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "users_users_applet_children",
+				Columns:    []*schema.Column{UsersColumns[25]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -3003,6 +3010,7 @@ func init() {
 	TroubleDeductsTable.ForeignKeys[1].RefTable = UsersTable
 	TroubleDeductsTable.Annotation = &entsql.Annotation{}
 	UsersTable.ForeignKeys[0].RefTable = UsersTable
+	UsersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersTable.Annotation = &entsql.Annotation{}
 	UserDevicesTable.ForeignKeys[0].RefTable = DevicesTable
 	UserDevicesTable.ForeignKeys[1].RefTable = UsersTable

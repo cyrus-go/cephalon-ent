@@ -54,6 +54,8 @@ type User struct {
 	UserType enums.UserType `json:"user_type"`
 	// 邀请人用户 id
 	ParentID int64 `json:"parent_id,string"`
+	// 小程序邀请人用户 id
+	AppletParentID int64 `json:"applet_parent_id"`
 	// 用户最新弹窗版本
 	PopVersion string `json:"pop_version"`
 	// 国家区号
@@ -110,6 +112,10 @@ type UserEdges struct {
 	Parent *User `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*User `json:"children,omitempty"`
+	// AppletParent holds the value of the applet_parent edge.
+	AppletParent *User `json:"applet_parent,omitempty"`
+	// AppletChildren holds the value of the applet_children edge.
+	AppletChildren []*User `json:"applet_children,omitempty"`
 	// Invites holds the value of the invites edge.
 	Invites []*Invite `json:"invites,omitempty"`
 	// CampaignOrders holds the value of the campaign_orders edge.
@@ -170,7 +176,7 @@ type UserEdges struct {
 	ApproveSurveyResponses []*SurveyResponse `json:"approve_survey_responses,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [45]bool
+	loadedTypes [47]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -329,10 +335,32 @@ func (e UserEdges) ChildrenOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "children"}
 }
 
+// AppletParentOrErr returns the AppletParent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) AppletParentOrErr() (*User, error) {
+	if e.loadedTypes[16] {
+		if e.AppletParent == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.AppletParent, nil
+	}
+	return nil, &NotLoadedError{edge: "applet_parent"}
+}
+
+// AppletChildrenOrErr returns the AppletChildren value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AppletChildrenOrErr() ([]*User, error) {
+	if e.loadedTypes[17] {
+		return e.AppletChildren, nil
+	}
+	return nil, &NotLoadedError{edge: "applet_children"}
+}
+
 // InvitesOrErr returns the Invites value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) InvitesOrErr() ([]*Invite, error) {
-	if e.loadedTypes[16] {
+	if e.loadedTypes[18] {
 		return e.Invites, nil
 	}
 	return nil, &NotLoadedError{edge: "invites"}
@@ -341,7 +369,7 @@ func (e UserEdges) InvitesOrErr() ([]*Invite, error) {
 // CampaignOrdersOrErr returns the CampaignOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CampaignOrdersOrErr() ([]*CampaignOrder, error) {
-	if e.loadedTypes[17] {
+	if e.loadedTypes[19] {
 		return e.CampaignOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "campaign_orders"}
@@ -350,7 +378,7 @@ func (e UserEdges) CampaignOrdersOrErr() ([]*CampaignOrder, error) {
 // WalletsOrErr returns the Wallets value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) WalletsOrErr() ([]*Wallet, error) {
-	if e.loadedTypes[18] {
+	if e.loadedTypes[20] {
 		return e.Wallets, nil
 	}
 	return nil, &NotLoadedError{edge: "wallets"}
@@ -359,7 +387,7 @@ func (e UserEdges) WalletsOrErr() ([]*Wallet, error) {
 // WithdrawAccountOrErr returns the WithdrawAccount value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) WithdrawAccountOrErr() (*WithdrawAccount, error) {
-	if e.loadedTypes[19] {
+	if e.loadedTypes[21] {
 		if e.WithdrawAccount == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: withdrawaccount.Label}
@@ -372,7 +400,7 @@ func (e UserEdges) WithdrawAccountOrErr() (*WithdrawAccount, error) {
 // IncomeBillsOrErr returns the IncomeBills value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) IncomeBillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[20] {
+	if e.loadedTypes[22] {
 		return e.IncomeBills, nil
 	}
 	return nil, &NotLoadedError{edge: "income_bills"}
@@ -381,7 +409,7 @@ func (e UserEdges) IncomeBillsOrErr() ([]*Bill, error) {
 // OutcomeBillsOrErr returns the OutcomeBills value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OutcomeBillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[21] {
+	if e.loadedTypes[23] {
 		return e.OutcomeBills, nil
 	}
 	return nil, &NotLoadedError{edge: "outcome_bills"}
@@ -390,7 +418,7 @@ func (e UserEdges) OutcomeBillsOrErr() ([]*Bill, error) {
 // MissionProductionsOrErr returns the MissionProductions value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
-	if e.loadedTypes[22] {
+	if e.loadedTypes[24] {
 		return e.MissionProductions, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_productions"}
@@ -399,7 +427,7 @@ func (e UserEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
 // MissionsOrErr returns the Missions value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) MissionsOrErr() ([]*Mission, error) {
-	if e.loadedTypes[23] {
+	if e.loadedTypes[25] {
 		return e.Missions, nil
 	}
 	return nil, &NotLoadedError{edge: "missions"}
@@ -408,7 +436,7 @@ func (e UserEdges) MissionsOrErr() ([]*Mission, error) {
 // IncomeTransferOrdersOrErr returns the IncomeTransferOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) IncomeTransferOrdersOrErr() ([]*TransferOrder, error) {
-	if e.loadedTypes[24] {
+	if e.loadedTypes[26] {
 		return e.IncomeTransferOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "income_transfer_orders"}
@@ -417,7 +445,7 @@ func (e UserEdges) IncomeTransferOrdersOrErr() ([]*TransferOrder, error) {
 // OutcomeTransferOrdersOrErr returns the OutcomeTransferOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OutcomeTransferOrdersOrErr() ([]*TransferOrder, error) {
-	if e.loadedTypes[25] {
+	if e.loadedTypes[27] {
 		return e.OutcomeTransferOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "outcome_transfer_orders"}
@@ -426,7 +454,7 @@ func (e UserEdges) OutcomeTransferOrdersOrErr() ([]*TransferOrder, error) {
 // ConsumeMissionOrdersOrErr returns the ConsumeMissionOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ConsumeMissionOrdersOrErr() ([]*MissionOrder, error) {
-	if e.loadedTypes[26] {
+	if e.loadedTypes[28] {
 		return e.ConsumeMissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "consume_mission_orders"}
@@ -435,7 +463,7 @@ func (e UserEdges) ConsumeMissionOrdersOrErr() ([]*MissionOrder, error) {
 // ProduceMissionOrdersOrErr returns the ProduceMissionOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ProduceMissionOrdersOrErr() ([]*MissionOrder, error) {
-	if e.loadedTypes[27] {
+	if e.loadedTypes[29] {
 		return e.ProduceMissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "produce_mission_orders"}
@@ -444,7 +472,7 @@ func (e UserEdges) ProduceMissionOrdersOrErr() ([]*MissionOrder, error) {
 // LoginRecordsOrErr returns the LoginRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) LoginRecordsOrErr() ([]*LoginRecord, error) {
-	if e.loadedTypes[28] {
+	if e.loadedTypes[30] {
 		return e.LoginRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "login_records"}
@@ -453,7 +481,7 @@ func (e UserEdges) LoginRecordsOrErr() ([]*LoginRecord, error) {
 // RenewalAgreementsOrErr returns the RenewalAgreements value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
-	if e.loadedTypes[29] {
+	if e.loadedTypes[31] {
 		return e.RenewalAgreements, nil
 	}
 	return nil, &NotLoadedError{edge: "renewal_agreements"}
@@ -462,7 +490,7 @@ func (e UserEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
 // ArtworksOrErr returns the Artworks value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ArtworksOrErr() ([]*Artwork, error) {
-	if e.loadedTypes[30] {
+	if e.loadedTypes[32] {
 		return e.Artworks, nil
 	}
 	return nil, &NotLoadedError{edge: "artworks"}
@@ -471,7 +499,7 @@ func (e UserEdges) ArtworksOrErr() ([]*Artwork, error) {
 // ArtworkLikesOrErr returns the ArtworkLikes value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ArtworkLikesOrErr() ([]*ArtworkLike, error) {
-	if e.loadedTypes[31] {
+	if e.loadedTypes[33] {
 		return e.ArtworkLikes, nil
 	}
 	return nil, &NotLoadedError{edge: "artwork_likes"}
@@ -480,7 +508,7 @@ func (e UserEdges) ArtworkLikesOrErr() ([]*ArtworkLike, error) {
 // CdkInfosOrErr returns the CdkInfos value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CdkInfosOrErr() ([]*CDKInfo, error) {
-	if e.loadedTypes[32] {
+	if e.loadedTypes[34] {
 		return e.CdkInfos, nil
 	}
 	return nil, &NotLoadedError{edge: "cdk_infos"}
@@ -489,7 +517,7 @@ func (e UserEdges) CdkInfosOrErr() ([]*CDKInfo, error) {
 // UseCdkInfosOrErr returns the UseCdkInfos value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UseCdkInfosOrErr() ([]*CDKInfo, error) {
-	if e.loadedTypes[33] {
+	if e.loadedTypes[35] {
 		return e.UseCdkInfos, nil
 	}
 	return nil, &NotLoadedError{edge: "use_cdk_infos"}
@@ -498,7 +526,7 @@ func (e UserEdges) UseCdkInfosOrErr() ([]*CDKInfo, error) {
 // LottoRecordsOrErr returns the LottoRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) LottoRecordsOrErr() ([]*LottoRecord, error) {
-	if e.loadedTypes[34] {
+	if e.loadedTypes[36] {
 		return e.LottoRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "lotto_records"}
@@ -507,7 +535,7 @@ func (e UserEdges) LottoRecordsOrErr() ([]*LottoRecord, error) {
 // LottoUserCountsOrErr returns the LottoUserCounts value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) LottoUserCountsOrErr() ([]*LottoUserCount, error) {
-	if e.loadedTypes[35] {
+	if e.loadedTypes[37] {
 		return e.LottoUserCounts, nil
 	}
 	return nil, &NotLoadedError{edge: "lotto_user_counts"}
@@ -516,7 +544,7 @@ func (e UserEdges) LottoUserCountsOrErr() ([]*LottoUserCount, error) {
 // LottoGetCountRecordsOrErr returns the LottoGetCountRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) LottoGetCountRecordsOrErr() ([]*LottoGetCountRecord, error) {
-	if e.loadedTypes[36] {
+	if e.loadedTypes[38] {
 		return e.LottoGetCountRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "lotto_get_count_records"}
@@ -525,7 +553,7 @@ func (e UserEdges) LottoGetCountRecordsOrErr() ([]*LottoGetCountRecord, error) {
 // CloudFilesOrErr returns the CloudFiles value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CloudFilesOrErr() ([]*CloudFile, error) {
-	if e.loadedTypes[37] {
+	if e.loadedTypes[39] {
 		return e.CloudFiles, nil
 	}
 	return nil, &NotLoadedError{edge: "cloud_files"}
@@ -534,7 +562,7 @@ func (e UserEdges) CloudFilesOrErr() ([]*CloudFile, error) {
 // WithdrawRecordsOrErr returns the WithdrawRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) WithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
-	if e.loadedTypes[38] {
+	if e.loadedTypes[40] {
 		return e.WithdrawRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "withdraw_records"}
@@ -543,7 +571,7 @@ func (e UserEdges) WithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
 // OperateWithdrawRecordsOrErr returns the OperateWithdrawRecords value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OperateWithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
-	if e.loadedTypes[39] {
+	if e.loadedTypes[41] {
 		return e.OperateWithdrawRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "operate_withdraw_records"}
@@ -552,7 +580,7 @@ func (e UserEdges) OperateWithdrawRecordsOrErr() ([]*WithdrawRecord, error) {
 // TroubleDeductsOrErr returns the TroubleDeducts value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
-	if e.loadedTypes[40] {
+	if e.loadedTypes[42] {
 		return e.TroubleDeducts, nil
 	}
 	return nil, &NotLoadedError{edge: "trouble_deducts"}
@@ -561,7 +589,7 @@ func (e UserEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
 // IncomeManagesOrErr returns the IncomeManages value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) IncomeManagesOrErr() ([]*IncomeManage, error) {
-	if e.loadedTypes[41] {
+	if e.loadedTypes[43] {
 		return e.IncomeManages, nil
 	}
 	return nil, &NotLoadedError{edge: "income_manages"}
@@ -570,7 +598,7 @@ func (e UserEdges) IncomeManagesOrErr() ([]*IncomeManage, error) {
 // ApproveIncomeManagesOrErr returns the ApproveIncomeManages value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ApproveIncomeManagesOrErr() ([]*IncomeManage, error) {
-	if e.loadedTypes[42] {
+	if e.loadedTypes[44] {
 		return e.ApproveIncomeManages, nil
 	}
 	return nil, &NotLoadedError{edge: "approve_income_manages"}
@@ -579,7 +607,7 @@ func (e UserEdges) ApproveIncomeManagesOrErr() ([]*IncomeManage, error) {
 // SurveyResponsesOrErr returns the SurveyResponses value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) SurveyResponsesOrErr() ([]*SurveyResponse, error) {
-	if e.loadedTypes[43] {
+	if e.loadedTypes[45] {
 		return e.SurveyResponses, nil
 	}
 	return nil, &NotLoadedError{edge: "survey_responses"}
@@ -588,7 +616,7 @@ func (e UserEdges) SurveyResponsesOrErr() ([]*SurveyResponse, error) {
 // ApproveSurveyResponsesOrErr returns the ApproveSurveyResponses value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) ApproveSurveyResponsesOrErr() ([]*SurveyResponse, error) {
-	if e.loadedTypes[44] {
+	if e.loadedTypes[46] {
 		return e.ApproveSurveyResponses, nil
 	}
 	return nil, &NotLoadedError{edge: "approve_survey_responses"}
@@ -601,7 +629,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsFrozen, user.FieldIsRecharge:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldCloudSpace:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldParentID, user.FieldAppletParentID, user.FieldCloudSpace:
 			values[i] = new(sql.NullInt64)
 		case user.FieldName, user.FieldNickName, user.FieldJpgURL, user.FieldKey, user.FieldSecret, user.FieldPhone, user.FieldPassword, user.FieldUserType, user.FieldPopVersion, user.FieldAreaCode, user.FieldEmail, user.FieldBaiduAccessToken, user.FieldBaiduRefreshToken, user.FieldUserStatus:
 			values[i] = new(sql.NullString)
@@ -723,6 +751,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
 				u.ParentID = value.Int64
+			}
+		case user.FieldAppletParentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field applet_parent_id", values[i])
+			} else if value.Valid {
+				u.AppletParentID = value.Int64
 			}
 		case user.FieldPopVersion:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -864,6 +898,16 @@ func (u *User) QueryParent() *UserQuery {
 // QueryChildren queries the "children" edge of the User entity.
 func (u *User) QueryChildren() *UserQuery {
 	return NewUserClient(u.config).QueryChildren(u)
+}
+
+// QueryAppletParent queries the "applet_parent" edge of the User entity.
+func (u *User) QueryAppletParent() *UserQuery {
+	return NewUserClient(u.config).QueryAppletParent(u)
+}
+
+// QueryAppletChildren queries the "applet_children" edge of the User entity.
+func (u *User) QueryAppletChildren() *UserQuery {
+	return NewUserClient(u.config).QueryAppletChildren(u)
 }
 
 // QueryInvites queries the "invites" edge of the User entity.
@@ -1079,6 +1123,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("parent_id=")
 	builder.WriteString(fmt.Sprintf("%v", u.ParentID))
+	builder.WriteString(", ")
+	builder.WriteString("applet_parent_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.AppletParentID))
 	builder.WriteString(", ")
 	builder.WriteString("pop_version=")
 	builder.WriteString(u.PopVersion)

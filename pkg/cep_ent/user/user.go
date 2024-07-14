@@ -48,6 +48,8 @@ const (
 	FieldUserType = "user_type"
 	// FieldParentID holds the string denoting the parent_id field in the database.
 	FieldParentID = "parent_id"
+	// FieldAppletParentID holds the string denoting the applet_parent_id field in the database.
+	FieldAppletParentID = "applet_parent_id"
 	// FieldPopVersion holds the string denoting the pop_version field in the database.
 	FieldPopVersion = "pop_version"
 	// FieldAreaCode holds the string denoting the area_code field in the database.
@@ -96,6 +98,10 @@ const (
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
+	// EdgeAppletParent holds the string denoting the applet_parent edge name in mutations.
+	EdgeAppletParent = "applet_parent"
+	// EdgeAppletChildren holds the string denoting the applet_children edge name in mutations.
+	EdgeAppletChildren = "applet_children"
 	// EdgeInvites holds the string denoting the invites edge name in mutations.
 	EdgeInvites = "invites"
 	// EdgeCampaignOrders holds the string denoting the campaign_orders edge name in mutations.
@@ -262,6 +268,14 @@ const (
 	ChildrenTable = "users"
 	// ChildrenColumn is the table column denoting the children relation/edge.
 	ChildrenColumn = "parent_id"
+	// AppletParentTable is the table that holds the applet_parent relation/edge.
+	AppletParentTable = "users"
+	// AppletParentColumn is the table column denoting the applet_parent relation/edge.
+	AppletParentColumn = "applet_parent_id"
+	// AppletChildrenTable is the table that holds the applet_children relation/edge.
+	AppletChildrenTable = "users"
+	// AppletChildrenColumn is the table column denoting the applet_children relation/edge.
+	AppletChildrenColumn = "applet_parent_id"
 	// InvitesTable is the table that holds the invites relation/edge.
 	InvitesTable = "invites"
 	// InvitesInverseTable is the table name for the Invite entity.
@@ -486,6 +500,7 @@ var Columns = []string{
 	FieldIsRecharge,
 	FieldUserType,
 	FieldParentID,
+	FieldAppletParentID,
 	FieldPopVersion,
 	FieldAreaCode,
 	FieldEmail,
@@ -539,6 +554,8 @@ var (
 	DefaultIsRecharge bool
 	// DefaultParentID holds the default value on creation for the "parent_id" field.
 	DefaultParentID int64
+	// DefaultAppletParentID holds the default value on creation for the "applet_parent_id" field.
+	DefaultAppletParentID int64
 	// DefaultPopVersion holds the default value on creation for the "pop_version" field.
 	DefaultPopVersion string
 	// DefaultAreaCode holds the default value on creation for the "area_code" field.
@@ -667,6 +684,11 @@ func ByUserType(opts ...sql.OrderTermOption) OrderOption {
 // ByParentID orders the results by the parent_id field.
 func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentID, opts...).ToFunc()
+}
+
+// ByAppletParentID orders the results by the applet_parent_id field.
+func ByAppletParentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAppletParentID, opts...).ToFunc()
 }
 
 // ByPopVersion orders the results by the pop_version field.
@@ -909,6 +931,27 @@ func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
 func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAppletParentField orders the results by applet_parent field.
+func ByAppletParentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAppletParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByAppletChildrenCount orders the results by applet_children count.
+func ByAppletChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAppletChildrenStep(), opts...)
+	}
+}
+
+// ByAppletChildren orders the results by applet_children terms.
+func ByAppletChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAppletChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -1420,6 +1463,20 @@ func newChildrenStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
+}
+func newAppletParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, AppletParentTable, AppletParentColumn),
+	)
+}
+func newAppletChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AppletChildrenTable, AppletChildrenColumn),
 	)
 }
 func newInvitesStep() *sqlgraph.Step {

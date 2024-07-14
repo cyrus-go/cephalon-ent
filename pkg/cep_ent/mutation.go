@@ -75501,6 +75501,11 @@ type UserMutation struct {
 	children                        map[int64]struct{}
 	removedchildren                 map[int64]struct{}
 	clearedchildren                 bool
+	applet_parent                   *int64
+	clearedapplet_parent            bool
+	applet_children                 map[int64]struct{}
+	removedapplet_children          map[int64]struct{}
+	clearedapplet_children          bool
 	invites                         map[int64]struct{}
 	removedinvites                  map[int64]struct{}
 	clearedinvites                  bool
@@ -76310,6 +76315,42 @@ func (m *UserMutation) OldParentID(ctx context.Context) (v int64, err error) {
 // ResetParentID resets all changes to the "parent_id" field.
 func (m *UserMutation) ResetParentID() {
 	m.parent = nil
+}
+
+// SetAppletParentID sets the "applet_parent_id" field.
+func (m *UserMutation) SetAppletParentID(i int64) {
+	m.applet_parent = &i
+}
+
+// AppletParentID returns the value of the "applet_parent_id" field in the mutation.
+func (m *UserMutation) AppletParentID() (r int64, exists bool) {
+	v := m.applet_parent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppletParentID returns the old "applet_parent_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAppletParentID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppletParentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppletParentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppletParentID: %w", err)
+	}
+	return oldValue.AppletParentID, nil
+}
+
+// ResetAppletParentID resets all changes to the "applet_parent_id" field.
+func (m *UserMutation) ResetAppletParentID() {
+	m.applet_parent = nil
 }
 
 // SetPopVersion sets the "pop_version" field.
@@ -77438,6 +77479,87 @@ func (m *UserMutation) ResetChildren() {
 	m.children = nil
 	m.clearedchildren = false
 	m.removedchildren = nil
+}
+
+// ClearAppletParent clears the "applet_parent" edge to the User entity.
+func (m *UserMutation) ClearAppletParent() {
+	m.clearedapplet_parent = true
+	m.clearedFields[user.FieldAppletParentID] = struct{}{}
+}
+
+// AppletParentCleared reports if the "applet_parent" edge to the User entity was cleared.
+func (m *UserMutation) AppletParentCleared() bool {
+	return m.clearedapplet_parent
+}
+
+// AppletParentIDs returns the "applet_parent" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppletParentID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) AppletParentIDs() (ids []int64) {
+	if id := m.applet_parent; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAppletParent resets all changes to the "applet_parent" edge.
+func (m *UserMutation) ResetAppletParent() {
+	m.applet_parent = nil
+	m.clearedapplet_parent = false
+}
+
+// AddAppletChildIDs adds the "applet_children" edge to the User entity by ids.
+func (m *UserMutation) AddAppletChildIDs(ids ...int64) {
+	if m.applet_children == nil {
+		m.applet_children = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.applet_children[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppletChildren clears the "applet_children" edge to the User entity.
+func (m *UserMutation) ClearAppletChildren() {
+	m.clearedapplet_children = true
+}
+
+// AppletChildrenCleared reports if the "applet_children" edge to the User entity was cleared.
+func (m *UserMutation) AppletChildrenCleared() bool {
+	return m.clearedapplet_children
+}
+
+// RemoveAppletChildIDs removes the "applet_children" edge to the User entity by IDs.
+func (m *UserMutation) RemoveAppletChildIDs(ids ...int64) {
+	if m.removedapplet_children == nil {
+		m.removedapplet_children = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.applet_children, ids[i])
+		m.removedapplet_children[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppletChildren returns the removed IDs of the "applet_children" edge to the User entity.
+func (m *UserMutation) RemovedAppletChildrenIDs() (ids []int64) {
+	for id := range m.removedapplet_children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppletChildrenIDs returns the "applet_children" edge IDs in the mutation.
+func (m *UserMutation) AppletChildrenIDs() (ids []int64) {
+	for id := range m.applet_children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppletChildren resets all changes to the "applet_children" edge.
+func (m *UserMutation) ResetAppletChildren() {
+	m.applet_children = nil
+	m.clearedapplet_children = false
+	m.removedapplet_children = nil
 }
 
 // AddInviteIDs adds the "invites" edge to the Invite entity by ids.
@@ -79025,7 +79147,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -79073,6 +79195,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.parent != nil {
 		fields = append(fields, user.FieldParentID)
+	}
+	if m.applet_parent != nil {
+		fields = append(fields, user.FieldAppletParentID)
 	}
 	if m.pop_version != nil {
 		fields = append(fields, user.FieldPopVersion)
@@ -79138,6 +79263,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.UserType()
 	case user.FieldParentID:
 		return m.ParentID()
+	case user.FieldAppletParentID:
+		return m.AppletParentID()
 	case user.FieldPopVersion:
 		return m.PopVersion()
 	case user.FieldAreaCode:
@@ -79195,6 +79322,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUserType(ctx)
 	case user.FieldParentID:
 		return m.OldParentID(ctx)
+	case user.FieldAppletParentID:
+		return m.OldAppletParentID(ctx)
 	case user.FieldPopVersion:
 		return m.OldPopVersion(ctx)
 	case user.FieldAreaCode:
@@ -79331,6 +79460,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetParentID(v)
+		return nil
+	case user.FieldAppletParentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppletParentID(v)
 		return nil
 	case user.FieldPopVersion:
 		v, ok := value.(string)
@@ -79533,6 +79669,9 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldParentID:
 		m.ResetParentID()
 		return nil
+	case user.FieldAppletParentID:
+		m.ResetAppletParentID()
+		return nil
 	case user.FieldPopVersion:
 		m.ResetPopVersion()
 		return nil
@@ -79563,7 +79702,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 45)
+	edges := make([]string, 0, 47)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -79611,6 +79750,12 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.children != nil {
 		edges = append(edges, user.EdgeChildren)
+	}
+	if m.applet_parent != nil {
+		edges = append(edges, user.EdgeAppletParent)
+	}
+	if m.applet_children != nil {
+		edges = append(edges, user.EdgeAppletChildren)
 	}
 	if m.invites != nil {
 		edges = append(edges, user.EdgeInvites)
@@ -79796,6 +79941,16 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeAppletParent:
+		if id := m.applet_parent; id != nil {
+			return []ent.Value{*id}
+		}
+	case user.EdgeAppletChildren:
+		ids := make([]ent.Value, 0, len(m.applet_children))
+		for id := range m.applet_children {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeInvites:
 		ids := make([]ent.Value, 0, len(m.invites))
 		for id := range m.invites {
@@ -79974,7 +80129,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 45)
+	edges := make([]string, 0, 47)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -80013,6 +80168,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedchildren != nil {
 		edges = append(edges, user.EdgeChildren)
+	}
+	if m.removedapplet_children != nil {
+		edges = append(edges, user.EdgeAppletChildren)
 	}
 	if m.removedinvites != nil {
 		edges = append(edges, user.EdgeInvites)
@@ -80180,6 +80338,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	case user.EdgeChildren:
 		ids := make([]ent.Value, 0, len(m.removedchildren))
 		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeAppletChildren:
+		ids := make([]ent.Value, 0, len(m.removedapplet_children))
+		for id := range m.removedapplet_children {
 			ids = append(ids, id)
 		}
 		return ids
@@ -80357,7 +80521,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 45)
+	edges := make([]string, 0, 47)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -80405,6 +80569,12 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedchildren {
 		edges = append(edges, user.EdgeChildren)
+	}
+	if m.clearedapplet_parent {
+		edges = append(edges, user.EdgeAppletParent)
+	}
+	if m.clearedapplet_children {
+		edges = append(edges, user.EdgeAppletChildren)
 	}
 	if m.clearedinvites {
 		edges = append(edges, user.EdgeInvites)
@@ -80532,6 +80702,10 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedparent
 	case user.EdgeChildren:
 		return m.clearedchildren
+	case user.EdgeAppletParent:
+		return m.clearedapplet_parent
+	case user.EdgeAppletChildren:
+		return m.clearedapplet_children
 	case user.EdgeInvites:
 		return m.clearedinvites
 	case user.EdgeCampaignOrders:
@@ -80607,6 +80781,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 	case user.EdgeParent:
 		m.ClearParent()
 		return nil
+	case user.EdgeAppletParent:
+		m.ClearAppletParent()
+		return nil
 	case user.EdgeWithdrawAccount:
 		m.ClearWithdrawAccount()
 		return nil
@@ -80665,6 +80842,12 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeChildren:
 		m.ResetChildren()
+		return nil
+	case user.EdgeAppletParent:
+		m.ResetAppletParent()
+		return nil
+	case user.EdgeAppletChildren:
+		m.ResetAppletChildren()
 		return nil
 	case user.EdgeInvites:
 		m.ResetInvites()

@@ -282,6 +282,20 @@ func (uu *UserUpdate) SetNillableParentID(i *int64) *UserUpdate {
 	return uu
 }
 
+// SetAppletParentID sets the "applet_parent_id" field.
+func (uu *UserUpdate) SetAppletParentID(i int64) *UserUpdate {
+	uu.mutation.SetAppletParentID(i)
+	return uu
+}
+
+// SetNillableAppletParentID sets the "applet_parent_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAppletParentID(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetAppletParentID(*i)
+	}
+	return uu
+}
+
 // SetPopVersion sets the "pop_version" field.
 func (uu *UserUpdate) SetPopVersion(s string) *UserUpdate {
 	uu.mutation.SetPopVersion(s)
@@ -643,6 +657,26 @@ func (uu *UserUpdate) AddChildren(u ...*User) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.AddChildIDs(ids...)
+}
+
+// SetAppletParent sets the "applet_parent" edge to the User entity.
+func (uu *UserUpdate) SetAppletParent(u *User) *UserUpdate {
+	return uu.SetAppletParentID(u.ID)
+}
+
+// AddAppletChildIDs adds the "applet_children" edge to the User entity by IDs.
+func (uu *UserUpdate) AddAppletChildIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddAppletChildIDs(ids...)
+	return uu
+}
+
+// AddAppletChildren adds the "applet_children" edges to the User entity.
+func (uu *UserUpdate) AddAppletChildren(u ...*User) *UserUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.AddAppletChildIDs(ids...)
 }
 
 // AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
@@ -1380,6 +1414,33 @@ func (uu *UserUpdate) RemoveChildren(u ...*User) *UserUpdate {
 	return uu.RemoveChildIDs(ids...)
 }
 
+// ClearAppletParent clears the "applet_parent" edge to the User entity.
+func (uu *UserUpdate) ClearAppletParent() *UserUpdate {
+	uu.mutation.ClearAppletParent()
+	return uu
+}
+
+// ClearAppletChildren clears all "applet_children" edges to the User entity.
+func (uu *UserUpdate) ClearAppletChildren() *UserUpdate {
+	uu.mutation.ClearAppletChildren()
+	return uu
+}
+
+// RemoveAppletChildIDs removes the "applet_children" edge to User entities by IDs.
+func (uu *UserUpdate) RemoveAppletChildIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveAppletChildIDs(ids...)
+	return uu
+}
+
+// RemoveAppletChildren removes "applet_children" edges to User entities.
+func (uu *UserUpdate) RemoveAppletChildren(u ...*User) *UserUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.RemoveAppletChildIDs(ids...)
+}
+
 // ClearInvites clears all "invites" edges to the Invite entity.
 func (uu *UserUpdate) ClearInvites() *UserUpdate {
 	uu.mutation.ClearInvites()
@@ -2024,6 +2085,9 @@ func (uu *UserUpdate) check() error {
 	}
 	if _, ok := uu.mutation.ParentID(); uu.mutation.ParentCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
+	}
+	if _, ok := uu.mutation.AppletParentID(); uu.mutation.AppletParentCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "User.applet_parent"`)
 	}
 	return nil
 }
@@ -2786,6 +2850,80 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Inverse: false,
 			Table:   user.ChildrenTable,
 			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.AppletParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.AppletParentTable,
+			Columns: []string{user.AppletParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AppletParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.AppletParentTable,
+			Columns: []string{user.AppletParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.AppletChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAppletChildrenIDs(); len(nodes) > 0 && !uu.mutation.AppletChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AppletChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -4323,6 +4461,20 @@ func (uuo *UserUpdateOne) SetNillableParentID(i *int64) *UserUpdateOne {
 	return uuo
 }
 
+// SetAppletParentID sets the "applet_parent_id" field.
+func (uuo *UserUpdateOne) SetAppletParentID(i int64) *UserUpdateOne {
+	uuo.mutation.SetAppletParentID(i)
+	return uuo
+}
+
+// SetNillableAppletParentID sets the "applet_parent_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAppletParentID(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetAppletParentID(*i)
+	}
+	return uuo
+}
+
 // SetPopVersion sets the "pop_version" field.
 func (uuo *UserUpdateOne) SetPopVersion(s string) *UserUpdateOne {
 	uuo.mutation.SetPopVersion(s)
@@ -4684,6 +4836,26 @@ func (uuo *UserUpdateOne) AddChildren(u ...*User) *UserUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return uuo.AddChildIDs(ids...)
+}
+
+// SetAppletParent sets the "applet_parent" edge to the User entity.
+func (uuo *UserUpdateOne) SetAppletParent(u *User) *UserUpdateOne {
+	return uuo.SetAppletParentID(u.ID)
+}
+
+// AddAppletChildIDs adds the "applet_children" edge to the User entity by IDs.
+func (uuo *UserUpdateOne) AddAppletChildIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddAppletChildIDs(ids...)
+	return uuo
+}
+
+// AddAppletChildren adds the "applet_children" edges to the User entity.
+func (uuo *UserUpdateOne) AddAppletChildren(u ...*User) *UserUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.AddAppletChildIDs(ids...)
 }
 
 // AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
@@ -5421,6 +5593,33 @@ func (uuo *UserUpdateOne) RemoveChildren(u ...*User) *UserUpdateOne {
 	return uuo.RemoveChildIDs(ids...)
 }
 
+// ClearAppletParent clears the "applet_parent" edge to the User entity.
+func (uuo *UserUpdateOne) ClearAppletParent() *UserUpdateOne {
+	uuo.mutation.ClearAppletParent()
+	return uuo
+}
+
+// ClearAppletChildren clears all "applet_children" edges to the User entity.
+func (uuo *UserUpdateOne) ClearAppletChildren() *UserUpdateOne {
+	uuo.mutation.ClearAppletChildren()
+	return uuo
+}
+
+// RemoveAppletChildIDs removes the "applet_children" edge to User entities by IDs.
+func (uuo *UserUpdateOne) RemoveAppletChildIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveAppletChildIDs(ids...)
+	return uuo
+}
+
+// RemoveAppletChildren removes "applet_children" edges to User entities.
+func (uuo *UserUpdateOne) RemoveAppletChildren(u ...*User) *UserUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.RemoveAppletChildIDs(ids...)
+}
+
 // ClearInvites clears all "invites" edges to the Invite entity.
 func (uuo *UserUpdateOne) ClearInvites() *UserUpdateOne {
 	uuo.mutation.ClearInvites()
@@ -6078,6 +6277,9 @@ func (uuo *UserUpdateOne) check() error {
 	}
 	if _, ok := uuo.mutation.ParentID(); uuo.mutation.ParentCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "User.parent"`)
+	}
+	if _, ok := uuo.mutation.AppletParentID(); uuo.mutation.AppletParentCleared() && !ok {
+		return errors.New(`cep_ent: clearing a required unique edge "User.applet_parent"`)
 	}
 	return nil
 }
@@ -6857,6 +7059,80 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Inverse: false,
 			Table:   user.ChildrenTable,
 			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AppletParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.AppletParentTable,
+			Columns: []string{user.AppletParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AppletParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.AppletParentTable,
+			Columns: []string{user.AppletParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AppletChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAppletChildrenIDs(); len(nodes) > 0 && !uuo.mutation.AppletChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AppletChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AppletChildrenTable,
+			Columns: []string{user.AppletChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),

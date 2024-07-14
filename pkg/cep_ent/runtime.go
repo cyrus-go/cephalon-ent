@@ -3357,32 +3357,36 @@ func init() {
 	userDescParentID := userFields[10].Descriptor()
 	// user.DefaultParentID holds the default value on creation for the parent_id field.
 	user.DefaultParentID = userDescParentID.Default.(int64)
+	// userDescAppletParentID is the schema descriptor for applet_parent_id field.
+	userDescAppletParentID := userFields[11].Descriptor()
+	// user.DefaultAppletParentID holds the default value on creation for the applet_parent_id field.
+	user.DefaultAppletParentID = userDescAppletParentID.Default.(int64)
 	// userDescPopVersion is the schema descriptor for pop_version field.
-	userDescPopVersion := userFields[11].Descriptor()
+	userDescPopVersion := userFields[12].Descriptor()
 	// user.DefaultPopVersion holds the default value on creation for the pop_version field.
 	user.DefaultPopVersion = userDescPopVersion.Default.(string)
 	// userDescAreaCode is the schema descriptor for area_code field.
-	userDescAreaCode := userFields[12].Descriptor()
+	userDescAreaCode := userFields[13].Descriptor()
 	// user.DefaultAreaCode holds the default value on creation for the area_code field.
 	user.DefaultAreaCode = userDescAreaCode.Default.(string)
 	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[13].Descriptor()
+	userDescEmail := userFields[14].Descriptor()
 	// user.DefaultEmail holds the default value on creation for the email field.
 	user.DefaultEmail = userDescEmail.Default.(string)
 	// userDescCloudSpace is the schema descriptor for cloud_space field.
-	userDescCloudSpace := userFields[14].Descriptor()
+	userDescCloudSpace := userFields[15].Descriptor()
 	// user.DefaultCloudSpace holds the default value on creation for the cloud_space field.
 	user.DefaultCloudSpace = userDescCloudSpace.Default.(int64)
 	// userDescBaiduAccessToken is the schema descriptor for baidu_access_token field.
-	userDescBaiduAccessToken := userFields[15].Descriptor()
+	userDescBaiduAccessToken := userFields[16].Descriptor()
 	// user.DefaultBaiduAccessToken holds the default value on creation for the baidu_access_token field.
 	user.DefaultBaiduAccessToken = userDescBaiduAccessToken.Default.(string)
 	// userDescBaiduRefreshToken is the schema descriptor for baidu_refresh_token field.
-	userDescBaiduRefreshToken := userFields[16].Descriptor()
+	userDescBaiduRefreshToken := userFields[17].Descriptor()
 	// user.DefaultBaiduRefreshToken holds the default value on creation for the baidu_refresh_token field.
 	user.DefaultBaiduRefreshToken = userDescBaiduRefreshToken.Default.(string)
 	// userDescBoundAt is the schema descriptor for bound_at field.
-	userDescBoundAt := userFields[17].Descriptor()
+	userDescBoundAt := userFields[18].Descriptor()
 	// user.DefaultBoundAt holds the default value on creation for the bound_at field.
 	user.DefaultBoundAt = userDescBoundAt.Default.(time.Time)
 	// userDescID is the schema descriptor for id field.
