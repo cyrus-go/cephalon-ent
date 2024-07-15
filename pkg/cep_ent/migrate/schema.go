@@ -495,6 +495,8 @@ var (
 		{Name: "cpus", Type: field.TypeString, Nullable: true, Comment: "CPU型号", SchemaType: map[string]string{"postgres": "bytea"}},
 		{Name: "memory", Type: field.TypeInt64, Comment: "内存(单位:G)", Default: 0},
 		{Name: "disk", Type: field.TypeFloat32, Comment: "硬盘(单位:T)", Default: 0, SchemaType: map[string]string{"postgres": "NUMERIC(10,4)"}},
+		{Name: "delay", Type: field.TypeFloat64, Comment: "延迟(单位:ms)", Default: 0},
+		{Name: "temperature", Type: field.TypeFloat64, Comment: "温度(单位:℃)", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -506,7 +508,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[20]},
+				Columns:    []*schema.Column{DevicesColumns[22]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -515,7 +517,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[20]},
+				Columns: []*schema.Column{DevicesColumns[22]},
 			},
 		},
 	}

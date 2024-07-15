@@ -12701,6 +12701,10 @@ type DeviceMutation struct {
 	addmemory                     *int64
 	disk                          *float32
 	adddisk                       *float32
+	delay                         *float64
+	adddelay                      *float64
+	temperature                   *float64
+	addtemperature                *float64
 	clearedFields                 map[string]struct{}
 	user                          *int64
 	cleareduser                   bool
@@ -13690,6 +13694,118 @@ func (m *DeviceMutation) ResetDisk() {
 	m.adddisk = nil
 }
 
+// SetDelay sets the "delay" field.
+func (m *DeviceMutation) SetDelay(f float64) {
+	m.delay = &f
+	m.adddelay = nil
+}
+
+// Delay returns the value of the "delay" field in the mutation.
+func (m *DeviceMutation) Delay() (r float64, exists bool) {
+	v := m.delay
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDelay returns the old "delay" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldDelay(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDelay is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDelay requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDelay: %w", err)
+	}
+	return oldValue.Delay, nil
+}
+
+// AddDelay adds f to the "delay" field.
+func (m *DeviceMutation) AddDelay(f float64) {
+	if m.adddelay != nil {
+		*m.adddelay += f
+	} else {
+		m.adddelay = &f
+	}
+}
+
+// AddedDelay returns the value that was added to the "delay" field in this mutation.
+func (m *DeviceMutation) AddedDelay() (r float64, exists bool) {
+	v := m.adddelay
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDelay resets all changes to the "delay" field.
+func (m *DeviceMutation) ResetDelay() {
+	m.delay = nil
+	m.adddelay = nil
+}
+
+// SetTemperature sets the "temperature" field.
+func (m *DeviceMutation) SetTemperature(f float64) {
+	m.temperature = &f
+	m.addtemperature = nil
+}
+
+// Temperature returns the value of the "temperature" field in the mutation.
+func (m *DeviceMutation) Temperature() (r float64, exists bool) {
+	v := m.temperature
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTemperature returns the old "temperature" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldTemperature(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTemperature is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTemperature requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTemperature: %w", err)
+	}
+	return oldValue.Temperature, nil
+}
+
+// AddTemperature adds f to the "temperature" field.
+func (m *DeviceMutation) AddTemperature(f float64) {
+	if m.addtemperature != nil {
+		*m.addtemperature += f
+	} else {
+		m.addtemperature = &f
+	}
+}
+
+// AddedTemperature returns the value that was added to the "temperature" field in this mutation.
+func (m *DeviceMutation) AddedTemperature() (r float64, exists bool) {
+	v := m.addtemperature
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTemperature resets all changes to the "temperature" field.
+func (m *DeviceMutation) ResetTemperature() {
+	m.temperature = nil
+	m.addtemperature = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -14183,7 +14299,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 22)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -14244,6 +14360,12 @@ func (m *DeviceMutation) Fields() []string {
 	if m.disk != nil {
 		fields = append(fields, device.FieldDisk)
 	}
+	if m.delay != nil {
+		fields = append(fields, device.FieldDelay)
+	}
+	if m.temperature != nil {
+		fields = append(fields, device.FieldTemperature)
+	}
 	return fields
 }
 
@@ -14292,6 +14414,10 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Memory()
 	case device.FieldDisk:
 		return m.Disk()
+	case device.FieldDelay:
+		return m.Delay()
+	case device.FieldTemperature:
+		return m.Temperature()
 	}
 	return nil, false
 }
@@ -14341,6 +14467,10 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldMemory(ctx)
 	case device.FieldDisk:
 		return m.OldDisk(ctx)
+	case device.FieldDelay:
+		return m.OldDelay(ctx)
+	case device.FieldTemperature:
+		return m.OldTemperature(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -14490,6 +14620,20 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDisk(v)
 		return nil
+	case device.FieldDelay:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDelay(v)
+		return nil
+	case device.FieldTemperature:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTemperature(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
 }
@@ -14516,6 +14660,12 @@ func (m *DeviceMutation) AddedFields() []string {
 	if m.adddisk != nil {
 		fields = append(fields, device.FieldDisk)
 	}
+	if m.adddelay != nil {
+		fields = append(fields, device.FieldDelay)
+	}
+	if m.addtemperature != nil {
+		fields = append(fields, device.FieldTemperature)
+	}
 	return fields
 }
 
@@ -14536,6 +14686,10 @@ func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedMemory()
 	case device.FieldDisk:
 		return m.AddedDisk()
+	case device.FieldDelay:
+		return m.AddedDelay()
+	case device.FieldTemperature:
+		return m.AddedTemperature()
 	}
 	return nil, false
 }
@@ -14586,6 +14740,20 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDisk(v)
+		return nil
+	case device.FieldDelay:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDelay(v)
+		return nil
+	case device.FieldTemperature:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTemperature(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device numeric field %s", name)
@@ -14682,6 +14850,12 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldDisk:
 		m.ResetDisk()
+		return nil
+	case device.FieldDelay:
+		m.ResetDelay()
+		return nil
+	case device.FieldTemperature:
+		m.ResetTemperature()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

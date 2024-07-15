@@ -131,6 +131,16 @@ func Disk(v float32) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldDisk, v))
 }
 
+// Delay applies equality check predicate on the "delay" field. It's identical to DelayEQ.
+func Delay(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldDelay, v))
+}
+
+// Temperature applies equality check predicate on the "temperature" field. It's identical to TemperatureEQ.
+func Temperature(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldTemperature, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -899,6 +909,86 @@ func DiskLT(v float32) predicate.Device {
 // DiskLTE applies the LTE predicate on the "disk" field.
 func DiskLTE(v float32) predicate.Device {
 	return predicate.Device(sql.FieldLTE(FieldDisk, v))
+}
+
+// DelayEQ applies the EQ predicate on the "delay" field.
+func DelayEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldDelay, v))
+}
+
+// DelayNEQ applies the NEQ predicate on the "delay" field.
+func DelayNEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldDelay, v))
+}
+
+// DelayIn applies the In predicate on the "delay" field.
+func DelayIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldDelay, vs...))
+}
+
+// DelayNotIn applies the NotIn predicate on the "delay" field.
+func DelayNotIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldDelay, vs...))
+}
+
+// DelayGT applies the GT predicate on the "delay" field.
+func DelayGT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldDelay, v))
+}
+
+// DelayGTE applies the GTE predicate on the "delay" field.
+func DelayGTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldDelay, v))
+}
+
+// DelayLT applies the LT predicate on the "delay" field.
+func DelayLT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldDelay, v))
+}
+
+// DelayLTE applies the LTE predicate on the "delay" field.
+func DelayLTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldDelay, v))
+}
+
+// TemperatureEQ applies the EQ predicate on the "temperature" field.
+func TemperatureEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldTemperature, v))
+}
+
+// TemperatureNEQ applies the NEQ predicate on the "temperature" field.
+func TemperatureNEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldTemperature, v))
+}
+
+// TemperatureIn applies the In predicate on the "temperature" field.
+func TemperatureIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldTemperature, vs...))
+}
+
+// TemperatureNotIn applies the NotIn predicate on the "temperature" field.
+func TemperatureNotIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldTemperature, vs...))
+}
+
+// TemperatureGT applies the GT predicate on the "temperature" field.
+func TemperatureGT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldTemperature, v))
+}
+
+// TemperatureGTE applies the GTE predicate on the "temperature" field.
+func TemperatureGTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldTemperature, v))
+}
+
+// TemperatureLT applies the LT predicate on the "temperature" field.
+func TemperatureLT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldTemperature, v))
+}
+
+// TemperatureLTE applies the LTE predicate on the "temperature" field.
+func TemperatureLTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldTemperature, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

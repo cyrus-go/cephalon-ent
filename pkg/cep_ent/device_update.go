@@ -337,6 +337,48 @@ func (du *DeviceUpdate) AddDisk(f float32) *DeviceUpdate {
 	return du
 }
 
+// SetDelay sets the "delay" field.
+func (du *DeviceUpdate) SetDelay(f float64) *DeviceUpdate {
+	du.mutation.ResetDelay()
+	du.mutation.SetDelay(f)
+	return du
+}
+
+// SetNillableDelay sets the "delay" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableDelay(f *float64) *DeviceUpdate {
+	if f != nil {
+		du.SetDelay(*f)
+	}
+	return du
+}
+
+// AddDelay adds f to the "delay" field.
+func (du *DeviceUpdate) AddDelay(f float64) *DeviceUpdate {
+	du.mutation.AddDelay(f)
+	return du
+}
+
+// SetTemperature sets the "temperature" field.
+func (du *DeviceUpdate) SetTemperature(f float64) *DeviceUpdate {
+	du.mutation.ResetTemperature()
+	du.mutation.SetTemperature(f)
+	return du
+}
+
+// SetNillableTemperature sets the "temperature" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableTemperature(f *float64) *DeviceUpdate {
+	if f != nil {
+		du.SetTemperature(*f)
+	}
+	return du
+}
+
+// AddTemperature adds f to the "temperature" field.
+func (du *DeviceUpdate) AddTemperature(f float64) *DeviceUpdate {
+	du.mutation.AddTemperature(f)
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -801,6 +843,18 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.AddedDisk(); ok {
 		_spec.AddField(device.FieldDisk, field.TypeFloat32, value)
+	}
+	if value, ok := du.mutation.Delay(); ok {
+		_spec.SetField(device.FieldDelay, field.TypeFloat64, value)
+	}
+	if value, ok := du.mutation.AddedDelay(); ok {
+		_spec.AddField(device.FieldDelay, field.TypeFloat64, value)
+	}
+	if value, ok := du.mutation.Temperature(); ok {
+		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := du.mutation.AddedTemperature(); ok {
+		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1511,6 +1565,48 @@ func (duo *DeviceUpdateOne) AddDisk(f float32) *DeviceUpdateOne {
 	return duo
 }
 
+// SetDelay sets the "delay" field.
+func (duo *DeviceUpdateOne) SetDelay(f float64) *DeviceUpdateOne {
+	duo.mutation.ResetDelay()
+	duo.mutation.SetDelay(f)
+	return duo
+}
+
+// SetNillableDelay sets the "delay" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableDelay(f *float64) *DeviceUpdateOne {
+	if f != nil {
+		duo.SetDelay(*f)
+	}
+	return duo
+}
+
+// AddDelay adds f to the "delay" field.
+func (duo *DeviceUpdateOne) AddDelay(f float64) *DeviceUpdateOne {
+	duo.mutation.AddDelay(f)
+	return duo
+}
+
+// SetTemperature sets the "temperature" field.
+func (duo *DeviceUpdateOne) SetTemperature(f float64) *DeviceUpdateOne {
+	duo.mutation.ResetTemperature()
+	duo.mutation.SetTemperature(f)
+	return duo
+}
+
+// SetNillableTemperature sets the "temperature" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableTemperature(f *float64) *DeviceUpdateOne {
+	if f != nil {
+		duo.SetTemperature(*f)
+	}
+	return duo
+}
+
+// AddTemperature adds f to the "temperature" field.
+func (duo *DeviceUpdateOne) AddTemperature(f float64) *DeviceUpdateOne {
+	duo.mutation.AddTemperature(f)
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2005,6 +2101,18 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.AddedDisk(); ok {
 		_spec.AddField(device.FieldDisk, field.TypeFloat32, value)
+	}
+	if value, ok := duo.mutation.Delay(); ok {
+		_spec.SetField(device.FieldDelay, field.TypeFloat64, value)
+	}
+	if value, ok := duo.mutation.AddedDelay(); ok {
+		_spec.AddField(device.FieldDelay, field.TypeFloat64, value)
+	}
+	if value, ok := duo.mutation.Temperature(); ok {
+		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := duo.mutation.AddedTemperature(); ok {
+		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

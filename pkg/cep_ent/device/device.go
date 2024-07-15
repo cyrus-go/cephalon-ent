@@ -57,6 +57,10 @@ const (
 	FieldMemory = "memory"
 	// FieldDisk holds the string denoting the disk field in the database.
 	FieldDisk = "disk"
+	// FieldDelay holds the string denoting the delay field in the database.
+	FieldDelay = "delay"
+	// FieldTemperature holds the string denoting the temperature field in the database.
+	FieldTemperature = "temperature"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -165,6 +169,8 @@ var Columns = []string{
 	FieldCpus,
 	FieldMemory,
 	FieldDisk,
+	FieldDelay,
+	FieldTemperature,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -210,6 +216,10 @@ var (
 	DefaultMemory int64
 	// DefaultDisk holds the default value on creation for the "disk" field.
 	DefaultDisk float32
+	// DefaultDelay holds the default value on creation for the "delay" field.
+	DefaultDelay float64
+	// DefaultTemperature holds the default value on creation for the "temperature" field.
+	DefaultTemperature float64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -387,6 +397,16 @@ func ByMemory(opts ...sql.OrderTermOption) OrderOption {
 // ByDisk orders the results by the disk field.
 func ByDisk(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDisk, opts...).ToFunc()
+}
+
+// ByDelay orders the results by the delay field.
+func ByDelay(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDelay, opts...).ToFunc()
+}
+
+// ByTemperature orders the results by the temperature field.
+func ByTemperature(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTemperature, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

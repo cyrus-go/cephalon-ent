@@ -304,6 +304,34 @@ func (dc *DeviceCreate) SetNillableDisk(f *float32) *DeviceCreate {
 	return dc
 }
 
+// SetDelay sets the "delay" field.
+func (dc *DeviceCreate) SetDelay(f float64) *DeviceCreate {
+	dc.mutation.SetDelay(f)
+	return dc
+}
+
+// SetNillableDelay sets the "delay" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableDelay(f *float64) *DeviceCreate {
+	if f != nil {
+		dc.SetDelay(*f)
+	}
+	return dc
+}
+
+// SetTemperature sets the "temperature" field.
+func (dc *DeviceCreate) SetTemperature(f float64) *DeviceCreate {
+	dc.mutation.SetTemperature(f)
+	return dc
+}
+
+// SetNillableTemperature sets the "temperature" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableTemperature(f *float64) *DeviceCreate {
+	if f != nil {
+		dc.SetTemperature(*f)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -554,6 +582,14 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultDisk
 		dc.mutation.SetDisk(v)
 	}
+	if _, ok := dc.mutation.Delay(); !ok {
+		v := device.DefaultDelay
+		dc.mutation.SetDelay(v)
+	}
+	if _, ok := dc.mutation.Temperature(); !ok {
+		v := device.DefaultTemperature
+		dc.mutation.SetTemperature(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -638,6 +674,12 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.Disk(); !ok {
 		return &ValidationError{Name: "disk", err: errors.New(`cep_ent: missing required field "Device.disk"`)}
+	}
+	if _, ok := dc.mutation.Delay(); !ok {
+		return &ValidationError{Name: "delay", err: errors.New(`cep_ent: missing required field "Device.delay"`)}
+	}
+	if _, ok := dc.mutation.Temperature(); !ok {
+		return &ValidationError{Name: "temperature", err: errors.New(`cep_ent: missing required field "Device.temperature"`)}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -757,6 +799,14 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Disk(); ok {
 		_spec.SetField(device.FieldDisk, field.TypeFloat32, value)
 		_node.Disk = value
+	}
+	if value, ok := dc.mutation.Delay(); ok {
+		_spec.SetField(device.FieldDelay, field.TypeFloat64, value)
+		_node.Delay = value
+	}
+	if value, ok := dc.mutation.Temperature(); ok {
+		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
+		_node.Temperature = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1225,6 +1275,42 @@ func (u *DeviceUpsert) AddDisk(v float32) *DeviceUpsert {
 	return u
 }
 
+// SetDelay sets the "delay" field.
+func (u *DeviceUpsert) SetDelay(v float64) *DeviceUpsert {
+	u.Set(device.FieldDelay, v)
+	return u
+}
+
+// UpdateDelay sets the "delay" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateDelay() *DeviceUpsert {
+	u.SetExcluded(device.FieldDelay)
+	return u
+}
+
+// AddDelay adds v to the "delay" field.
+func (u *DeviceUpsert) AddDelay(v float64) *DeviceUpsert {
+	u.Add(device.FieldDelay, v)
+	return u
+}
+
+// SetTemperature sets the "temperature" field.
+func (u *DeviceUpsert) SetTemperature(v float64) *DeviceUpsert {
+	u.Set(device.FieldTemperature, v)
+	return u
+}
+
+// UpdateTemperature sets the "temperature" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateTemperature() *DeviceUpsert {
+	u.SetExcluded(device.FieldTemperature)
+	return u
+}
+
+// AddTemperature adds v to the "temperature" field.
+func (u *DeviceUpsert) AddTemperature(v float64) *DeviceUpsert {
+	u.Add(device.FieldTemperature, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1588,6 +1674,48 @@ func (u *DeviceUpsertOne) AddDisk(v float32) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateDisk() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateDisk()
+	})
+}
+
+// SetDelay sets the "delay" field.
+func (u *DeviceUpsertOne) SetDelay(v float64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetDelay(v)
+	})
+}
+
+// AddDelay adds v to the "delay" field.
+func (u *DeviceUpsertOne) AddDelay(v float64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddDelay(v)
+	})
+}
+
+// UpdateDelay sets the "delay" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateDelay() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateDelay()
+	})
+}
+
+// SetTemperature sets the "temperature" field.
+func (u *DeviceUpsertOne) SetTemperature(v float64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetTemperature(v)
+	})
+}
+
+// AddTemperature adds v to the "temperature" field.
+func (u *DeviceUpsertOne) AddTemperature(v float64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddTemperature(v)
+	})
+}
+
+// UpdateTemperature sets the "temperature" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateTemperature() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateTemperature()
 	})
 }
 
@@ -2123,6 +2251,48 @@ func (u *DeviceUpsertBulk) AddDisk(v float32) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateDisk() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateDisk()
+	})
+}
+
+// SetDelay sets the "delay" field.
+func (u *DeviceUpsertBulk) SetDelay(v float64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetDelay(v)
+	})
+}
+
+// AddDelay adds v to the "delay" field.
+func (u *DeviceUpsertBulk) AddDelay(v float64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddDelay(v)
+	})
+}
+
+// UpdateDelay sets the "delay" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateDelay() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateDelay()
+	})
+}
+
+// SetTemperature sets the "temperature" field.
+func (u *DeviceUpsertBulk) SetTemperature(v float64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetTemperature(v)
+	})
+}
+
+// AddTemperature adds v to the "temperature" field.
+func (u *DeviceUpsertBulk) AddTemperature(v float64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddTemperature(v)
+	})
+}
+
+// UpdateTemperature sets the "temperature" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateTemperature() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateTemperature()
 	})
 }
 

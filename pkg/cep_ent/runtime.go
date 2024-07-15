@@ -706,6 +706,14 @@ func init() {
 	deviceDescDisk := deviceFields[14].Descriptor()
 	// device.DefaultDisk holds the default value on creation for the disk field.
 	device.DefaultDisk = deviceDescDisk.Default.(float32)
+	// deviceDescDelay is the schema descriptor for delay field.
+	deviceDescDelay := deviceFields[15].Descriptor()
+	// device.DefaultDelay holds the default value on creation for the delay field.
+	device.DefaultDelay = deviceDescDelay.Default.(float64)
+	// deviceDescTemperature is the schema descriptor for temperature field.
+	deviceDescTemperature := deviceFields[16].Descriptor()
+	// device.DefaultTemperature holds the default value on creation for the temperature field.
+	device.DefaultTemperature = deviceDescTemperature.Default.(float64)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.
