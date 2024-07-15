@@ -579,7 +579,7 @@ const DefaultUserType enums.UserType = "personal"
 // UserTypeValidator is a validator for the "user_type" field enum values. It is called by the builders before save.
 func UserTypeValidator(ut enums.UserType) error {
 	switch ut {
-	case "personal", "enterprise", "admin":
+	case "personal", "enterprise", "admin", "boss", "admin_read_only":
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for user_type field: %q", ut)

@@ -2471,7 +2471,7 @@ var (
 		{Name: "password", Type: field.TypeString, Comment: "密码", Default: ""},
 		{Name: "is_frozen", Type: field.TypeBool, Comment: "是否冻结", Default: false},
 		{Name: "is_recharge", Type: field.TypeBool, Comment: "是否充值过", Default: false},
-		{Name: "user_type", Type: field.TypeEnum, Comment: "用户类型", Enums: []string{"personal", "enterprise", "admin"}, Default: "personal"},
+		{Name: "user_type", Type: field.TypeEnum, Comment: "用户类型", Enums: []string{"personal", "enterprise", "admin", "boss", "admin_read_only"}, Default: "personal"},
 		{Name: "pop_version", Type: field.TypeString, Comment: "用户最新弹窗版本", Default: ""},
 		{Name: "area_code", Type: field.TypeString, Comment: "国家区号", Default: "+86"},
 		{Name: "email", Type: field.TypeString, Comment: "邮箱", Default: ""},
