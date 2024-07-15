@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -98,11 +99,6 @@ func RegCep(v int64) predicate.Invite {
 // FirstRechargeCep applies equality check predicate on the "first_recharge_cep" field. It's identical to FirstRechargeCepEQ.
 func FirstRechargeCep(v int64) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldFirstRechargeCep, v))
-}
-
-// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldEQ(FieldType, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
@@ -501,68 +497,33 @@ func FirstRechargeCepLTE(v int64) predicate.Invite {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldEQ(FieldType, v))
+func TypeEQ(v enums.InviteType) predicate.Invite {
+	vc := v
+	return predicate.Invite(sql.FieldEQ(FieldType, vc))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldNEQ(FieldType, v))
+func TypeNEQ(v enums.InviteType) predicate.Invite {
+	vc := v
+	return predicate.Invite(sql.FieldNEQ(FieldType, vc))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...string) predicate.Invite {
-	return predicate.Invite(sql.FieldIn(FieldType, vs...))
+func TypeIn(vs ...enums.InviteType) predicate.Invite {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Invite(sql.FieldIn(FieldType, v...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...string) predicate.Invite {
-	return predicate.Invite(sql.FieldNotIn(FieldType, vs...))
-}
-
-// TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldGT(FieldType, v))
-}
-
-// TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldGTE(FieldType, v))
-}
-
-// TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldLT(FieldType, v))
-}
-
-// TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldLTE(FieldType, v))
-}
-
-// TypeContains applies the Contains predicate on the "type" field.
-func TypeContains(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldContains(FieldType, v))
-}
-
-// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
-func TypeHasPrefix(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldHasPrefix(FieldType, v))
-}
-
-// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
-func TypeHasSuffix(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldHasSuffix(FieldType, v))
-}
-
-// TypeEqualFold applies the EqualFold predicate on the "type" field.
-func TypeEqualFold(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldEqualFold(FieldType, v))
-}
-
-// TypeContainsFold applies the ContainsFold predicate on the "type" field.
-func TypeContainsFold(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldContainsFold(FieldType, v))
+func TypeNotIn(vs ...enums.InviteType) predicate.Invite {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Invite(sql.FieldNotIn(FieldType, v...))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.

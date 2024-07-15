@@ -12,6 +12,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 邀请码表，可横行拓展，为邀请码赋予额外功能；具备第一条数据，默认邀请码，id 为 1
@@ -39,7 +40,7 @@ type Invite struct {
 	// 通过此邀请码邀请用户注册并首次充值能获得的收益
 	FirstRechargeCep int64 `json:"first_recharge_cep"`
 	// 邀请码类型（可以用来区分不同的活动）
-	Type string `json:"type"`
+	Type enums.InviteType `json:"type"`
 	// 外键用户 id
 	UserID int64 `json:"user_id,string"`
 	// 外键活动 id
@@ -188,7 +189,7 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[j])
 			} else if value.Valid {
-				i.Type = value.String
+				i.Type = enums.InviteType(value.String)
 			}
 		case invite.FieldUserID:
 			if value, ok := values[j].(*sql.NullInt64); !ok {
@@ -281,7 +282,7 @@ func (i *Invite) String() string {
 	builder.WriteString(fmt.Sprintf("%v", i.FirstRechargeCep))
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(i.Type)
+	builder.WriteString(fmt.Sprintf("%v", i.Type))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", i.UserID))

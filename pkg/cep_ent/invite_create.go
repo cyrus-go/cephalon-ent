@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/campaign"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // InviteCreate is the builder for creating a Invite entity.
@@ -152,15 +153,15 @@ func (ic *InviteCreate) SetNillableFirstRechargeCep(i *int64) *InviteCreate {
 }
 
 // SetType sets the "type" field.
-func (ic *InviteCreate) SetType(s string) *InviteCreate {
-	ic.mutation.SetType(s)
+func (ic *InviteCreate) SetType(et enums.InviteType) *InviteCreate {
+	ic.mutation.SetType(et)
 	return ic
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (ic *InviteCreate) SetNillableType(s *string) *InviteCreate {
-	if s != nil {
-		ic.SetType(*s)
+func (ic *InviteCreate) SetNillableType(et *enums.InviteType) *InviteCreate {
+	if et != nil {
+		ic.SetType(*et)
 	}
 	return ic
 }
@@ -353,6 +354,11 @@ func (ic *InviteCreate) check() error {
 	if _, ok := ic.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`cep_ent: missing required field "Invite.type"`)}
 	}
+	if v, ok := ic.mutation.GetType(); ok {
+		if err := invite.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Invite.type": %w`, err)}
+		}
+	}
 	if _, ok := ic.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "Invite.user_id"`)}
 	}
@@ -435,7 +441,7 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 		_node.FirstRechargeCep = value
 	}
 	if value, ok := ic.mutation.GetType(); ok {
-		_spec.SetField(invite.FieldType, field.TypeString, value)
+		_spec.SetField(invite.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
 	if nodes := ic.mutation.UserIDs(); len(nodes) > 0 {
@@ -667,7 +673,7 @@ func (u *InviteUpsert) AddFirstRechargeCep(v int64) *InviteUpsert {
 }
 
 // SetType sets the "type" field.
-func (u *InviteUpsert) SetType(v string) *InviteUpsert {
+func (u *InviteUpsert) SetType(v enums.InviteType) *InviteUpsert {
 	u.Set(invite.FieldType, v)
 	return u
 }
@@ -901,7 +907,7 @@ func (u *InviteUpsertOne) UpdateFirstRechargeCep() *InviteUpsertOne {
 }
 
 // SetType sets the "type" field.
-func (u *InviteUpsertOne) SetType(v string) *InviteUpsertOne {
+func (u *InviteUpsertOne) SetType(v enums.InviteType) *InviteUpsertOne {
 	return u.Update(func(s *InviteUpsert) {
 		s.SetType(v)
 	})
@@ -1307,7 +1313,7 @@ func (u *InviteUpsertBulk) UpdateFirstRechargeCep() *InviteUpsertBulk {
 }
 
 // SetType sets the "type" field.
-func (u *InviteUpsertBulk) SetType(v string) *InviteUpsertBulk {
+func (u *InviteUpsertBulk) SetType(v enums.InviteType) *InviteUpsertBulk {
 	return u.Update(func(s *InviteUpsert) {
 		s.SetType(v)
 	})

@@ -31958,7 +31958,7 @@ type InviteMutation struct {
 	addreg_cep            *int64
 	first_recharge_cep    *int64
 	addfirst_recharge_cep *int64
-	_type                 *string
+	_type                 *enums.InviteType
 	clearedFields         map[string]struct{}
 	user                  *int64
 	cleareduser           bool
@@ -32501,12 +32501,12 @@ func (m *InviteMutation) ResetFirstRechargeCep() {
 }
 
 // SetType sets the "type" field.
-func (m *InviteMutation) SetType(s string) {
-	m._type = &s
+func (m *InviteMutation) SetType(et enums.InviteType) {
+	m._type = &et
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *InviteMutation) GetType() (r string, exists bool) {
+func (m *InviteMutation) GetType() (r enums.InviteType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -32517,7 +32517,7 @@ func (m *InviteMutation) GetType() (r string, exists bool) {
 // OldType returns the old "type" field's value of the Invite entity.
 // If the Invite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InviteMutation) OldType(ctx context.Context) (v string, err error) {
+func (m *InviteMutation) OldType(ctx context.Context) (v enums.InviteType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -32925,7 +32925,7 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 		m.SetFirstRechargeCep(v)
 		return nil
 	case invite.FieldType:
-		v, ok := value.(string)
+		v, ok := value.(enums.InviteType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

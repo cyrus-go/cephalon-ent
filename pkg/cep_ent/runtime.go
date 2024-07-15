@@ -1525,10 +1525,6 @@ func init() {
 	inviteDescFirstRechargeCep := inviteFields[3].Descriptor()
 	// invite.DefaultFirstRechargeCep holds the default value on creation for the first_recharge_cep field.
 	invite.DefaultFirstRechargeCep = inviteDescFirstRechargeCep.Default.(int64)
-	// inviteDescType is the schema descriptor for type field.
-	inviteDescType := inviteFields[4].Descriptor()
-	// invite.DefaultType holds the default value on creation for the type field.
-	invite.DefaultType = inviteDescType.Default.(string)
 	// inviteDescUserID is the schema descriptor for user_id field.
 	inviteDescUserID := inviteFields[5].Descriptor()
 	// invite.DefaultUserID holds the default value on creation for the user_id field.

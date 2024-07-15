@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/invite"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // InviteUpdate is the builder for updating Invite entities.
@@ -172,15 +173,15 @@ func (iu *InviteUpdate) AddFirstRechargeCep(i int64) *InviteUpdate {
 }
 
 // SetType sets the "type" field.
-func (iu *InviteUpdate) SetType(s string) *InviteUpdate {
-	iu.mutation.SetType(s)
+func (iu *InviteUpdate) SetType(et enums.InviteType) *InviteUpdate {
+	iu.mutation.SetType(et)
 	return iu
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (iu *InviteUpdate) SetNillableType(s *string) *InviteUpdate {
-	if s != nil {
-		iu.SetType(*s)
+func (iu *InviteUpdate) SetNillableType(et *enums.InviteType) *InviteUpdate {
+	if et != nil {
+		iu.SetType(*et)
 	}
 	return iu
 }
@@ -314,6 +315,11 @@ func (iu *InviteUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *InviteUpdate) check() error {
+	if v, ok := iu.mutation.GetType(); ok {
+		if err := invite.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Invite.type": %w`, err)}
+		}
+	}
 	if _, ok := iu.mutation.UserID(); iu.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Invite.user"`)
 	}
@@ -381,7 +387,7 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
 	}
 	if value, ok := iu.mutation.GetType(); ok {
-		_spec.SetField(invite.FieldType, field.TypeString, value)
+		_spec.SetField(invite.FieldType, field.TypeEnum, value)
 	}
 	if iu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -648,15 +654,15 @@ func (iuo *InviteUpdateOne) AddFirstRechargeCep(i int64) *InviteUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (iuo *InviteUpdateOne) SetType(s string) *InviteUpdateOne {
-	iuo.mutation.SetType(s)
+func (iuo *InviteUpdateOne) SetType(et enums.InviteType) *InviteUpdateOne {
+	iuo.mutation.SetType(et)
 	return iuo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (iuo *InviteUpdateOne) SetNillableType(s *string) *InviteUpdateOne {
-	if s != nil {
-		iuo.SetType(*s)
+func (iuo *InviteUpdateOne) SetNillableType(et *enums.InviteType) *InviteUpdateOne {
+	if et != nil {
+		iuo.SetType(*et)
 	}
 	return iuo
 }
@@ -803,6 +809,11 @@ func (iuo *InviteUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *InviteUpdateOne) check() error {
+	if v, ok := iuo.mutation.GetType(); ok {
+		if err := invite.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Invite.type": %w`, err)}
+		}
+	}
 	if _, ok := iuo.mutation.UserID(); iuo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Invite.user"`)
 	}
@@ -887,7 +898,7 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 		_spec.AddField(invite.FieldFirstRechargeCep, field.TypeInt64, value)
 	}
 	if value, ok := iuo.mutation.GetType(); ok {
-		_spec.SetField(invite.FieldType, field.TypeString, value)
+		_spec.SetField(invite.FieldType, field.TypeEnum, value)
 	}
 	if iuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

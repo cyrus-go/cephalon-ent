@@ -3,10 +3,12 @@
 package invite
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -117,8 +119,6 @@ var (
 	DefaultRegCep int64
 	// DefaultFirstRechargeCep holds the default value on creation for the "first_recharge_cep" field.
 	DefaultFirstRechargeCep int64
-	// DefaultType holds the default value on creation for the "type" field.
-	DefaultType string
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int64
 	// DefaultCampaignID holds the default value on creation for the "campaign_id" field.
@@ -126,6 +126,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultType enums.InviteType = "unknown"
+
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type enums.InviteType) error {
+	switch _type {
+	case "unknown", "share_register", "app_invite":
+		return nil
+	default:
+		return fmt.Errorf("invite: invalid enum value for type field: %q", _type)
+	}
+}
 
 // OrderOption defines the ordering options for the Invite queries.
 type OrderOption func(*sql.Selector)

@@ -1058,7 +1058,7 @@ var (
 		{Name: "share_cep", Type: field.TypeInt64, Comment: "通过此邀请码分享能获得的收益", Default: 0},
 		{Name: "reg_cep", Type: field.TypeInt64, Comment: "通过此邀请码注册能获得的收益", Default: 0},
 		{Name: "first_recharge_cep", Type: field.TypeInt64, Comment: "通过此邀请码邀请用户注册并首次充值能获得的收益", Default: 0},
-		{Name: "type", Type: field.TypeString, Comment: "邀请码类型（可以用来区分不同的活动）", Default: ""},
+		{Name: "type", Type: field.TypeEnum, Comment: "邀请码类型（可以用来区分不同的活动）", Enums: []string{"unknown", "share_register", "app_invite"}, Default: "unknown"},
 		{Name: "campaign_id", Type: field.TypeInt64, Comment: "外键活动 id", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}

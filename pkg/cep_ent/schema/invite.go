@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // Invite holds the schema definition for the Invite entity.
@@ -20,7 +21,7 @@ func (Invite) Fields() []ent.Field {
 		field.Int64("share_cep").Default(0).StructTag(`json:"share_cep"`).Comment("通过此邀请码分享能获得的收益"),
 		field.Int64("reg_cep").Default(0).StructTag(`json:"reg_cep"`).Comment("通过此邀请码注册能获得的收益"),
 		field.Int64("first_recharge_cep").Default(0).StructTag(`json:"first_recharge_cep"`).Comment("通过此邀请码邀请用户注册并首次充值能获得的收益"),
-		field.String("type").Default("").StructTag(`json:"type"`).Comment("邀请码类型（可以用来区分不同的活动）"),
+		field.Enum("type").GoType(enums.InviteTypeShareRegister).Default(string(enums.InviteTypeUnknown)).StructTag(`json:"type"`).Comment("邀请码类型（可以用来区分不同的活动）"),
 
 		field.Int64("user_id").StructTag(`json:"user_id,string"`).Default(0).Comment("外键用户 id"),
 		field.Int64("campaign_id").StructTag(`json:"campaign_id"`).Default(0).Comment("外键活动 id"),
