@@ -59,7 +59,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("user_devices", UserDevice.Type),
 		edge.To("children", User.Type).From("parent").Unique().Required().Field("parent_id"),
 		edge.To("applet_children", User.Type).From("applet_parent").Unique().Required().Field("applet_parent_id"),
-		edge.To("", Invite.Type),
+		edge.To("invite", Invite.Type),
 		edge.To("campaign_orders", CampaignOrder.Type),
 		edge.To("wallets", Wallet.Type),
 		edge.To("withdraw_account", WithdrawAccount.Type).Unique(),
