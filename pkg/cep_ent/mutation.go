@@ -23,6 +23,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
@@ -102,6 +103,7 @@ const (
 	TypeCostBill             = "CostBill"
 	TypeDevice               = "Device"
 	TypeDeviceGpuMission     = "DeviceGpuMission"
+	TypeDeviceOfflineRecord  = "DeviceOfflineRecord"
 	TypeDeviceRebootTime     = "DeviceRebootTime"
 	TypeDeviceState          = "DeviceState"
 	TypeEarnBill             = "EarnBill"
@@ -12739,6 +12741,9 @@ type DeviceMutation struct {
 	device_states                 map[int64]struct{}
 	removeddevice_states          map[int64]struct{}
 	cleareddevice_states          bool
+	device_offline_records        map[int64]struct{}
+	removeddevice_offline_records map[int64]struct{}
+	cleareddevice_offline_records bool
 	done                          bool
 	oldValue                      func(context.Context) (*Device, error)
 	predicates                    []predicate.Device
@@ -14382,6 +14387,60 @@ func (m *DeviceMutation) ResetDeviceStates() {
 	m.removeddevice_states = nil
 }
 
+// AddDeviceOfflineRecordIDs adds the "device_offline_records" edge to the DeviceOfflineRecord entity by ids.
+func (m *DeviceMutation) AddDeviceOfflineRecordIDs(ids ...int64) {
+	if m.device_offline_records == nil {
+		m.device_offline_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.device_offline_records[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDeviceOfflineRecords clears the "device_offline_records" edge to the DeviceOfflineRecord entity.
+func (m *DeviceMutation) ClearDeviceOfflineRecords() {
+	m.cleareddevice_offline_records = true
+}
+
+// DeviceOfflineRecordsCleared reports if the "device_offline_records" edge to the DeviceOfflineRecord entity was cleared.
+func (m *DeviceMutation) DeviceOfflineRecordsCleared() bool {
+	return m.cleareddevice_offline_records
+}
+
+// RemoveDeviceOfflineRecordIDs removes the "device_offline_records" edge to the DeviceOfflineRecord entity by IDs.
+func (m *DeviceMutation) RemoveDeviceOfflineRecordIDs(ids ...int64) {
+	if m.removeddevice_offline_records == nil {
+		m.removeddevice_offline_records = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.device_offline_records, ids[i])
+		m.removeddevice_offline_records[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDeviceOfflineRecords returns the removed IDs of the "device_offline_records" edge to the DeviceOfflineRecord entity.
+func (m *DeviceMutation) RemovedDeviceOfflineRecordsIDs() (ids []int64) {
+	for id := range m.removeddevice_offline_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DeviceOfflineRecordsIDs returns the "device_offline_records" edge IDs in the mutation.
+func (m *DeviceMutation) DeviceOfflineRecordsIDs() (ids []int64) {
+	for id := range m.device_offline_records {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDeviceOfflineRecords resets all changes to the "device_offline_records" edge.
+func (m *DeviceMutation) ResetDeviceOfflineRecords() {
+	m.device_offline_records = nil
+	m.cleareddevice_offline_records = false
+	m.removeddevice_offline_records = nil
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -15009,7 +15068,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -15039,6 +15098,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.device_states != nil {
 		edges = append(edges, device.EdgeDeviceStates)
+	}
+	if m.device_offline_records != nil {
+		edges = append(edges, device.EdgeDeviceOfflineRecords)
 	}
 	return edges
 }
@@ -15105,13 +15167,19 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeDeviceOfflineRecords:
+		ids := make([]ent.Value, 0, len(m.device_offline_records))
+		for id := range m.device_offline_records {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -15138,6 +15206,9 @@ func (m *DeviceMutation) RemovedEdges() []string {
 	}
 	if m.removeddevice_states != nil {
 		edges = append(edges, device.EdgeDeviceStates)
+	}
+	if m.removeddevice_offline_records != nil {
+		edges = append(edges, device.EdgeDeviceOfflineRecords)
 	}
 	return edges
 }
@@ -15200,13 +15271,19 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeDeviceOfflineRecords:
+		ids := make([]ent.Value, 0, len(m.removeddevice_offline_records))
+		for id := range m.removeddevice_offline_records {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 10)
+	edges := make([]string, 0, 11)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -15237,6 +15314,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	if m.cleareddevice_states {
 		edges = append(edges, device.EdgeDeviceStates)
 	}
+	if m.cleareddevice_offline_records {
+		edges = append(edges, device.EdgeDeviceOfflineRecords)
+	}
 	return edges
 }
 
@@ -15264,6 +15344,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.clearedtrouble_deducts
 	case device.EdgeDeviceStates:
 		return m.cleareddevice_states
+	case device.EdgeDeviceOfflineRecords:
+		return m.cleareddevice_offline_records
 	}
 	return false
 }
@@ -15312,6 +15394,9 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 		return nil
 	case device.EdgeDeviceStates:
 		m.ResetDeviceStates()
+		return nil
+	case device.EdgeDeviceOfflineRecords:
+		m.ResetDeviceOfflineRecords()
 		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
@@ -16517,6 +16602,731 @@ func (m *DeviceGpuMissionMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown DeviceGpuMission edge %s", name)
+}
+
+// DeviceOfflineRecordMutation represents an operation that mutates the DeviceOfflineRecord nodes in the graph.
+type DeviceOfflineRecordMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	clearedFields map[string]struct{}
+	device        *int64
+	cleareddevice bool
+	done          bool
+	oldValue      func(context.Context) (*DeviceOfflineRecord, error)
+	predicates    []predicate.DeviceOfflineRecord
+}
+
+var _ ent.Mutation = (*DeviceOfflineRecordMutation)(nil)
+
+// deviceofflinerecordOption allows management of the mutation configuration using functional options.
+type deviceofflinerecordOption func(*DeviceOfflineRecordMutation)
+
+// newDeviceOfflineRecordMutation creates new mutation for the DeviceOfflineRecord entity.
+func newDeviceOfflineRecordMutation(c config, op Op, opts ...deviceofflinerecordOption) *DeviceOfflineRecordMutation {
+	m := &DeviceOfflineRecordMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDeviceOfflineRecord,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDeviceOfflineRecordID sets the ID field of the mutation.
+func withDeviceOfflineRecordID(id int64) deviceofflinerecordOption {
+	return func(m *DeviceOfflineRecordMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DeviceOfflineRecord
+		)
+		m.oldValue = func(ctx context.Context) (*DeviceOfflineRecord, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DeviceOfflineRecord.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDeviceOfflineRecord sets the old DeviceOfflineRecord of the mutation.
+func withDeviceOfflineRecord(node *DeviceOfflineRecord) deviceofflinerecordOption {
+	return func(m *DeviceOfflineRecordMutation) {
+		m.oldValue = func(context.Context) (*DeviceOfflineRecord, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DeviceOfflineRecordMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DeviceOfflineRecordMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DeviceOfflineRecord entities.
+func (m *DeviceOfflineRecordMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DeviceOfflineRecordMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DeviceOfflineRecordMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().DeviceOfflineRecord.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *DeviceOfflineRecordMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *DeviceOfflineRecordMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the DeviceOfflineRecord entity.
+// If the DeviceOfflineRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceOfflineRecordMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *DeviceOfflineRecordMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *DeviceOfflineRecordMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *DeviceOfflineRecordMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *DeviceOfflineRecordMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *DeviceOfflineRecordMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the DeviceOfflineRecord entity.
+// If the DeviceOfflineRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceOfflineRecordMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *DeviceOfflineRecordMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *DeviceOfflineRecordMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *DeviceOfflineRecordMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DeviceOfflineRecordMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DeviceOfflineRecordMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the DeviceOfflineRecord entity.
+// If the DeviceOfflineRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceOfflineRecordMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DeviceOfflineRecordMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DeviceOfflineRecordMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DeviceOfflineRecordMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the DeviceOfflineRecord entity.
+// If the DeviceOfflineRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceOfflineRecordMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DeviceOfflineRecordMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DeviceOfflineRecordMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DeviceOfflineRecordMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the DeviceOfflineRecord entity.
+// If the DeviceOfflineRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceOfflineRecordMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DeviceOfflineRecordMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *DeviceOfflineRecordMutation) SetDeviceID(i int64) {
+	m.device = &i
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *DeviceOfflineRecordMutation) DeviceID() (r int64, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the DeviceOfflineRecord entity.
+// If the DeviceOfflineRecord object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceOfflineRecordMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *DeviceOfflineRecordMutation) ResetDeviceID() {
+	m.device = nil
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *DeviceOfflineRecordMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[deviceofflinerecord.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *DeviceOfflineRecordMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *DeviceOfflineRecordMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *DeviceOfflineRecordMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
+// Where appends a list predicates to the DeviceOfflineRecordMutation builder.
+func (m *DeviceOfflineRecordMutation) Where(ps ...predicate.DeviceOfflineRecord) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DeviceOfflineRecordMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DeviceOfflineRecordMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.DeviceOfflineRecord, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DeviceOfflineRecordMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DeviceOfflineRecordMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (DeviceOfflineRecord).
+func (m *DeviceOfflineRecordMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DeviceOfflineRecordMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_by != nil {
+		fields = append(fields, deviceofflinerecord.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, deviceofflinerecord.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, deviceofflinerecord.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, deviceofflinerecord.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, deviceofflinerecord.FieldDeletedAt)
+	}
+	if m.device != nil {
+		fields = append(fields, deviceofflinerecord.FieldDeviceID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DeviceOfflineRecordMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case deviceofflinerecord.FieldCreatedBy:
+		return m.CreatedBy()
+	case deviceofflinerecord.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case deviceofflinerecord.FieldCreatedAt:
+		return m.CreatedAt()
+	case deviceofflinerecord.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case deviceofflinerecord.FieldDeletedAt:
+		return m.DeletedAt()
+	case deviceofflinerecord.FieldDeviceID:
+		return m.DeviceID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DeviceOfflineRecordMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case deviceofflinerecord.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case deviceofflinerecord.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case deviceofflinerecord.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case deviceofflinerecord.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case deviceofflinerecord.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case deviceofflinerecord.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	}
+	return nil, fmt.Errorf("unknown DeviceOfflineRecord field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DeviceOfflineRecordMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case deviceofflinerecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case deviceofflinerecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case deviceofflinerecord.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case deviceofflinerecord.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case deviceofflinerecord.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case deviceofflinerecord.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceOfflineRecord field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DeviceOfflineRecordMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, deviceofflinerecord.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, deviceofflinerecord.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DeviceOfflineRecordMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case deviceofflinerecord.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case deviceofflinerecord.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DeviceOfflineRecordMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case deviceofflinerecord.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case deviceofflinerecord.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceOfflineRecord numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DeviceOfflineRecordMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DeviceOfflineRecordMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DeviceOfflineRecordMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown DeviceOfflineRecord nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DeviceOfflineRecordMutation) ResetField(name string) error {
+	switch name {
+	case deviceofflinerecord.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case deviceofflinerecord.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case deviceofflinerecord.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case deviceofflinerecord.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case deviceofflinerecord.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case deviceofflinerecord.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceOfflineRecord field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DeviceOfflineRecordMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.device != nil {
+		edges = append(edges, deviceofflinerecord.EdgeDevice)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DeviceOfflineRecordMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case deviceofflinerecord.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DeviceOfflineRecordMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DeviceOfflineRecordMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DeviceOfflineRecordMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareddevice {
+		edges = append(edges, deviceofflinerecord.EdgeDevice)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DeviceOfflineRecordMutation) EdgeCleared(name string) bool {
+	switch name {
+	case deviceofflinerecord.EdgeDevice:
+		return m.cleareddevice
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DeviceOfflineRecordMutation) ClearEdge(name string) error {
+	switch name {
+	case deviceofflinerecord.EdgeDevice:
+		m.ClearDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceOfflineRecord unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DeviceOfflineRecordMutation) ResetEdge(name string) error {
+	switch name {
+	case deviceofflinerecord.EdgeDevice:
+		m.ResetDevice()
+		return nil
+	}
+	return fmt.Errorf("unknown DeviceOfflineRecord edge %s", name)
 }
 
 // DeviceRebootTimeMutation represents an operation that mutates the DeviceRebootTime nodes in the graph.

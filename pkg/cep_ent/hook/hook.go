@@ -153,6 +153,18 @@ func (f DeviceGpuMissionFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (c
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceGpuMissionMutation", m)
 }
 
+// The DeviceOfflineRecordFunc type is an adapter to allow the use of ordinary
+// function as DeviceOfflineRecord mutator.
+type DeviceOfflineRecordFunc func(context.Context, *cep_ent.DeviceOfflineRecordMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DeviceOfflineRecordFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.DeviceOfflineRecordMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceOfflineRecordMutation", m)
+}
+
 // The DeviceRebootTimeFunc type is an adapter to allow the use of ordinary
 // function as DeviceRebootTime mutator.
 type DeviceRebootTimeFunc func(context.Context, *cep_ent.DeviceRebootTimeMutation) (cep_ent.Value, error)

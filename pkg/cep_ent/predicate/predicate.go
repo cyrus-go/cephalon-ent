@@ -64,6 +64,9 @@ func DeviceGpuMissionOrErr(p DeviceGpuMission, err error) DeviceGpuMission {
 	}
 }
 
+// DeviceOfflineRecord is the predicate function for deviceofflinerecord builders.
+type DeviceOfflineRecord func(*sql.Selector)
+
 // DeviceRebootTime is the predicate function for devicereboottime builders.
 type DeviceRebootTime func(*sql.Selector)
 

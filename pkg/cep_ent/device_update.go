@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
@@ -541,6 +542,21 @@ func (du *DeviceUpdate) AddDeviceStates(d ...*DeviceState) *DeviceUpdate {
 	return du.AddDeviceStateIDs(ids...)
 }
 
+// AddDeviceOfflineRecordIDs adds the "device_offline_records" edge to the DeviceOfflineRecord entity by IDs.
+func (du *DeviceUpdate) AddDeviceOfflineRecordIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddDeviceOfflineRecordIDs(ids...)
+	return du
+}
+
+// AddDeviceOfflineRecords adds the "device_offline_records" edges to the DeviceOfflineRecord entity.
+func (du *DeviceUpdate) AddDeviceOfflineRecords(d ...*DeviceOfflineRecord) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.AddDeviceOfflineRecordIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -739,6 +755,27 @@ func (du *DeviceUpdate) RemoveDeviceStates(d ...*DeviceState) *DeviceUpdate {
 		ids[i] = d[i].ID
 	}
 	return du.RemoveDeviceStateIDs(ids...)
+}
+
+// ClearDeviceOfflineRecords clears all "device_offline_records" edges to the DeviceOfflineRecord entity.
+func (du *DeviceUpdate) ClearDeviceOfflineRecords() *DeviceUpdate {
+	du.mutation.ClearDeviceOfflineRecords()
+	return du
+}
+
+// RemoveDeviceOfflineRecordIDs removes the "device_offline_records" edge to DeviceOfflineRecord entities by IDs.
+func (du *DeviceUpdate) RemoveDeviceOfflineRecordIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveDeviceOfflineRecordIDs(ids...)
+	return du
+}
+
+// RemoveDeviceOfflineRecords removes "device_offline_records" edges to DeviceOfflineRecord entities.
+func (du *DeviceUpdate) RemoveDeviceOfflineRecords(d ...*DeviceOfflineRecord) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.RemoveDeviceOfflineRecordIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1354,6 +1391,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.DeviceOfflineRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedDeviceOfflineRecordsIDs(); len(nodes) > 0 && !du.mutation.DeviceOfflineRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.DeviceOfflineRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1877,6 +1959,21 @@ func (duo *DeviceUpdateOne) AddDeviceStates(d ...*DeviceState) *DeviceUpdateOne 
 	return duo.AddDeviceStateIDs(ids...)
 }
 
+// AddDeviceOfflineRecordIDs adds the "device_offline_records" edge to the DeviceOfflineRecord entity by IDs.
+func (duo *DeviceUpdateOne) AddDeviceOfflineRecordIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddDeviceOfflineRecordIDs(ids...)
+	return duo
+}
+
+// AddDeviceOfflineRecords adds the "device_offline_records" edges to the DeviceOfflineRecord entity.
+func (duo *DeviceUpdateOne) AddDeviceOfflineRecords(d ...*DeviceOfflineRecord) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.AddDeviceOfflineRecordIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -2075,6 +2172,27 @@ func (duo *DeviceUpdateOne) RemoveDeviceStates(d ...*DeviceState) *DeviceUpdateO
 		ids[i] = d[i].ID
 	}
 	return duo.RemoveDeviceStateIDs(ids...)
+}
+
+// ClearDeviceOfflineRecords clears all "device_offline_records" edges to the DeviceOfflineRecord entity.
+func (duo *DeviceUpdateOne) ClearDeviceOfflineRecords() *DeviceUpdateOne {
+	duo.mutation.ClearDeviceOfflineRecords()
+	return duo
+}
+
+// RemoveDeviceOfflineRecordIDs removes the "device_offline_records" edge to DeviceOfflineRecord entities by IDs.
+func (duo *DeviceUpdateOne) RemoveDeviceOfflineRecordIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveDeviceOfflineRecordIDs(ids...)
+	return duo
+}
+
+// RemoveDeviceOfflineRecords removes "device_offline_records" edges to DeviceOfflineRecord entities.
+func (duo *DeviceUpdateOne) RemoveDeviceOfflineRecords(d ...*DeviceOfflineRecord) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.RemoveDeviceOfflineRecordIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -2713,6 +2831,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.DeviceOfflineRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedDeviceOfflineRecordsIDs(); len(nodes) > 0 && !duo.mutation.DeviceOfflineRecordsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.DeviceOfflineRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

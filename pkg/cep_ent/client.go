@@ -27,6 +27,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
@@ -112,6 +113,8 @@ type Client struct {
 	Device *DeviceClient
 	// DeviceGpuMission is the client for interacting with the DeviceGpuMission builders.
 	DeviceGpuMission *DeviceGpuMissionClient
+	// DeviceOfflineRecord is the client for interacting with the DeviceOfflineRecord builders.
+	DeviceOfflineRecord *DeviceOfflineRecordClient
 	// DeviceRebootTime is the client for interacting with the DeviceRebootTime builders.
 	DeviceRebootTime *DeviceRebootTimeClient
 	// DeviceState is the client for interacting with the DeviceState builders.
@@ -245,6 +248,7 @@ func (c *Client) init() {
 	c.CostBill = NewCostBillClient(c.config)
 	c.Device = NewDeviceClient(c.config)
 	c.DeviceGpuMission = NewDeviceGpuMissionClient(c.config)
+	c.DeviceOfflineRecord = NewDeviceOfflineRecordClient(c.config)
 	c.DeviceRebootTime = NewDeviceRebootTimeClient(c.config)
 	c.DeviceState = NewDeviceStateClient(c.config)
 	c.EarnBill = NewEarnBillClient(c.config)
@@ -396,6 +400,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CostBill:             NewCostBillClient(cfg),
 		Device:               NewDeviceClient(cfg),
 		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
+		DeviceOfflineRecord:  NewDeviceOfflineRecordClient(cfg),
 		DeviceRebootTime:     NewDeviceRebootTimeClient(cfg),
 		DeviceState:          NewDeviceStateClient(cfg),
 		EarnBill:             NewEarnBillClient(cfg),
@@ -481,6 +486,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CostBill:             NewCostBillClient(cfg),
 		Device:               NewDeviceClient(cfg),
 		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
+		DeviceOfflineRecord:  NewDeviceOfflineRecordClient(cfg),
 		DeviceRebootTime:     NewDeviceRebootTimeClient(cfg),
 		DeviceState:          NewDeviceStateClient(cfg),
 		EarnBill:             NewEarnBillClient(cfg),
@@ -566,10 +572,10 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
 		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceGpuMission, c.DeviceRebootTime, c.DeviceState, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
-		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair,
-		c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
+		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
+		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
+		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu,
+		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
 		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
@@ -590,10 +596,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
 		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceGpuMission, c.DeviceRebootTime, c.DeviceState, c.EarnBill,
-		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
-		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair,
-		c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
+		c.DeviceGpuMission, c.DeviceOfflineRecord, c.DeviceRebootTime, c.DeviceState,
+		c.EarnBill, c.EnumCondition, c.EnumMissionStatus, c.ExtraService,
+		c.ExtraServiceOrder, c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu,
+		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
 		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
@@ -635,6 +641,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Device.mutate(ctx, m)
 	case *DeviceGpuMissionMutation:
 		return c.DeviceGpuMission.mutate(ctx, m)
+	case *DeviceOfflineRecordMutation:
+		return c.DeviceOfflineRecord.mutate(ctx, m)
 	case *DeviceRebootTimeMutation:
 		return c.DeviceRebootTime.mutate(ctx, m)
 	case *DeviceStateMutation:
@@ -2810,6 +2818,22 @@ func (c *DeviceClient) QueryDeviceStates(d *Device) *DeviceStateQuery {
 	return query
 }
 
+// QueryDeviceOfflineRecords queries the device_offline_records edge of a Device.
+func (c *DeviceClient) QueryDeviceOfflineRecords(d *Device) *DeviceOfflineRecordQuery {
+	query := (&DeviceOfflineRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(deviceofflinerecord.Table, deviceofflinerecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceOfflineRecordsTable, device.DeviceOfflineRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DeviceClient) Hooks() []Hook {
 	return c.hooks.Device
@@ -2997,6 +3021,155 @@ func (c *DeviceGpuMissionClient) mutate(ctx context.Context, m *DeviceGpuMission
 		return (&DeviceGpuMissionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown DeviceGpuMission mutation op: %q", m.Op())
+	}
+}
+
+// DeviceOfflineRecordClient is a client for the DeviceOfflineRecord schema.
+type DeviceOfflineRecordClient struct {
+	config
+}
+
+// NewDeviceOfflineRecordClient returns a client for the DeviceOfflineRecord from the given config.
+func NewDeviceOfflineRecordClient(c config) *DeviceOfflineRecordClient {
+	return &DeviceOfflineRecordClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `deviceofflinerecord.Hooks(f(g(h())))`.
+func (c *DeviceOfflineRecordClient) Use(hooks ...Hook) {
+	c.hooks.DeviceOfflineRecord = append(c.hooks.DeviceOfflineRecord, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `deviceofflinerecord.Intercept(f(g(h())))`.
+func (c *DeviceOfflineRecordClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DeviceOfflineRecord = append(c.inters.DeviceOfflineRecord, interceptors...)
+}
+
+// Create returns a builder for creating a DeviceOfflineRecord entity.
+func (c *DeviceOfflineRecordClient) Create() *DeviceOfflineRecordCreate {
+	mutation := newDeviceOfflineRecordMutation(c.config, OpCreate)
+	return &DeviceOfflineRecordCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DeviceOfflineRecord entities.
+func (c *DeviceOfflineRecordClient) CreateBulk(builders ...*DeviceOfflineRecordCreate) *DeviceOfflineRecordCreateBulk {
+	return &DeviceOfflineRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DeviceOfflineRecordClient) MapCreateBulk(slice any, setFunc func(*DeviceOfflineRecordCreate, int)) *DeviceOfflineRecordCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DeviceOfflineRecordCreateBulk{err: fmt.Errorf("calling to DeviceOfflineRecordClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DeviceOfflineRecordCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DeviceOfflineRecordCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DeviceOfflineRecord.
+func (c *DeviceOfflineRecordClient) Update() *DeviceOfflineRecordUpdate {
+	mutation := newDeviceOfflineRecordMutation(c.config, OpUpdate)
+	return &DeviceOfflineRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DeviceOfflineRecordClient) UpdateOne(dor *DeviceOfflineRecord) *DeviceOfflineRecordUpdateOne {
+	mutation := newDeviceOfflineRecordMutation(c.config, OpUpdateOne, withDeviceOfflineRecord(dor))
+	return &DeviceOfflineRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DeviceOfflineRecordClient) UpdateOneID(id int64) *DeviceOfflineRecordUpdateOne {
+	mutation := newDeviceOfflineRecordMutation(c.config, OpUpdateOne, withDeviceOfflineRecordID(id))
+	return &DeviceOfflineRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DeviceOfflineRecord.
+func (c *DeviceOfflineRecordClient) Delete() *DeviceOfflineRecordDelete {
+	mutation := newDeviceOfflineRecordMutation(c.config, OpDelete)
+	return &DeviceOfflineRecordDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DeviceOfflineRecordClient) DeleteOne(dor *DeviceOfflineRecord) *DeviceOfflineRecordDeleteOne {
+	return c.DeleteOneID(dor.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DeviceOfflineRecordClient) DeleteOneID(id int64) *DeviceOfflineRecordDeleteOne {
+	builder := c.Delete().Where(deviceofflinerecord.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DeviceOfflineRecordDeleteOne{builder}
+}
+
+// Query returns a query builder for DeviceOfflineRecord.
+func (c *DeviceOfflineRecordClient) Query() *DeviceOfflineRecordQuery {
+	return &DeviceOfflineRecordQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDeviceOfflineRecord},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DeviceOfflineRecord entity by its id.
+func (c *DeviceOfflineRecordClient) Get(ctx context.Context, id int64) (*DeviceOfflineRecord, error) {
+	return c.Query().Where(deviceofflinerecord.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DeviceOfflineRecordClient) GetX(ctx context.Context, id int64) *DeviceOfflineRecord {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDevice queries the device edge of a DeviceOfflineRecord.
+func (c *DeviceOfflineRecordClient) QueryDevice(dor *DeviceOfflineRecord) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dor.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(deviceofflinerecord.Table, deviceofflinerecord.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, deviceofflinerecord.DeviceTable, deviceofflinerecord.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(dor.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DeviceOfflineRecordClient) Hooks() []Hook {
+	return c.hooks.DeviceOfflineRecord
+}
+
+// Interceptors returns the client interceptors.
+func (c *DeviceOfflineRecordClient) Interceptors() []Interceptor {
+	return c.inters.DeviceOfflineRecord
+}
+
+func (c *DeviceOfflineRecordClient) mutate(ctx context.Context, m *DeviceOfflineRecordMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DeviceOfflineRecordCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DeviceOfflineRecordUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DeviceOfflineRecordUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DeviceOfflineRecordDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown DeviceOfflineRecord mutation op: %q", m.Op())
 	}
 }
 
@@ -13098,32 +13271,32 @@ func (c *WithdrawRecordClient) mutate(ctx context.Context, m *WithdrawRecordMuta
 type (
 	hooks struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
-		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceRebootTime,
-		DeviceState, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
-		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		IncomeManage, InputLog, Invite, LoginRecord, Lotto, LottoChanceRule,
-		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
-		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
-		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Survey,
-		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
-		TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
-		WithdrawRecord []ent.Hook
+		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceOfflineRecord,
+		DeviceRebootTime, DeviceState, EarnBill, EnumCondition, EnumMissionStatus,
+		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
+		HmacKeyPair, IncomeManage, InputLog, Invite, LoginRecord, Lotto,
+		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
+		Mission, MissionBatch, MissionCategory, MissionConsumeOrder,
+		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
+		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
+		WithdrawAccount, WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
-		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceRebootTime,
-		DeviceState, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
-		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
-		IncomeManage, InputLog, Invite, LoginRecord, Lotto, LottoChanceRule,
-		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
-		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
-		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
-		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Survey,
-		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
-		TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
-		WithdrawRecord []ent.Interceptor
+		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceOfflineRecord,
+		DeviceRebootTime, DeviceState, EarnBill, EnumCondition, EnumMissionStatus,
+		ExtraService, ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu,
+		HmacKeyPair, IncomeManage, InputLog, Invite, LoginRecord, Lotto,
+		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
+		Mission, MissionBatch, MissionCategory, MissionConsumeOrder,
+		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
+		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
+		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
+		WithdrawAccount, WithdrawRecord []ent.Interceptor
 	}
 )

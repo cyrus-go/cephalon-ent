@@ -36,6 +36,8 @@ type Tx struct {
 	Device *DeviceClient
 	// DeviceGpuMission is the client for interacting with the DeviceGpuMission builders.
 	DeviceGpuMission *DeviceGpuMissionClient
+	// DeviceOfflineRecord is the client for interacting with the DeviceOfflineRecord builders.
+	DeviceOfflineRecord *DeviceOfflineRecordClient
 	// DeviceRebootTime is the client for interacting with the DeviceRebootTime builders.
 	DeviceRebootTime *DeviceRebootTimeClient
 	// DeviceState is the client for interacting with the DeviceState builders.
@@ -287,6 +289,7 @@ func (tx *Tx) init() {
 	tx.CostBill = NewCostBillClient(tx.config)
 	tx.Device = NewDeviceClient(tx.config)
 	tx.DeviceGpuMission = NewDeviceGpuMissionClient(tx.config)
+	tx.DeviceOfflineRecord = NewDeviceOfflineRecordClient(tx.config)
 	tx.DeviceRebootTime = NewDeviceRebootTimeClient(tx.config)
 	tx.DeviceState = NewDeviceStateClient(tx.config)
 	tx.EarnBill = NewEarnBillClient(tx.config)

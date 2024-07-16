@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
@@ -499,6 +500,21 @@ func (dc *DeviceCreate) AddDeviceStates(d ...*DeviceState) *DeviceCreate {
 		ids[i] = d[i].ID
 	}
 	return dc.AddDeviceStateIDs(ids...)
+}
+
+// AddDeviceOfflineRecordIDs adds the "device_offline_records" edge to the DeviceOfflineRecord entity by IDs.
+func (dc *DeviceCreate) AddDeviceOfflineRecordIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddDeviceOfflineRecordIDs(ids...)
+	return dc
+}
+
+// AddDeviceOfflineRecords adds the "device_offline_records" edges to the DeviceOfflineRecord entity.
+func (dc *DeviceCreate) AddDeviceOfflineRecords(d ...*DeviceOfflineRecord) *DeviceCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return dc.AddDeviceOfflineRecordIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -1003,6 +1019,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.DeviceOfflineRecordsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceOfflineRecordsTable,
+			Columns: []string{device.DeviceOfflineRecordsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

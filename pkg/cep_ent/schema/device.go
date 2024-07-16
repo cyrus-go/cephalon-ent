@@ -52,6 +52,7 @@ func (Device) Edges() []ent.Edge {
 		edge.To("device_reboot_times", DeviceRebootTime.Type),
 		edge.To("trouble_deducts", TroubleDeduct.Type),
 		edge.To("device_states", DeviceState.Type),
+		edge.To("device_offline_records", DeviceOfflineRecord.Type),
 	}
 }
 

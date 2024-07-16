@@ -1266,6 +1266,29 @@ func HasDeviceStatesWith(preds ...predicate.DeviceState) predicate.Device {
 	})
 }
 
+// HasDeviceOfflineRecords applies the HasEdge predicate on the "device_offline_records" edge.
+func HasDeviceOfflineRecords() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceOfflineRecordsTable, DeviceOfflineRecordsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDeviceOfflineRecordsWith applies the HasEdge predicate on the "device_offline_records" edge with a given conditions (other predicates).
+func HasDeviceOfflineRecordsWith(preds ...predicate.DeviceOfflineRecord) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := newDeviceOfflineRecordsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Device) predicate.Device {
 	return predicate.Device(sql.AndPredicates(predicates...))

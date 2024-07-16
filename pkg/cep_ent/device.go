@@ -94,9 +94,11 @@ type DeviceEdges struct {
 	TroubleDeducts []*TroubleDeduct `json:"trouble_deducts,omitempty"`
 	// DeviceStates holds the value of the device_states edge.
 	DeviceStates []*DeviceState `json:"device_states,omitempty"`
+	// DeviceOfflineRecords holds the value of the device_offline_records edge.
+	DeviceOfflineRecords []*DeviceOfflineRecord `json:"device_offline_records,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [11]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -191,6 +193,15 @@ func (e DeviceEdges) DeviceStatesOrErr() ([]*DeviceState, error) {
 		return e.DeviceStates, nil
 	}
 	return nil, &NotLoadedError{edge: "device_states"}
+}
+
+// DeviceOfflineRecordsOrErr returns the DeviceOfflineRecords value or an error if the edge
+// was not loaded in eager-loading.
+func (e DeviceEdges) DeviceOfflineRecordsOrErr() ([]*DeviceOfflineRecord, error) {
+	if e.loadedTypes[10] {
+		return e.DeviceOfflineRecords, nil
+	}
+	return nil, &NotLoadedError{edge: "device_offline_records"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -430,6 +441,11 @@ func (d *Device) QueryTroubleDeducts() *TroubleDeductQuery {
 // QueryDeviceStates queries the "device_states" edge of the Device entity.
 func (d *Device) QueryDeviceStates() *DeviceStateQuery {
 	return NewDeviceClient(d.config).QueryDeviceStates(d)
+}
+
+// QueryDeviceOfflineRecords queries the "device_offline_records" edge of the Device entity.
+func (d *Device) QueryDeviceOfflineRecords() *DeviceOfflineRecordQuery {
+	return NewDeviceClient(d.config).QueryDeviceOfflineRecords(d)
 }
 
 // Update returns a builder for updating this Device.

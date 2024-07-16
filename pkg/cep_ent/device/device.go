@@ -83,6 +83,8 @@ const (
 	EdgeTroubleDeducts = "trouble_deducts"
 	// EdgeDeviceStates holds the string denoting the device_states edge name in mutations.
 	EdgeDeviceStates = "device_states"
+	// EdgeDeviceOfflineRecords holds the string denoting the device_offline_records edge name in mutations.
+	EdgeDeviceOfflineRecords = "device_offline_records"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -155,6 +157,13 @@ const (
 	DeviceStatesInverseTable = "device_states"
 	// DeviceStatesColumn is the table column denoting the device_states relation/edge.
 	DeviceStatesColumn = "device_id"
+	// DeviceOfflineRecordsTable is the table that holds the device_offline_records relation/edge.
+	DeviceOfflineRecordsTable = "device_offline_records"
+	// DeviceOfflineRecordsInverseTable is the table name for the DeviceOfflineRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "deviceofflinerecord" package.
+	DeviceOfflineRecordsInverseTable = "device_offline_records"
+	// DeviceOfflineRecordsColumn is the table column denoting the device_offline_records relation/edge.
+	DeviceOfflineRecordsColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -560,6 +569,20 @@ func ByDeviceStates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newDeviceStatesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByDeviceOfflineRecordsCount orders the results by device_offline_records count.
+func ByDeviceOfflineRecordsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDeviceOfflineRecordsStep(), opts...)
+	}
+}
+
+// ByDeviceOfflineRecords orders the results by device_offline_records terms.
+func ByDeviceOfflineRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceOfflineRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -628,5 +651,12 @@ func newDeviceStatesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceStatesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, DeviceStatesTable, DeviceStatesColumn),
+	)
+}
+func newDeviceOfflineRecordsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceOfflineRecordsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DeviceOfflineRecordsTable, DeviceOfflineRecordsColumn),
 	)
 }

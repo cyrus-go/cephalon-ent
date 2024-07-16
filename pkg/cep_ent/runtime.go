@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/costbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
@@ -776,6 +777,41 @@ func init() {
 	devicegpumissionDescID := devicegpumissionMixinFields0[0].Descriptor()
 	// devicegpumission.DefaultID holds the default value on creation for the id field.
 	devicegpumission.DefaultID = devicegpumissionDescID.Default.(func() int64)
+	deviceofflinerecordMixin := schema.DeviceOfflineRecord{}.Mixin()
+	deviceofflinerecordMixinFields0 := deviceofflinerecordMixin[0].Fields()
+	_ = deviceofflinerecordMixinFields0
+	deviceofflinerecordFields := schema.DeviceOfflineRecord{}.Fields()
+	_ = deviceofflinerecordFields
+	// deviceofflinerecordDescCreatedBy is the schema descriptor for created_by field.
+	deviceofflinerecordDescCreatedBy := deviceofflinerecordMixinFields0[1].Descriptor()
+	// deviceofflinerecord.DefaultCreatedBy holds the default value on creation for the created_by field.
+	deviceofflinerecord.DefaultCreatedBy = deviceofflinerecordDescCreatedBy.Default.(int64)
+	// deviceofflinerecordDescUpdatedBy is the schema descriptor for updated_by field.
+	deviceofflinerecordDescUpdatedBy := deviceofflinerecordMixinFields0[2].Descriptor()
+	// deviceofflinerecord.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	deviceofflinerecord.DefaultUpdatedBy = deviceofflinerecordDescUpdatedBy.Default.(int64)
+	// deviceofflinerecordDescCreatedAt is the schema descriptor for created_at field.
+	deviceofflinerecordDescCreatedAt := deviceofflinerecordMixinFields0[3].Descriptor()
+	// deviceofflinerecord.DefaultCreatedAt holds the default value on creation for the created_at field.
+	deviceofflinerecord.DefaultCreatedAt = deviceofflinerecordDescCreatedAt.Default.(func() time.Time)
+	// deviceofflinerecordDescUpdatedAt is the schema descriptor for updated_at field.
+	deviceofflinerecordDescUpdatedAt := deviceofflinerecordMixinFields0[4].Descriptor()
+	// deviceofflinerecord.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	deviceofflinerecord.DefaultUpdatedAt = deviceofflinerecordDescUpdatedAt.Default.(func() time.Time)
+	// deviceofflinerecord.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	deviceofflinerecord.UpdateDefaultUpdatedAt = deviceofflinerecordDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// deviceofflinerecordDescDeletedAt is the schema descriptor for deleted_at field.
+	deviceofflinerecordDescDeletedAt := deviceofflinerecordMixinFields0[5].Descriptor()
+	// deviceofflinerecord.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	deviceofflinerecord.DefaultDeletedAt = deviceofflinerecordDescDeletedAt.Default.(time.Time)
+	// deviceofflinerecordDescDeviceID is the schema descriptor for device_id field.
+	deviceofflinerecordDescDeviceID := deviceofflinerecordFields[0].Descriptor()
+	// deviceofflinerecord.DefaultDeviceID holds the default value on creation for the device_id field.
+	deviceofflinerecord.DefaultDeviceID = deviceofflinerecordDescDeviceID.Default.(int64)
+	// deviceofflinerecordDescID is the schema descriptor for id field.
+	deviceofflinerecordDescID := deviceofflinerecordMixinFields0[0].Descriptor()
+	// deviceofflinerecord.DefaultID holds the default value on creation for the id field.
+	deviceofflinerecord.DefaultID = deviceofflinerecordDescID.Default.(func() int64)
 	devicereboottimeMixin := schema.DeviceRebootTime{}.Mixin()
 	devicereboottimeMixinFields0 := devicereboottimeMixin[0].Fields()
 	_ = devicereboottimeMixinFields0

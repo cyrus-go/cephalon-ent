@@ -571,6 +571,38 @@ var (
 			},
 		},
 	}
+	// DeviceOfflineRecordsColumns holds the columns for the "device_offline_records" table.
+	DeviceOfflineRecordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
+	}
+	// DeviceOfflineRecordsTable holds the schema information for the "device_offline_records" table.
+	DeviceOfflineRecordsTable = &schema.Table{
+		Name:       "device_offline_records",
+		Comment:    "设备离线时间记录",
+		Columns:    DeviceOfflineRecordsColumns,
+		PrimaryKey: []*schema.Column{DeviceOfflineRecordsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "device_offline_records_devices_device_offline_records",
+				Columns:    []*schema.Column{DeviceOfflineRecordsColumns[6]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "deviceofflinerecord_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{DeviceOfflineRecordsColumns[6]},
+			},
+		},
+	}
 	// DeviceRebootTimesColumns holds the columns for the "device_reboot_times" table.
 	DeviceRebootTimesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2826,6 +2858,7 @@ var (
 		CostBillsTable,
 		DevicesTable,
 		DeviceGpuMissionsTable,
+		DeviceOfflineRecordsTable,
 		DeviceRebootTimesTable,
 		DeviceStatesTable,
 		EarnBillsTable,
@@ -2924,6 +2957,8 @@ func init() {
 	DeviceGpuMissionsTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceGpuMissionsTable.ForeignKeys[1].RefTable = GpusTable
 	DeviceGpuMissionsTable.Annotation = &entsql.Annotation{}
+	DeviceOfflineRecordsTable.ForeignKeys[0].RefTable = DevicesTable
+	DeviceOfflineRecordsTable.Annotation = &entsql.Annotation{}
 	DeviceRebootTimesTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceRebootTimesTable.Annotation = &entsql.Annotation{}
 	DeviceStatesTable.ForeignKeys[0].RefTable = DevicesTable

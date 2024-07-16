@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/deviceofflinerecord"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
@@ -42,6 +43,7 @@ type DeviceQuery struct {
 	withDeviceRebootTimes    *DeviceRebootTimeQuery
 	withTroubleDeducts       *TroubleDeductQuery
 	withDeviceStates         *DeviceStateQuery
+	withDeviceOfflineRecords *DeviceOfflineRecordQuery
 	modifiers                []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -299,6 +301,28 @@ func (dq *DeviceQuery) QueryDeviceStates() *DeviceStateQuery {
 	return query
 }
 
+// QueryDeviceOfflineRecords chains the current query on the "device_offline_records" edge.
+func (dq *DeviceQuery) QueryDeviceOfflineRecords() *DeviceOfflineRecordQuery {
+	query := (&DeviceOfflineRecordClient{config: dq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, selector),
+			sqlgraph.To(deviceofflinerecord.Table, deviceofflinerecord.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceOfflineRecordsTable, device.DeviceOfflineRecordsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Device entity from the query.
 // Returns a *NotFoundError when no Device was found.
 func (dq *DeviceQuery) First(ctx context.Context) (*Device, error) {
@@ -501,6 +525,7 @@ func (dq *DeviceQuery) Clone() *DeviceQuery {
 		withDeviceRebootTimes:    dq.withDeviceRebootTimes.Clone(),
 		withTroubleDeducts:       dq.withTroubleDeducts.Clone(),
 		withDeviceStates:         dq.withDeviceStates.Clone(),
+		withDeviceOfflineRecords: dq.withDeviceOfflineRecords.Clone(),
 		// clone intermediate query.
 		sql:  dq.sql.Clone(),
 		path: dq.path,
@@ -617,6 +642,17 @@ func (dq *DeviceQuery) WithDeviceStates(opts ...func(*DeviceStateQuery)) *Device
 	return dq
 }
 
+// WithDeviceOfflineRecords tells the query-builder to eager-load the nodes that are connected to
+// the "device_offline_records" edge. The optional arguments are used to configure the query builder of the edge.
+func (dq *DeviceQuery) WithDeviceOfflineRecords(opts ...func(*DeviceOfflineRecordQuery)) *DeviceQuery {
+	query := (&DeviceOfflineRecordClient{config: dq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	dq.withDeviceOfflineRecords = query
+	return dq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -695,7 +731,7 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 	var (
 		nodes       = []*Device{}
 		_spec       = dq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [11]bool{
 			dq.withUser != nil,
 			dq.withMissionProduceOrders != nil,
 			dq.withUserDevices != nil,
@@ -706,6 +742,7 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 			dq.withDeviceRebootTimes != nil,
 			dq.withTroubleDeducts != nil,
 			dq.withDeviceStates != nil,
+			dq.withDeviceOfflineRecords != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -799,6 +836,15 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Devic
 		if err := dq.loadDeviceStates(ctx, query, nodes,
 			func(n *Device) { n.Edges.DeviceStates = []*DeviceState{} },
 			func(n *Device, e *DeviceState) { n.Edges.DeviceStates = append(n.Edges.DeviceStates, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := dq.withDeviceOfflineRecords; query != nil {
+		if err := dq.loadDeviceOfflineRecords(ctx, query, nodes,
+			func(n *Device) { n.Edges.DeviceOfflineRecords = []*DeviceOfflineRecord{} },
+			func(n *Device, e *DeviceOfflineRecord) {
+				n.Edges.DeviceOfflineRecords = append(n.Edges.DeviceOfflineRecords, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -1090,6 +1136,36 @@ func (dq *DeviceQuery) loadDeviceStates(ctx context.Context, query *DeviceStateQ
 	}
 	query.Where(predicate.DeviceState(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(device.DeviceStatesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.DeviceID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "device_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (dq *DeviceQuery) loadDeviceOfflineRecords(ctx context.Context, query *DeviceOfflineRecordQuery, nodes []*Device, init func(*Device), assign func(*Device, *DeviceOfflineRecord)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Device)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(deviceofflinerecord.FieldDeviceID)
+	}
+	query.Where(predicate.DeviceOfflineRecord(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(device.DeviceOfflineRecordsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
