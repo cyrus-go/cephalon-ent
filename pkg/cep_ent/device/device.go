@@ -61,6 +61,8 @@ const (
 	FieldDelay = "delay"
 	// FieldTemperature holds the string denoting the temperature field in the database.
 	FieldTemperature = "temperature"
+	// FieldStability holds the string denoting the stability field in the database.
+	FieldStability = "stability"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -79,6 +81,8 @@ const (
 	EdgeDeviceRebootTimes = "device_reboot_times"
 	// EdgeTroubleDeducts holds the string denoting the trouble_deducts edge name in mutations.
 	EdgeTroubleDeducts = "trouble_deducts"
+	// EdgeDeviceStates holds the string denoting the device_states edge name in mutations.
+	EdgeDeviceStates = "device_states"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -144,6 +148,13 @@ const (
 	TroubleDeductsInverseTable = "trouble_deducts"
 	// TroubleDeductsColumn is the table column denoting the trouble_deducts relation/edge.
 	TroubleDeductsColumn = "device_id"
+	// DeviceStatesTable is the table that holds the device_states relation/edge.
+	DeviceStatesTable = "device_states"
+	// DeviceStatesInverseTable is the table name for the DeviceState entity.
+	// It exists in this package in order to avoid circular dependency with the "devicestate" package.
+	DeviceStatesInverseTable = "device_states"
+	// DeviceStatesColumn is the table column denoting the device_states relation/edge.
+	DeviceStatesColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -171,6 +182,7 @@ var Columns = []string{
 	FieldDisk,
 	FieldDelay,
 	FieldTemperature,
+	FieldStability,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -220,6 +232,8 @@ var (
 	DefaultDelay float64
 	// DefaultTemperature holds the default value on creation for the "temperature" field.
 	DefaultTemperature float64
+	// DefaultStability holds the default value on creation for the "stability" field.
+	DefaultStability int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -409,6 +423,11 @@ func ByTemperature(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTemperature, opts...).ToFunc()
 }
 
+// ByStability orders the results by the stability field.
+func ByStability(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStability, opts...).ToFunc()
+}
+
 // ByUserField orders the results by user field.
 func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -527,6 +546,20 @@ func ByTroubleDeducts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTroubleDeductsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByDeviceStatesCount orders the results by device_states count.
+func ByDeviceStatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDeviceStatesStep(), opts...)
+	}
+}
+
+// ByDeviceStates orders the results by device_states terms.
+func ByDeviceStates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDeviceStatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -588,5 +621,12 @@ func newTroubleDeductsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TroubleDeductsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TroubleDeductsTable, TroubleDeductsColumn),
+	)
+}
+func newDeviceStatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DeviceStatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DeviceStatesTable, DeviceStatesColumn),
 	)
 }

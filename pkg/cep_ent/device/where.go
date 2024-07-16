@@ -141,6 +141,11 @@ func Temperature(v float64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldTemperature, v))
 }
 
+// Stability applies equality check predicate on the "stability" field. It's identical to StabilityEQ.
+func Stability(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldStability, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -991,6 +996,46 @@ func TemperatureLTE(v float64) predicate.Device {
 	return predicate.Device(sql.FieldLTE(FieldTemperature, v))
 }
 
+// StabilityEQ applies the EQ predicate on the "stability" field.
+func StabilityEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldStability, v))
+}
+
+// StabilityNEQ applies the NEQ predicate on the "stability" field.
+func StabilityNEQ(v int64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldStability, v))
+}
+
+// StabilityIn applies the In predicate on the "stability" field.
+func StabilityIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldStability, vs...))
+}
+
+// StabilityNotIn applies the NotIn predicate on the "stability" field.
+func StabilityNotIn(vs ...int64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldStability, vs...))
+}
+
+// StabilityGT applies the GT predicate on the "stability" field.
+func StabilityGT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldStability, v))
+}
+
+// StabilityGTE applies the GTE predicate on the "stability" field.
+func StabilityGTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldStability, v))
+}
+
+// StabilityLT applies the LT predicate on the "stability" field.
+func StabilityLT(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldStability, v))
+}
+
+// StabilityLTE applies the LTE predicate on the "stability" field.
+func StabilityLTE(v int64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldStability, v))
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
@@ -1190,6 +1235,29 @@ func HasTroubleDeducts() predicate.Device {
 func HasTroubleDeductsWith(preds ...predicate.TroubleDeduct) predicate.Device {
 	return predicate.Device(func(s *sql.Selector) {
 		step := newTroubleDeductsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasDeviceStates applies the HasEdge predicate on the "device_states" edge.
+func HasDeviceStates() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceStatesTable, DeviceStatesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDeviceStatesWith applies the HasEdge predicate on the "device_states" edge with a given conditions (other predicates).
+func HasDeviceStatesWith(preds ...predicate.DeviceState) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := newDeviceStatesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

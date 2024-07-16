@@ -47,6 +47,6 @@ func (DeviceRebootTime) Mixin() []ent.Mixin {
 
 func (DeviceRebootTime) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		schema.Comment("设备重启时间记录"),
+		schema.Comment("设备重启时间记录，已弃用"),
 	}
 }

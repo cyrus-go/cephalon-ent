@@ -13,7 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 )
 
-// 设备重启时间记录
+// 设备重启时间记录，已弃用
 type DeviceRebootTime struct {
 	config `json:"-"`
 	// ID of the ent.

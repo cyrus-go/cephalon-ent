@@ -64,6 +64,8 @@ type Device struct {
 	Delay float64 `json:"delay"`
 	// 温度(单位:℃)
 	Temperature float64 `json:"temperature"`
+	// 稳定性，数值越小越稳定
+	Stability int64 `json:"stability"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -90,9 +92,11 @@ type DeviceEdges struct {
 	DeviceRebootTimes []*DeviceRebootTime `json:"device_reboot_times,omitempty"`
 	// TroubleDeducts holds the value of the trouble_deducts edge.
 	TroubleDeducts []*TroubleDeduct `json:"trouble_deducts,omitempty"`
+	// DeviceStates holds the value of the device_states edge.
+	DeviceStates []*DeviceState `json:"device_states,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -180,6 +184,15 @@ func (e DeviceEdges) TroubleDeductsOrErr() ([]*TroubleDeduct, error) {
 	return nil, &NotLoadedError{edge: "trouble_deducts"}
 }
 
+// DeviceStatesOrErr returns the DeviceStates value or an error if the edge
+// was not loaded in eager-loading.
+func (e DeviceEdges) DeviceStatesOrErr() ([]*DeviceState, error) {
+	if e.loadedTypes[9] {
+		return e.DeviceStates, nil
+	}
+	return nil, &NotLoadedError{edge: "device_states"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Device) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -189,7 +202,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case device.FieldDisk, device.FieldDelay, device.FieldTemperature:
 			values[i] = new(sql.NullFloat64)
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldStability:
 			values[i] = new(sql.NullInt64)
 		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU:
 			values[i] = new(sql.NullString)
@@ -350,6 +363,12 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.Temperature = value.Float64
 			}
+		case device.FieldStability:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field stability", values[i])
+			} else if value.Valid {
+				d.Stability = value.Int64
+			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
 		}
@@ -406,6 +425,11 @@ func (d *Device) QueryDeviceRebootTimes() *DeviceRebootTimeQuery {
 // QueryTroubleDeducts queries the "trouble_deducts" edge of the Device entity.
 func (d *Device) QueryTroubleDeducts() *TroubleDeductQuery {
 	return NewDeviceClient(d.config).QueryTroubleDeducts(d)
+}
+
+// QueryDeviceStates queries the "device_states" edge of the Device entity.
+func (d *Device) QueryDeviceStates() *DeviceStateQuery {
+	return NewDeviceClient(d.config).QueryDeviceStates(d)
 }
 
 // Update returns a builder for updating this Device.
@@ -496,6 +520,9 @@ func (d *Device) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("temperature=")
 	builder.WriteString(fmt.Sprintf("%v", d.Temperature))
+	builder.WriteString(", ")
+	builder.WriteString("stability=")
+	builder.WriteString(fmt.Sprintf("%v", d.Stability))
 	builder.WriteByte(')')
 	return builder.String()
 }

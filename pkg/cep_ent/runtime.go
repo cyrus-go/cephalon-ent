@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
@@ -714,6 +715,10 @@ func init() {
 	deviceDescTemperature := deviceFields[16].Descriptor()
 	// device.DefaultTemperature holds the default value on creation for the temperature field.
 	device.DefaultTemperature = deviceDescTemperature.Default.(float64)
+	// deviceDescStability is the schema descriptor for stability field.
+	deviceDescStability := deviceFields[17].Descriptor()
+	// device.DefaultStability holds the default value on creation for the stability field.
+	device.DefaultStability = deviceDescStability.Default.(int64)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.
@@ -826,6 +831,45 @@ func init() {
 	devicereboottimeDescID := devicereboottimeMixinFields0[0].Descriptor()
 	// devicereboottime.DefaultID holds the default value on creation for the id field.
 	devicereboottime.DefaultID = devicereboottimeDescID.Default.(func() int64)
+	devicestateMixin := schema.DeviceState{}.Mixin()
+	devicestateMixinFields0 := devicestateMixin[0].Fields()
+	_ = devicestateMixinFields0
+	devicestateFields := schema.DeviceState{}.Fields()
+	_ = devicestateFields
+	// devicestateDescCreatedBy is the schema descriptor for created_by field.
+	devicestateDescCreatedBy := devicestateMixinFields0[1].Descriptor()
+	// devicestate.DefaultCreatedBy holds the default value on creation for the created_by field.
+	devicestate.DefaultCreatedBy = devicestateDescCreatedBy.Default.(int64)
+	// devicestateDescUpdatedBy is the schema descriptor for updated_by field.
+	devicestateDescUpdatedBy := devicestateMixinFields0[2].Descriptor()
+	// devicestate.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	devicestate.DefaultUpdatedBy = devicestateDescUpdatedBy.Default.(int64)
+	// devicestateDescCreatedAt is the schema descriptor for created_at field.
+	devicestateDescCreatedAt := devicestateMixinFields0[3].Descriptor()
+	// devicestate.DefaultCreatedAt holds the default value on creation for the created_at field.
+	devicestate.DefaultCreatedAt = devicestateDescCreatedAt.Default.(func() time.Time)
+	// devicestateDescUpdatedAt is the schema descriptor for updated_at field.
+	devicestateDescUpdatedAt := devicestateMixinFields0[4].Descriptor()
+	// devicestate.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	devicestate.DefaultUpdatedAt = devicestateDescUpdatedAt.Default.(func() time.Time)
+	// devicestate.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	devicestate.UpdateDefaultUpdatedAt = devicestateDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// devicestateDescDeletedAt is the schema descriptor for deleted_at field.
+	devicestateDescDeletedAt := devicestateMixinFields0[5].Descriptor()
+	// devicestate.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	devicestate.DefaultDeletedAt = devicestateDescDeletedAt.Default.(time.Time)
+	// devicestateDescDeviceID is the schema descriptor for device_id field.
+	devicestateDescDeviceID := devicestateFields[0].Descriptor()
+	// devicestate.DefaultDeviceID holds the default value on creation for the device_id field.
+	devicestate.DefaultDeviceID = devicestateDescDeviceID.Default.(int64)
+	// devicestateDescDelay is the schema descriptor for delay field.
+	devicestateDescDelay := devicestateFields[1].Descriptor()
+	// devicestate.DefaultDelay holds the default value on creation for the delay field.
+	devicestate.DefaultDelay = devicestateDescDelay.Default.(float64)
+	// devicestateDescID is the schema descriptor for id field.
+	devicestateDescID := devicestateMixinFields0[0].Descriptor()
+	// devicestate.DefaultID holds the default value on creation for the id field.
+	devicestate.DefaultID = devicestateDescID.Default.(func() int64)
 	earnbillMixin := schema.EarnBill{}.Mixin()
 	earnbillMixinFields0 := earnbillMixin[0].Fields()
 	_ = earnbillMixinFields0

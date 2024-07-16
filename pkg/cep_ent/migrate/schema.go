@@ -497,6 +497,7 @@ var (
 		{Name: "disk", Type: field.TypeFloat32, Comment: "硬盘(单位:T)", Default: 0, SchemaType: map[string]string{"postgres": "NUMERIC(10,4)"}},
 		{Name: "delay", Type: field.TypeFloat64, Comment: "延迟(单位:ms)", Default: 0},
 		{Name: "temperature", Type: field.TypeFloat64, Comment: "温度(单位:℃)", Default: 0},
+		{Name: "stability", Type: field.TypeInt64, Comment: "稳定性，数值越小越稳定", Default: 0},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -508,7 +509,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[22]},
+				Columns:    []*schema.Column{DevicesColumns[23]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -517,7 +518,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[22]},
+				Columns: []*schema.Column{DevicesColumns[23]},
 			},
 		},
 	}
@@ -588,7 +589,7 @@ var (
 	// DeviceRebootTimesTable holds the schema information for the "device_reboot_times" table.
 	DeviceRebootTimesTable = &schema.Table{
 		Name:       "device_reboot_times",
-		Comment:    "设备重启时间记录",
+		Comment:    "设备重启时间记录，已弃用",
 		Columns:    DeviceRebootTimesColumns,
 		PrimaryKey: []*schema.Column{DeviceRebootTimesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
@@ -604,6 +605,39 @@ var (
 				Name:    "devicereboottime_device_id",
 				Unique:  false,
 				Columns: []*schema.Column{DeviceRebootTimesColumns[11]},
+			},
+		},
+	}
+	// DeviceStatesColumns holds the columns for the "device_states" table.
+	DeviceStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "delay", Type: field.TypeFloat64, Comment: "延迟(单位:ms)", Default: 0},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "外键设备 id", Default: 0},
+	}
+	// DeviceStatesTable holds the schema information for the "device_states" table.
+	DeviceStatesTable = &schema.Table{
+		Name:       "device_states",
+		Comment:    "设备状态信息 目前只有延迟信息",
+		Columns:    DeviceStatesColumns,
+		PrimaryKey: []*schema.Column{DeviceStatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "device_states_devices_device_states",
+				Columns:    []*schema.Column{DeviceStatesColumns[7]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "devicestate_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{DeviceStatesColumns[7]},
 			},
 		},
 	}
@@ -2793,6 +2827,7 @@ var (
 		DevicesTable,
 		DeviceGpuMissionsTable,
 		DeviceRebootTimesTable,
+		DeviceStatesTable,
 		EarnBillsTable,
 		EnumConditionsTable,
 		EnumMissionStatusTable,
@@ -2891,6 +2926,8 @@ func init() {
 	DeviceGpuMissionsTable.Annotation = &entsql.Annotation{}
 	DeviceRebootTimesTable.ForeignKeys[0].RefTable = DevicesTable
 	DeviceRebootTimesTable.Annotation = &entsql.Annotation{}
+	DeviceStatesTable.ForeignKeys[0].RefTable = DevicesTable
+	DeviceStatesTable.Annotation = &entsql.Annotation{}
 	EarnBillsTable.ForeignKeys[0].RefTable = MissionProduceOrdersTable
 	EarnBillsTable.ForeignKeys[1].RefTable = PlatformAccountsTable
 	EarnBillsTable.ForeignKeys[2].RefTable = ProfitAccountsTable

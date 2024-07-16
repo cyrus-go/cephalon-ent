@@ -67,6 +67,9 @@ func DeviceGpuMissionOrErr(p DeviceGpuMission, err error) DeviceGpuMission {
 // DeviceRebootTime is the predicate function for devicereboottime builders.
 type DeviceRebootTime func(*sql.Selector)
 
+// DeviceState is the predicate function for devicestate builders.
+type DeviceState func(*sql.Selector)
+
 // EarnBill is the predicate function for earnbill builders.
 type EarnBill func(*sql.Selector)
 

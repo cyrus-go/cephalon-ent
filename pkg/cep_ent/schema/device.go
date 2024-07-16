@@ -34,6 +34,7 @@ func (Device) Fields() []ent.Field {
 		field.Float32("disk").SchemaType(map[string]string{dialect.Postgres: "NUMERIC(10,4)"}).StructTag(`json:disk`).Default(0).Comment("硬盘(单位:T)"),
 		field.Float("delay").StructTag(`json:"delay"`).Default(0).Comment("延迟(单位:ms)"),
 		field.Float("temperature").StructTag(`json:"temperature"`).Default(0).Comment("温度(单位:℃)"),
+		field.Int64("stability").StructTag(`json:"stability"`).Default(0).Comment("稳定性，数值越小越稳定"),
 	}
 }
 
@@ -50,6 +51,7 @@ func (Device) Edges() []ent.Edge {
 		edge.To("mission_productions", MissionProduction.Type),
 		edge.To("device_reboot_times", DeviceRebootTime.Type),
 		edge.To("trouble_deducts", TroubleDeduct.Type),
+		edge.To("device_states", DeviceState.Type),
 	}
 }
 

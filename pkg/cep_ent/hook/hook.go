@@ -165,6 +165,18 @@ func (f DeviceRebootTimeFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (c
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceRebootTimeMutation", m)
 }
 
+// The DeviceStateFunc type is an adapter to allow the use of ordinary
+// function as DeviceState mutator.
+type DeviceStateFunc func(context.Context, *cep_ent.DeviceStateMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DeviceStateFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.DeviceStateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.DeviceStateMutation", m)
+}
+
 // The EarnBillFunc type is an adapter to allow the use of ordinary
 // function as EarnBill mutator.
 type EarnBillFunc func(context.Context, *cep_ent.EarnBillMutation) (cep_ent.Value, error)

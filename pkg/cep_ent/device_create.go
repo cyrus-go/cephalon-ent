@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -332,6 +333,20 @@ func (dc *DeviceCreate) SetNillableTemperature(f *float64) *DeviceCreate {
 	return dc
 }
 
+// SetStability sets the "stability" field.
+func (dc *DeviceCreate) SetStability(i int64) *DeviceCreate {
+	dc.mutation.SetStability(i)
+	return dc
+}
+
+// SetNillableStability sets the "stability" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableStability(i *int64) *DeviceCreate {
+	if i != nil {
+		dc.SetStability(*i)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -471,6 +486,21 @@ func (dc *DeviceCreate) AddTroubleDeducts(t ...*TroubleDeduct) *DeviceCreate {
 	return dc.AddTroubleDeductIDs(ids...)
 }
 
+// AddDeviceStateIDs adds the "device_states" edge to the DeviceState entity by IDs.
+func (dc *DeviceCreate) AddDeviceStateIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddDeviceStateIDs(ids...)
+	return dc
+}
+
+// AddDeviceStates adds the "device_states" edges to the DeviceState entity.
+func (dc *DeviceCreate) AddDeviceStates(d ...*DeviceState) *DeviceCreate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return dc.AddDeviceStateIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (dc *DeviceCreate) Mutation() *DeviceMutation {
 	return dc.mutation
@@ -590,6 +620,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultTemperature
 		dc.mutation.SetTemperature(v)
 	}
+	if _, ok := dc.mutation.Stability(); !ok {
+		v := device.DefaultStability
+		dc.mutation.SetStability(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -680,6 +714,9 @@ func (dc *DeviceCreate) check() error {
 	}
 	if _, ok := dc.mutation.Temperature(); !ok {
 		return &ValidationError{Name: "temperature", err: errors.New(`cep_ent: missing required field "Device.temperature"`)}
+	}
+	if _, ok := dc.mutation.Stability(); !ok {
+		return &ValidationError{Name: "stability", err: errors.New(`cep_ent: missing required field "Device.stability"`)}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -807,6 +844,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Temperature(); ok {
 		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
 		_node.Temperature = value
+	}
+	if value, ok := dc.mutation.Stability(); ok {
+		_spec.SetField(device.FieldStability, field.TypeInt64, value)
+		_node.Stability = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -946,6 +987,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.DeviceStatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1308,6 +1365,24 @@ func (u *DeviceUpsert) UpdateTemperature() *DeviceUpsert {
 // AddTemperature adds v to the "temperature" field.
 func (u *DeviceUpsert) AddTemperature(v float64) *DeviceUpsert {
 	u.Add(device.FieldTemperature, v)
+	return u
+}
+
+// SetStability sets the "stability" field.
+func (u *DeviceUpsert) SetStability(v int64) *DeviceUpsert {
+	u.Set(device.FieldStability, v)
+	return u
+}
+
+// UpdateStability sets the "stability" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateStability() *DeviceUpsert {
+	u.SetExcluded(device.FieldStability)
+	return u
+}
+
+// AddStability adds v to the "stability" field.
+func (u *DeviceUpsert) AddStability(v int64) *DeviceUpsert {
+	u.Add(device.FieldStability, v)
 	return u
 }
 
@@ -1716,6 +1791,27 @@ func (u *DeviceUpsertOne) AddTemperature(v float64) *DeviceUpsertOne {
 func (u *DeviceUpsertOne) UpdateTemperature() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateTemperature()
+	})
+}
+
+// SetStability sets the "stability" field.
+func (u *DeviceUpsertOne) SetStability(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetStability(v)
+	})
+}
+
+// AddStability adds v to the "stability" field.
+func (u *DeviceUpsertOne) AddStability(v int64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddStability(v)
+	})
+}
+
+// UpdateStability sets the "stability" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateStability() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateStability()
 	})
 }
 
@@ -2293,6 +2389,27 @@ func (u *DeviceUpsertBulk) AddTemperature(v float64) *DeviceUpsertBulk {
 func (u *DeviceUpsertBulk) UpdateTemperature() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateTemperature()
+	})
+}
+
+// SetStability sets the "stability" field.
+func (u *DeviceUpsertBulk) SetStability(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetStability(v)
+	})
+}
+
+// AddStability adds v to the "stability" field.
+func (u *DeviceUpsertBulk) AddStability(v int64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddStability(v)
+	})
+}
+
+// UpdateStability sets the "stability" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateStability() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateStability()
 	})
 }
 

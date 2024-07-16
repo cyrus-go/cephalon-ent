@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
@@ -379,6 +380,27 @@ func (du *DeviceUpdate) AddTemperature(f float64) *DeviceUpdate {
 	return du
 }
 
+// SetStability sets the "stability" field.
+func (du *DeviceUpdate) SetStability(i int64) *DeviceUpdate {
+	du.mutation.ResetStability()
+	du.mutation.SetStability(i)
+	return du
+}
+
+// SetNillableStability sets the "stability" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableStability(i *int64) *DeviceUpdate {
+	if i != nil {
+		du.SetStability(*i)
+	}
+	return du
+}
+
+// AddStability adds i to the "stability" field.
+func (du *DeviceUpdate) AddStability(i int64) *DeviceUpdate {
+	du.mutation.AddStability(i)
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -502,6 +524,21 @@ func (du *DeviceUpdate) AddTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdate {
 		ids[i] = t[i].ID
 	}
 	return du.AddTroubleDeductIDs(ids...)
+}
+
+// AddDeviceStateIDs adds the "device_states" edge to the DeviceState entity by IDs.
+func (du *DeviceUpdate) AddDeviceStateIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddDeviceStateIDs(ids...)
+	return du
+}
+
+// AddDeviceStates adds the "device_states" edges to the DeviceState entity.
+func (du *DeviceUpdate) AddDeviceStates(d ...*DeviceState) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.AddDeviceStateIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -683,6 +720,27 @@ func (du *DeviceUpdate) RemoveTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdate 
 	return du.RemoveTroubleDeductIDs(ids...)
 }
 
+// ClearDeviceStates clears all "device_states" edges to the DeviceState entity.
+func (du *DeviceUpdate) ClearDeviceStates() *DeviceUpdate {
+	du.mutation.ClearDeviceStates()
+	return du
+}
+
+// RemoveDeviceStateIDs removes the "device_states" edge to DeviceState entities by IDs.
+func (du *DeviceUpdate) RemoveDeviceStateIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveDeviceStateIDs(ids...)
+	return du
+}
+
+// RemoveDeviceStates removes "device_states" edges to DeviceState entities.
+func (du *DeviceUpdate) RemoveDeviceStates(d ...*DeviceState) *DeviceUpdate {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return du.RemoveDeviceStateIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (du *DeviceUpdate) Save(ctx context.Context) (int, error) {
 	du.defaults()
@@ -855,6 +913,12 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.AddedTemperature(); ok {
 		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := du.mutation.Stability(); ok {
+		_spec.SetField(device.FieldStability, field.TypeInt64, value)
+	}
+	if value, ok := du.mutation.AddedStability(); ok {
+		_spec.AddField(device.FieldStability, field.TypeInt64, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1245,6 +1309,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.DeviceStatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedDeviceStatesIDs(); len(nodes) > 0 && !du.mutation.DeviceStatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.DeviceStatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1607,6 +1716,27 @@ func (duo *DeviceUpdateOne) AddTemperature(f float64) *DeviceUpdateOne {
 	return duo
 }
 
+// SetStability sets the "stability" field.
+func (duo *DeviceUpdateOne) SetStability(i int64) *DeviceUpdateOne {
+	duo.mutation.ResetStability()
+	duo.mutation.SetStability(i)
+	return duo
+}
+
+// SetNillableStability sets the "stability" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableStability(i *int64) *DeviceUpdateOne {
+	if i != nil {
+		duo.SetStability(*i)
+	}
+	return duo
+}
+
+// AddStability adds i to the "stability" field.
+func (duo *DeviceUpdateOne) AddStability(i int64) *DeviceUpdateOne {
+	duo.mutation.AddStability(i)
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -1730,6 +1860,21 @@ func (duo *DeviceUpdateOne) AddTroubleDeducts(t ...*TroubleDeduct) *DeviceUpdate
 		ids[i] = t[i].ID
 	}
 	return duo.AddTroubleDeductIDs(ids...)
+}
+
+// AddDeviceStateIDs adds the "device_states" edge to the DeviceState entity by IDs.
+func (duo *DeviceUpdateOne) AddDeviceStateIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddDeviceStateIDs(ids...)
+	return duo
+}
+
+// AddDeviceStates adds the "device_states" edges to the DeviceState entity.
+func (duo *DeviceUpdateOne) AddDeviceStates(d ...*DeviceState) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.AddDeviceStateIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -1909,6 +2054,27 @@ func (duo *DeviceUpdateOne) RemoveTroubleDeducts(t ...*TroubleDeduct) *DeviceUpd
 		ids[i] = t[i].ID
 	}
 	return duo.RemoveTroubleDeductIDs(ids...)
+}
+
+// ClearDeviceStates clears all "device_states" edges to the DeviceState entity.
+func (duo *DeviceUpdateOne) ClearDeviceStates() *DeviceUpdateOne {
+	duo.mutation.ClearDeviceStates()
+	return duo
+}
+
+// RemoveDeviceStateIDs removes the "device_states" edge to DeviceState entities by IDs.
+func (duo *DeviceUpdateOne) RemoveDeviceStateIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveDeviceStateIDs(ids...)
+	return duo
+}
+
+// RemoveDeviceStates removes "device_states" edges to DeviceState entities.
+func (duo *DeviceUpdateOne) RemoveDeviceStates(d ...*DeviceState) *DeviceUpdateOne {
+	ids := make([]int64, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return duo.RemoveDeviceStateIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -2113,6 +2279,12 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.AddedTemperature(); ok {
 		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := duo.mutation.Stability(); ok {
+		_spec.SetField(device.FieldStability, field.TypeInt64, value)
+	}
+	if value, ok := duo.mutation.AddedStability(); ok {
+		_spec.AddField(device.FieldStability, field.TypeInt64, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2496,6 +2668,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(troublededuct.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.DeviceStatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedDeviceStatesIDs(); len(nodes) > 0 && !duo.mutation.DeviceStatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.DeviceStatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.DeviceStatesTable,
+			Columns: []string{device.DeviceStatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(devicestate.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

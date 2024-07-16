@@ -28,6 +28,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/device"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicegpumission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/earnbill"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enumcondition"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/enummissionstatus"
@@ -113,6 +114,8 @@ type Client struct {
 	DeviceGpuMission *DeviceGpuMissionClient
 	// DeviceRebootTime is the client for interacting with the DeviceRebootTime builders.
 	DeviceRebootTime *DeviceRebootTimeClient
+	// DeviceState is the client for interacting with the DeviceState builders.
+	DeviceState *DeviceStateClient
 	// EarnBill is the client for interacting with the EarnBill builders.
 	EarnBill *EarnBillClient
 	// EnumCondition is the client for interacting with the EnumCondition builders.
@@ -243,6 +246,7 @@ func (c *Client) init() {
 	c.Device = NewDeviceClient(c.config)
 	c.DeviceGpuMission = NewDeviceGpuMissionClient(c.config)
 	c.DeviceRebootTime = NewDeviceRebootTimeClient(c.config)
+	c.DeviceState = NewDeviceStateClient(c.config)
 	c.EarnBill = NewEarnBillClient(c.config)
 	c.EnumCondition = NewEnumConditionClient(c.config)
 	c.EnumMissionStatus = NewEnumMissionStatusClient(c.config)
@@ -393,6 +397,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Device:               NewDeviceClient(cfg),
 		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
 		DeviceRebootTime:     NewDeviceRebootTimeClient(cfg),
+		DeviceState:          NewDeviceStateClient(cfg),
 		EarnBill:             NewEarnBillClient(cfg),
 		EnumCondition:        NewEnumConditionClient(cfg),
 		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
@@ -477,6 +482,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Device:               NewDeviceClient(cfg),
 		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
 		DeviceRebootTime:     NewDeviceRebootTimeClient(cfg),
+		DeviceState:          NewDeviceStateClient(cfg),
 		EarnBill:             NewEarnBillClient(cfg),
 		EnumCondition:        NewEnumConditionClient(cfg),
 		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
@@ -560,18 +566,19 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
 		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceGpuMission, c.DeviceRebootTime, c.EarnBill, c.EnumCondition,
-		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
-		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
-		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
-		c.MissionCategory, c.MissionConsumeOrder, c.MissionExtraService,
-		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
-		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Survey, c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol,
-		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
+		c.DeviceGpuMission, c.DeviceRebootTime, c.DeviceState, c.EarnBill,
+		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
+		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair,
+		c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
+		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
+		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
+		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
+		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
 	}
@@ -583,18 +590,19 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Artwork, c.ArtworkLike, c.Bill, c.CDKInfo, c.Campaign, c.CampaignOrder,
 		c.CloudFile, c.Collect, c.CostAccount, c.CostBill, c.Device,
-		c.DeviceGpuMission, c.DeviceRebootTime, c.EarnBill, c.EnumCondition,
-		c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder, c.ExtraServicePrice,
-		c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair, c.IncomeManage, c.InputLog,
-		c.Invite, c.LoginRecord, c.Lotto, c.LottoChanceRule, c.LottoGetCountRecord,
-		c.LottoPrize, c.LottoRecord, c.LottoUserCount, c.Mission, c.MissionBatch,
-		c.MissionCategory, c.MissionConsumeOrder, c.MissionExtraService,
-		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
-		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
-		c.Survey, c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol,
-		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
-		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
+		c.DeviceGpuMission, c.DeviceRebootTime, c.DeviceState, c.EarnBill,
+		c.EnumCondition, c.EnumMissionStatus, c.ExtraService, c.ExtraServiceOrder,
+		c.ExtraServicePrice, c.FrpcInfo, c.FrpsInfo, c.Gpu, c.HmacKeyPair,
+		c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
+		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
+		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
+		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
+		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
+		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
+		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
+		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -629,6 +637,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DeviceGpuMission.mutate(ctx, m)
 	case *DeviceRebootTimeMutation:
 		return c.DeviceRebootTime.mutate(ctx, m)
+	case *DeviceStateMutation:
+		return c.DeviceState.mutate(ctx, m)
 	case *EarnBillMutation:
 		return c.EarnBill.mutate(ctx, m)
 	case *EnumConditionMutation:
@@ -2784,6 +2794,22 @@ func (c *DeviceClient) QueryTroubleDeducts(d *Device) *TroubleDeductQuery {
 	return query
 }
 
+// QueryDeviceStates queries the device_states edge of a Device.
+func (c *DeviceClient) QueryDeviceStates(d *Device) *DeviceStateQuery {
+	query := (&DeviceStateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(devicestate.Table, devicestate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceStatesTable, device.DeviceStatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DeviceClient) Hooks() []Hook {
 	return c.hooks.Device
@@ -3120,6 +3146,155 @@ func (c *DeviceRebootTimeClient) mutate(ctx context.Context, m *DeviceRebootTime
 		return (&DeviceRebootTimeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown DeviceRebootTime mutation op: %q", m.Op())
+	}
+}
+
+// DeviceStateClient is a client for the DeviceState schema.
+type DeviceStateClient struct {
+	config
+}
+
+// NewDeviceStateClient returns a client for the DeviceState from the given config.
+func NewDeviceStateClient(c config) *DeviceStateClient {
+	return &DeviceStateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `devicestate.Hooks(f(g(h())))`.
+func (c *DeviceStateClient) Use(hooks ...Hook) {
+	c.hooks.DeviceState = append(c.hooks.DeviceState, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `devicestate.Intercept(f(g(h())))`.
+func (c *DeviceStateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DeviceState = append(c.inters.DeviceState, interceptors...)
+}
+
+// Create returns a builder for creating a DeviceState entity.
+func (c *DeviceStateClient) Create() *DeviceStateCreate {
+	mutation := newDeviceStateMutation(c.config, OpCreate)
+	return &DeviceStateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DeviceState entities.
+func (c *DeviceStateClient) CreateBulk(builders ...*DeviceStateCreate) *DeviceStateCreateBulk {
+	return &DeviceStateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DeviceStateClient) MapCreateBulk(slice any, setFunc func(*DeviceStateCreate, int)) *DeviceStateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DeviceStateCreateBulk{err: fmt.Errorf("calling to DeviceStateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DeviceStateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DeviceStateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DeviceState.
+func (c *DeviceStateClient) Update() *DeviceStateUpdate {
+	mutation := newDeviceStateMutation(c.config, OpUpdate)
+	return &DeviceStateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DeviceStateClient) UpdateOne(ds *DeviceState) *DeviceStateUpdateOne {
+	mutation := newDeviceStateMutation(c.config, OpUpdateOne, withDeviceState(ds))
+	return &DeviceStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DeviceStateClient) UpdateOneID(id int64) *DeviceStateUpdateOne {
+	mutation := newDeviceStateMutation(c.config, OpUpdateOne, withDeviceStateID(id))
+	return &DeviceStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DeviceState.
+func (c *DeviceStateClient) Delete() *DeviceStateDelete {
+	mutation := newDeviceStateMutation(c.config, OpDelete)
+	return &DeviceStateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DeviceStateClient) DeleteOne(ds *DeviceState) *DeviceStateDeleteOne {
+	return c.DeleteOneID(ds.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DeviceStateClient) DeleteOneID(id int64) *DeviceStateDeleteOne {
+	builder := c.Delete().Where(devicestate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DeviceStateDeleteOne{builder}
+}
+
+// Query returns a query builder for DeviceState.
+func (c *DeviceStateClient) Query() *DeviceStateQuery {
+	return &DeviceStateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDeviceState},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DeviceState entity by its id.
+func (c *DeviceStateClient) Get(ctx context.Context, id int64) (*DeviceState, error) {
+	return c.Query().Where(devicestate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DeviceStateClient) GetX(ctx context.Context, id int64) *DeviceState {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDevice queries the device edge of a DeviceState.
+func (c *DeviceStateClient) QueryDevice(ds *DeviceState) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ds.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(devicestate.Table, devicestate.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, devicestate.DeviceTable, devicestate.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(ds.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DeviceStateClient) Hooks() []Hook {
+	return c.hooks.DeviceState
+}
+
+// Interceptors returns the client interceptors.
+func (c *DeviceStateClient) Interceptors() []Interceptor {
+	return c.inters.DeviceState
+}
+
+func (c *DeviceStateClient) mutate(ctx context.Context, m *DeviceStateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DeviceStateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DeviceStateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DeviceStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DeviceStateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown DeviceState mutation op: %q", m.Op())
 	}
 }
 
@@ -12924,29 +13099,31 @@ type (
 	hooks struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceRebootTime,
-		EarnBill, EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
-		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage,
-		InputLog, Invite, LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord,
-		LottoPrize, LottoRecord, LottoUserCount, Mission, MissionBatch,
-		MissionCategory, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
-		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
-		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
-		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
-		VXAccount, VXSocial, Wallet, WithdrawAccount, WithdrawRecord []ent.Hook
+		DeviceState, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
+		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
+		IncomeManage, InputLog, Invite, LoginRecord, Lotto, LottoChanceRule,
+		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
+		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
+		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
+		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Survey,
+		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
+		TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
 		Collect, CostAccount, CostBill, Device, DeviceGpuMission, DeviceRebootTime,
-		EarnBill, EnumCondition, EnumMissionStatus, ExtraService, ExtraServiceOrder,
-		ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair, IncomeManage,
-		InputLog, Invite, LoginRecord, Lotto, LottoChanceRule, LottoGetCountRecord,
-		LottoPrize, LottoRecord, LottoUserCount, Mission, MissionBatch,
-		MissionCategory, MissionConsumeOrder, MissionExtraService, MissionKeyPair,
-		MissionKind, MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
-		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
-		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
-		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
-		VXAccount, VXSocial, Wallet, WithdrawAccount, WithdrawRecord []ent.Interceptor
+		DeviceState, EarnBill, EnumCondition, EnumMissionStatus, ExtraService,
+		ExtraServiceOrder, ExtraServicePrice, FrpcInfo, FrpsInfo, Gpu, HmacKeyPair,
+		IncomeManage, InputLog, Invite, LoginRecord, Lotto, LottoChanceRule,
+		LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount, Mission,
+		MissionBatch, MissionCategory, MissionConsumeOrder, MissionExtraService,
+		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
+		MissionProduction, OutputLog, PlatformAccount, Price, ProfitAccount,
+		ProfitSetting, RechargeCampaignRule, RechargeOrder, RenewalAgreement, Survey,
+		SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol, TransferOrder,
+		TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet, WithdrawAccount,
+		WithdrawRecord []ent.Interceptor
 	}
 )
