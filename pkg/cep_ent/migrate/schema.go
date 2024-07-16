@@ -497,7 +497,7 @@ var (
 		{Name: "disk", Type: field.TypeFloat32, Comment: "硬盘(单位:T)", Default: 0, SchemaType: map[string]string{"postgres": "NUMERIC(10,4)"}},
 		{Name: "delay", Type: field.TypeFloat64, Comment: "延迟(单位:ms)", Default: 0},
 		{Name: "temperature", Type: field.TypeFloat64, Comment: "温度(单位:℃)", Default: 0},
-		{Name: "stability", Type: field.TypeInt64, Comment: "稳定性，数值越小越稳定", Default: 0},
+		{Name: "stability", Type: field.TypeEnum, Comment: "设备稳定性", Enums: []string{"great", "good", "ok", "bad"}, Default: "good"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.

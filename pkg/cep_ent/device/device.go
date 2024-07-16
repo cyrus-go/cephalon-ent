@@ -241,8 +241,6 @@ var (
 	DefaultDelay float64
 	// DefaultTemperature holds the default value on creation for the "temperature" field.
 	DefaultTemperature float64
-	// DefaultStability holds the default value on creation for the "stability" field.
-	DefaultStability int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -311,6 +309,18 @@ func TypeValidator(_type enums.DeviceType) error {
 		return nil
 	default:
 		return fmt.Errorf("device: invalid enum value for type field: %q", _type)
+	}
+}
+
+const DefaultStability enums.DeviceStabilityType = "good"
+
+// StabilityValidator is a validator for the "stability" field enum values. It is called by the builders before save.
+func StabilityValidator(s enums.DeviceStabilityType) error {
+	switch s {
+	case "great", "good", "ok", "bad":
+		return nil
+	default:
+		return fmt.Errorf("device: invalid enum value for stability field: %q", s)
 	}
 }
 

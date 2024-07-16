@@ -64,8 +64,8 @@ type Device struct {
 	Delay float64 `json:"delay"`
 	// 温度(单位:℃)
 	Temperature float64 `json:"temperature"`
-	// 稳定性，数值越小越稳定
-	Stability int64 `json:"stability"`
+	// 设备稳定性
+	Stability enums.DeviceStabilityType `json:"stability"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges        DeviceEdges `json:"edges"`
@@ -213,9 +213,9 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case device.FieldDisk, device.FieldDelay, device.FieldTemperature:
 			values[i] = new(sql.NullFloat64)
-		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory, device.FieldStability:
+		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
 			values[i] = new(sql.NullInt64)
-		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU:
+		case device.FieldSerialNumber, device.FieldState, device.FieldBindingStatus, device.FieldStatus, device.FieldName, device.FieldManageName, device.FieldType, device.FieldCPU, device.FieldStability:
 			values[i] = new(sql.NullString)
 		case device.FieldCreatedAt, device.FieldUpdatedAt, device.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -375,10 +375,10 @@ func (d *Device) assignValues(columns []string, values []any) error {
 				d.Temperature = value.Float64
 			}
 		case device.FieldStability:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field stability", values[i])
 			} else if value.Valid {
-				d.Stability = value.Int64
+				d.Stability = enums.DeviceStabilityType(value.String)
 			}
 		default:
 			d.selectValues.Set(columns[i], values[i])

@@ -382,23 +382,16 @@ func (du *DeviceUpdate) AddTemperature(f float64) *DeviceUpdate {
 }
 
 // SetStability sets the "stability" field.
-func (du *DeviceUpdate) SetStability(i int64) *DeviceUpdate {
-	du.mutation.ResetStability()
-	du.mutation.SetStability(i)
+func (du *DeviceUpdate) SetStability(est enums.DeviceStabilityType) *DeviceUpdate {
+	du.mutation.SetStability(est)
 	return du
 }
 
 // SetNillableStability sets the "stability" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableStability(i *int64) *DeviceUpdate {
-	if i != nil {
-		du.SetStability(*i)
+func (du *DeviceUpdate) SetNillableStability(est *enums.DeviceStabilityType) *DeviceUpdate {
+	if est != nil {
+		du.SetStability(*est)
 	}
-	return du
-}
-
-// AddStability adds i to the "stability" field.
-func (du *DeviceUpdate) AddStability(i int64) *DeviceUpdate {
-	du.mutation.AddStability(i)
 	return du
 }
 
@@ -836,6 +829,11 @@ func (du *DeviceUpdate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.type": %w`, err)}
 		}
 	}
+	if v, ok := du.mutation.Stability(); ok {
+		if err := device.StabilityValidator(v); err != nil {
+			return &ValidationError{Name: "stability", err: fmt.Errorf(`cep_ent: validator failed for field "Device.stability": %w`, err)}
+		}
+	}
 	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -952,10 +950,7 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
 	}
 	if value, ok := du.mutation.Stability(); ok {
-		_spec.SetField(device.FieldStability, field.TypeInt64, value)
-	}
-	if value, ok := du.mutation.AddedStability(); ok {
-		_spec.AddField(device.FieldStability, field.TypeInt64, value)
+		_spec.SetField(device.FieldStability, field.TypeEnum, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1799,23 +1794,16 @@ func (duo *DeviceUpdateOne) AddTemperature(f float64) *DeviceUpdateOne {
 }
 
 // SetStability sets the "stability" field.
-func (duo *DeviceUpdateOne) SetStability(i int64) *DeviceUpdateOne {
-	duo.mutation.ResetStability()
-	duo.mutation.SetStability(i)
+func (duo *DeviceUpdateOne) SetStability(est enums.DeviceStabilityType) *DeviceUpdateOne {
+	duo.mutation.SetStability(est)
 	return duo
 }
 
 // SetNillableStability sets the "stability" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableStability(i *int64) *DeviceUpdateOne {
-	if i != nil {
-		duo.SetStability(*i)
+func (duo *DeviceUpdateOne) SetNillableStability(est *enums.DeviceStabilityType) *DeviceUpdateOne {
+	if est != nil {
+		duo.SetStability(*est)
 	}
-	return duo
-}
-
-// AddStability adds i to the "stability" field.
-func (duo *DeviceUpdateOne) AddStability(i int64) *DeviceUpdateOne {
-	duo.mutation.AddStability(i)
 	return duo
 }
 
@@ -2266,6 +2254,11 @@ func (duo *DeviceUpdateOne) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`cep_ent: validator failed for field "Device.type": %w`, err)}
 		}
 	}
+	if v, ok := duo.mutation.Stability(); ok {
+		if err := device.StabilityValidator(v); err != nil {
+			return &ValidationError{Name: "stability", err: fmt.Errorf(`cep_ent: validator failed for field "Device.stability": %w`, err)}
+		}
+	}
 	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "Device.user"`)
 	}
@@ -2399,10 +2392,7 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
 	}
 	if value, ok := duo.mutation.Stability(); ok {
-		_spec.SetField(device.FieldStability, field.TypeInt64, value)
-	}
-	if value, ok := duo.mutation.AddedStability(); ok {
-		_spec.AddField(device.FieldStability, field.TypeInt64, value)
+		_spec.SetField(device.FieldStability, field.TypeEnum, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

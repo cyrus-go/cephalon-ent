@@ -716,10 +716,6 @@ func init() {
 	deviceDescTemperature := deviceFields[16].Descriptor()
 	// device.DefaultTemperature holds the default value on creation for the temperature field.
 	device.DefaultTemperature = deviceDescTemperature.Default.(float64)
-	// deviceDescStability is the schema descriptor for stability field.
-	deviceDescStability := deviceFields[17].Descriptor()
-	// device.DefaultStability holds the default value on creation for the stability field.
-	device.DefaultStability = deviceDescStability.Default.(int64)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.

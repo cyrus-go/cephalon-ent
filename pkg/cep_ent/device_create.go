@@ -335,15 +335,15 @@ func (dc *DeviceCreate) SetNillableTemperature(f *float64) *DeviceCreate {
 }
 
 // SetStability sets the "stability" field.
-func (dc *DeviceCreate) SetStability(i int64) *DeviceCreate {
-	dc.mutation.SetStability(i)
+func (dc *DeviceCreate) SetStability(est enums.DeviceStabilityType) *DeviceCreate {
+	dc.mutation.SetStability(est)
 	return dc
 }
 
 // SetNillableStability sets the "stability" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableStability(i *int64) *DeviceCreate {
-	if i != nil {
-		dc.SetStability(*i)
+func (dc *DeviceCreate) SetNillableStability(est *enums.DeviceStabilityType) *DeviceCreate {
+	if est != nil {
+		dc.SetStability(*est)
 	}
 	return dc
 }
@@ -734,6 +734,11 @@ func (dc *DeviceCreate) check() error {
 	if _, ok := dc.mutation.Stability(); !ok {
 		return &ValidationError{Name: "stability", err: errors.New(`cep_ent: missing required field "Device.stability"`)}
 	}
+	if v, ok := dc.mutation.Stability(); ok {
+		if err := device.StabilityValidator(v); err != nil {
+			return &ValidationError{Name: "stability", err: fmt.Errorf(`cep_ent: validator failed for field "Device.stability": %w`, err)}
+		}
+	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
 	}
@@ -862,7 +867,7 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 		_node.Temperature = value
 	}
 	if value, ok := dc.mutation.Stability(); ok {
-		_spec.SetField(device.FieldStability, field.TypeInt64, value)
+		_spec.SetField(device.FieldStability, field.TypeEnum, value)
 		_node.Stability = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
@@ -1401,7 +1406,7 @@ func (u *DeviceUpsert) AddTemperature(v float64) *DeviceUpsert {
 }
 
 // SetStability sets the "stability" field.
-func (u *DeviceUpsert) SetStability(v int64) *DeviceUpsert {
+func (u *DeviceUpsert) SetStability(v enums.DeviceStabilityType) *DeviceUpsert {
 	u.Set(device.FieldStability, v)
 	return u
 }
@@ -1409,12 +1414,6 @@ func (u *DeviceUpsert) SetStability(v int64) *DeviceUpsert {
 // UpdateStability sets the "stability" field to the value that was provided on create.
 func (u *DeviceUpsert) UpdateStability() *DeviceUpsert {
 	u.SetExcluded(device.FieldStability)
-	return u
-}
-
-// AddStability adds v to the "stability" field.
-func (u *DeviceUpsert) AddStability(v int64) *DeviceUpsert {
-	u.Add(device.FieldStability, v)
 	return u
 }
 
@@ -1827,16 +1826,9 @@ func (u *DeviceUpsertOne) UpdateTemperature() *DeviceUpsertOne {
 }
 
 // SetStability sets the "stability" field.
-func (u *DeviceUpsertOne) SetStability(v int64) *DeviceUpsertOne {
+func (u *DeviceUpsertOne) SetStability(v enums.DeviceStabilityType) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.SetStability(v)
-	})
-}
-
-// AddStability adds v to the "stability" field.
-func (u *DeviceUpsertOne) AddStability(v int64) *DeviceUpsertOne {
-	return u.Update(func(s *DeviceUpsert) {
-		s.AddStability(v)
 	})
 }
 
@@ -2425,16 +2417,9 @@ func (u *DeviceUpsertBulk) UpdateTemperature() *DeviceUpsertBulk {
 }
 
 // SetStability sets the "stability" field.
-func (u *DeviceUpsertBulk) SetStability(v int64) *DeviceUpsertBulk {
+func (u *DeviceUpsertBulk) SetStability(v enums.DeviceStabilityType) *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.SetStability(v)
-	})
-}
-
-// AddStability adds v to the "stability" field.
-func (u *DeviceUpsertBulk) AddStability(v int64) *DeviceUpsertBulk {
-	return u.Update(func(s *DeviceUpsert) {
-		s.AddStability(v)
 	})
 }
 

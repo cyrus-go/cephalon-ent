@@ -12709,8 +12709,7 @@ type DeviceMutation struct {
 	adddelay                      *float64
 	temperature                   *float64
 	addtemperature                *float64
-	stability                     *int64
-	addstability                  *int64
+	stability                     *enums.DeviceStabilityType
 	clearedFields                 map[string]struct{}
 	user                          *int64
 	cleareduser                   bool
@@ -13819,13 +13818,12 @@ func (m *DeviceMutation) ResetTemperature() {
 }
 
 // SetStability sets the "stability" field.
-func (m *DeviceMutation) SetStability(i int64) {
-	m.stability = &i
-	m.addstability = nil
+func (m *DeviceMutation) SetStability(est enums.DeviceStabilityType) {
+	m.stability = &est
 }
 
 // Stability returns the value of the "stability" field in the mutation.
-func (m *DeviceMutation) Stability() (r int64, exists bool) {
+func (m *DeviceMutation) Stability() (r enums.DeviceStabilityType, exists bool) {
 	v := m.stability
 	if v == nil {
 		return
@@ -13836,7 +13834,7 @@ func (m *DeviceMutation) Stability() (r int64, exists bool) {
 // OldStability returns the old "stability" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldStability(ctx context.Context) (v int64, err error) {
+func (m *DeviceMutation) OldStability(ctx context.Context) (v enums.DeviceStabilityType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStability is only allowed on UpdateOne operations")
 	}
@@ -13850,28 +13848,9 @@ func (m *DeviceMutation) OldStability(ctx context.Context) (v int64, err error) 
 	return oldValue.Stability, nil
 }
 
-// AddStability adds i to the "stability" field.
-func (m *DeviceMutation) AddStability(i int64) {
-	if m.addstability != nil {
-		*m.addstability += i
-	} else {
-		m.addstability = &i
-	}
-}
-
-// AddedStability returns the value that was added to the "stability" field in this mutation.
-func (m *DeviceMutation) AddedStability() (r int64, exists bool) {
-	v := m.addstability
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetStability resets all changes to the "stability" field.
 func (m *DeviceMutation) ResetStability() {
 	m.stability = nil
-	m.addstability = nil
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -14818,7 +14797,7 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		m.SetTemperature(v)
 		return nil
 	case device.FieldStability:
-		v, ok := value.(int64)
+		v, ok := value.(enums.DeviceStabilityType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -14856,9 +14835,6 @@ func (m *DeviceMutation) AddedFields() []string {
 	if m.addtemperature != nil {
 		fields = append(fields, device.FieldTemperature)
 	}
-	if m.addstability != nil {
-		fields = append(fields, device.FieldStability)
-	}
 	return fields
 }
 
@@ -14883,8 +14859,6 @@ func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDelay()
 	case device.FieldTemperature:
 		return m.AddedTemperature()
-	case device.FieldStability:
-		return m.AddedStability()
 	}
 	return nil, false
 }
@@ -14949,13 +14923,6 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTemperature(v)
-		return nil
-	case device.FieldStability:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddStability(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device numeric field %s", name)

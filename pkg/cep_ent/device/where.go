@@ -141,11 +141,6 @@ func Temperature(v float64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldTemperature, v))
 }
 
-// Stability applies equality check predicate on the "stability" field. It's identical to StabilityEQ.
-func Stability(v int64) predicate.Device {
-	return predicate.Device(sql.FieldEQ(FieldStability, v))
-}
-
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -997,43 +992,33 @@ func TemperatureLTE(v float64) predicate.Device {
 }
 
 // StabilityEQ applies the EQ predicate on the "stability" field.
-func StabilityEQ(v int64) predicate.Device {
-	return predicate.Device(sql.FieldEQ(FieldStability, v))
+func StabilityEQ(v enums.DeviceStabilityType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldEQ(FieldStability, vc))
 }
 
 // StabilityNEQ applies the NEQ predicate on the "stability" field.
-func StabilityNEQ(v int64) predicate.Device {
-	return predicate.Device(sql.FieldNEQ(FieldStability, v))
+func StabilityNEQ(v enums.DeviceStabilityType) predicate.Device {
+	vc := v
+	return predicate.Device(sql.FieldNEQ(FieldStability, vc))
 }
 
 // StabilityIn applies the In predicate on the "stability" field.
-func StabilityIn(vs ...int64) predicate.Device {
-	return predicate.Device(sql.FieldIn(FieldStability, vs...))
+func StabilityIn(vs ...enums.DeviceStabilityType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldIn(FieldStability, v...))
 }
 
 // StabilityNotIn applies the NotIn predicate on the "stability" field.
-func StabilityNotIn(vs ...int64) predicate.Device {
-	return predicate.Device(sql.FieldNotIn(FieldStability, vs...))
-}
-
-// StabilityGT applies the GT predicate on the "stability" field.
-func StabilityGT(v int64) predicate.Device {
-	return predicate.Device(sql.FieldGT(FieldStability, v))
-}
-
-// StabilityGTE applies the GTE predicate on the "stability" field.
-func StabilityGTE(v int64) predicate.Device {
-	return predicate.Device(sql.FieldGTE(FieldStability, v))
-}
-
-// StabilityLT applies the LT predicate on the "stability" field.
-func StabilityLT(v int64) predicate.Device {
-	return predicate.Device(sql.FieldLT(FieldStability, v))
-}
-
-// StabilityLTE applies the LTE predicate on the "stability" field.
-func StabilityLTE(v int64) predicate.Device {
-	return predicate.Device(sql.FieldLTE(FieldStability, v))
+func StabilityNotIn(vs ...enums.DeviceStabilityType) predicate.Device {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Device(sql.FieldNotIn(FieldStability, v...))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
