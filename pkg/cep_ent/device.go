@@ -62,8 +62,10 @@ type Device struct {
 	Disk float32 `json:"disk,omitempty" json:disk`
 	// 延迟(单位:ms)
 	Delay float64 `json:"delay"`
-	// 温度(单位:℃)
-	Temperature float64 `json:"temperature"`
+	// GPU 温度(单位:℃)
+	GpuTemperature float64 `json:"gpu_temperature"`
+	// CPU 温度(单位:℃)
+	CPUTemperature float64 `json:"cpu_temperature"`
 	// 设备稳定性
 	Stability enums.DeviceStabilityType `json:"stability"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -211,7 +213,7 @@ func (*Device) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case device.FieldLinking:
 			values[i] = new(sql.NullBool)
-		case device.FieldDisk, device.FieldDelay, device.FieldTemperature:
+		case device.FieldDisk, device.FieldDelay, device.FieldGpuTemperature, device.FieldCPUTemperature:
 			values[i] = new(sql.NullFloat64)
 		case device.FieldID, device.FieldCreatedBy, device.FieldUpdatedBy, device.FieldUserID, device.FieldSumCep, device.FieldCoresNumber, device.FieldMemory:
 			values[i] = new(sql.NullInt64)
@@ -368,11 +370,17 @@ func (d *Device) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				d.Delay = value.Float64
 			}
-		case device.FieldTemperature:
+		case device.FieldGpuTemperature:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field temperature", values[i])
+				return fmt.Errorf("unexpected type %T for field gpu_temperature", values[i])
 			} else if value.Valid {
-				d.Temperature = value.Float64
+				d.GpuTemperature = value.Float64
+			}
+		case device.FieldCPUTemperature:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field cpu_temperature", values[i])
+			} else if value.Valid {
+				d.CPUTemperature = value.Float64
 			}
 		case device.FieldStability:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -534,8 +542,11 @@ func (d *Device) String() string {
 	builder.WriteString("delay=")
 	builder.WriteString(fmt.Sprintf("%v", d.Delay))
 	builder.WriteString(", ")
-	builder.WriteString("temperature=")
-	builder.WriteString(fmt.Sprintf("%v", d.Temperature))
+	builder.WriteString("gpu_temperature=")
+	builder.WriteString(fmt.Sprintf("%v", d.GpuTemperature))
+	builder.WriteString(", ")
+	builder.WriteString("cpu_temperature=")
+	builder.WriteString(fmt.Sprintf("%v", d.CPUTemperature))
 	builder.WriteString(", ")
 	builder.WriteString("stability=")
 	builder.WriteString(fmt.Sprintf("%v", d.Stability))

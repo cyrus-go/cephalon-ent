@@ -360,24 +360,45 @@ func (du *DeviceUpdate) AddDelay(f float64) *DeviceUpdate {
 	return du
 }
 
-// SetTemperature sets the "temperature" field.
-func (du *DeviceUpdate) SetTemperature(f float64) *DeviceUpdate {
-	du.mutation.ResetTemperature()
-	du.mutation.SetTemperature(f)
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (du *DeviceUpdate) SetGpuTemperature(f float64) *DeviceUpdate {
+	du.mutation.ResetGpuTemperature()
+	du.mutation.SetGpuTemperature(f)
 	return du
 }
 
-// SetNillableTemperature sets the "temperature" field if the given value is not nil.
-func (du *DeviceUpdate) SetNillableTemperature(f *float64) *DeviceUpdate {
+// SetNillableGpuTemperature sets the "gpu_temperature" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableGpuTemperature(f *float64) *DeviceUpdate {
 	if f != nil {
-		du.SetTemperature(*f)
+		du.SetGpuTemperature(*f)
 	}
 	return du
 }
 
-// AddTemperature adds f to the "temperature" field.
-func (du *DeviceUpdate) AddTemperature(f float64) *DeviceUpdate {
-	du.mutation.AddTemperature(f)
+// AddGpuTemperature adds f to the "gpu_temperature" field.
+func (du *DeviceUpdate) AddGpuTemperature(f float64) *DeviceUpdate {
+	du.mutation.AddGpuTemperature(f)
+	return du
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (du *DeviceUpdate) SetCPUTemperature(f float64) *DeviceUpdate {
+	du.mutation.ResetCPUTemperature()
+	du.mutation.SetCPUTemperature(f)
+	return du
+}
+
+// SetNillableCPUTemperature sets the "cpu_temperature" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableCPUTemperature(f *float64) *DeviceUpdate {
+	if f != nil {
+		du.SetCPUTemperature(*f)
+	}
+	return du
+}
+
+// AddCPUTemperature adds f to the "cpu_temperature" field.
+func (du *DeviceUpdate) AddCPUTemperature(f float64) *DeviceUpdate {
+	du.mutation.AddCPUTemperature(f)
 	return du
 }
 
@@ -943,11 +964,17 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := du.mutation.AddedDelay(); ok {
 		_spec.AddField(device.FieldDelay, field.TypeFloat64, value)
 	}
-	if value, ok := du.mutation.Temperature(); ok {
-		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
+	if value, ok := du.mutation.GpuTemperature(); ok {
+		_spec.SetField(device.FieldGpuTemperature, field.TypeFloat64, value)
 	}
-	if value, ok := du.mutation.AddedTemperature(); ok {
-		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
+	if value, ok := du.mutation.AddedGpuTemperature(); ok {
+		_spec.AddField(device.FieldGpuTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := du.mutation.CPUTemperature(); ok {
+		_spec.SetField(device.FieldCPUTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := du.mutation.AddedCPUTemperature(); ok {
+		_spec.AddField(device.FieldCPUTemperature, field.TypeFloat64, value)
 	}
 	if value, ok := du.mutation.Stability(); ok {
 		_spec.SetField(device.FieldStability, field.TypeEnum, value)
@@ -1772,24 +1799,45 @@ func (duo *DeviceUpdateOne) AddDelay(f float64) *DeviceUpdateOne {
 	return duo
 }
 
-// SetTemperature sets the "temperature" field.
-func (duo *DeviceUpdateOne) SetTemperature(f float64) *DeviceUpdateOne {
-	duo.mutation.ResetTemperature()
-	duo.mutation.SetTemperature(f)
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (duo *DeviceUpdateOne) SetGpuTemperature(f float64) *DeviceUpdateOne {
+	duo.mutation.ResetGpuTemperature()
+	duo.mutation.SetGpuTemperature(f)
 	return duo
 }
 
-// SetNillableTemperature sets the "temperature" field if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableTemperature(f *float64) *DeviceUpdateOne {
+// SetNillableGpuTemperature sets the "gpu_temperature" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableGpuTemperature(f *float64) *DeviceUpdateOne {
 	if f != nil {
-		duo.SetTemperature(*f)
+		duo.SetGpuTemperature(*f)
 	}
 	return duo
 }
 
-// AddTemperature adds f to the "temperature" field.
-func (duo *DeviceUpdateOne) AddTemperature(f float64) *DeviceUpdateOne {
-	duo.mutation.AddTemperature(f)
+// AddGpuTemperature adds f to the "gpu_temperature" field.
+func (duo *DeviceUpdateOne) AddGpuTemperature(f float64) *DeviceUpdateOne {
+	duo.mutation.AddGpuTemperature(f)
+	return duo
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (duo *DeviceUpdateOne) SetCPUTemperature(f float64) *DeviceUpdateOne {
+	duo.mutation.ResetCPUTemperature()
+	duo.mutation.SetCPUTemperature(f)
+	return duo
+}
+
+// SetNillableCPUTemperature sets the "cpu_temperature" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableCPUTemperature(f *float64) *DeviceUpdateOne {
+	if f != nil {
+		duo.SetCPUTemperature(*f)
+	}
+	return duo
+}
+
+// AddCPUTemperature adds f to the "cpu_temperature" field.
+func (duo *DeviceUpdateOne) AddCPUTemperature(f float64) *DeviceUpdateOne {
+	duo.mutation.AddCPUTemperature(f)
 	return duo
 }
 
@@ -2385,11 +2433,17 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	if value, ok := duo.mutation.AddedDelay(); ok {
 		_spec.AddField(device.FieldDelay, field.TypeFloat64, value)
 	}
-	if value, ok := duo.mutation.Temperature(); ok {
-		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
+	if value, ok := duo.mutation.GpuTemperature(); ok {
+		_spec.SetField(device.FieldGpuTemperature, field.TypeFloat64, value)
 	}
-	if value, ok := duo.mutation.AddedTemperature(); ok {
-		_spec.AddField(device.FieldTemperature, field.TypeFloat64, value)
+	if value, ok := duo.mutation.AddedGpuTemperature(); ok {
+		_spec.AddField(device.FieldGpuTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := duo.mutation.CPUTemperature(); ok {
+		_spec.SetField(device.FieldCPUTemperature, field.TypeFloat64, value)
+	}
+	if value, ok := duo.mutation.AddedCPUTemperature(); ok {
+		_spec.AddField(device.FieldCPUTemperature, field.TypeFloat64, value)
 	}
 	if value, ok := duo.mutation.Stability(); ok {
 		_spec.SetField(device.FieldStability, field.TypeEnum, value)

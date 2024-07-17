@@ -136,9 +136,14 @@ func Delay(v float64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldDelay, v))
 }
 
-// Temperature applies equality check predicate on the "temperature" field. It's identical to TemperatureEQ.
-func Temperature(v float64) predicate.Device {
-	return predicate.Device(sql.FieldEQ(FieldTemperature, v))
+// GpuTemperature applies equality check predicate on the "gpu_temperature" field. It's identical to GpuTemperatureEQ.
+func GpuTemperature(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldGpuTemperature, v))
+}
+
+// CPUTemperature applies equality check predicate on the "cpu_temperature" field. It's identical to CPUTemperatureEQ.
+func CPUTemperature(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldCPUTemperature, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -951,44 +956,84 @@ func DelayLTE(v float64) predicate.Device {
 	return predicate.Device(sql.FieldLTE(FieldDelay, v))
 }
 
-// TemperatureEQ applies the EQ predicate on the "temperature" field.
-func TemperatureEQ(v float64) predicate.Device {
-	return predicate.Device(sql.FieldEQ(FieldTemperature, v))
+// GpuTemperatureEQ applies the EQ predicate on the "gpu_temperature" field.
+func GpuTemperatureEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldGpuTemperature, v))
 }
 
-// TemperatureNEQ applies the NEQ predicate on the "temperature" field.
-func TemperatureNEQ(v float64) predicate.Device {
-	return predicate.Device(sql.FieldNEQ(FieldTemperature, v))
+// GpuTemperatureNEQ applies the NEQ predicate on the "gpu_temperature" field.
+func GpuTemperatureNEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldGpuTemperature, v))
 }
 
-// TemperatureIn applies the In predicate on the "temperature" field.
-func TemperatureIn(vs ...float64) predicate.Device {
-	return predicate.Device(sql.FieldIn(FieldTemperature, vs...))
+// GpuTemperatureIn applies the In predicate on the "gpu_temperature" field.
+func GpuTemperatureIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldGpuTemperature, vs...))
 }
 
-// TemperatureNotIn applies the NotIn predicate on the "temperature" field.
-func TemperatureNotIn(vs ...float64) predicate.Device {
-	return predicate.Device(sql.FieldNotIn(FieldTemperature, vs...))
+// GpuTemperatureNotIn applies the NotIn predicate on the "gpu_temperature" field.
+func GpuTemperatureNotIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldGpuTemperature, vs...))
 }
 
-// TemperatureGT applies the GT predicate on the "temperature" field.
-func TemperatureGT(v float64) predicate.Device {
-	return predicate.Device(sql.FieldGT(FieldTemperature, v))
+// GpuTemperatureGT applies the GT predicate on the "gpu_temperature" field.
+func GpuTemperatureGT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldGpuTemperature, v))
 }
 
-// TemperatureGTE applies the GTE predicate on the "temperature" field.
-func TemperatureGTE(v float64) predicate.Device {
-	return predicate.Device(sql.FieldGTE(FieldTemperature, v))
+// GpuTemperatureGTE applies the GTE predicate on the "gpu_temperature" field.
+func GpuTemperatureGTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldGpuTemperature, v))
 }
 
-// TemperatureLT applies the LT predicate on the "temperature" field.
-func TemperatureLT(v float64) predicate.Device {
-	return predicate.Device(sql.FieldLT(FieldTemperature, v))
+// GpuTemperatureLT applies the LT predicate on the "gpu_temperature" field.
+func GpuTemperatureLT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldGpuTemperature, v))
 }
 
-// TemperatureLTE applies the LTE predicate on the "temperature" field.
-func TemperatureLTE(v float64) predicate.Device {
-	return predicate.Device(sql.FieldLTE(FieldTemperature, v))
+// GpuTemperatureLTE applies the LTE predicate on the "gpu_temperature" field.
+func GpuTemperatureLTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldGpuTemperature, v))
+}
+
+// CPUTemperatureEQ applies the EQ predicate on the "cpu_temperature" field.
+func CPUTemperatureEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldCPUTemperature, v))
+}
+
+// CPUTemperatureNEQ applies the NEQ predicate on the "cpu_temperature" field.
+func CPUTemperatureNEQ(v float64) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldCPUTemperature, v))
+}
+
+// CPUTemperatureIn applies the In predicate on the "cpu_temperature" field.
+func CPUTemperatureIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldCPUTemperature, vs...))
+}
+
+// CPUTemperatureNotIn applies the NotIn predicate on the "cpu_temperature" field.
+func CPUTemperatureNotIn(vs ...float64) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldCPUTemperature, vs...))
+}
+
+// CPUTemperatureGT applies the GT predicate on the "cpu_temperature" field.
+func CPUTemperatureGT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldCPUTemperature, v))
+}
+
+// CPUTemperatureGTE applies the GTE predicate on the "cpu_temperature" field.
+func CPUTemperatureGTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldCPUTemperature, v))
+}
+
+// CPUTemperatureLT applies the LT predicate on the "cpu_temperature" field.
+func CPUTemperatureLT(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldCPUTemperature, v))
+}
+
+// CPUTemperatureLTE applies the LTE predicate on the "cpu_temperature" field.
+func CPUTemperatureLTE(v float64) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldCPUTemperature, v))
 }
 
 // StabilityEQ applies the EQ predicate on the "stability" field.

@@ -320,16 +320,30 @@ func (dc *DeviceCreate) SetNillableDelay(f *float64) *DeviceCreate {
 	return dc
 }
 
-// SetTemperature sets the "temperature" field.
-func (dc *DeviceCreate) SetTemperature(f float64) *DeviceCreate {
-	dc.mutation.SetTemperature(f)
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (dc *DeviceCreate) SetGpuTemperature(f float64) *DeviceCreate {
+	dc.mutation.SetGpuTemperature(f)
 	return dc
 }
 
-// SetNillableTemperature sets the "temperature" field if the given value is not nil.
-func (dc *DeviceCreate) SetNillableTemperature(f *float64) *DeviceCreate {
+// SetNillableGpuTemperature sets the "gpu_temperature" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableGpuTemperature(f *float64) *DeviceCreate {
 	if f != nil {
-		dc.SetTemperature(*f)
+		dc.SetGpuTemperature(*f)
+	}
+	return dc
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (dc *DeviceCreate) SetCPUTemperature(f float64) *DeviceCreate {
+	dc.mutation.SetCPUTemperature(f)
+	return dc
+}
+
+// SetNillableCPUTemperature sets the "cpu_temperature" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableCPUTemperature(f *float64) *DeviceCreate {
+	if f != nil {
+		dc.SetCPUTemperature(*f)
 	}
 	return dc
 }
@@ -632,9 +646,13 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultDelay
 		dc.mutation.SetDelay(v)
 	}
-	if _, ok := dc.mutation.Temperature(); !ok {
-		v := device.DefaultTemperature
-		dc.mutation.SetTemperature(v)
+	if _, ok := dc.mutation.GpuTemperature(); !ok {
+		v := device.DefaultGpuTemperature
+		dc.mutation.SetGpuTemperature(v)
+	}
+	if _, ok := dc.mutation.CPUTemperature(); !ok {
+		v := device.DefaultCPUTemperature
+		dc.mutation.SetCPUTemperature(v)
 	}
 	if _, ok := dc.mutation.Stability(); !ok {
 		v := device.DefaultStability
@@ -728,8 +746,11 @@ func (dc *DeviceCreate) check() error {
 	if _, ok := dc.mutation.Delay(); !ok {
 		return &ValidationError{Name: "delay", err: errors.New(`cep_ent: missing required field "Device.delay"`)}
 	}
-	if _, ok := dc.mutation.Temperature(); !ok {
-		return &ValidationError{Name: "temperature", err: errors.New(`cep_ent: missing required field "Device.temperature"`)}
+	if _, ok := dc.mutation.GpuTemperature(); !ok {
+		return &ValidationError{Name: "gpu_temperature", err: errors.New(`cep_ent: missing required field "Device.gpu_temperature"`)}
+	}
+	if _, ok := dc.mutation.CPUTemperature(); !ok {
+		return &ValidationError{Name: "cpu_temperature", err: errors.New(`cep_ent: missing required field "Device.cpu_temperature"`)}
 	}
 	if _, ok := dc.mutation.Stability(); !ok {
 		return &ValidationError{Name: "stability", err: errors.New(`cep_ent: missing required field "Device.stability"`)}
@@ -862,9 +883,13 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 		_spec.SetField(device.FieldDelay, field.TypeFloat64, value)
 		_node.Delay = value
 	}
-	if value, ok := dc.mutation.Temperature(); ok {
-		_spec.SetField(device.FieldTemperature, field.TypeFloat64, value)
-		_node.Temperature = value
+	if value, ok := dc.mutation.GpuTemperature(); ok {
+		_spec.SetField(device.FieldGpuTemperature, field.TypeFloat64, value)
+		_node.GpuTemperature = value
+	}
+	if value, ok := dc.mutation.CPUTemperature(); ok {
+		_spec.SetField(device.FieldCPUTemperature, field.TypeFloat64, value)
+		_node.CPUTemperature = value
 	}
 	if value, ok := dc.mutation.Stability(); ok {
 		_spec.SetField(device.FieldStability, field.TypeEnum, value)
@@ -1387,21 +1412,39 @@ func (u *DeviceUpsert) AddDelay(v float64) *DeviceUpsert {
 	return u
 }
 
-// SetTemperature sets the "temperature" field.
-func (u *DeviceUpsert) SetTemperature(v float64) *DeviceUpsert {
-	u.Set(device.FieldTemperature, v)
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (u *DeviceUpsert) SetGpuTemperature(v float64) *DeviceUpsert {
+	u.Set(device.FieldGpuTemperature, v)
 	return u
 }
 
-// UpdateTemperature sets the "temperature" field to the value that was provided on create.
-func (u *DeviceUpsert) UpdateTemperature() *DeviceUpsert {
-	u.SetExcluded(device.FieldTemperature)
+// UpdateGpuTemperature sets the "gpu_temperature" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateGpuTemperature() *DeviceUpsert {
+	u.SetExcluded(device.FieldGpuTemperature)
 	return u
 }
 
-// AddTemperature adds v to the "temperature" field.
-func (u *DeviceUpsert) AddTemperature(v float64) *DeviceUpsert {
-	u.Add(device.FieldTemperature, v)
+// AddGpuTemperature adds v to the "gpu_temperature" field.
+func (u *DeviceUpsert) AddGpuTemperature(v float64) *DeviceUpsert {
+	u.Add(device.FieldGpuTemperature, v)
+	return u
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (u *DeviceUpsert) SetCPUTemperature(v float64) *DeviceUpsert {
+	u.Set(device.FieldCPUTemperature, v)
+	return u
+}
+
+// UpdateCPUTemperature sets the "cpu_temperature" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateCPUTemperature() *DeviceUpsert {
+	u.SetExcluded(device.FieldCPUTemperature)
+	return u
+}
+
+// AddCPUTemperature adds v to the "cpu_temperature" field.
+func (u *DeviceUpsert) AddCPUTemperature(v float64) *DeviceUpsert {
+	u.Add(device.FieldCPUTemperature, v)
 	return u
 }
 
@@ -1804,24 +1847,45 @@ func (u *DeviceUpsertOne) UpdateDelay() *DeviceUpsertOne {
 	})
 }
 
-// SetTemperature sets the "temperature" field.
-func (u *DeviceUpsertOne) SetTemperature(v float64) *DeviceUpsertOne {
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (u *DeviceUpsertOne) SetGpuTemperature(v float64) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
-		s.SetTemperature(v)
+		s.SetGpuTemperature(v)
 	})
 }
 
-// AddTemperature adds v to the "temperature" field.
-func (u *DeviceUpsertOne) AddTemperature(v float64) *DeviceUpsertOne {
+// AddGpuTemperature adds v to the "gpu_temperature" field.
+func (u *DeviceUpsertOne) AddGpuTemperature(v float64) *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
-		s.AddTemperature(v)
+		s.AddGpuTemperature(v)
 	})
 }
 
-// UpdateTemperature sets the "temperature" field to the value that was provided on create.
-func (u *DeviceUpsertOne) UpdateTemperature() *DeviceUpsertOne {
+// UpdateGpuTemperature sets the "gpu_temperature" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateGpuTemperature() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
-		s.UpdateTemperature()
+		s.UpdateGpuTemperature()
+	})
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (u *DeviceUpsertOne) SetCPUTemperature(v float64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCPUTemperature(v)
+	})
+}
+
+// AddCPUTemperature adds v to the "cpu_temperature" field.
+func (u *DeviceUpsertOne) AddCPUTemperature(v float64) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddCPUTemperature(v)
+	})
+}
+
+// UpdateCPUTemperature sets the "cpu_temperature" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateCPUTemperature() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCPUTemperature()
 	})
 }
 
@@ -2395,24 +2459,45 @@ func (u *DeviceUpsertBulk) UpdateDelay() *DeviceUpsertBulk {
 	})
 }
 
-// SetTemperature sets the "temperature" field.
-func (u *DeviceUpsertBulk) SetTemperature(v float64) *DeviceUpsertBulk {
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (u *DeviceUpsertBulk) SetGpuTemperature(v float64) *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
-		s.SetTemperature(v)
+		s.SetGpuTemperature(v)
 	})
 }
 
-// AddTemperature adds v to the "temperature" field.
-func (u *DeviceUpsertBulk) AddTemperature(v float64) *DeviceUpsertBulk {
+// AddGpuTemperature adds v to the "gpu_temperature" field.
+func (u *DeviceUpsertBulk) AddGpuTemperature(v float64) *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
-		s.AddTemperature(v)
+		s.AddGpuTemperature(v)
 	})
 }
 
-// UpdateTemperature sets the "temperature" field to the value that was provided on create.
-func (u *DeviceUpsertBulk) UpdateTemperature() *DeviceUpsertBulk {
+// UpdateGpuTemperature sets the "gpu_temperature" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateGpuTemperature() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
-		s.UpdateTemperature()
+		s.UpdateGpuTemperature()
+	})
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (u *DeviceUpsertBulk) SetCPUTemperature(v float64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetCPUTemperature(v)
+	})
+}
+
+// AddCPUTemperature adds v to the "cpu_temperature" field.
+func (u *DeviceUpsertBulk) AddCPUTemperature(v float64) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.AddCPUTemperature(v)
+	})
+}
+
+// UpdateCPUTemperature sets the "cpu_temperature" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateCPUTemperature() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateCPUTemperature()
 	})
 }
 

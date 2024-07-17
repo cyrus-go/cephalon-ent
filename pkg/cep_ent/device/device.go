@@ -59,8 +59,10 @@ const (
 	FieldDisk = "disk"
 	// FieldDelay holds the string denoting the delay field in the database.
 	FieldDelay = "delay"
-	// FieldTemperature holds the string denoting the temperature field in the database.
-	FieldTemperature = "temperature"
+	// FieldGpuTemperature holds the string denoting the gpu_temperature field in the database.
+	FieldGpuTemperature = "gpu_temperature"
+	// FieldCPUTemperature holds the string denoting the cpu_temperature field in the database.
+	FieldCPUTemperature = "cpu_temperature"
 	// FieldStability holds the string denoting the stability field in the database.
 	FieldStability = "stability"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -190,7 +192,8 @@ var Columns = []string{
 	FieldMemory,
 	FieldDisk,
 	FieldDelay,
-	FieldTemperature,
+	FieldGpuTemperature,
+	FieldCPUTemperature,
 	FieldStability,
 }
 
@@ -239,8 +242,10 @@ var (
 	DefaultDisk float32
 	// DefaultDelay holds the default value on creation for the "delay" field.
 	DefaultDelay float64
-	// DefaultTemperature holds the default value on creation for the "temperature" field.
-	DefaultTemperature float64
+	// DefaultGpuTemperature holds the default value on creation for the "gpu_temperature" field.
+	DefaultGpuTemperature float64
+	// DefaultCPUTemperature holds the default value on creation for the "cpu_temperature" field.
+	DefaultCPUTemperature float64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -437,9 +442,14 @@ func ByDelay(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDelay, opts...).ToFunc()
 }
 
-// ByTemperature orders the results by the temperature field.
-func ByTemperature(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTemperature, opts...).ToFunc()
+// ByGpuTemperature orders the results by the gpu_temperature field.
+func ByGpuTemperature(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGpuTemperature, opts...).ToFunc()
+}
+
+// ByCPUTemperature orders the results by the cpu_temperature field.
+func ByCPUTemperature(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCPUTemperature, opts...).ToFunc()
 }
 
 // ByStability orders the results by the stability field.

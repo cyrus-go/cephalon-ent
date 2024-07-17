@@ -712,10 +712,14 @@ func init() {
 	deviceDescDelay := deviceFields[15].Descriptor()
 	// device.DefaultDelay holds the default value on creation for the delay field.
 	device.DefaultDelay = deviceDescDelay.Default.(float64)
-	// deviceDescTemperature is the schema descriptor for temperature field.
-	deviceDescTemperature := deviceFields[16].Descriptor()
-	// device.DefaultTemperature holds the default value on creation for the temperature field.
-	device.DefaultTemperature = deviceDescTemperature.Default.(float64)
+	// deviceDescGpuTemperature is the schema descriptor for gpu_temperature field.
+	deviceDescGpuTemperature := deviceFields[16].Descriptor()
+	// device.DefaultGpuTemperature holds the default value on creation for the gpu_temperature field.
+	device.DefaultGpuTemperature = deviceDescGpuTemperature.Default.(float64)
+	// deviceDescCPUTemperature is the schema descriptor for cpu_temperature field.
+	deviceDescCPUTemperature := deviceFields[17].Descriptor()
+	// device.DefaultCPUTemperature holds the default value on creation for the cpu_temperature field.
+	device.DefaultCPUTemperature = deviceDescCPUTemperature.Default.(float64)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.

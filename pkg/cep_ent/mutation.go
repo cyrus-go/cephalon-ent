@@ -12707,8 +12707,10 @@ type DeviceMutation struct {
 	adddisk                       *float32
 	delay                         *float64
 	adddelay                      *float64
-	temperature                   *float64
-	addtemperature                *float64
+	gpu_temperature               *float64
+	addgpu_temperature            *float64
+	cpu_temperature               *float64
+	addcpu_temperature            *float64
 	stability                     *enums.DeviceStabilityType
 	clearedFields                 map[string]struct{}
 	user                          *int64
@@ -13761,60 +13763,116 @@ func (m *DeviceMutation) ResetDelay() {
 	m.adddelay = nil
 }
 
-// SetTemperature sets the "temperature" field.
-func (m *DeviceMutation) SetTemperature(f float64) {
-	m.temperature = &f
-	m.addtemperature = nil
+// SetGpuTemperature sets the "gpu_temperature" field.
+func (m *DeviceMutation) SetGpuTemperature(f float64) {
+	m.gpu_temperature = &f
+	m.addgpu_temperature = nil
 }
 
-// Temperature returns the value of the "temperature" field in the mutation.
-func (m *DeviceMutation) Temperature() (r float64, exists bool) {
-	v := m.temperature
+// GpuTemperature returns the value of the "gpu_temperature" field in the mutation.
+func (m *DeviceMutation) GpuTemperature() (r float64, exists bool) {
+	v := m.gpu_temperature
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTemperature returns the old "temperature" field's value of the Device entity.
+// OldGpuTemperature returns the old "gpu_temperature" field's value of the Device entity.
 // If the Device object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DeviceMutation) OldTemperature(ctx context.Context) (v float64, err error) {
+func (m *DeviceMutation) OldGpuTemperature(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTemperature is only allowed on UpdateOne operations")
+		return v, errors.New("OldGpuTemperature is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTemperature requires an ID field in the mutation")
+		return v, errors.New("OldGpuTemperature requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTemperature: %w", err)
+		return v, fmt.Errorf("querying old value for OldGpuTemperature: %w", err)
 	}
-	return oldValue.Temperature, nil
+	return oldValue.GpuTemperature, nil
 }
 
-// AddTemperature adds f to the "temperature" field.
-func (m *DeviceMutation) AddTemperature(f float64) {
-	if m.addtemperature != nil {
-		*m.addtemperature += f
+// AddGpuTemperature adds f to the "gpu_temperature" field.
+func (m *DeviceMutation) AddGpuTemperature(f float64) {
+	if m.addgpu_temperature != nil {
+		*m.addgpu_temperature += f
 	} else {
-		m.addtemperature = &f
+		m.addgpu_temperature = &f
 	}
 }
 
-// AddedTemperature returns the value that was added to the "temperature" field in this mutation.
-func (m *DeviceMutation) AddedTemperature() (r float64, exists bool) {
-	v := m.addtemperature
+// AddedGpuTemperature returns the value that was added to the "gpu_temperature" field in this mutation.
+func (m *DeviceMutation) AddedGpuTemperature() (r float64, exists bool) {
+	v := m.addgpu_temperature
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetTemperature resets all changes to the "temperature" field.
-func (m *DeviceMutation) ResetTemperature() {
-	m.temperature = nil
-	m.addtemperature = nil
+// ResetGpuTemperature resets all changes to the "gpu_temperature" field.
+func (m *DeviceMutation) ResetGpuTemperature() {
+	m.gpu_temperature = nil
+	m.addgpu_temperature = nil
+}
+
+// SetCPUTemperature sets the "cpu_temperature" field.
+func (m *DeviceMutation) SetCPUTemperature(f float64) {
+	m.cpu_temperature = &f
+	m.addcpu_temperature = nil
+}
+
+// CPUTemperature returns the value of the "cpu_temperature" field in the mutation.
+func (m *DeviceMutation) CPUTemperature() (r float64, exists bool) {
+	v := m.cpu_temperature
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCPUTemperature returns the old "cpu_temperature" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldCPUTemperature(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCPUTemperature is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCPUTemperature requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCPUTemperature: %w", err)
+	}
+	return oldValue.CPUTemperature, nil
+}
+
+// AddCPUTemperature adds f to the "cpu_temperature" field.
+func (m *DeviceMutation) AddCPUTemperature(f float64) {
+	if m.addcpu_temperature != nil {
+		*m.addcpu_temperature += f
+	} else {
+		m.addcpu_temperature = &f
+	}
+}
+
+// AddedCPUTemperature returns the value that was added to the "cpu_temperature" field in this mutation.
+func (m *DeviceMutation) AddedCPUTemperature() (r float64, exists bool) {
+	v := m.addcpu_temperature
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCPUTemperature resets all changes to the "cpu_temperature" field.
+func (m *DeviceMutation) ResetCPUTemperature() {
+	m.cpu_temperature = nil
+	m.addcpu_temperature = nil
 }
 
 // SetStability sets the "stability" field.
@@ -14454,7 +14512,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -14518,8 +14576,11 @@ func (m *DeviceMutation) Fields() []string {
 	if m.delay != nil {
 		fields = append(fields, device.FieldDelay)
 	}
-	if m.temperature != nil {
-		fields = append(fields, device.FieldTemperature)
+	if m.gpu_temperature != nil {
+		fields = append(fields, device.FieldGpuTemperature)
+	}
+	if m.cpu_temperature != nil {
+		fields = append(fields, device.FieldCPUTemperature)
 	}
 	if m.stability != nil {
 		fields = append(fields, device.FieldStability)
@@ -14574,8 +14635,10 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Disk()
 	case device.FieldDelay:
 		return m.Delay()
-	case device.FieldTemperature:
-		return m.Temperature()
+	case device.FieldGpuTemperature:
+		return m.GpuTemperature()
+	case device.FieldCPUTemperature:
+		return m.CPUTemperature()
 	case device.FieldStability:
 		return m.Stability()
 	}
@@ -14629,8 +14692,10 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDisk(ctx)
 	case device.FieldDelay:
 		return m.OldDelay(ctx)
-	case device.FieldTemperature:
-		return m.OldTemperature(ctx)
+	case device.FieldGpuTemperature:
+		return m.OldGpuTemperature(ctx)
+	case device.FieldCPUTemperature:
+		return m.OldCPUTemperature(ctx)
 	case device.FieldStability:
 		return m.OldStability(ctx)
 	}
@@ -14789,12 +14854,19 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDelay(v)
 		return nil
-	case device.FieldTemperature:
+	case device.FieldGpuTemperature:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTemperature(v)
+		m.SetGpuTemperature(v)
+		return nil
+	case device.FieldCPUTemperature:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCPUTemperature(v)
 		return nil
 	case device.FieldStability:
 		v, ok := value.(enums.DeviceStabilityType)
@@ -14832,8 +14904,11 @@ func (m *DeviceMutation) AddedFields() []string {
 	if m.adddelay != nil {
 		fields = append(fields, device.FieldDelay)
 	}
-	if m.addtemperature != nil {
-		fields = append(fields, device.FieldTemperature)
+	if m.addgpu_temperature != nil {
+		fields = append(fields, device.FieldGpuTemperature)
+	}
+	if m.addcpu_temperature != nil {
+		fields = append(fields, device.FieldCPUTemperature)
 	}
 	return fields
 }
@@ -14857,8 +14932,10 @@ func (m *DeviceMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDisk()
 	case device.FieldDelay:
 		return m.AddedDelay()
-	case device.FieldTemperature:
-		return m.AddedTemperature()
+	case device.FieldGpuTemperature:
+		return m.AddedGpuTemperature()
+	case device.FieldCPUTemperature:
+		return m.AddedCPUTemperature()
 	}
 	return nil, false
 }
@@ -14917,12 +14994,19 @@ func (m *DeviceMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDelay(v)
 		return nil
-	case device.FieldTemperature:
+	case device.FieldGpuTemperature:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddTemperature(v)
+		m.AddGpuTemperature(v)
+		return nil
+	case device.FieldCPUTemperature:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCPUTemperature(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device numeric field %s", name)
@@ -15023,8 +15107,11 @@ func (m *DeviceMutation) ResetField(name string) error {
 	case device.FieldDelay:
 		m.ResetDelay()
 		return nil
-	case device.FieldTemperature:
-		m.ResetTemperature()
+	case device.FieldGpuTemperature:
+		m.ResetGpuTemperature()
+		return nil
+	case device.FieldCPUTemperature:
+		m.ResetCPUTemperature()
 		return nil
 	case device.FieldStability:
 		m.ResetStability()
