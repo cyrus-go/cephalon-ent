@@ -1444,7 +1444,7 @@ var (
 		{Name: "finished_at", Type: field.TypeTime, Nullable: true, Comment: "任务结束时间"},
 		{Name: "expired_at", Type: field.TypeTime, Nullable: true, Comment: "任务到期时间（包时任务才有）"},
 		{Name: "free_at", Type: field.TypeTime, Comment: "任务释放时刻", Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"postgres": "timestamptz"}},
-		{Name: "close_way", Type: field.TypeEnum, Comment: "任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭", Enums: []string{"unknown", "user", "balance_not_enough", "expired", "admin"}, Default: "unknown"},
+		{Name: "close_way", Type: field.TypeEnum, Comment: "任务关闭方式，user：用户自己关闭，balance_not_enough：余额不足自动关闭", Enums: []string{"unknown", "user", "balance_not_enough", "expired", "admin", "system_monitor"}, Default: "unknown"},
 		{Name: "closed_at", Type: field.TypeTime, Nullable: true, Comment: "用戶关闭任务时间"},
 		{Name: "warning_times", Type: field.TypeInt64, Comment: "预警次数，任务运行时间超过一定时间会发送预警消息", Default: 0},
 		{Name: "remark", Type: field.TypeString, Comment: "备注信息", Default: ""},
