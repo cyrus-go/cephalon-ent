@@ -56,6 +56,8 @@ func (Mission) Fields() []ent.Field {
 		field.Time("closed_at").Default(common.ZeroTime).Nillable().Optional().StructTag(`json:"closed_at"`).Comment("用戶关闭任务时间"),
 		field.Int64("warning_times").Default(0).StructTag(`json:"warning_times"`).Comment("预警次数，任务运行时间超过一定时间会发送预警消息"),
 		field.String("remark").Default("").StructTag(`json:"remark"`).Comment("备注信息"),
+		field.Bool("use_auth").Default(false).StructTag(`json:"use_auth"`).Comment("是否需要使用鉴权（应用开启后需要账号密码登陆验证）"),
+		field.Int64("old_mission_id").Default(0).StructTag(`json:"old_mission_id,string"`).Comment("外键，重新开机的旧应用 ID"),
 	}
 }
 
@@ -64,17 +66,20 @@ func (Mission) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("mission_kind", MissionKind.Type).Ref("missions").Field("mission_kind_id").Unique().Required(),
 		edge.From("user", User.Type).Ref("missions").Field("user_id").Unique().Required(),
-		edge.To("mission_key_pairs", MissionKeyPair.Type),
 		edge.From("key_pair", HmacKeyPair.Type).Ref("created_missions").Field("key_pair_id").Unique().Required(),
+		edge.From("mission_batch", MissionBatch.Type).Ref("missions").Field("mission_batch_id").Unique().Required(),
+		edge.From("old_mission", Mission.Type).Ref("reboot_missions").Field("old_mission_id").Unique().Required(),
+
+		edge.To("mission_key_pairs", MissionKeyPair.Type),
 		edge.To("mission_consume_order", MissionConsumeOrder.Type).Unique(),
 		edge.To("mission_produce_orders", MissionProduceOrder.Type),
-		edge.From("mission_batch", MissionBatch.Type).Ref("missions").Field("mission_batch_id").Unique().Required(),
 		edge.To("mission_productions", MissionProduction.Type),
 		edge.To("mission_orders", MissionOrder.Type),
 		edge.To("renewal_agreements", RenewalAgreement.Type),
 		edge.To("mission_extra_services", MissionExtraService.Type),
 		edge.To("extra_services", ExtraService.Type),
 		edge.To("extra_service_orders", ExtraServiceOrder.Type),
+		edge.To("reboot_missions", Mission.Type),
 	}
 }
 

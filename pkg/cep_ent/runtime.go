@@ -2079,6 +2079,14 @@ func init() {
 	missionDescRemark := missionFields[35].Descriptor()
 	// mission.DefaultRemark holds the default value on creation for the remark field.
 	mission.DefaultRemark = missionDescRemark.Default.(string)
+	// missionDescUseAuth is the schema descriptor for use_auth field.
+	missionDescUseAuth := missionFields[36].Descriptor()
+	// mission.DefaultUseAuth holds the default value on creation for the use_auth field.
+	mission.DefaultUseAuth = missionDescUseAuth.Default.(bool)
+	// missionDescOldMissionID is the schema descriptor for old_mission_id field.
+	missionDescOldMissionID := missionFields[37].Descriptor()
+	// mission.DefaultOldMissionID holds the default value on creation for the old_mission_id field.
+	mission.DefaultOldMissionID = missionDescOldMissionID.Default.(int64)
 	// missionDescID is the schema descriptor for id field.
 	missionDescID := missionMixinFields0[0].Descriptor()
 	// mission.DefaultID holds the default value on creation for the id field.

@@ -42758,23 +42758,26 @@ type MissionMutation struct {
 	warning_times                 *int64
 	addwarning_times              *int64
 	remark                        *string
+	use_auth                      *bool
 	clearedFields                 map[string]struct{}
 	mission_kind                  *int64
 	clearedmission_kind           bool
 	user                          *int64
 	cleareduser                   bool
+	key_pair                      *int64
+	clearedkey_pair               bool
+	mission_batch                 *int64
+	clearedmission_batch          bool
+	old_mission                   *int64
+	clearedold_mission            bool
 	mission_key_pairs             map[int64]struct{}
 	removedmission_key_pairs      map[int64]struct{}
 	clearedmission_key_pairs      bool
-	key_pair                      *int64
-	clearedkey_pair               bool
 	mission_consume_order         *int64
 	clearedmission_consume_order  bool
 	mission_produce_orders        map[int64]struct{}
 	removedmission_produce_orders map[int64]struct{}
 	clearedmission_produce_orders bool
-	mission_batch                 *int64
-	clearedmission_batch          bool
 	mission_productions           map[int64]struct{}
 	removedmission_productions    map[int64]struct{}
 	clearedmission_productions    bool
@@ -42793,6 +42796,9 @@ type MissionMutation struct {
 	extra_service_orders          map[int64]struct{}
 	removedextra_service_orders   map[int64]struct{}
 	clearedextra_service_orders   bool
+	reboot_missions               map[int64]struct{}
+	removedreboot_missions        map[int64]struct{}
+	clearedreboot_missions        bool
 	done                          bool
 	oldValue                      func(context.Context) (*Mission, error)
 	predicates                    []predicate.Mission
@@ -44611,6 +44617,78 @@ func (m *MissionMutation) ResetRemark() {
 	m.remark = nil
 }
 
+// SetUseAuth sets the "use_auth" field.
+func (m *MissionMutation) SetUseAuth(b bool) {
+	m.use_auth = &b
+}
+
+// UseAuth returns the value of the "use_auth" field in the mutation.
+func (m *MissionMutation) UseAuth() (r bool, exists bool) {
+	v := m.use_auth
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUseAuth returns the old "use_auth" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldUseAuth(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUseAuth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUseAuth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUseAuth: %w", err)
+	}
+	return oldValue.UseAuth, nil
+}
+
+// ResetUseAuth resets all changes to the "use_auth" field.
+func (m *MissionMutation) ResetUseAuth() {
+	m.use_auth = nil
+}
+
+// SetOldMissionID sets the "old_mission_id" field.
+func (m *MissionMutation) SetOldMissionID(i int64) {
+	m.old_mission = &i
+}
+
+// OldMissionID returns the value of the "old_mission_id" field in the mutation.
+func (m *MissionMutation) OldMissionID() (r int64, exists bool) {
+	v := m.old_mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOldMissionID returns the old "old_mission_id" field's value of the Mission entity.
+// If the Mission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionMutation) OldOldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOldMissionID: %w", err)
+	}
+	return oldValue.OldMissionID, nil
+}
+
+// ResetOldMissionID resets all changes to the "old_mission_id" field.
+func (m *MissionMutation) ResetOldMissionID() {
+	m.old_mission = nil
+}
+
 // ClearMissionKind clears the "mission_kind" edge to the MissionKind entity.
 func (m *MissionMutation) ClearMissionKind() {
 	m.clearedmission_kind = true
@@ -44665,6 +44743,87 @@ func (m *MissionMutation) ResetUser() {
 	m.cleareduser = false
 }
 
+// ClearKeyPair clears the "key_pair" edge to the HmacKeyPair entity.
+func (m *MissionMutation) ClearKeyPair() {
+	m.clearedkey_pair = true
+	m.clearedFields[mission.FieldKeyPairID] = struct{}{}
+}
+
+// KeyPairCleared reports if the "key_pair" edge to the HmacKeyPair entity was cleared.
+func (m *MissionMutation) KeyPairCleared() bool {
+	return m.clearedkey_pair
+}
+
+// KeyPairIDs returns the "key_pair" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// KeyPairID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) KeyPairIDs() (ids []int64) {
+	if id := m.key_pair; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetKeyPair resets all changes to the "key_pair" edge.
+func (m *MissionMutation) ResetKeyPair() {
+	m.key_pair = nil
+	m.clearedkey_pair = false
+}
+
+// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
+func (m *MissionMutation) ClearMissionBatch() {
+	m.clearedmission_batch = true
+	m.clearedFields[mission.FieldMissionBatchID] = struct{}{}
+}
+
+// MissionBatchCleared reports if the "mission_batch" edge to the MissionBatch entity was cleared.
+func (m *MissionMutation) MissionBatchCleared() bool {
+	return m.clearedmission_batch
+}
+
+// MissionBatchIDs returns the "mission_batch" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionBatchID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) MissionBatchIDs() (ids []int64) {
+	if id := m.mission_batch; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionBatch resets all changes to the "mission_batch" edge.
+func (m *MissionMutation) ResetMissionBatch() {
+	m.mission_batch = nil
+	m.clearedmission_batch = false
+}
+
+// ClearOldMission clears the "old_mission" edge to the Mission entity.
+func (m *MissionMutation) ClearOldMission() {
+	m.clearedold_mission = true
+	m.clearedFields[mission.FieldOldMissionID] = struct{}{}
+}
+
+// OldMissionCleared reports if the "old_mission" edge to the Mission entity was cleared.
+func (m *MissionMutation) OldMissionCleared() bool {
+	return m.clearedold_mission
+}
+
+// OldMissionIDs returns the "old_mission" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OldMissionID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) OldMissionIDs() (ids []int64) {
+	if id := m.old_mission; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOldMission resets all changes to the "old_mission" edge.
+func (m *MissionMutation) ResetOldMission() {
+	m.old_mission = nil
+	m.clearedold_mission = false
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by ids.
 func (m *MissionMutation) AddMissionKeyPairIDs(ids ...int64) {
 	if m.mission_key_pairs == nil {
@@ -44717,33 +44876,6 @@ func (m *MissionMutation) ResetMissionKeyPairs() {
 	m.mission_key_pairs = nil
 	m.clearedmission_key_pairs = false
 	m.removedmission_key_pairs = nil
-}
-
-// ClearKeyPair clears the "key_pair" edge to the HmacKeyPair entity.
-func (m *MissionMutation) ClearKeyPair() {
-	m.clearedkey_pair = true
-	m.clearedFields[mission.FieldKeyPairID] = struct{}{}
-}
-
-// KeyPairCleared reports if the "key_pair" edge to the HmacKeyPair entity was cleared.
-func (m *MissionMutation) KeyPairCleared() bool {
-	return m.clearedkey_pair
-}
-
-// KeyPairIDs returns the "key_pair" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// KeyPairID instead. It exists only for internal usage by the builders.
-func (m *MissionMutation) KeyPairIDs() (ids []int64) {
-	if id := m.key_pair; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetKeyPair resets all changes to the "key_pair" edge.
-func (m *MissionMutation) ResetKeyPair() {
-	m.key_pair = nil
-	m.clearedkey_pair = false
 }
 
 // SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by id.
@@ -44837,33 +44969,6 @@ func (m *MissionMutation) ResetMissionProduceOrders() {
 	m.mission_produce_orders = nil
 	m.clearedmission_produce_orders = false
 	m.removedmission_produce_orders = nil
-}
-
-// ClearMissionBatch clears the "mission_batch" edge to the MissionBatch entity.
-func (m *MissionMutation) ClearMissionBatch() {
-	m.clearedmission_batch = true
-	m.clearedFields[mission.FieldMissionBatchID] = struct{}{}
-}
-
-// MissionBatchCleared reports if the "mission_batch" edge to the MissionBatch entity was cleared.
-func (m *MissionMutation) MissionBatchCleared() bool {
-	return m.clearedmission_batch
-}
-
-// MissionBatchIDs returns the "mission_batch" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// MissionBatchID instead. It exists only for internal usage by the builders.
-func (m *MissionMutation) MissionBatchIDs() (ids []int64) {
-	if id := m.mission_batch; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetMissionBatch resets all changes to the "mission_batch" edge.
-func (m *MissionMutation) ResetMissionBatch() {
-	m.mission_batch = nil
-	m.clearedmission_batch = false
 }
 
 // AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by ids.
@@ -45190,6 +45295,60 @@ func (m *MissionMutation) ResetExtraServiceOrders() {
 	m.removedextra_service_orders = nil
 }
 
+// AddRebootMissionIDs adds the "reboot_missions" edge to the Mission entity by ids.
+func (m *MissionMutation) AddRebootMissionIDs(ids ...int64) {
+	if m.reboot_missions == nil {
+		m.reboot_missions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.reboot_missions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRebootMissions clears the "reboot_missions" edge to the Mission entity.
+func (m *MissionMutation) ClearRebootMissions() {
+	m.clearedreboot_missions = true
+}
+
+// RebootMissionsCleared reports if the "reboot_missions" edge to the Mission entity was cleared.
+func (m *MissionMutation) RebootMissionsCleared() bool {
+	return m.clearedreboot_missions
+}
+
+// RemoveRebootMissionIDs removes the "reboot_missions" edge to the Mission entity by IDs.
+func (m *MissionMutation) RemoveRebootMissionIDs(ids ...int64) {
+	if m.removedreboot_missions == nil {
+		m.removedreboot_missions = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.reboot_missions, ids[i])
+		m.removedreboot_missions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRebootMissions returns the removed IDs of the "reboot_missions" edge to the Mission entity.
+func (m *MissionMutation) RemovedRebootMissionsIDs() (ids []int64) {
+	for id := range m.removedreboot_missions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RebootMissionsIDs returns the "reboot_missions" edge IDs in the mutation.
+func (m *MissionMutation) RebootMissionsIDs() (ids []int64) {
+	for id := range m.reboot_missions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRebootMissions resets all changes to the "reboot_missions" edge.
+func (m *MissionMutation) ResetRebootMissions() {
+	m.reboot_missions = nil
+	m.clearedreboot_missions = false
+	m.removedreboot_missions = nil
+}
+
 // Where appends a list predicates to the MissionMutation builder.
 func (m *MissionMutation) Where(ps ...predicate.Mission) {
 	m.predicates = append(m.predicates, ps...)
@@ -45224,7 +45383,7 @@ func (m *MissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionMutation) Fields() []string {
-	fields := make([]string, 0, 41)
+	fields := make([]string, 0, 43)
 	if m.created_by != nil {
 		fields = append(fields, mission.FieldCreatedBy)
 	}
@@ -45348,6 +45507,12 @@ func (m *MissionMutation) Fields() []string {
 	if m.remark != nil {
 		fields = append(fields, mission.FieldRemark)
 	}
+	if m.use_auth != nil {
+		fields = append(fields, mission.FieldUseAuth)
+	}
+	if m.old_mission != nil {
+		fields = append(fields, mission.FieldOldMissionID)
+	}
 	return fields
 }
 
@@ -45438,6 +45603,10 @@ func (m *MissionMutation) Field(name string) (ent.Value, bool) {
 		return m.WarningTimes()
 	case mission.FieldRemark:
 		return m.Remark()
+	case mission.FieldUseAuth:
+		return m.UseAuth()
+	case mission.FieldOldMissionID:
+		return m.OldMissionID()
 	}
 	return nil, false
 }
@@ -45529,6 +45698,10 @@ func (m *MissionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldWarningTimes(ctx)
 	case mission.FieldRemark:
 		return m.OldRemark(ctx)
+	case mission.FieldUseAuth:
+		return m.OldUseAuth(ctx)
+	case mission.FieldOldMissionID:
+		return m.OldOldMissionID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mission field %s", name)
 }
@@ -45825,6 +45998,20 @@ func (m *MissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRemark(v)
 		return nil
+	case mission.FieldUseAuth:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUseAuth(v)
+		return nil
+	case mission.FieldOldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOldMissionID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
@@ -46117,33 +46304,42 @@ func (m *MissionMutation) ResetField(name string) error {
 	case mission.FieldRemark:
 		m.ResetRemark()
 		return nil
+	case mission.FieldUseAuth:
+		m.ResetUseAuth()
+		return nil
+	case mission.FieldOldMissionID:
+		m.ResetOldMissionID()
+		return nil
 	}
 	return fmt.Errorf("unknown Mission field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 13)
+	edges := make([]string, 0, 15)
 	if m.mission_kind != nil {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
 	if m.user != nil {
 		edges = append(edges, mission.EdgeUser)
 	}
-	if m.mission_key_pairs != nil {
-		edges = append(edges, mission.EdgeMissionKeyPairs)
-	}
 	if m.key_pair != nil {
 		edges = append(edges, mission.EdgeKeyPair)
+	}
+	if m.mission_batch != nil {
+		edges = append(edges, mission.EdgeMissionBatch)
+	}
+	if m.old_mission != nil {
+		edges = append(edges, mission.EdgeOldMission)
+	}
+	if m.mission_key_pairs != nil {
+		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
 	if m.mission_consume_order != nil {
 		edges = append(edges, mission.EdgeMissionConsumeOrder)
 	}
 	if m.mission_produce_orders != nil {
 		edges = append(edges, mission.EdgeMissionProduceOrders)
-	}
-	if m.mission_batch != nil {
-		edges = append(edges, mission.EdgeMissionBatch)
 	}
 	if m.mission_productions != nil {
 		edges = append(edges, mission.EdgeMissionProductions)
@@ -46163,6 +46359,9 @@ func (m *MissionMutation) AddedEdges() []string {
 	if m.extra_service_orders != nil {
 		edges = append(edges, mission.EdgeExtraServiceOrders)
 	}
+	if m.reboot_missions != nil {
+		edges = append(edges, mission.EdgeRebootMissions)
+	}
 	return edges
 }
 
@@ -46178,16 +46377,24 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case mission.EdgeKeyPair:
+		if id := m.key_pair; id != nil {
+			return []ent.Value{*id}
+		}
+	case mission.EdgeMissionBatch:
+		if id := m.mission_batch; id != nil {
+			return []ent.Value{*id}
+		}
+	case mission.EdgeOldMission:
+		if id := m.old_mission; id != nil {
+			return []ent.Value{*id}
+		}
 	case mission.EdgeMissionKeyPairs:
 		ids := make([]ent.Value, 0, len(m.mission_key_pairs))
 		for id := range m.mission_key_pairs {
 			ids = append(ids, id)
 		}
 		return ids
-	case mission.EdgeKeyPair:
-		if id := m.key_pair; id != nil {
-			return []ent.Value{*id}
-		}
 	case mission.EdgeMissionConsumeOrder:
 		if id := m.mission_consume_order; id != nil {
 			return []ent.Value{*id}
@@ -46198,10 +46405,6 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case mission.EdgeMissionBatch:
-		if id := m.mission_batch; id != nil {
-			return []ent.Value{*id}
-		}
 	case mission.EdgeMissionProductions:
 		ids := make([]ent.Value, 0, len(m.mission_productions))
 		for id := range m.mission_productions {
@@ -46238,13 +46441,19 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeRebootMissions:
+		ids := make([]ent.Value, 0, len(m.reboot_missions))
+		for id := range m.reboot_missions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 13)
+	edges := make([]string, 0, 15)
 	if m.removedmission_key_pairs != nil {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
@@ -46268,6 +46477,9 @@ func (m *MissionMutation) RemovedEdges() []string {
 	}
 	if m.removedextra_service_orders != nil {
 		edges = append(edges, mission.EdgeExtraServiceOrders)
+	}
+	if m.removedreboot_missions != nil {
+		edges = append(edges, mission.EdgeRebootMissions)
 	}
 	return edges
 }
@@ -46324,33 +46536,42 @@ func (m *MissionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeRebootMissions:
+		ids := make([]ent.Value, 0, len(m.removedreboot_missions))
+		for id := range m.removedreboot_missions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 13)
+	edges := make([]string, 0, 15)
 	if m.clearedmission_kind {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
 	if m.cleareduser {
 		edges = append(edges, mission.EdgeUser)
 	}
-	if m.clearedmission_key_pairs {
-		edges = append(edges, mission.EdgeMissionKeyPairs)
-	}
 	if m.clearedkey_pair {
 		edges = append(edges, mission.EdgeKeyPair)
+	}
+	if m.clearedmission_batch {
+		edges = append(edges, mission.EdgeMissionBatch)
+	}
+	if m.clearedold_mission {
+		edges = append(edges, mission.EdgeOldMission)
+	}
+	if m.clearedmission_key_pairs {
+		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
 	if m.clearedmission_consume_order {
 		edges = append(edges, mission.EdgeMissionConsumeOrder)
 	}
 	if m.clearedmission_produce_orders {
 		edges = append(edges, mission.EdgeMissionProduceOrders)
-	}
-	if m.clearedmission_batch {
-		edges = append(edges, mission.EdgeMissionBatch)
 	}
 	if m.clearedmission_productions {
 		edges = append(edges, mission.EdgeMissionProductions)
@@ -46370,6 +46591,9 @@ func (m *MissionMutation) ClearedEdges() []string {
 	if m.clearedextra_service_orders {
 		edges = append(edges, mission.EdgeExtraServiceOrders)
 	}
+	if m.clearedreboot_missions {
+		edges = append(edges, mission.EdgeRebootMissions)
+	}
 	return edges
 }
 
@@ -46381,16 +46605,18 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 		return m.clearedmission_kind
 	case mission.EdgeUser:
 		return m.cleareduser
-	case mission.EdgeMissionKeyPairs:
-		return m.clearedmission_key_pairs
 	case mission.EdgeKeyPair:
 		return m.clearedkey_pair
+	case mission.EdgeMissionBatch:
+		return m.clearedmission_batch
+	case mission.EdgeOldMission:
+		return m.clearedold_mission
+	case mission.EdgeMissionKeyPairs:
+		return m.clearedmission_key_pairs
 	case mission.EdgeMissionConsumeOrder:
 		return m.clearedmission_consume_order
 	case mission.EdgeMissionProduceOrders:
 		return m.clearedmission_produce_orders
-	case mission.EdgeMissionBatch:
-		return m.clearedmission_batch
 	case mission.EdgeMissionProductions:
 		return m.clearedmission_productions
 	case mission.EdgeMissionOrders:
@@ -46403,6 +46629,8 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 		return m.clearedextra_services
 	case mission.EdgeExtraServiceOrders:
 		return m.clearedextra_service_orders
+	case mission.EdgeRebootMissions:
+		return m.clearedreboot_missions
 	}
 	return false
 }
@@ -46420,11 +46648,14 @@ func (m *MissionMutation) ClearEdge(name string) error {
 	case mission.EdgeKeyPair:
 		m.ClearKeyPair()
 		return nil
-	case mission.EdgeMissionConsumeOrder:
-		m.ClearMissionConsumeOrder()
-		return nil
 	case mission.EdgeMissionBatch:
 		m.ClearMissionBatch()
+		return nil
+	case mission.EdgeOldMission:
+		m.ClearOldMission()
+		return nil
+	case mission.EdgeMissionConsumeOrder:
+		m.ClearMissionConsumeOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission unique edge %s", name)
@@ -46440,20 +46671,23 @@ func (m *MissionMutation) ResetEdge(name string) error {
 	case mission.EdgeUser:
 		m.ResetUser()
 		return nil
-	case mission.EdgeMissionKeyPairs:
-		m.ResetMissionKeyPairs()
-		return nil
 	case mission.EdgeKeyPair:
 		m.ResetKeyPair()
+		return nil
+	case mission.EdgeMissionBatch:
+		m.ResetMissionBatch()
+		return nil
+	case mission.EdgeOldMission:
+		m.ResetOldMission()
+		return nil
+	case mission.EdgeMissionKeyPairs:
+		m.ResetMissionKeyPairs()
 		return nil
 	case mission.EdgeMissionConsumeOrder:
 		m.ResetMissionConsumeOrder()
 		return nil
 	case mission.EdgeMissionProduceOrders:
 		m.ResetMissionProduceOrders()
-		return nil
-	case mission.EdgeMissionBatch:
-		m.ResetMissionBatch()
 		return nil
 	case mission.EdgeMissionProductions:
 		m.ResetMissionProductions()
@@ -46472,6 +46706,9 @@ func (m *MissionMutation) ResetEdge(name string) error {
 		return nil
 	case mission.EdgeExtraServiceOrders:
 		m.ResetExtraServiceOrders()
+		return nil
+	case mission.EdgeRebootMissions:
+		m.ResetRebootMissions()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission edge %s", name)

@@ -107,6 +107,10 @@ type Mission struct {
 	WarningTimes int64 `json:"warning_times"`
 	// 备注信息
 	Remark string `json:"remark"`
+	// 是否需要使用鉴权（应用开启后需要账号密码登陆验证）
+	UseAuth bool `json:"use_auth"`
+	// 外键，重新开机的旧应用 ID
+	OldMissionID int64 `json:"old_mission_id,string"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionQuery when eager-loading is set.
 	Edges                  MissionEdges `json:"edges"`
@@ -120,16 +124,18 @@ type MissionEdges struct {
 	MissionKind *MissionKind `json:"mission_kind,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// MissionKeyPairs holds the value of the mission_key_pairs edge.
-	MissionKeyPairs []*MissionKeyPair `json:"mission_key_pairs,omitempty"`
 	// KeyPair holds the value of the key_pair edge.
 	KeyPair *HmacKeyPair `json:"key_pair,omitempty"`
+	// MissionBatch holds the value of the mission_batch edge.
+	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
+	// OldMission holds the value of the old_mission edge.
+	OldMission *Mission `json:"old_mission,omitempty"`
+	// MissionKeyPairs holds the value of the mission_key_pairs edge.
+	MissionKeyPairs []*MissionKeyPair `json:"mission_key_pairs,omitempty"`
 	// MissionConsumeOrder holds the value of the mission_consume_order edge.
 	MissionConsumeOrder *MissionConsumeOrder `json:"mission_consume_order,omitempty"`
 	// MissionProduceOrders holds the value of the mission_produce_orders edge.
 	MissionProduceOrders []*MissionProduceOrder `json:"mission_produce_orders,omitempty"`
-	// MissionBatch holds the value of the mission_batch edge.
-	MissionBatch *MissionBatch `json:"mission_batch,omitempty"`
 	// MissionProductions holds the value of the mission_productions edge.
 	MissionProductions []*MissionProduction `json:"mission_productions,omitempty"`
 	// MissionOrders holds the value of the mission_orders edge.
@@ -142,9 +148,11 @@ type MissionEdges struct {
 	ExtraServices []*ExtraService `json:"extra_services,omitempty"`
 	// ExtraServiceOrders holds the value of the extra_service_orders edge.
 	ExtraServiceOrders []*ExtraServiceOrder `json:"extra_service_orders,omitempty"`
+	// RebootMissions holds the value of the reboot_missions edge.
+	RebootMissions []*Mission `json:"reboot_missions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [13]bool
+	loadedTypes [15]bool
 }
 
 // MissionKindOrErr returns the MissionKind value or an error if the edge
@@ -173,19 +181,10 @@ func (e MissionEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// MissionKeyPairsOrErr returns the MissionKeyPairs value or an error if the edge
-// was not loaded in eager-loading.
-func (e MissionEdges) MissionKeyPairsOrErr() ([]*MissionKeyPair, error) {
-	if e.loadedTypes[2] {
-		return e.MissionKeyPairs, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_key_pairs"}
-}
-
 // KeyPairOrErr returns the KeyPair value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionEdges) KeyPairOrErr() (*HmacKeyPair, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		if e.KeyPair == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: hmackeypair.Label}
@@ -195,10 +194,45 @@ func (e MissionEdges) KeyPairOrErr() (*HmacKeyPair, error) {
 	return nil, &NotLoadedError{edge: "key_pair"}
 }
 
+// MissionBatchOrErr returns the MissionBatch value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) MissionBatchOrErr() (*MissionBatch, error) {
+	if e.loadedTypes[3] {
+		if e.MissionBatch == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionbatch.Label}
+		}
+		return e.MissionBatch, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_batch"}
+}
+
+// OldMissionOrErr returns the OldMission value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) OldMissionOrErr() (*Mission, error) {
+	if e.loadedTypes[4] {
+		if e.OldMission == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: mission.Label}
+		}
+		return e.OldMission, nil
+	}
+	return nil, &NotLoadedError{edge: "old_mission"}
+}
+
+// MissionKeyPairsOrErr returns the MissionKeyPairs value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) MissionKeyPairsOrErr() ([]*MissionKeyPair, error) {
+	if e.loadedTypes[5] {
+		return e.MissionKeyPairs, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_key_pairs"}
+}
+
 // MissionConsumeOrderOrErr returns the MissionConsumeOrder value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e MissionEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[6] {
 		if e.MissionConsumeOrder == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: missionconsumeorder.Label}
@@ -211,29 +245,16 @@ func (e MissionEdges) MissionConsumeOrderOrErr() (*MissionConsumeOrder, error) {
 // MissionProduceOrdersOrErr returns the MissionProduceOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) MissionProduceOrdersOrErr() ([]*MissionProduceOrder, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[7] {
 		return e.MissionProduceOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_produce_orders"}
 }
 
-// MissionBatchOrErr returns the MissionBatch value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e MissionEdges) MissionBatchOrErr() (*MissionBatch, error) {
-	if e.loadedTypes[6] {
-		if e.MissionBatch == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: missionbatch.Label}
-		}
-		return e.MissionBatch, nil
-	}
-	return nil, &NotLoadedError{edge: "mission_batch"}
-}
-
 // MissionProductionsOrErr returns the MissionProductions value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.MissionProductions, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_productions"}
@@ -242,7 +263,7 @@ func (e MissionEdges) MissionProductionsOrErr() ([]*MissionProduction, error) {
 // MissionOrdersOrErr returns the MissionOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.MissionOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_orders"}
@@ -251,7 +272,7 @@ func (e MissionEdges) MissionOrdersOrErr() ([]*MissionOrder, error) {
 // RenewalAgreementsOrErr returns the RenewalAgreements value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.RenewalAgreements, nil
 	}
 	return nil, &NotLoadedError{edge: "renewal_agreements"}
@@ -260,7 +281,7 @@ func (e MissionEdges) RenewalAgreementsOrErr() ([]*RenewalAgreement, error) {
 // MissionExtraServicesOrErr returns the MissionExtraServices value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) MissionExtraServicesOrErr() ([]*MissionExtraService, error) {
-	if e.loadedTypes[10] {
+	if e.loadedTypes[11] {
 		return e.MissionExtraServices, nil
 	}
 	return nil, &NotLoadedError{edge: "mission_extra_services"}
@@ -269,7 +290,7 @@ func (e MissionEdges) MissionExtraServicesOrErr() ([]*MissionExtraService, error
 // ExtraServicesOrErr returns the ExtraServices value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) ExtraServicesOrErr() ([]*ExtraService, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[12] {
 		return e.ExtraServices, nil
 	}
 	return nil, &NotLoadedError{edge: "extra_services"}
@@ -278,10 +299,19 @@ func (e MissionEdges) ExtraServicesOrErr() ([]*ExtraService, error) {
 // ExtraServiceOrdersOrErr returns the ExtraServiceOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e MissionEdges) ExtraServiceOrdersOrErr() ([]*ExtraServiceOrder, error) {
-	if e.loadedTypes[12] {
+	if e.loadedTypes[13] {
 		return e.ExtraServiceOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "extra_service_orders"}
+}
+
+// RebootMissionsOrErr returns the RebootMissions value or an error if the edge
+// was not loaded in eager-loading.
+func (e MissionEdges) RebootMissionsOrErr() ([]*Mission, error) {
+	if e.loadedTypes[14] {
+		return e.RebootMissions, nil
+	}
+	return nil, &NotLoadedError{edge: "reboot_missions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -291,7 +321,9 @@ func (*Mission) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case mission.FieldCallBackData, mission.FieldResultUrls:
 			values[i] = new([]byte)
-		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode, mission.FieldWarningTimes:
+		case mission.FieldUseAuth:
+			values[i] = new(sql.NullBool)
+		case mission.FieldID, mission.FieldCreatedBy, mission.FieldUpdatedBy, mission.FieldMissionKindID, mission.FieldKeyPairID, mission.FieldUserID, mission.FieldMissionBatchID, mission.FieldUnitCep, mission.FieldRespStatusCode, mission.FieldWarningTimes, mission.FieldOldMissionID:
 			values[i] = new(sql.NullInt64)
 		case mission.FieldType, mission.FieldBody, mission.FieldCallBackURL, mission.FieldCallBackInfo, mission.FieldStatus, mission.FieldResult, mission.FieldState, mission.FieldUrls, mission.FieldMissionBatchNumber, mission.FieldGpuVersion, mission.FieldRespBody, mission.FieldInnerURI, mission.FieldInnerMethod, mission.FieldTempHmacKey, mission.FieldTempHmacSecret, mission.FieldSecondHmacKey, mission.FieldUsername, mission.FieldPassword, mission.FieldCloseWay, mission.FieldRemark:
 			values[i] = new(sql.NullString)
@@ -577,6 +609,18 @@ func (m *Mission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Remark = value.String
 			}
+		case mission.FieldUseAuth:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field use_auth", values[i])
+			} else if value.Valid {
+				m.UseAuth = value.Bool
+			}
+		case mission.FieldOldMissionID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field old_mission_id", values[i])
+			} else if value.Valid {
+				m.OldMissionID = value.Int64
+			}
 		case mission.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field extra_service_missions", value)
@@ -607,14 +651,24 @@ func (m *Mission) QueryUser() *UserQuery {
 	return NewMissionClient(m.config).QueryUser(m)
 }
 
-// QueryMissionKeyPairs queries the "mission_key_pairs" edge of the Mission entity.
-func (m *Mission) QueryMissionKeyPairs() *MissionKeyPairQuery {
-	return NewMissionClient(m.config).QueryMissionKeyPairs(m)
-}
-
 // QueryKeyPair queries the "key_pair" edge of the Mission entity.
 func (m *Mission) QueryKeyPair() *HmacKeyPairQuery {
 	return NewMissionClient(m.config).QueryKeyPair(m)
+}
+
+// QueryMissionBatch queries the "mission_batch" edge of the Mission entity.
+func (m *Mission) QueryMissionBatch() *MissionBatchQuery {
+	return NewMissionClient(m.config).QueryMissionBatch(m)
+}
+
+// QueryOldMission queries the "old_mission" edge of the Mission entity.
+func (m *Mission) QueryOldMission() *MissionQuery {
+	return NewMissionClient(m.config).QueryOldMission(m)
+}
+
+// QueryMissionKeyPairs queries the "mission_key_pairs" edge of the Mission entity.
+func (m *Mission) QueryMissionKeyPairs() *MissionKeyPairQuery {
+	return NewMissionClient(m.config).QueryMissionKeyPairs(m)
 }
 
 // QueryMissionConsumeOrder queries the "mission_consume_order" edge of the Mission entity.
@@ -625,11 +679,6 @@ func (m *Mission) QueryMissionConsumeOrder() *MissionConsumeOrderQuery {
 // QueryMissionProduceOrders queries the "mission_produce_orders" edge of the Mission entity.
 func (m *Mission) QueryMissionProduceOrders() *MissionProduceOrderQuery {
 	return NewMissionClient(m.config).QueryMissionProduceOrders(m)
-}
-
-// QueryMissionBatch queries the "mission_batch" edge of the Mission entity.
-func (m *Mission) QueryMissionBatch() *MissionBatchQuery {
-	return NewMissionClient(m.config).QueryMissionBatch(m)
 }
 
 // QueryMissionProductions queries the "mission_productions" edge of the Mission entity.
@@ -660,6 +709,11 @@ func (m *Mission) QueryExtraServices() *ExtraServiceQuery {
 // QueryExtraServiceOrders queries the "extra_service_orders" edge of the Mission entity.
 func (m *Mission) QueryExtraServiceOrders() *ExtraServiceOrderQuery {
 	return NewMissionClient(m.config).QueryExtraServiceOrders(m)
+}
+
+// QueryRebootMissions queries the "reboot_missions" edge of the Mission entity.
+func (m *Mission) QueryRebootMissions() *MissionQuery {
+	return NewMissionClient(m.config).QueryRebootMissions(m)
 }
 
 // Update returns a builder for updating this Mission.
@@ -815,6 +869,12 @@ func (m *Mission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(m.Remark)
+	builder.WriteString(", ")
+	builder.WriteString("use_auth=")
+	builder.WriteString(fmt.Sprintf("%v", m.UseAuth))
+	builder.WriteString(", ")
+	builder.WriteString("old_mission_id=")
+	builder.WriteString(fmt.Sprintf("%v", m.OldMissionID))
 	builder.WriteByte(')')
 	return builder.String()
 }

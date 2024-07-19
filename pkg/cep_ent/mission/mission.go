@@ -99,20 +99,26 @@ const (
 	FieldWarningTimes = "warning_times"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
+	// FieldUseAuth holds the string denoting the use_auth field in the database.
+	FieldUseAuth = "use_auth"
+	// FieldOldMissionID holds the string denoting the old_mission_id field in the database.
+	FieldOldMissionID = "old_mission_id"
 	// EdgeMissionKind holds the string denoting the mission_kind edge name in mutations.
 	EdgeMissionKind = "mission_kind"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
-	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeKeyPair holds the string denoting the key_pair edge name in mutations.
 	EdgeKeyPair = "key_pair"
+	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
+	EdgeMissionBatch = "mission_batch"
+	// EdgeOldMission holds the string denoting the old_mission edge name in mutations.
+	EdgeOldMission = "old_mission"
+	// EdgeMissionKeyPairs holds the string denoting the mission_key_pairs edge name in mutations.
+	EdgeMissionKeyPairs = "mission_key_pairs"
 	// EdgeMissionConsumeOrder holds the string denoting the mission_consume_order edge name in mutations.
 	EdgeMissionConsumeOrder = "mission_consume_order"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
 	EdgeMissionProduceOrders = "mission_produce_orders"
-	// EdgeMissionBatch holds the string denoting the mission_batch edge name in mutations.
-	EdgeMissionBatch = "mission_batch"
 	// EdgeMissionProductions holds the string denoting the mission_productions edge name in mutations.
 	EdgeMissionProductions = "mission_productions"
 	// EdgeMissionOrders holds the string denoting the mission_orders edge name in mutations.
@@ -125,6 +131,8 @@ const (
 	EdgeExtraServices = "extra_services"
 	// EdgeExtraServiceOrders holds the string denoting the extra_service_orders edge name in mutations.
 	EdgeExtraServiceOrders = "extra_service_orders"
+	// EdgeRebootMissions holds the string denoting the reboot_missions edge name in mutations.
+	EdgeRebootMissions = "reboot_missions"
 	// Table holds the table name of the mission in the database.
 	Table = "missions"
 	// MissionKindTable is the table that holds the mission_kind relation/edge.
@@ -141,13 +149,6 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_id"
-	// MissionKeyPairsTable is the table that holds the mission_key_pairs relation/edge.
-	MissionKeyPairsTable = "mission_key_pairs"
-	// MissionKeyPairsInverseTable is the table name for the MissionKeyPair entity.
-	// It exists in this package in order to avoid circular dependency with the "missionkeypair" package.
-	MissionKeyPairsInverseTable = "mission_key_pairs"
-	// MissionKeyPairsColumn is the table column denoting the mission_key_pairs relation/edge.
-	MissionKeyPairsColumn = "mission_id"
 	// KeyPairTable is the table that holds the key_pair relation/edge.
 	KeyPairTable = "missions"
 	// KeyPairInverseTable is the table name for the HmacKeyPair entity.
@@ -155,6 +156,24 @@ const (
 	KeyPairInverseTable = "hmac_key_pairs"
 	// KeyPairColumn is the table column denoting the key_pair relation/edge.
 	KeyPairColumn = "key_pair_id"
+	// MissionBatchTable is the table that holds the mission_batch relation/edge.
+	MissionBatchTable = "missions"
+	// MissionBatchInverseTable is the table name for the MissionBatch entity.
+	// It exists in this package in order to avoid circular dependency with the "missionbatch" package.
+	MissionBatchInverseTable = "mission_batches"
+	// MissionBatchColumn is the table column denoting the mission_batch relation/edge.
+	MissionBatchColumn = "mission_batch_id"
+	// OldMissionTable is the table that holds the old_mission relation/edge.
+	OldMissionTable = "missions"
+	// OldMissionColumn is the table column denoting the old_mission relation/edge.
+	OldMissionColumn = "old_mission_id"
+	// MissionKeyPairsTable is the table that holds the mission_key_pairs relation/edge.
+	MissionKeyPairsTable = "mission_key_pairs"
+	// MissionKeyPairsInverseTable is the table name for the MissionKeyPair entity.
+	// It exists in this package in order to avoid circular dependency with the "missionkeypair" package.
+	MissionKeyPairsInverseTable = "mission_key_pairs"
+	// MissionKeyPairsColumn is the table column denoting the mission_key_pairs relation/edge.
+	MissionKeyPairsColumn = "mission_id"
 	// MissionConsumeOrderTable is the table that holds the mission_consume_order relation/edge.
 	MissionConsumeOrderTable = "mission_consume_orders"
 	// MissionConsumeOrderInverseTable is the table name for the MissionConsumeOrder entity.
@@ -169,13 +188,6 @@ const (
 	MissionProduceOrdersInverseTable = "mission_produce_orders"
 	// MissionProduceOrdersColumn is the table column denoting the mission_produce_orders relation/edge.
 	MissionProduceOrdersColumn = "mission_mission_produce_orders"
-	// MissionBatchTable is the table that holds the mission_batch relation/edge.
-	MissionBatchTable = "missions"
-	// MissionBatchInverseTable is the table name for the MissionBatch entity.
-	// It exists in this package in order to avoid circular dependency with the "missionbatch" package.
-	MissionBatchInverseTable = "mission_batches"
-	// MissionBatchColumn is the table column denoting the mission_batch relation/edge.
-	MissionBatchColumn = "mission_batch_id"
 	// MissionProductionsTable is the table that holds the mission_productions relation/edge.
 	MissionProductionsTable = "mission_productions"
 	// MissionProductionsInverseTable is the table name for the MissionProduction entity.
@@ -218,6 +230,10 @@ const (
 	ExtraServiceOrdersInverseTable = "extra_service_orders"
 	// ExtraServiceOrdersColumn is the table column denoting the extra_service_orders relation/edge.
 	ExtraServiceOrdersColumn = "mission_id"
+	// RebootMissionsTable is the table that holds the reboot_missions relation/edge.
+	RebootMissionsTable = "missions"
+	// RebootMissionsColumn is the table column denoting the reboot_missions relation/edge.
+	RebootMissionsColumn = "old_mission_id"
 )
 
 // Columns holds all SQL columns for mission fields.
@@ -264,6 +280,8 @@ var Columns = []string{
 	FieldClosedAt,
 	FieldWarningTimes,
 	FieldRemark,
+	FieldUseAuth,
+	FieldOldMissionID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "missions"
@@ -348,6 +366,10 @@ var (
 	DefaultWarningTimes int64
 	// DefaultRemark holds the default value on creation for the "remark" field.
 	DefaultRemark string
+	// DefaultUseAuth holds the default value on creation for the "use_auth" field.
+	DefaultUseAuth bool
+	// DefaultOldMissionID holds the default value on creation for the "old_mission_id" field.
+	DefaultOldMissionID int64
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Mission fields.
@@ -644,6 +666,16 @@ func ByRemark(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRemark, opts...).ToFunc()
 }
 
+// ByUseAuth orders the results by the use_auth field.
+func ByUseAuth(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUseAuth, opts...).ToFunc()
+}
+
+// ByOldMissionID orders the results by the old_mission_id field.
+func ByOldMissionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOldMissionID, opts...).ToFunc()
+}
+
 // ByMissionKindField orders the results by mission_kind field.
 func ByMissionKindField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -658,6 +690,27 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByKeyPairField orders the results by key_pair field.
+func ByKeyPairField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newKeyPairStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByMissionBatchField orders the results by mission_batch field.
+func ByMissionBatchField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionBatchStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByOldMissionField orders the results by old_mission field.
+func ByOldMissionField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOldMissionStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByMissionKeyPairsCount orders the results by mission_key_pairs count.
 func ByMissionKeyPairsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -669,13 +722,6 @@ func ByMissionKeyPairsCount(opts ...sql.OrderTermOption) OrderOption {
 func ByMissionKeyPairs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newMissionKeyPairsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByKeyPairField orders the results by key_pair field.
-func ByKeyPairField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newKeyPairStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -697,13 +743,6 @@ func ByMissionProduceOrdersCount(opts ...sql.OrderTermOption) OrderOption {
 func ByMissionProduceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newMissionProduceOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByMissionBatchField orders the results by mission_batch field.
-func ByMissionBatchField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMissionBatchStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -790,6 +829,20 @@ func ByExtraServiceOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newExtraServiceOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRebootMissionsCount orders the results by reboot_missions count.
+func ByRebootMissionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRebootMissionsStep(), opts...)
+	}
+}
+
+// ByRebootMissions orders the results by reboot_missions terms.
+func ByRebootMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRebootMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newMissionKindStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -804,18 +857,32 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newMissionKeyPairsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionKeyPairsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
-	)
-}
 func newKeyPairStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(KeyPairInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, KeyPairTable, KeyPairColumn),
+	)
+}
+func newMissionBatchStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionBatchInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
+	)
+}
+func newOldMissionStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OldMissionTable, OldMissionColumn),
+	)
+}
+func newMissionKeyPairsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionKeyPairsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
 	)
 }
 func newMissionConsumeOrderStep() *sqlgraph.Step {
@@ -830,13 +897,6 @@ func newMissionProduceOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionProduceOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionProduceOrdersTable, MissionProduceOrdersColumn),
-	)
-}
-func newMissionBatchStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MissionBatchInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
 	)
 }
 func newMissionProductionsStep() *sqlgraph.Step {
@@ -879,5 +939,12 @@ func newExtraServiceOrdersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ExtraServiceOrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ExtraServiceOrdersTable, ExtraServiceOrdersColumn),
+	)
+}
+func newRebootMissionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RebootMissionsTable, RebootMissionsColumn),
 	)
 }

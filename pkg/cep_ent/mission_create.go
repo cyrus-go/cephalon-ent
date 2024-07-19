@@ -578,6 +578,34 @@ func (mc *MissionCreate) SetNillableRemark(s *string) *MissionCreate {
 	return mc
 }
 
+// SetUseAuth sets the "use_auth" field.
+func (mc *MissionCreate) SetUseAuth(b bool) *MissionCreate {
+	mc.mutation.SetUseAuth(b)
+	return mc
+}
+
+// SetNillableUseAuth sets the "use_auth" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableUseAuth(b *bool) *MissionCreate {
+	if b != nil {
+		mc.SetUseAuth(*b)
+	}
+	return mc
+}
+
+// SetOldMissionID sets the "old_mission_id" field.
+func (mc *MissionCreate) SetOldMissionID(i int64) *MissionCreate {
+	mc.mutation.SetOldMissionID(i)
+	return mc
+}
+
+// SetNillableOldMissionID sets the "old_mission_id" field if the given value is not nil.
+func (mc *MissionCreate) SetNillableOldMissionID(i *int64) *MissionCreate {
+	if i != nil {
+		mc.SetOldMissionID(*i)
+	}
+	return mc
+}
+
 // SetID sets the "id" field.
 func (mc *MissionCreate) SetID(i int64) *MissionCreate {
 	mc.mutation.SetID(i)
@@ -602,6 +630,21 @@ func (mc *MissionCreate) SetUser(u *User) *MissionCreate {
 	return mc.SetUserID(u.ID)
 }
 
+// SetKeyPair sets the "key_pair" edge to the HmacKeyPair entity.
+func (mc *MissionCreate) SetKeyPair(h *HmacKeyPair) *MissionCreate {
+	return mc.SetKeyPairID(h.ID)
+}
+
+// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
+func (mc *MissionCreate) SetMissionBatch(m *MissionBatch) *MissionCreate {
+	return mc.SetMissionBatchID(m.ID)
+}
+
+// SetOldMission sets the "old_mission" edge to the Mission entity.
+func (mc *MissionCreate) SetOldMission(m *Mission) *MissionCreate {
+	return mc.SetOldMissionID(m.ID)
+}
+
 // AddMissionKeyPairIDs adds the "mission_key_pairs" edge to the MissionKeyPair entity by IDs.
 func (mc *MissionCreate) AddMissionKeyPairIDs(ids ...int64) *MissionCreate {
 	mc.mutation.AddMissionKeyPairIDs(ids...)
@@ -615,11 +658,6 @@ func (mc *MissionCreate) AddMissionKeyPairs(m ...*MissionKeyPair) *MissionCreate
 		ids[i] = m[i].ID
 	}
 	return mc.AddMissionKeyPairIDs(ids...)
-}
-
-// SetKeyPair sets the "key_pair" edge to the HmacKeyPair entity.
-func (mc *MissionCreate) SetKeyPair(h *HmacKeyPair) *MissionCreate {
-	return mc.SetKeyPairID(h.ID)
 }
 
 // SetMissionConsumeOrderID sets the "mission_consume_order" edge to the MissionConsumeOrder entity by ID.
@@ -654,11 +692,6 @@ func (mc *MissionCreate) AddMissionProduceOrders(m ...*MissionProduceOrder) *Mis
 		ids[i] = m[i].ID
 	}
 	return mc.AddMissionProduceOrderIDs(ids...)
-}
-
-// SetMissionBatch sets the "mission_batch" edge to the MissionBatch entity.
-func (mc *MissionCreate) SetMissionBatch(m *MissionBatch) *MissionCreate {
-	return mc.SetMissionBatchID(m.ID)
 }
 
 // AddMissionProductionIDs adds the "mission_productions" edge to the MissionProduction entity by IDs.
@@ -749,6 +782,21 @@ func (mc *MissionCreate) AddExtraServiceOrders(e ...*ExtraServiceOrder) *Mission
 		ids[i] = e[i].ID
 	}
 	return mc.AddExtraServiceOrderIDs(ids...)
+}
+
+// AddRebootMissionIDs adds the "reboot_missions" edge to the Mission entity by IDs.
+func (mc *MissionCreate) AddRebootMissionIDs(ids ...int64) *MissionCreate {
+	mc.mutation.AddRebootMissionIDs(ids...)
+	return mc
+}
+
+// AddRebootMissions adds the "reboot_missions" edges to the Mission entity.
+func (mc *MissionCreate) AddRebootMissions(m ...*Mission) *MissionCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mc.AddRebootMissionIDs(ids...)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -930,6 +978,14 @@ func (mc *MissionCreate) defaults() {
 		v := mission.DefaultRemark
 		mc.mutation.SetRemark(v)
 	}
+	if _, ok := mc.mutation.UseAuth(); !ok {
+		v := mission.DefaultUseAuth
+		mc.mutation.SetUseAuth(v)
+	}
+	if _, ok := mc.mutation.OldMissionID(); !ok {
+		v := mission.DefaultOldMissionID
+		mc.mutation.SetOldMissionID(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := mission.DefaultID()
 		mc.mutation.SetID(v)
@@ -1069,6 +1125,12 @@ func (mc *MissionCreate) check() error {
 	if _, ok := mc.mutation.Remark(); !ok {
 		return &ValidationError{Name: "remark", err: errors.New(`cep_ent: missing required field "Mission.remark"`)}
 	}
+	if _, ok := mc.mutation.UseAuth(); !ok {
+		return &ValidationError{Name: "use_auth", err: errors.New(`cep_ent: missing required field "Mission.use_auth"`)}
+	}
+	if _, ok := mc.mutation.OldMissionID(); !ok {
+		return &ValidationError{Name: "old_mission_id", err: errors.New(`cep_ent: missing required field "Mission.old_mission_id"`)}
+	}
 	if _, ok := mc.mutation.MissionKindID(); !ok {
 		return &ValidationError{Name: "mission_kind", err: errors.New(`cep_ent: missing required edge "Mission.mission_kind"`)}
 	}
@@ -1080,6 +1142,9 @@ func (mc *MissionCreate) check() error {
 	}
 	if _, ok := mc.mutation.MissionBatchID(); !ok {
 		return &ValidationError{Name: "mission_batch", err: errors.New(`cep_ent: missing required edge "Mission.mission_batch"`)}
+	}
+	if _, ok := mc.mutation.OldMissionID(); !ok {
+		return &ValidationError{Name: "old_mission", err: errors.New(`cep_ent: missing required edge "Mission.old_mission"`)}
 	}
 	return nil
 }
@@ -1273,6 +1338,10 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 		_spec.SetField(mission.FieldRemark, field.TypeString, value)
 		_node.Remark = value
 	}
+	if value, ok := mc.mutation.UseAuth(); ok {
+		_spec.SetField(mission.FieldUseAuth, field.TypeBool, value)
+		_node.UseAuth = value
+	}
 	if nodes := mc.mutation.MissionKindIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -1307,22 +1376,6 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   mission.MissionKeyPairsTable,
-			Columns: []string{mission.MissionKeyPairsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := mc.mutation.KeyPairIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -1338,6 +1391,56 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.KeyPairID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionBatchIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.MissionBatchTable,
+			Columns: []string{mission.MissionBatchColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.MissionBatchID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.OldMissionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   mission.OldMissionTable,
+			Columns: []string{mission.OldMissionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OldMissionID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionKeyPairsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.MissionKeyPairsTable,
+			Columns: []string{mission.MissionKeyPairsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionkeypair.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mc.mutation.MissionConsumeOrderIDs(); len(nodes) > 0 {
@@ -1370,23 +1473,6 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := mc.mutation.MissionBatchIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   mission.MissionBatchTable,
-			Columns: []string{mission.MissionBatchColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(missionbatch.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.MissionBatchID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mc.mutation.MissionProductionsIDs(); len(nodes) > 0 {
@@ -1478,6 +1564,22 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(extraserviceorder.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.RebootMissionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   mission.RebootMissionsTable,
+			Columns: []string{mission.RebootMissionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -2098,6 +2200,30 @@ func (u *MissionUpsert) SetRemark(v string) *MissionUpsert {
 // UpdateRemark sets the "remark" field to the value that was provided on create.
 func (u *MissionUpsert) UpdateRemark() *MissionUpsert {
 	u.SetExcluded(mission.FieldRemark)
+	return u
+}
+
+// SetUseAuth sets the "use_auth" field.
+func (u *MissionUpsert) SetUseAuth(v bool) *MissionUpsert {
+	u.Set(mission.FieldUseAuth, v)
+	return u
+}
+
+// UpdateUseAuth sets the "use_auth" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateUseAuth() *MissionUpsert {
+	u.SetExcluded(mission.FieldUseAuth)
+	return u
+}
+
+// SetOldMissionID sets the "old_mission_id" field.
+func (u *MissionUpsert) SetOldMissionID(v int64) *MissionUpsert {
+	u.Set(mission.FieldOldMissionID, v)
+	return u
+}
+
+// UpdateOldMissionID sets the "old_mission_id" field to the value that was provided on create.
+func (u *MissionUpsert) UpdateOldMissionID() *MissionUpsert {
+	u.SetExcluded(mission.FieldOldMissionID)
 	return u
 }
 
@@ -2807,6 +2933,34 @@ func (u *MissionUpsertOne) SetRemark(v string) *MissionUpsertOne {
 func (u *MissionUpsertOne) UpdateRemark() *MissionUpsertOne {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateRemark()
+	})
+}
+
+// SetUseAuth sets the "use_auth" field.
+func (u *MissionUpsertOne) SetUseAuth(v bool) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUseAuth(v)
+	})
+}
+
+// UpdateUseAuth sets the "use_auth" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateUseAuth() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUseAuth()
+	})
+}
+
+// SetOldMissionID sets the "old_mission_id" field.
+func (u *MissionUpsertOne) SetOldMissionID(v int64) *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetOldMissionID(v)
+	})
+}
+
+// UpdateOldMissionID sets the "old_mission_id" field to the value that was provided on create.
+func (u *MissionUpsertOne) UpdateOldMissionID() *MissionUpsertOne {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateOldMissionID()
 	})
 }
 
@@ -3685,6 +3839,34 @@ func (u *MissionUpsertBulk) SetRemark(v string) *MissionUpsertBulk {
 func (u *MissionUpsertBulk) UpdateRemark() *MissionUpsertBulk {
 	return u.Update(func(s *MissionUpsert) {
 		s.UpdateRemark()
+	})
+}
+
+// SetUseAuth sets the "use_auth" field.
+func (u *MissionUpsertBulk) SetUseAuth(v bool) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetUseAuth(v)
+	})
+}
+
+// UpdateUseAuth sets the "use_auth" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateUseAuth() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateUseAuth()
+	})
+}
+
+// SetOldMissionID sets the "old_mission_id" field.
+func (u *MissionUpsertBulk) SetOldMissionID(v int64) *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.SetOldMissionID(v)
+	})
+}
+
+// UpdateOldMissionID sets the "old_mission_id" field to the value that was provided on create.
+func (u *MissionUpsertBulk) UpdateOldMissionID() *MissionUpsertBulk {
+	return u.Update(func(s *MissionUpsert) {
+		s.UpdateOldMissionID()
 	})
 }
 

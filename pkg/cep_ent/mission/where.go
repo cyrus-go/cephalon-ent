@@ -211,6 +211,16 @@ func Remark(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldRemark, v))
 }
 
+// UseAuth applies equality check predicate on the "use_auth" field. It's identical to UseAuthEQ.
+func UseAuth(v bool) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUseAuth, v))
+}
+
+// OldMissionID applies equality check predicate on the "old_mission_id" field. It's identical to OldMissionIDEQ.
+func OldMissionID(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldOldMissionID, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Mission {
 	return predicate.Mission(sql.FieldEQ(FieldCreatedBy, v))
@@ -1996,6 +2006,36 @@ func RemarkContainsFold(v string) predicate.Mission {
 	return predicate.Mission(sql.FieldContainsFold(FieldRemark, v))
 }
 
+// UseAuthEQ applies the EQ predicate on the "use_auth" field.
+func UseAuthEQ(v bool) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldUseAuth, v))
+}
+
+// UseAuthNEQ applies the NEQ predicate on the "use_auth" field.
+func UseAuthNEQ(v bool) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldUseAuth, v))
+}
+
+// OldMissionIDEQ applies the EQ predicate on the "old_mission_id" field.
+func OldMissionIDEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldEQ(FieldOldMissionID, v))
+}
+
+// OldMissionIDNEQ applies the NEQ predicate on the "old_mission_id" field.
+func OldMissionIDNEQ(v int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNEQ(FieldOldMissionID, v))
+}
+
+// OldMissionIDIn applies the In predicate on the "old_mission_id" field.
+func OldMissionIDIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldIn(FieldOldMissionID, vs...))
+}
+
+// OldMissionIDNotIn applies the NotIn predicate on the "old_mission_id" field.
+func OldMissionIDNotIn(vs ...int64) predicate.Mission {
+	return predicate.Mission(sql.FieldNotIn(FieldOldMissionID, vs...))
+}
+
 // HasMissionKind applies the HasEdge predicate on the "mission_kind" edge.
 func HasMissionKind() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
@@ -2042,29 +2082,6 @@ func HasUserWith(preds ...predicate.User) predicate.Mission {
 	})
 }
 
-// HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.
-func HasMissionKeyPairs() predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionKeyPairsWith applies the HasEdge predicate on the "mission_key_pairs" edge with a given conditions (other predicates).
-func HasMissionKeyPairsWith(preds ...predicate.MissionKeyPair) predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := newMissionKeyPairsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasKeyPair applies the HasEdge predicate on the "key_pair" edge.
 func HasKeyPair() predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
@@ -2080,6 +2097,75 @@ func HasKeyPair() predicate.Mission {
 func HasKeyPairWith(preds ...predicate.HmacKeyPair) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := newKeyPairStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionBatch applies the HasEdge predicate on the "mission_batch" edge.
+func HasMissionBatch() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionBatchWith applies the HasEdge predicate on the "mission_batch" edge with a given conditions (other predicates).
+func HasMissionBatchWith(preds ...predicate.MissionBatch) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionBatchStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOldMission applies the HasEdge predicate on the "old_mission" edge.
+func HasOldMission() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OldMissionTable, OldMissionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOldMissionWith applies the HasEdge predicate on the "old_mission" edge with a given conditions (other predicates).
+func HasOldMissionWith(preds ...predicate.Mission) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newOldMissionStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMissionKeyPairs applies the HasEdge predicate on the "mission_key_pairs" edge.
+func HasMissionKeyPairs() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionKeyPairsTable, MissionKeyPairsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionKeyPairsWith applies the HasEdge predicate on the "mission_key_pairs" edge with a given conditions (other predicates).
+func HasMissionKeyPairsWith(preds ...predicate.MissionKeyPair) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionKeyPairsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -2126,29 +2212,6 @@ func HasMissionProduceOrders() predicate.Mission {
 func HasMissionProduceOrdersWith(preds ...predicate.MissionProduceOrder) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := newMissionProduceOrdersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasMissionBatch applies the HasEdge predicate on the "mission_batch" edge.
-func HasMissionBatch() predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, MissionBatchTable, MissionBatchColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMissionBatchWith applies the HasEdge predicate on the "mission_batch" edge with a given conditions (other predicates).
-func HasMissionBatchWith(preds ...predicate.MissionBatch) predicate.Mission {
-	return predicate.Mission(func(s *sql.Selector) {
-		step := newMissionBatchStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -2287,6 +2350,29 @@ func HasExtraServiceOrders() predicate.Mission {
 func HasExtraServiceOrdersWith(preds ...predicate.ExtraServiceOrder) predicate.Mission {
 	return predicate.Mission(func(s *sql.Selector) {
 		step := newExtraServiceOrdersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasRebootMissions applies the HasEdge predicate on the "reboot_missions" edge.
+func HasRebootMissions() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RebootMissionsTable, RebootMissionsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRebootMissionsWith applies the HasEdge predicate on the "reboot_missions" edge with a given conditions (other predicates).
+func HasRebootMissionsWith(preds ...predicate.Mission) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newRebootMissionsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

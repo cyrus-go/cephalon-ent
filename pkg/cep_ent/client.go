@@ -6911,22 +6911,6 @@ func (c *MissionClient) QueryUser(m *Mission) *UserQuery {
 	return query
 }
 
-// QueryMissionKeyPairs queries the mission_key_pairs edge of a Mission.
-func (c *MissionClient) QueryMissionKeyPairs(m *Mission) *MissionKeyPairQuery {
-	query := (&MissionKeyPairClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(missionkeypair.Table, missionkeypair.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionKeyPairsTable, mission.MissionKeyPairsColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryKeyPair queries the key_pair edge of a Mission.
 func (c *MissionClient) QueryKeyPair(m *Mission) *HmacKeyPairQuery {
 	query := (&HmacKeyPairClient{config: c.config}).Query()
@@ -6936,6 +6920,54 @@ func (c *MissionClient) QueryKeyPair(m *Mission) *HmacKeyPairQuery {
 			sqlgraph.From(mission.Table, mission.FieldID, id),
 			sqlgraph.To(hmackeypair.Table, hmackeypair.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, mission.KeyPairTable, mission.KeyPairColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionBatch queries the mission_batch edge of a Mission.
+func (c *MissionClient) QueryMissionBatch(m *Mission) *MissionBatchQuery {
+	query := (&MissionBatchClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, mission.MissionBatchTable, mission.MissionBatchColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOldMission queries the old_mission edge of a Mission.
+func (c *MissionClient) QueryOldMission(m *Mission) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, mission.OldMissionTable, mission.OldMissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionKeyPairs queries the mission_key_pairs edge of a Mission.
+func (c *MissionClient) QueryMissionKeyPairs(m *Mission) *MissionKeyPairQuery {
+	query := (&MissionKeyPairClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(missionkeypair.Table, missionkeypair.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionKeyPairsTable, mission.MissionKeyPairsColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -6968,22 +7000,6 @@ func (c *MissionClient) QueryMissionProduceOrders(m *Mission) *MissionProduceOrd
 			sqlgraph.From(mission.Table, mission.FieldID, id),
 			sqlgraph.To(missionproduceorder.Table, missionproduceorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, mission.MissionProduceOrdersTable, mission.MissionProduceOrdersColumn),
-		)
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryMissionBatch queries the mission_batch edge of a Mission.
-func (c *MissionClient) QueryMissionBatch(m *Mission) *MissionBatchQuery {
-	query := (&MissionBatchClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(mission.Table, mission.FieldID, id),
-			sqlgraph.To(missionbatch.Table, missionbatch.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, mission.MissionBatchTable, mission.MissionBatchColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -7080,6 +7096,22 @@ func (c *MissionClient) QueryExtraServiceOrders(m *Mission) *ExtraServiceOrderQu
 			sqlgraph.From(mission.Table, mission.FieldID, id),
 			sqlgraph.To(extraserviceorder.Table, extraserviceorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, mission.ExtraServiceOrdersTable, mission.ExtraServiceOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRebootMissions queries the reboot_missions edge of a Mission.
+func (c *MissionClient) QueryRebootMissions(m *Mission) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, mission.RebootMissionsTable, mission.RebootMissionsColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
