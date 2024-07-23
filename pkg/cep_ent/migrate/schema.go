@@ -1663,6 +1663,63 @@ var (
 			},
 		},
 	}
+	// MissionFailedFeedbacksColumns holds the columns for the "mission_failed_feedbacks" table.
+	MissionFailedFeedbacksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "mission_name", Type: field.TypeString, Comment: "应用名称", Default: ""},
+		{Name: "device_id", Type: field.TypeInt64, Comment: "外键，反馈关联的设备 ID", Default: 0},
+		{Name: "mission_id", Type: field.TypeInt64, Unique: true, Comment: "外键，反馈关联的任务 ID", Default: 0},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "外键，反馈的用户 ID", Default: 0},
+	}
+	// MissionFailedFeedbacksTable holds the schema information for the "mission_failed_feedbacks" table.
+	MissionFailedFeedbacksTable = &schema.Table{
+		Name:       "mission_failed_feedbacks",
+		Comment:    "应用启动失败反馈信息表",
+		Columns:    MissionFailedFeedbacksColumns,
+		PrimaryKey: []*schema.Column{MissionFailedFeedbacksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mission_failed_feedbacks_devices_mission_failed_feedbacks",
+				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[7]},
+				RefColumns: []*schema.Column{DevicesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "mission_failed_feedbacks_missions_mission_failed_feedback",
+				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[8]},
+				RefColumns: []*schema.Column{MissionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "mission_failed_feedbacks_users_mission_failed_feedbacks",
+				Columns:    []*schema.Column{MissionFailedFeedbacksColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "missionfailedfeedback_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[9]},
+			},
+			{
+				Name:    "missionfailedfeedback_device_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[7]},
+			},
+			{
+				Name:    "missionfailedfeedback_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[8]},
+			},
+		},
+	}
 	// MissionKeyPairsColumns holds the columns for the "mission_key_pairs" table.
 	MissionKeyPairsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2895,6 +2952,7 @@ var (
 		MissionCategoriesTable,
 		MissionConsumeOrdersTable,
 		MissionExtraServicesTable,
+		MissionFailedFeedbacksTable,
 		MissionKeyPairsTable,
 		MissionKindsTable,
 		MissionOrdersTable,
@@ -3037,6 +3095,10 @@ func init() {
 	MissionExtraServicesTable.ForeignKeys[0].RefTable = ExtraServicesTable
 	MissionExtraServicesTable.ForeignKeys[1].RefTable = MissionsTable
 	MissionExtraServicesTable.Annotation = &entsql.Annotation{}
+	MissionFailedFeedbacksTable.ForeignKeys[0].RefTable = DevicesTable
+	MissionFailedFeedbacksTable.ForeignKeys[1].RefTable = MissionsTable
+	MissionFailedFeedbacksTable.ForeignKeys[2].RefTable = UsersTable
+	MissionFailedFeedbacksTable.Annotation = &entsql.Annotation{}
 	MissionKeyPairsTable.ForeignKeys[0].RefTable = HmacKeyPairsTable
 	MissionKeyPairsTable.ForeignKeys[1].RefTable = MissionsTable
 	MissionKeyPairsTable.Annotation = &entsql.Annotation{}

@@ -19,6 +19,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -866,6 +867,25 @@ func (mu *MissionUpdate) AddRebootMissions(m ...*Mission) *MissionUpdate {
 	return mu.AddRebootMissionIDs(ids...)
 }
 
+// SetMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by ID.
+func (mu *MissionUpdate) SetMissionFailedFeedbackID(id int64) *MissionUpdate {
+	mu.mutation.SetMissionFailedFeedbackID(id)
+	return mu
+}
+
+// SetNillableMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by ID if the given value is not nil.
+func (mu *MissionUpdate) SetNillableMissionFailedFeedbackID(id *int64) *MissionUpdate {
+	if id != nil {
+		mu = mu.SetMissionFailedFeedbackID(*id)
+	}
+	return mu
+}
+
+// SetMissionFailedFeedback sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity.
+func (mu *MissionUpdate) SetMissionFailedFeedback(m *MissionFailedFeedback) *MissionUpdate {
+	return mu.SetMissionFailedFeedbackID(m.ID)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (mu *MissionUpdate) Mutation() *MissionMutation {
 	return mu.mutation
@@ -1094,6 +1114,12 @@ func (mu *MissionUpdate) RemoveRebootMissions(m ...*Mission) *MissionUpdate {
 		ids[i] = m[i].ID
 	}
 	return mu.RemoveRebootMissionIDs(ids...)
+}
+
+// ClearMissionFailedFeedback clears the "mission_failed_feedback" edge to the MissionFailedFeedback entity.
+func (mu *MissionUpdate) ClearMissionFailedFeedback() *MissionUpdate {
+	mu.mutation.ClearMissionFailedFeedback()
+	return mu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1950,6 +1976,35 @@ func (mu *MissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if mu.mutation.MissionFailedFeedbackCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionFailedFeedbackTable,
+			Columns: []string{mission.MissionFailedFeedbackColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MissionFailedFeedbackIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionFailedFeedbackTable,
+			Columns: []string{mission.MissionFailedFeedbackColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(mu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -2794,6 +2849,25 @@ func (muo *MissionUpdateOne) AddRebootMissions(m ...*Mission) *MissionUpdateOne 
 	return muo.AddRebootMissionIDs(ids...)
 }
 
+// SetMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by ID.
+func (muo *MissionUpdateOne) SetMissionFailedFeedbackID(id int64) *MissionUpdateOne {
+	muo.mutation.SetMissionFailedFeedbackID(id)
+	return muo
+}
+
+// SetNillableMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by ID if the given value is not nil.
+func (muo *MissionUpdateOne) SetNillableMissionFailedFeedbackID(id *int64) *MissionUpdateOne {
+	if id != nil {
+		muo = muo.SetMissionFailedFeedbackID(*id)
+	}
+	return muo
+}
+
+// SetMissionFailedFeedback sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity.
+func (muo *MissionUpdateOne) SetMissionFailedFeedback(m *MissionFailedFeedback) *MissionUpdateOne {
+	return muo.SetMissionFailedFeedbackID(m.ID)
+}
+
 // Mutation returns the MissionMutation object of the builder.
 func (muo *MissionUpdateOne) Mutation() *MissionMutation {
 	return muo.mutation
@@ -3022,6 +3096,12 @@ func (muo *MissionUpdateOne) RemoveRebootMissions(m ...*Mission) *MissionUpdateO
 		ids[i] = m[i].ID
 	}
 	return muo.RemoveRebootMissionIDs(ids...)
+}
+
+// ClearMissionFailedFeedback clears the "mission_failed_feedback" edge to the MissionFailedFeedback entity.
+func (muo *MissionUpdateOne) ClearMissionFailedFeedback() *MissionUpdateOne {
+	muo.mutation.ClearMissionFailedFeedback()
+	return muo
 }
 
 // Where appends a list predicates to the MissionUpdate builder.
@@ -3901,6 +3981,35 @@ func (muo *MissionUpdateOne) sqlSave(ctx context.Context) (_node *Mission, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.MissionFailedFeedbackCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionFailedFeedbackTable,
+			Columns: []string{mission.MissionFailedFeedbackColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MissionFailedFeedbackIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionFailedFeedbackTable,
+			Columns: []string{mission.MissionFailedFeedbackColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

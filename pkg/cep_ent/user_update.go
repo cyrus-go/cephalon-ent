@@ -31,6 +31,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -1118,6 +1119,21 @@ func (uu *UserUpdate) AddApproveSurveyResponses(s ...*SurveyResponse) *UserUpdat
 	return uu.AddApproveSurveyResponseIDs(ids...)
 }
 
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (uu *UserUpdate) AddMissionFailedFeedbackIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddMissionFailedFeedbackIDs(ids...)
+	return uu
+}
+
+// AddMissionFailedFeedbacks adds the "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (uu *UserUpdate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddMissionFailedFeedbackIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -2033,6 +2049,27 @@ func (uu *UserUpdate) RemoveApproveSurveyResponses(s ...*SurveyResponse) *UserUp
 		ids[i] = s[i].ID
 	}
 	return uu.RemoveApproveSurveyResponseIDs(ids...)
+}
+
+// ClearMissionFailedFeedbacks clears all "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (uu *UserUpdate) ClearMissionFailedFeedbacks() *UserUpdate {
+	uu.mutation.ClearMissionFailedFeedbacks()
+	return uu
+}
+
+// RemoveMissionFailedFeedbackIDs removes the "mission_failed_feedbacks" edge to MissionFailedFeedback entities by IDs.
+func (uu *UserUpdate) RemoveMissionFailedFeedbackIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveMissionFailedFeedbackIDs(ids...)
+	return uu
+}
+
+// RemoveMissionFailedFeedbacks removes "mission_failed_feedbacks" edges to MissionFailedFeedback entities.
+func (uu *UserUpdate) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedback) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveMissionFailedFeedbackIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -4223,6 +4260,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedMissionFailedFeedbacksIDs(); len(nodes) > 0 && !uu.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.MissionFailedFeedbacksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -5297,6 +5379,21 @@ func (uuo *UserUpdateOne) AddApproveSurveyResponses(s ...*SurveyResponse) *UserU
 	return uuo.AddApproveSurveyResponseIDs(ids...)
 }
 
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (uuo *UserUpdateOne) AddMissionFailedFeedbackIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddMissionFailedFeedbackIDs(ids...)
+	return uuo
+}
+
+// AddMissionFailedFeedbacks adds the "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (uuo *UserUpdateOne) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddMissionFailedFeedbackIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -6212,6 +6309,27 @@ func (uuo *UserUpdateOne) RemoveApproveSurveyResponses(s ...*SurveyResponse) *Us
 		ids[i] = s[i].ID
 	}
 	return uuo.RemoveApproveSurveyResponseIDs(ids...)
+}
+
+// ClearMissionFailedFeedbacks clears all "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (uuo *UserUpdateOne) ClearMissionFailedFeedbacks() *UserUpdateOne {
+	uuo.mutation.ClearMissionFailedFeedbacks()
+	return uuo
+}
+
+// RemoveMissionFailedFeedbackIDs removes the "mission_failed_feedbacks" edge to MissionFailedFeedback entities by IDs.
+func (uuo *UserUpdateOne) RemoveMissionFailedFeedbackIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveMissionFailedFeedbackIDs(ids...)
+	return uuo
+}
+
+// RemoveMissionFailedFeedbacks removes "mission_failed_feedbacks" edges to MissionFailedFeedback entities.
+func (uuo *UserUpdateOne) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedback) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveMissionFailedFeedbackIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -8425,6 +8543,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedMissionFailedFeedbacksIDs(); len(nodes) > 0 && !uuo.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.MissionFailedFeedbacksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -80,6 +80,7 @@ func (Mission) Edges() []ent.Edge {
 		edge.To("extra_services", ExtraService.Type),
 		edge.To("extra_service_orders", ExtraServiceOrder.Type),
 		edge.To("reboot_missions", Mission.Type),
+		edge.To("mission_failed_feedback", MissionFailedFeedback.Type).Unique(),
 	}
 }
 

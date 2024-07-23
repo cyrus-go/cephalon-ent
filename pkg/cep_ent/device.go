@@ -98,9 +98,11 @@ type DeviceEdges struct {
 	DeviceStates []*DeviceState `json:"device_states,omitempty"`
 	// DeviceOfflineRecords holds the value of the device_offline_records edge.
 	DeviceOfflineRecords []*DeviceOfflineRecord `json:"device_offline_records,omitempty"`
+	// MissionFailedFeedbacks holds the value of the mission_failed_feedbacks edge.
+	MissionFailedFeedbacks []*MissionFailedFeedback `json:"mission_failed_feedbacks,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [11]bool
+	loadedTypes [12]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -204,6 +206,15 @@ func (e DeviceEdges) DeviceOfflineRecordsOrErr() ([]*DeviceOfflineRecord, error)
 		return e.DeviceOfflineRecords, nil
 	}
 	return nil, &NotLoadedError{edge: "device_offline_records"}
+}
+
+// MissionFailedFeedbacksOrErr returns the MissionFailedFeedbacks value or an error if the edge
+// was not loaded in eager-loading.
+func (e DeviceEdges) MissionFailedFeedbacksOrErr() ([]*MissionFailedFeedback, error) {
+	if e.loadedTypes[11] {
+		return e.MissionFailedFeedbacks, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_failed_feedbacks"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -454,6 +465,11 @@ func (d *Device) QueryDeviceStates() *DeviceStateQuery {
 // QueryDeviceOfflineRecords queries the "device_offline_records" edge of the Device entity.
 func (d *Device) QueryDeviceOfflineRecords() *DeviceOfflineRecordQuery {
 	return NewDeviceClient(d.config).QueryDeviceOfflineRecords(d)
+}
+
+// QueryMissionFailedFeedbacks queries the "mission_failed_feedbacks" edge of the Device entity.
+func (d *Device) QueryMissionFailedFeedbacks() *MissionFailedFeedbackQuery {
+	return NewDeviceClient(d.config).QueryMissionFailedFeedbacks(d)
 }
 
 // Update returns a builder for updating this Device.

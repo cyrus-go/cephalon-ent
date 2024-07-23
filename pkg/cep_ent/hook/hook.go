@@ -489,6 +489,18 @@ func (f MissionExtraServiceFunc) Mutate(ctx context.Context, m cep_ent.Mutation)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionExtraServiceMutation", m)
 }
 
+// The MissionFailedFeedbackFunc type is an adapter to allow the use of ordinary
+// function as MissionFailedFeedback mutator.
+type MissionFailedFeedbackFunc func(context.Context, *cep_ent.MissionFailedFeedbackMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MissionFailedFeedbackFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.MissionFailedFeedbackMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionFailedFeedbackMutation", m)
+}
+
 // The MissionKeyPairFunc type is an adapter to allow the use of ordinary
 // function as MissionKeyPair mutator.
 type MissionKeyPairFunc func(context.Context, *cep_ent.MissionKeyPairMutation) (cep_ent.Value, error)

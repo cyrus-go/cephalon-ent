@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -797,6 +798,25 @@ func (mc *MissionCreate) AddRebootMissions(m ...*Mission) *MissionCreate {
 		ids[i] = m[i].ID
 	}
 	return mc.AddRebootMissionIDs(ids...)
+}
+
+// SetMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by ID.
+func (mc *MissionCreate) SetMissionFailedFeedbackID(id int64) *MissionCreate {
+	mc.mutation.SetMissionFailedFeedbackID(id)
+	return mc
+}
+
+// SetNillableMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by ID if the given value is not nil.
+func (mc *MissionCreate) SetNillableMissionFailedFeedbackID(id *int64) *MissionCreate {
+	if id != nil {
+		mc = mc.SetMissionFailedFeedbackID(*id)
+	}
+	return mc
+}
+
+// SetMissionFailedFeedback sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity.
+func (mc *MissionCreate) SetMissionFailedFeedback(m *MissionFailedFeedback) *MissionCreate {
+	return mc.SetMissionFailedFeedbackID(m.ID)
 }
 
 // Mutation returns the MissionMutation object of the builder.
@@ -1580,6 +1600,22 @@ func (mc *MissionCreate) createSpec() (*Mission, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(mission.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.MissionFailedFeedbackIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   mission.MissionFailedFeedbackTable,
+			Columns: []string{mission.MissionFailedFeedbackColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

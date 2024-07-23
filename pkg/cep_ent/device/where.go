@@ -1319,6 +1319,29 @@ func HasDeviceOfflineRecordsWith(preds ...predicate.DeviceOfflineRecord) predica
 	})
 }
 
+// HasMissionFailedFeedbacks applies the HasEdge predicate on the "mission_failed_feedbacks" edge.
+func HasMissionFailedFeedbacks() predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MissionFailedFeedbacksTable, MissionFailedFeedbacksColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionFailedFeedbacksWith applies the HasEdge predicate on the "mission_failed_feedbacks" edge with a given conditions (other predicates).
+func HasMissionFailedFeedbacksWith(preds ...predicate.MissionFailedFeedback) predicate.Device {
+	return predicate.Device(func(s *sql.Selector) {
+		step := newMissionFailedFeedbacksStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Device) predicate.Device {
 	return predicate.Device(sql.AndPredicates(predicates...))

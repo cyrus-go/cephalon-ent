@@ -17,6 +17,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -571,6 +572,21 @@ func (du *DeviceUpdate) AddDeviceOfflineRecords(d ...*DeviceOfflineRecord) *Devi
 	return du.AddDeviceOfflineRecordIDs(ids...)
 }
 
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (du *DeviceUpdate) AddMissionFailedFeedbackIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.AddMissionFailedFeedbackIDs(ids...)
+	return du
+}
+
+// AddMissionFailedFeedbacks adds the "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (du *DeviceUpdate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *DeviceUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return du.AddMissionFailedFeedbackIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (du *DeviceUpdate) Mutation() *DeviceMutation {
 	return du.mutation
@@ -790,6 +806,27 @@ func (du *DeviceUpdate) RemoveDeviceOfflineRecords(d ...*DeviceOfflineRecord) *D
 		ids[i] = d[i].ID
 	}
 	return du.RemoveDeviceOfflineRecordIDs(ids...)
+}
+
+// ClearMissionFailedFeedbacks clears all "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (du *DeviceUpdate) ClearMissionFailedFeedbacks() *DeviceUpdate {
+	du.mutation.ClearMissionFailedFeedbacks()
+	return du
+}
+
+// RemoveMissionFailedFeedbackIDs removes the "mission_failed_feedbacks" edge to MissionFailedFeedback entities by IDs.
+func (du *DeviceUpdate) RemoveMissionFailedFeedbackIDs(ids ...int64) *DeviceUpdate {
+	du.mutation.RemoveMissionFailedFeedbackIDs(ids...)
+	return du
+}
+
+// RemoveMissionFailedFeedbacks removes "mission_failed_feedbacks" edges to MissionFailedFeedback entities.
+func (du *DeviceUpdate) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedback) *DeviceUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return du.RemoveMissionFailedFeedbackIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1458,6 +1495,51 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedMissionFailedFeedbacksIDs(); len(nodes) > 0 && !du.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.MissionFailedFeedbacksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(du.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -2010,6 +2092,21 @@ func (duo *DeviceUpdateOne) AddDeviceOfflineRecords(d ...*DeviceOfflineRecord) *
 	return duo.AddDeviceOfflineRecordIDs(ids...)
 }
 
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (duo *DeviceUpdateOne) AddMissionFailedFeedbackIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.AddMissionFailedFeedbackIDs(ids...)
+	return duo
+}
+
+// AddMissionFailedFeedbacks adds the "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (duo *DeviceUpdateOne) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *DeviceUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return duo.AddMissionFailedFeedbackIDs(ids...)
+}
+
 // Mutation returns the DeviceMutation object of the builder.
 func (duo *DeviceUpdateOne) Mutation() *DeviceMutation {
 	return duo.mutation
@@ -2229,6 +2326,27 @@ func (duo *DeviceUpdateOne) RemoveDeviceOfflineRecords(d ...*DeviceOfflineRecord
 		ids[i] = d[i].ID
 	}
 	return duo.RemoveDeviceOfflineRecordIDs(ids...)
+}
+
+// ClearMissionFailedFeedbacks clears all "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (duo *DeviceUpdateOne) ClearMissionFailedFeedbacks() *DeviceUpdateOne {
+	duo.mutation.ClearMissionFailedFeedbacks()
+	return duo
+}
+
+// RemoveMissionFailedFeedbackIDs removes the "mission_failed_feedbacks" edge to MissionFailedFeedback entities by IDs.
+func (duo *DeviceUpdateOne) RemoveMissionFailedFeedbackIDs(ids ...int64) *DeviceUpdateOne {
+	duo.mutation.RemoveMissionFailedFeedbackIDs(ids...)
+	return duo
+}
+
+// RemoveMissionFailedFeedbacks removes "mission_failed_feedbacks" edges to MissionFailedFeedback entities.
+func (duo *DeviceUpdateOne) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedback) *DeviceUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return duo.RemoveMissionFailedFeedbackIDs(ids...)
 }
 
 // Where appends a list predicates to the DeviceUpdate builder.
@@ -2920,6 +3038,51 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedMissionFailedFeedbacksIDs(); len(nodes) > 0 && !duo.mutation.MissionFailedFeedbacksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.MissionFailedFeedbacksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

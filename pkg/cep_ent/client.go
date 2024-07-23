@@ -55,6 +55,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missioncategory"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -169,6 +170,8 @@ type Client struct {
 	MissionConsumeOrder *MissionConsumeOrderClient
 	// MissionExtraService is the client for interacting with the MissionExtraService builders.
 	MissionExtraService *MissionExtraServiceClient
+	// MissionFailedFeedback is the client for interacting with the MissionFailedFeedback builders.
+	MissionFailedFeedback *MissionFailedFeedbackClient
 	// MissionKeyPair is the client for interacting with the MissionKeyPair builders.
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
@@ -276,6 +279,7 @@ func (c *Client) init() {
 	c.MissionCategory = NewMissionCategoryClient(c.config)
 	c.MissionConsumeOrder = NewMissionConsumeOrderClient(c.config)
 	c.MissionExtraService = NewMissionExtraServiceClient(c.config)
+	c.MissionFailedFeedback = NewMissionFailedFeedbackClient(c.config)
 	c.MissionKeyPair = NewMissionKeyPairClient(c.config)
 	c.MissionKind = NewMissionKindClient(c.config)
 	c.MissionOrder = NewMissionOrderClient(c.config)
@@ -386,75 +390,76 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                  ctx,
-		config:               cfg,
-		Artwork:              NewArtworkClient(cfg),
-		ArtworkLike:          NewArtworkLikeClient(cfg),
-		Bill:                 NewBillClient(cfg),
-		CDKInfo:              NewCDKInfoClient(cfg),
-		Campaign:             NewCampaignClient(cfg),
-		CampaignOrder:        NewCampaignOrderClient(cfg),
-		CloudFile:            NewCloudFileClient(cfg),
-		Collect:              NewCollectClient(cfg),
-		CostAccount:          NewCostAccountClient(cfg),
-		CostBill:             NewCostBillClient(cfg),
-		Device:               NewDeviceClient(cfg),
-		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
-		DeviceOfflineRecord:  NewDeviceOfflineRecordClient(cfg),
-		DeviceRebootTime:     NewDeviceRebootTimeClient(cfg),
-		DeviceState:          NewDeviceStateClient(cfg),
-		EarnBill:             NewEarnBillClient(cfg),
-		EnumCondition:        NewEnumConditionClient(cfg),
-		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
-		ExtraService:         NewExtraServiceClient(cfg),
-		ExtraServiceOrder:    NewExtraServiceOrderClient(cfg),
-		ExtraServicePrice:    NewExtraServicePriceClient(cfg),
-		FrpcInfo:             NewFrpcInfoClient(cfg),
-		FrpsInfo:             NewFrpsInfoClient(cfg),
-		Gpu:                  NewGpuClient(cfg),
-		HmacKeyPair:          NewHmacKeyPairClient(cfg),
-		IncomeManage:         NewIncomeManageClient(cfg),
-		InputLog:             NewInputLogClient(cfg),
-		Invite:               NewInviteClient(cfg),
-		LoginRecord:          NewLoginRecordClient(cfg),
-		Lotto:                NewLottoClient(cfg),
-		LottoChanceRule:      NewLottoChanceRuleClient(cfg),
-		LottoGetCountRecord:  NewLottoGetCountRecordClient(cfg),
-		LottoPrize:           NewLottoPrizeClient(cfg),
-		LottoRecord:          NewLottoRecordClient(cfg),
-		LottoUserCount:       NewLottoUserCountClient(cfg),
-		Mission:              NewMissionClient(cfg),
-		MissionBatch:         NewMissionBatchClient(cfg),
-		MissionCategory:      NewMissionCategoryClient(cfg),
-		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
-		MissionExtraService:  NewMissionExtraServiceClient(cfg),
-		MissionKeyPair:       NewMissionKeyPairClient(cfg),
-		MissionKind:          NewMissionKindClient(cfg),
-		MissionOrder:         NewMissionOrderClient(cfg),
-		MissionProduceOrder:  NewMissionProduceOrderClient(cfg),
-		MissionProduction:    NewMissionProductionClient(cfg),
-		OutputLog:            NewOutputLogClient(cfg),
-		PlatformAccount:      NewPlatformAccountClient(cfg),
-		Price:                NewPriceClient(cfg),
-		ProfitAccount:        NewProfitAccountClient(cfg),
-		ProfitSetting:        NewProfitSettingClient(cfg),
-		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
-		RechargeOrder:        NewRechargeOrderClient(cfg),
-		RenewalAgreement:     NewRenewalAgreementClient(cfg),
-		Survey:               NewSurveyClient(cfg),
-		SurveyAnswer:         NewSurveyAnswerClient(cfg),
-		SurveyQuestion:       NewSurveyQuestionClient(cfg),
-		SurveyResponse:       NewSurveyResponseClient(cfg),
-		Symbol:               NewSymbolClient(cfg),
-		TransferOrder:        NewTransferOrderClient(cfg),
-		TroubleDeduct:        NewTroubleDeductClient(cfg),
-		User:                 NewUserClient(cfg),
-		UserDevice:           NewUserDeviceClient(cfg),
-		VXAccount:            NewVXAccountClient(cfg),
-		VXSocial:             NewVXSocialClient(cfg),
-		Wallet:               NewWalletClient(cfg),
-		WithdrawAccount:      NewWithdrawAccountClient(cfg),
-		WithdrawRecord:       NewWithdrawRecordClient(cfg),
+		ctx:                   ctx,
+		config:                cfg,
+		Artwork:               NewArtworkClient(cfg),
+		ArtworkLike:           NewArtworkLikeClient(cfg),
+		Bill:                  NewBillClient(cfg),
+		CDKInfo:               NewCDKInfoClient(cfg),
+		Campaign:              NewCampaignClient(cfg),
+		CampaignOrder:         NewCampaignOrderClient(cfg),
+		CloudFile:             NewCloudFileClient(cfg),
+		Collect:               NewCollectClient(cfg),
+		CostAccount:           NewCostAccountClient(cfg),
+		CostBill:              NewCostBillClient(cfg),
+		Device:                NewDeviceClient(cfg),
+		DeviceGpuMission:      NewDeviceGpuMissionClient(cfg),
+		DeviceOfflineRecord:   NewDeviceOfflineRecordClient(cfg),
+		DeviceRebootTime:      NewDeviceRebootTimeClient(cfg),
+		DeviceState:           NewDeviceStateClient(cfg),
+		EarnBill:              NewEarnBillClient(cfg),
+		EnumCondition:         NewEnumConditionClient(cfg),
+		EnumMissionStatus:     NewEnumMissionStatusClient(cfg),
+		ExtraService:          NewExtraServiceClient(cfg),
+		ExtraServiceOrder:     NewExtraServiceOrderClient(cfg),
+		ExtraServicePrice:     NewExtraServicePriceClient(cfg),
+		FrpcInfo:              NewFrpcInfoClient(cfg),
+		FrpsInfo:              NewFrpsInfoClient(cfg),
+		Gpu:                   NewGpuClient(cfg),
+		HmacKeyPair:           NewHmacKeyPairClient(cfg),
+		IncomeManage:          NewIncomeManageClient(cfg),
+		InputLog:              NewInputLogClient(cfg),
+		Invite:                NewInviteClient(cfg),
+		LoginRecord:           NewLoginRecordClient(cfg),
+		Lotto:                 NewLottoClient(cfg),
+		LottoChanceRule:       NewLottoChanceRuleClient(cfg),
+		LottoGetCountRecord:   NewLottoGetCountRecordClient(cfg),
+		LottoPrize:            NewLottoPrizeClient(cfg),
+		LottoRecord:           NewLottoRecordClient(cfg),
+		LottoUserCount:        NewLottoUserCountClient(cfg),
+		Mission:               NewMissionClient(cfg),
+		MissionBatch:          NewMissionBatchClient(cfg),
+		MissionCategory:       NewMissionCategoryClient(cfg),
+		MissionConsumeOrder:   NewMissionConsumeOrderClient(cfg),
+		MissionExtraService:   NewMissionExtraServiceClient(cfg),
+		MissionFailedFeedback: NewMissionFailedFeedbackClient(cfg),
+		MissionKeyPair:        NewMissionKeyPairClient(cfg),
+		MissionKind:           NewMissionKindClient(cfg),
+		MissionOrder:          NewMissionOrderClient(cfg),
+		MissionProduceOrder:   NewMissionProduceOrderClient(cfg),
+		MissionProduction:     NewMissionProductionClient(cfg),
+		OutputLog:             NewOutputLogClient(cfg),
+		PlatformAccount:       NewPlatformAccountClient(cfg),
+		Price:                 NewPriceClient(cfg),
+		ProfitAccount:         NewProfitAccountClient(cfg),
+		ProfitSetting:         NewProfitSettingClient(cfg),
+		RechargeCampaignRule:  NewRechargeCampaignRuleClient(cfg),
+		RechargeOrder:         NewRechargeOrderClient(cfg),
+		RenewalAgreement:      NewRenewalAgreementClient(cfg),
+		Survey:                NewSurveyClient(cfg),
+		SurveyAnswer:          NewSurveyAnswerClient(cfg),
+		SurveyQuestion:        NewSurveyQuestionClient(cfg),
+		SurveyResponse:        NewSurveyResponseClient(cfg),
+		Symbol:                NewSymbolClient(cfg),
+		TransferOrder:         NewTransferOrderClient(cfg),
+		TroubleDeduct:         NewTroubleDeductClient(cfg),
+		User:                  NewUserClient(cfg),
+		UserDevice:            NewUserDeviceClient(cfg),
+		VXAccount:             NewVXAccountClient(cfg),
+		VXSocial:              NewVXSocialClient(cfg),
+		Wallet:                NewWalletClient(cfg),
+		WithdrawAccount:       NewWithdrawAccountClient(cfg),
+		WithdrawRecord:        NewWithdrawRecordClient(cfg),
 	}, nil
 }
 
@@ -472,75 +477,76 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                  ctx,
-		config:               cfg,
-		Artwork:              NewArtworkClient(cfg),
-		ArtworkLike:          NewArtworkLikeClient(cfg),
-		Bill:                 NewBillClient(cfg),
-		CDKInfo:              NewCDKInfoClient(cfg),
-		Campaign:             NewCampaignClient(cfg),
-		CampaignOrder:        NewCampaignOrderClient(cfg),
-		CloudFile:            NewCloudFileClient(cfg),
-		Collect:              NewCollectClient(cfg),
-		CostAccount:          NewCostAccountClient(cfg),
-		CostBill:             NewCostBillClient(cfg),
-		Device:               NewDeviceClient(cfg),
-		DeviceGpuMission:     NewDeviceGpuMissionClient(cfg),
-		DeviceOfflineRecord:  NewDeviceOfflineRecordClient(cfg),
-		DeviceRebootTime:     NewDeviceRebootTimeClient(cfg),
-		DeviceState:          NewDeviceStateClient(cfg),
-		EarnBill:             NewEarnBillClient(cfg),
-		EnumCondition:        NewEnumConditionClient(cfg),
-		EnumMissionStatus:    NewEnumMissionStatusClient(cfg),
-		ExtraService:         NewExtraServiceClient(cfg),
-		ExtraServiceOrder:    NewExtraServiceOrderClient(cfg),
-		ExtraServicePrice:    NewExtraServicePriceClient(cfg),
-		FrpcInfo:             NewFrpcInfoClient(cfg),
-		FrpsInfo:             NewFrpsInfoClient(cfg),
-		Gpu:                  NewGpuClient(cfg),
-		HmacKeyPair:          NewHmacKeyPairClient(cfg),
-		IncomeManage:         NewIncomeManageClient(cfg),
-		InputLog:             NewInputLogClient(cfg),
-		Invite:               NewInviteClient(cfg),
-		LoginRecord:          NewLoginRecordClient(cfg),
-		Lotto:                NewLottoClient(cfg),
-		LottoChanceRule:      NewLottoChanceRuleClient(cfg),
-		LottoGetCountRecord:  NewLottoGetCountRecordClient(cfg),
-		LottoPrize:           NewLottoPrizeClient(cfg),
-		LottoRecord:          NewLottoRecordClient(cfg),
-		LottoUserCount:       NewLottoUserCountClient(cfg),
-		Mission:              NewMissionClient(cfg),
-		MissionBatch:         NewMissionBatchClient(cfg),
-		MissionCategory:      NewMissionCategoryClient(cfg),
-		MissionConsumeOrder:  NewMissionConsumeOrderClient(cfg),
-		MissionExtraService:  NewMissionExtraServiceClient(cfg),
-		MissionKeyPair:       NewMissionKeyPairClient(cfg),
-		MissionKind:          NewMissionKindClient(cfg),
-		MissionOrder:         NewMissionOrderClient(cfg),
-		MissionProduceOrder:  NewMissionProduceOrderClient(cfg),
-		MissionProduction:    NewMissionProductionClient(cfg),
-		OutputLog:            NewOutputLogClient(cfg),
-		PlatformAccount:      NewPlatformAccountClient(cfg),
-		Price:                NewPriceClient(cfg),
-		ProfitAccount:        NewProfitAccountClient(cfg),
-		ProfitSetting:        NewProfitSettingClient(cfg),
-		RechargeCampaignRule: NewRechargeCampaignRuleClient(cfg),
-		RechargeOrder:        NewRechargeOrderClient(cfg),
-		RenewalAgreement:     NewRenewalAgreementClient(cfg),
-		Survey:               NewSurveyClient(cfg),
-		SurveyAnswer:         NewSurveyAnswerClient(cfg),
-		SurveyQuestion:       NewSurveyQuestionClient(cfg),
-		SurveyResponse:       NewSurveyResponseClient(cfg),
-		Symbol:               NewSymbolClient(cfg),
-		TransferOrder:        NewTransferOrderClient(cfg),
-		TroubleDeduct:        NewTroubleDeductClient(cfg),
-		User:                 NewUserClient(cfg),
-		UserDevice:           NewUserDeviceClient(cfg),
-		VXAccount:            NewVXAccountClient(cfg),
-		VXSocial:             NewVXSocialClient(cfg),
-		Wallet:               NewWalletClient(cfg),
-		WithdrawAccount:      NewWithdrawAccountClient(cfg),
-		WithdrawRecord:       NewWithdrawRecordClient(cfg),
+		ctx:                   ctx,
+		config:                cfg,
+		Artwork:               NewArtworkClient(cfg),
+		ArtworkLike:           NewArtworkLikeClient(cfg),
+		Bill:                  NewBillClient(cfg),
+		CDKInfo:               NewCDKInfoClient(cfg),
+		Campaign:              NewCampaignClient(cfg),
+		CampaignOrder:         NewCampaignOrderClient(cfg),
+		CloudFile:             NewCloudFileClient(cfg),
+		Collect:               NewCollectClient(cfg),
+		CostAccount:           NewCostAccountClient(cfg),
+		CostBill:              NewCostBillClient(cfg),
+		Device:                NewDeviceClient(cfg),
+		DeviceGpuMission:      NewDeviceGpuMissionClient(cfg),
+		DeviceOfflineRecord:   NewDeviceOfflineRecordClient(cfg),
+		DeviceRebootTime:      NewDeviceRebootTimeClient(cfg),
+		DeviceState:           NewDeviceStateClient(cfg),
+		EarnBill:              NewEarnBillClient(cfg),
+		EnumCondition:         NewEnumConditionClient(cfg),
+		EnumMissionStatus:     NewEnumMissionStatusClient(cfg),
+		ExtraService:          NewExtraServiceClient(cfg),
+		ExtraServiceOrder:     NewExtraServiceOrderClient(cfg),
+		ExtraServicePrice:     NewExtraServicePriceClient(cfg),
+		FrpcInfo:              NewFrpcInfoClient(cfg),
+		FrpsInfo:              NewFrpsInfoClient(cfg),
+		Gpu:                   NewGpuClient(cfg),
+		HmacKeyPair:           NewHmacKeyPairClient(cfg),
+		IncomeManage:          NewIncomeManageClient(cfg),
+		InputLog:              NewInputLogClient(cfg),
+		Invite:                NewInviteClient(cfg),
+		LoginRecord:           NewLoginRecordClient(cfg),
+		Lotto:                 NewLottoClient(cfg),
+		LottoChanceRule:       NewLottoChanceRuleClient(cfg),
+		LottoGetCountRecord:   NewLottoGetCountRecordClient(cfg),
+		LottoPrize:            NewLottoPrizeClient(cfg),
+		LottoRecord:           NewLottoRecordClient(cfg),
+		LottoUserCount:        NewLottoUserCountClient(cfg),
+		Mission:               NewMissionClient(cfg),
+		MissionBatch:          NewMissionBatchClient(cfg),
+		MissionCategory:       NewMissionCategoryClient(cfg),
+		MissionConsumeOrder:   NewMissionConsumeOrderClient(cfg),
+		MissionExtraService:   NewMissionExtraServiceClient(cfg),
+		MissionFailedFeedback: NewMissionFailedFeedbackClient(cfg),
+		MissionKeyPair:        NewMissionKeyPairClient(cfg),
+		MissionKind:           NewMissionKindClient(cfg),
+		MissionOrder:          NewMissionOrderClient(cfg),
+		MissionProduceOrder:   NewMissionProduceOrderClient(cfg),
+		MissionProduction:     NewMissionProductionClient(cfg),
+		OutputLog:             NewOutputLogClient(cfg),
+		PlatformAccount:       NewPlatformAccountClient(cfg),
+		Price:                 NewPriceClient(cfg),
+		ProfitAccount:         NewProfitAccountClient(cfg),
+		ProfitSetting:         NewProfitSettingClient(cfg),
+		RechargeCampaignRule:  NewRechargeCampaignRuleClient(cfg),
+		RechargeOrder:         NewRechargeOrderClient(cfg),
+		RenewalAgreement:      NewRenewalAgreementClient(cfg),
+		Survey:                NewSurveyClient(cfg),
+		SurveyAnswer:          NewSurveyAnswerClient(cfg),
+		SurveyQuestion:        NewSurveyQuestionClient(cfg),
+		SurveyResponse:        NewSurveyResponseClient(cfg),
+		Symbol:                NewSymbolClient(cfg),
+		TransferOrder:         NewTransferOrderClient(cfg),
+		TroubleDeduct:         NewTroubleDeductClient(cfg),
+		User:                  NewUserClient(cfg),
+		UserDevice:            NewUserDeviceClient(cfg),
+		VXAccount:             NewVXAccountClient(cfg),
+		VXSocial:              NewVXSocialClient(cfg),
+		Wallet:                NewWalletClient(cfg),
+		WithdrawAccount:       NewWithdrawAccountClient(cfg),
+		WithdrawRecord:        NewWithdrawRecordClient(cfg),
 	}, nil
 }
 
@@ -578,13 +584,13 @@ func (c *Client) Use(hooks ...Hook) {
 		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
 		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
-		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
-		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
-		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
-		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount, c.WithdrawRecord,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
+		c.Survey, c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol,
+		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
 	}
@@ -602,13 +608,13 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.HmacKeyPair, c.IncomeManage, c.InputLog, c.Invite, c.LoginRecord, c.Lotto,
 		c.LottoChanceRule, c.LottoGetCountRecord, c.LottoPrize, c.LottoRecord,
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
-		c.MissionConsumeOrder, c.MissionExtraService, c.MissionKeyPair, c.MissionKind,
-		c.MissionOrder, c.MissionProduceOrder, c.MissionProduction, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
-		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
-		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
-		c.WithdrawAccount, c.WithdrawRecord,
+		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
+		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
+		c.MissionProduction, c.OutputLog, c.PlatformAccount, c.Price, c.ProfitAccount,
+		c.ProfitSetting, c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement,
+		c.Survey, c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol,
+		c.TransferOrder, c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount,
+		c.VXSocial, c.Wallet, c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -697,6 +703,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MissionConsumeOrder.mutate(ctx, m)
 	case *MissionExtraServiceMutation:
 		return c.MissionExtraService.mutate(ctx, m)
+	case *MissionFailedFeedbackMutation:
+		return c.MissionFailedFeedback.mutate(ctx, m)
 	case *MissionKeyPairMutation:
 		return c.MissionKeyPair.mutate(ctx, m)
 	case *MissionKindMutation:
@@ -2827,6 +2835,22 @@ func (c *DeviceClient) QueryDeviceOfflineRecords(d *Device) *DeviceOfflineRecord
 			sqlgraph.From(device.Table, device.FieldID, id),
 			sqlgraph.To(deviceofflinerecord.Table, deviceofflinerecord.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, device.DeviceOfflineRecordsTable, device.DeviceOfflineRecordsColumn),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMissionFailedFeedbacks queries the mission_failed_feedbacks edge of a Device.
+func (c *DeviceClient) QueryMissionFailedFeedbacks(d *Device) *MissionFailedFeedbackQuery {
+	query := (&MissionFailedFeedbackClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(device.Table, device.FieldID, id),
+			sqlgraph.To(missionfailedfeedback.Table, missionfailedfeedback.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, device.MissionFailedFeedbacksTable, device.MissionFailedFeedbacksColumn),
 		)
 		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
 		return fromV, nil
@@ -7119,6 +7143,22 @@ func (c *MissionClient) QueryRebootMissions(m *Mission) *MissionQuery {
 	return query
 }
 
+// QueryMissionFailedFeedback queries the mission_failed_feedback edge of a Mission.
+func (c *MissionClient) QueryMissionFailedFeedback(m *Mission) *MissionFailedFeedbackQuery {
+	query := (&MissionFailedFeedbackClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, id),
+			sqlgraph.To(missionfailedfeedback.Table, missionfailedfeedback.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, mission.MissionFailedFeedbackTable, mission.MissionFailedFeedbackColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MissionClient) Hooks() []Hook {
 	return c.hooks.Mission
@@ -7865,6 +7905,187 @@ func (c *MissionExtraServiceClient) mutate(ctx context.Context, m *MissionExtraS
 		return (&MissionExtraServiceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown MissionExtraService mutation op: %q", m.Op())
+	}
+}
+
+// MissionFailedFeedbackClient is a client for the MissionFailedFeedback schema.
+type MissionFailedFeedbackClient struct {
+	config
+}
+
+// NewMissionFailedFeedbackClient returns a client for the MissionFailedFeedback from the given config.
+func NewMissionFailedFeedbackClient(c config) *MissionFailedFeedbackClient {
+	return &MissionFailedFeedbackClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `missionfailedfeedback.Hooks(f(g(h())))`.
+func (c *MissionFailedFeedbackClient) Use(hooks ...Hook) {
+	c.hooks.MissionFailedFeedback = append(c.hooks.MissionFailedFeedback, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `missionfailedfeedback.Intercept(f(g(h())))`.
+func (c *MissionFailedFeedbackClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MissionFailedFeedback = append(c.inters.MissionFailedFeedback, interceptors...)
+}
+
+// Create returns a builder for creating a MissionFailedFeedback entity.
+func (c *MissionFailedFeedbackClient) Create() *MissionFailedFeedbackCreate {
+	mutation := newMissionFailedFeedbackMutation(c.config, OpCreate)
+	return &MissionFailedFeedbackCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MissionFailedFeedback entities.
+func (c *MissionFailedFeedbackClient) CreateBulk(builders ...*MissionFailedFeedbackCreate) *MissionFailedFeedbackCreateBulk {
+	return &MissionFailedFeedbackCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MissionFailedFeedbackClient) MapCreateBulk(slice any, setFunc func(*MissionFailedFeedbackCreate, int)) *MissionFailedFeedbackCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MissionFailedFeedbackCreateBulk{err: fmt.Errorf("calling to MissionFailedFeedbackClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MissionFailedFeedbackCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MissionFailedFeedbackCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MissionFailedFeedback.
+func (c *MissionFailedFeedbackClient) Update() *MissionFailedFeedbackUpdate {
+	mutation := newMissionFailedFeedbackMutation(c.config, OpUpdate)
+	return &MissionFailedFeedbackUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MissionFailedFeedbackClient) UpdateOne(mff *MissionFailedFeedback) *MissionFailedFeedbackUpdateOne {
+	mutation := newMissionFailedFeedbackMutation(c.config, OpUpdateOne, withMissionFailedFeedback(mff))
+	return &MissionFailedFeedbackUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MissionFailedFeedbackClient) UpdateOneID(id int64) *MissionFailedFeedbackUpdateOne {
+	mutation := newMissionFailedFeedbackMutation(c.config, OpUpdateOne, withMissionFailedFeedbackID(id))
+	return &MissionFailedFeedbackUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MissionFailedFeedback.
+func (c *MissionFailedFeedbackClient) Delete() *MissionFailedFeedbackDelete {
+	mutation := newMissionFailedFeedbackMutation(c.config, OpDelete)
+	return &MissionFailedFeedbackDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MissionFailedFeedbackClient) DeleteOne(mff *MissionFailedFeedback) *MissionFailedFeedbackDeleteOne {
+	return c.DeleteOneID(mff.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MissionFailedFeedbackClient) DeleteOneID(id int64) *MissionFailedFeedbackDeleteOne {
+	builder := c.Delete().Where(missionfailedfeedback.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MissionFailedFeedbackDeleteOne{builder}
+}
+
+// Query returns a query builder for MissionFailedFeedback.
+func (c *MissionFailedFeedbackClient) Query() *MissionFailedFeedbackQuery {
+	return &MissionFailedFeedbackQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMissionFailedFeedback},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MissionFailedFeedback entity by its id.
+func (c *MissionFailedFeedbackClient) Get(ctx context.Context, id int64) (*MissionFailedFeedback, error) {
+	return c.Query().Where(missionfailedfeedback.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MissionFailedFeedbackClient) GetX(ctx context.Context, id int64) *MissionFailedFeedback {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a MissionFailedFeedback.
+func (c *MissionFailedFeedbackClient) QueryUser(mff *MissionFailedFeedback) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mff.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionfailedfeedback.Table, missionfailedfeedback.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionfailedfeedback.UserTable, missionfailedfeedback.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(mff.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDevice queries the device edge of a MissionFailedFeedback.
+func (c *MissionFailedFeedbackClient) QueryDevice(mff *MissionFailedFeedback) *DeviceQuery {
+	query := (&DeviceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mff.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionfailedfeedback.Table, missionfailedfeedback.FieldID, id),
+			sqlgraph.To(device.Table, device.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, missionfailedfeedback.DeviceTable, missionfailedfeedback.DeviceColumn),
+		)
+		fromV = sqlgraph.Neighbors(mff.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMission queries the mission edge of a MissionFailedFeedback.
+func (c *MissionFailedFeedbackClient) QueryMission(mff *MissionFailedFeedback) *MissionQuery {
+	query := (&MissionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mff.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(missionfailedfeedback.Table, missionfailedfeedback.FieldID, id),
+			sqlgraph.To(mission.Table, mission.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, missionfailedfeedback.MissionTable, missionfailedfeedback.MissionColumn),
+		)
+		fromV = sqlgraph.Neighbors(mff.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *MissionFailedFeedbackClient) Hooks() []Hook {
+	return c.hooks.MissionFailedFeedback
+}
+
+// Interceptors returns the client interceptors.
+func (c *MissionFailedFeedbackClient) Interceptors() []Interceptor {
+	return c.inters.MissionFailedFeedback
+}
+
+func (c *MissionFailedFeedbackClient) mutate(ctx context.Context, m *MissionFailedFeedbackMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MissionFailedFeedbackCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MissionFailedFeedbackUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MissionFailedFeedbackUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MissionFailedFeedbackDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown MissionFailedFeedback mutation op: %q", m.Op())
 	}
 }
 
@@ -12284,6 +12505,22 @@ func (c *UserClient) QueryApproveSurveyResponses(u *User) *SurveyResponseQuery {
 	return query
 }
 
+// QueryMissionFailedFeedbacks queries the mission_failed_feedbacks edge of a User.
+func (c *UserClient) QueryMissionFailedFeedbacks(u *User) *MissionFailedFeedbackQuery {
+	query := (&MissionFailedFeedbackClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(missionfailedfeedback.Table, missionfailedfeedback.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MissionFailedFeedbacksTable, user.MissionFailedFeedbacksColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -13309,12 +13546,12 @@ type (
 		HmacKeyPair, IncomeManage, InputLog, Invite, LoginRecord, Lotto,
 		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
 		Mission, MissionBatch, MissionCategory, MissionConsumeOrder,
-		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
-		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
-		WithdrawAccount, WithdrawRecord []ent.Hook
+		MissionExtraService, MissionFailedFeedback, MissionKeyPair, MissionKind,
+		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount, WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder, CloudFile,
@@ -13324,11 +13561,11 @@ type (
 		HmacKeyPair, IncomeManage, InputLog, Invite, LoginRecord, Lotto,
 		LottoChanceRule, LottoGetCountRecord, LottoPrize, LottoRecord, LottoUserCount,
 		Mission, MissionBatch, MissionCategory, MissionConsumeOrder,
-		MissionExtraService, MissionKeyPair, MissionKind, MissionOrder,
-		MissionProduceOrder, MissionProduction, OutputLog, PlatformAccount, Price,
-		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
-		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
-		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
-		WithdrawAccount, WithdrawRecord []ent.Interceptor
+		MissionExtraService, MissionFailedFeedback, MissionKeyPair, MissionKind,
+		MissionOrder, MissionProduceOrder, MissionProduction, OutputLog,
+		PlatformAccount, Price, ProfitAccount, ProfitSetting, RechargeCampaignRule,
+		RechargeOrder, RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion,
+		SurveyResponse, Symbol, TransferOrder, TroubleDeduct, User, UserDevice,
+		VXAccount, VXSocial, Wallet, WithdrawAccount, WithdrawRecord []ent.Interceptor
 	}
 )

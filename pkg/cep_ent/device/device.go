@@ -87,6 +87,8 @@ const (
 	EdgeDeviceStates = "device_states"
 	// EdgeDeviceOfflineRecords holds the string denoting the device_offline_records edge name in mutations.
 	EdgeDeviceOfflineRecords = "device_offline_records"
+	// EdgeMissionFailedFeedbacks holds the string denoting the mission_failed_feedbacks edge name in mutations.
+	EdgeMissionFailedFeedbacks = "mission_failed_feedbacks"
 	// Table holds the table name of the device in the database.
 	Table = "devices"
 	// UserTable is the table that holds the user relation/edge.
@@ -166,6 +168,13 @@ const (
 	DeviceOfflineRecordsInverseTable = "device_offline_records"
 	// DeviceOfflineRecordsColumn is the table column denoting the device_offline_records relation/edge.
 	DeviceOfflineRecordsColumn = "device_id"
+	// MissionFailedFeedbacksTable is the table that holds the mission_failed_feedbacks relation/edge.
+	MissionFailedFeedbacksTable = "mission_failed_feedbacks"
+	// MissionFailedFeedbacksInverseTable is the table name for the MissionFailedFeedback entity.
+	// It exists in this package in order to avoid circular dependency with the "missionfailedfeedback" package.
+	MissionFailedFeedbacksInverseTable = "mission_failed_feedbacks"
+	// MissionFailedFeedbacksColumn is the table column denoting the mission_failed_feedbacks relation/edge.
+	MissionFailedFeedbacksColumn = "device_id"
 )
 
 // Columns holds all SQL columns for device fields.
@@ -603,6 +612,20 @@ func ByDeviceOfflineRecords(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newDeviceOfflineRecordsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionFailedFeedbacksCount orders the results by mission_failed_feedbacks count.
+func ByMissionFailedFeedbacksCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionFailedFeedbacksStep(), opts...)
+	}
+}
+
+// ByMissionFailedFeedbacks orders the results by mission_failed_feedbacks terms.
+func ByMissionFailedFeedbacks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionFailedFeedbacksStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -678,5 +701,12 @@ func newDeviceOfflineRecordsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DeviceOfflineRecordsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, DeviceOfflineRecordsTable, DeviceOfflineRecordsColumn),
+	)
+}
+func newMissionFailedFeedbacksStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionFailedFeedbacksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionFailedFeedbacksTable, MissionFailedFeedbacksColumn),
 	)
 }

@@ -159,6 +159,9 @@ type MissionConsumeOrder func(*sql.Selector)
 // MissionExtraService is the predicate function for missionextraservice builders.
 type MissionExtraService func(*sql.Selector)
 
+// MissionFailedFeedback is the predicate function for missionfailedfeedback builders.
+type MissionFailedFeedback func(*sql.Selector)
+
 // MissionKeyPair is the predicate function for missionkeypair builders.
 type MissionKeyPair func(*sql.Selector)
 

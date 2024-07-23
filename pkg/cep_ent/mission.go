@@ -14,6 +14,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
@@ -150,9 +151,11 @@ type MissionEdges struct {
 	ExtraServiceOrders []*ExtraServiceOrder `json:"extra_service_orders,omitempty"`
 	// RebootMissions holds the value of the reboot_missions edge.
 	RebootMissions []*Mission `json:"reboot_missions,omitempty"`
+	// MissionFailedFeedback holds the value of the mission_failed_feedback edge.
+	MissionFailedFeedback *MissionFailedFeedback `json:"mission_failed_feedback,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [15]bool
+	loadedTypes [16]bool
 }
 
 // MissionKindOrErr returns the MissionKind value or an error if the edge
@@ -312,6 +315,19 @@ func (e MissionEdges) RebootMissionsOrErr() ([]*Mission, error) {
 		return e.RebootMissions, nil
 	}
 	return nil, &NotLoadedError{edge: "reboot_missions"}
+}
+
+// MissionFailedFeedbackOrErr returns the MissionFailedFeedback value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MissionEdges) MissionFailedFeedbackOrErr() (*MissionFailedFeedback, error) {
+	if e.loadedTypes[15] {
+		if e.MissionFailedFeedback == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: missionfailedfeedback.Label}
+		}
+		return e.MissionFailedFeedback, nil
+	}
+	return nil, &NotLoadedError{edge: "mission_failed_feedback"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -714,6 +730,11 @@ func (m *Mission) QueryExtraServiceOrders() *ExtraServiceOrderQuery {
 // QueryRebootMissions queries the "reboot_missions" edge of the Mission entity.
 func (m *Mission) QueryRebootMissions() *MissionQuery {
 	return NewMissionClient(m.config).QueryRebootMissions(m)
+}
+
+// QueryMissionFailedFeedback queries the "mission_failed_feedback" edge of the Mission entity.
+func (m *Mission) QueryMissionFailedFeedback() *MissionFailedFeedbackQuery {
+	return NewMissionClient(m.config).QueryMissionFailedFeedback(m)
 }
 
 // Update returns a builder for updating this Mission.

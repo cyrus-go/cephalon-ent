@@ -46,6 +46,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missioncategory"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -2275,6 +2276,53 @@ func init() {
 	missionextraserviceDescID := missionextraserviceMixinFields0[0].Descriptor()
 	// missionextraservice.DefaultID holds the default value on creation for the id field.
 	missionextraservice.DefaultID = missionextraserviceDescID.Default.(func() int64)
+	missionfailedfeedbackMixin := schema.MissionFailedFeedback{}.Mixin()
+	missionfailedfeedbackMixinFields0 := missionfailedfeedbackMixin[0].Fields()
+	_ = missionfailedfeedbackMixinFields0
+	missionfailedfeedbackFields := schema.MissionFailedFeedback{}.Fields()
+	_ = missionfailedfeedbackFields
+	// missionfailedfeedbackDescCreatedBy is the schema descriptor for created_by field.
+	missionfailedfeedbackDescCreatedBy := missionfailedfeedbackMixinFields0[1].Descriptor()
+	// missionfailedfeedback.DefaultCreatedBy holds the default value on creation for the created_by field.
+	missionfailedfeedback.DefaultCreatedBy = missionfailedfeedbackDescCreatedBy.Default.(int64)
+	// missionfailedfeedbackDescUpdatedBy is the schema descriptor for updated_by field.
+	missionfailedfeedbackDescUpdatedBy := missionfailedfeedbackMixinFields0[2].Descriptor()
+	// missionfailedfeedback.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	missionfailedfeedback.DefaultUpdatedBy = missionfailedfeedbackDescUpdatedBy.Default.(int64)
+	// missionfailedfeedbackDescCreatedAt is the schema descriptor for created_at field.
+	missionfailedfeedbackDescCreatedAt := missionfailedfeedbackMixinFields0[3].Descriptor()
+	// missionfailedfeedback.DefaultCreatedAt holds the default value on creation for the created_at field.
+	missionfailedfeedback.DefaultCreatedAt = missionfailedfeedbackDescCreatedAt.Default.(func() time.Time)
+	// missionfailedfeedbackDescUpdatedAt is the schema descriptor for updated_at field.
+	missionfailedfeedbackDescUpdatedAt := missionfailedfeedbackMixinFields0[4].Descriptor()
+	// missionfailedfeedback.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	missionfailedfeedback.DefaultUpdatedAt = missionfailedfeedbackDescUpdatedAt.Default.(func() time.Time)
+	// missionfailedfeedback.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	missionfailedfeedback.UpdateDefaultUpdatedAt = missionfailedfeedbackDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// missionfailedfeedbackDescDeletedAt is the schema descriptor for deleted_at field.
+	missionfailedfeedbackDescDeletedAt := missionfailedfeedbackMixinFields0[5].Descriptor()
+	// missionfailedfeedback.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	missionfailedfeedback.DefaultDeletedAt = missionfailedfeedbackDescDeletedAt.Default.(time.Time)
+	// missionfailedfeedbackDescUserID is the schema descriptor for user_id field.
+	missionfailedfeedbackDescUserID := missionfailedfeedbackFields[0].Descriptor()
+	// missionfailedfeedback.DefaultUserID holds the default value on creation for the user_id field.
+	missionfailedfeedback.DefaultUserID = missionfailedfeedbackDescUserID.Default.(int64)
+	// missionfailedfeedbackDescDeviceID is the schema descriptor for device_id field.
+	missionfailedfeedbackDescDeviceID := missionfailedfeedbackFields[1].Descriptor()
+	// missionfailedfeedback.DefaultDeviceID holds the default value on creation for the device_id field.
+	missionfailedfeedback.DefaultDeviceID = missionfailedfeedbackDescDeviceID.Default.(int64)
+	// missionfailedfeedbackDescMissionID is the schema descriptor for mission_id field.
+	missionfailedfeedbackDescMissionID := missionfailedfeedbackFields[2].Descriptor()
+	// missionfailedfeedback.DefaultMissionID holds the default value on creation for the mission_id field.
+	missionfailedfeedback.DefaultMissionID = missionfailedfeedbackDescMissionID.Default.(int64)
+	// missionfailedfeedbackDescMissionName is the schema descriptor for mission_name field.
+	missionfailedfeedbackDescMissionName := missionfailedfeedbackFields[3].Descriptor()
+	// missionfailedfeedback.DefaultMissionName holds the default value on creation for the mission_name field.
+	missionfailedfeedback.DefaultMissionName = missionfailedfeedbackDescMissionName.Default.(string)
+	// missionfailedfeedbackDescID is the schema descriptor for id field.
+	missionfailedfeedbackDescID := missionfailedfeedbackMixinFields0[0].Descriptor()
+	// missionfailedfeedback.DefaultID holds the default value on creation for the id field.
+	missionfailedfeedback.DefaultID = missionfailedfeedbackDescID.Default.(func() int64)
 	missionkeypairMixin := schema.MissionKeyPair{}.Mixin()
 	missionkeypairMixinFields0 := missionkeypairMixin[0].Fields()
 	_ = missionkeypairMixinFields0

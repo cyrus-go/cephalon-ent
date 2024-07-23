@@ -133,6 +133,8 @@ const (
 	EdgeExtraServiceOrders = "extra_service_orders"
 	// EdgeRebootMissions holds the string denoting the reboot_missions edge name in mutations.
 	EdgeRebootMissions = "reboot_missions"
+	// EdgeMissionFailedFeedback holds the string denoting the mission_failed_feedback edge name in mutations.
+	EdgeMissionFailedFeedback = "mission_failed_feedback"
 	// Table holds the table name of the mission in the database.
 	Table = "missions"
 	// MissionKindTable is the table that holds the mission_kind relation/edge.
@@ -234,6 +236,13 @@ const (
 	RebootMissionsTable = "missions"
 	// RebootMissionsColumn is the table column denoting the reboot_missions relation/edge.
 	RebootMissionsColumn = "old_mission_id"
+	// MissionFailedFeedbackTable is the table that holds the mission_failed_feedback relation/edge.
+	MissionFailedFeedbackTable = "mission_failed_feedbacks"
+	// MissionFailedFeedbackInverseTable is the table name for the MissionFailedFeedback entity.
+	// It exists in this package in order to avoid circular dependency with the "missionfailedfeedback" package.
+	MissionFailedFeedbackInverseTable = "mission_failed_feedbacks"
+	// MissionFailedFeedbackColumn is the table column denoting the mission_failed_feedback relation/edge.
+	MissionFailedFeedbackColumn = "mission_id"
 )
 
 // Columns holds all SQL columns for mission fields.
@@ -843,6 +852,13 @@ func ByRebootMissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newRebootMissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionFailedFeedbackField orders the results by mission_failed_feedback field.
+func ByMissionFailedFeedbackField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionFailedFeedbackStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newMissionKindStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -946,5 +962,12 @@ func newRebootMissionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RebootMissionsTable, RebootMissionsColumn),
+	)
+}
+func newMissionFailedFeedbackStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionFailedFeedbackInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, MissionFailedFeedbackTable, MissionFailedFeedbackColumn),
 	)
 }

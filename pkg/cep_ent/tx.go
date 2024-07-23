@@ -92,6 +92,8 @@ type Tx struct {
 	MissionConsumeOrder *MissionConsumeOrderClient
 	// MissionExtraService is the client for interacting with the MissionExtraService builders.
 	MissionExtraService *MissionExtraServiceClient
+	// MissionFailedFeedback is the client for interacting with the MissionFailedFeedback builders.
+	MissionFailedFeedback *MissionFailedFeedbackClient
 	// MissionKeyPair is the client for interacting with the MissionKeyPair builders.
 	MissionKeyPair *MissionKeyPairClient
 	// MissionKind is the client for interacting with the MissionKind builders.
@@ -317,6 +319,7 @@ func (tx *Tx) init() {
 	tx.MissionCategory = NewMissionCategoryClient(tx.config)
 	tx.MissionConsumeOrder = NewMissionConsumeOrderClient(tx.config)
 	tx.MissionExtraService = NewMissionExtraServiceClient(tx.config)
+	tx.MissionFailedFeedback = NewMissionFailedFeedbackClient(tx.config)
 	tx.MissionKeyPair = NewMissionKeyPairClient(tx.config)
 	tx.MissionKind = NewMissionKindClient(tx.config)
 	tx.MissionOrder = NewMissionOrderClient(tx.config)

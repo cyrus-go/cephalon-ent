@@ -18,6 +18,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -31,27 +32,28 @@ import (
 // MissionQuery is the builder for querying Mission entities.
 type MissionQuery struct {
 	config
-	ctx                      *QueryContext
-	order                    []mission.OrderOption
-	inters                   []Interceptor
-	predicates               []predicate.Mission
-	withMissionKind          *MissionKindQuery
-	withUser                 *UserQuery
-	withKeyPair              *HmacKeyPairQuery
-	withMissionBatch         *MissionBatchQuery
-	withOldMission           *MissionQuery
-	withMissionKeyPairs      *MissionKeyPairQuery
-	withMissionConsumeOrder  *MissionConsumeOrderQuery
-	withMissionProduceOrders *MissionProduceOrderQuery
-	withMissionProductions   *MissionProductionQuery
-	withMissionOrders        *MissionOrderQuery
-	withRenewalAgreements    *RenewalAgreementQuery
-	withMissionExtraServices *MissionExtraServiceQuery
-	withExtraServices        *ExtraServiceQuery
-	withExtraServiceOrders   *ExtraServiceOrderQuery
-	withRebootMissions       *MissionQuery
-	withFKs                  bool
-	modifiers                []func(*sql.Selector)
+	ctx                       *QueryContext
+	order                     []mission.OrderOption
+	inters                    []Interceptor
+	predicates                []predicate.Mission
+	withMissionKind           *MissionKindQuery
+	withUser                  *UserQuery
+	withKeyPair               *HmacKeyPairQuery
+	withMissionBatch          *MissionBatchQuery
+	withOldMission            *MissionQuery
+	withMissionKeyPairs       *MissionKeyPairQuery
+	withMissionConsumeOrder   *MissionConsumeOrderQuery
+	withMissionProduceOrders  *MissionProduceOrderQuery
+	withMissionProductions    *MissionProductionQuery
+	withMissionOrders         *MissionOrderQuery
+	withRenewalAgreements     *RenewalAgreementQuery
+	withMissionExtraServices  *MissionExtraServiceQuery
+	withExtraServices         *ExtraServiceQuery
+	withExtraServiceOrders    *ExtraServiceOrderQuery
+	withRebootMissions        *MissionQuery
+	withMissionFailedFeedback *MissionFailedFeedbackQuery
+	withFKs                   bool
+	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -418,6 +420,28 @@ func (mq *MissionQuery) QueryRebootMissions() *MissionQuery {
 	return query
 }
 
+// QueryMissionFailedFeedback chains the current query on the "mission_failed_feedback" edge.
+func (mq *MissionQuery) QueryMissionFailedFeedback() *MissionFailedFeedbackQuery {
+	query := (&MissionFailedFeedbackClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mission.Table, mission.FieldID, selector),
+			sqlgraph.To(missionfailedfeedback.Table, missionfailedfeedback.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, mission.MissionFailedFeedbackTable, mission.MissionFailedFeedbackColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Mission entity from the query.
 // Returns a *NotFoundError when no Mission was found.
 func (mq *MissionQuery) First(ctx context.Context) (*Mission, error) {
@@ -605,26 +629,27 @@ func (mq *MissionQuery) Clone() *MissionQuery {
 		return nil
 	}
 	return &MissionQuery{
-		config:                   mq.config,
-		ctx:                      mq.ctx.Clone(),
-		order:                    append([]mission.OrderOption{}, mq.order...),
-		inters:                   append([]Interceptor{}, mq.inters...),
-		predicates:               append([]predicate.Mission{}, mq.predicates...),
-		withMissionKind:          mq.withMissionKind.Clone(),
-		withUser:                 mq.withUser.Clone(),
-		withKeyPair:              mq.withKeyPair.Clone(),
-		withMissionBatch:         mq.withMissionBatch.Clone(),
-		withOldMission:           mq.withOldMission.Clone(),
-		withMissionKeyPairs:      mq.withMissionKeyPairs.Clone(),
-		withMissionConsumeOrder:  mq.withMissionConsumeOrder.Clone(),
-		withMissionProduceOrders: mq.withMissionProduceOrders.Clone(),
-		withMissionProductions:   mq.withMissionProductions.Clone(),
-		withMissionOrders:        mq.withMissionOrders.Clone(),
-		withRenewalAgreements:    mq.withRenewalAgreements.Clone(),
-		withMissionExtraServices: mq.withMissionExtraServices.Clone(),
-		withExtraServices:        mq.withExtraServices.Clone(),
-		withExtraServiceOrders:   mq.withExtraServiceOrders.Clone(),
-		withRebootMissions:       mq.withRebootMissions.Clone(),
+		config:                    mq.config,
+		ctx:                       mq.ctx.Clone(),
+		order:                     append([]mission.OrderOption{}, mq.order...),
+		inters:                    append([]Interceptor{}, mq.inters...),
+		predicates:                append([]predicate.Mission{}, mq.predicates...),
+		withMissionKind:           mq.withMissionKind.Clone(),
+		withUser:                  mq.withUser.Clone(),
+		withKeyPair:               mq.withKeyPair.Clone(),
+		withMissionBatch:          mq.withMissionBatch.Clone(),
+		withOldMission:            mq.withOldMission.Clone(),
+		withMissionKeyPairs:       mq.withMissionKeyPairs.Clone(),
+		withMissionConsumeOrder:   mq.withMissionConsumeOrder.Clone(),
+		withMissionProduceOrders:  mq.withMissionProduceOrders.Clone(),
+		withMissionProductions:    mq.withMissionProductions.Clone(),
+		withMissionOrders:         mq.withMissionOrders.Clone(),
+		withRenewalAgreements:     mq.withRenewalAgreements.Clone(),
+		withMissionExtraServices:  mq.withMissionExtraServices.Clone(),
+		withExtraServices:         mq.withExtraServices.Clone(),
+		withExtraServiceOrders:    mq.withExtraServiceOrders.Clone(),
+		withRebootMissions:        mq.withRebootMissions.Clone(),
+		withMissionFailedFeedback: mq.withMissionFailedFeedback.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -796,6 +821,17 @@ func (mq *MissionQuery) WithRebootMissions(opts ...func(*MissionQuery)) *Mission
 	return mq
 }
 
+// WithMissionFailedFeedback tells the query-builder to eager-load the nodes that are connected to
+// the "mission_failed_feedback" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MissionQuery) WithMissionFailedFeedback(opts ...func(*MissionFailedFeedbackQuery)) *MissionQuery {
+	query := (&MissionFailedFeedbackClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withMissionFailedFeedback = query
+	return mq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -875,7 +911,7 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 		nodes       = []*Mission{}
 		withFKs     = mq.withFKs
 		_spec       = mq.querySpec()
-		loadedTypes = [15]bool{
+		loadedTypes = [16]bool{
 			mq.withMissionKind != nil,
 			mq.withUser != nil,
 			mq.withKeyPair != nil,
@@ -891,6 +927,7 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 			mq.withExtraServices != nil,
 			mq.withExtraServiceOrders != nil,
 			mq.withRebootMissions != nil,
+			mq.withMissionFailedFeedback != nil,
 		}
 	)
 	if withFKs {
@@ -1023,6 +1060,12 @@ func (mq *MissionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Miss
 		if err := mq.loadRebootMissions(ctx, query, nodes,
 			func(n *Mission) { n.Edges.RebootMissions = []*Mission{} },
 			func(n *Mission, e *Mission) { n.Edges.RebootMissions = append(n.Edges.RebootMissions, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withMissionFailedFeedback; query != nil {
+		if err := mq.loadMissionFailedFeedback(ctx, query, nodes, nil,
+			func(n *Mission, e *MissionFailedFeedback) { n.Edges.MissionFailedFeedback = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -1469,6 +1512,33 @@ func (mq *MissionQuery) loadRebootMissions(ctx context.Context, query *MissionQu
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "old_mission_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (mq *MissionQuery) loadMissionFailedFeedback(ctx context.Context, query *MissionFailedFeedbackQuery, nodes []*Mission, init func(*Mission), assign func(*Mission, *MissionFailedFeedback)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Mission)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionfailedfeedback.FieldMissionID)
+	}
+	query.Where(predicate.MissionFailedFeedback(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mission.MissionFailedFeedbackColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MissionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mission_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

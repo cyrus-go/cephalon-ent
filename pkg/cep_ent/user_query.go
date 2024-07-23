@@ -31,6 +31,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -105,6 +106,7 @@ type UserQuery struct {
 	withApproveIncomeManages   *IncomeManageQuery
 	withSurveyResponses        *SurveyResponseQuery
 	withApproveSurveyResponses *SurveyResponseQuery
+	withMissionFailedFeedbacks *MissionFailedFeedbackQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -1176,6 +1178,28 @@ func (uq *UserQuery) QueryApproveSurveyResponses() *SurveyResponseQuery {
 	return query
 }
 
+// QueryMissionFailedFeedbacks chains the current query on the "mission_failed_feedbacks" edge.
+func (uq *UserQuery) QueryMissionFailedFeedbacks() *MissionFailedFeedbackQuery {
+	query := (&MissionFailedFeedbackClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(missionfailedfeedback.Table, missionfailedfeedback.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.MissionFailedFeedbacksTable, user.MissionFailedFeedbacksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first User entity from the query.
 // Returns a *NotFoundError when no User was found.
 func (uq *UserQuery) First(ctx context.Context) (*User, error) {
@@ -1415,6 +1439,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withApproveIncomeManages:   uq.withApproveIncomeManages.Clone(),
 		withSurveyResponses:        uq.withSurveyResponses.Clone(),
 		withApproveSurveyResponses: uq.withApproveSurveyResponses.Clone(),
+		withMissionFailedFeedbacks: uq.withMissionFailedFeedbacks.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -1938,6 +1963,17 @@ func (uq *UserQuery) WithApproveSurveyResponses(opts ...func(*SurveyResponseQuer
 	return uq
 }
 
+// WithMissionFailedFeedbacks tells the query-builder to eager-load the nodes that are connected to
+// the "mission_failed_feedbacks" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithMissionFailedFeedbacks(opts ...func(*MissionFailedFeedbackQuery)) *UserQuery {
+	query := (&MissionFailedFeedbackClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withMissionFailedFeedbacks = query
+	return uq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -2016,7 +2052,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [47]bool{
+		loadedTypes = [48]bool{
 			uq.withVxAccounts != nil,
 			uq.withCollects != nil,
 			uq.withDevices != nil,
@@ -2064,6 +2100,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withApproveIncomeManages != nil,
 			uq.withSurveyResponses != nil,
 			uq.withApproveSurveyResponses != nil,
+			uq.withMissionFailedFeedbacks != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -2423,6 +2460,15 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			func(n *User) { n.Edges.ApproveSurveyResponses = []*SurveyResponse{} },
 			func(n *User, e *SurveyResponse) {
 				n.Edges.ApproveSurveyResponses = append(n.Edges.ApproveSurveyResponses, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withMissionFailedFeedbacks; query != nil {
+		if err := uq.loadMissionFailedFeedbacks(ctx, query, nodes,
+			func(n *User) { n.Edges.MissionFailedFeedbacks = []*MissionFailedFeedback{} },
+			func(n *User, e *MissionFailedFeedback) {
+				n.Edges.MissionFailedFeedbacks = append(n.Edges.MissionFailedFeedbacks, e)
 			}); err != nil {
 			return nil, err
 		}
@@ -3826,6 +3872,36 @@ func (uq *UserQuery) loadApproveSurveyResponses(ctx context.Context, query *Surv
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "approved_by" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadMissionFailedFeedbacks(ctx context.Context, query *MissionFailedFeedbackQuery, nodes []*User, init func(*User), assign func(*User, *MissionFailedFeedback)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(missionfailedfeedback.FieldUserID)
+	}
+	query.Where(predicate.MissionFailedFeedback(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.MissionFailedFeedbacksColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

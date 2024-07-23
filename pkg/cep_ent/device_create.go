@@ -17,6 +17,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicereboottime"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/devicestate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/frpcinfo"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -529,6 +530,21 @@ func (dc *DeviceCreate) AddDeviceOfflineRecords(d ...*DeviceOfflineRecord) *Devi
 		ids[i] = d[i].ID
 	}
 	return dc.AddDeviceOfflineRecordIDs(ids...)
+}
+
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (dc *DeviceCreate) AddMissionFailedFeedbackIDs(ids ...int64) *DeviceCreate {
+	dc.mutation.AddMissionFailedFeedbackIDs(ids...)
+	return dc
+}
+
+// AddMissionFailedFeedbacks adds the "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (dc *DeviceCreate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *DeviceCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return dc.AddMissionFailedFeedbackIDs(ids...)
 }
 
 // Mutation returns the DeviceMutation object of the builder.
@@ -1065,6 +1081,22 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(deviceofflinerecord.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.MissionFailedFeedbacksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   device.MissionFailedFeedbacksTable,
+			Columns: []string{device.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -2381,6 +2381,29 @@ func HasRebootMissionsWith(preds ...predicate.Mission) predicate.Mission {
 	})
 }
 
+// HasMissionFailedFeedback applies the HasEdge predicate on the "mission_failed_feedback" edge.
+func HasMissionFailedFeedback() predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, MissionFailedFeedbackTable, MissionFailedFeedbackColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMissionFailedFeedbackWith applies the HasEdge predicate on the "mission_failed_feedback" edge with a given conditions (other predicates).
+func HasMissionFailedFeedbackWith(preds ...predicate.MissionFailedFeedback) predicate.Mission {
+	return predicate.Mission(func(s *sql.Selector) {
+		step := newMissionFailedFeedbackStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Mission) predicate.Mission {
 	return predicate.Mission(sql.AndPredicates(predicates...))

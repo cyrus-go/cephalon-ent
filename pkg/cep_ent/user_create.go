@@ -31,6 +31,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionbatch"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
@@ -1118,6 +1119,21 @@ func (uc *UserCreate) AddApproveSurveyResponses(s ...*SurveyResponse) *UserCreat
 		ids[i] = s[i].ID
 	}
 	return uc.AddApproveSurveyResponseIDs(ids...)
+}
+
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (uc *UserCreate) AddMissionFailedFeedbackIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddMissionFailedFeedbackIDs(ids...)
+	return uc
+}
+
+// AddMissionFailedFeedbacks adds the "mission_failed_feedbacks" edges to the MissionFailedFeedback entity.
+func (uc *UserCreate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddMissionFailedFeedbackIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -2223,6 +2239,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(surveyresponse.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.MissionFailedFeedbacksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.MissionFailedFeedbacksTable,
+			Columns: []string{user.MissionFailedFeedbacksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

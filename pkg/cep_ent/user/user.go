@@ -160,6 +160,8 @@ const (
 	EdgeSurveyResponses = "survey_responses"
 	// EdgeApproveSurveyResponses holds the string denoting the approve_survey_responses edge name in mutations.
 	EdgeApproveSurveyResponses = "approve_survey_responses"
+	// EdgeMissionFailedFeedbacks holds the string denoting the mission_failed_feedbacks edge name in mutations.
+	EdgeMissionFailedFeedbacks = "mission_failed_feedbacks"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -479,6 +481,13 @@ const (
 	ApproveSurveyResponsesInverseTable = "survey_responses"
 	// ApproveSurveyResponsesColumn is the table column denoting the approve_survey_responses relation/edge.
 	ApproveSurveyResponsesColumn = "approved_by"
+	// MissionFailedFeedbacksTable is the table that holds the mission_failed_feedbacks relation/edge.
+	MissionFailedFeedbacksTable = "mission_failed_feedbacks"
+	// MissionFailedFeedbacksInverseTable is the table name for the MissionFailedFeedback entity.
+	// It exists in this package in order to avoid circular dependency with the "missionfailedfeedback" package.
+	MissionFailedFeedbacksInverseTable = "mission_failed_feedbacks"
+	// MissionFailedFeedbacksColumn is the table column denoting the mission_failed_feedbacks relation/edge.
+	MissionFailedFeedbacksColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -1353,6 +1362,20 @@ func ByApproveSurveyResponses(term sql.OrderTerm, terms ...sql.OrderTerm) OrderO
 		sqlgraph.OrderByNeighborTerms(s, newApproveSurveyResponsesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByMissionFailedFeedbacksCount orders the results by mission_failed_feedbacks count.
+func ByMissionFailedFeedbacksCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMissionFailedFeedbacksStep(), opts...)
+	}
+}
+
+// ByMissionFailedFeedbacks orders the results by mission_failed_feedbacks terms.
+func ByMissionFailedFeedbacks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMissionFailedFeedbacksStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1680,5 +1703,12 @@ func newApproveSurveyResponsesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ApproveSurveyResponsesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ApproveSurveyResponsesTable, ApproveSurveyResponsesColumn),
+	)
+}
+func newMissionFailedFeedbacksStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MissionFailedFeedbacksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MissionFailedFeedbacksTable, MissionFailedFeedbacksColumn),
 	)
 }

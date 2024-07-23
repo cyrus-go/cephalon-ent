@@ -51,6 +51,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missioncategory"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionconsumeorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionextraservice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkeypair"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionkind"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
@@ -91,73 +92,74 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeArtwork              = "Artwork"
-	TypeArtworkLike          = "ArtworkLike"
-	TypeBill                 = "Bill"
-	TypeCDKInfo              = "CDKInfo"
-	TypeCampaign             = "Campaign"
-	TypeCampaignOrder        = "CampaignOrder"
-	TypeCloudFile            = "CloudFile"
-	TypeCollect              = "Collect"
-	TypeCostAccount          = "CostAccount"
-	TypeCostBill             = "CostBill"
-	TypeDevice               = "Device"
-	TypeDeviceGpuMission     = "DeviceGpuMission"
-	TypeDeviceOfflineRecord  = "DeviceOfflineRecord"
-	TypeDeviceRebootTime     = "DeviceRebootTime"
-	TypeDeviceState          = "DeviceState"
-	TypeEarnBill             = "EarnBill"
-	TypeEnumCondition        = "EnumCondition"
-	TypeEnumMissionStatus    = "EnumMissionStatus"
-	TypeExtraService         = "ExtraService"
-	TypeExtraServiceOrder    = "ExtraServiceOrder"
-	TypeExtraServicePrice    = "ExtraServicePrice"
-	TypeFrpcInfo             = "FrpcInfo"
-	TypeFrpsInfo             = "FrpsInfo"
-	TypeGpu                  = "Gpu"
-	TypeHmacKeyPair          = "HmacKeyPair"
-	TypeIncomeManage         = "IncomeManage"
-	TypeInputLog             = "InputLog"
-	TypeInvite               = "Invite"
-	TypeLoginRecord          = "LoginRecord"
-	TypeLotto                = "Lotto"
-	TypeLottoChanceRule      = "LottoChanceRule"
-	TypeLottoGetCountRecord  = "LottoGetCountRecord"
-	TypeLottoPrize           = "LottoPrize"
-	TypeLottoRecord          = "LottoRecord"
-	TypeLottoUserCount       = "LottoUserCount"
-	TypeMission              = "Mission"
-	TypeMissionBatch         = "MissionBatch"
-	TypeMissionCategory      = "MissionCategory"
-	TypeMissionConsumeOrder  = "MissionConsumeOrder"
-	TypeMissionExtraService  = "MissionExtraService"
-	TypeMissionKeyPair       = "MissionKeyPair"
-	TypeMissionKind          = "MissionKind"
-	TypeMissionOrder         = "MissionOrder"
-	TypeMissionProduceOrder  = "MissionProduceOrder"
-	TypeMissionProduction    = "MissionProduction"
-	TypeOutputLog            = "OutputLog"
-	TypePlatformAccount      = "PlatformAccount"
-	TypePrice                = "Price"
-	TypeProfitAccount        = "ProfitAccount"
-	TypeProfitSetting        = "ProfitSetting"
-	TypeRechargeCampaignRule = "RechargeCampaignRule"
-	TypeRechargeOrder        = "RechargeOrder"
-	TypeRenewalAgreement     = "RenewalAgreement"
-	TypeSurvey               = "Survey"
-	TypeSurveyAnswer         = "SurveyAnswer"
-	TypeSurveyQuestion       = "SurveyQuestion"
-	TypeSurveyResponse       = "SurveyResponse"
-	TypeSymbol               = "Symbol"
-	TypeTransferOrder        = "TransferOrder"
-	TypeTroubleDeduct        = "TroubleDeduct"
-	TypeUser                 = "User"
-	TypeUserDevice           = "UserDevice"
-	TypeVXAccount            = "VXAccount"
-	TypeVXSocial             = "VXSocial"
-	TypeWallet               = "Wallet"
-	TypeWithdrawAccount      = "WithdrawAccount"
-	TypeWithdrawRecord       = "WithdrawRecord"
+	TypeArtwork               = "Artwork"
+	TypeArtworkLike           = "ArtworkLike"
+	TypeBill                  = "Bill"
+	TypeCDKInfo               = "CDKInfo"
+	TypeCampaign              = "Campaign"
+	TypeCampaignOrder         = "CampaignOrder"
+	TypeCloudFile             = "CloudFile"
+	TypeCollect               = "Collect"
+	TypeCostAccount           = "CostAccount"
+	TypeCostBill              = "CostBill"
+	TypeDevice                = "Device"
+	TypeDeviceGpuMission      = "DeviceGpuMission"
+	TypeDeviceOfflineRecord   = "DeviceOfflineRecord"
+	TypeDeviceRebootTime      = "DeviceRebootTime"
+	TypeDeviceState           = "DeviceState"
+	TypeEarnBill              = "EarnBill"
+	TypeEnumCondition         = "EnumCondition"
+	TypeEnumMissionStatus     = "EnumMissionStatus"
+	TypeExtraService          = "ExtraService"
+	TypeExtraServiceOrder     = "ExtraServiceOrder"
+	TypeExtraServicePrice     = "ExtraServicePrice"
+	TypeFrpcInfo              = "FrpcInfo"
+	TypeFrpsInfo              = "FrpsInfo"
+	TypeGpu                   = "Gpu"
+	TypeHmacKeyPair           = "HmacKeyPair"
+	TypeIncomeManage          = "IncomeManage"
+	TypeInputLog              = "InputLog"
+	TypeInvite                = "Invite"
+	TypeLoginRecord           = "LoginRecord"
+	TypeLotto                 = "Lotto"
+	TypeLottoChanceRule       = "LottoChanceRule"
+	TypeLottoGetCountRecord   = "LottoGetCountRecord"
+	TypeLottoPrize            = "LottoPrize"
+	TypeLottoRecord           = "LottoRecord"
+	TypeLottoUserCount        = "LottoUserCount"
+	TypeMission               = "Mission"
+	TypeMissionBatch          = "MissionBatch"
+	TypeMissionCategory       = "MissionCategory"
+	TypeMissionConsumeOrder   = "MissionConsumeOrder"
+	TypeMissionExtraService   = "MissionExtraService"
+	TypeMissionFailedFeedback = "MissionFailedFeedback"
+	TypeMissionKeyPair        = "MissionKeyPair"
+	TypeMissionKind           = "MissionKind"
+	TypeMissionOrder          = "MissionOrder"
+	TypeMissionProduceOrder   = "MissionProduceOrder"
+	TypeMissionProduction     = "MissionProduction"
+	TypeOutputLog             = "OutputLog"
+	TypePlatformAccount       = "PlatformAccount"
+	TypePrice                 = "Price"
+	TypeProfitAccount         = "ProfitAccount"
+	TypeProfitSetting         = "ProfitSetting"
+	TypeRechargeCampaignRule  = "RechargeCampaignRule"
+	TypeRechargeOrder         = "RechargeOrder"
+	TypeRenewalAgreement      = "RenewalAgreement"
+	TypeSurvey                = "Survey"
+	TypeSurveyAnswer          = "SurveyAnswer"
+	TypeSurveyQuestion        = "SurveyQuestion"
+	TypeSurveyResponse        = "SurveyResponse"
+	TypeSymbol                = "Symbol"
+	TypeTransferOrder         = "TransferOrder"
+	TypeTroubleDeduct         = "TroubleDeduct"
+	TypeUser                  = "User"
+	TypeUserDevice            = "UserDevice"
+	TypeVXAccount             = "VXAccount"
+	TypeVXSocial              = "VXSocial"
+	TypeWallet                = "Wallet"
+	TypeWithdrawAccount       = "WithdrawAccount"
+	TypeWithdrawRecord        = "WithdrawRecord"
 )
 
 // ArtworkMutation represents an operation that mutates the Artwork nodes in the graph.
@@ -12677,77 +12679,80 @@ func (m *CostBillMutation) ResetEdge(name string) error {
 // DeviceMutation represents an operation that mutates the Device nodes in the graph.
 type DeviceMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *int64
-	created_by                    *int64
-	addcreated_by                 *int64
-	updated_by                    *int64
-	addupdated_by                 *int64
-	created_at                    *time.Time
-	updated_at                    *time.Time
-	deleted_at                    *time.Time
-	serial_number                 *string
-	state                         *device.State
-	sum_cep                       *int64
-	addsum_cep                    *int64
-	linking                       *bool
-	binding_status                *enums.DeviceBindingStatus
-	status                        *enums.DeviceStatus
-	name                          *string
-	manage_name                   *string
-	_type                         *enums.DeviceType
-	cores_number                  *int64
-	addcores_number               *int64
-	cpu                           *string
-	cpus                          *[]string
-	memory                        *int64
-	addmemory                     *int64
-	disk                          *float32
-	adddisk                       *float32
-	delay                         *float64
-	adddelay                      *float64
-	gpu_temperature               *float64
-	addgpu_temperature            *float64
-	cpu_temperature               *float64
-	addcpu_temperature            *float64
-	stability                     *enums.DeviceStabilityType
-	clearedFields                 map[string]struct{}
-	user                          *int64
-	cleareduser                   bool
-	mission_produce_orders        map[int64]struct{}
-	removedmission_produce_orders map[int64]struct{}
-	clearedmission_produce_orders bool
-	user_devices                  map[int64]struct{}
-	removeduser_devices           map[int64]struct{}
-	cleareduser_devices           bool
-	device_gpu_missions           map[int64]struct{}
-	removeddevice_gpu_missions    map[int64]struct{}
-	cleareddevice_gpu_missions    bool
-	frpc_infos                    map[int64]struct{}
-	removedfrpc_infos             map[int64]struct{}
-	clearedfrpc_infos             bool
-	mission_orders                map[int64]struct{}
-	removedmission_orders         map[int64]struct{}
-	clearedmission_orders         bool
-	mission_productions           map[int64]struct{}
-	removedmission_productions    map[int64]struct{}
-	clearedmission_productions    bool
-	device_reboot_times           map[int64]struct{}
-	removeddevice_reboot_times    map[int64]struct{}
-	cleareddevice_reboot_times    bool
-	trouble_deducts               map[int64]struct{}
-	removedtrouble_deducts        map[int64]struct{}
-	clearedtrouble_deducts        bool
-	device_states                 map[int64]struct{}
-	removeddevice_states          map[int64]struct{}
-	cleareddevice_states          bool
-	device_offline_records        map[int64]struct{}
-	removeddevice_offline_records map[int64]struct{}
-	cleareddevice_offline_records bool
-	done                          bool
-	oldValue                      func(context.Context) (*Device, error)
-	predicates                    []predicate.Device
+	op                              Op
+	typ                             string
+	id                              *int64
+	created_by                      *int64
+	addcreated_by                   *int64
+	updated_by                      *int64
+	addupdated_by                   *int64
+	created_at                      *time.Time
+	updated_at                      *time.Time
+	deleted_at                      *time.Time
+	serial_number                   *string
+	state                           *device.State
+	sum_cep                         *int64
+	addsum_cep                      *int64
+	linking                         *bool
+	binding_status                  *enums.DeviceBindingStatus
+	status                          *enums.DeviceStatus
+	name                            *string
+	manage_name                     *string
+	_type                           *enums.DeviceType
+	cores_number                    *int64
+	addcores_number                 *int64
+	cpu                             *string
+	cpus                            *[]string
+	memory                          *int64
+	addmemory                       *int64
+	disk                            *float32
+	adddisk                         *float32
+	delay                           *float64
+	adddelay                        *float64
+	gpu_temperature                 *float64
+	addgpu_temperature              *float64
+	cpu_temperature                 *float64
+	addcpu_temperature              *float64
+	stability                       *enums.DeviceStabilityType
+	clearedFields                   map[string]struct{}
+	user                            *int64
+	cleareduser                     bool
+	mission_produce_orders          map[int64]struct{}
+	removedmission_produce_orders   map[int64]struct{}
+	clearedmission_produce_orders   bool
+	user_devices                    map[int64]struct{}
+	removeduser_devices             map[int64]struct{}
+	cleareduser_devices             bool
+	device_gpu_missions             map[int64]struct{}
+	removeddevice_gpu_missions      map[int64]struct{}
+	cleareddevice_gpu_missions      bool
+	frpc_infos                      map[int64]struct{}
+	removedfrpc_infos               map[int64]struct{}
+	clearedfrpc_infos               bool
+	mission_orders                  map[int64]struct{}
+	removedmission_orders           map[int64]struct{}
+	clearedmission_orders           bool
+	mission_productions             map[int64]struct{}
+	removedmission_productions      map[int64]struct{}
+	clearedmission_productions      bool
+	device_reboot_times             map[int64]struct{}
+	removeddevice_reboot_times      map[int64]struct{}
+	cleareddevice_reboot_times      bool
+	trouble_deducts                 map[int64]struct{}
+	removedtrouble_deducts          map[int64]struct{}
+	clearedtrouble_deducts          bool
+	device_states                   map[int64]struct{}
+	removeddevice_states            map[int64]struct{}
+	cleareddevice_states            bool
+	device_offline_records          map[int64]struct{}
+	removeddevice_offline_records   map[int64]struct{}
+	cleareddevice_offline_records   bool
+	mission_failed_feedbacks        map[int64]struct{}
+	removedmission_failed_feedbacks map[int64]struct{}
+	clearedmission_failed_feedbacks bool
+	done                            bool
+	oldValue                        func(context.Context) (*Device, error)
+	predicates                      []predicate.Device
 }
 
 var _ ent.Mutation = (*DeviceMutation)(nil)
@@ -14478,6 +14483,60 @@ func (m *DeviceMutation) ResetDeviceOfflineRecords() {
 	m.removeddevice_offline_records = nil
 }
 
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by ids.
+func (m *DeviceMutation) AddMissionFailedFeedbackIDs(ids ...int64) {
+	if m.mission_failed_feedbacks == nil {
+		m.mission_failed_feedbacks = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_failed_feedbacks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionFailedFeedbacks clears the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity.
+func (m *DeviceMutation) ClearMissionFailedFeedbacks() {
+	m.clearedmission_failed_feedbacks = true
+}
+
+// MissionFailedFeedbacksCleared reports if the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity was cleared.
+func (m *DeviceMutation) MissionFailedFeedbacksCleared() bool {
+	return m.clearedmission_failed_feedbacks
+}
+
+// RemoveMissionFailedFeedbackIDs removes the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (m *DeviceMutation) RemoveMissionFailedFeedbackIDs(ids ...int64) {
+	if m.removedmission_failed_feedbacks == nil {
+		m.removedmission_failed_feedbacks = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_failed_feedbacks, ids[i])
+		m.removedmission_failed_feedbacks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionFailedFeedbacks returns the removed IDs of the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity.
+func (m *DeviceMutation) RemovedMissionFailedFeedbacksIDs() (ids []int64) {
+	for id := range m.removedmission_failed_feedbacks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionFailedFeedbacksIDs returns the "mission_failed_feedbacks" edge IDs in the mutation.
+func (m *DeviceMutation) MissionFailedFeedbacksIDs() (ids []int64) {
+	for id := range m.mission_failed_feedbacks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionFailedFeedbacks resets all changes to the "mission_failed_feedbacks" edge.
+func (m *DeviceMutation) ResetMissionFailedFeedbacks() {
+	m.mission_failed_feedbacks = nil
+	m.clearedmission_failed_feedbacks = false
+	m.removedmission_failed_feedbacks = nil
+}
+
 // Where appends a list predicates to the DeviceMutation builder.
 func (m *DeviceMutation) Where(ps ...predicate.Device) {
 	m.predicates = append(m.predicates, ps...)
@@ -15122,7 +15181,7 @@ func (m *DeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 11)
+	edges := make([]string, 0, 12)
 	if m.user != nil {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -15155,6 +15214,9 @@ func (m *DeviceMutation) AddedEdges() []string {
 	}
 	if m.device_offline_records != nil {
 		edges = append(edges, device.EdgeDeviceOfflineRecords)
+	}
+	if m.mission_failed_feedbacks != nil {
+		edges = append(edges, device.EdgeMissionFailedFeedbacks)
 	}
 	return edges
 }
@@ -15227,13 +15289,19 @@ func (m *DeviceMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeMissionFailedFeedbacks:
+		ids := make([]ent.Value, 0, len(m.mission_failed_feedbacks))
+		for id := range m.mission_failed_feedbacks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 11)
+	edges := make([]string, 0, 12)
 	if m.removedmission_produce_orders != nil {
 		edges = append(edges, device.EdgeMissionProduceOrders)
 	}
@@ -15263,6 +15331,9 @@ func (m *DeviceMutation) RemovedEdges() []string {
 	}
 	if m.removeddevice_offline_records != nil {
 		edges = append(edges, device.EdgeDeviceOfflineRecords)
+	}
+	if m.removedmission_failed_feedbacks != nil {
+		edges = append(edges, device.EdgeMissionFailedFeedbacks)
 	}
 	return edges
 }
@@ -15331,13 +15402,19 @@ func (m *DeviceMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case device.EdgeMissionFailedFeedbacks:
+		ids := make([]ent.Value, 0, len(m.removedmission_failed_feedbacks))
+		for id := range m.removedmission_failed_feedbacks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 11)
+	edges := make([]string, 0, 12)
 	if m.cleareduser {
 		edges = append(edges, device.EdgeUser)
 	}
@@ -15371,6 +15448,9 @@ func (m *DeviceMutation) ClearedEdges() []string {
 	if m.cleareddevice_offline_records {
 		edges = append(edges, device.EdgeDeviceOfflineRecords)
 	}
+	if m.clearedmission_failed_feedbacks {
+		edges = append(edges, device.EdgeMissionFailedFeedbacks)
+	}
 	return edges
 }
 
@@ -15400,6 +15480,8 @@ func (m *DeviceMutation) EdgeCleared(name string) bool {
 		return m.cleareddevice_states
 	case device.EdgeDeviceOfflineRecords:
 		return m.cleareddevice_offline_records
+	case device.EdgeMissionFailedFeedbacks:
+		return m.clearedmission_failed_feedbacks
 	}
 	return false
 }
@@ -15451,6 +15533,9 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 		return nil
 	case device.EdgeDeviceOfflineRecords:
 		m.ResetDeviceOfflineRecords()
+		return nil
+	case device.EdgeMissionFailedFeedbacks:
+		m.ResetMissionFailedFeedbacks()
 		return nil
 	}
 	return fmt.Errorf("unknown Device edge %s", name)
@@ -42712,96 +42797,98 @@ func (m *LottoUserCountMutation) ResetEdge(name string) error {
 // MissionMutation represents an operation that mutates the Mission nodes in the graph.
 type MissionMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *int64
-	created_by                    *int64
-	addcreated_by                 *int64
-	updated_by                    *int64
-	addupdated_by                 *int64
-	created_at                    *time.Time
-	updated_at                    *time.Time
-	deleted_at                    *time.Time
-	_type                         *enums.MissionType
-	body                          *string
-	call_back_url                 *string
-	call_back_info                *string
-	call_back_data                *[]byte
-	status                        *enums.MissionStatus
-	result                        *enums.MissionResult
-	state                         *enums.MissionState
-	result_urls                   *[]string
-	appendresult_urls             []string
-	urls                          *string
-	mission_batch_number          *string
-	gpu_version                   *enums.GpuVersion
-	unit_cep                      *int64
-	addunit_cep                   *int64
-	resp_status_code              *int32
-	addresp_status_code           *int32
-	resp_body                     *string
-	inner_uri                     *string
-	inner_method                  *enums.InnerMethod
-	temp_hmac_key                 *string
-	temp_hmac_secret              *string
-	second_hmac_key               *string
-	username                      *string
-	password                      *string
-	white_device_ids              *[]string
-	black_device_ids              *[]string
-	started_at                    *time.Time
-	finished_at                   *time.Time
-	expired_at                    *time.Time
-	free_at                       *time.Time
-	close_way                     *enums.CloseWay
-	closed_at                     *time.Time
-	warning_times                 *int64
-	addwarning_times              *int64
-	remark                        *string
-	use_auth                      *bool
-	clearedFields                 map[string]struct{}
-	mission_kind                  *int64
-	clearedmission_kind           bool
-	user                          *int64
-	cleareduser                   bool
-	key_pair                      *int64
-	clearedkey_pair               bool
-	mission_batch                 *int64
-	clearedmission_batch          bool
-	old_mission                   *int64
-	clearedold_mission            bool
-	mission_key_pairs             map[int64]struct{}
-	removedmission_key_pairs      map[int64]struct{}
-	clearedmission_key_pairs      bool
-	mission_consume_order         *int64
-	clearedmission_consume_order  bool
-	mission_produce_orders        map[int64]struct{}
-	removedmission_produce_orders map[int64]struct{}
-	clearedmission_produce_orders bool
-	mission_productions           map[int64]struct{}
-	removedmission_productions    map[int64]struct{}
-	clearedmission_productions    bool
-	mission_orders                map[int64]struct{}
-	removedmission_orders         map[int64]struct{}
-	clearedmission_orders         bool
-	renewal_agreements            map[int64]struct{}
-	removedrenewal_agreements     map[int64]struct{}
-	clearedrenewal_agreements     bool
-	mission_extra_services        map[int64]struct{}
-	removedmission_extra_services map[int64]struct{}
-	clearedmission_extra_services bool
-	extra_services                map[int64]struct{}
-	removedextra_services         map[int64]struct{}
-	clearedextra_services         bool
-	extra_service_orders          map[int64]struct{}
-	removedextra_service_orders   map[int64]struct{}
-	clearedextra_service_orders   bool
-	reboot_missions               map[int64]struct{}
-	removedreboot_missions        map[int64]struct{}
-	clearedreboot_missions        bool
-	done                          bool
-	oldValue                      func(context.Context) (*Mission, error)
-	predicates                    []predicate.Mission
+	op                             Op
+	typ                            string
+	id                             *int64
+	created_by                     *int64
+	addcreated_by                  *int64
+	updated_by                     *int64
+	addupdated_by                  *int64
+	created_at                     *time.Time
+	updated_at                     *time.Time
+	deleted_at                     *time.Time
+	_type                          *enums.MissionType
+	body                           *string
+	call_back_url                  *string
+	call_back_info                 *string
+	call_back_data                 *[]byte
+	status                         *enums.MissionStatus
+	result                         *enums.MissionResult
+	state                          *enums.MissionState
+	result_urls                    *[]string
+	appendresult_urls              []string
+	urls                           *string
+	mission_batch_number           *string
+	gpu_version                    *enums.GpuVersion
+	unit_cep                       *int64
+	addunit_cep                    *int64
+	resp_status_code               *int32
+	addresp_status_code            *int32
+	resp_body                      *string
+	inner_uri                      *string
+	inner_method                   *enums.InnerMethod
+	temp_hmac_key                  *string
+	temp_hmac_secret               *string
+	second_hmac_key                *string
+	username                       *string
+	password                       *string
+	white_device_ids               *[]string
+	black_device_ids               *[]string
+	started_at                     *time.Time
+	finished_at                    *time.Time
+	expired_at                     *time.Time
+	free_at                        *time.Time
+	close_way                      *enums.CloseWay
+	closed_at                      *time.Time
+	warning_times                  *int64
+	addwarning_times               *int64
+	remark                         *string
+	use_auth                       *bool
+	clearedFields                  map[string]struct{}
+	mission_kind                   *int64
+	clearedmission_kind            bool
+	user                           *int64
+	cleareduser                    bool
+	key_pair                       *int64
+	clearedkey_pair                bool
+	mission_batch                  *int64
+	clearedmission_batch           bool
+	old_mission                    *int64
+	clearedold_mission             bool
+	mission_key_pairs              map[int64]struct{}
+	removedmission_key_pairs       map[int64]struct{}
+	clearedmission_key_pairs       bool
+	mission_consume_order          *int64
+	clearedmission_consume_order   bool
+	mission_produce_orders         map[int64]struct{}
+	removedmission_produce_orders  map[int64]struct{}
+	clearedmission_produce_orders  bool
+	mission_productions            map[int64]struct{}
+	removedmission_productions     map[int64]struct{}
+	clearedmission_productions     bool
+	mission_orders                 map[int64]struct{}
+	removedmission_orders          map[int64]struct{}
+	clearedmission_orders          bool
+	renewal_agreements             map[int64]struct{}
+	removedrenewal_agreements      map[int64]struct{}
+	clearedrenewal_agreements      bool
+	mission_extra_services         map[int64]struct{}
+	removedmission_extra_services  map[int64]struct{}
+	clearedmission_extra_services  bool
+	extra_services                 map[int64]struct{}
+	removedextra_services          map[int64]struct{}
+	clearedextra_services          bool
+	extra_service_orders           map[int64]struct{}
+	removedextra_service_orders    map[int64]struct{}
+	clearedextra_service_orders    bool
+	reboot_missions                map[int64]struct{}
+	removedreboot_missions         map[int64]struct{}
+	clearedreboot_missions         bool
+	mission_failed_feedback        *int64
+	clearedmission_failed_feedback bool
+	done                           bool
+	oldValue                       func(context.Context) (*Mission, error)
+	predicates                     []predicate.Mission
 }
 
 var _ ent.Mutation = (*MissionMutation)(nil)
@@ -45349,6 +45436,45 @@ func (m *MissionMutation) ResetRebootMissions() {
 	m.removedreboot_missions = nil
 }
 
+// SetMissionFailedFeedbackID sets the "mission_failed_feedback" edge to the MissionFailedFeedback entity by id.
+func (m *MissionMutation) SetMissionFailedFeedbackID(id int64) {
+	m.mission_failed_feedback = &id
+}
+
+// ClearMissionFailedFeedback clears the "mission_failed_feedback" edge to the MissionFailedFeedback entity.
+func (m *MissionMutation) ClearMissionFailedFeedback() {
+	m.clearedmission_failed_feedback = true
+}
+
+// MissionFailedFeedbackCleared reports if the "mission_failed_feedback" edge to the MissionFailedFeedback entity was cleared.
+func (m *MissionMutation) MissionFailedFeedbackCleared() bool {
+	return m.clearedmission_failed_feedback
+}
+
+// MissionFailedFeedbackID returns the "mission_failed_feedback" edge ID in the mutation.
+func (m *MissionMutation) MissionFailedFeedbackID() (id int64, exists bool) {
+	if m.mission_failed_feedback != nil {
+		return *m.mission_failed_feedback, true
+	}
+	return
+}
+
+// MissionFailedFeedbackIDs returns the "mission_failed_feedback" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionFailedFeedbackID instead. It exists only for internal usage by the builders.
+func (m *MissionMutation) MissionFailedFeedbackIDs() (ids []int64) {
+	if id := m.mission_failed_feedback; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMissionFailedFeedback resets all changes to the "mission_failed_feedback" edge.
+func (m *MissionMutation) ResetMissionFailedFeedback() {
+	m.mission_failed_feedback = nil
+	m.clearedmission_failed_feedback = false
+}
+
 // Where appends a list predicates to the MissionMutation builder.
 func (m *MissionMutation) Where(ps ...predicate.Mission) {
 	m.predicates = append(m.predicates, ps...)
@@ -46316,7 +46442,7 @@ func (m *MissionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MissionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 15)
+	edges := make([]string, 0, 16)
 	if m.mission_kind != nil {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
@@ -46361,6 +46487,9 @@ func (m *MissionMutation) AddedEdges() []string {
 	}
 	if m.reboot_missions != nil {
 		edges = append(edges, mission.EdgeRebootMissions)
+	}
+	if m.mission_failed_feedback != nil {
+		edges = append(edges, mission.EdgeMissionFailedFeedback)
 	}
 	return edges
 }
@@ -46447,13 +46576,17 @@ func (m *MissionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case mission.EdgeMissionFailedFeedback:
+		if id := m.mission_failed_feedback; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MissionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 15)
+	edges := make([]string, 0, 16)
 	if m.removedmission_key_pairs != nil {
 		edges = append(edges, mission.EdgeMissionKeyPairs)
 	}
@@ -46548,7 +46681,7 @@ func (m *MissionMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MissionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 15)
+	edges := make([]string, 0, 16)
 	if m.clearedmission_kind {
 		edges = append(edges, mission.EdgeMissionKind)
 	}
@@ -46594,6 +46727,9 @@ func (m *MissionMutation) ClearedEdges() []string {
 	if m.clearedreboot_missions {
 		edges = append(edges, mission.EdgeRebootMissions)
 	}
+	if m.clearedmission_failed_feedback {
+		edges = append(edges, mission.EdgeMissionFailedFeedback)
+	}
 	return edges
 }
 
@@ -46631,6 +46767,8 @@ func (m *MissionMutation) EdgeCleared(name string) bool {
 		return m.clearedextra_service_orders
 	case mission.EdgeRebootMissions:
 		return m.clearedreboot_missions
+	case mission.EdgeMissionFailedFeedback:
+		return m.clearedmission_failed_feedback
 	}
 	return false
 }
@@ -46656,6 +46794,9 @@ func (m *MissionMutation) ClearEdge(name string) error {
 		return nil
 	case mission.EdgeMissionConsumeOrder:
 		m.ClearMissionConsumeOrder()
+		return nil
+	case mission.EdgeMissionFailedFeedback:
+		m.ClearMissionFailedFeedback()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission unique edge %s", name)
@@ -46709,6 +46850,9 @@ func (m *MissionMutation) ResetEdge(name string) error {
 		return nil
 	case mission.EdgeRebootMissions:
 		m.ResetRebootMissions()
+		return nil
+	case mission.EdgeMissionFailedFeedback:
+		m.ResetMissionFailedFeedback()
 		return nil
 	}
 	return fmt.Errorf("unknown Mission edge %s", name)
@@ -51161,6 +51305,985 @@ func (m *MissionExtraServiceMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown MissionExtraService edge %s", name)
+}
+
+// MissionFailedFeedbackMutation represents an operation that mutates the MissionFailedFeedback nodes in the graph.
+type MissionFailedFeedbackMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int64
+	created_by     *int64
+	addcreated_by  *int64
+	updated_by     *int64
+	addupdated_by  *int64
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	mission_name   *string
+	clearedFields  map[string]struct{}
+	user           *int64
+	cleareduser    bool
+	device         *int64
+	cleareddevice  bool
+	mission        *int64
+	clearedmission bool
+	done           bool
+	oldValue       func(context.Context) (*MissionFailedFeedback, error)
+	predicates     []predicate.MissionFailedFeedback
+}
+
+var _ ent.Mutation = (*MissionFailedFeedbackMutation)(nil)
+
+// missionfailedfeedbackOption allows management of the mutation configuration using functional options.
+type missionfailedfeedbackOption func(*MissionFailedFeedbackMutation)
+
+// newMissionFailedFeedbackMutation creates new mutation for the MissionFailedFeedback entity.
+func newMissionFailedFeedbackMutation(c config, op Op, opts ...missionfailedfeedbackOption) *MissionFailedFeedbackMutation {
+	m := &MissionFailedFeedbackMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMissionFailedFeedback,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMissionFailedFeedbackID sets the ID field of the mutation.
+func withMissionFailedFeedbackID(id int64) missionfailedfeedbackOption {
+	return func(m *MissionFailedFeedbackMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MissionFailedFeedback
+		)
+		m.oldValue = func(ctx context.Context) (*MissionFailedFeedback, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MissionFailedFeedback.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMissionFailedFeedback sets the old MissionFailedFeedback of the mutation.
+func withMissionFailedFeedback(node *MissionFailedFeedback) missionfailedfeedbackOption {
+	return func(m *MissionFailedFeedbackMutation) {
+		m.oldValue = func(context.Context) (*MissionFailedFeedback, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MissionFailedFeedbackMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MissionFailedFeedbackMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MissionFailedFeedback entities.
+func (m *MissionFailedFeedbackMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MissionFailedFeedbackMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MissionFailedFeedbackMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MissionFailedFeedback.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MissionFailedFeedbackMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MissionFailedFeedbackMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *MissionFailedFeedbackMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MissionFailedFeedbackMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MissionFailedFeedbackMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MissionFailedFeedbackMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MissionFailedFeedbackMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *MissionFailedFeedbackMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MissionFailedFeedbackMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MissionFailedFeedbackMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MissionFailedFeedbackMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MissionFailedFeedbackMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MissionFailedFeedbackMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MissionFailedFeedbackMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MissionFailedFeedbackMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MissionFailedFeedbackMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MissionFailedFeedbackMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MissionFailedFeedbackMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MissionFailedFeedbackMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *MissionFailedFeedbackMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *MissionFailedFeedbackMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *MissionFailedFeedbackMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetDeviceID sets the "device_id" field.
+func (m *MissionFailedFeedbackMutation) SetDeviceID(i int64) {
+	m.device = &i
+}
+
+// DeviceID returns the value of the "device_id" field in the mutation.
+func (m *MissionFailedFeedbackMutation) DeviceID() (r int64, exists bool) {
+	v := m.device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceID returns the old "device_id" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldDeviceID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceID: %w", err)
+	}
+	return oldValue.DeviceID, nil
+}
+
+// ResetDeviceID resets all changes to the "device_id" field.
+func (m *MissionFailedFeedbackMutation) ResetDeviceID() {
+	m.device = nil
+}
+
+// SetMissionID sets the "mission_id" field.
+func (m *MissionFailedFeedbackMutation) SetMissionID(i int64) {
+	m.mission = &i
+}
+
+// MissionID returns the value of the "mission_id" field in the mutation.
+func (m *MissionFailedFeedbackMutation) MissionID() (r int64, exists bool) {
+	v := m.mission
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionID returns the old "mission_id" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldMissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionID: %w", err)
+	}
+	return oldValue.MissionID, nil
+}
+
+// ResetMissionID resets all changes to the "mission_id" field.
+func (m *MissionFailedFeedbackMutation) ResetMissionID() {
+	m.mission = nil
+}
+
+// SetMissionName sets the "mission_name" field.
+func (m *MissionFailedFeedbackMutation) SetMissionName(s string) {
+	m.mission_name = &s
+}
+
+// MissionName returns the value of the "mission_name" field in the mutation.
+func (m *MissionFailedFeedbackMutation) MissionName() (r string, exists bool) {
+	v := m.mission_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMissionName returns the old "mission_name" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldMissionName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMissionName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMissionName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMissionName: %w", err)
+	}
+	return oldValue.MissionName, nil
+}
+
+// ResetMissionName resets all changes to the "mission_name" field.
+func (m *MissionFailedFeedbackMutation) ResetMissionName() {
+	m.mission_name = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *MissionFailedFeedbackMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[missionfailedfeedback.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *MissionFailedFeedbackMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *MissionFailedFeedbackMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *MissionFailedFeedbackMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearDevice clears the "device" edge to the Device entity.
+func (m *MissionFailedFeedbackMutation) ClearDevice() {
+	m.cleareddevice = true
+	m.clearedFields[missionfailedfeedback.FieldDeviceID] = struct{}{}
+}
+
+// DeviceCleared reports if the "device" edge to the Device entity was cleared.
+func (m *MissionFailedFeedbackMutation) DeviceCleared() bool {
+	return m.cleareddevice
+}
+
+// DeviceIDs returns the "device" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DeviceID instead. It exists only for internal usage by the builders.
+func (m *MissionFailedFeedbackMutation) DeviceIDs() (ids []int64) {
+	if id := m.device; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDevice resets all changes to the "device" edge.
+func (m *MissionFailedFeedbackMutation) ResetDevice() {
+	m.device = nil
+	m.cleareddevice = false
+}
+
+// ClearMission clears the "mission" edge to the Mission entity.
+func (m *MissionFailedFeedbackMutation) ClearMission() {
+	m.clearedmission = true
+	m.clearedFields[missionfailedfeedback.FieldMissionID] = struct{}{}
+}
+
+// MissionCleared reports if the "mission" edge to the Mission entity was cleared.
+func (m *MissionFailedFeedbackMutation) MissionCleared() bool {
+	return m.clearedmission
+}
+
+// MissionIDs returns the "mission" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MissionID instead. It exists only for internal usage by the builders.
+func (m *MissionFailedFeedbackMutation) MissionIDs() (ids []int64) {
+	if id := m.mission; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMission resets all changes to the "mission" edge.
+func (m *MissionFailedFeedbackMutation) ResetMission() {
+	m.mission = nil
+	m.clearedmission = false
+}
+
+// Where appends a list predicates to the MissionFailedFeedbackMutation builder.
+func (m *MissionFailedFeedbackMutation) Where(ps ...predicate.MissionFailedFeedback) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MissionFailedFeedbackMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MissionFailedFeedbackMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MissionFailedFeedback, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MissionFailedFeedbackMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MissionFailedFeedbackMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MissionFailedFeedback).
+func (m *MissionFailedFeedbackMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MissionFailedFeedbackMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_by != nil {
+		fields = append(fields, missionfailedfeedback.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, missionfailedfeedback.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, missionfailedfeedback.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, missionfailedfeedback.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, missionfailedfeedback.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, missionfailedfeedback.FieldUserID)
+	}
+	if m.device != nil {
+		fields = append(fields, missionfailedfeedback.FieldDeviceID)
+	}
+	if m.mission != nil {
+		fields = append(fields, missionfailedfeedback.FieldMissionID)
+	}
+	if m.mission_name != nil {
+		fields = append(fields, missionfailedfeedback.FieldMissionName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MissionFailedFeedbackMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case missionfailedfeedback.FieldCreatedBy:
+		return m.CreatedBy()
+	case missionfailedfeedback.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case missionfailedfeedback.FieldCreatedAt:
+		return m.CreatedAt()
+	case missionfailedfeedback.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case missionfailedfeedback.FieldDeletedAt:
+		return m.DeletedAt()
+	case missionfailedfeedback.FieldUserID:
+		return m.UserID()
+	case missionfailedfeedback.FieldDeviceID:
+		return m.DeviceID()
+	case missionfailedfeedback.FieldMissionID:
+		return m.MissionID()
+	case missionfailedfeedback.FieldMissionName:
+		return m.MissionName()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MissionFailedFeedbackMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case missionfailedfeedback.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case missionfailedfeedback.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case missionfailedfeedback.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case missionfailedfeedback.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case missionfailedfeedback.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case missionfailedfeedback.FieldUserID:
+		return m.OldUserID(ctx)
+	case missionfailedfeedback.FieldDeviceID:
+		return m.OldDeviceID(ctx)
+	case missionfailedfeedback.FieldMissionID:
+		return m.OldMissionID(ctx)
+	case missionfailedfeedback.FieldMissionName:
+		return m.OldMissionName(ctx)
+	}
+	return nil, fmt.Errorf("unknown MissionFailedFeedback field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionFailedFeedbackMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case missionfailedfeedback.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case missionfailedfeedback.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case missionfailedfeedback.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case missionfailedfeedback.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case missionfailedfeedback.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case missionfailedfeedback.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case missionfailedfeedback.FieldDeviceID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceID(v)
+		return nil
+	case missionfailedfeedback.FieldMissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionID(v)
+		return nil
+	case missionfailedfeedback.FieldMissionName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMissionName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionFailedFeedback field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MissionFailedFeedbackMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, missionfailedfeedback.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, missionfailedfeedback.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MissionFailedFeedbackMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case missionfailedfeedback.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case missionfailedfeedback.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MissionFailedFeedbackMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case missionfailedfeedback.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case missionfailedfeedback.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MissionFailedFeedback numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MissionFailedFeedbackMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MissionFailedFeedbackMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MissionFailedFeedbackMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown MissionFailedFeedback nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MissionFailedFeedbackMutation) ResetField(name string) error {
+	switch name {
+	case missionfailedfeedback.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case missionfailedfeedback.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case missionfailedfeedback.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case missionfailedfeedback.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case missionfailedfeedback.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case missionfailedfeedback.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case missionfailedfeedback.FieldDeviceID:
+		m.ResetDeviceID()
+		return nil
+	case missionfailedfeedback.FieldMissionID:
+		m.ResetMissionID()
+		return nil
+	case missionfailedfeedback.FieldMissionName:
+		m.ResetMissionName()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionFailedFeedback field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MissionFailedFeedbackMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.user != nil {
+		edges = append(edges, missionfailedfeedback.EdgeUser)
+	}
+	if m.device != nil {
+		edges = append(edges, missionfailedfeedback.EdgeDevice)
+	}
+	if m.mission != nil {
+		edges = append(edges, missionfailedfeedback.EdgeMission)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MissionFailedFeedbackMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case missionfailedfeedback.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case missionfailedfeedback.EdgeDevice:
+		if id := m.device; id != nil {
+			return []ent.Value{*id}
+		}
+	case missionfailedfeedback.EdgeMission:
+		if id := m.mission; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MissionFailedFeedbackMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MissionFailedFeedbackMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MissionFailedFeedbackMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.cleareduser {
+		edges = append(edges, missionfailedfeedback.EdgeUser)
+	}
+	if m.cleareddevice {
+		edges = append(edges, missionfailedfeedback.EdgeDevice)
+	}
+	if m.clearedmission {
+		edges = append(edges, missionfailedfeedback.EdgeMission)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MissionFailedFeedbackMutation) EdgeCleared(name string) bool {
+	switch name {
+	case missionfailedfeedback.EdgeUser:
+		return m.cleareduser
+	case missionfailedfeedback.EdgeDevice:
+		return m.cleareddevice
+	case missionfailedfeedback.EdgeMission:
+		return m.clearedmission
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MissionFailedFeedbackMutation) ClearEdge(name string) error {
+	switch name {
+	case missionfailedfeedback.EdgeUser:
+		m.ClearUser()
+		return nil
+	case missionfailedfeedback.EdgeDevice:
+		m.ClearDevice()
+		return nil
+	case missionfailedfeedback.EdgeMission:
+		m.ClearMission()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionFailedFeedback unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MissionFailedFeedbackMutation) ResetEdge(name string) error {
+	switch name {
+	case missionfailedfeedback.EdgeUser:
+		m.ResetUser()
+		return nil
+	case missionfailedfeedback.EdgeDevice:
+		m.ResetDevice()
+		return nil
+	case missionfailedfeedback.EdgeMission:
+		m.ResetMission()
+		return nil
+	}
+	return fmt.Errorf("unknown MissionFailedFeedback edge %s", name)
 }
 
 // MissionKeyPairMutation represents an operation that mutates the MissionKeyPair nodes in the graph.
@@ -77851,6 +78974,9 @@ type UserMutation struct {
 	approve_survey_responses        map[int64]struct{}
 	removedapprove_survey_responses map[int64]struct{}
 	clearedapprove_survey_responses bool
+	mission_failed_feedbacks        map[int64]struct{}
+	removedmission_failed_feedbacks map[int64]struct{}
+	clearedmission_failed_feedbacks bool
 	done                            bool
 	oldValue                        func(context.Context) (*User, error)
 	predicates                      []predicate.User
@@ -81372,6 +82498,60 @@ func (m *UserMutation) ResetApproveSurveyResponses() {
 	m.removedapprove_survey_responses = nil
 }
 
+// AddMissionFailedFeedbackIDs adds the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by ids.
+func (m *UserMutation) AddMissionFailedFeedbackIDs(ids ...int64) {
+	if m.mission_failed_feedbacks == nil {
+		m.mission_failed_feedbacks = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.mission_failed_feedbacks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMissionFailedFeedbacks clears the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity.
+func (m *UserMutation) ClearMissionFailedFeedbacks() {
+	m.clearedmission_failed_feedbacks = true
+}
+
+// MissionFailedFeedbacksCleared reports if the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity was cleared.
+func (m *UserMutation) MissionFailedFeedbacksCleared() bool {
+	return m.clearedmission_failed_feedbacks
+}
+
+// RemoveMissionFailedFeedbackIDs removes the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity by IDs.
+func (m *UserMutation) RemoveMissionFailedFeedbackIDs(ids ...int64) {
+	if m.removedmission_failed_feedbacks == nil {
+		m.removedmission_failed_feedbacks = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.mission_failed_feedbacks, ids[i])
+		m.removedmission_failed_feedbacks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMissionFailedFeedbacks returns the removed IDs of the "mission_failed_feedbacks" edge to the MissionFailedFeedback entity.
+func (m *UserMutation) RemovedMissionFailedFeedbacksIDs() (ids []int64) {
+	for id := range m.removedmission_failed_feedbacks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MissionFailedFeedbacksIDs returns the "mission_failed_feedbacks" edge IDs in the mutation.
+func (m *UserMutation) MissionFailedFeedbacksIDs() (ids []int64) {
+	for id := range m.mission_failed_feedbacks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMissionFailedFeedbacks resets all changes to the "mission_failed_feedbacks" edge.
+func (m *UserMutation) ResetMissionFailedFeedbacks() {
+	m.mission_failed_feedbacks = nil
+	m.clearedmission_failed_feedbacks = false
+	m.removedmission_failed_feedbacks = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -81961,7 +83141,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 47)
+	edges := make([]string, 0, 48)
 	if m.vx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -82102,6 +83282,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.approve_survey_responses != nil {
 		edges = append(edges, user.EdgeApproveSurveyResponses)
+	}
+	if m.mission_failed_feedbacks != nil {
+		edges = append(edges, user.EdgeMissionFailedFeedbacks)
 	}
 	return edges
 }
@@ -82382,13 +83565,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeMissionFailedFeedbacks:
+		ids := make([]ent.Value, 0, len(m.mission_failed_feedbacks))
+		for id := range m.mission_failed_feedbacks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 47)
+	edges := make([]string, 0, 48)
 	if m.removedvx_accounts != nil {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -82514,6 +83703,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedapprove_survey_responses != nil {
 		edges = append(edges, user.EdgeApproveSurveyResponses)
+	}
+	if m.removedmission_failed_feedbacks != nil {
+		edges = append(edges, user.EdgeMissionFailedFeedbacks)
 	}
 	return edges
 }
@@ -82774,13 +83966,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeMissionFailedFeedbacks:
+		ids := make([]ent.Value, 0, len(m.removedmission_failed_feedbacks))
+		for id := range m.removedmission_failed_feedbacks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 47)
+	edges := make([]string, 0, 48)
 	if m.clearedvx_accounts {
 		edges = append(edges, user.EdgeVxAccounts)
 	}
@@ -82922,6 +84120,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedapprove_survey_responses {
 		edges = append(edges, user.EdgeApproveSurveyResponses)
 	}
+	if m.clearedmission_failed_feedbacks {
+		edges = append(edges, user.EdgeMissionFailedFeedbacks)
+	}
 	return edges
 }
 
@@ -83023,6 +84224,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedsurvey_responses
 	case user.EdgeApproveSurveyResponses:
 		return m.clearedapprove_survey_responses
+	case user.EdgeMissionFailedFeedbacks:
+		return m.clearedmission_failed_feedbacks
 	}
 	return false
 }
@@ -83194,6 +84397,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeApproveSurveyResponses:
 		m.ResetApproveSurveyResponses()
+		return nil
+	case user.EdgeMissionFailedFeedbacks:
+		m.ResetMissionFailedFeedbacks()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
