@@ -15,6 +15,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // MissionFailedFeedbackCreate is the builder for creating a MissionFailedFeedback entity.
@@ -151,6 +152,20 @@ func (mffc *MissionFailedFeedbackCreate) SetNillableMissionName(s *string) *Miss
 	return mffc
 }
 
+// SetStatus sets the "status" field.
+func (mffc *MissionFailedFeedbackCreate) SetStatus(effs enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackCreate {
+	mffc.mutation.SetStatus(effs)
+	return mffc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (mffc *MissionFailedFeedbackCreate) SetNillableStatus(effs *enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackCreate {
+	if effs != nil {
+		mffc.SetStatus(*effs)
+	}
+	return mffc
+}
+
 // SetID sets the "id" field.
 func (mffc *MissionFailedFeedbackCreate) SetID(i int64) *MissionFailedFeedbackCreate {
 	mffc.mutation.SetID(i)
@@ -251,6 +266,10 @@ func (mffc *MissionFailedFeedbackCreate) defaults() {
 		v := missionfailedfeedback.DefaultMissionName
 		mffc.mutation.SetMissionName(v)
 	}
+	if _, ok := mffc.mutation.Status(); !ok {
+		v := missionfailedfeedback.DefaultStatus
+		mffc.mutation.SetStatus(v)
+	}
 	if _, ok := mffc.mutation.ID(); !ok {
 		v := missionfailedfeedback.DefaultID()
 		mffc.mutation.SetID(v)
@@ -285,6 +304,14 @@ func (mffc *MissionFailedFeedbackCreate) check() error {
 	}
 	if _, ok := mffc.mutation.MissionName(); !ok {
 		return &ValidationError{Name: "mission_name", err: errors.New(`cep_ent: missing required field "MissionFailedFeedback.mission_name"`)}
+	}
+	if _, ok := mffc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "MissionFailedFeedback.status"`)}
+	}
+	if v, ok := mffc.mutation.Status(); ok {
+		if err := missionfailedfeedback.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.status": %w`, err)}
+		}
 	}
 	if _, ok := mffc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "MissionFailedFeedback.user"`)}
@@ -351,6 +378,10 @@ func (mffc *MissionFailedFeedbackCreate) createSpec() (*MissionFailedFeedback, *
 	if value, ok := mffc.mutation.MissionName(); ok {
 		_spec.SetField(missionfailedfeedback.FieldMissionName, field.TypeString, value)
 		_node.MissionName = value
+	}
+	if value, ok := mffc.mutation.Status(); ok {
+		_spec.SetField(missionfailedfeedback.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if nodes := mffc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -563,6 +594,18 @@ func (u *MissionFailedFeedbackUpsert) UpdateMissionName() *MissionFailedFeedback
 	return u
 }
 
+// SetStatus sets the "status" field.
+func (u *MissionFailedFeedbackUpsert) SetStatus(v enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpsert {
+	u.Set(missionfailedfeedback.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsert) UpdateStatus() *MissionFailedFeedbackUpsert {
+	u.SetExcluded(missionfailedfeedback.FieldStatus)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -737,6 +780,20 @@ func (u *MissionFailedFeedbackUpsertOne) SetMissionName(v string) *MissionFailed
 func (u *MissionFailedFeedbackUpsertOne) UpdateMissionName() *MissionFailedFeedbackUpsertOne {
 	return u.Update(func(s *MissionFailedFeedbackUpsert) {
 		s.UpdateMissionName()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *MissionFailedFeedbackUpsertOne) SetStatus(v enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpsertOne {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsertOne) UpdateStatus() *MissionFailedFeedbackUpsertOne {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.UpdateStatus()
 	})
 }
 
@@ -1080,6 +1137,20 @@ func (u *MissionFailedFeedbackUpsertBulk) SetMissionName(v string) *MissionFaile
 func (u *MissionFailedFeedbackUpsertBulk) UpdateMissionName() *MissionFailedFeedbackUpsertBulk {
 	return u.Update(func(s *MissionFailedFeedbackUpsert) {
 		s.UpdateMissionName()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *MissionFailedFeedbackUpsertBulk) SetStatus(v enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpsertBulk {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsertBulk) UpdateStatus() *MissionFailedFeedbackUpsertBulk {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.UpdateStatus()
 	})
 }
 

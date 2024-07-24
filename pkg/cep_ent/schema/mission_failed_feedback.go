@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 type MissionFailedFeedback struct {
@@ -18,6 +19,7 @@ func (MissionFailedFeedback) Fields() []ent.Field {
 		field.Int64("device_id").Default(0).StructTag(`json:"device_id,string"`).Comment("外键，反馈关联的设备 ID"),
 		field.Int64("mission_id").Default(0).StructTag(`json:"mission_id,string"`).Comment("外键，反馈关联的任务 ID"),
 		field.String("mission_name").StructTag(`json:"mission_name"`).Default("").Comment("应用名称"),
+		field.Enum("status").GoType(enums.MissionFailedFeedbackStatusInit).Default(string(enums.MissionFailedFeedbackStatusInit)).StructTag(`json:"status"`).Comment("状态"),
 	}
 }
 

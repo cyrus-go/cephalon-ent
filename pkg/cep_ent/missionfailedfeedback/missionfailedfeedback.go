@@ -3,10 +3,12 @@
 package missionfailedfeedback
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 const (
@@ -32,6 +34,8 @@ const (
 	FieldMissionID = "mission_id"
 	// FieldMissionName holds the string denoting the mission_name field in the database.
 	FieldMissionName = "mission_name"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
@@ -75,6 +79,7 @@ var Columns = []string{
 	FieldDeviceID,
 	FieldMissionID,
 	FieldMissionName,
+	FieldStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -111,6 +116,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
+
+const DefaultStatus enums.MissionFailedFeedbackStatus = "init"
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s enums.MissionFailedFeedbackStatus) error {
+	switch s {
+	case "init", "done":
+		return nil
+	default:
+		return fmt.Errorf("missionfailedfeedback: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the MissionFailedFeedback queries.
 type OrderOption func(*sql.Selector)
@@ -163,6 +180,11 @@ func ByMissionID(opts ...sql.OrderTermOption) OrderOption {
 // ByMissionName orders the results by the mission_name field.
 func ByMissionName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMissionName, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

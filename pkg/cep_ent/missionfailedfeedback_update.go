@@ -16,6 +16,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // MissionFailedFeedbackUpdate is the builder for updating MissionFailedFeedback entities.
@@ -150,6 +151,20 @@ func (mffu *MissionFailedFeedbackUpdate) SetNillableMissionName(s *string) *Miss
 	return mffu
 }
 
+// SetStatus sets the "status" field.
+func (mffu *MissionFailedFeedbackUpdate) SetStatus(effs enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpdate {
+	mffu.mutation.SetStatus(effs)
+	return mffu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (mffu *MissionFailedFeedbackUpdate) SetNillableStatus(effs *enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpdate {
+	if effs != nil {
+		mffu.SetStatus(*effs)
+	}
+	return mffu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (mffu *MissionFailedFeedbackUpdate) SetUser(u *User) *MissionFailedFeedbackUpdate {
 	return mffu.SetUserID(u.ID)
@@ -226,6 +241,11 @@ func (mffu *MissionFailedFeedbackUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mffu *MissionFailedFeedbackUpdate) check() error {
+	if v, ok := mffu.mutation.Status(); ok {
+		if err := missionfailedfeedback.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.status": %w`, err)}
+		}
+	}
 	if _, ok := mffu.mutation.UserID(); mffu.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionFailedFeedback.user"`)
 	}
@@ -276,6 +296,9 @@ func (mffu *MissionFailedFeedbackUpdate) sqlSave(ctx context.Context) (n int, er
 	}
 	if value, ok := mffu.mutation.MissionName(); ok {
 		_spec.SetField(missionfailedfeedback.FieldMissionName, field.TypeString, value)
+	}
+	if value, ok := mffu.mutation.Status(); ok {
+		_spec.SetField(missionfailedfeedback.FieldStatus, field.TypeEnum, value)
 	}
 	if mffu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -504,6 +527,20 @@ func (mffuo *MissionFailedFeedbackUpdateOne) SetNillableMissionName(s *string) *
 	return mffuo
 }
 
+// SetStatus sets the "status" field.
+func (mffuo *MissionFailedFeedbackUpdateOne) SetStatus(effs enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpdateOne {
+	mffuo.mutation.SetStatus(effs)
+	return mffuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (mffuo *MissionFailedFeedbackUpdateOne) SetNillableStatus(effs *enums.MissionFailedFeedbackStatus) *MissionFailedFeedbackUpdateOne {
+	if effs != nil {
+		mffuo.SetStatus(*effs)
+	}
+	return mffuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (mffuo *MissionFailedFeedbackUpdateOne) SetUser(u *User) *MissionFailedFeedbackUpdateOne {
 	return mffuo.SetUserID(u.ID)
@@ -593,6 +630,11 @@ func (mffuo *MissionFailedFeedbackUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mffuo *MissionFailedFeedbackUpdateOne) check() error {
+	if v, ok := mffuo.mutation.Status(); ok {
+		if err := missionfailedfeedback.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.status": %w`, err)}
+		}
+	}
 	if _, ok := mffuo.mutation.UserID(); mffuo.mutation.UserCleared() && !ok {
 		return errors.New(`cep_ent: clearing a required unique edge "MissionFailedFeedback.user"`)
 	}
@@ -660,6 +702,9 @@ func (mffuo *MissionFailedFeedbackUpdateOne) sqlSave(ctx context.Context) (_node
 	}
 	if value, ok := mffuo.mutation.MissionName(); ok {
 		_spec.SetField(missionfailedfeedback.FieldMissionName, field.TypeString, value)
+	}
+	if value, ok := mffuo.mutation.Status(); ok {
+		_spec.SetField(missionfailedfeedback.FieldStatus, field.TypeEnum, value)
 	}
 	if mffuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

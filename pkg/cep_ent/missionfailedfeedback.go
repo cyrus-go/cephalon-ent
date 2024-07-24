@@ -13,6 +13,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/mission"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionfailedfeedback"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // 应用启动失败反馈信息表
@@ -39,6 +40,8 @@ type MissionFailedFeedback struct {
 	MissionID int64 `json:"mission_id,string"`
 	// 应用名称
 	MissionName string `json:"mission_name"`
+	// 状态
+	Status enums.MissionFailedFeedbackStatus `json:"status"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionFailedFeedbackQuery when eager-loading is set.
 	Edges        MissionFailedFeedbackEdges `json:"edges"`
@@ -104,7 +107,7 @@ func (*MissionFailedFeedback) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionfailedfeedback.FieldID, missionfailedfeedback.FieldCreatedBy, missionfailedfeedback.FieldUpdatedBy, missionfailedfeedback.FieldUserID, missionfailedfeedback.FieldDeviceID, missionfailedfeedback.FieldMissionID:
 			values[i] = new(sql.NullInt64)
-		case missionfailedfeedback.FieldMissionName:
+		case missionfailedfeedback.FieldMissionName, missionfailedfeedback.FieldStatus:
 			values[i] = new(sql.NullString)
 		case missionfailedfeedback.FieldCreatedAt, missionfailedfeedback.FieldUpdatedAt, missionfailedfeedback.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -183,6 +186,12 @@ func (mff *MissionFailedFeedback) assignValues(columns []string, values []any) e
 			} else if value.Valid {
 				mff.MissionName = value.String
 			}
+		case missionfailedfeedback.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				mff.Status = enums.MissionFailedFeedbackStatus(value.String)
+			}
 		default:
 			mff.selectValues.Set(columns[i], values[i])
 		}
@@ -260,6 +269,9 @@ func (mff *MissionFailedFeedback) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mission_name=")
 	builder.WriteString(mff.MissionName)
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", mff.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }

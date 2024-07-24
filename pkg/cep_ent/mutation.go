@@ -51321,6 +51321,7 @@ type MissionFailedFeedbackMutation struct {
 	updated_at     *time.Time
 	deleted_at     *time.Time
 	mission_name   *string
+	status         *enums.MissionFailedFeedbackStatus
 	clearedFields  map[string]struct{}
 	user           *int64
 	cleareduser    bool
@@ -51801,6 +51802,42 @@ func (m *MissionFailedFeedbackMutation) ResetMissionName() {
 	m.mission_name = nil
 }
 
+// SetStatus sets the "status" field.
+func (m *MissionFailedFeedbackMutation) SetStatus(effs enums.MissionFailedFeedbackStatus) {
+	m.status = &effs
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *MissionFailedFeedbackMutation) Status() (r enums.MissionFailedFeedbackStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the MissionFailedFeedback entity.
+// If the MissionFailedFeedback object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MissionFailedFeedbackMutation) OldStatus(ctx context.Context) (v enums.MissionFailedFeedbackStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *MissionFailedFeedbackMutation) ResetStatus() {
+	m.status = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *MissionFailedFeedbackMutation) ClearUser() {
 	m.cleareduser = true
@@ -51916,7 +51953,7 @@ func (m *MissionFailedFeedbackMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MissionFailedFeedbackMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_by != nil {
 		fields = append(fields, missionfailedfeedback.FieldCreatedBy)
 	}
@@ -51944,6 +51981,9 @@ func (m *MissionFailedFeedbackMutation) Fields() []string {
 	if m.mission_name != nil {
 		fields = append(fields, missionfailedfeedback.FieldMissionName)
 	}
+	if m.status != nil {
+		fields = append(fields, missionfailedfeedback.FieldStatus)
+	}
 	return fields
 }
 
@@ -51970,6 +52010,8 @@ func (m *MissionFailedFeedbackMutation) Field(name string) (ent.Value, bool) {
 		return m.MissionID()
 	case missionfailedfeedback.FieldMissionName:
 		return m.MissionName()
+	case missionfailedfeedback.FieldStatus:
+		return m.Status()
 	}
 	return nil, false
 }
@@ -51997,6 +52039,8 @@ func (m *MissionFailedFeedbackMutation) OldField(ctx context.Context, name strin
 		return m.OldMissionID(ctx)
 	case missionfailedfeedback.FieldMissionName:
 		return m.OldMissionName(ctx)
+	case missionfailedfeedback.FieldStatus:
+		return m.OldStatus(ctx)
 	}
 	return nil, fmt.Errorf("unknown MissionFailedFeedback field %s", name)
 }
@@ -52068,6 +52112,13 @@ func (m *MissionFailedFeedbackMutation) SetField(name string, value ent.Value) e
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMissionName(v)
+		return nil
+	case missionfailedfeedback.FieldStatus:
+		v, ok := value.(enums.MissionFailedFeedbackStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
 		return nil
 	}
 	return fmt.Errorf("unknown MissionFailedFeedback field %s", name)
@@ -52171,6 +52222,9 @@ func (m *MissionFailedFeedbackMutation) ResetField(name string) error {
 		return nil
 	case missionfailedfeedback.FieldMissionName:
 		m.ResetMissionName()
+		return nil
+	case missionfailedfeedback.FieldStatus:
+		m.ResetStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown MissionFailedFeedback field %s", name)

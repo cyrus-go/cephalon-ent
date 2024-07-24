@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ID filters vertices based on their ID field.
@@ -423,6 +424,36 @@ func MissionNameEqualFold(v string) predicate.MissionFailedFeedback {
 // MissionNameContainsFold applies the ContainsFold predicate on the "mission_name" field.
 func MissionNameContainsFold(v string) predicate.MissionFailedFeedback {
 	return predicate.MissionFailedFeedback(sql.FieldContainsFold(FieldMissionName, v))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v enums.MissionFailedFeedbackStatus) predicate.MissionFailedFeedback {
+	vc := v
+	return predicate.MissionFailedFeedback(sql.FieldEQ(FieldStatus, vc))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v enums.MissionFailedFeedbackStatus) predicate.MissionFailedFeedback {
+	vc := v
+	return predicate.MissionFailedFeedback(sql.FieldNEQ(FieldStatus, vc))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...enums.MissionFailedFeedbackStatus) predicate.MissionFailedFeedback {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionFailedFeedback(sql.FieldIn(FieldStatus, v...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...enums.MissionFailedFeedbackStatus) predicate.MissionFailedFeedback {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.MissionFailedFeedback(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.
