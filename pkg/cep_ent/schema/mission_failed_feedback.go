@@ -40,6 +40,7 @@ func (MissionFailedFeedback) Indexes() []ent.Index {
 		index.Fields("user_id"),
 		index.Fields("device_id"),
 		index.Fields("mission_id"),
+		index.Fields("user_id", "mission_id"),
 	}
 }
 

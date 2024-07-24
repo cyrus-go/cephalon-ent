@@ -1720,6 +1720,11 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{MissionFailedFeedbacksColumns[10]},
 			},
+			{
+				Name:    "missionfailedfeedback_user_id_mission_id",
+				Unique:  false,
+				Columns: []*schema.Column{MissionFailedFeedbacksColumns[11], MissionFailedFeedbacksColumns[10]},
+			},
 		},
 	}
 	// MissionKeyPairsColumns holds the columns for the "mission_key_pairs" table.
