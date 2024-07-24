@@ -165,6 +165,20 @@ func (mffu *MissionFailedFeedbackUpdate) SetNillableStatus(effs *enums.MissionFa
 	return mffu
 }
 
+// SetReason sets the "reason" field.
+func (mffu *MissionFailedFeedbackUpdate) SetReason(s string) *MissionFailedFeedbackUpdate {
+	mffu.mutation.SetReason(s)
+	return mffu
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (mffu *MissionFailedFeedbackUpdate) SetNillableReason(s *string) *MissionFailedFeedbackUpdate {
+	if s != nil {
+		mffu.SetReason(*s)
+	}
+	return mffu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (mffu *MissionFailedFeedbackUpdate) SetUser(u *User) *MissionFailedFeedbackUpdate {
 	return mffu.SetUserID(u.ID)
@@ -299,6 +313,9 @@ func (mffu *MissionFailedFeedbackUpdate) sqlSave(ctx context.Context) (n int, er
 	}
 	if value, ok := mffu.mutation.Status(); ok {
 		_spec.SetField(missionfailedfeedback.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := mffu.mutation.Reason(); ok {
+		_spec.SetField(missionfailedfeedback.FieldReason, field.TypeString, value)
 	}
 	if mffu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -541,6 +558,20 @@ func (mffuo *MissionFailedFeedbackUpdateOne) SetNillableStatus(effs *enums.Missi
 	return mffuo
 }
 
+// SetReason sets the "reason" field.
+func (mffuo *MissionFailedFeedbackUpdateOne) SetReason(s string) *MissionFailedFeedbackUpdateOne {
+	mffuo.mutation.SetReason(s)
+	return mffuo
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (mffuo *MissionFailedFeedbackUpdateOne) SetNillableReason(s *string) *MissionFailedFeedbackUpdateOne {
+	if s != nil {
+		mffuo.SetReason(*s)
+	}
+	return mffuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (mffuo *MissionFailedFeedbackUpdateOne) SetUser(u *User) *MissionFailedFeedbackUpdateOne {
 	return mffuo.SetUserID(u.ID)
@@ -705,6 +736,9 @@ func (mffuo *MissionFailedFeedbackUpdateOne) sqlSave(ctx context.Context) (_node
 	}
 	if value, ok := mffuo.mutation.Status(); ok {
 		_spec.SetField(missionfailedfeedback.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := mffuo.mutation.Reason(); ok {
+		_spec.SetField(missionfailedfeedback.FieldReason, field.TypeString, value)
 	}
 	if mffuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

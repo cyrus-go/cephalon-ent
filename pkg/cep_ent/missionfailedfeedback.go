@@ -42,6 +42,8 @@ type MissionFailedFeedback struct {
 	MissionName string `json:"mission_name"`
 	// 状态
 	Status enums.MissionFailedFeedbackStatus `json:"status"`
+	// 任务失败的原因
+	Reason string `json:"reason"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MissionFailedFeedbackQuery when eager-loading is set.
 	Edges        MissionFailedFeedbackEdges `json:"edges"`
@@ -107,7 +109,7 @@ func (*MissionFailedFeedback) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case missionfailedfeedback.FieldID, missionfailedfeedback.FieldCreatedBy, missionfailedfeedback.FieldUpdatedBy, missionfailedfeedback.FieldUserID, missionfailedfeedback.FieldDeviceID, missionfailedfeedback.FieldMissionID:
 			values[i] = new(sql.NullInt64)
-		case missionfailedfeedback.FieldMissionName, missionfailedfeedback.FieldStatus:
+		case missionfailedfeedback.FieldMissionName, missionfailedfeedback.FieldStatus, missionfailedfeedback.FieldReason:
 			values[i] = new(sql.NullString)
 		case missionfailedfeedback.FieldCreatedAt, missionfailedfeedback.FieldUpdatedAt, missionfailedfeedback.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -192,6 +194,12 @@ func (mff *MissionFailedFeedback) assignValues(columns []string, values []any) e
 			} else if value.Valid {
 				mff.Status = enums.MissionFailedFeedbackStatus(value.String)
 			}
+		case missionfailedfeedback.FieldReason:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field reason", values[i])
+			} else if value.Valid {
+				mff.Reason = value.String
+			}
 		default:
 			mff.selectValues.Set(columns[i], values[i])
 		}
@@ -272,6 +280,9 @@ func (mff *MissionFailedFeedback) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", mff.Status))
+	builder.WriteString(", ")
+	builder.WriteString("reason=")
+	builder.WriteString(mff.Reason)
 	builder.WriteByte(')')
 	return builder.String()
 }

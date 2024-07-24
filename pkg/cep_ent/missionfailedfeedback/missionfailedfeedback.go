@@ -36,6 +36,8 @@ const (
 	FieldMissionName = "mission_name"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldReason holds the string denoting the reason field in the database.
+	FieldReason = "reason"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldMissionID,
 	FieldMissionName,
 	FieldStatus,
+	FieldReason,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -113,6 +116,8 @@ var (
 	DefaultMissionID int64
 	// DefaultMissionName holds the default value on creation for the "mission_name" field.
 	DefaultMissionName string
+	// DefaultReason holds the default value on creation for the "reason" field.
+	DefaultReason string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 )
@@ -185,6 +190,11 @@ func ByMissionName(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByReason orders the results by the reason field.
+func ByReason(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReason, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

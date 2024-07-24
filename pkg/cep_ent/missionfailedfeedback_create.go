@@ -166,6 +166,20 @@ func (mffc *MissionFailedFeedbackCreate) SetNillableStatus(effs *enums.MissionFa
 	return mffc
 }
 
+// SetReason sets the "reason" field.
+func (mffc *MissionFailedFeedbackCreate) SetReason(s string) *MissionFailedFeedbackCreate {
+	mffc.mutation.SetReason(s)
+	return mffc
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (mffc *MissionFailedFeedbackCreate) SetNillableReason(s *string) *MissionFailedFeedbackCreate {
+	if s != nil {
+		mffc.SetReason(*s)
+	}
+	return mffc
+}
+
 // SetID sets the "id" field.
 func (mffc *MissionFailedFeedbackCreate) SetID(i int64) *MissionFailedFeedbackCreate {
 	mffc.mutation.SetID(i)
@@ -270,6 +284,10 @@ func (mffc *MissionFailedFeedbackCreate) defaults() {
 		v := missionfailedfeedback.DefaultStatus
 		mffc.mutation.SetStatus(v)
 	}
+	if _, ok := mffc.mutation.Reason(); !ok {
+		v := missionfailedfeedback.DefaultReason
+		mffc.mutation.SetReason(v)
+	}
 	if _, ok := mffc.mutation.ID(); !ok {
 		v := missionfailedfeedback.DefaultID()
 		mffc.mutation.SetID(v)
@@ -312,6 +330,9 @@ func (mffc *MissionFailedFeedbackCreate) check() error {
 		if err := missionfailedfeedback.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "MissionFailedFeedback.status": %w`, err)}
 		}
+	}
+	if _, ok := mffc.mutation.Reason(); !ok {
+		return &ValidationError{Name: "reason", err: errors.New(`cep_ent: missing required field "MissionFailedFeedback.reason"`)}
 	}
 	if _, ok := mffc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "MissionFailedFeedback.user"`)}
@@ -382,6 +403,10 @@ func (mffc *MissionFailedFeedbackCreate) createSpec() (*MissionFailedFeedback, *
 	if value, ok := mffc.mutation.Status(); ok {
 		_spec.SetField(missionfailedfeedback.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := mffc.mutation.Reason(); ok {
+		_spec.SetField(missionfailedfeedback.FieldReason, field.TypeString, value)
+		_node.Reason = value
 	}
 	if nodes := mffc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -606,6 +631,18 @@ func (u *MissionFailedFeedbackUpsert) UpdateStatus() *MissionFailedFeedbackUpser
 	return u
 }
 
+// SetReason sets the "reason" field.
+func (u *MissionFailedFeedbackUpsert) SetReason(v string) *MissionFailedFeedbackUpsert {
+	u.Set(missionfailedfeedback.FieldReason, v)
+	return u
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsert) UpdateReason() *MissionFailedFeedbackUpsert {
+	u.SetExcluded(missionfailedfeedback.FieldReason)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -794,6 +831,20 @@ func (u *MissionFailedFeedbackUpsertOne) SetStatus(v enums.MissionFailedFeedback
 func (u *MissionFailedFeedbackUpsertOne) UpdateStatus() *MissionFailedFeedbackUpsertOne {
 	return u.Update(func(s *MissionFailedFeedbackUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetReason sets the "reason" field.
+func (u *MissionFailedFeedbackUpsertOne) SetReason(v string) *MissionFailedFeedbackUpsertOne {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.SetReason(v)
+	})
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsertOne) UpdateReason() *MissionFailedFeedbackUpsertOne {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.UpdateReason()
 	})
 }
 
@@ -1151,6 +1202,20 @@ func (u *MissionFailedFeedbackUpsertBulk) SetStatus(v enums.MissionFailedFeedbac
 func (u *MissionFailedFeedbackUpsertBulk) UpdateStatus() *MissionFailedFeedbackUpsertBulk {
 	return u.Update(func(s *MissionFailedFeedbackUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetReason sets the "reason" field.
+func (u *MissionFailedFeedbackUpsertBulk) SetReason(v string) *MissionFailedFeedbackUpsertBulk {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.SetReason(v)
+	})
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *MissionFailedFeedbackUpsertBulk) UpdateReason() *MissionFailedFeedbackUpsertBulk {
+	return u.Update(func(s *MissionFailedFeedbackUpsert) {
+		s.UpdateReason()
 	})
 }
 

@@ -20,6 +20,7 @@ func (MissionFailedFeedback) Fields() []ent.Field {
 		field.Int64("mission_id").Default(0).StructTag(`json:"mission_id,string"`).Comment("外键，反馈关联的任务 ID"),
 		field.String("mission_name").StructTag(`json:"mission_name"`).Default("").Comment("应用名称"),
 		field.Enum("status").GoType(enums.MissionFailedFeedbackStatusInit).Default(string(enums.MissionFailedFeedbackStatusInit)).StructTag(`json:"status"`).Comment("状态"),
+		field.String("reason").StructTag(`json:"reason"`).Default("").Comment("任务失败的原因"),
 	}
 }
 
