@@ -17,6 +17,7 @@ const (
 	MissionCategoryFooocusLanQue MissionCategory = "FOOOCUS_LAN_QUE"
 	MissionCategoryFooocusShaApi MissionCategory = "FOOOCUS_SHA_API"
 	MissionCategoryTabby         MissionCategory = "TABBY"
+	MissionCategoryOllama        MissionCategory = "OLLAMA"
 	MissionCategoryJpConda       MissionCategory = "JP_CONDA"
 	MissionCategorySDCat         MissionCategory = "SD_CAT"
 	MissionCategorySDFire        MissionCategory = "SD_FIRE"
@@ -55,6 +56,7 @@ func (obj MissionCategory) Values() []string {
 		string(MissionCategoryFooocusLanQue),
 		string(MissionCategoryFooocusShaApi),
 		string(MissionCategoryTabby),
+		string(MissionCategoryOllama),
 		string(MissionCategoryJpConda),
 		string(MissionCategorySDCat),
 		string(MissionCategorySDFire),

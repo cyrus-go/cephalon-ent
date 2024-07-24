@@ -22,6 +22,7 @@ const (
 	MissionTypeFooocusLanQueTime  MissionType = "fooocus_lan_que_time"
 	MissionTypeFooocusShaApiTime  MissionType = "fooocus_sha_api_time"
 	MissionTypeTabbyTime          MissionType = "tabby_time"
+	MissionTypeOllamaTime         MissionType = "ollama_time"
 	MissionTypeJpCondaTime        MissionType = "jp_conda_time"
 	MissionTypeJpMlTime           MissionType = "jp_ml_time"
 	MissionTypeSdCatTime          MissionType = "sd_cat_time"
@@ -59,6 +60,7 @@ const (
 	MissionTypeFooocusLanQueTimePlan MissionType = "fooocus_lan_que_time_plan"
 	MissionTypeFooocusShaApiTimePlan MissionType = "fooocus_sha_api_time_plan"
 	MissionTypeTabbyTimePlan         MissionType = "tabby_time_plan"
+	MissionTypeOllamaTimePlan        MissionType = "ollama_time_plan"
 	MissionTypeJpCondaTimePlan       MissionType = "jp_conda_time_plan"
 	MissionTypeJpMlTimePlan          MissionType = "jp_ml_time_plan"
 	MissionTypeSdCatTimePlan         MissionType = "sd_cat_time_plan"
@@ -118,6 +120,8 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeFooocusShaApiTimePlan),
 		string(MissionTypeTabbyTime),
 		string(MissionTypeTabbyTimePlan),
+		string(MissionTypeOllamaTime),
+		string(MissionTypeOllamaTimePlan),
 		string(MissionTypeJpCondaTime),
 		string(MissionTypeJpCondaTimePlan),
 		string(MissionTypeJpMlTime),
