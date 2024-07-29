@@ -417,6 +417,20 @@ func (du *DeviceUpdate) SetNillableStability(est *enums.DeviceStabilityType) *De
 	return du
 }
 
+// SetVersion sets the "version" field.
+func (du *DeviceUpdate) SetVersion(s string) *DeviceUpdate {
+	du.mutation.SetVersion(s)
+	return du
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (du *DeviceUpdate) SetNillableVersion(s *string) *DeviceUpdate {
+	if s != nil {
+		du.SetVersion(*s)
+	}
+	return du
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (du *DeviceUpdate) SetUser(u *User) *DeviceUpdate {
 	return du.SetUserID(u.ID)
@@ -1015,6 +1029,9 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Stability(); ok {
 		_spec.SetField(device.FieldStability, field.TypeEnum, value)
+	}
+	if value, ok := du.mutation.Version(); ok {
+		_spec.SetField(device.FieldVersion, field.TypeString, value)
 	}
 	if du.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1937,6 +1954,20 @@ func (duo *DeviceUpdateOne) SetNillableStability(est *enums.DeviceStabilityType)
 	return duo
 }
 
+// SetVersion sets the "version" field.
+func (duo *DeviceUpdateOne) SetVersion(s string) *DeviceUpdateOne {
+	duo.mutation.SetVersion(s)
+	return duo
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (duo *DeviceUpdateOne) SetNillableVersion(s *string) *DeviceUpdateOne {
+	if s != nil {
+		duo.SetVersion(*s)
+	}
+	return duo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -2565,6 +2596,9 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 	}
 	if value, ok := duo.mutation.Stability(); ok {
 		_spec.SetField(device.FieldStability, field.TypeEnum, value)
+	}
+	if value, ok := duo.mutation.Version(); ok {
+		_spec.SetField(device.FieldVersion, field.TypeString, value)
 	}
 	if duo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

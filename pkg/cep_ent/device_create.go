@@ -363,6 +363,20 @@ func (dc *DeviceCreate) SetNillableStability(est *enums.DeviceStabilityType) *De
 	return dc
 }
 
+// SetVersion sets the "version" field.
+func (dc *DeviceCreate) SetVersion(s string) *DeviceCreate {
+	dc.mutation.SetVersion(s)
+	return dc
+}
+
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (dc *DeviceCreate) SetNillableVersion(s *string) *DeviceCreate {
+	if s != nil {
+		dc.SetVersion(*s)
+	}
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DeviceCreate) SetID(i int64) *DeviceCreate {
 	dc.mutation.SetID(i)
@@ -674,6 +688,10 @@ func (dc *DeviceCreate) defaults() {
 		v := device.DefaultStability
 		dc.mutation.SetStability(v)
 	}
+	if _, ok := dc.mutation.Version(); !ok {
+		v := device.DefaultVersion
+		dc.mutation.SetVersion(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := device.DefaultID()
 		dc.mutation.SetID(v)
@@ -775,6 +793,9 @@ func (dc *DeviceCreate) check() error {
 		if err := device.StabilityValidator(v); err != nil {
 			return &ValidationError{Name: "stability", err: fmt.Errorf(`cep_ent: validator failed for field "Device.stability": %w`, err)}
 		}
+	}
+	if _, ok := dc.mutation.Version(); !ok {
+		return &ValidationError{Name: "version", err: errors.New(`cep_ent: missing required field "Device.version"`)}
 	}
 	if _, ok := dc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "Device.user"`)}
@@ -910,6 +931,10 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec, error) {
 	if value, ok := dc.mutation.Stability(); ok {
 		_spec.SetField(device.FieldStability, field.TypeEnum, value)
 		_node.Stability = value
+	}
+	if value, ok := dc.mutation.Version(); ok {
+		_spec.SetField(device.FieldVersion, field.TypeString, value)
+		_node.Version = value
 	}
 	if nodes := dc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1492,6 +1517,18 @@ func (u *DeviceUpsert) UpdateStability() *DeviceUpsert {
 	return u
 }
 
+// SetVersion sets the "version" field.
+func (u *DeviceUpsert) SetVersion(v string) *DeviceUpsert {
+	u.Set(device.FieldVersion, v)
+	return u
+}
+
+// UpdateVersion sets the "version" field to the value that was provided on create.
+func (u *DeviceUpsert) UpdateVersion() *DeviceUpsert {
+	u.SetExcluded(device.FieldVersion)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1932,6 +1969,20 @@ func (u *DeviceUpsertOne) SetStability(v enums.DeviceStabilityType) *DeviceUpser
 func (u *DeviceUpsertOne) UpdateStability() *DeviceUpsertOne {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateStability()
+	})
+}
+
+// SetVersion sets the "version" field.
+func (u *DeviceUpsertOne) SetVersion(v string) *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetVersion(v)
+	})
+}
+
+// UpdateVersion sets the "version" field to the value that was provided on create.
+func (u *DeviceUpsertOne) UpdateVersion() *DeviceUpsertOne {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateVersion()
 	})
 }
 
@@ -2544,6 +2595,20 @@ func (u *DeviceUpsertBulk) SetStability(v enums.DeviceStabilityType) *DeviceUpse
 func (u *DeviceUpsertBulk) UpdateStability() *DeviceUpsertBulk {
 	return u.Update(func(s *DeviceUpsert) {
 		s.UpdateStability()
+	})
+}
+
+// SetVersion sets the "version" field.
+func (u *DeviceUpsertBulk) SetVersion(v string) *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.SetVersion(v)
+	})
+}
+
+// UpdateVersion sets the "version" field to the value that was provided on create.
+func (u *DeviceUpsertBulk) UpdateVersion() *DeviceUpsertBulk {
+	return u.Update(func(s *DeviceUpsert) {
+		s.UpdateVersion()
 	})
 }
 

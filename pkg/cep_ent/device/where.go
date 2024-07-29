@@ -146,6 +146,11 @@ func CPUTemperature(v float64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCPUTemperature, v))
 }
 
+// Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
+func Version(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldVersion, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v int64) predicate.Device {
 	return predicate.Device(sql.FieldEQ(FieldCreatedBy, v))
@@ -1064,6 +1069,71 @@ func StabilityNotIn(vs ...enums.DeviceStabilityType) predicate.Device {
 		v[i] = vs[i]
 	}
 	return predicate.Device(sql.FieldNotIn(FieldStability, v...))
+}
+
+// VersionEQ applies the EQ predicate on the "version" field.
+func VersionEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldEQ(FieldVersion, v))
+}
+
+// VersionNEQ applies the NEQ predicate on the "version" field.
+func VersionNEQ(v string) predicate.Device {
+	return predicate.Device(sql.FieldNEQ(FieldVersion, v))
+}
+
+// VersionIn applies the In predicate on the "version" field.
+func VersionIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldIn(FieldVersion, vs...))
+}
+
+// VersionNotIn applies the NotIn predicate on the "version" field.
+func VersionNotIn(vs ...string) predicate.Device {
+	return predicate.Device(sql.FieldNotIn(FieldVersion, vs...))
+}
+
+// VersionGT applies the GT predicate on the "version" field.
+func VersionGT(v string) predicate.Device {
+	return predicate.Device(sql.FieldGT(FieldVersion, v))
+}
+
+// VersionGTE applies the GTE predicate on the "version" field.
+func VersionGTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldGTE(FieldVersion, v))
+}
+
+// VersionLT applies the LT predicate on the "version" field.
+func VersionLT(v string) predicate.Device {
+	return predicate.Device(sql.FieldLT(FieldVersion, v))
+}
+
+// VersionLTE applies the LTE predicate on the "version" field.
+func VersionLTE(v string) predicate.Device {
+	return predicate.Device(sql.FieldLTE(FieldVersion, v))
+}
+
+// VersionContains applies the Contains predicate on the "version" field.
+func VersionContains(v string) predicate.Device {
+	return predicate.Device(sql.FieldContains(FieldVersion, v))
+}
+
+// VersionHasPrefix applies the HasPrefix predicate on the "version" field.
+func VersionHasPrefix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasPrefix(FieldVersion, v))
+}
+
+// VersionHasSuffix applies the HasSuffix predicate on the "version" field.
+func VersionHasSuffix(v string) predicate.Device {
+	return predicate.Device(sql.FieldHasSuffix(FieldVersion, v))
+}
+
+// VersionEqualFold applies the EqualFold predicate on the "version" field.
+func VersionEqualFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldEqualFold(FieldVersion, v))
+}
+
+// VersionContainsFold applies the ContainsFold predicate on the "version" field.
+func VersionContainsFold(v string) predicate.Device {
+	return predicate.Device(sql.FieldContainsFold(FieldVersion, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

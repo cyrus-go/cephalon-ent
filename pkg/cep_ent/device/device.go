@@ -65,6 +65,8 @@ const (
 	FieldCPUTemperature = "cpu_temperature"
 	// FieldStability holds the string denoting the stability field in the database.
 	FieldStability = "stability"
+	// FieldVersion holds the string denoting the version field in the database.
+	FieldVersion = "version"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMissionProduceOrders holds the string denoting the mission_produce_orders edge name in mutations.
@@ -204,6 +206,7 @@ var Columns = []string{
 	FieldGpuTemperature,
 	FieldCPUTemperature,
 	FieldStability,
+	FieldVersion,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -255,6 +258,8 @@ var (
 	DefaultGpuTemperature float64
 	// DefaultCPUTemperature holds the default value on creation for the "cpu_temperature" field.
 	DefaultCPUTemperature float64
+	// DefaultVersion holds the default value on creation for the "version" field.
+	DefaultVersion string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() int64
 	// ValueScanner of all Device fields.
@@ -464,6 +469,11 @@ func ByCPUTemperature(opts ...sql.OrderTermOption) OrderOption {
 // ByStability orders the results by the stability field.
 func ByStability(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStability, opts...).ToFunc()
+}
+
+// ByVersion orders the results by the version field.
+func ByVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVersion, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

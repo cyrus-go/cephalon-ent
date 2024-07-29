@@ -36,6 +36,7 @@ func (Device) Fields() []ent.Field {
 		field.Float("gpu_temperature").StructTag(`json:"gpu_temperature"`).Default(0).Comment("GPU 温度(单位:℃)"),
 		field.Float("cpu_temperature").StructTag(`json:"cpu_temperature"`).Default(0).Comment("CPU 温度(单位:℃)"),
 		field.Enum("stability").GoType(enums.DeviceStabilityTypeGood).StructTag(`json:"stability"`).Default(string(enums.DeviceStabilityTypeGood)).Comment("设备稳定性"),
+		field.String("version").StructTag(`json:"version"`).Default("无版本号").Comment("设备版本"),
 	}
 }
 

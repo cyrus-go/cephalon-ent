@@ -12714,6 +12714,7 @@ type DeviceMutation struct {
 	cpu_temperature                 *float64
 	addcpu_temperature              *float64
 	stability                       *enums.DeviceStabilityType
+	version                         *string
 	clearedFields                   map[string]struct{}
 	user                            *int64
 	cleareduser                     bool
@@ -13916,6 +13917,42 @@ func (m *DeviceMutation) ResetStability() {
 	m.stability = nil
 }
 
+// SetVersion sets the "version" field.
+func (m *DeviceMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *DeviceMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the Device entity.
+// If the Device object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeviceMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *DeviceMutation) ResetVersion() {
+	m.version = nil
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *DeviceMutation) ClearUser() {
 	m.cleareduser = true
@@ -14571,7 +14608,7 @@ func (m *DeviceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeviceMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_by != nil {
 		fields = append(fields, device.FieldCreatedBy)
 	}
@@ -14644,6 +14681,9 @@ func (m *DeviceMutation) Fields() []string {
 	if m.stability != nil {
 		fields = append(fields, device.FieldStability)
 	}
+	if m.version != nil {
+		fields = append(fields, device.FieldVersion)
+	}
 	return fields
 }
 
@@ -14700,6 +14740,8 @@ func (m *DeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.CPUTemperature()
 	case device.FieldStability:
 		return m.Stability()
+	case device.FieldVersion:
+		return m.Version()
 	}
 	return nil, false
 }
@@ -14757,6 +14799,8 @@ func (m *DeviceMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldCPUTemperature(ctx)
 	case device.FieldStability:
 		return m.OldStability(ctx)
+	case device.FieldVersion:
+		return m.OldVersion(ctx)
 	}
 	return nil, fmt.Errorf("unknown Device field %s", name)
 }
@@ -14933,6 +14977,13 @@ func (m *DeviceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStability(v)
+		return nil
+	case device.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)
@@ -15174,6 +15225,9 @@ func (m *DeviceMutation) ResetField(name string) error {
 		return nil
 	case device.FieldStability:
 		m.ResetStability()
+		return nil
+	case device.FieldVersion:
+		m.ResetVersion()
 		return nil
 	}
 	return fmt.Errorf("unknown Device field %s", name)

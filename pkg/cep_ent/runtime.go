@@ -721,6 +721,10 @@ func init() {
 	deviceDescCPUTemperature := deviceFields[17].Descriptor()
 	// device.DefaultCPUTemperature holds the default value on creation for the cpu_temperature field.
 	device.DefaultCPUTemperature = deviceDescCPUTemperature.Default.(float64)
+	// deviceDescVersion is the schema descriptor for version field.
+	deviceDescVersion := deviceFields[19].Descriptor()
+	// device.DefaultVersion holds the default value on creation for the version field.
+	device.DefaultVersion = deviceDescVersion.Default.(string)
 	// deviceDescID is the schema descriptor for id field.
 	deviceDescID := deviceMixinFields0[0].Descriptor()
 	// device.DefaultID holds the default value on creation for the id field.

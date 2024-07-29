@@ -499,6 +499,7 @@ var (
 		{Name: "gpu_temperature", Type: field.TypeFloat64, Comment: "GPU 温度(单位:℃)", Default: 0},
 		{Name: "cpu_temperature", Type: field.TypeFloat64, Comment: "CPU 温度(单位:℃)", Default: 0},
 		{Name: "stability", Type: field.TypeEnum, Comment: "设备稳定性", Enums: []string{"great", "good", "ok", "bad"}, Default: "good"},
+		{Name: "version", Type: field.TypeString, Comment: "设备版本", Default: "无版本号"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "外键用户 id", Default: 0},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
@@ -510,7 +511,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "devices_users_devices",
-				Columns:    []*schema.Column{DevicesColumns[24]},
+				Columns:    []*schema.Column{DevicesColumns[25]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -519,7 +520,7 @@ var (
 			{
 				Name:    "device_user_id",
 				Unique:  false,
-				Columns: []*schema.Column{DevicesColumns[24]},
+				Columns: []*schema.Column{DevicesColumns[25]},
 			},
 		},
 	}
