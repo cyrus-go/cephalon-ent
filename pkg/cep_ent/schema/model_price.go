@@ -17,6 +17,7 @@ func (ModelPrice) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("model_id").StructTag(`json:"model_id,string"`).Comment("模型ID"),
 		field.Enum("invoke_type").Default(string(enums.UnKnownInvokeType)).GoType(enums.ApiInvokeType).StructTag(`json:"invoke_type"`).Comment("调用类型"),
+		field.Enum("gpu_version").Default(string(enums.GpuVersionUnknown)).GoType(enums.GpuVersion3060).StructTag(`json:"gpu_version"`).Comment("GPU 版本"),
 		field.Int("input_gpu_price").Default(0).StructTag(`json:"input_gpu_price"`).Comment("输入算力价格"),
 		field.Int("output_gpu_price").Default(0).StructTag(`json:"output_gpu_price"`).Comment("输出算力价格"),
 		field.Int("input_model_price").Default(0).StructTag(`json:"input_model_price"`).Comment("输入模型使用价格"),

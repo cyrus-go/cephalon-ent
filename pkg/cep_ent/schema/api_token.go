@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // ApiToken holds the schema definition for the ApiToken entity.
@@ -17,6 +18,7 @@ func (ApiToken) Fields() []ent.Field {
 		field.Int("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
 		field.String("name").Default("").StructTag(`json:"name"`).Comment("token 名称"),
 		field.String("token").Default("").Sensitive().Comment("token 内容"),
+		field.Enum("status").Default(string(enums.UnknownApiTokenStatus)).GoType(enums.InitApiTokenStatus).StructTag(`"json:"status"`).Comment("token 状态"),
 	}
 }
 

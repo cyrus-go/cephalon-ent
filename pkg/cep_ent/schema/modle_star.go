@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
 // Token holds the schema definition for the Token entity.
@@ -16,6 +17,7 @@ func (ModleStar) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
 		field.Int("model_id").StructTag(`json:"model_id"`).Comment("模型ID"),
+		field.Enum("status").StructTag(`json:"status"`).Default(string(enums.UnknownStartStatus)).GoType(enums.Star).Comment("收藏状态h"),
 	}
 }
 
