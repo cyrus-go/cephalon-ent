@@ -6,13 +6,13 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Token holds the schema definition for the Token entity.
-type Token struct {
+// ApiToken holds the schema definition for the ApiToken entity.
+type ApiToken struct {
 	ent.Schema
 }
 
 // Fields of the Token.
-func (Token) Fields() []ent.Field {
+func (ApiToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
 		field.String("name").Default("").StructTag(`json:"name"`).Comment("token 名称"),
@@ -21,13 +21,13 @@ func (Token) Fields() []ent.Field {
 }
 
 // Edges of the Token.
-func (Token) Edges() []ent.Edge {
+func (ApiToken) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).Ref("tokens").Field("user_id").Unique().Required(),
 	}
 }
 
-func (Token) Mixin() []ent.Mixin {
+func (ApiToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
 	}

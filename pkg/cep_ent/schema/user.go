@@ -90,7 +90,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("survey_responses", SurveyResponse.Type),
 		edge.To("approve_survey_responses", SurveyResponse.Type),
 		edge.To("mission_failed_feedbacks", MissionFailedFeedback.Type),
-		edge.To("token", Token.Type),
+		edge.To("api_token", ApiToken.Type),
 		edge.To("model_stars", Model.Type),
 	}
 }
