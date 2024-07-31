@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// ApiToken is the client for interacting with the ApiToken builders.
+	ApiToken *ApiTokenClient
 	// Artwork is the client for interacting with the Artwork builders.
 	Artwork *ArtworkClient
 	// ArtworkLike is the client for interacting with the ArtworkLike builders.
@@ -104,6 +106,12 @@ type Tx struct {
 	MissionProduceOrder *MissionProduceOrderClient
 	// MissionProduction is the client for interacting with the MissionProduction builders.
 	MissionProduction *MissionProductionClient
+	// Model is the client for interacting with the Model builders.
+	Model *ModelClient
+	// ModelPrice is the client for interacting with the ModelPrice builders.
+	ModelPrice *ModelPriceClient
+	// ModleStar is the client for interacting with the ModleStar builders.
+	ModleStar *ModleStarClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
@@ -279,6 +287,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.ApiToken = NewApiTokenClient(tx.config)
 	tx.Artwork = NewArtworkClient(tx.config)
 	tx.ArtworkLike = NewArtworkLikeClient(tx.config)
 	tx.Bill = NewBillClient(tx.config)
@@ -325,6 +334,9 @@ func (tx *Tx) init() {
 	tx.MissionOrder = NewMissionOrderClient(tx.config)
 	tx.MissionProduceOrder = NewMissionProduceOrderClient(tx.config)
 	tx.MissionProduction = NewMissionProductionClient(tx.config)
+	tx.Model = NewModelClient(tx.config)
+	tx.ModelPrice = NewModelPriceClient(tx.config)
+	tx.ModleStar = NewModleStarClient(tx.config)
 	tx.OutputLog = NewOutputLogClient(tx.config)
 	tx.PlatformAccount = NewPlatformAccountClient(tx.config)
 	tx.Price = NewPriceClient(tx.config)
@@ -356,7 +368,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Artwork.QueryXXX(), the query will be executed
+// applies a query, for example: ApiToken.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

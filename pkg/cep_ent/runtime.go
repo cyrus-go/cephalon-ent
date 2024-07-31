@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
@@ -52,6 +53,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -81,6 +85,45 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	apitokenMixin := schema.ApiToken{}.Mixin()
+	apitokenMixinFields0 := apitokenMixin[0].Fields()
+	_ = apitokenMixinFields0
+	apitokenFields := schema.ApiToken{}.Fields()
+	_ = apitokenFields
+	// apitokenDescCreatedBy is the schema descriptor for created_by field.
+	apitokenDescCreatedBy := apitokenMixinFields0[1].Descriptor()
+	// apitoken.DefaultCreatedBy holds the default value on creation for the created_by field.
+	apitoken.DefaultCreatedBy = apitokenDescCreatedBy.Default.(int64)
+	// apitokenDescUpdatedBy is the schema descriptor for updated_by field.
+	apitokenDescUpdatedBy := apitokenMixinFields0[2].Descriptor()
+	// apitoken.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	apitoken.DefaultUpdatedBy = apitokenDescUpdatedBy.Default.(int64)
+	// apitokenDescCreatedAt is the schema descriptor for created_at field.
+	apitokenDescCreatedAt := apitokenMixinFields0[3].Descriptor()
+	// apitoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	apitoken.DefaultCreatedAt = apitokenDescCreatedAt.Default.(func() time.Time)
+	// apitokenDescUpdatedAt is the schema descriptor for updated_at field.
+	apitokenDescUpdatedAt := apitokenMixinFields0[4].Descriptor()
+	// apitoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	apitoken.DefaultUpdatedAt = apitokenDescUpdatedAt.Default.(func() time.Time)
+	// apitoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	apitoken.UpdateDefaultUpdatedAt = apitokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// apitokenDescDeletedAt is the schema descriptor for deleted_at field.
+	apitokenDescDeletedAt := apitokenMixinFields0[5].Descriptor()
+	// apitoken.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	apitoken.DefaultDeletedAt = apitokenDescDeletedAt.Default.(time.Time)
+	// apitokenDescName is the schema descriptor for name field.
+	apitokenDescName := apitokenFields[1].Descriptor()
+	// apitoken.DefaultName holds the default value on creation for the name field.
+	apitoken.DefaultName = apitokenDescName.Default.(string)
+	// apitokenDescToken is the schema descriptor for token field.
+	apitokenDescToken := apitokenFields[2].Descriptor()
+	// apitoken.DefaultToken holds the default value on creation for the token field.
+	apitoken.DefaultToken = apitokenDescToken.Default.(string)
+	// apitokenDescID is the schema descriptor for id field.
+	apitokenDescID := apitokenMixinFields0[0].Descriptor()
+	// apitoken.DefaultID holds the default value on creation for the id field.
+	apitoken.DefaultID = apitokenDescID.Default.(func() int64)
 	artworkMixin := schema.Artwork{}.Mixin()
 	artworkMixinFields0 := artworkMixin[0].Fields()
 	_ = artworkMixinFields0
@@ -2654,6 +2697,131 @@ func init() {
 	missionproductionDescID := missionproductionMixinFields0[0].Descriptor()
 	// missionproduction.DefaultID holds the default value on creation for the id field.
 	missionproduction.DefaultID = missionproductionDescID.Default.(func() int64)
+	modelMixin := schema.Model{}.Mixin()
+	modelMixinFields0 := modelMixin[0].Fields()
+	_ = modelMixinFields0
+	modelFields := schema.Model{}.Fields()
+	_ = modelFields
+	// modelDescCreatedBy is the schema descriptor for created_by field.
+	modelDescCreatedBy := modelMixinFields0[1].Descriptor()
+	// model.DefaultCreatedBy holds the default value on creation for the created_by field.
+	model.DefaultCreatedBy = modelDescCreatedBy.Default.(int64)
+	// modelDescUpdatedBy is the schema descriptor for updated_by field.
+	modelDescUpdatedBy := modelMixinFields0[2].Descriptor()
+	// model.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	model.DefaultUpdatedBy = modelDescUpdatedBy.Default.(int64)
+	// modelDescCreatedAt is the schema descriptor for created_at field.
+	modelDescCreatedAt := modelMixinFields0[3].Descriptor()
+	// model.DefaultCreatedAt holds the default value on creation for the created_at field.
+	model.DefaultCreatedAt = modelDescCreatedAt.Default.(func() time.Time)
+	// modelDescUpdatedAt is the schema descriptor for updated_at field.
+	modelDescUpdatedAt := modelMixinFields0[4].Descriptor()
+	// model.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	model.DefaultUpdatedAt = modelDescUpdatedAt.Default.(func() time.Time)
+	// model.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	model.UpdateDefaultUpdatedAt = modelDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// modelDescDeletedAt is the schema descriptor for deleted_at field.
+	modelDescDeletedAt := modelMixinFields0[5].Descriptor()
+	// model.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	model.DefaultDeletedAt = modelDescDeletedAt.Default.(time.Time)
+	// modelDescName is the schema descriptor for name field.
+	modelDescName := modelFields[0].Descriptor()
+	// model.DefaultName holds the default value on creation for the name field.
+	model.DefaultName = modelDescName.Default.(string)
+	// modelDescAuthor is the schema descriptor for author field.
+	modelDescAuthor := modelFields[1].Descriptor()
+	// model.DefaultAuthor holds the default value on creation for the author field.
+	model.DefaultAuthor = modelDescAuthor.Default.(string)
+	// modelDescIsOfficial is the schema descriptor for is_official field.
+	modelDescIsOfficial := modelFields[4].Descriptor()
+	// model.DefaultIsOfficial holds the default value on creation for the is_official field.
+	model.DefaultIsOfficial = modelDescIsOfficial.Default.(bool)
+	// modelDescTotalUsage is the schema descriptor for total_usage field.
+	modelDescTotalUsage := modelFields[5].Descriptor()
+	// model.DefaultTotalUsage holds the default value on creation for the total_usage field.
+	model.DefaultTotalUsage = modelDescTotalUsage.Default.(int)
+	// modelDescID is the schema descriptor for id field.
+	modelDescID := modelMixinFields0[0].Descriptor()
+	// model.DefaultID holds the default value on creation for the id field.
+	model.DefaultID = modelDescID.Default.(func() int64)
+	modelpriceMixin := schema.ModelPrice{}.Mixin()
+	modelpriceMixinFields0 := modelpriceMixin[0].Fields()
+	_ = modelpriceMixinFields0
+	modelpriceFields := schema.ModelPrice{}.Fields()
+	_ = modelpriceFields
+	// modelpriceDescCreatedBy is the schema descriptor for created_by field.
+	modelpriceDescCreatedBy := modelpriceMixinFields0[1].Descriptor()
+	// modelprice.DefaultCreatedBy holds the default value on creation for the created_by field.
+	modelprice.DefaultCreatedBy = modelpriceDescCreatedBy.Default.(int64)
+	// modelpriceDescUpdatedBy is the schema descriptor for updated_by field.
+	modelpriceDescUpdatedBy := modelpriceMixinFields0[2].Descriptor()
+	// modelprice.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	modelprice.DefaultUpdatedBy = modelpriceDescUpdatedBy.Default.(int64)
+	// modelpriceDescCreatedAt is the schema descriptor for created_at field.
+	modelpriceDescCreatedAt := modelpriceMixinFields0[3].Descriptor()
+	// modelprice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	modelprice.DefaultCreatedAt = modelpriceDescCreatedAt.Default.(func() time.Time)
+	// modelpriceDescUpdatedAt is the schema descriptor for updated_at field.
+	modelpriceDescUpdatedAt := modelpriceMixinFields0[4].Descriptor()
+	// modelprice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	modelprice.DefaultUpdatedAt = modelpriceDescUpdatedAt.Default.(func() time.Time)
+	// modelprice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	modelprice.UpdateDefaultUpdatedAt = modelpriceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// modelpriceDescDeletedAt is the schema descriptor for deleted_at field.
+	modelpriceDescDeletedAt := modelpriceMixinFields0[5].Descriptor()
+	// modelprice.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	modelprice.DefaultDeletedAt = modelpriceDescDeletedAt.Default.(time.Time)
+	// modelpriceDescInputGpuPrice is the schema descriptor for input_gpu_price field.
+	modelpriceDescInputGpuPrice := modelpriceFields[3].Descriptor()
+	// modelprice.DefaultInputGpuPrice holds the default value on creation for the input_gpu_price field.
+	modelprice.DefaultInputGpuPrice = modelpriceDescInputGpuPrice.Default.(int)
+	// modelpriceDescOutputGpuPrice is the schema descriptor for output_gpu_price field.
+	modelpriceDescOutputGpuPrice := modelpriceFields[4].Descriptor()
+	// modelprice.DefaultOutputGpuPrice holds the default value on creation for the output_gpu_price field.
+	modelprice.DefaultOutputGpuPrice = modelpriceDescOutputGpuPrice.Default.(int)
+	// modelpriceDescInputModelPrice is the schema descriptor for input_model_price field.
+	modelpriceDescInputModelPrice := modelpriceFields[5].Descriptor()
+	// modelprice.DefaultInputModelPrice holds the default value on creation for the input_model_price field.
+	modelprice.DefaultInputModelPrice = modelpriceDescInputModelPrice.Default.(int)
+	// modelpriceDescOutputModelPrice is the schema descriptor for output_model_price field.
+	modelpriceDescOutputModelPrice := modelpriceFields[6].Descriptor()
+	// modelprice.DefaultOutputModelPrice holds the default value on creation for the output_model_price field.
+	modelprice.DefaultOutputModelPrice = modelpriceDescOutputModelPrice.Default.(int)
+	// modelpriceDescID is the schema descriptor for id field.
+	modelpriceDescID := modelpriceMixinFields0[0].Descriptor()
+	// modelprice.DefaultID holds the default value on creation for the id field.
+	modelprice.DefaultID = modelpriceDescID.Default.(func() int64)
+	modlestarMixin := schema.ModleStar{}.Mixin()
+	modlestarMixinFields0 := modlestarMixin[0].Fields()
+	_ = modlestarMixinFields0
+	modlestarFields := schema.ModleStar{}.Fields()
+	_ = modlestarFields
+	// modlestarDescCreatedBy is the schema descriptor for created_by field.
+	modlestarDescCreatedBy := modlestarMixinFields0[1].Descriptor()
+	// modlestar.DefaultCreatedBy holds the default value on creation for the created_by field.
+	modlestar.DefaultCreatedBy = modlestarDescCreatedBy.Default.(int64)
+	// modlestarDescUpdatedBy is the schema descriptor for updated_by field.
+	modlestarDescUpdatedBy := modlestarMixinFields0[2].Descriptor()
+	// modlestar.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	modlestar.DefaultUpdatedBy = modlestarDescUpdatedBy.Default.(int64)
+	// modlestarDescCreatedAt is the schema descriptor for created_at field.
+	modlestarDescCreatedAt := modlestarMixinFields0[3].Descriptor()
+	// modlestar.DefaultCreatedAt holds the default value on creation for the created_at field.
+	modlestar.DefaultCreatedAt = modlestarDescCreatedAt.Default.(func() time.Time)
+	// modlestarDescUpdatedAt is the schema descriptor for updated_at field.
+	modlestarDescUpdatedAt := modlestarMixinFields0[4].Descriptor()
+	// modlestar.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	modlestar.DefaultUpdatedAt = modlestarDescUpdatedAt.Default.(func() time.Time)
+	// modlestar.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	modlestar.UpdateDefaultUpdatedAt = modlestarDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// modlestarDescDeletedAt is the schema descriptor for deleted_at field.
+	modlestarDescDeletedAt := modlestarMixinFields0[5].Descriptor()
+	// modlestar.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	modlestar.DefaultDeletedAt = modlestarDescDeletedAt.Default.(time.Time)
+	// modlestarDescID is the schema descriptor for id field.
+	modlestarDescID := modlestarMixinFields0[0].Descriptor()
+	// modlestar.DefaultID holds the default value on creation for the id field.
+	modlestar.DefaultID = modlestarDescID.Default.(func() int64)
 	outputlogMixin := schema.OutputLog{}.Mixin()
 	outputlogMixinFields0 := outputlogMixin[0].Fields()
 	_ = outputlogMixinFields0

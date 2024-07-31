@@ -7,25 +7,22 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// Token holds the schema definition for the Token entity.
 type ModleStar struct {
 	ent.Schema
 }
 
-// Fields of the Token.
 func (ModleStar) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
-		field.Int("model_id").StructTag(`json:"model_id"`).Comment("模型ID"),
-		field.Enum("status").StructTag(`json:"status"`).Default(string(enums.UnknownStartStatus)).GoType(enums.Star).Comment("收藏状态h"),
+		field.Int64("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
+		field.Int64("model_id").StructTag(`json:"model_id"`).Comment("模型ID"),
+		field.Enum("status").StructTag(`json:"status"`).Default(string(enums.UnknownStartStatus)).GoType(enums.Star).Comment("收藏状态"),
 	}
 }
 
-// Edges of the Token.
 func (ModleStar) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("tokens").Field("user_id").Unique().Required(),
-		edge.From("model", Model.Type).Ref("tokens").Field("model_id").Unique().Required(),
+		edge.To("user", User.Type).Unique().Required().Field("user_id"),
+		edge.To("model", Model.Type).Unique().Required().Field("model_id"),
 	}
 }
 

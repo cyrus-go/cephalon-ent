@@ -176,9 +176,15 @@ type UserEdges struct {
 	ApproveSurveyResponses []*SurveyResponse `json:"approve_survey_responses,omitempty"`
 	// MissionFailedFeedbacks holds the value of the mission_failed_feedbacks edge.
 	MissionFailedFeedbacks []*MissionFailedFeedback `json:"mission_failed_feedbacks,omitempty"`
+	// APITokens holds the value of the api_tokens edge.
+	APITokens []*ApiToken `json:"api_tokens,omitempty"`
+	// StarModel holds the value of the star_model edge.
+	StarModel []*Model `json:"star_model,omitempty"`
+	// ModelStar holds the value of the model_star edge.
+	ModelStar []*ModleStar `json:"model_star,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [48]bool
+	loadedTypes [51]bool
 }
 
 // VxAccountsOrErr returns the VxAccounts value or an error if the edge
@@ -633,6 +639,33 @@ func (e UserEdges) MissionFailedFeedbacksOrErr() ([]*MissionFailedFeedback, erro
 	return nil, &NotLoadedError{edge: "mission_failed_feedbacks"}
 }
 
+// APITokensOrErr returns the APITokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) APITokensOrErr() ([]*ApiToken, error) {
+	if e.loadedTypes[48] {
+		return e.APITokens, nil
+	}
+	return nil, &NotLoadedError{edge: "api_tokens"}
+}
+
+// StarModelOrErr returns the StarModel value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) StarModelOrErr() ([]*Model, error) {
+	if e.loadedTypes[49] {
+		return e.StarModel, nil
+	}
+	return nil, &NotLoadedError{edge: "star_model"}
+}
+
+// ModelStarOrErr returns the ModelStar value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ModelStarOrErr() ([]*ModleStar, error) {
+	if e.loadedTypes[50] {
+		return e.ModelStar, nil
+	}
+	return nil, &NotLoadedError{edge: "model_star"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -1069,6 +1102,21 @@ func (u *User) QueryApproveSurveyResponses() *SurveyResponseQuery {
 // QueryMissionFailedFeedbacks queries the "mission_failed_feedbacks" edge of the User entity.
 func (u *User) QueryMissionFailedFeedbacks() *MissionFailedFeedbackQuery {
 	return NewUserClient(u.config).QueryMissionFailedFeedbacks(u)
+}
+
+// QueryAPITokens queries the "api_tokens" edge of the User entity.
+func (u *User) QueryAPITokens() *ApiTokenQuery {
+	return NewUserClient(u.config).QueryAPITokens(u)
+}
+
+// QueryStarModel queries the "star_model" edge of the User entity.
+func (u *User) QueryStarModel() *ModelQuery {
+	return NewUserClient(u.config).QueryStarModel(u)
+}
+
+// QueryModelStar queries the "model_star" edge of the User entity.
+func (u *User) QueryModelStar() *ModleStarQuery {
+	return NewUserClient(u.config).QueryModelStar(u)
 }
 
 // Update returns a builder for updating this User.

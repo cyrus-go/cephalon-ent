@@ -162,6 +162,12 @@ const (
 	EdgeApproveSurveyResponses = "approve_survey_responses"
 	// EdgeMissionFailedFeedbacks holds the string denoting the mission_failed_feedbacks edge name in mutations.
 	EdgeMissionFailedFeedbacks = "mission_failed_feedbacks"
+	// EdgeAPITokens holds the string denoting the api_tokens edge name in mutations.
+	EdgeAPITokens = "api_tokens"
+	// EdgeStarModel holds the string denoting the star_model edge name in mutations.
+	EdgeStarModel = "star_model"
+	// EdgeModelStar holds the string denoting the model_star edge name in mutations.
+	EdgeModelStar = "model_star"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// VxAccountsTable is the table that holds the vx_accounts relation/edge.
@@ -488,6 +494,25 @@ const (
 	MissionFailedFeedbacksInverseTable = "mission_failed_feedbacks"
 	// MissionFailedFeedbacksColumn is the table column denoting the mission_failed_feedbacks relation/edge.
 	MissionFailedFeedbacksColumn = "user_id"
+	// APITokensTable is the table that holds the api_tokens relation/edge.
+	APITokensTable = "api_tokens"
+	// APITokensInverseTable is the table name for the ApiToken entity.
+	// It exists in this package in order to avoid circular dependency with the "apitoken" package.
+	APITokensInverseTable = "api_tokens"
+	// APITokensColumn is the table column denoting the api_tokens relation/edge.
+	APITokensColumn = "user_id"
+	// StarModelTable is the table that holds the star_model relation/edge. The primary key declared below.
+	StarModelTable = "modle_stars"
+	// StarModelInverseTable is the table name for the Model entity.
+	// It exists in this package in order to avoid circular dependency with the "model" package.
+	StarModelInverseTable = "models"
+	// ModelStarTable is the table that holds the model_star relation/edge.
+	ModelStarTable = "modle_stars"
+	// ModelStarInverseTable is the table name for the ModleStar entity.
+	// It exists in this package in order to avoid circular dependency with the "modlestar" package.
+	ModelStarInverseTable = "modle_stars"
+	// ModelStarColumn is the table column denoting the model_star relation/edge.
+	ModelStarColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -519,6 +544,12 @@ var Columns = []string{
 	FieldBoundAt,
 	FieldUserStatus,
 }
+
+var (
+	// StarModelPrimaryKey and StarModelColumn2 are the table columns denoting the
+	// primary key for the star_model relation (M2M).
+	StarModelPrimaryKey = []string{"user_id", "model_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -1376,6 +1407,48 @@ func ByMissionFailedFeedbacks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderO
 		sqlgraph.OrderByNeighborTerms(s, newMissionFailedFeedbacksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByAPITokensCount orders the results by api_tokens count.
+func ByAPITokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAPITokensStep(), opts...)
+	}
+}
+
+// ByAPITokens orders the results by api_tokens terms.
+func ByAPITokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAPITokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByStarModelCount orders the results by star_model count.
+func ByStarModelCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newStarModelStep(), opts...)
+	}
+}
+
+// ByStarModel orders the results by star_model terms.
+func ByStarModel(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStarModelStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByModelStarCount orders the results by model_star count.
+func ByModelStarCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newModelStarStep(), opts...)
+	}
+}
+
+// ByModelStar orders the results by model_star terms.
+func ByModelStar(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newModelStarStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newVxAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1710,5 +1783,26 @@ func newMissionFailedFeedbacksStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MissionFailedFeedbacksInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, MissionFailedFeedbacksTable, MissionFailedFeedbacksColumn),
+	)
+}
+func newAPITokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(APITokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, APITokensTable, APITokensColumn),
+	)
+}
+func newStarModelStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StarModelInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, StarModelTable, StarModelPrimaryKey...),
+	)
+}
+func newModelStarStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ModelStarInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, ModelStarTable, ModelStarColumn),
 	)
 }

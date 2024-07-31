@@ -15,7 +15,7 @@ type ApiToken struct {
 // Fields of the Token.
 func (ApiToken) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
+		field.Int64("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
 		field.String("name").Default("").StructTag(`json:"name"`).Comment("token 名称"),
 		field.String("token").Default("").Sensitive().Comment("token 内容"),
 		field.Enum("status").Default(string(enums.UnknownApiTokenStatus)).GoType(enums.InitApiTokenStatus).StructTag(`"json:"status"`).Comment("token 状态"),
@@ -25,7 +25,7 @@ func (ApiToken) Fields() []ent.Field {
 // Edges of the Token.
 func (ApiToken) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("tokens").Field("user_id").Unique().Required(),
+		edge.From("user", User.Type).Ref("api_tokens").Field("user_id").Unique().Required(),
 	}
 }
 

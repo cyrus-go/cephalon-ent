@@ -9,6 +9,33 @@ import (
 )
 
 var (
+	// APITokensColumns holds the columns for the "api_tokens" table.
+	APITokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "token 名称", Default: ""},
+		{Name: "token", Type: field.TypeString, Comment: "token 内容", Default: ""},
+		{Name: "status", Type: field.TypeEnum, Comment: "token 状态", Enums: []string{"unknown", "init", "forbidden"}, Default: "unknown"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+	}
+	// APITokensTable holds the schema information for the "api_tokens" table.
+	APITokensTable = &schema.Table{
+		Name:       "api_tokens",
+		Columns:    APITokensColumns,
+		PrimaryKey: []*schema.Column{APITokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "api_tokens_users_api_tokens",
+				Columns:    []*schema.Column{APITokensColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// ArtworksColumns holds the columns for the "artworks" table.
 	ArtworksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2022,6 +2049,96 @@ var (
 			},
 		},
 	}
+	// ModelsColumns holds the columns for the "models" table.
+	ModelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "name", Type: field.TypeString, Comment: "模型名称", Default: ""},
+		{Name: "author", Type: field.TypeString, Comment: "模型作者", Default: ""},
+		{Name: "model_type", Type: field.TypeEnum, Comment: "模型类型", Enums: []string{"unknown", "language"}, Default: "unknown"},
+		{Name: "model_status", Type: field.TypeEnum, Comment: "模型状态", Enums: []string{"unknown", "init"}, Default: "unknown"},
+		{Name: "is_official", Type: field.TypeBool, Comment: "是否为官方模型", Default: false},
+		{Name: "total_usage", Type: field.TypeInt, Comment: "模型的总使用次数", Default: 0},
+	}
+	// ModelsTable holds the schema information for the "models" table.
+	ModelsTable = &schema.Table{
+		Name:       "models",
+		Columns:    ModelsColumns,
+		PrimaryKey: []*schema.Column{ModelsColumns[0]},
+	}
+	// ModelPricesColumns holds the columns for the "model_prices" table.
+	ModelPricesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "invoke_type", Type: field.TypeEnum, Comment: "调用类型", Enums: []string{"unknown", "language"}, Default: "unknown"},
+		{Name: "gpu_version", Type: field.TypeEnum, Comment: "GPU 版本", Enums: []string{"unknown", "RTX2060", "RTX2060Ti", "RTX2070", "RTX2070Ti", "RTX2080", "RTX2080Ti", "RTX3060", "RTX3060Ti", "RTX3070", "RTX3070Ti", "RTX3080", "RTX3080Ti", "RTX3090", "RTX3090Ti", "RTX4060", "RTX4060Ti", "RTX4070", "RTX4070Ti", "RTX4080", "RTX4090", "A800", "A100", "V100", "ComputilityKing-I", "Ascend910ProB", "P40"}, Default: "unknown"},
+		{Name: "input_gpu_price", Type: field.TypeInt, Comment: "输入算力价格", Default: 0},
+		{Name: "output_gpu_price", Type: field.TypeInt, Comment: "输出算力价格", Default: 0},
+		{Name: "input_model_price", Type: field.TypeInt, Comment: "输入模型使用价格", Default: 0},
+		{Name: "output_model_price", Type: field.TypeInt, Comment: "输出模型使用价格", Default: 0},
+		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
+	}
+	// ModelPricesTable holds the schema information for the "model_prices" table.
+	ModelPricesTable = &schema.Table{
+		Name:       "model_prices",
+		Columns:    ModelPricesColumns,
+		PrimaryKey: []*schema.Column{ModelPricesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "model_prices_models_model_prices",
+				Columns:    []*schema.Column{ModelPricesColumns[12]},
+				RefColumns: []*schema.Column{ModelsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// ModleStarsColumns holds the columns for the "modle_stars" table.
+	ModleStarsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "status", Type: field.TypeEnum, Comment: "收藏状态", Enums: []string{"unknown", "language"}, Default: "unknown"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
+	}
+	// ModleStarsTable holds the schema information for the "modle_stars" table.
+	ModleStarsTable = &schema.Table{
+		Name:       "modle_stars",
+		Columns:    ModleStarsColumns,
+		PrimaryKey: []*schema.Column{ModleStarsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "modle_stars_users_user",
+				Columns:    []*schema.Column{ModleStarsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "modle_stars_models_model",
+				Columns:    []*schema.Column{ModleStarsColumns[8]},
+				RefColumns: []*schema.Column{ModelsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "modlestar_user_id_model_id",
+				Unique:  true,
+				Columns: []*schema.Column{ModleStarsColumns[7], ModleStarsColumns[8]},
+			},
+		},
+	}
 	// OutputLogsColumns holds the columns for the "output_logs" table.
 	OutputLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2920,6 +3037,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		APITokensTable,
 		ArtworksTable,
 		ArtworkLikesTable,
 		BillsTable,
@@ -2966,6 +3084,9 @@ var (
 		MissionOrdersTable,
 		MissionProduceOrdersTable,
 		MissionProductionsTable,
+		ModelsTable,
+		ModelPricesTable,
+		ModleStarsTable,
 		OutputLogsTable,
 		PlatformAccountsTable,
 		PricesTable,
@@ -2992,6 +3113,8 @@ var (
 )
 
 func init() {
+	APITokensTable.ForeignKeys[0].RefTable = UsersTable
+	APITokensTable.Annotation = &entsql.Annotation{}
 	ArtworksTable.ForeignKeys[0].RefTable = UsersTable
 	ArtworksTable.Annotation = &entsql.Annotation{}
 	ArtworkLikesTable.ForeignKeys[0].RefTable = ArtworksTable
@@ -3128,6 +3251,12 @@ func init() {
 	MissionProductionsTable.ForeignKeys[1].RefTable = MissionsTable
 	MissionProductionsTable.ForeignKeys[2].RefTable = UsersTable
 	MissionProductionsTable.Annotation = &entsql.Annotation{}
+	ModelsTable.Annotation = &entsql.Annotation{}
+	ModelPricesTable.ForeignKeys[0].RefTable = ModelsTable
+	ModelPricesTable.Annotation = &entsql.Annotation{}
+	ModleStarsTable.ForeignKeys[0].RefTable = UsersTable
+	ModleStarsTable.ForeignKeys[1].RefTable = ModelsTable
+	ModleStarsTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}
 	PricesTable.ForeignKeys[0].RefTable = GpusTable

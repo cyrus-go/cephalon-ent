@@ -9,6 +9,18 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent"
 )
 
+// The ApiTokenFunc type is an adapter to allow the use of ordinary
+// function as ApiToken mutator.
+type ApiTokenFunc func(context.Context, *cep_ent.ApiTokenMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApiTokenFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ApiTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ApiTokenMutation", m)
+}
+
 // The ArtworkFunc type is an adapter to allow the use of ordinary
 // function as Artwork mutator.
 type ArtworkFunc func(context.Context, *cep_ent.ArtworkMutation) (cep_ent.Value, error)
@@ -559,6 +571,42 @@ func (f MissionProductionFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.MissionProductionMutation", m)
+}
+
+// The ModelFunc type is an adapter to allow the use of ordinary
+// function as Model mutator.
+type ModelFunc func(context.Context, *cep_ent.ModelMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ModelFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ModelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModelMutation", m)
+}
+
+// The ModelPriceFunc type is an adapter to allow the use of ordinary
+// function as ModelPrice mutator.
+type ModelPriceFunc func(context.Context, *cep_ent.ModelPriceMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ModelPriceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ModelPriceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModelPriceMutation", m)
+}
+
+// The ModleStarFunc type is an adapter to allow the use of ordinary
+// function as ModleStar mutator.
+type ModleStarFunc func(context.Context, *cep_ent.ModleStarMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ModleStarFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ModleStarMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModleStarMutation", m)
 }
 
 // The OutputLogFunc type is an adapter to allow the use of ordinary
