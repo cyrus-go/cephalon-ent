@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
@@ -35,6 +36,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
@@ -1134,6 +1137,51 @@ func (uu *UserUpdate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *Us
 	return uu.AddMissionFailedFeedbackIDs(ids...)
 }
 
+// AddAPITokenIDs adds the "api_tokens" edge to the ApiToken entity by IDs.
+func (uu *UserUpdate) AddAPITokenIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddAPITokenIDs(ids...)
+	return uu
+}
+
+// AddAPITokens adds the "api_tokens" edges to the ApiToken entity.
+func (uu *UserUpdate) AddAPITokens(a ...*ApiToken) *UserUpdate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAPITokenIDs(ids...)
+}
+
+// AddStarModelIDs adds the "star_model" edge to the Model entity by IDs.
+func (uu *UserUpdate) AddStarModelIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddStarModelIDs(ids...)
+	return uu
+}
+
+// AddStarModel adds the "star_model" edges to the Model entity.
+func (uu *UserUpdate) AddStarModel(m ...*Model) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddStarModelIDs(ids...)
+}
+
+// AddModelStarIDs adds the "model_star" edge to the ModleStar entity by IDs.
+func (uu *UserUpdate) AddModelStarIDs(ids ...int64) *UserUpdate {
+	uu.mutation.AddModelStarIDs(ids...)
+	return uu
+}
+
+// AddModelStar adds the "model_star" edges to the ModleStar entity.
+func (uu *UserUpdate) AddModelStar(m ...*ModleStar) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.AddModelStarIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -2070,6 +2118,69 @@ func (uu *UserUpdate) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedback) 
 		ids[i] = m[i].ID
 	}
 	return uu.RemoveMissionFailedFeedbackIDs(ids...)
+}
+
+// ClearAPITokens clears all "api_tokens" edges to the ApiToken entity.
+func (uu *UserUpdate) ClearAPITokens() *UserUpdate {
+	uu.mutation.ClearAPITokens()
+	return uu
+}
+
+// RemoveAPITokenIDs removes the "api_tokens" edge to ApiToken entities by IDs.
+func (uu *UserUpdate) RemoveAPITokenIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveAPITokenIDs(ids...)
+	return uu
+}
+
+// RemoveAPITokens removes "api_tokens" edges to ApiToken entities.
+func (uu *UserUpdate) RemoveAPITokens(a ...*ApiToken) *UserUpdate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAPITokenIDs(ids...)
+}
+
+// ClearStarModel clears all "star_model" edges to the Model entity.
+func (uu *UserUpdate) ClearStarModel() *UserUpdate {
+	uu.mutation.ClearStarModel()
+	return uu
+}
+
+// RemoveStarModelIDs removes the "star_model" edge to Model entities by IDs.
+func (uu *UserUpdate) RemoveStarModelIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveStarModelIDs(ids...)
+	return uu
+}
+
+// RemoveStarModel removes "star_model" edges to Model entities.
+func (uu *UserUpdate) RemoveStarModel(m ...*Model) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveStarModelIDs(ids...)
+}
+
+// ClearModelStar clears all "model_star" edges to the ModleStar entity.
+func (uu *UserUpdate) ClearModelStar() *UserUpdate {
+	uu.mutation.ClearModelStar()
+	return uu
+}
+
+// RemoveModelStarIDs removes the "model_star" edge to ModleStar entities by IDs.
+func (uu *UserUpdate) RemoveModelStarIDs(ids ...int64) *UserUpdate {
+	uu.mutation.RemoveModelStarIDs(ids...)
+	return uu
+}
+
+// RemoveModelStar removes "model_star" edges to ModleStar entities.
+func (uu *UserUpdate) RemoveModelStar(m ...*ModleStar) *UserUpdate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uu.RemoveModelStarIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -4305,6 +4416,162 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAPITokensIDs(); len(nodes) > 0 && !uu.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.APITokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.StarModelCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		createE := &ModleStarCreate{config: uu.config, mutation: newModleStarMutation(uu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedStarModelIDs(); len(nodes) > 0 && !uu.mutation.StarModelCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &ModleStarCreate{config: uu.config, mutation: newModleStarMutation(uu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.StarModelIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &ModleStarCreate{config: uu.config, mutation: newModleStarMutation(uu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ModelStarCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedModelStarIDs(); len(nodes) > 0 && !uu.mutation.ModelStarCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ModelStarIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(uu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -5394,6 +5661,51 @@ func (uuo *UserUpdateOne) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback)
 	return uuo.AddMissionFailedFeedbackIDs(ids...)
 }
 
+// AddAPITokenIDs adds the "api_tokens" edge to the ApiToken entity by IDs.
+func (uuo *UserUpdateOne) AddAPITokenIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddAPITokenIDs(ids...)
+	return uuo
+}
+
+// AddAPITokens adds the "api_tokens" edges to the ApiToken entity.
+func (uuo *UserUpdateOne) AddAPITokens(a ...*ApiToken) *UserUpdateOne {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAPITokenIDs(ids...)
+}
+
+// AddStarModelIDs adds the "star_model" edge to the Model entity by IDs.
+func (uuo *UserUpdateOne) AddStarModelIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddStarModelIDs(ids...)
+	return uuo
+}
+
+// AddStarModel adds the "star_model" edges to the Model entity.
+func (uuo *UserUpdateOne) AddStarModel(m ...*Model) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddStarModelIDs(ids...)
+}
+
+// AddModelStarIDs adds the "model_star" edge to the ModleStar entity by IDs.
+func (uuo *UserUpdateOne) AddModelStarIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.AddModelStarIDs(ids...)
+	return uuo
+}
+
+// AddModelStar adds the "model_star" edges to the ModleStar entity.
+func (uuo *UserUpdateOne) AddModelStar(m ...*ModleStar) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.AddModelStarIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -6330,6 +6642,69 @@ func (uuo *UserUpdateOne) RemoveMissionFailedFeedbacks(m ...*MissionFailedFeedba
 		ids[i] = m[i].ID
 	}
 	return uuo.RemoveMissionFailedFeedbackIDs(ids...)
+}
+
+// ClearAPITokens clears all "api_tokens" edges to the ApiToken entity.
+func (uuo *UserUpdateOne) ClearAPITokens() *UserUpdateOne {
+	uuo.mutation.ClearAPITokens()
+	return uuo
+}
+
+// RemoveAPITokenIDs removes the "api_tokens" edge to ApiToken entities by IDs.
+func (uuo *UserUpdateOne) RemoveAPITokenIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveAPITokenIDs(ids...)
+	return uuo
+}
+
+// RemoveAPITokens removes "api_tokens" edges to ApiToken entities.
+func (uuo *UserUpdateOne) RemoveAPITokens(a ...*ApiToken) *UserUpdateOne {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAPITokenIDs(ids...)
+}
+
+// ClearStarModel clears all "star_model" edges to the Model entity.
+func (uuo *UserUpdateOne) ClearStarModel() *UserUpdateOne {
+	uuo.mutation.ClearStarModel()
+	return uuo
+}
+
+// RemoveStarModelIDs removes the "star_model" edge to Model entities by IDs.
+func (uuo *UserUpdateOne) RemoveStarModelIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveStarModelIDs(ids...)
+	return uuo
+}
+
+// RemoveStarModel removes "star_model" edges to Model entities.
+func (uuo *UserUpdateOne) RemoveStarModel(m ...*Model) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveStarModelIDs(ids...)
+}
+
+// ClearModelStar clears all "model_star" edges to the ModleStar entity.
+func (uuo *UserUpdateOne) ClearModelStar() *UserUpdateOne {
+	uuo.mutation.ClearModelStar()
+	return uuo
+}
+
+// RemoveModelStarIDs removes the "model_star" edge to ModleStar entities by IDs.
+func (uuo *UserUpdateOne) RemoveModelStarIDs(ids ...int64) *UserUpdateOne {
+	uuo.mutation.RemoveModelStarIDs(ids...)
+	return uuo
+}
+
+// RemoveModelStar removes "model_star" edges to ModleStar entities.
+func (uuo *UserUpdateOne) RemoveModelStar(m ...*ModleStar) *UserUpdateOne {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uuo.RemoveModelStarIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -8588,6 +8963,162 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAPITokensIDs(); len(nodes) > 0 && !uuo.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.APITokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.StarModelCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		createE := &ModleStarCreate{config: uuo.config, mutation: newModleStarMutation(uuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedStarModelIDs(); len(nodes) > 0 && !uuo.mutation.StarModelCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &ModleStarCreate{config: uuo.config, mutation: newModleStarMutation(uuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.StarModelIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &ModleStarCreate{config: uuo.config, mutation: newModleStarMutation(uuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ModelStarCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedModelStarIDs(); len(nodes) > 0 && !uuo.mutation.ModelStarCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ModelStarIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

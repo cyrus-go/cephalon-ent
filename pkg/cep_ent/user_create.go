@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
@@ -35,6 +36,8 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -1134,6 +1137,51 @@ func (uc *UserCreate) AddMissionFailedFeedbacks(m ...*MissionFailedFeedback) *Us
 		ids[i] = m[i].ID
 	}
 	return uc.AddMissionFailedFeedbackIDs(ids...)
+}
+
+// AddAPITokenIDs adds the "api_tokens" edge to the ApiToken entity by IDs.
+func (uc *UserCreate) AddAPITokenIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddAPITokenIDs(ids...)
+	return uc
+}
+
+// AddAPITokens adds the "api_tokens" edges to the ApiToken entity.
+func (uc *UserCreate) AddAPITokens(a ...*ApiToken) *UserCreate {
+	ids := make([]int64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAPITokenIDs(ids...)
+}
+
+// AddStarModelIDs adds the "star_model" edge to the Model entity by IDs.
+func (uc *UserCreate) AddStarModelIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddStarModelIDs(ids...)
+	return uc
+}
+
+// AddStarModel adds the "star_model" edges to the Model entity.
+func (uc *UserCreate) AddStarModel(m ...*Model) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddStarModelIDs(ids...)
+}
+
+// AddModelStarIDs adds the "model_star" edge to the ModleStar entity by IDs.
+func (uc *UserCreate) AddModelStarIDs(ids ...int64) *UserCreate {
+	uc.mutation.AddModelStarIDs(ids...)
+	return uc
+}
+
+// AddModelStar adds the "model_star" edges to the ModleStar entity.
+func (uc *UserCreate) AddModelStar(m ...*ModleStar) *UserCreate {
+	ids := make([]int64, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return uc.AddModelStarIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -2255,6 +2303,61 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(missionfailedfeedback.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.APITokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.APITokensTable,
+			Columns: []string{user.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.StarModelIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.StarModelTable,
+			Columns: user.StarModelPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &ModleStarCreate{config: uc.config, mutation: newModleStarMutation(uc.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ModelStarIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ModelStarTable,
+			Columns: []string{user.ModelStarColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

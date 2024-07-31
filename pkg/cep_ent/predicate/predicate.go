@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// ApiToken is the predicate function for apitoken builders.
+type ApiToken func(*sql.Selector)
+
 // Artwork is the predicate function for artwork builders.
 type Artwork func(*sql.Selector)
 
@@ -176,6 +179,15 @@ type MissionProduceOrder func(*sql.Selector)
 
 // MissionProduction is the predicate function for missionproduction builders.
 type MissionProduction func(*sql.Selector)
+
+// Model is the predicate function for model builders.
+type Model func(*sql.Selector)
+
+// ModelPrice is the predicate function for modelprice builders.
+type ModelPrice func(*sql.Selector)
+
+// ModleStar is the predicate function for modlestar builders.
+type ModleStar func(*sql.Selector)
 
 // OutputLog is the predicate function for outputlog builders.
 type OutputLog func(*sql.Selector)

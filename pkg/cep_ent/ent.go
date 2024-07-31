@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/apitoken"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artwork"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/artworklike"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/bill"
@@ -58,6 +59,9 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -140,6 +144,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			apitoken.Table:              apitoken.ValidColumn,
 			artwork.Table:               artwork.ValidColumn,
 			artworklike.Table:           artworklike.ValidColumn,
 			bill.Table:                  bill.ValidColumn,
@@ -186,6 +191,9 @@ func checkColumn(table, column string) error {
 			missionorder.Table:          missionorder.ValidColumn,
 			missionproduceorder.Table:   missionproduceorder.ValidColumn,
 			missionproduction.Table:     missionproduction.ValidColumn,
+			model.Table:                 model.ValidColumn,
+			modelprice.Table:            modelprice.ValidColumn,
+			modlestar.Table:             modlestar.ValidColumn,
 			outputlog.Table:             outputlog.ValidColumn,
 			platformaccount.Table:       platformaccount.ValidColumn,
 			price.Table:                 price.ValidColumn,
