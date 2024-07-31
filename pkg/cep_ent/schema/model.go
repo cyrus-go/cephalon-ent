@@ -29,7 +29,7 @@ func (Model) Fields() []ent.Field {
 func (Model) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("model_prices", ModelPrice.Type).StructTag(`json:"model_prices"`),
-		edge.To("model_orders", ModelOrder.Type).StructTag(`json:"model_orders"`),
+		// edge.To("model_orders", ModelOrder.Type).StructTag(`json:"model_orders"`),
 	}
 }
 
