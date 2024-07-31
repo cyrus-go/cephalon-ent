@@ -5,6 +5,7 @@ type MissionType string
 const (
 	MissionTypeUnknown            MissionType = "unknown"
 	MissionTypeSdTime             MissionType = "sd_time"
+	MissionTypeSdProTime          MissionType = "sd_pro_time"
 	MissionTypeSdTxt2Img          MissionType = "txt2img"
 	MissionTypeSdImg2Img          MissionType = "img2img"
 	MissionTypeJpTime             MissionType = "jp_time"
@@ -49,6 +50,7 @@ const (
 	MissionTypeWaitingTime        MissionType = "waiting_time" // 等待任务
 
 	MissionTypeSdTimePlan            MissionType = "sd_time_plan"
+	MissionTypeSdProTimePlan         MissionType = "sd_pro_time_plan"
 	MissionTypeWtTimePlan            MissionType = "wt_time_plan"
 	MissionTypeJpTimePlan            MissionType = "jp_time_plan"
 	MissionTypeJpDkTimePlan          MissionType = "jp_dk_time_plan"
@@ -92,6 +94,7 @@ func (obj MissionType) Values() []string {
 	return []string{
 		string(MissionTypeUnknown),
 		string(MissionTypeSdTime),
+		string(MissionTypeSdProTime),
 		string(MissionTypeSdTxt2Img),
 		string(MissionTypeSdImg2Img),
 		string(MissionTypeJpTime),
@@ -102,6 +105,7 @@ func (obj MissionType) Values() []string {
 		string(MissionTypeJpDkTime),
 		string(MissionTypeSshTime),
 		string(MissionTypeSdTimePlan),
+		string(MissionTypeSdProTimePlan),
 		string(MissionTypeWtTimePlan),
 		string(MissionTypeJpTimePlan),
 		string(MissionTypeJpDkTimePlan),
