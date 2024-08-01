@@ -14,6 +14,7 @@ func (obj ApiTokenStatus) Values() []string {
 		string(UnknownApiTokenStatus),
 		string(InitApiTokenStatus),
 		string(ForbiddenApiTokenStatus),
+		string(DelApiTokenStatus),
 	}
 }
 

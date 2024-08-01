@@ -19,7 +19,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "name", Type: field.TypeString, Comment: "token 名称", Default: ""},
 		{Name: "token", Type: field.TypeString, Comment: "token 内容", Default: ""},
-		{Name: "status", Type: field.TypeEnum, Comment: "token 状态", Enums: []string{"unknown", "init", "forbidden"}, Default: "unknown"},
+		{Name: "status", Type: field.TypeEnum, Comment: "token 状态", Enums: []string{"unknown", "init", "forbidden", "del"}, Default: "unknown"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
 	}
 	// APITokensTable holds the schema information for the "api_tokens" table.

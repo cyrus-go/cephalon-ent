@@ -97,7 +97,7 @@ const DefaultStatus enums.ApiTokenStatus = "unknown"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.ApiTokenStatus) error {
 	switch s {
-	case "unknown", "init", "forbidden":
+	case "unknown", "init", "forbidden", "del":
 		return nil
 	default:
 		return fmt.Errorf("apitoken: invalid enum value for status field: %q", s)
