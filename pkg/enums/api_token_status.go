@@ -5,6 +5,7 @@ type ApiTokenStatus string
 const (
 	UnknownApiTokenStatus   ApiTokenStatus = "unknown"
 	InitApiTokenStatus      ApiTokenStatus = "init"
+	DelApiTokenStatus       ApiTokenStatus = "del"
 	ForbiddenApiTokenStatus ApiTokenStatus = "forbidden"
 )
 
