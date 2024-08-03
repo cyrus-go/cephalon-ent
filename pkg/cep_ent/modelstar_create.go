@@ -108,15 +108,15 @@ func (msc *ModelStarCreate) SetModelID(i int64) *ModelStarCreate {
 }
 
 // SetStatus sets the "status" field.
-func (msc *ModelStarCreate) SetStatus(e enums.Model) *ModelStarCreate {
-	msc.mutation.SetStatus(e)
+func (msc *ModelStarCreate) SetStatus(es enums.StarStatus) *ModelStarCreate {
+	msc.mutation.SetStatus(es)
 	return msc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (msc *ModelStarCreate) SetNillableStatus(e *enums.Model) *ModelStarCreate {
-	if e != nil {
-		msc.SetStatus(*e)
+func (msc *ModelStarCreate) SetNillableStatus(es *enums.StarStatus) *ModelStarCreate {
+	if es != nil {
+		msc.SetStatus(*es)
 	}
 	return msc
 }
@@ -475,7 +475,7 @@ func (u *ModelStarUpsert) UpdateModelID() *ModelStarUpsert {
 }
 
 // SetStatus sets the "status" field.
-func (u *ModelStarUpsert) SetStatus(v enums.Model) *ModelStarUpsert {
+func (u *ModelStarUpsert) SetStatus(v enums.StarStatus) *ModelStarUpsert {
 	u.Set(modelstar.FieldStatus, v)
 	return u
 }
@@ -636,7 +636,7 @@ func (u *ModelStarUpsertOne) UpdateModelID() *ModelStarUpsertOne {
 }
 
 // SetStatus sets the "status" field.
-func (u *ModelStarUpsertOne) SetStatus(v enums.Model) *ModelStarUpsertOne {
+func (u *ModelStarUpsertOne) SetStatus(v enums.StarStatus) *ModelStarUpsertOne {
 	return u.Update(func(s *ModelStarUpsert) {
 		s.SetStatus(v)
 	})
@@ -965,7 +965,7 @@ func (u *ModelStarUpsertBulk) UpdateModelID() *ModelStarUpsertBulk {
 }
 
 // SetStatus sets the "status" field.
-func (u *ModelStarUpsertBulk) SetStatus(v enums.Model) *ModelStarUpsertBulk {
+func (u *ModelStarUpsertBulk) SetStatus(v enums.StarStatus) *ModelStarUpsertBulk {
 	return u.Update(func(s *ModelStarUpsert) {
 		s.SetStatus(v)
 	})

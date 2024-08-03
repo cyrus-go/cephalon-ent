@@ -332,19 +332,19 @@ func ModelIDNotIn(vs ...int64) predicate.ModelStar {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v enums.Model) predicate.ModelStar {
+func StatusEQ(v enums.StarStatus) predicate.ModelStar {
 	vc := v
 	return predicate.ModelStar(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v enums.Model) predicate.ModelStar {
+func StatusNEQ(v enums.StarStatus) predicate.ModelStar {
 	vc := v
 	return predicate.ModelStar(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...enums.Model) predicate.ModelStar {
+func StatusIn(vs ...enums.StarStatus) predicate.ModelStar {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -353,7 +353,7 @@ func StatusIn(vs ...enums.Model) predicate.ModelStar {
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...enums.Model) predicate.ModelStar {
+func StatusNotIn(vs ...enums.StarStatus) predicate.ModelStar {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]

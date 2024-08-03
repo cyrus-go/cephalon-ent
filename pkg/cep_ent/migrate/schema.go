@@ -2109,7 +2109,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
 		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "status", Type: field.TypeEnum, Comment: "收藏状态", Enums: []string{"unknown", "language"}, Default: "unknown"},
+		{Name: "status", Type: field.TypeEnum, Comment: "收藏状态", Enums: []string{"unknown", "star", "unstar"}, Default: "unknown"},
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
 		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
 	}

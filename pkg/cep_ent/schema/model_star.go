@@ -15,7 +15,7 @@ func (ModelStar) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("user_id").StructTag(`json:"user_id"`).Comment("用户ID"),
 		field.Int64("model_id").StructTag(`json:"model_id"`).Comment("模型ID"),
-		field.Enum("status").StructTag(`json:"status"`).Default(string(enums.UnknownStartStatus)).GoType(enums.Star).Comment("收藏状态"),
+		field.Enum("status").StructTag(`json:"status"`).Default(string(enums.UnknownModelStart)).GoType(enums.ModelStar).Comment("收藏状态"),
 	}
 }
 

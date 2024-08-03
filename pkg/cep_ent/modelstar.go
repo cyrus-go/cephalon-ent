@@ -36,7 +36,7 @@ type ModelStar struct {
 	// 模型ID
 	ModelID int64 `json:"model_id"`
 	// 收藏状态
-	Status enums.Model `json:"status"`
+	Status enums.StarStatus `json:"status"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ModelStarQuery when eager-loading is set.
 	Edges        ModelStarEdges `json:"edges"`
@@ -158,7 +158,7 @@ func (ms *ModelStar) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				ms.Status = enums.Model(value.String)
+				ms.Status = enums.StarStatus(value.String)
 			}
 		default:
 			ms.selectValues.Set(columns[i], values[i])

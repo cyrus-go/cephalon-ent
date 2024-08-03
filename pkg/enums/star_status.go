@@ -3,16 +3,16 @@ package enums
 type StarStatus string
 
 const (
-	UnknownStartStatus StarStatus = "unknown"
-	Star               Model      = "star"
-	UnStar             Model      = "unstar"
+	UnknownModelStart StarStatus = "unknown"
+	ModelStar         StarStatus = "star"
+	ModelUnStar       StarStatus = "unstar"
 )
 
 func (obj StarStatus) Values() []string {
 	return []string{
-		string(UnknownStartStatus),
-		string(Star),
-		string(UnStar),
+		string(UnknownModelStart),
+		string(ModelStar),
+		string(ModelUnStar),
 	}
 }
 

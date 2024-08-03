@@ -107,15 +107,15 @@ func (msu *ModelStarUpdate) SetModelID(i int64) *ModelStarUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (msu *ModelStarUpdate) SetStatus(e enums.Model) *ModelStarUpdate {
-	msu.mutation.SetStatus(e)
+func (msu *ModelStarUpdate) SetStatus(es enums.StarStatus) *ModelStarUpdate {
+	msu.mutation.SetStatus(es)
 	return msu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (msu *ModelStarUpdate) SetNillableStatus(e *enums.Model) *ModelStarUpdate {
-	if e != nil {
-		msu.SetStatus(*e)
+func (msu *ModelStarUpdate) SetNillableStatus(es *enums.StarStatus) *ModelStarUpdate {
+	if es != nil {
+		msu.SetStatus(*es)
 	}
 	return msu
 }
@@ -393,15 +393,15 @@ func (msuo *ModelStarUpdateOne) SetModelID(i int64) *ModelStarUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (msuo *ModelStarUpdateOne) SetStatus(e enums.Model) *ModelStarUpdateOne {
-	msuo.mutation.SetStatus(e)
+func (msuo *ModelStarUpdateOne) SetStatus(es enums.StarStatus) *ModelStarUpdateOne {
+	msuo.mutation.SetStatus(es)
 	return msuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (msuo *ModelStarUpdateOne) SetNillableStatus(e *enums.Model) *ModelStarUpdateOne {
-	if e != nil {
-		msuo.SetStatus(*e)
+func (msuo *ModelStarUpdateOne) SetNillableStatus(es *enums.StarStatus) *ModelStarUpdateOne {
+	if es != nil {
+		msuo.SetStatus(*es)
 	}
 	return msuo
 }

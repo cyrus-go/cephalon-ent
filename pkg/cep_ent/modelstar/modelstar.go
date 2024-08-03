@@ -94,12 +94,12 @@ var (
 	DefaultID func() int64
 )
 
-const DefaultStatus enums.Model = "unknown"
+const DefaultStatus enums.StarStatus = "unknown"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s enums.Model) error {
+func StatusValidator(s enums.StarStatus) error {
 	switch s {
-	case "unknown", "language":
+	case "unknown", "star", "unstar":
 		return nil
 	default:
 		return fmt.Errorf("modelstar: invalid enum value for status field: %q", s)

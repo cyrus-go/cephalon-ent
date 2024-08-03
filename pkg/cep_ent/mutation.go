@@ -63925,7 +63925,7 @@ type ModelStarMutation struct {
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
-	status        *enums.Model
+	status        *enums.StarStatus
 	clearedFields map[string]struct{}
 	user          *int64
 	cleareduser   bool
@@ -64333,12 +64333,12 @@ func (m *ModelStarMutation) ResetModelID() {
 }
 
 // SetStatus sets the "status" field.
-func (m *ModelStarMutation) SetStatus(e enums.Model) {
-	m.status = &e
+func (m *ModelStarMutation) SetStatus(es enums.StarStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *ModelStarMutation) Status() (r enums.Model, exists bool) {
+func (m *ModelStarMutation) Status() (r enums.StarStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -64349,7 +64349,7 @@ func (m *ModelStarMutation) Status() (r enums.Model, exists bool) {
 // OldStatus returns the old "status" field's value of the ModelStar entity.
 // If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldStatus(ctx context.Context) (v enums.Model, err error) {
+func (m *ModelStarMutation) OldStatus(ctx context.Context) (v enums.StarStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -64589,7 +64589,7 @@ func (m *ModelStarMutation) SetField(name string, value ent.Value) error {
 		m.SetModelID(v)
 		return nil
 	case modelstar.FieldStatus:
-		v, ok := value.(enums.Model)
+		v, ok := value.(enums.StarStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
