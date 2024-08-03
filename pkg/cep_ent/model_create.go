@@ -124,6 +124,20 @@ func (mc *ModelCreate) SetNillableAuthor(s *string) *ModelCreate {
 	return mc
 }
 
+// SetDescription sets the "description" field.
+func (mc *ModelCreate) SetDescription(s string) *ModelCreate {
+	mc.mutation.SetDescription(s)
+	return mc
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (mc *ModelCreate) SetNillableDescription(s *string) *ModelCreate {
+	if s != nil {
+		mc.SetDescription(*s)
+	}
+	return mc
+}
+
 // SetModelType sets the "model_type" field.
 func (mc *ModelCreate) SetModelType(e enums.Model) *ModelCreate {
 	mc.mutation.SetModelType(e)
@@ -302,6 +316,10 @@ func (mc *ModelCreate) defaults() {
 		v := model.DefaultAuthor
 		mc.mutation.SetAuthor(v)
 	}
+	if _, ok := mc.mutation.Description(); !ok {
+		v := model.DefaultDescription
+		mc.mutation.SetDescription(v)
+	}
 	if _, ok := mc.mutation.ModelType(); !ok {
 		v := model.DefaultModelType
 		mc.mutation.SetModelType(v)
@@ -346,6 +364,9 @@ func (mc *ModelCreate) check() error {
 	}
 	if _, ok := mc.mutation.Author(); !ok {
 		return &ValidationError{Name: "author", err: errors.New(`cep_ent: missing required field "Model.author"`)}
+	}
+	if _, ok := mc.mutation.Description(); !ok {
+		return &ValidationError{Name: "description", err: errors.New(`cep_ent: missing required field "Model.description"`)}
 	}
 	if _, ok := mc.mutation.ModelType(); !ok {
 		return &ValidationError{Name: "model_type", err: errors.New(`cep_ent: missing required field "Model.model_type"`)}
@@ -429,6 +450,10 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.Author(); ok {
 		_spec.SetField(model.FieldAuthor, field.TypeString, value)
 		_node.Author = value
+	}
+	if value, ok := mc.mutation.Description(); ok {
+		_spec.SetField(model.FieldDescription, field.TypeString, value)
+		_node.Description = value
 	}
 	if value, ok := mc.mutation.ModelType(); ok {
 		_spec.SetField(model.FieldModelType, field.TypeEnum, value)
@@ -637,6 +662,18 @@ func (u *ModelUpsert) UpdateAuthor() *ModelUpsert {
 	return u
 }
 
+// SetDescription sets the "description" field.
+func (u *ModelUpsert) SetDescription(v string) *ModelUpsert {
+	u.Set(model.FieldDescription, v)
+	return u
+}
+
+// UpdateDescription sets the "description" field to the value that was provided on create.
+func (u *ModelUpsert) UpdateDescription() *ModelUpsert {
+	u.SetExcluded(model.FieldDescription)
+	return u
+}
+
 // SetModelType sets the "model_type" field.
 func (u *ModelUpsert) SetModelType(v enums.Model) *ModelUpsert {
 	u.Set(model.FieldModelType, v)
@@ -837,6 +874,20 @@ func (u *ModelUpsertOne) SetAuthor(v string) *ModelUpsertOne {
 func (u *ModelUpsertOne) UpdateAuthor() *ModelUpsertOne {
 	return u.Update(func(s *ModelUpsert) {
 		s.UpdateAuthor()
+	})
+}
+
+// SetDescription sets the "description" field.
+func (u *ModelUpsertOne) SetDescription(v string) *ModelUpsertOne {
+	return u.Update(func(s *ModelUpsert) {
+		s.SetDescription(v)
+	})
+}
+
+// UpdateDescription sets the "description" field to the value that was provided on create.
+func (u *ModelUpsertOne) UpdateDescription() *ModelUpsertOne {
+	return u.Update(func(s *ModelUpsert) {
+		s.UpdateDescription()
 	})
 }
 
@@ -1215,6 +1266,20 @@ func (u *ModelUpsertBulk) SetAuthor(v string) *ModelUpsertBulk {
 func (u *ModelUpsertBulk) UpdateAuthor() *ModelUpsertBulk {
 	return u.Update(func(s *ModelUpsert) {
 		s.UpdateAuthor()
+	})
+}
+
+// SetDescription sets the "description" field.
+func (u *ModelUpsertBulk) SetDescription(v string) *ModelUpsertBulk {
+	return u.Update(func(s *ModelUpsert) {
+		s.SetDescription(v)
+	})
+}
+
+// UpdateDescription sets the "description" field to the value that was provided on create.
+func (u *ModelUpsertBulk) UpdateDescription() *ModelUpsertBulk {
+	return u.Update(func(s *ModelUpsert) {
+		s.UpdateDescription()
 	})
 }
 

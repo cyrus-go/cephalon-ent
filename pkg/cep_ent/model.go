@@ -33,6 +33,8 @@ type Model struct {
 	Name string `json:"name"`
 	// 模型作者
 	Author string `json:"author"`
+	// 模型描述
+	Description string `json:"description"`
 	// 模型类型
 	ModelType enums.Model `json:"model_type"`
 	// 模型状态
@@ -96,7 +98,7 @@ func (*Model) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case model.FieldID, model.FieldCreatedBy, model.FieldUpdatedBy, model.FieldTotalUsage:
 			values[i] = new(sql.NullInt64)
-		case model.FieldName, model.FieldAuthor, model.FieldModelType, model.FieldModelStatus:
+		case model.FieldName, model.FieldAuthor, model.FieldDescription, model.FieldModelType, model.FieldModelStatus:
 			values[i] = new(sql.NullString)
 		case model.FieldCreatedAt, model.FieldUpdatedAt, model.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -162,6 +164,12 @@ func (m *Model) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field author", values[i])
 			} else if value.Valid {
 				m.Author = value.String
+			}
+		case model.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				m.Description = value.String
 			}
 		case model.FieldModelType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -258,6 +266,9 @@ func (m *Model) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("author=")
 	builder.WriteString(m.Author)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("model_type=")
 	builder.WriteString(fmt.Sprintf("%v", m.ModelType))

@@ -61459,6 +61459,7 @@ type ModelMutation struct {
 	deleted_at          *time.Time
 	name                *string
 	author              *string
+	description         *string
 	model_type          *enums.Model
 	model_status        *enums.ModelStatus
 	is_official         *bool
@@ -61875,6 +61876,42 @@ func (m *ModelMutation) ResetAuthor() {
 	m.author = nil
 }
 
+// SetDescription sets the "description" field.
+func (m *ModelMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ModelMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Model entity.
+// If the Model object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ModelMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ModelMutation) ResetDescription() {
+	m.description = nil
+}
+
 // SetModelType sets the "model_type" field.
 func (m *ModelMutation) SetModelType(e enums.Model) {
 	m.model_type = &e
@@ -62235,7 +62272,7 @@ func (m *ModelMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ModelMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_by != nil {
 		fields = append(fields, model.FieldCreatedBy)
 	}
@@ -62256,6 +62293,9 @@ func (m *ModelMutation) Fields() []string {
 	}
 	if m.author != nil {
 		fields = append(fields, model.FieldAuthor)
+	}
+	if m.description != nil {
+		fields = append(fields, model.FieldDescription)
 	}
 	if m.model_type != nil {
 		fields = append(fields, model.FieldModelType)
@@ -62291,6 +62331,8 @@ func (m *ModelMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case model.FieldAuthor:
 		return m.Author()
+	case model.FieldDescription:
+		return m.Description()
 	case model.FieldModelType:
 		return m.ModelType()
 	case model.FieldModelStatus:
@@ -62322,6 +62364,8 @@ func (m *ModelMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case model.FieldAuthor:
 		return m.OldAuthor(ctx)
+	case model.FieldDescription:
+		return m.OldDescription(ctx)
 	case model.FieldModelType:
 		return m.OldModelType(ctx)
 	case model.FieldModelStatus:
@@ -62387,6 +62431,13 @@ func (m *ModelMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAuthor(v)
+		return nil
+	case model.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
 		return nil
 	case model.FieldModelType:
 		v, ok := value.(enums.Model)
@@ -62524,6 +62575,9 @@ func (m *ModelMutation) ResetField(name string) error {
 		return nil
 	case model.FieldAuthor:
 		m.ResetAuthor()
+		return nil
+	case model.FieldDescription:
+		m.ResetDescription()
 		return nil
 	case model.FieldModelType:
 		m.ResetModelType()

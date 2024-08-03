@@ -2732,12 +2732,16 @@ func init() {
 	modelDescAuthor := modelFields[1].Descriptor()
 	// model.DefaultAuthor holds the default value on creation for the author field.
 	model.DefaultAuthor = modelDescAuthor.Default.(string)
+	// modelDescDescription is the schema descriptor for description field.
+	modelDescDescription := modelFields[2].Descriptor()
+	// model.DefaultDescription holds the default value on creation for the description field.
+	model.DefaultDescription = modelDescDescription.Default.(string)
 	// modelDescIsOfficial is the schema descriptor for is_official field.
-	modelDescIsOfficial := modelFields[4].Descriptor()
+	modelDescIsOfficial := modelFields[5].Descriptor()
 	// model.DefaultIsOfficial holds the default value on creation for the is_official field.
 	model.DefaultIsOfficial = modelDescIsOfficial.Default.(bool)
 	// modelDescTotalUsage is the schema descriptor for total_usage field.
-	modelDescTotalUsage := modelFields[5].Descriptor()
+	modelDescTotalUsage := modelFields[6].Descriptor()
 	// model.DefaultTotalUsage holds the default value on creation for the total_usage field.
 	model.DefaultTotalUsage = modelDescTotalUsage.Default.(int)
 	// modelDescID is the schema descriptor for id field.

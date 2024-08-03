@@ -123,6 +123,20 @@ func (mu *ModelUpdate) SetNillableAuthor(s *string) *ModelUpdate {
 	return mu
 }
 
+// SetDescription sets the "description" field.
+func (mu *ModelUpdate) SetDescription(s string) *ModelUpdate {
+	mu.mutation.SetDescription(s)
+	return mu
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (mu *ModelUpdate) SetNillableDescription(s *string) *ModelUpdate {
+	if s != nil {
+		mu.SetDescription(*s)
+	}
+	return mu
+}
+
 // SetModelType sets the "model_type" field.
 func (mu *ModelUpdate) SetModelType(e enums.Model) *ModelUpdate {
 	mu.mutation.SetModelType(e)
@@ -391,6 +405,9 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.Author(); ok {
 		_spec.SetField(model.FieldAuthor, field.TypeString, value)
+	}
+	if value, ok := mu.mutation.Description(); ok {
+		_spec.SetField(model.FieldDescription, field.TypeString, value)
 	}
 	if value, ok := mu.mutation.ModelType(); ok {
 		_spec.SetField(model.FieldModelType, field.TypeEnum, value)
@@ -671,6 +688,20 @@ func (muo *ModelUpdateOne) SetAuthor(s string) *ModelUpdateOne {
 func (muo *ModelUpdateOne) SetNillableAuthor(s *string) *ModelUpdateOne {
 	if s != nil {
 		muo.SetAuthor(*s)
+	}
+	return muo
+}
+
+// SetDescription sets the "description" field.
+func (muo *ModelUpdateOne) SetDescription(s string) *ModelUpdateOne {
+	muo.mutation.SetDescription(s)
+	return muo
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (muo *ModelUpdateOne) SetNillableDescription(s *string) *ModelUpdateOne {
+	if s != nil {
+		muo.SetDescription(*s)
 	}
 	return muo
 }
@@ -973,6 +1004,9 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 	}
 	if value, ok := muo.mutation.Author(); ok {
 		_spec.SetField(model.FieldAuthor, field.TypeString, value)
+	}
+	if value, ok := muo.mutation.Description(); ok {
+		_spec.SetField(model.FieldDescription, field.TypeString, value)
 	}
 	if value, ok := muo.mutation.ModelType(); ok {
 		_spec.SetField(model.FieldModelType, field.TypeEnum, value)

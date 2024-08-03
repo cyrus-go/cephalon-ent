@@ -30,6 +30,8 @@ const (
 	FieldName = "name"
 	// FieldAuthor holds the string denoting the author field in the database.
 	FieldAuthor = "author"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 	// FieldModelType holds the string denoting the model_type field in the database.
 	FieldModelType = "model_type"
 	// FieldModelStatus holds the string denoting the model_status field in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldName,
 	FieldAuthor,
+	FieldDescription,
 	FieldModelType,
 	FieldModelStatus,
 	FieldIsOfficial,
@@ -116,6 +119,8 @@ var (
 	DefaultName string
 	// DefaultAuthor holds the default value on creation for the "author" field.
 	DefaultAuthor string
+	// DefaultDescription holds the default value on creation for the "description" field.
+	DefaultDescription string
 	// DefaultIsOfficial holds the default value on creation for the "is_official" field.
 	DefaultIsOfficial bool
 	// DefaultTotalUsage holds the default value on creation for the "total_usage" field.
@@ -136,7 +141,7 @@ func ModelTypeValidator(mt enums.Model) error {
 	}
 }
 
-const DefaultModelStatus enums.ModelStatus = "unknown"
+const DefaultModelStatus enums.ModelStatus = "init"
 
 // ModelStatusValidator is a validator for the "model_status" field enum values. It is called by the builders before save.
 func ModelStatusValidator(ms enums.ModelStatus) error {
@@ -189,6 +194,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByAuthor orders the results by the author field.
 func ByAuthor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthor, opts...).ToFunc()
+}
+
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
 // ByModelType orders the results by the model_type field.

@@ -2059,8 +2059,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
 		{Name: "name", Type: field.TypeString, Comment: "模型名称", Default: ""},
 		{Name: "author", Type: field.TypeString, Comment: "模型作者", Default: ""},
+		{Name: "description", Type: field.TypeString, Comment: "模型描述", Default: ""},
 		{Name: "model_type", Type: field.TypeEnum, Comment: "模型类型", Enums: []string{"unknown", "language"}, Default: "unknown"},
-		{Name: "model_status", Type: field.TypeEnum, Comment: "模型状态", Enums: []string{"unknown", "init"}, Default: "unknown"},
+		{Name: "model_status", Type: field.TypeEnum, Comment: "模型状态", Enums: []string{"unknown", "init"}, Default: "init"},
 		{Name: "is_official", Type: field.TypeBool, Comment: "是否为官方模型", Default: false},
 		{Name: "total_usage", Type: field.TypeInt, Comment: "模型的总使用次数", Default: 0},
 	}
