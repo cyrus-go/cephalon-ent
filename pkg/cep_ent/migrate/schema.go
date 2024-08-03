@@ -2101,8 +2101,8 @@ var (
 			},
 		},
 	}
-	// ModleStarsColumns holds the columns for the "modle_stars" table.
-	ModleStarsColumns = []*schema.Column{
+	// ModelStarsColumns holds the columns for the "model_stars" table.
+	ModelStarsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
 		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
 		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
@@ -2113,30 +2113,30 @@ var (
 		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
 		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
 	}
-	// ModleStarsTable holds the schema information for the "modle_stars" table.
-	ModleStarsTable = &schema.Table{
-		Name:       "modle_stars",
-		Columns:    ModleStarsColumns,
-		PrimaryKey: []*schema.Column{ModleStarsColumns[0]},
+	// ModelStarsTable holds the schema information for the "model_stars" table.
+	ModelStarsTable = &schema.Table{
+		Name:       "model_stars",
+		Columns:    ModelStarsColumns,
+		PrimaryKey: []*schema.Column{ModelStarsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "modle_stars_users_user",
-				Columns:    []*schema.Column{ModleStarsColumns[7]},
+				Symbol:     "model_stars_users_user",
+				Columns:    []*schema.Column{ModelStarsColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "modle_stars_models_model",
-				Columns:    []*schema.Column{ModleStarsColumns[8]},
+				Symbol:     "model_stars_models_model",
+				Columns:    []*schema.Column{ModelStarsColumns[8]},
 				RefColumns: []*schema.Column{ModelsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "modlestar_user_id_model_id",
+				Name:    "modelstar_user_id_model_id",
 				Unique:  true,
-				Columns: []*schema.Column{ModleStarsColumns[7], ModleStarsColumns[8]},
+				Columns: []*schema.Column{ModelStarsColumns[7], ModelStarsColumns[8]},
 			},
 		},
 	}
@@ -3087,7 +3087,7 @@ var (
 		MissionProductionsTable,
 		ModelsTable,
 		ModelPricesTable,
-		ModleStarsTable,
+		ModelStarsTable,
 		OutputLogsTable,
 		PlatformAccountsTable,
 		PricesTable,
@@ -3255,9 +3255,9 @@ func init() {
 	ModelsTable.Annotation = &entsql.Annotation{}
 	ModelPricesTable.ForeignKeys[0].RefTable = ModelsTable
 	ModelPricesTable.Annotation = &entsql.Annotation{}
-	ModleStarsTable.ForeignKeys[0].RefTable = UsersTable
-	ModleStarsTable.ForeignKeys[1].RefTable = ModelsTable
-	ModleStarsTable.Annotation = &entsql.Annotation{}
+	ModelStarsTable.ForeignKeys[0].RefTable = UsersTable
+	ModelStarsTable.ForeignKeys[1].RefTable = ModelsTable
+	ModelStarsTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}
 	PricesTable.ForeignKeys[0].RefTable = GpusTable

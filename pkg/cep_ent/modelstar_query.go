@@ -11,18 +11,18 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
 
-// ModleStarQuery is the builder for querying ModleStar entities.
-type ModleStarQuery struct {
+// ModelStarQuery is the builder for querying ModelStar entities.
+type ModelStarQuery struct {
 	config
 	ctx        *QueryContext
-	order      []modlestar.OrderOption
+	order      []modelstar.OrderOption
 	inters     []Interceptor
-	predicates []predicate.ModleStar
+	predicates []predicate.ModelStar
 	withUser   *UserQuery
 	withModel  *ModelQuery
 	modifiers  []func(*sql.Selector)
@@ -31,39 +31,39 @@ type ModleStarQuery struct {
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the ModleStarQuery builder.
-func (msq *ModleStarQuery) Where(ps ...predicate.ModleStar) *ModleStarQuery {
+// Where adds a new predicate for the ModelStarQuery builder.
+func (msq *ModelStarQuery) Where(ps ...predicate.ModelStar) *ModelStarQuery {
 	msq.predicates = append(msq.predicates, ps...)
 	return msq
 }
 
 // Limit the number of records to be returned by this query.
-func (msq *ModleStarQuery) Limit(limit int) *ModleStarQuery {
+func (msq *ModelStarQuery) Limit(limit int) *ModelStarQuery {
 	msq.ctx.Limit = &limit
 	return msq
 }
 
 // Offset to start from.
-func (msq *ModleStarQuery) Offset(offset int) *ModleStarQuery {
+func (msq *ModelStarQuery) Offset(offset int) *ModelStarQuery {
 	msq.ctx.Offset = &offset
 	return msq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (msq *ModleStarQuery) Unique(unique bool) *ModleStarQuery {
+func (msq *ModelStarQuery) Unique(unique bool) *ModelStarQuery {
 	msq.ctx.Unique = &unique
 	return msq
 }
 
 // Order specifies how the records should be ordered.
-func (msq *ModleStarQuery) Order(o ...modlestar.OrderOption) *ModleStarQuery {
+func (msq *ModelStarQuery) Order(o ...modelstar.OrderOption) *ModelStarQuery {
 	msq.order = append(msq.order, o...)
 	return msq
 }
 
 // QueryUser chains the current query on the "user" edge.
-func (msq *ModleStarQuery) QueryUser() *UserQuery {
+func (msq *ModelStarQuery) QueryUser() *UserQuery {
 	query := (&UserClient{config: msq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := msq.prepareQuery(ctx); err != nil {
@@ -74,9 +74,9 @@ func (msq *ModleStarQuery) QueryUser() *UserQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(modlestar.Table, modlestar.FieldID, selector),
+			sqlgraph.From(modelstar.Table, modelstar.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, modlestar.UserTable, modlestar.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, modelstar.UserTable, modelstar.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(msq.driver.Dialect(), step)
 		return fromU, nil
@@ -85,7 +85,7 @@ func (msq *ModleStarQuery) QueryUser() *UserQuery {
 }
 
 // QueryModel chains the current query on the "model" edge.
-func (msq *ModleStarQuery) QueryModel() *ModelQuery {
+func (msq *ModelStarQuery) QueryModel() *ModelQuery {
 	query := (&ModelClient{config: msq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := msq.prepareQuery(ctx); err != nil {
@@ -96,9 +96,9 @@ func (msq *ModleStarQuery) QueryModel() *ModelQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(modlestar.Table, modlestar.FieldID, selector),
+			sqlgraph.From(modelstar.Table, modelstar.FieldID, selector),
 			sqlgraph.To(model.Table, model.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, modlestar.ModelTable, modlestar.ModelColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, modelstar.ModelTable, modelstar.ModelColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(msq.driver.Dialect(), step)
 		return fromU, nil
@@ -106,21 +106,21 @@ func (msq *ModleStarQuery) QueryModel() *ModelQuery {
 	return query
 }
 
-// First returns the first ModleStar entity from the query.
-// Returns a *NotFoundError when no ModleStar was found.
-func (msq *ModleStarQuery) First(ctx context.Context) (*ModleStar, error) {
+// First returns the first ModelStar entity from the query.
+// Returns a *NotFoundError when no ModelStar was found.
+func (msq *ModelStarQuery) First(ctx context.Context) (*ModelStar, error) {
 	nodes, err := msq.Limit(1).All(setContextOp(ctx, msq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{modlestar.Label}
+		return nil, &NotFoundError{modelstar.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (msq *ModleStarQuery) FirstX(ctx context.Context) *ModleStar {
+func (msq *ModelStarQuery) FirstX(ctx context.Context) *ModelStar {
 	node, err := msq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -128,22 +128,22 @@ func (msq *ModleStarQuery) FirstX(ctx context.Context) *ModleStar {
 	return node
 }
 
-// FirstID returns the first ModleStar ID from the query.
-// Returns a *NotFoundError when no ModleStar ID was found.
-func (msq *ModleStarQuery) FirstID(ctx context.Context) (id int64, err error) {
+// FirstID returns the first ModelStar ID from the query.
+// Returns a *NotFoundError when no ModelStar ID was found.
+func (msq *ModelStarQuery) FirstID(ctx context.Context) (id int64, err error) {
 	var ids []int64
 	if ids, err = msq.Limit(1).IDs(setContextOp(ctx, msq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{modlestar.Label}
+		err = &NotFoundError{modelstar.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (msq *ModleStarQuery) FirstIDX(ctx context.Context) int64 {
+func (msq *ModelStarQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := msq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -151,10 +151,10 @@ func (msq *ModleStarQuery) FirstIDX(ctx context.Context) int64 {
 	return id
 }
 
-// Only returns a single ModleStar entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one ModleStar entity is found.
-// Returns a *NotFoundError when no ModleStar entities are found.
-func (msq *ModleStarQuery) Only(ctx context.Context) (*ModleStar, error) {
+// Only returns a single ModelStar entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one ModelStar entity is found.
+// Returns a *NotFoundError when no ModelStar entities are found.
+func (msq *ModelStarQuery) Only(ctx context.Context) (*ModelStar, error) {
 	nodes, err := msq.Limit(2).All(setContextOp(ctx, msq.ctx, "Only"))
 	if err != nil {
 		return nil, err
@@ -163,14 +163,14 @@ func (msq *ModleStarQuery) Only(ctx context.Context) (*ModleStar, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{modlestar.Label}
+		return nil, &NotFoundError{modelstar.Label}
 	default:
-		return nil, &NotSingularError{modlestar.Label}
+		return nil, &NotSingularError{modelstar.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (msq *ModleStarQuery) OnlyX(ctx context.Context) *ModleStar {
+func (msq *ModelStarQuery) OnlyX(ctx context.Context) *ModelStar {
 	node, err := msq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -178,10 +178,10 @@ func (msq *ModleStarQuery) OnlyX(ctx context.Context) *ModleStar {
 	return node
 }
 
-// OnlyID is like Only, but returns the only ModleStar ID in the query.
-// Returns a *NotSingularError when more than one ModleStar ID is found.
+// OnlyID is like Only, but returns the only ModelStar ID in the query.
+// Returns a *NotSingularError when more than one ModelStar ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (msq *ModleStarQuery) OnlyID(ctx context.Context) (id int64, err error) {
+func (msq *ModelStarQuery) OnlyID(ctx context.Context) (id int64, err error) {
 	var ids []int64
 	if ids, err = msq.Limit(2).IDs(setContextOp(ctx, msq.ctx, "OnlyID")); err != nil {
 		return
@@ -190,15 +190,15 @@ func (msq *ModleStarQuery) OnlyID(ctx context.Context) (id int64, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{modlestar.Label}
+		err = &NotFoundError{modelstar.Label}
 	default:
-		err = &NotSingularError{modlestar.Label}
+		err = &NotSingularError{modelstar.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (msq *ModleStarQuery) OnlyIDX(ctx context.Context) int64 {
+func (msq *ModelStarQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := msq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -206,18 +206,18 @@ func (msq *ModleStarQuery) OnlyIDX(ctx context.Context) int64 {
 	return id
 }
 
-// All executes the query and returns a list of ModleStars.
-func (msq *ModleStarQuery) All(ctx context.Context) ([]*ModleStar, error) {
+// All executes the query and returns a list of ModelStars.
+func (msq *ModelStarQuery) All(ctx context.Context) ([]*ModelStar, error) {
 	ctx = setContextOp(ctx, msq.ctx, "All")
 	if err := msq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*ModleStar, *ModleStarQuery]()
-	return withInterceptors[[]*ModleStar](ctx, msq, qr, msq.inters)
+	qr := querierAll[[]*ModelStar, *ModelStarQuery]()
+	return withInterceptors[[]*ModelStar](ctx, msq, qr, msq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (msq *ModleStarQuery) AllX(ctx context.Context) []*ModleStar {
+func (msq *ModelStarQuery) AllX(ctx context.Context) []*ModelStar {
 	nodes, err := msq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -225,20 +225,20 @@ func (msq *ModleStarQuery) AllX(ctx context.Context) []*ModleStar {
 	return nodes
 }
 
-// IDs executes the query and returns a list of ModleStar IDs.
-func (msq *ModleStarQuery) IDs(ctx context.Context) (ids []int64, err error) {
+// IDs executes the query and returns a list of ModelStar IDs.
+func (msq *ModelStarQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if msq.ctx.Unique == nil && msq.path != nil {
 		msq.Unique(true)
 	}
 	ctx = setContextOp(ctx, msq.ctx, "IDs")
-	if err = msq.Select(modlestar.FieldID).Scan(ctx, &ids); err != nil {
+	if err = msq.Select(modelstar.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (msq *ModleStarQuery) IDsX(ctx context.Context) []int64 {
+func (msq *ModelStarQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := msq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -247,16 +247,16 @@ func (msq *ModleStarQuery) IDsX(ctx context.Context) []int64 {
 }
 
 // Count returns the count of the given query.
-func (msq *ModleStarQuery) Count(ctx context.Context) (int, error) {
+func (msq *ModelStarQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, msq.ctx, "Count")
 	if err := msq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, msq, querierCount[*ModleStarQuery](), msq.inters)
+	return withInterceptors[int](ctx, msq, querierCount[*ModelStarQuery](), msq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (msq *ModleStarQuery) CountX(ctx context.Context) int {
+func (msq *ModelStarQuery) CountX(ctx context.Context) int {
 	count, err := msq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -265,7 +265,7 @@ func (msq *ModleStarQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (msq *ModleStarQuery) Exist(ctx context.Context) (bool, error) {
+func (msq *ModelStarQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, msq.ctx, "Exist")
 	switch _, err := msq.FirstID(ctx); {
 	case IsNotFound(err):
@@ -278,7 +278,7 @@ func (msq *ModleStarQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (msq *ModleStarQuery) ExistX(ctx context.Context) bool {
+func (msq *ModelStarQuery) ExistX(ctx context.Context) bool {
 	exist, err := msq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -286,18 +286,18 @@ func (msq *ModleStarQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the ModleStarQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the ModelStarQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (msq *ModleStarQuery) Clone() *ModleStarQuery {
+func (msq *ModelStarQuery) Clone() *ModelStarQuery {
 	if msq == nil {
 		return nil
 	}
-	return &ModleStarQuery{
+	return &ModelStarQuery{
 		config:     msq.config,
 		ctx:        msq.ctx.Clone(),
-		order:      append([]modlestar.OrderOption{}, msq.order...),
+		order:      append([]modelstar.OrderOption{}, msq.order...),
 		inters:     append([]Interceptor{}, msq.inters...),
-		predicates: append([]predicate.ModleStar{}, msq.predicates...),
+		predicates: append([]predicate.ModelStar{}, msq.predicates...),
 		withUser:   msq.withUser.Clone(),
 		withModel:  msq.withModel.Clone(),
 		// clone intermediate query.
@@ -308,7 +308,7 @@ func (msq *ModleStarQuery) Clone() *ModleStarQuery {
 
 // WithUser tells the query-builder to eager-load the nodes that are connected to
 // the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (msq *ModleStarQuery) WithUser(opts ...func(*UserQuery)) *ModleStarQuery {
+func (msq *ModelStarQuery) WithUser(opts ...func(*UserQuery)) *ModelStarQuery {
 	query := (&UserClient{config: msq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -319,7 +319,7 @@ func (msq *ModleStarQuery) WithUser(opts ...func(*UserQuery)) *ModleStarQuery {
 
 // WithModel tells the query-builder to eager-load the nodes that are connected to
 // the "model" edge. The optional arguments are used to configure the query builder of the edge.
-func (msq *ModleStarQuery) WithModel(opts ...func(*ModelQuery)) *ModleStarQuery {
+func (msq *ModelStarQuery) WithModel(opts ...func(*ModelQuery)) *ModelStarQuery {
 	query := (&ModelClient{config: msq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -338,15 +338,15 @@ func (msq *ModleStarQuery) WithModel(opts ...func(*ModelQuery)) *ModleStarQuery 
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.ModleStar.Query().
-//		GroupBy(modlestar.FieldCreatedBy).
+//	client.ModelStar.Query().
+//		GroupBy(modelstar.FieldCreatedBy).
 //		Aggregate(cep_ent.Count()).
 //		Scan(ctx, &v)
-func (msq *ModleStarQuery) GroupBy(field string, fields ...string) *ModleStarGroupBy {
+func (msq *ModelStarQuery) GroupBy(field string, fields ...string) *ModelStarGroupBy {
 	msq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &ModleStarGroupBy{build: msq}
+	grbuild := &ModelStarGroupBy{build: msq}
 	grbuild.flds = &msq.ctx.Fields
-	grbuild.label = modlestar.Label
+	grbuild.label = modelstar.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -360,23 +360,23 @@ func (msq *ModleStarQuery) GroupBy(field string, fields ...string) *ModleStarGro
 //		CreatedBy int64 `json:"created_by,string"`
 //	}
 //
-//	client.ModleStar.Query().
-//		Select(modlestar.FieldCreatedBy).
+//	client.ModelStar.Query().
+//		Select(modelstar.FieldCreatedBy).
 //		Scan(ctx, &v)
-func (msq *ModleStarQuery) Select(fields ...string) *ModleStarSelect {
+func (msq *ModelStarQuery) Select(fields ...string) *ModelStarSelect {
 	msq.ctx.Fields = append(msq.ctx.Fields, fields...)
-	sbuild := &ModleStarSelect{ModleStarQuery: msq}
-	sbuild.label = modlestar.Label
+	sbuild := &ModelStarSelect{ModelStarQuery: msq}
+	sbuild.label = modelstar.Label
 	sbuild.flds, sbuild.scan = &msq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a ModleStarSelect configured with the given aggregations.
-func (msq *ModleStarQuery) Aggregate(fns ...AggregateFunc) *ModleStarSelect {
+// Aggregate returns a ModelStarSelect configured with the given aggregations.
+func (msq *ModelStarQuery) Aggregate(fns ...AggregateFunc) *ModelStarSelect {
 	return msq.Select().Aggregate(fns...)
 }
 
-func (msq *ModleStarQuery) prepareQuery(ctx context.Context) error {
+func (msq *ModelStarQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range msq.inters {
 		if inter == nil {
 			return fmt.Errorf("cep_ent: uninitialized interceptor (forgotten import cep_ent/runtime?)")
@@ -388,7 +388,7 @@ func (msq *ModleStarQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range msq.ctx.Fields {
-		if !modlestar.ValidColumn(f) {
+		if !modelstar.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("cep_ent: invalid field %q for query", f)}
 		}
 	}
@@ -402,9 +402,9 @@ func (msq *ModleStarQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (msq *ModleStarQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ModleStar, error) {
+func (msq *ModelStarQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ModelStar, error) {
 	var (
-		nodes       = []*ModleStar{}
+		nodes       = []*ModelStar{}
 		_spec       = msq.querySpec()
 		loadedTypes = [2]bool{
 			msq.withUser != nil,
@@ -412,10 +412,10 @@ func (msq *ModleStarQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*M
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*ModleStar).scanValues(nil, columns)
+		return (*ModelStar).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &ModleStar{config: msq.config}
+		node := &ModelStar{config: msq.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -434,22 +434,22 @@ func (msq *ModleStarQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*M
 	}
 	if query := msq.withUser; query != nil {
 		if err := msq.loadUser(ctx, query, nodes, nil,
-			func(n *ModleStar, e *User) { n.Edges.User = e }); err != nil {
+			func(n *ModelStar, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := msq.withModel; query != nil {
 		if err := msq.loadModel(ctx, query, nodes, nil,
-			func(n *ModleStar, e *Model) { n.Edges.Model = e }); err != nil {
+			func(n *ModelStar, e *Model) { n.Edges.Model = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (msq *ModleStarQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*ModleStar, init func(*ModleStar), assign func(*ModleStar, *User)) error {
+func (msq *ModelStarQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*ModelStar, init func(*ModelStar), assign func(*ModelStar, *User)) error {
 	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*ModleStar)
+	nodeids := make(map[int64][]*ModelStar)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -476,9 +476,9 @@ func (msq *ModleStarQuery) loadUser(ctx context.Context, query *UserQuery, nodes
 	}
 	return nil
 }
-func (msq *ModleStarQuery) loadModel(ctx context.Context, query *ModelQuery, nodes []*ModleStar, init func(*ModleStar), assign func(*ModleStar, *Model)) error {
+func (msq *ModelStarQuery) loadModel(ctx context.Context, query *ModelQuery, nodes []*ModelStar, init func(*ModelStar), assign func(*ModelStar, *Model)) error {
 	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*ModleStar)
+	nodeids := make(map[int64][]*ModelStar)
 	for i := range nodes {
 		fk := nodes[i].ModelID
 		if _, ok := nodeids[fk]; !ok {
@@ -506,7 +506,7 @@ func (msq *ModleStarQuery) loadModel(ctx context.Context, query *ModelQuery, nod
 	return nil
 }
 
-func (msq *ModleStarQuery) sqlCount(ctx context.Context) (int, error) {
+func (msq *ModelStarQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := msq.querySpec()
 	if len(msq.modifiers) > 0 {
 		_spec.Modifiers = msq.modifiers
@@ -518,8 +518,8 @@ func (msq *ModleStarQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, msq.driver, _spec)
 }
 
-func (msq *ModleStarQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(modlestar.Table, modlestar.Columns, sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64))
+func (msq *ModelStarQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(modelstar.Table, modelstar.Columns, sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64))
 	_spec.From = msq.sql
 	if unique := msq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -528,17 +528,17 @@ func (msq *ModleStarQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := msq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, modlestar.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, modelstar.FieldID)
 		for i := range fields {
-			if fields[i] != modlestar.FieldID {
+			if fields[i] != modelstar.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if msq.withUser != nil {
-			_spec.Node.AddColumnOnce(modlestar.FieldUserID)
+			_spec.Node.AddColumnOnce(modelstar.FieldUserID)
 		}
 		if msq.withModel != nil {
-			_spec.Node.AddColumnOnce(modlestar.FieldModelID)
+			_spec.Node.AddColumnOnce(modelstar.FieldModelID)
 		}
 	}
 	if ps := msq.predicates; len(ps) > 0 {
@@ -564,12 +564,12 @@ func (msq *ModleStarQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (msq *ModleStarQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (msq *ModelStarQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(msq.driver.Dialect())
-	t1 := builder.Table(modlestar.Table)
+	t1 := builder.Table(modelstar.Table)
 	columns := msq.ctx.Fields
 	if len(columns) == 0 {
-		columns = modlestar.Columns
+		columns = modelstar.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if msq.sql != nil {
@@ -600,33 +600,33 @@ func (msq *ModleStarQuery) sqlQuery(ctx context.Context) *sql.Selector {
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (msq *ModleStarQuery) Modify(modifiers ...func(s *sql.Selector)) *ModleStarSelect {
+func (msq *ModelStarQuery) Modify(modifiers ...func(s *sql.Selector)) *ModelStarSelect {
 	msq.modifiers = append(msq.modifiers, modifiers...)
 	return msq.Select()
 }
 
-// ModleStarGroupBy is the group-by builder for ModleStar entities.
-type ModleStarGroupBy struct {
+// ModelStarGroupBy is the group-by builder for ModelStar entities.
+type ModelStarGroupBy struct {
 	selector
-	build *ModleStarQuery
+	build *ModelStarQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (msgb *ModleStarGroupBy) Aggregate(fns ...AggregateFunc) *ModleStarGroupBy {
+func (msgb *ModelStarGroupBy) Aggregate(fns ...AggregateFunc) *ModelStarGroupBy {
 	msgb.fns = append(msgb.fns, fns...)
 	return msgb
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (msgb *ModleStarGroupBy) Scan(ctx context.Context, v any) error {
+func (msgb *ModelStarGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, msgb.build.ctx, "GroupBy")
 	if err := msgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ModleStarQuery, *ModleStarGroupBy](ctx, msgb.build, msgb, msgb.build.inters, v)
+	return scanWithInterceptors[*ModelStarQuery, *ModelStarGroupBy](ctx, msgb.build, msgb, msgb.build.inters, v)
 }
 
-func (msgb *ModleStarGroupBy) sqlScan(ctx context.Context, root *ModleStarQuery, v any) error {
+func (msgb *ModelStarGroupBy) sqlScan(ctx context.Context, root *ModelStarQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(msgb.fns))
 	for _, fn := range msgb.fns {
@@ -653,28 +653,28 @@ func (msgb *ModleStarGroupBy) sqlScan(ctx context.Context, root *ModleStarQuery,
 	return sql.ScanSlice(rows, v)
 }
 
-// ModleStarSelect is the builder for selecting fields of ModleStar entities.
-type ModleStarSelect struct {
-	*ModleStarQuery
+// ModelStarSelect is the builder for selecting fields of ModelStar entities.
+type ModelStarSelect struct {
+	*ModelStarQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (mss *ModleStarSelect) Aggregate(fns ...AggregateFunc) *ModleStarSelect {
+func (mss *ModelStarSelect) Aggregate(fns ...AggregateFunc) *ModelStarSelect {
 	mss.fns = append(mss.fns, fns...)
 	return mss
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (mss *ModleStarSelect) Scan(ctx context.Context, v any) error {
+func (mss *ModelStarSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, mss.ctx, "Select")
 	if err := mss.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ModleStarQuery, *ModleStarSelect](ctx, mss.ModleStarQuery, mss, mss.inters, v)
+	return scanWithInterceptors[*ModelStarQuery, *ModelStarSelect](ctx, mss.ModelStarQuery, mss, mss.inters, v)
 }
 
-func (mss *ModleStarSelect) sqlScan(ctx context.Context, root *ModleStarQuery, v any) error {
+func (mss *ModelStarSelect) sqlScan(ctx context.Context, root *ModelStarQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(mss.fns))
 	for _, fn := range mss.fns {
@@ -696,7 +696,7 @@ func (mss *ModleStarSelect) sqlScan(ctx context.Context, root *ModleStarQuery, v
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (mss *ModleStarSelect) Modify(modifiers ...func(s *sql.Selector)) *ModleStarSelect {
+func (mss *ModelStarSelect) Modify(modifiers ...func(s *sql.Selector)) *ModelStarSelect {
 	mss.modifiers = append(mss.modifiers, modifiers...)
 	return mss
 }

@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
@@ -238,14 +238,14 @@ func (mc *ModelCreate) AddStarUser(u ...*User) *ModelCreate {
 	return mc.AddStarUserIDs(ids...)
 }
 
-// AddStarModelIDs adds the "star_model" edge to the ModleStar entity by IDs.
+// AddStarModelIDs adds the "star_model" edge to the ModelStar entity by IDs.
 func (mc *ModelCreate) AddStarModelIDs(ids ...int64) *ModelCreate {
 	mc.mutation.AddStarModelIDs(ids...)
 	return mc
 }
 
-// AddStarModel adds the "star_model" edges to the ModleStar entity.
-func (mc *ModelCreate) AddStarModel(m ...*ModleStar) *ModelCreate {
+// AddStarModel adds the "star_model" edges to the ModelStar entity.
+func (mc *ModelCreate) AddStarModel(m ...*ModelStar) *ModelCreate {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
@@ -501,7 +501,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModleStarCreate{config: mc.config, mutation: newModleStarMutation(mc.config, OpCreate)}
+		createE := &ModelStarCreate{config: mc.config, mutation: newModelStarMutation(mc.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -518,7 +518,7 @@ func (mc *ModelCreate) createSpec() (*Model, *sqlgraph.CreateSpec) {
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

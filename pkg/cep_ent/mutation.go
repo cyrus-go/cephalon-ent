@@ -60,7 +60,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -145,7 +145,7 @@ const (
 	TypeMissionProduction     = "MissionProduction"
 	TypeModel                 = "Model"
 	TypeModelPrice            = "ModelPrice"
-	TypeModleStar             = "ModleStar"
+	TypeModelStar             = "ModelStar"
 	TypeOutputLog             = "OutputLog"
 	TypePlatformAccount       = "PlatformAccount"
 	TypePrice                 = "Price"
@@ -62184,7 +62184,7 @@ func (m *ModelMutation) ResetStarUser() {
 	m.removedstar_user = nil
 }
 
-// AddStarModelIDs adds the "star_model" edge to the ModleStar entity by ids.
+// AddStarModelIDs adds the "star_model" edge to the ModelStar entity by ids.
 func (m *ModelMutation) AddStarModelIDs(ids ...int64) {
 	if m.star_model == nil {
 		m.star_model = make(map[int64]struct{})
@@ -62194,17 +62194,17 @@ func (m *ModelMutation) AddStarModelIDs(ids ...int64) {
 	}
 }
 
-// ClearStarModel clears the "star_model" edge to the ModleStar entity.
+// ClearStarModel clears the "star_model" edge to the ModelStar entity.
 func (m *ModelMutation) ClearStarModel() {
 	m.clearedstar_model = true
 }
 
-// StarModelCleared reports if the "star_model" edge to the ModleStar entity was cleared.
+// StarModelCleared reports if the "star_model" edge to the ModelStar entity was cleared.
 func (m *ModelMutation) StarModelCleared() bool {
 	return m.clearedstar_model
 }
 
-// RemoveStarModelIDs removes the "star_model" edge to the ModleStar entity by IDs.
+// RemoveStarModelIDs removes the "star_model" edge to the ModelStar entity by IDs.
 func (m *ModelMutation) RemoveStarModelIDs(ids ...int64) {
 	if m.removedstar_model == nil {
 		m.removedstar_model = make(map[int64]struct{})
@@ -62215,7 +62215,7 @@ func (m *ModelMutation) RemoveStarModelIDs(ids ...int64) {
 	}
 }
 
-// RemovedStarModel returns the removed IDs of the "star_model" edge to the ModleStar entity.
+// RemovedStarModel returns the removed IDs of the "star_model" edge to the ModelStar entity.
 func (m *ModelMutation) RemovedStarModelIDs() (ids []int64) {
 	for id := range m.removedstar_model {
 		ids = append(ids, id)
@@ -63912,8 +63912,8 @@ func (m *ModelPriceMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ModelPrice edge %s", name)
 }
 
-// ModleStarMutation represents an operation that mutates the ModleStar nodes in the graph.
-type ModleStarMutation struct {
+// ModelStarMutation represents an operation that mutates the ModelStar nodes in the graph.
+type ModelStarMutation struct {
 	config
 	op            Op
 	typ           string
@@ -63932,21 +63932,21 @@ type ModleStarMutation struct {
 	model         *int64
 	clearedmodel  bool
 	done          bool
-	oldValue      func(context.Context) (*ModleStar, error)
-	predicates    []predicate.ModleStar
+	oldValue      func(context.Context) (*ModelStar, error)
+	predicates    []predicate.ModelStar
 }
 
-var _ ent.Mutation = (*ModleStarMutation)(nil)
+var _ ent.Mutation = (*ModelStarMutation)(nil)
 
-// modlestarOption allows management of the mutation configuration using functional options.
-type modlestarOption func(*ModleStarMutation)
+// modelstarOption allows management of the mutation configuration using functional options.
+type modelstarOption func(*ModelStarMutation)
 
-// newModleStarMutation creates new mutation for the ModleStar entity.
-func newModleStarMutation(c config, op Op, opts ...modlestarOption) *ModleStarMutation {
-	m := &ModleStarMutation{
+// newModelStarMutation creates new mutation for the ModelStar entity.
+func newModelStarMutation(c config, op Op, opts ...modelstarOption) *ModelStarMutation {
+	m := &ModelStarMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeModleStar,
+		typ:           TypeModelStar,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -63955,20 +63955,20 @@ func newModleStarMutation(c config, op Op, opts ...modlestarOption) *ModleStarMu
 	return m
 }
 
-// withModleStarID sets the ID field of the mutation.
-func withModleStarID(id int64) modlestarOption {
-	return func(m *ModleStarMutation) {
+// withModelStarID sets the ID field of the mutation.
+func withModelStarID(id int64) modelstarOption {
+	return func(m *ModelStarMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *ModleStar
+			value *ModelStar
 		)
-		m.oldValue = func(ctx context.Context) (*ModleStar, error) {
+		m.oldValue = func(ctx context.Context) (*ModelStar, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().ModleStar.Get(ctx, id)
+					value, err = m.Client().ModelStar.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -63977,10 +63977,10 @@ func withModleStarID(id int64) modlestarOption {
 	}
 }
 
-// withModleStar sets the old ModleStar of the mutation.
-func withModleStar(node *ModleStar) modlestarOption {
-	return func(m *ModleStarMutation) {
-		m.oldValue = func(context.Context) (*ModleStar, error) {
+// withModelStar sets the old ModelStar of the mutation.
+func withModelStar(node *ModelStar) modelstarOption {
+	return func(m *ModelStarMutation) {
+		m.oldValue = func(context.Context) (*ModelStar, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -63989,7 +63989,7 @@ func withModleStar(node *ModleStar) modlestarOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ModleStarMutation) Client() *Client {
+func (m ModelStarMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -63997,7 +63997,7 @@ func (m ModleStarMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m ModleStarMutation) Tx() (*Tx, error) {
+func (m ModelStarMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("cep_ent: mutation is not running in a transaction")
 	}
@@ -64007,14 +64007,14 @@ func (m ModleStarMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of ModleStar entities.
-func (m *ModleStarMutation) SetID(id int64) {
+// operation is only accepted on creation of ModelStar entities.
+func (m *ModelStarMutation) SetID(id int64) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ModleStarMutation) ID() (id int64, exists bool) {
+func (m *ModelStarMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -64025,7 +64025,7 @@ func (m *ModleStarMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *ModleStarMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *ModelStarMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -64034,20 +64034,20 @@ func (m *ModleStarMutation) IDs(ctx context.Context) ([]int64, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().ModleStar.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().ModelStar.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *ModleStarMutation) SetCreatedBy(i int64) {
+func (m *ModelStarMutation) SetCreatedBy(i int64) {
 	m.created_by = &i
 	m.addcreated_by = nil
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *ModleStarMutation) CreatedBy() (r int64, exists bool) {
+func (m *ModelStarMutation) CreatedBy() (r int64, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -64055,10 +64055,10 @@ func (m *ModleStarMutation) CreatedBy() (r int64, exists bool) {
 	return *v, true
 }
 
-// OldCreatedBy returns the old "created_by" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedBy returns the old "created_by" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+func (m *ModelStarMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -64073,7 +64073,7 @@ func (m *ModleStarMutation) OldCreatedBy(ctx context.Context) (v int64, err erro
 }
 
 // AddCreatedBy adds i to the "created_by" field.
-func (m *ModleStarMutation) AddCreatedBy(i int64) {
+func (m *ModelStarMutation) AddCreatedBy(i int64) {
 	if m.addcreated_by != nil {
 		*m.addcreated_by += i
 	} else {
@@ -64082,7 +64082,7 @@ func (m *ModleStarMutation) AddCreatedBy(i int64) {
 }
 
 // AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
-func (m *ModleStarMutation) AddedCreatedBy() (r int64, exists bool) {
+func (m *ModelStarMutation) AddedCreatedBy() (r int64, exists bool) {
 	v := m.addcreated_by
 	if v == nil {
 		return
@@ -64091,19 +64091,19 @@ func (m *ModleStarMutation) AddedCreatedBy() (r int64, exists bool) {
 }
 
 // ResetCreatedBy resets all changes to the "created_by" field.
-func (m *ModleStarMutation) ResetCreatedBy() {
+func (m *ModelStarMutation) ResetCreatedBy() {
 	m.created_by = nil
 	m.addcreated_by = nil
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *ModleStarMutation) SetUpdatedBy(i int64) {
+func (m *ModelStarMutation) SetUpdatedBy(i int64) {
 	m.updated_by = &i
 	m.addupdated_by = nil
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *ModleStarMutation) UpdatedBy() (r int64, exists bool) {
+func (m *ModelStarMutation) UpdatedBy() (r int64, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -64111,10 +64111,10 @@ func (m *ModleStarMutation) UpdatedBy() (r int64, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedBy returns the old "updated_by" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedBy returns the old "updated_by" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+func (m *ModelStarMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -64129,7 +64129,7 @@ func (m *ModleStarMutation) OldUpdatedBy(ctx context.Context) (v int64, err erro
 }
 
 // AddUpdatedBy adds i to the "updated_by" field.
-func (m *ModleStarMutation) AddUpdatedBy(i int64) {
+func (m *ModelStarMutation) AddUpdatedBy(i int64) {
 	if m.addupdated_by != nil {
 		*m.addupdated_by += i
 	} else {
@@ -64138,7 +64138,7 @@ func (m *ModleStarMutation) AddUpdatedBy(i int64) {
 }
 
 // AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
-func (m *ModleStarMutation) AddedUpdatedBy() (r int64, exists bool) {
+func (m *ModelStarMutation) AddedUpdatedBy() (r int64, exists bool) {
 	v := m.addupdated_by
 	if v == nil {
 		return
@@ -64147,18 +64147,18 @@ func (m *ModleStarMutation) AddedUpdatedBy() (r int64, exists bool) {
 }
 
 // ResetUpdatedBy resets all changes to the "updated_by" field.
-func (m *ModleStarMutation) ResetUpdatedBy() {
+func (m *ModelStarMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	m.addupdated_by = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *ModleStarMutation) SetCreatedAt(t time.Time) {
+func (m *ModelStarMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ModleStarMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *ModelStarMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -64166,10 +64166,10 @@ func (m *ModleStarMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *ModelStarMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -64184,17 +64184,17 @@ func (m *ModleStarMutation) OldCreatedAt(ctx context.Context) (v time.Time, err 
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ModleStarMutation) ResetCreatedAt() {
+func (m *ModelStarMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (m *ModleStarMutation) SetUpdatedAt(t time.Time) {
+func (m *ModelStarMutation) SetUpdatedAt(t time.Time) {
 	m.updated_at = &t
 }
 
 // UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *ModleStarMutation) UpdatedAt() (r time.Time, exists bool) {
+func (m *ModelStarMutation) UpdatedAt() (r time.Time, exists bool) {
 	v := m.updated_at
 	if v == nil {
 		return
@@ -64202,10 +64202,10 @@ func (m *ModleStarMutation) UpdatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *ModelStarMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
@@ -64220,17 +64220,17 @@ func (m *ModleStarMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err 
 }
 
 // ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *ModleStarMutation) ResetUpdatedAt() {
+func (m *ModelStarMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (m *ModleStarMutation) SetDeletedAt(t time.Time) {
+func (m *ModelStarMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
 }
 
 // DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *ModleStarMutation) DeletedAt() (r time.Time, exists bool) {
+func (m *ModelStarMutation) DeletedAt() (r time.Time, exists bool) {
 	v := m.deleted_at
 	if v == nil {
 		return
@@ -64238,10 +64238,10 @@ func (m *ModleStarMutation) DeletedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldDeletedAt returns the old "deleted_at" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedAt returns the old "deleted_at" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *ModelStarMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -64256,17 +64256,17 @@ func (m *ModleStarMutation) OldDeletedAt(ctx context.Context) (v time.Time, err 
 }
 
 // ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *ModleStarMutation) ResetDeletedAt() {
+func (m *ModelStarMutation) ResetDeletedAt() {
 	m.deleted_at = nil
 }
 
 // SetUserID sets the "user_id" field.
-func (m *ModleStarMutation) SetUserID(i int64) {
+func (m *ModelStarMutation) SetUserID(i int64) {
 	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *ModleStarMutation) UserID() (r int64, exists bool) {
+func (m *ModelStarMutation) UserID() (r int64, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -64274,10 +64274,10 @@ func (m *ModleStarMutation) UserID() (r int64, exists bool) {
 	return *v, true
 }
 
-// OldUserID returns the old "user_id" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldUserID returns the old "user_id" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldUserID(ctx context.Context) (v int64, err error) {
+func (m *ModelStarMutation) OldUserID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -64292,17 +64292,17 @@ func (m *ModleStarMutation) OldUserID(ctx context.Context) (v int64, err error) 
 }
 
 // ResetUserID resets all changes to the "user_id" field.
-func (m *ModleStarMutation) ResetUserID() {
+func (m *ModelStarMutation) ResetUserID() {
 	m.user = nil
 }
 
 // SetModelID sets the "model_id" field.
-func (m *ModleStarMutation) SetModelID(i int64) {
+func (m *ModelStarMutation) SetModelID(i int64) {
 	m.model = &i
 }
 
 // ModelID returns the value of the "model_id" field in the mutation.
-func (m *ModleStarMutation) ModelID() (r int64, exists bool) {
+func (m *ModelStarMutation) ModelID() (r int64, exists bool) {
 	v := m.model
 	if v == nil {
 		return
@@ -64310,10 +64310,10 @@ func (m *ModleStarMutation) ModelID() (r int64, exists bool) {
 	return *v, true
 }
 
-// OldModelID returns the old "model_id" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldModelID returns the old "model_id" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldModelID(ctx context.Context) (v int64, err error) {
+func (m *ModelStarMutation) OldModelID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldModelID is only allowed on UpdateOne operations")
 	}
@@ -64328,17 +64328,17 @@ func (m *ModleStarMutation) OldModelID(ctx context.Context) (v int64, err error)
 }
 
 // ResetModelID resets all changes to the "model_id" field.
-func (m *ModleStarMutation) ResetModelID() {
+func (m *ModelStarMutation) ResetModelID() {
 	m.model = nil
 }
 
 // SetStatus sets the "status" field.
-func (m *ModleStarMutation) SetStatus(e enums.Model) {
+func (m *ModelStarMutation) SetStatus(e enums.Model) {
 	m.status = &e
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *ModleStarMutation) Status() (r enums.Model, exists bool) {
+func (m *ModelStarMutation) Status() (r enums.Model, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -64346,10 +64346,10 @@ func (m *ModleStarMutation) Status() (r enums.Model, exists bool) {
 	return *v, true
 }
 
-// OldStatus returns the old "status" field's value of the ModleStar entity.
-// If the ModleStar object wasn't provided to the builder, the object is fetched from the database.
+// OldStatus returns the old "status" field's value of the ModelStar entity.
+// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModleStarMutation) OldStatus(ctx context.Context) (v enums.Model, err error) {
+func (m *ModelStarMutation) OldStatus(ctx context.Context) (v enums.Model, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -64364,25 +64364,25 @@ func (m *ModleStarMutation) OldStatus(ctx context.Context) (v enums.Model, err e
 }
 
 // ResetStatus resets all changes to the "status" field.
-func (m *ModleStarMutation) ResetStatus() {
+func (m *ModelStarMutation) ResetStatus() {
 	m.status = nil
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (m *ModleStarMutation) ClearUser() {
+func (m *ModelStarMutation) ClearUser() {
 	m.cleareduser = true
-	m.clearedFields[modlestar.FieldUserID] = struct{}{}
+	m.clearedFields[modelstar.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
-func (m *ModleStarMutation) UserCleared() bool {
+func (m *ModelStarMutation) UserCleared() bool {
 	return m.cleareduser
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *ModleStarMutation) UserIDs() (ids []int64) {
+func (m *ModelStarMutation) UserIDs() (ids []int64) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -64390,26 +64390,26 @@ func (m *ModleStarMutation) UserIDs() (ids []int64) {
 }
 
 // ResetUser resets all changes to the "user" edge.
-func (m *ModleStarMutation) ResetUser() {
+func (m *ModelStarMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
 }
 
 // ClearModel clears the "model" edge to the Model entity.
-func (m *ModleStarMutation) ClearModel() {
+func (m *ModelStarMutation) ClearModel() {
 	m.clearedmodel = true
-	m.clearedFields[modlestar.FieldModelID] = struct{}{}
+	m.clearedFields[modelstar.FieldModelID] = struct{}{}
 }
 
 // ModelCleared reports if the "model" edge to the Model entity was cleared.
-func (m *ModleStarMutation) ModelCleared() bool {
+func (m *ModelStarMutation) ModelCleared() bool {
 	return m.clearedmodel
 }
 
 // ModelIDs returns the "model" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // ModelID instead. It exists only for internal usage by the builders.
-func (m *ModleStarMutation) ModelIDs() (ids []int64) {
+func (m *ModelStarMutation) ModelIDs() (ids []int64) {
 	if id := m.model; id != nil {
 		ids = append(ids, *id)
 	}
@@ -64417,20 +64417,20 @@ func (m *ModleStarMutation) ModelIDs() (ids []int64) {
 }
 
 // ResetModel resets all changes to the "model" edge.
-func (m *ModleStarMutation) ResetModel() {
+func (m *ModelStarMutation) ResetModel() {
 	m.model = nil
 	m.clearedmodel = false
 }
 
-// Where appends a list predicates to the ModleStarMutation builder.
-func (m *ModleStarMutation) Where(ps ...predicate.ModleStar) {
+// Where appends a list predicates to the ModelStarMutation builder.
+func (m *ModelStarMutation) Where(ps ...predicate.ModelStar) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the ModleStarMutation builder. Using this method,
+// WhereP appends storage-level predicates to the ModelStarMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *ModleStarMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.ModleStar, len(ps))
+func (m *ModelStarMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ModelStar, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -64438,48 +64438,48 @@ func (m *ModleStarMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *ModleStarMutation) Op() Op {
+func (m *ModelStarMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *ModleStarMutation) SetOp(op Op) {
+func (m *ModelStarMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (ModleStar).
-func (m *ModleStarMutation) Type() string {
+// Type returns the node type of this mutation (ModelStar).
+func (m *ModelStarMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *ModleStarMutation) Fields() []string {
+func (m *ModelStarMutation) Fields() []string {
 	fields := make([]string, 0, 8)
 	if m.created_by != nil {
-		fields = append(fields, modlestar.FieldCreatedBy)
+		fields = append(fields, modelstar.FieldCreatedBy)
 	}
 	if m.updated_by != nil {
-		fields = append(fields, modlestar.FieldUpdatedBy)
+		fields = append(fields, modelstar.FieldUpdatedBy)
 	}
 	if m.created_at != nil {
-		fields = append(fields, modlestar.FieldCreatedAt)
+		fields = append(fields, modelstar.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, modlestar.FieldUpdatedAt)
+		fields = append(fields, modelstar.FieldUpdatedAt)
 	}
 	if m.deleted_at != nil {
-		fields = append(fields, modlestar.FieldDeletedAt)
+		fields = append(fields, modelstar.FieldDeletedAt)
 	}
 	if m.user != nil {
-		fields = append(fields, modlestar.FieldUserID)
+		fields = append(fields, modelstar.FieldUserID)
 	}
 	if m.model != nil {
-		fields = append(fields, modlestar.FieldModelID)
+		fields = append(fields, modelstar.FieldModelID)
 	}
 	if m.status != nil {
-		fields = append(fields, modlestar.FieldStatus)
+		fields = append(fields, modelstar.FieldStatus)
 	}
 	return fields
 }
@@ -64487,23 +64487,23 @@ func (m *ModleStarMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *ModleStarMutation) Field(name string) (ent.Value, bool) {
+func (m *ModelStarMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case modlestar.FieldCreatedBy:
+	case modelstar.FieldCreatedBy:
 		return m.CreatedBy()
-	case modlestar.FieldUpdatedBy:
+	case modelstar.FieldUpdatedBy:
 		return m.UpdatedBy()
-	case modlestar.FieldCreatedAt:
+	case modelstar.FieldCreatedAt:
 		return m.CreatedAt()
-	case modlestar.FieldUpdatedAt:
+	case modelstar.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case modlestar.FieldDeletedAt:
+	case modelstar.FieldDeletedAt:
 		return m.DeletedAt()
-	case modlestar.FieldUserID:
+	case modelstar.FieldUserID:
 		return m.UserID()
-	case modlestar.FieldModelID:
+	case modelstar.FieldModelID:
 		return m.ModelID()
-	case modlestar.FieldStatus:
+	case modelstar.FieldStatus:
 		return m.Status()
 	}
 	return nil, false
@@ -64512,83 +64512,83 @@ func (m *ModleStarMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *ModleStarMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *ModelStarMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case modlestar.FieldCreatedBy:
+	case modelstar.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
-	case modlestar.FieldUpdatedBy:
+	case modelstar.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
-	case modlestar.FieldCreatedAt:
+	case modelstar.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case modlestar.FieldUpdatedAt:
+	case modelstar.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case modlestar.FieldDeletedAt:
+	case modelstar.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case modlestar.FieldUserID:
+	case modelstar.FieldUserID:
 		return m.OldUserID(ctx)
-	case modlestar.FieldModelID:
+	case modelstar.FieldModelID:
 		return m.OldModelID(ctx)
-	case modlestar.FieldStatus:
+	case modelstar.FieldStatus:
 		return m.OldStatus(ctx)
 	}
-	return nil, fmt.Errorf("unknown ModleStar field %s", name)
+	return nil, fmt.Errorf("unknown ModelStar field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *ModleStarMutation) SetField(name string, value ent.Value) error {
+func (m *ModelStarMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case modlestar.FieldCreatedBy:
+	case modelstar.FieldCreatedBy:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
-	case modlestar.FieldUpdatedBy:
+	case modelstar.FieldUpdatedBy:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
 		return nil
-	case modlestar.FieldCreatedAt:
+	case modelstar.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case modlestar.FieldUpdatedAt:
+	case modelstar.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case modlestar.FieldDeletedAt:
+	case modelstar.FieldDeletedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case modlestar.FieldUserID:
+	case modelstar.FieldUserID:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
 		return nil
-	case modlestar.FieldModelID:
+	case modelstar.FieldModelID:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetModelID(v)
 		return nil
-	case modlestar.FieldStatus:
+	case modelstar.FieldStatus:
 		v, ok := value.(enums.Model)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -64596,18 +64596,18 @@ func (m *ModleStarMutation) SetField(name string, value ent.Value) error {
 		m.SetStatus(v)
 		return nil
 	}
-	return fmt.Errorf("unknown ModleStar field %s", name)
+	return fmt.Errorf("unknown ModelStar field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *ModleStarMutation) AddedFields() []string {
+func (m *ModelStarMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreated_by != nil {
-		fields = append(fields, modlestar.FieldCreatedBy)
+		fields = append(fields, modelstar.FieldCreatedBy)
 	}
 	if m.addupdated_by != nil {
-		fields = append(fields, modlestar.FieldUpdatedBy)
+		fields = append(fields, modelstar.FieldUpdatedBy)
 	}
 	return fields
 }
@@ -64615,11 +64615,11 @@ func (m *ModleStarMutation) AddedFields() []string {
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *ModleStarMutation) AddedField(name string) (ent.Value, bool) {
+func (m *ModelStarMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case modlestar.FieldCreatedBy:
+	case modelstar.FieldCreatedBy:
 		return m.AddedCreatedBy()
-	case modlestar.FieldUpdatedBy:
+	case modelstar.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
 	}
 	return nil, false
@@ -64628,16 +64628,16 @@ func (m *ModleStarMutation) AddedField(name string) (ent.Value, bool) {
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *ModleStarMutation) AddField(name string, value ent.Value) error {
+func (m *ModelStarMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case modlestar.FieldCreatedBy:
+	case modelstar.FieldCreatedBy:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCreatedBy(v)
 		return nil
-	case modlestar.FieldUpdatedBy:
+	case modelstar.FieldUpdatedBy:
 		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -64645,81 +64645,81 @@ func (m *ModleStarMutation) AddField(name string, value ent.Value) error {
 		m.AddUpdatedBy(v)
 		return nil
 	}
-	return fmt.Errorf("unknown ModleStar numeric field %s", name)
+	return fmt.Errorf("unknown ModelStar numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *ModleStarMutation) ClearedFields() []string {
+func (m *ModelStarMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *ModleStarMutation) FieldCleared(name string) bool {
+func (m *ModelStarMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *ModleStarMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ModleStar nullable field %s", name)
+func (m *ModelStarMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ModelStar nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *ModleStarMutation) ResetField(name string) error {
+func (m *ModelStarMutation) ResetField(name string) error {
 	switch name {
-	case modlestar.FieldCreatedBy:
+	case modelstar.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
-	case modlestar.FieldUpdatedBy:
+	case modelstar.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
-	case modlestar.FieldCreatedAt:
+	case modelstar.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case modlestar.FieldUpdatedAt:
+	case modelstar.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case modlestar.FieldDeletedAt:
+	case modelstar.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case modlestar.FieldUserID:
+	case modelstar.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case modlestar.FieldModelID:
+	case modelstar.FieldModelID:
 		m.ResetModelID()
 		return nil
-	case modlestar.FieldStatus:
+	case modelstar.FieldStatus:
 		m.ResetStatus()
 		return nil
 	}
-	return fmt.Errorf("unknown ModleStar field %s", name)
+	return fmt.Errorf("unknown ModelStar field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *ModleStarMutation) AddedEdges() []string {
+func (m *ModelStarMutation) AddedEdges() []string {
 	edges := make([]string, 0, 2)
 	if m.user != nil {
-		edges = append(edges, modlestar.EdgeUser)
+		edges = append(edges, modelstar.EdgeUser)
 	}
 	if m.model != nil {
-		edges = append(edges, modlestar.EdgeModel)
+		edges = append(edges, modelstar.EdgeModel)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *ModleStarMutation) AddedIDs(name string) []ent.Value {
+func (m *ModelStarMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case modlestar.EdgeUser:
+	case modelstar.EdgeUser:
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
-	case modlestar.EdgeModel:
+	case modelstar.EdgeModel:
 		if id := m.model; id != nil {
 			return []ent.Value{*id}
 		}
@@ -64728,36 +64728,36 @@ func (m *ModleStarMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *ModleStarMutation) RemovedEdges() []string {
+func (m *ModelStarMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *ModleStarMutation) RemovedIDs(name string) []ent.Value {
+func (m *ModelStarMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *ModleStarMutation) ClearedEdges() []string {
+func (m *ModelStarMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
 	if m.cleareduser {
-		edges = append(edges, modlestar.EdgeUser)
+		edges = append(edges, modelstar.EdgeUser)
 	}
 	if m.clearedmodel {
-		edges = append(edges, modlestar.EdgeModel)
+		edges = append(edges, modelstar.EdgeModel)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *ModleStarMutation) EdgeCleared(name string) bool {
+func (m *ModelStarMutation) EdgeCleared(name string) bool {
 	switch name {
-	case modlestar.EdgeUser:
+	case modelstar.EdgeUser:
 		return m.cleareduser
-	case modlestar.EdgeModel:
+	case modelstar.EdgeModel:
 		return m.clearedmodel
 	}
 	return false
@@ -64765,30 +64765,30 @@ func (m *ModleStarMutation) EdgeCleared(name string) bool {
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *ModleStarMutation) ClearEdge(name string) error {
+func (m *ModelStarMutation) ClearEdge(name string) error {
 	switch name {
-	case modlestar.EdgeUser:
+	case modelstar.EdgeUser:
 		m.ClearUser()
 		return nil
-	case modlestar.EdgeModel:
+	case modelstar.EdgeModel:
 		m.ClearModel()
 		return nil
 	}
-	return fmt.Errorf("unknown ModleStar unique edge %s", name)
+	return fmt.Errorf("unknown ModelStar unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *ModleStarMutation) ResetEdge(name string) error {
+func (m *ModelStarMutation) ResetEdge(name string) error {
 	switch name {
-	case modlestar.EdgeUser:
+	case modelstar.EdgeUser:
 		m.ResetUser()
 		return nil
-	case modlestar.EdgeModel:
+	case modelstar.EdgeModel:
 		m.ResetModel()
 		return nil
 	}
-	return fmt.Errorf("unknown ModleStar edge %s", name)
+	return fmt.Errorf("unknown ModelStar edge %s", name)
 }
 
 // OutputLogMutation represents an operation that mutates the OutputLog nodes in the graph.
@@ -87073,7 +87073,7 @@ func (m *UserMutation) ResetStarModel() {
 	m.removedstar_model = nil
 }
 
-// AddModelStarIDs adds the "model_star" edge to the ModleStar entity by ids.
+// AddModelStarIDs adds the "model_star" edge to the ModelStar entity by ids.
 func (m *UserMutation) AddModelStarIDs(ids ...int64) {
 	if m.model_star == nil {
 		m.model_star = make(map[int64]struct{})
@@ -87083,17 +87083,17 @@ func (m *UserMutation) AddModelStarIDs(ids ...int64) {
 	}
 }
 
-// ClearModelStar clears the "model_star" edge to the ModleStar entity.
+// ClearModelStar clears the "model_star" edge to the ModelStar entity.
 func (m *UserMutation) ClearModelStar() {
 	m.clearedmodel_star = true
 }
 
-// ModelStarCleared reports if the "model_star" edge to the ModleStar entity was cleared.
+// ModelStarCleared reports if the "model_star" edge to the ModelStar entity was cleared.
 func (m *UserMutation) ModelStarCleared() bool {
 	return m.clearedmodel_star
 }
 
-// RemoveModelStarIDs removes the "model_star" edge to the ModleStar entity by IDs.
+// RemoveModelStarIDs removes the "model_star" edge to the ModelStar entity by IDs.
 func (m *UserMutation) RemoveModelStarIDs(ids ...int64) {
 	if m.removedmodel_star == nil {
 		m.removedmodel_star = make(map[int64]struct{})
@@ -87104,7 +87104,7 @@ func (m *UserMutation) RemoveModelStarIDs(ids ...int64) {
 	}
 }
 
-// RemovedModelStar returns the removed IDs of the "model_star" edge to the ModleStar entity.
+// RemovedModelStar returns the removed IDs of the "model_star" edge to the ModelStar entity.
 func (m *UserMutation) RemovedModelStarIDs() (ids []int64) {
 	for id := range m.removedmodel_star {
 		ids = append(ids, id)

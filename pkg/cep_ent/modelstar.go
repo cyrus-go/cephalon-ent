@@ -10,13 +10,13 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// ModleStar is the model entity for the ModleStar schema.
-type ModleStar struct {
+// ModelStar is the model entity for the ModelStar schema.
+type ModelStar struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 19 位雪花 ID
@@ -38,13 +38,13 @@ type ModleStar struct {
 	// 收藏状态
 	Status enums.Model `json:"status"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ModleStarQuery when eager-loading is set.
-	Edges        ModleStarEdges `json:"edges"`
+	// The values are being populated by the ModelStarQuery when eager-loading is set.
+	Edges        ModelStarEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// ModleStarEdges holds the relations/edges for other nodes in the graph.
-type ModleStarEdges struct {
+// ModelStarEdges holds the relations/edges for other nodes in the graph.
+type ModelStarEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// Model holds the value of the model edge.
@@ -56,7 +56,7 @@ type ModleStarEdges struct {
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ModleStarEdges) UserOrErr() (*User, error) {
+func (e ModelStarEdges) UserOrErr() (*User, error) {
 	if e.loadedTypes[0] {
 		if e.User == nil {
 			// Edge was loaded but was not found.
@@ -69,7 +69,7 @@ func (e ModleStarEdges) UserOrErr() (*User, error) {
 
 // ModelOrErr returns the Model value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ModleStarEdges) ModelOrErr() (*Model, error) {
+func (e ModelStarEdges) ModelOrErr() (*Model, error) {
 	if e.loadedTypes[1] {
 		if e.Model == nil {
 			// Edge was loaded but was not found.
@@ -81,15 +81,15 @@ func (e ModleStarEdges) ModelOrErr() (*Model, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ModleStar) scanValues(columns []string) ([]any, error) {
+func (*ModelStar) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case modlestar.FieldID, modlestar.FieldCreatedBy, modlestar.FieldUpdatedBy, modlestar.FieldUserID, modlestar.FieldModelID:
+		case modelstar.FieldID, modelstar.FieldCreatedBy, modelstar.FieldUpdatedBy, modelstar.FieldUserID, modelstar.FieldModelID:
 			values[i] = new(sql.NullInt64)
-		case modlestar.FieldStatus:
+		case modelstar.FieldStatus:
 			values[i] = new(sql.NullString)
-		case modlestar.FieldCreatedAt, modlestar.FieldUpdatedAt, modlestar.FieldDeletedAt:
+		case modelstar.FieldCreatedAt, modelstar.FieldUpdatedAt, modelstar.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -99,62 +99,62 @@ func (*ModleStar) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ModleStar fields.
-func (ms *ModleStar) assignValues(columns []string, values []any) error {
+// to the ModelStar fields.
+func (ms *ModelStar) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case modlestar.FieldID:
+		case modelstar.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ms.ID = int64(value.Int64)
-		case modlestar.FieldCreatedBy:
+		case modelstar.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				ms.CreatedBy = value.Int64
 			}
-		case modlestar.FieldUpdatedBy:
+		case modelstar.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				ms.UpdatedBy = value.Int64
 			}
-		case modlestar.FieldCreatedAt:
+		case modelstar.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				ms.CreatedAt = value.Time
 			}
-		case modlestar.FieldUpdatedAt:
+		case modelstar.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				ms.UpdatedAt = value.Time
 			}
-		case modlestar.FieldDeletedAt:
+		case modelstar.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				ms.DeletedAt = value.Time
 			}
-		case modlestar.FieldUserID:
+		case modelstar.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				ms.UserID = value.Int64
 			}
-		case modlestar.FieldModelID:
+		case modelstar.FieldModelID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field model_id", values[i])
 			} else if value.Valid {
 				ms.ModelID = value.Int64
 			}
-		case modlestar.FieldStatus:
+		case modelstar.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
@@ -167,44 +167,44 @@ func (ms *ModleStar) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ModleStar.
+// Value returns the ent.Value that was dynamically selected and assigned to the ModelStar.
 // This includes values selected through modifiers, order, etc.
-func (ms *ModleStar) Value(name string) (ent.Value, error) {
+func (ms *ModelStar) Value(name string) (ent.Value, error) {
 	return ms.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the ModleStar entity.
-func (ms *ModleStar) QueryUser() *UserQuery {
-	return NewModleStarClient(ms.config).QueryUser(ms)
+// QueryUser queries the "user" edge of the ModelStar entity.
+func (ms *ModelStar) QueryUser() *UserQuery {
+	return NewModelStarClient(ms.config).QueryUser(ms)
 }
 
-// QueryModel queries the "model" edge of the ModleStar entity.
-func (ms *ModleStar) QueryModel() *ModelQuery {
-	return NewModleStarClient(ms.config).QueryModel(ms)
+// QueryModel queries the "model" edge of the ModelStar entity.
+func (ms *ModelStar) QueryModel() *ModelQuery {
+	return NewModelStarClient(ms.config).QueryModel(ms)
 }
 
-// Update returns a builder for updating this ModleStar.
-// Note that you need to call ModleStar.Unwrap() before calling this method if this ModleStar
+// Update returns a builder for updating this ModelStar.
+// Note that you need to call ModelStar.Unwrap() before calling this method if this ModelStar
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ms *ModleStar) Update() *ModleStarUpdateOne {
-	return NewModleStarClient(ms.config).UpdateOne(ms)
+func (ms *ModelStar) Update() *ModelStarUpdateOne {
+	return NewModelStarClient(ms.config).UpdateOne(ms)
 }
 
-// Unwrap unwraps the ModleStar entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the ModelStar entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (ms *ModleStar) Unwrap() *ModleStar {
+func (ms *ModelStar) Unwrap() *ModelStar {
 	_tx, ok := ms.config.driver.(*txDriver)
 	if !ok {
-		panic("cep_ent: ModleStar is not a transactional entity")
+		panic("cep_ent: ModelStar is not a transactional entity")
 	}
 	ms.config.driver = _tx.drv
 	return ms
 }
 
 // String implements the fmt.Stringer.
-func (ms *ModleStar) String() string {
+func (ms *ModelStar) String() string {
 	var builder strings.Builder
-	builder.WriteString("ModleStar(")
+	builder.WriteString("ModelStar(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ms.ID))
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", ms.CreatedBy))
@@ -233,5 +233,5 @@ func (ms *ModleStar) String() string {
 	return builder.String()
 }
 
-// ModleStars is a parsable slice of ModleStar.
-type ModleStars []*ModleStar
+// ModelStars is a parsable slice of ModelStar.
+type ModelStars []*ModelStar

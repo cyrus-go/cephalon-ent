@@ -61,7 +61,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -193,7 +193,7 @@ func checkColumn(table, column string) error {
 			missionproduction.Table:     missionproduction.ValidColumn,
 			model.Table:                 model.ValidColumn,
 			modelprice.Table:            modelprice.ValidColumn,
-			modlestar.Table:             modlestar.ValidColumn,
+			modelstar.Table:             modelstar.ValidColumn,
 			outputlog.Table:             outputlog.ValidColumn,
 			platformaccount.Table:       platformaccount.ValidColumn,
 			price.Table:                 price.ValidColumn,

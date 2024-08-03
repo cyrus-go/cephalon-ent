@@ -37,7 +37,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -1169,14 +1169,14 @@ func (uc *UserCreate) AddStarModel(m ...*Model) *UserCreate {
 	return uc.AddStarModelIDs(ids...)
 }
 
-// AddModelStarIDs adds the "model_star" edge to the ModleStar entity by IDs.
+// AddModelStarIDs adds the "model_star" edge to the ModelStar entity by IDs.
 func (uc *UserCreate) AddModelStarIDs(ids ...int64) *UserCreate {
 	uc.mutation.AddModelStarIDs(ids...)
 	return uc
 }
 
-// AddModelStar adds the "model_star" edges to the ModleStar entity.
-func (uc *UserCreate) AddModelStar(m ...*ModleStar) *UserCreate {
+// AddModelStar adds the "model_star" edges to the ModelStar entity.
+func (uc *UserCreate) AddModelStar(m ...*ModelStar) *UserCreate {
 	ids := make([]int64, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
@@ -2340,7 +2340,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModleStarCreate{config: uc.config, mutation: newModleStarMutation(uc.config, OpCreate)}
+		createE := &ModelStarCreate{config: uc.config, mutation: newModelStarMutation(uc.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -2357,7 +2357,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.ModelStarColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

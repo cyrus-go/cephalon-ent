@@ -597,16 +597,16 @@ func (f ModelPriceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModelPriceMutation", m)
 }
 
-// The ModleStarFunc type is an adapter to allow the use of ordinary
-// function as ModleStar mutator.
-type ModleStarFunc func(context.Context, *cep_ent.ModleStarMutation) (cep_ent.Value, error)
+// The ModelStarFunc type is an adapter to allow the use of ordinary
+// function as ModelStar mutator.
+type ModelStarFunc func(context.Context, *cep_ent.ModelStarMutation) (cep_ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ModleStarFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
-	if mv, ok := m.(*cep_ent.ModleStarMutation); ok {
+func (f ModelStarFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.ModelStarMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModleStarMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModelStarMutation", m)
 }
 
 // The OutputLogFunc type is an adapter to allow the use of ordinary

@@ -186,8 +186,8 @@ type Model func(*sql.Selector)
 // ModelPrice is the predicate function for modelprice builders.
 type ModelPrice func(*sql.Selector)
 
-// ModleStar is the predicate function for modlestar builders.
-type ModleStar func(*sql.Selector)
+// ModelStar is the predicate function for modelstar builders.
+type ModelStar func(*sql.Selector)
 
 // OutputLog is the predicate function for outputlog builders.
 type OutputLog func(*sql.Selector)

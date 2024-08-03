@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 )
@@ -27,7 +27,7 @@ type ModelQuery struct {
 	predicates      []predicate.Model
 	withModelPrices *ModelPriceQuery
 	withStarUser    *UserQuery
-	withStarModel   *ModleStarQuery
+	withStarModel   *ModelStarQuery
 	modifiers       []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -110,8 +110,8 @@ func (mq *ModelQuery) QueryStarUser() *UserQuery {
 }
 
 // QueryStarModel chains the current query on the "star_model" edge.
-func (mq *ModelQuery) QueryStarModel() *ModleStarQuery {
-	query := (&ModleStarClient{config: mq.config}).Query()
+func (mq *ModelQuery) QueryStarModel() *ModelStarQuery {
+	query := (&ModelStarClient{config: mq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := mq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -122,7 +122,7 @@ func (mq *ModelQuery) QueryStarModel() *ModleStarQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(model.Table, model.FieldID, selector),
-			sqlgraph.To(modlestar.Table, modlestar.FieldID),
+			sqlgraph.To(modelstar.Table, modelstar.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, model.StarModelTable, model.StarModelColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
@@ -356,8 +356,8 @@ func (mq *ModelQuery) WithStarUser(opts ...func(*UserQuery)) *ModelQuery {
 
 // WithStarModel tells the query-builder to eager-load the nodes that are connected to
 // the "star_model" edge. The optional arguments are used to configure the query builder of the edge.
-func (mq *ModelQuery) WithStarModel(opts ...func(*ModleStarQuery)) *ModelQuery {
-	query := (&ModleStarClient{config: mq.config}).Query()
+func (mq *ModelQuery) WithStarModel(opts ...func(*ModelStarQuery)) *ModelQuery {
+	query := (&ModelStarClient{config: mq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -486,8 +486,8 @@ func (mq *ModelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Model,
 	}
 	if query := mq.withStarModel; query != nil {
 		if err := mq.loadStarModel(ctx, query, nodes,
-			func(n *Model) { n.Edges.StarModel = []*ModleStar{} },
-			func(n *Model, e *ModleStar) { n.Edges.StarModel = append(n.Edges.StarModel, e) }); err != nil {
+			func(n *Model) { n.Edges.StarModel = []*ModelStar{} },
+			func(n *Model, e *ModelStar) { n.Edges.StarModel = append(n.Edges.StarModel, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -585,7 +585,7 @@ func (mq *ModelQuery) loadStarUser(ctx context.Context, query *UserQuery, nodes 
 	}
 	return nil
 }
-func (mq *ModelQuery) loadStarModel(ctx context.Context, query *ModleStarQuery, nodes []*Model, init func(*Model), assign func(*Model, *ModleStar)) error {
+func (mq *ModelQuery) loadStarModel(ctx context.Context, query *ModelStarQuery, nodes []*Model, init func(*Model), assign func(*Model, *ModelStar)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Model)
 	for i := range nodes {
@@ -596,9 +596,9 @@ func (mq *ModelQuery) loadStarModel(ctx context.Context, query *ModleStarQuery, 
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(modlestar.FieldModelID)
+		query.ctx.AppendFieldOnce(modelstar.FieldModelID)
 	}
-	query.Where(predicate.ModleStar(func(s *sql.Selector) {
+	query.Where(predicate.ModelStar(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(model.StarModelColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

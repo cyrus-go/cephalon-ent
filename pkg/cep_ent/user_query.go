@@ -37,7 +37,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
@@ -112,7 +112,7 @@ type UserQuery struct {
 	withMissionFailedFeedbacks *MissionFailedFeedbackQuery
 	withAPITokens              *ApiTokenQuery
 	withStarModel              *ModelQuery
-	withModelStar              *ModleStarQuery
+	withModelStar              *ModelStarQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -1251,8 +1251,8 @@ func (uq *UserQuery) QueryStarModel() *ModelQuery {
 }
 
 // QueryModelStar chains the current query on the "model_star" edge.
-func (uq *UserQuery) QueryModelStar() *ModleStarQuery {
-	query := (&ModleStarClient{config: uq.config}).Query()
+func (uq *UserQuery) QueryModelStar() *ModelStarQuery {
+	query := (&ModelStarClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -1263,7 +1263,7 @@ func (uq *UserQuery) QueryModelStar() *ModleStarQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(modlestar.Table, modlestar.FieldID),
+			sqlgraph.To(modelstar.Table, modelstar.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, user.ModelStarTable, user.ModelStarColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
@@ -2073,8 +2073,8 @@ func (uq *UserQuery) WithStarModel(opts ...func(*ModelQuery)) *UserQuery {
 
 // WithModelStar tells the query-builder to eager-load the nodes that are connected to
 // the "model_star" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithModelStar(opts ...func(*ModleStarQuery)) *UserQuery {
-	query := (&ModleStarClient{config: uq.config}).Query()
+func (uq *UserQuery) WithModelStar(opts ...func(*ModelStarQuery)) *UserQuery {
+	query := (&ModelStarClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -2600,8 +2600,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	}
 	if query := uq.withModelStar; query != nil {
 		if err := uq.loadModelStar(ctx, query, nodes,
-			func(n *User) { n.Edges.ModelStar = []*ModleStar{} },
-			func(n *User, e *ModleStar) { n.Edges.ModelStar = append(n.Edges.ModelStar, e) }); err != nil {
+			func(n *User) { n.Edges.ModelStar = []*ModelStar{} },
+			func(n *User, e *ModelStar) { n.Edges.ModelStar = append(n.Edges.ModelStar, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -4130,7 +4130,7 @@ func (uq *UserQuery) loadStarModel(ctx context.Context, query *ModelQuery, nodes
 	}
 	return nil
 }
-func (uq *UserQuery) loadModelStar(ctx context.Context, query *ModleStarQuery, nodes []*User, init func(*User), assign func(*User, *ModleStar)) error {
+func (uq *UserQuery) loadModelStar(ctx context.Context, query *ModelStarQuery, nodes []*User, init func(*User), assign func(*User, *ModelStar)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -4141,9 +4141,9 @@ func (uq *UserQuery) loadModelStar(ctx context.Context, query *ModleStarQuery, n
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(modlestar.FieldUserID)
+		query.ctx.AppendFieldOnce(modelstar.FieldUserID)
 	}
-	query.Where(predicate.ModleStar(func(s *sql.Selector) {
+	query.Where(predicate.ModelStar(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.ModelStarColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

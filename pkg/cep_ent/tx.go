@@ -110,8 +110,8 @@ type Tx struct {
 	Model *ModelClient
 	// ModelPrice is the client for interacting with the ModelPrice builders.
 	ModelPrice *ModelPriceClient
-	// ModleStar is the client for interacting with the ModleStar builders.
-	ModleStar *ModleStarClient
+	// ModelStar is the client for interacting with the ModelStar builders.
+	ModelStar *ModelStarClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
@@ -336,7 +336,7 @@ func (tx *Tx) init() {
 	tx.MissionProduction = NewMissionProductionClient(tx.config)
 	tx.Model = NewModelClient(tx.config)
 	tx.ModelPrice = NewModelPriceClient(tx.config)
-	tx.ModleStar = NewModleStarClient(tx.config)
+	tx.ModelStar = NewModelStarClient(tx.config)
 	tx.OutputLog = NewOutputLogClient(tx.config)
 	tx.PlatformAccount = NewPlatformAccountClient(tx.config)
 	tx.Price = NewPriceClient(tx.config)

@@ -12,27 +12,27 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// ModleStarCreate is the builder for creating a ModleStar entity.
-type ModleStarCreate struct {
+// ModelStarCreate is the builder for creating a ModelStar entity.
+type ModelStarCreate struct {
 	config
-	mutation *ModleStarMutation
+	mutation *ModelStarMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (msc *ModleStarCreate) SetCreatedBy(i int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetCreatedBy(i int64) *ModelStarCreate {
 	msc.mutation.SetCreatedBy(i)
 	return msc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableCreatedBy(i *int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableCreatedBy(i *int64) *ModelStarCreate {
 	if i != nil {
 		msc.SetCreatedBy(*i)
 	}
@@ -40,13 +40,13 @@ func (msc *ModleStarCreate) SetNillableCreatedBy(i *int64) *ModleStarCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (msc *ModleStarCreate) SetUpdatedBy(i int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetUpdatedBy(i int64) *ModelStarCreate {
 	msc.mutation.SetUpdatedBy(i)
 	return msc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableUpdatedBy(i *int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableUpdatedBy(i *int64) *ModelStarCreate {
 	if i != nil {
 		msc.SetUpdatedBy(*i)
 	}
@@ -54,13 +54,13 @@ func (msc *ModleStarCreate) SetNillableUpdatedBy(i *int64) *ModleStarCreate {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (msc *ModleStarCreate) SetCreatedAt(t time.Time) *ModleStarCreate {
+func (msc *ModelStarCreate) SetCreatedAt(t time.Time) *ModelStarCreate {
 	msc.mutation.SetCreatedAt(t)
 	return msc
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableCreatedAt(t *time.Time) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableCreatedAt(t *time.Time) *ModelStarCreate {
 	if t != nil {
 		msc.SetCreatedAt(*t)
 	}
@@ -68,13 +68,13 @@ func (msc *ModleStarCreate) SetNillableCreatedAt(t *time.Time) *ModleStarCreate 
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (msc *ModleStarCreate) SetUpdatedAt(t time.Time) *ModleStarCreate {
+func (msc *ModelStarCreate) SetUpdatedAt(t time.Time) *ModelStarCreate {
 	msc.mutation.SetUpdatedAt(t)
 	return msc
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableUpdatedAt(t *time.Time) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableUpdatedAt(t *time.Time) *ModelStarCreate {
 	if t != nil {
 		msc.SetUpdatedAt(*t)
 	}
@@ -82,13 +82,13 @@ func (msc *ModleStarCreate) SetNillableUpdatedAt(t *time.Time) *ModleStarCreate 
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (msc *ModleStarCreate) SetDeletedAt(t time.Time) *ModleStarCreate {
+func (msc *ModelStarCreate) SetDeletedAt(t time.Time) *ModelStarCreate {
 	msc.mutation.SetDeletedAt(t)
 	return msc
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableDeletedAt(t *time.Time) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableDeletedAt(t *time.Time) *ModelStarCreate {
 	if t != nil {
 		msc.SetDeletedAt(*t)
 	}
@@ -96,25 +96,25 @@ func (msc *ModleStarCreate) SetNillableDeletedAt(t *time.Time) *ModleStarCreate 
 }
 
 // SetUserID sets the "user_id" field.
-func (msc *ModleStarCreate) SetUserID(i int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetUserID(i int64) *ModelStarCreate {
 	msc.mutation.SetUserID(i)
 	return msc
 }
 
 // SetModelID sets the "model_id" field.
-func (msc *ModleStarCreate) SetModelID(i int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetModelID(i int64) *ModelStarCreate {
 	msc.mutation.SetModelID(i)
 	return msc
 }
 
 // SetStatus sets the "status" field.
-func (msc *ModleStarCreate) SetStatus(e enums.Model) *ModleStarCreate {
+func (msc *ModelStarCreate) SetStatus(e enums.Model) *ModelStarCreate {
 	msc.mutation.SetStatus(e)
 	return msc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableStatus(e *enums.Model) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableStatus(e *enums.Model) *ModelStarCreate {
 	if e != nil {
 		msc.SetStatus(*e)
 	}
@@ -122,13 +122,13 @@ func (msc *ModleStarCreate) SetNillableStatus(e *enums.Model) *ModleStarCreate {
 }
 
 // SetID sets the "id" field.
-func (msc *ModleStarCreate) SetID(i int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetID(i int64) *ModelStarCreate {
 	msc.mutation.SetID(i)
 	return msc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (msc *ModleStarCreate) SetNillableID(i *int64) *ModleStarCreate {
+func (msc *ModelStarCreate) SetNillableID(i *int64) *ModelStarCreate {
 	if i != nil {
 		msc.SetID(*i)
 	}
@@ -136,28 +136,28 @@ func (msc *ModleStarCreate) SetNillableID(i *int64) *ModleStarCreate {
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (msc *ModleStarCreate) SetUser(u *User) *ModleStarCreate {
+func (msc *ModelStarCreate) SetUser(u *User) *ModelStarCreate {
 	return msc.SetUserID(u.ID)
 }
 
 // SetModel sets the "model" edge to the Model entity.
-func (msc *ModleStarCreate) SetModel(m *Model) *ModleStarCreate {
+func (msc *ModelStarCreate) SetModel(m *Model) *ModelStarCreate {
 	return msc.SetModelID(m.ID)
 }
 
-// Mutation returns the ModleStarMutation object of the builder.
-func (msc *ModleStarCreate) Mutation() *ModleStarMutation {
+// Mutation returns the ModelStarMutation object of the builder.
+func (msc *ModelStarCreate) Mutation() *ModelStarMutation {
 	return msc.mutation
 }
 
-// Save creates the ModleStar in the database.
-func (msc *ModleStarCreate) Save(ctx context.Context) (*ModleStar, error) {
+// Save creates the ModelStar in the database.
+func (msc *ModelStarCreate) Save(ctx context.Context) (*ModelStar, error) {
 	msc.defaults()
 	return withHooks(ctx, msc.sqlSave, msc.mutation, msc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (msc *ModleStarCreate) SaveX(ctx context.Context) *ModleStar {
+func (msc *ModelStarCreate) SaveX(ctx context.Context) *ModelStar {
 	v, err := msc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -166,91 +166,91 @@ func (msc *ModleStarCreate) SaveX(ctx context.Context) *ModleStar {
 }
 
 // Exec executes the query.
-func (msc *ModleStarCreate) Exec(ctx context.Context) error {
+func (msc *ModelStarCreate) Exec(ctx context.Context) error {
 	_, err := msc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (msc *ModleStarCreate) ExecX(ctx context.Context) {
+func (msc *ModelStarCreate) ExecX(ctx context.Context) {
 	if err := msc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (msc *ModleStarCreate) defaults() {
+func (msc *ModelStarCreate) defaults() {
 	if _, ok := msc.mutation.CreatedBy(); !ok {
-		v := modlestar.DefaultCreatedBy
+		v := modelstar.DefaultCreatedBy
 		msc.mutation.SetCreatedBy(v)
 	}
 	if _, ok := msc.mutation.UpdatedBy(); !ok {
-		v := modlestar.DefaultUpdatedBy
+		v := modelstar.DefaultUpdatedBy
 		msc.mutation.SetUpdatedBy(v)
 	}
 	if _, ok := msc.mutation.CreatedAt(); !ok {
-		v := modlestar.DefaultCreatedAt()
+		v := modelstar.DefaultCreatedAt()
 		msc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := msc.mutation.UpdatedAt(); !ok {
-		v := modlestar.DefaultUpdatedAt()
+		v := modelstar.DefaultUpdatedAt()
 		msc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := msc.mutation.DeletedAt(); !ok {
-		v := modlestar.DefaultDeletedAt
+		v := modelstar.DefaultDeletedAt
 		msc.mutation.SetDeletedAt(v)
 	}
 	if _, ok := msc.mutation.Status(); !ok {
-		v := modlestar.DefaultStatus
+		v := modelstar.DefaultStatus
 		msc.mutation.SetStatus(v)
 	}
 	if _, ok := msc.mutation.ID(); !ok {
-		v := modlestar.DefaultID()
+		v := modelstar.DefaultID()
 		msc.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (msc *ModleStarCreate) check() error {
+func (msc *ModelStarCreate) check() error {
 	if _, ok := msc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`cep_ent: missing required field "ModleStar.created_by"`)}
+		return &ValidationError{Name: "created_by", err: errors.New(`cep_ent: missing required field "ModelStar.created_by"`)}
 	}
 	if _, ok := msc.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`cep_ent: missing required field "ModleStar.updated_by"`)}
+		return &ValidationError{Name: "updated_by", err: errors.New(`cep_ent: missing required field "ModelStar.updated_by"`)}
 	}
 	if _, ok := msc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`cep_ent: missing required field "ModleStar.created_at"`)}
+		return &ValidationError{Name: "created_at", err: errors.New(`cep_ent: missing required field "ModelStar.created_at"`)}
 	}
 	if _, ok := msc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`cep_ent: missing required field "ModleStar.updated_at"`)}
+		return &ValidationError{Name: "updated_at", err: errors.New(`cep_ent: missing required field "ModelStar.updated_at"`)}
 	}
 	if _, ok := msc.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`cep_ent: missing required field "ModleStar.deleted_at"`)}
+		return &ValidationError{Name: "deleted_at", err: errors.New(`cep_ent: missing required field "ModelStar.deleted_at"`)}
 	}
 	if _, ok := msc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "ModleStar.user_id"`)}
+		return &ValidationError{Name: "user_id", err: errors.New(`cep_ent: missing required field "ModelStar.user_id"`)}
 	}
 	if _, ok := msc.mutation.ModelID(); !ok {
-		return &ValidationError{Name: "model_id", err: errors.New(`cep_ent: missing required field "ModleStar.model_id"`)}
+		return &ValidationError{Name: "model_id", err: errors.New(`cep_ent: missing required field "ModelStar.model_id"`)}
 	}
 	if _, ok := msc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "ModleStar.status"`)}
+		return &ValidationError{Name: "status", err: errors.New(`cep_ent: missing required field "ModelStar.status"`)}
 	}
 	if v, ok := msc.mutation.Status(); ok {
-		if err := modlestar.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "ModleStar.status": %w`, err)}
+		if err := modelstar.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`cep_ent: validator failed for field "ModelStar.status": %w`, err)}
 		}
 	}
 	if _, ok := msc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "ModleStar.user"`)}
+		return &ValidationError{Name: "user", err: errors.New(`cep_ent: missing required edge "ModelStar.user"`)}
 	}
 	if _, ok := msc.mutation.ModelID(); !ok {
-		return &ValidationError{Name: "model", err: errors.New(`cep_ent: missing required edge "ModleStar.model"`)}
+		return &ValidationError{Name: "model", err: errors.New(`cep_ent: missing required edge "ModelStar.model"`)}
 	}
 	return nil
 }
 
-func (msc *ModleStarCreate) sqlSave(ctx context.Context) (*ModleStar, error) {
+func (msc *ModelStarCreate) sqlSave(ctx context.Context) (*ModelStar, error) {
 	if err := msc.check(); err != nil {
 		return nil, err
 	}
@@ -270,10 +270,10 @@ func (msc *ModleStarCreate) sqlSave(ctx context.Context) (*ModleStar, error) {
 	return _node, nil
 }
 
-func (msc *ModleStarCreate) createSpec() (*ModleStar, *sqlgraph.CreateSpec) {
+func (msc *ModelStarCreate) createSpec() (*ModelStar, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ModleStar{config: msc.config}
-		_spec = sqlgraph.NewCreateSpec(modlestar.Table, sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64))
+		_node = &ModelStar{config: msc.config}
+		_spec = sqlgraph.NewCreateSpec(modelstar.Table, sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = msc.conflict
 	if id, ok := msc.mutation.ID(); ok {
@@ -281,35 +281,35 @@ func (msc *ModleStarCreate) createSpec() (*ModleStar, *sqlgraph.CreateSpec) {
 		_spec.ID.Value = id
 	}
 	if value, ok := msc.mutation.CreatedBy(); ok {
-		_spec.SetField(modlestar.FieldCreatedBy, field.TypeInt64, value)
+		_spec.SetField(modelstar.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := msc.mutation.UpdatedBy(); ok {
-		_spec.SetField(modlestar.FieldUpdatedBy, field.TypeInt64, value)
+		_spec.SetField(modelstar.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := msc.mutation.CreatedAt(); ok {
-		_spec.SetField(modlestar.FieldCreatedAt, field.TypeTime, value)
+		_spec.SetField(modelstar.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := msc.mutation.UpdatedAt(); ok {
-		_spec.SetField(modlestar.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(modelstar.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
 	if value, ok := msc.mutation.DeletedAt(); ok {
-		_spec.SetField(modlestar.FieldDeletedAt, field.TypeTime, value)
+		_spec.SetField(modelstar.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
 	if value, ok := msc.mutation.Status(); ok {
-		_spec.SetField(modlestar.FieldStatus, field.TypeEnum, value)
+		_spec.SetField(modelstar.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
 	if nodes := msc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   modlestar.UserTable,
-			Columns: []string{modlestar.UserColumn},
+			Table:   modelstar.UserTable,
+			Columns: []string{modelstar.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
@@ -325,8 +325,8 @@ func (msc *ModleStarCreate) createSpec() (*ModleStar, *sqlgraph.CreateSpec) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   modlestar.ModelTable,
-			Columns: []string{modlestar.ModelColumn},
+			Table:   modelstar.ModelTable,
+			Columns: []string{modelstar.ModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(model.FieldID, field.TypeInt64),
@@ -344,7 +344,7 @@ func (msc *ModleStarCreate) createSpec() (*ModleStar, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //		SetCreatedBy(v).
 //		OnConflict(
 //			// Update the row with the new values
@@ -353,13 +353,13 @@ func (msc *ModleStarCreate) createSpec() (*ModleStar, *sqlgraph.CreateSpec) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.ModleStarUpsert) {
+//		Update(func(u *ent.ModelStarUpsert) {
 //			SetCreatedBy(v+v).
 //		}).
 //		Exec(ctx)
-func (msc *ModleStarCreate) OnConflict(opts ...sql.ConflictOption) *ModleStarUpsertOne {
+func (msc *ModelStarCreate) OnConflict(opts ...sql.ConflictOption) *ModelStarUpsertOne {
 	msc.conflict = opts
-	return &ModleStarUpsertOne{
+	return &ModelStarUpsertOne{
 		create: msc,
 	}
 }
@@ -367,144 +367,144 @@ func (msc *ModleStarCreate) OnConflict(opts ...sql.ConflictOption) *ModleStarUps
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (msc *ModleStarCreate) OnConflictColumns(columns ...string) *ModleStarUpsertOne {
+func (msc *ModelStarCreate) OnConflictColumns(columns ...string) *ModelStarUpsertOne {
 	msc.conflict = append(msc.conflict, sql.ConflictColumns(columns...))
-	return &ModleStarUpsertOne{
+	return &ModelStarUpsertOne{
 		create: msc,
 	}
 }
 
 type (
-	// ModleStarUpsertOne is the builder for "upsert"-ing
-	//  one ModleStar node.
-	ModleStarUpsertOne struct {
-		create *ModleStarCreate
+	// ModelStarUpsertOne is the builder for "upsert"-ing
+	//  one ModelStar node.
+	ModelStarUpsertOne struct {
+		create *ModelStarCreate
 	}
 
-	// ModleStarUpsert is the "OnConflict" setter.
-	ModleStarUpsert struct {
+	// ModelStarUpsert is the "OnConflict" setter.
+	ModelStarUpsert struct {
 		*sql.UpdateSet
 	}
 )
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ModleStarUpsert) SetCreatedBy(v int64) *ModleStarUpsert {
-	u.Set(modlestar.FieldCreatedBy, v)
+func (u *ModelStarUpsert) SetCreatedBy(v int64) *ModelStarUpsert {
+	u.Set(modelstar.FieldCreatedBy, v)
 	return u
 }
 
 // UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateCreatedBy() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldCreatedBy)
+func (u *ModelStarUpsert) UpdateCreatedBy() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldCreatedBy)
 	return u
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ModleStarUpsert) AddCreatedBy(v int64) *ModleStarUpsert {
-	u.Add(modlestar.FieldCreatedBy, v)
+func (u *ModelStarUpsert) AddCreatedBy(v int64) *ModelStarUpsert {
+	u.Add(modelstar.FieldCreatedBy, v)
 	return u
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ModleStarUpsert) SetUpdatedBy(v int64) *ModleStarUpsert {
-	u.Set(modlestar.FieldUpdatedBy, v)
+func (u *ModelStarUpsert) SetUpdatedBy(v int64) *ModelStarUpsert {
+	u.Set(modelstar.FieldUpdatedBy, v)
 	return u
 }
 
 // UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateUpdatedBy() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldUpdatedBy)
+func (u *ModelStarUpsert) UpdateUpdatedBy() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldUpdatedBy)
 	return u
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ModleStarUpsert) AddUpdatedBy(v int64) *ModleStarUpsert {
-	u.Add(modlestar.FieldUpdatedBy, v)
+func (u *ModelStarUpsert) AddUpdatedBy(v int64) *ModelStarUpsert {
+	u.Add(modelstar.FieldUpdatedBy, v)
 	return u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (u *ModleStarUpsert) SetUpdatedAt(v time.Time) *ModleStarUpsert {
-	u.Set(modlestar.FieldUpdatedAt, v)
+func (u *ModelStarUpsert) SetUpdatedAt(v time.Time) *ModelStarUpsert {
+	u.Set(modelstar.FieldUpdatedAt, v)
 	return u
 }
 
 // UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateUpdatedAt() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldUpdatedAt)
+func (u *ModelStarUpsert) UpdateUpdatedAt() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldUpdatedAt)
 	return u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (u *ModleStarUpsert) SetDeletedAt(v time.Time) *ModleStarUpsert {
-	u.Set(modlestar.FieldDeletedAt, v)
+func (u *ModelStarUpsert) SetDeletedAt(v time.Time) *ModelStarUpsert {
+	u.Set(modelstar.FieldDeletedAt, v)
 	return u
 }
 
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateDeletedAt() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldDeletedAt)
+func (u *ModelStarUpsert) UpdateDeletedAt() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldDeletedAt)
 	return u
 }
 
 // SetUserID sets the "user_id" field.
-func (u *ModleStarUpsert) SetUserID(v int64) *ModleStarUpsert {
-	u.Set(modlestar.FieldUserID, v)
+func (u *ModelStarUpsert) SetUserID(v int64) *ModelStarUpsert {
+	u.Set(modelstar.FieldUserID, v)
 	return u
 }
 
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateUserID() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldUserID)
+func (u *ModelStarUpsert) UpdateUserID() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldUserID)
 	return u
 }
 
 // SetModelID sets the "model_id" field.
-func (u *ModleStarUpsert) SetModelID(v int64) *ModleStarUpsert {
-	u.Set(modlestar.FieldModelID, v)
+func (u *ModelStarUpsert) SetModelID(v int64) *ModelStarUpsert {
+	u.Set(modelstar.FieldModelID, v)
 	return u
 }
 
 // UpdateModelID sets the "model_id" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateModelID() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldModelID)
+func (u *ModelStarUpsert) UpdateModelID() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldModelID)
 	return u
 }
 
 // SetStatus sets the "status" field.
-func (u *ModleStarUpsert) SetStatus(v enums.Model) *ModleStarUpsert {
-	u.Set(modlestar.FieldStatus, v)
+func (u *ModelStarUpsert) SetStatus(v enums.Model) *ModelStarUpsert {
+	u.Set(modelstar.FieldStatus, v)
 	return u
 }
 
 // UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *ModleStarUpsert) UpdateStatus() *ModleStarUpsert {
-	u.SetExcluded(modlestar.FieldStatus)
+func (u *ModelStarUpsert) UpdateStatus() *ModelStarUpsert {
+	u.SetExcluded(modelstar.FieldStatus)
 	return u
 }
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
-//				u.SetIgnore(modlestar.FieldID)
+//				u.SetIgnore(modelstar.FieldID)
 //			}),
 //		).
 //		Exec(ctx)
-func (u *ModleStarUpsertOne) UpdateNewValues() *ModleStarUpsertOne {
+func (u *ModelStarUpsertOne) UpdateNewValues() *ModelStarUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
-			s.SetIgnore(modlestar.FieldID)
+			s.SetIgnore(modelstar.FieldID)
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
-			s.SetIgnore(modlestar.FieldCreatedAt)
+			s.SetIgnore(modelstar.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -513,159 +513,159 @@ func (u *ModleStarUpsertOne) UpdateNewValues() *ModleStarUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
-func (u *ModleStarUpsertOne) Ignore() *ModleStarUpsertOne {
+func (u *ModelStarUpsertOne) Ignore() *ModelStarUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *ModleStarUpsertOne) DoNothing() *ModleStarUpsertOne {
+func (u *ModelStarUpsertOne) DoNothing() *ModelStarUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the ModleStarCreate.OnConflict
+// Update allows overriding fields `UPDATE` values. See the ModelStarCreate.OnConflict
 // documentation for more info.
-func (u *ModleStarUpsertOne) Update(set func(*ModleStarUpsert)) *ModleStarUpsertOne {
+func (u *ModelStarUpsertOne) Update(set func(*ModelStarUpsert)) *ModelStarUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&ModleStarUpsert{UpdateSet: update})
+		set(&ModelStarUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ModleStarUpsertOne) SetCreatedBy(v int64) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetCreatedBy(v int64) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ModleStarUpsertOne) AddCreatedBy(v int64) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) AddCreatedBy(v int64) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.AddCreatedBy(v)
 	})
 }
 
 // UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateCreatedBy() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateCreatedBy() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateCreatedBy()
 	})
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ModleStarUpsertOne) SetUpdatedBy(v int64) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetUpdatedBy(v int64) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ModleStarUpsertOne) AddUpdatedBy(v int64) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) AddUpdatedBy(v int64) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.AddUpdatedBy(v)
 	})
 }
 
 // UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateUpdatedBy() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateUpdatedBy() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateUpdatedBy()
 	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (u *ModleStarUpsertOne) SetUpdatedAt(v time.Time) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetUpdatedAt(v time.Time) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetUpdatedAt(v)
 	})
 }
 
 // UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateUpdatedAt() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateUpdatedAt() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateUpdatedAt()
 	})
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (u *ModleStarUpsertOne) SetDeletedAt(v time.Time) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetDeletedAt(v time.Time) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetDeletedAt(v)
 	})
 }
 
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateDeletedAt() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateDeletedAt() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateDeletedAt()
 	})
 }
 
 // SetUserID sets the "user_id" field.
-func (u *ModleStarUpsertOne) SetUserID(v int64) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetUserID(v int64) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateUserID() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateUserID() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateUserID()
 	})
 }
 
 // SetModelID sets the "model_id" field.
-func (u *ModleStarUpsertOne) SetModelID(v int64) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetModelID(v int64) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetModelID(v)
 	})
 }
 
 // UpdateModelID sets the "model_id" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateModelID() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateModelID() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateModelID()
 	})
 }
 
 // SetStatus sets the "status" field.
-func (u *ModleStarUpsertOne) SetStatus(v enums.Model) *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) SetStatus(v enums.Model) *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetStatus(v)
 	})
 }
 
 // UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *ModleStarUpsertOne) UpdateStatus() *ModleStarUpsertOne {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertOne) UpdateStatus() *ModelStarUpsertOne {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateStatus()
 	})
 }
 
 // Exec executes the query.
-func (u *ModleStarUpsertOne) Exec(ctx context.Context) error {
+func (u *ModelStarUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
-		return errors.New("cep_ent: missing options for ModleStarCreate.OnConflict")
+		return errors.New("cep_ent: missing options for ModelStarCreate.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *ModleStarUpsertOne) ExecX(ctx context.Context) {
+func (u *ModelStarUpsertOne) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ModleStarUpsertOne) ID(ctx context.Context) (id int64, err error) {
+func (u *ModelStarUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -674,7 +674,7 @@ func (u *ModleStarUpsertOne) ID(ctx context.Context) (id int64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ModleStarUpsertOne) IDX(ctx context.Context) int64 {
+func (u *ModelStarUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -682,28 +682,28 @@ func (u *ModleStarUpsertOne) IDX(ctx context.Context) int64 {
 	return id
 }
 
-// ModleStarCreateBulk is the builder for creating many ModleStar entities in bulk.
-type ModleStarCreateBulk struct {
+// ModelStarCreateBulk is the builder for creating many ModelStar entities in bulk.
+type ModelStarCreateBulk struct {
 	config
 	err      error
-	builders []*ModleStarCreate
+	builders []*ModelStarCreate
 	conflict []sql.ConflictOption
 }
 
-// Save creates the ModleStar entities in the database.
-func (mscb *ModleStarCreateBulk) Save(ctx context.Context) ([]*ModleStar, error) {
+// Save creates the ModelStar entities in the database.
+func (mscb *ModelStarCreateBulk) Save(ctx context.Context) ([]*ModelStar, error) {
 	if mscb.err != nil {
 		return nil, mscb.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(mscb.builders))
-	nodes := make([]*ModleStar, len(mscb.builders))
+	nodes := make([]*ModelStar, len(mscb.builders))
 	mutators := make([]Mutator, len(mscb.builders))
 	for i := range mscb.builders {
 		func(i int, root context.Context) {
 			builder := mscb.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*ModleStarMutation)
+				mutation, ok := m.(*ModelStarMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -751,7 +751,7 @@ func (mscb *ModleStarCreateBulk) Save(ctx context.Context) ([]*ModleStar, error)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (mscb *ModleStarCreateBulk) SaveX(ctx context.Context) []*ModleStar {
+func (mscb *ModelStarCreateBulk) SaveX(ctx context.Context) []*ModelStar {
 	v, err := mscb.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -760,13 +760,13 @@ func (mscb *ModleStarCreateBulk) SaveX(ctx context.Context) []*ModleStar {
 }
 
 // Exec executes the query.
-func (mscb *ModleStarCreateBulk) Exec(ctx context.Context) error {
+func (mscb *ModelStarCreateBulk) Exec(ctx context.Context) error {
 	_, err := mscb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (mscb *ModleStarCreateBulk) ExecX(ctx context.Context) {
+func (mscb *ModelStarCreateBulk) ExecX(ctx context.Context) {
 	if err := mscb.Exec(ctx); err != nil {
 		panic(err)
 	}
@@ -775,7 +775,7 @@ func (mscb *ModleStarCreateBulk) ExecX(ctx context.Context) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.ModleStar.CreateBulk(builders...).
+//	client.ModelStar.CreateBulk(builders...).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -783,13 +783,13 @@ func (mscb *ModleStarCreateBulk) ExecX(ctx context.Context) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.ModleStarUpsert) {
+//		Update(func(u *ent.ModelStarUpsert) {
 //			SetCreatedBy(v+v).
 //		}).
 //		Exec(ctx)
-func (mscb *ModleStarCreateBulk) OnConflict(opts ...sql.ConflictOption) *ModleStarUpsertBulk {
+func (mscb *ModelStarCreateBulk) OnConflict(opts ...sql.ConflictOption) *ModelStarUpsertBulk {
 	mscb.conflict = opts
-	return &ModleStarUpsertBulk{
+	return &ModelStarUpsertBulk{
 		create: mscb,
 	}
 }
@@ -797,42 +797,42 @@ func (mscb *ModleStarCreateBulk) OnConflict(opts ...sql.ConflictOption) *ModleSt
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (mscb *ModleStarCreateBulk) OnConflictColumns(columns ...string) *ModleStarUpsertBulk {
+func (mscb *ModelStarCreateBulk) OnConflictColumns(columns ...string) *ModelStarUpsertBulk {
 	mscb.conflict = append(mscb.conflict, sql.ConflictColumns(columns...))
-	return &ModleStarUpsertBulk{
+	return &ModelStarUpsertBulk{
 		create: mscb,
 	}
 }
 
-// ModleStarUpsertBulk is the builder for "upsert"-ing
-// a bulk of ModleStar nodes.
-type ModleStarUpsertBulk struct {
-	create *ModleStarCreateBulk
+// ModelStarUpsertBulk is the builder for "upsert"-ing
+// a bulk of ModelStar nodes.
+type ModelStarUpsertBulk struct {
+	create *ModelStarCreateBulk
 }
 
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
-//				u.SetIgnore(modlestar.FieldID)
+//				u.SetIgnore(modelstar.FieldID)
 //			}),
 //		).
 //		Exec(ctx)
-func (u *ModleStarUpsertBulk) UpdateNewValues() *ModleStarUpsertBulk {
+func (u *ModelStarUpsertBulk) UpdateNewValues() *ModelStarUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
-				s.SetIgnore(modlestar.FieldID)
+				s.SetIgnore(modelstar.FieldID)
 			}
 			if _, exists := b.mutation.CreatedAt(); exists {
-				s.SetIgnore(modlestar.FieldCreatedAt)
+				s.SetIgnore(modelstar.FieldCreatedAt)
 			}
 		}
 	}))
@@ -842,160 +842,160 @@ func (u *ModleStarUpsertBulk) UpdateNewValues() *ModleStarUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.ModleStar.Create().
+//	client.ModelStar.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-func (u *ModleStarUpsertBulk) Ignore() *ModleStarUpsertBulk {
+func (u *ModelStarUpsertBulk) Ignore() *ModelStarUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *ModleStarUpsertBulk) DoNothing() *ModleStarUpsertBulk {
+func (u *ModelStarUpsertBulk) DoNothing() *ModelStarUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the ModleStarCreateBulk.OnConflict
+// Update allows overriding fields `UPDATE` values. See the ModelStarCreateBulk.OnConflict
 // documentation for more info.
-func (u *ModleStarUpsertBulk) Update(set func(*ModleStarUpsert)) *ModleStarUpsertBulk {
+func (u *ModelStarUpsertBulk) Update(set func(*ModelStarUpsert)) *ModelStarUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&ModleStarUpsert{UpdateSet: update})
+		set(&ModelStarUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ModleStarUpsertBulk) SetCreatedBy(v int64) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetCreatedBy(v int64) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ModleStarUpsertBulk) AddCreatedBy(v int64) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) AddCreatedBy(v int64) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.AddCreatedBy(v)
 	})
 }
 
 // UpdateCreatedBy sets the "created_by" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateCreatedBy() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateCreatedBy() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateCreatedBy()
 	})
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ModleStarUpsertBulk) SetUpdatedBy(v int64) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetUpdatedBy(v int64) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ModleStarUpsertBulk) AddUpdatedBy(v int64) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) AddUpdatedBy(v int64) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.AddUpdatedBy(v)
 	})
 }
 
 // UpdateUpdatedBy sets the "updated_by" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateUpdatedBy() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateUpdatedBy() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateUpdatedBy()
 	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (u *ModleStarUpsertBulk) SetUpdatedAt(v time.Time) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetUpdatedAt(v time.Time) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetUpdatedAt(v)
 	})
 }
 
 // UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateUpdatedAt() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateUpdatedAt() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateUpdatedAt()
 	})
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (u *ModleStarUpsertBulk) SetDeletedAt(v time.Time) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetDeletedAt(v time.Time) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetDeletedAt(v)
 	})
 }
 
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateDeletedAt() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateDeletedAt() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateDeletedAt()
 	})
 }
 
 // SetUserID sets the "user_id" field.
-func (u *ModleStarUpsertBulk) SetUserID(v int64) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetUserID(v int64) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateUserID() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateUserID() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateUserID()
 	})
 }
 
 // SetModelID sets the "model_id" field.
-func (u *ModleStarUpsertBulk) SetModelID(v int64) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetModelID(v int64) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetModelID(v)
 	})
 }
 
 // UpdateModelID sets the "model_id" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateModelID() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateModelID() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateModelID()
 	})
 }
 
 // SetStatus sets the "status" field.
-func (u *ModleStarUpsertBulk) SetStatus(v enums.Model) *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) SetStatus(v enums.Model) *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.SetStatus(v)
 	})
 }
 
 // UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *ModleStarUpsertBulk) UpdateStatus() *ModleStarUpsertBulk {
-	return u.Update(func(s *ModleStarUpsert) {
+func (u *ModelStarUpsertBulk) UpdateStatus() *ModelStarUpsertBulk {
+	return u.Update(func(s *ModelStarUpsert) {
 		s.UpdateStatus()
 	})
 }
 
 // Exec executes the query.
-func (u *ModleStarUpsertBulk) Exec(ctx context.Context) error {
+func (u *ModelStarUpsertBulk) Exec(ctx context.Context) error {
 	if u.create.err != nil {
 		return u.create.err
 	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
-			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the ModleStarCreateBulk instead", i)
+			return fmt.Errorf("cep_ent: OnConflict was set for builder %d. Set it on the ModelStarCreateBulk instead", i)
 		}
 	}
 	if len(u.create.conflict) == 0 {
-		return errors.New("cep_ent: missing options for ModleStarCreateBulk.OnConflict")
+		return errors.New("cep_ent: missing options for ModelStarCreateBulk.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *ModleStarUpsertBulk) ExecX(ctx context.Context) {
+func (u *ModelStarUpsertBulk) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}

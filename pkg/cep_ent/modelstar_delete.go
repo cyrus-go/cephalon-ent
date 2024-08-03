@@ -8,30 +8,30 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 )
 
-// ModleStarDelete is the builder for deleting a ModleStar entity.
-type ModleStarDelete struct {
+// ModelStarDelete is the builder for deleting a ModelStar entity.
+type ModelStarDelete struct {
 	config
 	hooks    []Hook
-	mutation *ModleStarMutation
+	mutation *ModelStarMutation
 }
 
-// Where appends a list predicates to the ModleStarDelete builder.
-func (msd *ModleStarDelete) Where(ps ...predicate.ModleStar) *ModleStarDelete {
+// Where appends a list predicates to the ModelStarDelete builder.
+func (msd *ModelStarDelete) Where(ps ...predicate.ModelStar) *ModelStarDelete {
 	msd.mutation.Where(ps...)
 	return msd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (msd *ModleStarDelete) Exec(ctx context.Context) (int, error) {
+func (msd *ModelStarDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, msd.sqlExec, msd.mutation, msd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (msd *ModleStarDelete) ExecX(ctx context.Context) int {
+func (msd *ModelStarDelete) ExecX(ctx context.Context) int {
 	n, err := msd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (msd *ModleStarDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (msd *ModleStarDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(modlestar.Table, sqlgraph.NewFieldSpec(modlestar.FieldID, field.TypeInt64))
+func (msd *ModelStarDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(modelstar.Table, sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64))
 	if ps := msd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (msd *ModleStarDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ModleStarDeleteOne is the builder for deleting a single ModleStar entity.
-type ModleStarDeleteOne struct {
-	msd *ModleStarDelete
+// ModelStarDeleteOne is the builder for deleting a single ModelStar entity.
+type ModelStarDeleteOne struct {
+	msd *ModelStarDelete
 }
 
-// Where appends a list predicates to the ModleStarDelete builder.
-func (msdo *ModleStarDeleteOne) Where(ps ...predicate.ModleStar) *ModleStarDeleteOne {
+// Where appends a list predicates to the ModelStarDelete builder.
+func (msdo *ModelStarDeleteOne) Where(ps ...predicate.ModelStar) *ModelStarDeleteOne {
 	msdo.msd.mutation.Where(ps...)
 	return msdo
 }
 
 // Exec executes the deletion query.
-func (msdo *ModleStarDeleteOne) Exec(ctx context.Context) error {
+func (msdo *ModelStarDeleteOne) Exec(ctx context.Context) error {
 	n, err := msdo.msd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{modlestar.Label}
+		return &NotFoundError{modelstar.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (msdo *ModleStarDeleteOne) ExecX(ctx context.Context) {
+func (msdo *ModelStarDeleteOne) ExecX(ctx context.Context) {
 	if err := msdo.Exec(ctx); err != nil {
 		panic(err)
 	}

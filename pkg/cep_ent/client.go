@@ -64,7 +64,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modlestar"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -192,8 +192,8 @@ type Client struct {
 	Model *ModelClient
 	// ModelPrice is the client for interacting with the ModelPrice builders.
 	ModelPrice *ModelPriceClient
-	// ModleStar is the client for interacting with the ModleStar builders.
-	ModleStar *ModleStarClient
+	// ModelStar is the client for interacting with the ModelStar builders.
+	ModelStar *ModelStarClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
@@ -300,7 +300,7 @@ func (c *Client) init() {
 	c.MissionProduction = NewMissionProductionClient(c.config)
 	c.Model = NewModelClient(c.config)
 	c.ModelPrice = NewModelPriceClient(c.config)
-	c.ModleStar = NewModleStarClient(c.config)
+	c.ModelStar = NewModelStarClient(c.config)
 	c.OutputLog = NewOutputLogClient(c.config)
 	c.PlatformAccount = NewPlatformAccountClient(c.config)
 	c.Price = NewPriceClient(c.config)
@@ -457,7 +457,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MissionProduction:     NewMissionProductionClient(cfg),
 		Model:                 NewModelClient(cfg),
 		ModelPrice:            NewModelPriceClient(cfg),
-		ModleStar:             NewModleStarClient(cfg),
+		ModelStar:             NewModelStarClient(cfg),
 		OutputLog:             NewOutputLogClient(cfg),
 		PlatformAccount:       NewPlatformAccountClient(cfg),
 		Price:                 NewPriceClient(cfg),
@@ -548,7 +548,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MissionProduction:     NewMissionProductionClient(cfg),
 		Model:                 NewModelClient(cfg),
 		ModelPrice:            NewModelPriceClient(cfg),
-		ModleStar:             NewModleStarClient(cfg),
+		ModelStar:             NewModelStarClient(cfg),
 		OutputLog:             NewOutputLogClient(cfg),
 		PlatformAccount:       NewPlatformAccountClient(cfg),
 		Price:                 NewPriceClient(cfg),
@@ -610,7 +610,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.Model, c.ModelPrice, c.ModleStar, c.OutputLog,
+		c.MissionProduction, c.Model, c.ModelPrice, c.ModelStar, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
 		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
@@ -635,7 +635,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.Model, c.ModelPrice, c.ModleStar, c.OutputLog,
+		c.MissionProduction, c.Model, c.ModelPrice, c.ModelStar, c.OutputLog,
 		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
 		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
 		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
@@ -747,8 +747,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Model.mutate(ctx, m)
 	case *ModelPriceMutation:
 		return c.ModelPrice.mutate(ctx, m)
-	case *ModleStarMutation:
-		return c.ModleStar.mutate(ctx, m)
+	case *ModelStarMutation:
+		return c.ModelStar.mutate(ctx, m)
 	case *OutputLogMutation:
 		return c.OutputLog.mutate(ctx, m)
 	case *PlatformAccountMutation:
@@ -9398,13 +9398,13 @@ func (c *ModelClient) QueryStarUser(m *Model) *UserQuery {
 }
 
 // QueryStarModel queries the star_model edge of a Model.
-func (c *ModelClient) QueryStarModel(m *Model) *ModleStarQuery {
-	query := (&ModleStarClient{config: c.config}).Query()
+func (c *ModelClient) QueryStarModel(m *Model) *ModelStarQuery {
+	query := (&ModelStarClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(model.Table, model.FieldID, id),
-			sqlgraph.To(modlestar.Table, modlestar.FieldID),
+			sqlgraph.To(modelstar.Table, modelstar.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, model.StarModelTable, model.StarModelColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
@@ -9587,107 +9587,107 @@ func (c *ModelPriceClient) mutate(ctx context.Context, m *ModelPriceMutation) (V
 	}
 }
 
-// ModleStarClient is a client for the ModleStar schema.
-type ModleStarClient struct {
+// ModelStarClient is a client for the ModelStar schema.
+type ModelStarClient struct {
 	config
 }
 
-// NewModleStarClient returns a client for the ModleStar from the given config.
-func NewModleStarClient(c config) *ModleStarClient {
-	return &ModleStarClient{config: c}
+// NewModelStarClient returns a client for the ModelStar from the given config.
+func NewModelStarClient(c config) *ModelStarClient {
+	return &ModelStarClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `modlestar.Hooks(f(g(h())))`.
-func (c *ModleStarClient) Use(hooks ...Hook) {
-	c.hooks.ModleStar = append(c.hooks.ModleStar, hooks...)
+// A call to `Use(f, g, h)` equals to `modelstar.Hooks(f(g(h())))`.
+func (c *ModelStarClient) Use(hooks ...Hook) {
+	c.hooks.ModelStar = append(c.hooks.ModelStar, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `modlestar.Intercept(f(g(h())))`.
-func (c *ModleStarClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ModleStar = append(c.inters.ModleStar, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `modelstar.Intercept(f(g(h())))`.
+func (c *ModelStarClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ModelStar = append(c.inters.ModelStar, interceptors...)
 }
 
-// Create returns a builder for creating a ModleStar entity.
-func (c *ModleStarClient) Create() *ModleStarCreate {
-	mutation := newModleStarMutation(c.config, OpCreate)
-	return &ModleStarCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a ModelStar entity.
+func (c *ModelStarClient) Create() *ModelStarCreate {
+	mutation := newModelStarMutation(c.config, OpCreate)
+	return &ModelStarCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of ModleStar entities.
-func (c *ModleStarClient) CreateBulk(builders ...*ModleStarCreate) *ModleStarCreateBulk {
-	return &ModleStarCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of ModelStar entities.
+func (c *ModelStarClient) CreateBulk(builders ...*ModelStarCreate) *ModelStarCreateBulk {
+	return &ModelStarCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *ModleStarClient) MapCreateBulk(slice any, setFunc func(*ModleStarCreate, int)) *ModleStarCreateBulk {
+func (c *ModelStarClient) MapCreateBulk(slice any, setFunc func(*ModelStarCreate, int)) *ModelStarCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &ModleStarCreateBulk{err: fmt.Errorf("calling to ModleStarClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &ModelStarCreateBulk{err: fmt.Errorf("calling to ModelStarClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*ModleStarCreate, rv.Len())
+	builders := make([]*ModelStarCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &ModleStarCreateBulk{config: c.config, builders: builders}
+	return &ModelStarCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for ModleStar.
-func (c *ModleStarClient) Update() *ModleStarUpdate {
-	mutation := newModleStarMutation(c.config, OpUpdate)
-	return &ModleStarUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for ModelStar.
+func (c *ModelStarClient) Update() *ModelStarUpdate {
+	mutation := newModelStarMutation(c.config, OpUpdate)
+	return &ModelStarUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ModleStarClient) UpdateOne(ms *ModleStar) *ModleStarUpdateOne {
-	mutation := newModleStarMutation(c.config, OpUpdateOne, withModleStar(ms))
-	return &ModleStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ModelStarClient) UpdateOne(ms *ModelStar) *ModelStarUpdateOne {
+	mutation := newModelStarMutation(c.config, OpUpdateOne, withModelStar(ms))
+	return &ModelStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ModleStarClient) UpdateOneID(id int64) *ModleStarUpdateOne {
-	mutation := newModleStarMutation(c.config, OpUpdateOne, withModleStarID(id))
-	return &ModleStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ModelStarClient) UpdateOneID(id int64) *ModelStarUpdateOne {
+	mutation := newModelStarMutation(c.config, OpUpdateOne, withModelStarID(id))
+	return &ModelStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for ModleStar.
-func (c *ModleStarClient) Delete() *ModleStarDelete {
-	mutation := newModleStarMutation(c.config, OpDelete)
-	return &ModleStarDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for ModelStar.
+func (c *ModelStarClient) Delete() *ModelStarDelete {
+	mutation := newModelStarMutation(c.config, OpDelete)
+	return &ModelStarDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ModleStarClient) DeleteOne(ms *ModleStar) *ModleStarDeleteOne {
+func (c *ModelStarClient) DeleteOne(ms *ModelStar) *ModelStarDeleteOne {
 	return c.DeleteOneID(ms.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ModleStarClient) DeleteOneID(id int64) *ModleStarDeleteOne {
-	builder := c.Delete().Where(modlestar.ID(id))
+func (c *ModelStarClient) DeleteOneID(id int64) *ModelStarDeleteOne {
+	builder := c.Delete().Where(modelstar.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ModleStarDeleteOne{builder}
+	return &ModelStarDeleteOne{builder}
 }
 
-// Query returns a query builder for ModleStar.
-func (c *ModleStarClient) Query() *ModleStarQuery {
-	return &ModleStarQuery{
+// Query returns a query builder for ModelStar.
+func (c *ModelStarClient) Query() *ModelStarQuery {
+	return &ModelStarQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeModleStar},
+		ctx:    &QueryContext{Type: TypeModelStar},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a ModleStar entity by its id.
-func (c *ModleStarClient) Get(ctx context.Context, id int64) (*ModleStar, error) {
-	return c.Query().Where(modlestar.ID(id)).Only(ctx)
+// Get returns a ModelStar entity by its id.
+func (c *ModelStarClient) Get(ctx context.Context, id int64) (*ModelStar, error) {
+	return c.Query().Where(modelstar.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ModleStarClient) GetX(ctx context.Context, id int64) *ModleStar {
+func (c *ModelStarClient) GetX(ctx context.Context, id int64) *ModelStar {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -9695,15 +9695,15 @@ func (c *ModleStarClient) GetX(ctx context.Context, id int64) *ModleStar {
 	return obj
 }
 
-// QueryUser queries the user edge of a ModleStar.
-func (c *ModleStarClient) QueryUser(ms *ModleStar) *UserQuery {
+// QueryUser queries the user edge of a ModelStar.
+func (c *ModelStarClient) QueryUser(ms *ModelStar) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ms.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(modlestar.Table, modlestar.FieldID, id),
+			sqlgraph.From(modelstar.Table, modelstar.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, modlestar.UserTable, modlestar.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, modelstar.UserTable, modelstar.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(ms.driver.Dialect(), step)
 		return fromV, nil
@@ -9711,15 +9711,15 @@ func (c *ModleStarClient) QueryUser(ms *ModleStar) *UserQuery {
 	return query
 }
 
-// QueryModel queries the model edge of a ModleStar.
-func (c *ModleStarClient) QueryModel(ms *ModleStar) *ModelQuery {
+// QueryModel queries the model edge of a ModelStar.
+func (c *ModelStarClient) QueryModel(ms *ModelStar) *ModelQuery {
 	query := (&ModelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := ms.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(modlestar.Table, modlestar.FieldID, id),
+			sqlgraph.From(modelstar.Table, modelstar.FieldID, id),
 			sqlgraph.To(model.Table, model.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, modlestar.ModelTable, modlestar.ModelColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, modelstar.ModelTable, modelstar.ModelColumn),
 		)
 		fromV = sqlgraph.Neighbors(ms.driver.Dialect(), step)
 		return fromV, nil
@@ -9728,27 +9728,27 @@ func (c *ModleStarClient) QueryModel(ms *ModleStar) *ModelQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *ModleStarClient) Hooks() []Hook {
-	return c.hooks.ModleStar
+func (c *ModelStarClient) Hooks() []Hook {
+	return c.hooks.ModelStar
 }
 
 // Interceptors returns the client interceptors.
-func (c *ModleStarClient) Interceptors() []Interceptor {
-	return c.inters.ModleStar
+func (c *ModelStarClient) Interceptors() []Interceptor {
+	return c.inters.ModelStar
 }
 
-func (c *ModleStarClient) mutate(ctx context.Context, m *ModleStarMutation) (Value, error) {
+func (c *ModelStarClient) mutate(ctx context.Context, m *ModelStarMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&ModleStarCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ModelStarCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&ModleStarUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ModelStarUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&ModleStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ModelStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&ModleStarDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&ModelStarDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("cep_ent: unknown ModleStar mutation op: %q", m.Op())
+		return nil, fmt.Errorf("cep_ent: unknown ModelStar mutation op: %q", m.Op())
 	}
 }
 
@@ -13232,13 +13232,13 @@ func (c *UserClient) QueryStarModel(u *User) *ModelQuery {
 }
 
 // QueryModelStar queries the model_star edge of a User.
-func (c *UserClient) QueryModelStar(u *User) *ModleStarQuery {
-	query := (&ModleStarClient{config: c.config}).Query()
+func (c *UserClient) QueryModelStar(u *User) *ModelStarQuery {
+	query := (&ModelStarClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(modlestar.Table, modlestar.FieldID),
+			sqlgraph.To(modelstar.Table, modelstar.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, user.ModelStarTable, user.ModelStarColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
@@ -14274,7 +14274,7 @@ type (
 		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
 		MissionConsumeOrder, MissionExtraService, MissionFailedFeedback,
 		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, Model, ModelPrice, ModleStar, OutputLog, PlatformAccount,
+		MissionProduction, Model, ModelPrice, ModelStar, OutputLog, PlatformAccount,
 		Price, ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
 		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
@@ -14290,7 +14290,7 @@ type (
 		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
 		MissionConsumeOrder, MissionExtraService, MissionFailedFeedback,
 		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, Model, ModelPrice, ModleStar, OutputLog, PlatformAccount,
+		MissionProduction, Model, ModelPrice, ModelStar, OutputLog, PlatformAccount,
 		Price, ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
 		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
