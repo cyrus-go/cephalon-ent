@@ -64,7 +64,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -82,6 +81,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -192,8 +192,6 @@ type Client struct {
 	Model *ModelClient
 	// ModelPrice is the client for interacting with the ModelPrice builders.
 	ModelPrice *ModelPriceClient
-	// ModelStar is the client for interacting with the ModelStar builders.
-	ModelStar *ModelStarClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
@@ -228,6 +226,8 @@ type Client struct {
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
 	UserDevice *UserDeviceClient
+	// UserModel is the client for interacting with the UserModel builders.
+	UserModel *UserModelClient
 	// VXAccount is the client for interacting with the VXAccount builders.
 	VXAccount *VXAccountClient
 	// VXSocial is the client for interacting with the VXSocial builders.
@@ -300,7 +300,6 @@ func (c *Client) init() {
 	c.MissionProduction = NewMissionProductionClient(c.config)
 	c.Model = NewModelClient(c.config)
 	c.ModelPrice = NewModelPriceClient(c.config)
-	c.ModelStar = NewModelStarClient(c.config)
 	c.OutputLog = NewOutputLogClient(c.config)
 	c.PlatformAccount = NewPlatformAccountClient(c.config)
 	c.Price = NewPriceClient(c.config)
@@ -318,6 +317,7 @@ func (c *Client) init() {
 	c.TroubleDeduct = NewTroubleDeductClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserDevice = NewUserDeviceClient(c.config)
+	c.UserModel = NewUserModelClient(c.config)
 	c.VXAccount = NewVXAccountClient(c.config)
 	c.VXSocial = NewVXSocialClient(c.config)
 	c.Wallet = NewWalletClient(c.config)
@@ -457,7 +457,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MissionProduction:     NewMissionProductionClient(cfg),
 		Model:                 NewModelClient(cfg),
 		ModelPrice:            NewModelPriceClient(cfg),
-		ModelStar:             NewModelStarClient(cfg),
 		OutputLog:             NewOutputLogClient(cfg),
 		PlatformAccount:       NewPlatformAccountClient(cfg),
 		Price:                 NewPriceClient(cfg),
@@ -475,6 +474,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TroubleDeduct:         NewTroubleDeductClient(cfg),
 		User:                  NewUserClient(cfg),
 		UserDevice:            NewUserDeviceClient(cfg),
+		UserModel:             NewUserModelClient(cfg),
 		VXAccount:             NewVXAccountClient(cfg),
 		VXSocial:              NewVXSocialClient(cfg),
 		Wallet:                NewWalletClient(cfg),
@@ -548,7 +548,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MissionProduction:     NewMissionProductionClient(cfg),
 		Model:                 NewModelClient(cfg),
 		ModelPrice:            NewModelPriceClient(cfg),
-		ModelStar:             NewModelStarClient(cfg),
 		OutputLog:             NewOutputLogClient(cfg),
 		PlatformAccount:       NewPlatformAccountClient(cfg),
 		Price:                 NewPriceClient(cfg),
@@ -566,6 +565,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TroubleDeduct:         NewTroubleDeductClient(cfg),
 		User:                  NewUserClient(cfg),
 		UserDevice:            NewUserDeviceClient(cfg),
+		UserModel:             NewUserModelClient(cfg),
 		VXAccount:             NewVXAccountClient(cfg),
 		VXSocial:              NewVXSocialClient(cfg),
 		Wallet:                NewWalletClient(cfg),
@@ -610,11 +610,11 @@ func (c *Client) Use(hooks ...Hook) {
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.Model, c.ModelPrice, c.ModelStar, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
-		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
-		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.RechargeOrder, c.RenewalAgreement, c.Survey, c.SurveyAnswer,
+		c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder, c.TroubleDeduct,
+		c.User, c.UserDevice, c.UserModel, c.VXAccount, c.VXSocial, c.Wallet,
 		c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Use(hooks...)
@@ -635,11 +635,11 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.LottoUserCount, c.Mission, c.MissionBatch, c.MissionCategory,
 		c.MissionConsumeOrder, c.MissionExtraService, c.MissionFailedFeedback,
 		c.MissionKeyPair, c.MissionKind, c.MissionOrder, c.MissionProduceOrder,
-		c.MissionProduction, c.Model, c.ModelPrice, c.ModelStar, c.OutputLog,
-		c.PlatformAccount, c.Price, c.ProfitAccount, c.ProfitSetting,
-		c.RechargeCampaignRule, c.RechargeOrder, c.RenewalAgreement, c.Survey,
-		c.SurveyAnswer, c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder,
-		c.TroubleDeduct, c.User, c.UserDevice, c.VXAccount, c.VXSocial, c.Wallet,
+		c.MissionProduction, c.Model, c.ModelPrice, c.OutputLog, c.PlatformAccount,
+		c.Price, c.ProfitAccount, c.ProfitSetting, c.RechargeCampaignRule,
+		c.RechargeOrder, c.RenewalAgreement, c.Survey, c.SurveyAnswer,
+		c.SurveyQuestion, c.SurveyResponse, c.Symbol, c.TransferOrder, c.TroubleDeduct,
+		c.User, c.UserDevice, c.UserModel, c.VXAccount, c.VXSocial, c.Wallet,
 		c.WithdrawAccount, c.WithdrawRecord,
 	} {
 		n.Intercept(interceptors...)
@@ -747,8 +747,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Model.mutate(ctx, m)
 	case *ModelPriceMutation:
 		return c.ModelPrice.mutate(ctx, m)
-	case *ModelStarMutation:
-		return c.ModelStar.mutate(ctx, m)
 	case *OutputLogMutation:
 		return c.OutputLog.mutate(ctx, m)
 	case *PlatformAccountMutation:
@@ -783,6 +781,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	case *UserDeviceMutation:
 		return c.UserDevice.mutate(ctx, m)
+	case *UserModelMutation:
+		return c.UserModel.mutate(ctx, m)
 	case *VXAccountMutation:
 		return c.VXAccount.mutate(ctx, m)
 	case *VXSocialMutation:
@@ -9398,13 +9398,13 @@ func (c *ModelClient) QueryStarUser(m *Model) *UserQuery {
 }
 
 // QueryStarModel queries the star_model edge of a Model.
-func (c *ModelClient) QueryStarModel(m *Model) *ModelStarQuery {
-	query := (&ModelStarClient{config: c.config}).Query()
+func (c *ModelClient) QueryStarModel(m *Model) *UserModelQuery {
+	query := (&UserModelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(model.Table, model.FieldID, id),
-			sqlgraph.To(modelstar.Table, modelstar.FieldID),
+			sqlgraph.To(usermodel.Table, usermodel.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, model.StarModelTable, model.StarModelColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
@@ -9584,171 +9584,6 @@ func (c *ModelPriceClient) mutate(ctx context.Context, m *ModelPriceMutation) (V
 		return (&ModelPriceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown ModelPrice mutation op: %q", m.Op())
-	}
-}
-
-// ModelStarClient is a client for the ModelStar schema.
-type ModelStarClient struct {
-	config
-}
-
-// NewModelStarClient returns a client for the ModelStar from the given config.
-func NewModelStarClient(c config) *ModelStarClient {
-	return &ModelStarClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `modelstar.Hooks(f(g(h())))`.
-func (c *ModelStarClient) Use(hooks ...Hook) {
-	c.hooks.ModelStar = append(c.hooks.ModelStar, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `modelstar.Intercept(f(g(h())))`.
-func (c *ModelStarClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ModelStar = append(c.inters.ModelStar, interceptors...)
-}
-
-// Create returns a builder for creating a ModelStar entity.
-func (c *ModelStarClient) Create() *ModelStarCreate {
-	mutation := newModelStarMutation(c.config, OpCreate)
-	return &ModelStarCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ModelStar entities.
-func (c *ModelStarClient) CreateBulk(builders ...*ModelStarCreate) *ModelStarCreateBulk {
-	return &ModelStarCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *ModelStarClient) MapCreateBulk(slice any, setFunc func(*ModelStarCreate, int)) *ModelStarCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &ModelStarCreateBulk{err: fmt.Errorf("calling to ModelStarClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*ModelStarCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &ModelStarCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ModelStar.
-func (c *ModelStarClient) Update() *ModelStarUpdate {
-	mutation := newModelStarMutation(c.config, OpUpdate)
-	return &ModelStarUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ModelStarClient) UpdateOne(ms *ModelStar) *ModelStarUpdateOne {
-	mutation := newModelStarMutation(c.config, OpUpdateOne, withModelStar(ms))
-	return &ModelStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ModelStarClient) UpdateOneID(id int64) *ModelStarUpdateOne {
-	mutation := newModelStarMutation(c.config, OpUpdateOne, withModelStarID(id))
-	return &ModelStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ModelStar.
-func (c *ModelStarClient) Delete() *ModelStarDelete {
-	mutation := newModelStarMutation(c.config, OpDelete)
-	return &ModelStarDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ModelStarClient) DeleteOne(ms *ModelStar) *ModelStarDeleteOne {
-	return c.DeleteOneID(ms.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ModelStarClient) DeleteOneID(id int64) *ModelStarDeleteOne {
-	builder := c.Delete().Where(modelstar.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ModelStarDeleteOne{builder}
-}
-
-// Query returns a query builder for ModelStar.
-func (c *ModelStarClient) Query() *ModelStarQuery {
-	return &ModelStarQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeModelStar},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a ModelStar entity by its id.
-func (c *ModelStarClient) Get(ctx context.Context, id int64) (*ModelStar, error) {
-	return c.Query().Where(modelstar.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ModelStarClient) GetX(ctx context.Context, id int64) *ModelStar {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUser queries the user edge of a ModelStar.
-func (c *ModelStarClient) QueryUser(ms *ModelStar) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := ms.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(modelstar.Table, modelstar.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, modelstar.UserTable, modelstar.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(ms.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryModel queries the model edge of a ModelStar.
-func (c *ModelStarClient) QueryModel(ms *ModelStar) *ModelQuery {
-	query := (&ModelClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := ms.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(modelstar.Table, modelstar.FieldID, id),
-			sqlgraph.To(model.Table, model.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, modelstar.ModelTable, modelstar.ModelColumn),
-		)
-		fromV = sqlgraph.Neighbors(ms.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ModelStarClient) Hooks() []Hook {
-	return c.hooks.ModelStar
-}
-
-// Interceptors returns the client interceptors.
-func (c *ModelStarClient) Interceptors() []Interceptor {
-	return c.inters.ModelStar
-}
-
-func (c *ModelStarClient) mutate(ctx context.Context, m *ModelStarMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&ModelStarCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&ModelStarUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&ModelStarUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&ModelStarDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("cep_ent: unknown ModelStar mutation op: %q", m.Op())
 	}
 }
 
@@ -13232,13 +13067,13 @@ func (c *UserClient) QueryStarModel(u *User) *ModelQuery {
 }
 
 // QueryModelStar queries the model_star edge of a User.
-func (c *UserClient) QueryModelStar(u *User) *ModelStarQuery {
-	query := (&ModelStarClient{config: c.config}).Query()
+func (c *UserClient) QueryModelStar(u *User) *UserModelQuery {
+	query := (&UserModelClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(modelstar.Table, modelstar.FieldID),
+			sqlgraph.To(usermodel.Table, usermodel.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, user.ModelStarTable, user.ModelStarColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
@@ -13434,6 +13269,171 @@ func (c *UserDeviceClient) mutate(ctx context.Context, m *UserDeviceMutation) (V
 		return (&UserDeviceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("cep_ent: unknown UserDevice mutation op: %q", m.Op())
+	}
+}
+
+// UserModelClient is a client for the UserModel schema.
+type UserModelClient struct {
+	config
+}
+
+// NewUserModelClient returns a client for the UserModel from the given config.
+func NewUserModelClient(c config) *UserModelClient {
+	return &UserModelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usermodel.Hooks(f(g(h())))`.
+func (c *UserModelClient) Use(hooks ...Hook) {
+	c.hooks.UserModel = append(c.hooks.UserModel, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usermodel.Intercept(f(g(h())))`.
+func (c *UserModelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserModel = append(c.inters.UserModel, interceptors...)
+}
+
+// Create returns a builder for creating a UserModel entity.
+func (c *UserModelClient) Create() *UserModelCreate {
+	mutation := newUserModelMutation(c.config, OpCreate)
+	return &UserModelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserModel entities.
+func (c *UserModelClient) CreateBulk(builders ...*UserModelCreate) *UserModelCreateBulk {
+	return &UserModelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserModelClient) MapCreateBulk(slice any, setFunc func(*UserModelCreate, int)) *UserModelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserModelCreateBulk{err: fmt.Errorf("calling to UserModelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserModelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserModelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserModel.
+func (c *UserModelClient) Update() *UserModelUpdate {
+	mutation := newUserModelMutation(c.config, OpUpdate)
+	return &UserModelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserModelClient) UpdateOne(um *UserModel) *UserModelUpdateOne {
+	mutation := newUserModelMutation(c.config, OpUpdateOne, withUserModel(um))
+	return &UserModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserModelClient) UpdateOneID(id int64) *UserModelUpdateOne {
+	mutation := newUserModelMutation(c.config, OpUpdateOne, withUserModelID(id))
+	return &UserModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserModel.
+func (c *UserModelClient) Delete() *UserModelDelete {
+	mutation := newUserModelMutation(c.config, OpDelete)
+	return &UserModelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserModelClient) DeleteOne(um *UserModel) *UserModelDeleteOne {
+	return c.DeleteOneID(um.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserModelClient) DeleteOneID(id int64) *UserModelDeleteOne {
+	builder := c.Delete().Where(usermodel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserModelDeleteOne{builder}
+}
+
+// Query returns a query builder for UserModel.
+func (c *UserModelClient) Query() *UserModelQuery {
+	return &UserModelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserModel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserModel entity by its id.
+func (c *UserModelClient) Get(ctx context.Context, id int64) (*UserModel, error) {
+	return c.Query().Where(usermodel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserModelClient) GetX(ctx context.Context, id int64) *UserModel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserModel.
+func (c *UserModelClient) QueryUser(um *UserModel) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := um.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usermodel.Table, usermodel.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usermodel.UserTable, usermodel.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(um.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryModel queries the model edge of a UserModel.
+func (c *UserModelClient) QueryModel(um *UserModel) *ModelQuery {
+	query := (&ModelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := um.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usermodel.Table, usermodel.FieldID, id),
+			sqlgraph.To(model.Table, model.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usermodel.ModelTable, usermodel.ModelColumn),
+		)
+		fromV = sqlgraph.Neighbors(um.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserModelClient) Hooks() []Hook {
+	return c.hooks.UserModel
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserModelClient) Interceptors() []Interceptor {
+	return c.inters.UserModel
+}
+
+func (c *UserModelClient) mutate(ctx context.Context, m *UserModelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserModelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserModelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserModelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserModelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("cep_ent: unknown UserModel mutation op: %q", m.Op())
 	}
 }
 
@@ -14274,11 +14274,11 @@ type (
 		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
 		MissionConsumeOrder, MissionExtraService, MissionFailedFeedback,
 		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, Model, ModelPrice, ModelStar, OutputLog, PlatformAccount,
-		Price, ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		MissionProduction, Model, ModelPrice, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
-		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
-		WithdrawAccount, WithdrawRecord []ent.Hook
+		TransferOrder, TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial,
+		Wallet, WithdrawAccount, WithdrawRecord []ent.Hook
 	}
 	inters struct {
 		ApiToken, Artwork, ArtworkLike, Bill, CDKInfo, Campaign, CampaignOrder,
@@ -14290,10 +14290,10 @@ type (
 		LottoRecord, LottoUserCount, Mission, MissionBatch, MissionCategory,
 		MissionConsumeOrder, MissionExtraService, MissionFailedFeedback,
 		MissionKeyPair, MissionKind, MissionOrder, MissionProduceOrder,
-		MissionProduction, Model, ModelPrice, ModelStar, OutputLog, PlatformAccount,
-		Price, ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
+		MissionProduction, Model, ModelPrice, OutputLog, PlatformAccount, Price,
+		ProfitAccount, ProfitSetting, RechargeCampaignRule, RechargeOrder,
 		RenewalAgreement, Survey, SurveyAnswer, SurveyQuestion, SurveyResponse, Symbol,
-		TransferOrder, TroubleDeduct, User, UserDevice, VXAccount, VXSocial, Wallet,
-		WithdrawAccount, WithdrawRecord []ent.Interceptor
+		TransferOrder, TroubleDeduct, User, UserDevice, UserModel, VXAccount, VXSocial,
+		Wallet, WithdrawAccount, WithdrawRecord []ent.Interceptor
 	}
 )

@@ -60,7 +60,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
@@ -79,6 +78,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -145,7 +145,6 @@ const (
 	TypeMissionProduction     = "MissionProduction"
 	TypeModel                 = "Model"
 	TypeModelPrice            = "ModelPrice"
-	TypeModelStar             = "ModelStar"
 	TypeOutputLog             = "OutputLog"
 	TypePlatformAccount       = "PlatformAccount"
 	TypePrice                 = "Price"
@@ -163,6 +162,7 @@ const (
 	TypeTroubleDeduct         = "TroubleDeduct"
 	TypeUser                  = "User"
 	TypeUserDevice            = "UserDevice"
+	TypeUserModel             = "UserModel"
 	TypeVXAccount             = "VXAccount"
 	TypeVXSocial              = "VXSocial"
 	TypeWallet                = "Wallet"
@@ -62184,7 +62184,7 @@ func (m *ModelMutation) ResetStarUser() {
 	m.removedstar_user = nil
 }
 
-// AddStarModelIDs adds the "star_model" edge to the ModelStar entity by ids.
+// AddStarModelIDs adds the "star_model" edge to the UserModel entity by ids.
 func (m *ModelMutation) AddStarModelIDs(ids ...int64) {
 	if m.star_model == nil {
 		m.star_model = make(map[int64]struct{})
@@ -62194,17 +62194,17 @@ func (m *ModelMutation) AddStarModelIDs(ids ...int64) {
 	}
 }
 
-// ClearStarModel clears the "star_model" edge to the ModelStar entity.
+// ClearStarModel clears the "star_model" edge to the UserModel entity.
 func (m *ModelMutation) ClearStarModel() {
 	m.clearedstar_model = true
 }
 
-// StarModelCleared reports if the "star_model" edge to the ModelStar entity was cleared.
+// StarModelCleared reports if the "star_model" edge to the UserModel entity was cleared.
 func (m *ModelMutation) StarModelCleared() bool {
 	return m.clearedstar_model
 }
 
-// RemoveStarModelIDs removes the "star_model" edge to the ModelStar entity by IDs.
+// RemoveStarModelIDs removes the "star_model" edge to the UserModel entity by IDs.
 func (m *ModelMutation) RemoveStarModelIDs(ids ...int64) {
 	if m.removedstar_model == nil {
 		m.removedstar_model = make(map[int64]struct{})
@@ -62215,7 +62215,7 @@ func (m *ModelMutation) RemoveStarModelIDs(ids ...int64) {
 	}
 }
 
-// RemovedStarModel returns the removed IDs of the "star_model" edge to the ModelStar entity.
+// RemovedStarModel returns the removed IDs of the "star_model" edge to the UserModel entity.
 func (m *ModelMutation) RemovedStarModelIDs() (ids []int64) {
 	for id := range m.removedstar_model {
 		ids = append(ids, id)
@@ -63910,885 +63910,6 @@ func (m *ModelPriceMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown ModelPrice edge %s", name)
-}
-
-// ModelStarMutation represents an operation that mutates the ModelStar nodes in the graph.
-type ModelStarMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *int64
-	created_by    *int64
-	addcreated_by *int64
-	updated_by    *int64
-	addupdated_by *int64
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	status        *enums.StarStatus
-	clearedFields map[string]struct{}
-	user          *int64
-	cleareduser   bool
-	model         *int64
-	clearedmodel  bool
-	done          bool
-	oldValue      func(context.Context) (*ModelStar, error)
-	predicates    []predicate.ModelStar
-}
-
-var _ ent.Mutation = (*ModelStarMutation)(nil)
-
-// modelstarOption allows management of the mutation configuration using functional options.
-type modelstarOption func(*ModelStarMutation)
-
-// newModelStarMutation creates new mutation for the ModelStar entity.
-func newModelStarMutation(c config, op Op, opts ...modelstarOption) *ModelStarMutation {
-	m := &ModelStarMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeModelStar,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withModelStarID sets the ID field of the mutation.
-func withModelStarID(id int64) modelstarOption {
-	return func(m *ModelStarMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *ModelStar
-		)
-		m.oldValue = func(ctx context.Context) (*ModelStar, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().ModelStar.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withModelStar sets the old ModelStar of the mutation.
-func withModelStar(node *ModelStar) modelstarOption {
-	return func(m *ModelStarMutation) {
-		m.oldValue = func(context.Context) (*ModelStar, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ModelStarMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ModelStarMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("cep_ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of ModelStar entities.
-func (m *ModelStarMutation) SetID(id int64) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *ModelStarMutation) ID() (id int64, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *ModelStarMutation) IDs(ctx context.Context) ([]int64, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []int64{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().ModelStar.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (m *ModelStarMutation) SetCreatedBy(i int64) {
-	m.created_by = &i
-	m.addcreated_by = nil
-}
-
-// CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *ModelStarMutation) CreatedBy() (r int64, exists bool) {
-	v := m.created_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedBy returns the old "created_by" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
-	}
-	return oldValue.CreatedBy, nil
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (m *ModelStarMutation) AddCreatedBy(i int64) {
-	if m.addcreated_by != nil {
-		*m.addcreated_by += i
-	} else {
-		m.addcreated_by = &i
-	}
-}
-
-// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
-func (m *ModelStarMutation) AddedCreatedBy() (r int64, exists bool) {
-	v := m.addcreated_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetCreatedBy resets all changes to the "created_by" field.
-func (m *ModelStarMutation) ResetCreatedBy() {
-	m.created_by = nil
-	m.addcreated_by = nil
-}
-
-// SetUpdatedBy sets the "updated_by" field.
-func (m *ModelStarMutation) SetUpdatedBy(i int64) {
-	m.updated_by = &i
-	m.addupdated_by = nil
-}
-
-// UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *ModelStarMutation) UpdatedBy() (r int64, exists bool) {
-	v := m.updated_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedBy returns the old "updated_by" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
-	}
-	return oldValue.UpdatedBy, nil
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (m *ModelStarMutation) AddUpdatedBy(i int64) {
-	if m.addupdated_by != nil {
-		*m.addupdated_by += i
-	} else {
-		m.addupdated_by = &i
-	}
-}
-
-// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
-func (m *ModelStarMutation) AddedUpdatedBy() (r int64, exists bool) {
-	v := m.addupdated_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetUpdatedBy resets all changes to the "updated_by" field.
-func (m *ModelStarMutation) ResetUpdatedBy() {
-	m.updated_by = nil
-	m.addupdated_by = nil
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *ModelStarMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ModelStarMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ModelStarMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *ModelStarMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *ModelStarMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *ModelStarMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *ModelStarMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *ModelStarMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *ModelStarMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-}
-
-// SetUserID sets the "user_id" field.
-func (m *ModelStarMutation) SetUserID(i int64) {
-	m.user = &i
-}
-
-// UserID returns the value of the "user_id" field in the mutation.
-func (m *ModelStarMutation) UserID() (r int64, exists bool) {
-	v := m.user
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUserID returns the old "user_id" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldUserID(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUserID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
-	}
-	return oldValue.UserID, nil
-}
-
-// ResetUserID resets all changes to the "user_id" field.
-func (m *ModelStarMutation) ResetUserID() {
-	m.user = nil
-}
-
-// SetModelID sets the "model_id" field.
-func (m *ModelStarMutation) SetModelID(i int64) {
-	m.model = &i
-}
-
-// ModelID returns the value of the "model_id" field in the mutation.
-func (m *ModelStarMutation) ModelID() (r int64, exists bool) {
-	v := m.model
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldModelID returns the old "model_id" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldModelID(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldModelID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldModelID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldModelID: %w", err)
-	}
-	return oldValue.ModelID, nil
-}
-
-// ResetModelID resets all changes to the "model_id" field.
-func (m *ModelStarMutation) ResetModelID() {
-	m.model = nil
-}
-
-// SetStatus sets the "status" field.
-func (m *ModelStarMutation) SetStatus(es enums.StarStatus) {
-	m.status = &es
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *ModelStarMutation) Status() (r enums.StarStatus, exists bool) {
-	v := m.status
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the ModelStar entity.
-// If the ModelStar object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ModelStarMutation) OldStatus(ctx context.Context) (v enums.StarStatus, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *ModelStarMutation) ResetStatus() {
-	m.status = nil
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (m *ModelStarMutation) ClearUser() {
-	m.cleareduser = true
-	m.clearedFields[modelstar.FieldUserID] = struct{}{}
-}
-
-// UserCleared reports if the "user" edge to the User entity was cleared.
-func (m *ModelStarMutation) UserCleared() bool {
-	return m.cleareduser
-}
-
-// UserIDs returns the "user" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// UserID instead. It exists only for internal usage by the builders.
-func (m *ModelStarMutation) UserIDs() (ids []int64) {
-	if id := m.user; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetUser resets all changes to the "user" edge.
-func (m *ModelStarMutation) ResetUser() {
-	m.user = nil
-	m.cleareduser = false
-}
-
-// ClearModel clears the "model" edge to the Model entity.
-func (m *ModelStarMutation) ClearModel() {
-	m.clearedmodel = true
-	m.clearedFields[modelstar.FieldModelID] = struct{}{}
-}
-
-// ModelCleared reports if the "model" edge to the Model entity was cleared.
-func (m *ModelStarMutation) ModelCleared() bool {
-	return m.clearedmodel
-}
-
-// ModelIDs returns the "model" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ModelID instead. It exists only for internal usage by the builders.
-func (m *ModelStarMutation) ModelIDs() (ids []int64) {
-	if id := m.model; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetModel resets all changes to the "model" edge.
-func (m *ModelStarMutation) ResetModel() {
-	m.model = nil
-	m.clearedmodel = false
-}
-
-// Where appends a list predicates to the ModelStarMutation builder.
-func (m *ModelStarMutation) Where(ps ...predicate.ModelStar) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the ModelStarMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *ModelStarMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.ModelStar, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *ModelStarMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *ModelStarMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (ModelStar).
-func (m *ModelStarMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *ModelStarMutation) Fields() []string {
-	fields := make([]string, 0, 8)
-	if m.created_by != nil {
-		fields = append(fields, modelstar.FieldCreatedBy)
-	}
-	if m.updated_by != nil {
-		fields = append(fields, modelstar.FieldUpdatedBy)
-	}
-	if m.created_at != nil {
-		fields = append(fields, modelstar.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, modelstar.FieldUpdatedAt)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, modelstar.FieldDeletedAt)
-	}
-	if m.user != nil {
-		fields = append(fields, modelstar.FieldUserID)
-	}
-	if m.model != nil {
-		fields = append(fields, modelstar.FieldModelID)
-	}
-	if m.status != nil {
-		fields = append(fields, modelstar.FieldStatus)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *ModelStarMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case modelstar.FieldCreatedBy:
-		return m.CreatedBy()
-	case modelstar.FieldUpdatedBy:
-		return m.UpdatedBy()
-	case modelstar.FieldCreatedAt:
-		return m.CreatedAt()
-	case modelstar.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case modelstar.FieldDeletedAt:
-		return m.DeletedAt()
-	case modelstar.FieldUserID:
-		return m.UserID()
-	case modelstar.FieldModelID:
-		return m.ModelID()
-	case modelstar.FieldStatus:
-		return m.Status()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *ModelStarMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case modelstar.FieldCreatedBy:
-		return m.OldCreatedBy(ctx)
-	case modelstar.FieldUpdatedBy:
-		return m.OldUpdatedBy(ctx)
-	case modelstar.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case modelstar.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case modelstar.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
-	case modelstar.FieldUserID:
-		return m.OldUserID(ctx)
-	case modelstar.FieldModelID:
-		return m.OldModelID(ctx)
-	case modelstar.FieldStatus:
-		return m.OldStatus(ctx)
-	}
-	return nil, fmt.Errorf("unknown ModelStar field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *ModelStarMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case modelstar.FieldCreatedBy:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedBy(v)
-		return nil
-	case modelstar.FieldUpdatedBy:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedBy(v)
-		return nil
-	case modelstar.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case modelstar.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case modelstar.FieldDeletedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
-	case modelstar.FieldUserID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUserID(v)
-		return nil
-	case modelstar.FieldModelID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetModelID(v)
-		return nil
-	case modelstar.FieldStatus:
-		v, ok := value.(enums.StarStatus)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
-		return nil
-	}
-	return fmt.Errorf("unknown ModelStar field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *ModelStarMutation) AddedFields() []string {
-	var fields []string
-	if m.addcreated_by != nil {
-		fields = append(fields, modelstar.FieldCreatedBy)
-	}
-	if m.addupdated_by != nil {
-		fields = append(fields, modelstar.FieldUpdatedBy)
-	}
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *ModelStarMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case modelstar.FieldCreatedBy:
-		return m.AddedCreatedBy()
-	case modelstar.FieldUpdatedBy:
-		return m.AddedUpdatedBy()
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *ModelStarMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	case modelstar.FieldCreatedBy:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddCreatedBy(v)
-		return nil
-	case modelstar.FieldUpdatedBy:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUpdatedBy(v)
-		return nil
-	}
-	return fmt.Errorf("unknown ModelStar numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *ModelStarMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *ModelStarMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ModelStarMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ModelStar nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *ModelStarMutation) ResetField(name string) error {
-	switch name {
-	case modelstar.FieldCreatedBy:
-		m.ResetCreatedBy()
-		return nil
-	case modelstar.FieldUpdatedBy:
-		m.ResetUpdatedBy()
-		return nil
-	case modelstar.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case modelstar.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case modelstar.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
-	case modelstar.FieldUserID:
-		m.ResetUserID()
-		return nil
-	case modelstar.FieldModelID:
-		m.ResetModelID()
-		return nil
-	case modelstar.FieldStatus:
-		m.ResetStatus()
-		return nil
-	}
-	return fmt.Errorf("unknown ModelStar field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *ModelStarMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.user != nil {
-		edges = append(edges, modelstar.EdgeUser)
-	}
-	if m.model != nil {
-		edges = append(edges, modelstar.EdgeModel)
-	}
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *ModelStarMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case modelstar.EdgeUser:
-		if id := m.user; id != nil {
-			return []ent.Value{*id}
-		}
-	case modelstar.EdgeModel:
-		if id := m.model; id != nil {
-			return []ent.Value{*id}
-		}
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *ModelStarMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *ModelStarMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *ModelStarMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.cleareduser {
-		edges = append(edges, modelstar.EdgeUser)
-	}
-	if m.clearedmodel {
-		edges = append(edges, modelstar.EdgeModel)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *ModelStarMutation) EdgeCleared(name string) bool {
-	switch name {
-	case modelstar.EdgeUser:
-		return m.cleareduser
-	case modelstar.EdgeModel:
-		return m.clearedmodel
-	}
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *ModelStarMutation) ClearEdge(name string) error {
-	switch name {
-	case modelstar.EdgeUser:
-		m.ClearUser()
-		return nil
-	case modelstar.EdgeModel:
-		m.ClearModel()
-		return nil
-	}
-	return fmt.Errorf("unknown ModelStar unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *ModelStarMutation) ResetEdge(name string) error {
-	switch name {
-	case modelstar.EdgeUser:
-		m.ResetUser()
-		return nil
-	case modelstar.EdgeModel:
-		m.ResetModel()
-		return nil
-	}
-	return fmt.Errorf("unknown ModelStar edge %s", name)
 }
 
 // OutputLogMutation represents an operation that mutates the OutputLog nodes in the graph.
@@ -87073,7 +86194,7 @@ func (m *UserMutation) ResetStarModel() {
 	m.removedstar_model = nil
 }
 
-// AddModelStarIDs adds the "model_star" edge to the ModelStar entity by ids.
+// AddModelStarIDs adds the "model_star" edge to the UserModel entity by ids.
 func (m *UserMutation) AddModelStarIDs(ids ...int64) {
 	if m.model_star == nil {
 		m.model_star = make(map[int64]struct{})
@@ -87083,17 +86204,17 @@ func (m *UserMutation) AddModelStarIDs(ids ...int64) {
 	}
 }
 
-// ClearModelStar clears the "model_star" edge to the ModelStar entity.
+// ClearModelStar clears the "model_star" edge to the UserModel entity.
 func (m *UserMutation) ClearModelStar() {
 	m.clearedmodel_star = true
 }
 
-// ModelStarCleared reports if the "model_star" edge to the ModelStar entity was cleared.
+// ModelStarCleared reports if the "model_star" edge to the UserModel entity was cleared.
 func (m *UserMutation) ModelStarCleared() bool {
 	return m.clearedmodel_star
 }
 
-// RemoveModelStarIDs removes the "model_star" edge to the ModelStar entity by IDs.
+// RemoveModelStarIDs removes the "model_star" edge to the UserModel entity by IDs.
 func (m *UserMutation) RemoveModelStarIDs(ids ...int64) {
 	if m.removedmodel_star == nil {
 		m.removedmodel_star = make(map[int64]struct{})
@@ -87104,7 +86225,7 @@ func (m *UserMutation) RemoveModelStarIDs(ids ...int64) {
 	}
 }
 
-// RemovedModelStar returns the removed IDs of the "model_star" edge to the ModelStar entity.
+// RemovedModelStar returns the removed IDs of the "model_star" edge to the UserModel entity.
 func (m *UserMutation) RemovedModelStarIDs() (ids []int64) {
 	for id := range m.removedmodel_star {
 		ids = append(ids, id)
@@ -90030,6 +89151,939 @@ func (m *UserDeviceMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown UserDevice edge %s", name)
+}
+
+// UserModelMutation represents an operation that mutates the UserModel nodes in the graph.
+type UserModelMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_by    *int64
+	addcreated_by *int64
+	updated_by    *int64
+	addupdated_by *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	relation      *enums.UserModelRelation
+	status        *enums.UserModelRelationStatus
+	clearedFields map[string]struct{}
+	user          *int64
+	cleareduser   bool
+	model         *int64
+	clearedmodel  bool
+	done          bool
+	oldValue      func(context.Context) (*UserModel, error)
+	predicates    []predicate.UserModel
+}
+
+var _ ent.Mutation = (*UserModelMutation)(nil)
+
+// usermodelOption allows management of the mutation configuration using functional options.
+type usermodelOption func(*UserModelMutation)
+
+// newUserModelMutation creates new mutation for the UserModel entity.
+func newUserModelMutation(c config, op Op, opts ...usermodelOption) *UserModelMutation {
+	m := &UserModelMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeUserModel,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withUserModelID sets the ID field of the mutation.
+func withUserModelID(id int64) usermodelOption {
+	return func(m *UserModelMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *UserModel
+		)
+		m.oldValue = func(ctx context.Context) (*UserModel, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().UserModel.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withUserModel sets the old UserModel of the mutation.
+func withUserModel(node *UserModel) usermodelOption {
+	return func(m *UserModelMutation) {
+		m.oldValue = func(context.Context) (*UserModel, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m UserModelMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m UserModelMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("cep_ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of UserModel entities.
+func (m *UserModelMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *UserModelMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *UserModelMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().UserModel.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *UserModelMutation) SetCreatedBy(i int64) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *UserModelMutation) CreatedBy() (r int64, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldCreatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *UserModelMutation) AddCreatedBy(i int64) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *UserModelMutation) AddedCreatedBy() (r int64, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *UserModelMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *UserModelMutation) SetUpdatedBy(i int64) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *UserModelMutation) UpdatedBy() (r int64, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldUpdatedBy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *UserModelMutation) AddUpdatedBy(i int64) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *UserModelMutation) AddedUpdatedBy() (r int64, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *UserModelMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *UserModelMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *UserModelMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *UserModelMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserModelMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserModelMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserModelMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserModelMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserModelMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserModelMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *UserModelMutation) SetUserID(i int64) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *UserModelMutation) UserID() (r int64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldUserID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *UserModelMutation) ResetUserID() {
+	m.user = nil
+}
+
+// SetModelID sets the "model_id" field.
+func (m *UserModelMutation) SetModelID(i int64) {
+	m.model = &i
+}
+
+// ModelID returns the value of the "model_id" field in the mutation.
+func (m *UserModelMutation) ModelID() (r int64, exists bool) {
+	v := m.model
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModelID returns the old "model_id" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldModelID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModelID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModelID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModelID: %w", err)
+	}
+	return oldValue.ModelID, nil
+}
+
+// ResetModelID resets all changes to the "model_id" field.
+func (m *UserModelMutation) ResetModelID() {
+	m.model = nil
+}
+
+// SetRelation sets the "relation" field.
+func (m *UserModelMutation) SetRelation(emr enums.UserModelRelation) {
+	m.relation = &emr
+}
+
+// Relation returns the value of the "relation" field in the mutation.
+func (m *UserModelMutation) Relation() (r enums.UserModelRelation, exists bool) {
+	v := m.relation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRelation returns the old "relation" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldRelation(ctx context.Context) (v enums.UserModelRelation, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRelation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRelation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRelation: %w", err)
+	}
+	return oldValue.Relation, nil
+}
+
+// ResetRelation resets all changes to the "relation" field.
+func (m *UserModelMutation) ResetRelation() {
+	m.relation = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *UserModelMutation) SetStatus(emrs enums.UserModelRelationStatus) {
+	m.status = &emrs
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *UserModelMutation) Status() (r enums.UserModelRelationStatus, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the UserModel entity.
+// If the UserModel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserModelMutation) OldStatus(ctx context.Context) (v enums.UserModelRelationStatus, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *UserModelMutation) ResetStatus() {
+	m.status = nil
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *UserModelMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[usermodel.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *UserModelMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *UserModelMutation) UserIDs() (ids []int64) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *UserModelMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// ClearModel clears the "model" edge to the Model entity.
+func (m *UserModelMutation) ClearModel() {
+	m.clearedmodel = true
+	m.clearedFields[usermodel.FieldModelID] = struct{}{}
+}
+
+// ModelCleared reports if the "model" edge to the Model entity was cleared.
+func (m *UserModelMutation) ModelCleared() bool {
+	return m.clearedmodel
+}
+
+// ModelIDs returns the "model" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ModelID instead. It exists only for internal usage by the builders.
+func (m *UserModelMutation) ModelIDs() (ids []int64) {
+	if id := m.model; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetModel resets all changes to the "model" edge.
+func (m *UserModelMutation) ResetModel() {
+	m.model = nil
+	m.clearedmodel = false
+}
+
+// Where appends a list predicates to the UserModelMutation builder.
+func (m *UserModelMutation) Where(ps ...predicate.UserModel) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the UserModelMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *UserModelMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.UserModel, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *UserModelMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *UserModelMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (UserModel).
+func (m *UserModelMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *UserModelMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_by != nil {
+		fields = append(fields, usermodel.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, usermodel.FieldUpdatedBy)
+	}
+	if m.created_at != nil {
+		fields = append(fields, usermodel.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, usermodel.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, usermodel.FieldDeletedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, usermodel.FieldUserID)
+	}
+	if m.model != nil {
+		fields = append(fields, usermodel.FieldModelID)
+	}
+	if m.relation != nil {
+		fields = append(fields, usermodel.FieldRelation)
+	}
+	if m.status != nil {
+		fields = append(fields, usermodel.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *UserModelMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case usermodel.FieldCreatedBy:
+		return m.CreatedBy()
+	case usermodel.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case usermodel.FieldCreatedAt:
+		return m.CreatedAt()
+	case usermodel.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case usermodel.FieldDeletedAt:
+		return m.DeletedAt()
+	case usermodel.FieldUserID:
+		return m.UserID()
+	case usermodel.FieldModelID:
+		return m.ModelID()
+	case usermodel.FieldRelation:
+		return m.Relation()
+	case usermodel.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *UserModelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case usermodel.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case usermodel.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case usermodel.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case usermodel.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case usermodel.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case usermodel.FieldUserID:
+		return m.OldUserID(ctx)
+	case usermodel.FieldModelID:
+		return m.OldModelID(ctx)
+	case usermodel.FieldRelation:
+		return m.OldRelation(ctx)
+	case usermodel.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown UserModel field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UserModelMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case usermodel.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case usermodel.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case usermodel.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case usermodel.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case usermodel.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case usermodel.FieldUserID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case usermodel.FieldModelID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModelID(v)
+		return nil
+	case usermodel.FieldRelation:
+		v, ok := value.(enums.UserModelRelation)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRelation(v)
+		return nil
+	case usermodel.FieldStatus:
+		v, ok := value.(enums.UserModelRelationStatus)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UserModel field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *UserModelMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, usermodel.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, usermodel.FieldUpdatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *UserModelMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case usermodel.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case usermodel.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *UserModelMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case usermodel.FieldCreatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case usermodel.FieldUpdatedBy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown UserModel numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *UserModelMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *UserModelMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *UserModelMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown UserModel nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *UserModelMutation) ResetField(name string) error {
+	switch name {
+	case usermodel.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case usermodel.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case usermodel.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case usermodel.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case usermodel.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case usermodel.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case usermodel.FieldModelID:
+		m.ResetModelID()
+		return nil
+	case usermodel.FieldRelation:
+		m.ResetRelation()
+		return nil
+	case usermodel.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown UserModel field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *UserModelMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.user != nil {
+		edges = append(edges, usermodel.EdgeUser)
+	}
+	if m.model != nil {
+		edges = append(edges, usermodel.EdgeModel)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *UserModelMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case usermodel.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	case usermodel.EdgeModel:
+		if id := m.model; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *UserModelMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *UserModelMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *UserModelMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.cleareduser {
+		edges = append(edges, usermodel.EdgeUser)
+	}
+	if m.clearedmodel {
+		edges = append(edges, usermodel.EdgeModel)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *UserModelMutation) EdgeCleared(name string) bool {
+	switch name {
+	case usermodel.EdgeUser:
+		return m.cleareduser
+	case usermodel.EdgeModel:
+		return m.clearedmodel
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *UserModelMutation) ClearEdge(name string) error {
+	switch name {
+	case usermodel.EdgeUser:
+		m.ClearUser()
+		return nil
+	case usermodel.EdgeModel:
+		m.ClearModel()
+		return nil
+	}
+	return fmt.Errorf("unknown UserModel unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *UserModelMutation) ResetEdge(name string) error {
+	switch name {
+	case usermodel.EdgeUser:
+		m.ResetUser()
+		return nil
+	case usermodel.EdgeModel:
+		m.ResetModel()
+		return nil
+	}
+	return fmt.Errorf("unknown UserModel edge %s", name)
 }
 
 // VXAccountMutation represents an operation that mutates the VXAccount nodes in the graph.

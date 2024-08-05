@@ -61,7 +61,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -79,6 +78,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -193,7 +193,6 @@ func checkColumn(table, column string) error {
 			missionproduction.Table:     missionproduction.ValidColumn,
 			model.Table:                 model.ValidColumn,
 			modelprice.Table:            modelprice.ValidColumn,
-			modelstar.Table:             modelstar.ValidColumn,
 			outputlog.Table:             outputlog.ValidColumn,
 			platformaccount.Table:       platformaccount.ValidColumn,
 			price.Table:                 price.ValidColumn,
@@ -211,6 +210,7 @@ func checkColumn(table, column string) error {
 			troublededuct.Table:         troublededuct.ValidColumn,
 			user.Table:                  user.ValidColumn,
 			userdevice.Table:            userdevice.ValidColumn,
+			usermodel.Table:             usermodel.ValidColumn,
 			vxaccount.Table:             vxaccount.ValidColumn,
 			vxsocial.Table:              vxsocial.ValidColumn,
 			wallet.Table:                wallet.ValidColumn,

@@ -2523,7 +2523,7 @@ func HasModelStar() predicate.User {
 }
 
 // HasModelStarWith applies the HasEdge predicate on the "model_star" edge with a given conditions (other predicates).
-func HasModelStarWith(preds ...predicate.ModelStar) predicate.User {
+func HasModelStarWith(preds ...predicate.UserModel) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := newModelStarStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

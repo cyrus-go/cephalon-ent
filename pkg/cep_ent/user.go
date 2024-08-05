@@ -181,7 +181,7 @@ type UserEdges struct {
 	// StarModel holds the value of the star_model edge.
 	StarModel []*Model `json:"star_model,omitempty"`
 	// ModelStar holds the value of the model_star edge.
-	ModelStar []*ModelStar `json:"model_star,omitempty"`
+	ModelStar []*UserModel `json:"model_star,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [51]bool
@@ -659,7 +659,7 @@ func (e UserEdges) StarModelOrErr() ([]*Model, error) {
 
 // ModelStarOrErr returns the ModelStar value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ModelStarOrErr() ([]*ModelStar, error) {
+func (e UserEdges) ModelStarOrErr() ([]*UserModel, error) {
 	if e.loadedTypes[50] {
 		return e.ModelStar, nil
 	}
@@ -1115,7 +1115,7 @@ func (u *User) QueryStarModel() *ModelQuery {
 }
 
 // QueryModelStar queries the "model_star" edge of the User entity.
-func (u *User) QueryModelStar() *ModelStarQuery {
+func (u *User) QueryModelStar() *UserModelQuery {
 	return NewUserClient(u.config).QueryModelStar(u)
 }
 

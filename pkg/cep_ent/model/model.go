@@ -56,15 +56,15 @@ const (
 	// ModelPricesColumn is the table column denoting the model_prices relation/edge.
 	ModelPricesColumn = "model_id"
 	// StarUserTable is the table that holds the star_user relation/edge. The primary key declared below.
-	StarUserTable = "model_stars"
+	StarUserTable = "user_models"
 	// StarUserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	StarUserInverseTable = "users"
 	// StarModelTable is the table that holds the star_model relation/edge.
-	StarModelTable = "model_stars"
-	// StarModelInverseTable is the table name for the ModelStar entity.
-	// It exists in this package in order to avoid circular dependency with the "modelstar" package.
-	StarModelInverseTable = "model_stars"
+	StarModelTable = "user_models"
+	// StarModelInverseTable is the table name for the UserModel entity.
+	// It exists in this package in order to avoid circular dependency with the "usermodel" package.
+	StarModelInverseTable = "user_models"
 	// StarModelColumn is the table column denoting the star_model relation/edge.
 	StarModelColumn = "model_id"
 )

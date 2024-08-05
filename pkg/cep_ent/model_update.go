@@ -13,9 +13,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/predicate"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
@@ -230,17 +230,17 @@ func (mu *ModelUpdate) AddStarUser(u ...*User) *ModelUpdate {
 	return mu.AddStarUserIDs(ids...)
 }
 
-// AddStarModelIDs adds the "star_model" edge to the ModelStar entity by IDs.
+// AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
 func (mu *ModelUpdate) AddStarModelIDs(ids ...int64) *ModelUpdate {
 	mu.mutation.AddStarModelIDs(ids...)
 	return mu
 }
 
-// AddStarModel adds the "star_model" edges to the ModelStar entity.
-func (mu *ModelUpdate) AddStarModel(m ...*ModelStar) *ModelUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddStarModel adds the "star_model" edges to the UserModel entity.
+func (mu *ModelUpdate) AddStarModel(u ...*UserModel) *ModelUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
 	return mu.AddStarModelIDs(ids...)
 }
@@ -292,23 +292,23 @@ func (mu *ModelUpdate) RemoveStarUser(u ...*User) *ModelUpdate {
 	return mu.RemoveStarUserIDs(ids...)
 }
 
-// ClearStarModel clears all "star_model" edges to the ModelStar entity.
+// ClearStarModel clears all "star_model" edges to the UserModel entity.
 func (mu *ModelUpdate) ClearStarModel() *ModelUpdate {
 	mu.mutation.ClearStarModel()
 	return mu
 }
 
-// RemoveStarModelIDs removes the "star_model" edge to ModelStar entities by IDs.
+// RemoveStarModelIDs removes the "star_model" edge to UserModel entities by IDs.
 func (mu *ModelUpdate) RemoveStarModelIDs(ids ...int64) *ModelUpdate {
 	mu.mutation.RemoveStarModelIDs(ids...)
 	return mu
 }
 
-// RemoveStarModel removes "star_model" edges to ModelStar entities.
-func (mu *ModelUpdate) RemoveStarModel(m ...*ModelStar) *ModelUpdate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// RemoveStarModel removes "star_model" edges to UserModel entities.
+func (mu *ModelUpdate) RemoveStarModel(u ...*UserModel) *ModelUpdate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
 	return mu.RemoveStarModelIDs(ids...)
 }
@@ -480,7 +480,7 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
-		createE := &ModelStarCreate{config: mu.config, mutation: newModelStarMutation(mu.config, OpCreate)}
+		createE := &UserModelCreate{config: mu.config, mutation: newUserModelMutation(mu.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -503,7 +503,7 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModelStarCreate{config: mu.config, mutation: newModelStarMutation(mu.config, OpCreate)}
+		createE := &UserModelCreate{config: mu.config, mutation: newUserModelMutation(mu.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -526,7 +526,7 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModelStarCreate{config: mu.config, mutation: newModelStarMutation(mu.config, OpCreate)}
+		createE := &UserModelCreate{config: mu.config, mutation: newUserModelMutation(mu.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -543,7 +543,7 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -556,7 +556,7 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -572,7 +572,7 @@ func (mu *ModelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -799,17 +799,17 @@ func (muo *ModelUpdateOne) AddStarUser(u ...*User) *ModelUpdateOne {
 	return muo.AddStarUserIDs(ids...)
 }
 
-// AddStarModelIDs adds the "star_model" edge to the ModelStar entity by IDs.
+// AddStarModelIDs adds the "star_model" edge to the UserModel entity by IDs.
 func (muo *ModelUpdateOne) AddStarModelIDs(ids ...int64) *ModelUpdateOne {
 	muo.mutation.AddStarModelIDs(ids...)
 	return muo
 }
 
-// AddStarModel adds the "star_model" edges to the ModelStar entity.
-func (muo *ModelUpdateOne) AddStarModel(m ...*ModelStar) *ModelUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddStarModel adds the "star_model" edges to the UserModel entity.
+func (muo *ModelUpdateOne) AddStarModel(u ...*UserModel) *ModelUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
 	return muo.AddStarModelIDs(ids...)
 }
@@ -861,23 +861,23 @@ func (muo *ModelUpdateOne) RemoveStarUser(u ...*User) *ModelUpdateOne {
 	return muo.RemoveStarUserIDs(ids...)
 }
 
-// ClearStarModel clears all "star_model" edges to the ModelStar entity.
+// ClearStarModel clears all "star_model" edges to the UserModel entity.
 func (muo *ModelUpdateOne) ClearStarModel() *ModelUpdateOne {
 	muo.mutation.ClearStarModel()
 	return muo
 }
 
-// RemoveStarModelIDs removes the "star_model" edge to ModelStar entities by IDs.
+// RemoveStarModelIDs removes the "star_model" edge to UserModel entities by IDs.
 func (muo *ModelUpdateOne) RemoveStarModelIDs(ids ...int64) *ModelUpdateOne {
 	muo.mutation.RemoveStarModelIDs(ids...)
 	return muo
 }
 
-// RemoveStarModel removes "star_model" edges to ModelStar entities.
-func (muo *ModelUpdateOne) RemoveStarModel(m ...*ModelStar) *ModelUpdateOne {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// RemoveStarModel removes "star_model" edges to UserModel entities.
+func (muo *ModelUpdateOne) RemoveStarModel(u ...*UserModel) *ModelUpdateOne {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
 	return muo.RemoveStarModelIDs(ids...)
 }
@@ -1079,7 +1079,7 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
-		createE := &ModelStarCreate{config: muo.config, mutation: newModelStarMutation(muo.config, OpCreate)}
+		createE := &UserModelCreate{config: muo.config, mutation: newUserModelMutation(muo.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -1102,7 +1102,7 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModelStarCreate{config: muo.config, mutation: newModelStarMutation(muo.config, OpCreate)}
+		createE := &UserModelCreate{config: muo.config, mutation: newUserModelMutation(muo.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -1125,7 +1125,7 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModelStarCreate{config: muo.config, mutation: newModelStarMutation(muo.config, OpCreate)}
+		createE := &UserModelCreate{config: muo.config, mutation: newUserModelMutation(muo.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -1142,7 +1142,7 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1155,7 +1155,7 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1171,7 +1171,7 @@ func (muo *ModelUpdateOne) sqlSave(ctx context.Context) (_node *Model, err error
 			Columns: []string{model.StarModelColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

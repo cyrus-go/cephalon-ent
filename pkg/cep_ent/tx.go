@@ -110,8 +110,6 @@ type Tx struct {
 	Model *ModelClient
 	// ModelPrice is the client for interacting with the ModelPrice builders.
 	ModelPrice *ModelPriceClient
-	// ModelStar is the client for interacting with the ModelStar builders.
-	ModelStar *ModelStarClient
 	// OutputLog is the client for interacting with the OutputLog builders.
 	OutputLog *OutputLogClient
 	// PlatformAccount is the client for interacting with the PlatformAccount builders.
@@ -146,6 +144,8 @@ type Tx struct {
 	User *UserClient
 	// UserDevice is the client for interacting with the UserDevice builders.
 	UserDevice *UserDeviceClient
+	// UserModel is the client for interacting with the UserModel builders.
+	UserModel *UserModelClient
 	// VXAccount is the client for interacting with the VXAccount builders.
 	VXAccount *VXAccountClient
 	// VXSocial is the client for interacting with the VXSocial builders.
@@ -336,7 +336,6 @@ func (tx *Tx) init() {
 	tx.MissionProduction = NewMissionProductionClient(tx.config)
 	tx.Model = NewModelClient(tx.config)
 	tx.ModelPrice = NewModelPriceClient(tx.config)
-	tx.ModelStar = NewModelStarClient(tx.config)
 	tx.OutputLog = NewOutputLogClient(tx.config)
 	tx.PlatformAccount = NewPlatformAccountClient(tx.config)
 	tx.Price = NewPriceClient(tx.config)
@@ -354,6 +353,7 @@ func (tx *Tx) init() {
 	tx.TroubleDeduct = NewTroubleDeductClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserDevice = NewUserDeviceClient(tx.config)
+	tx.UserModel = NewUserModelClient(tx.config)
 	tx.VXAccount = NewVXAccountClient(tx.config)
 	tx.VXSocial = NewVXSocialClient(tx.config)
 	tx.Wallet = NewWalletClient(tx.config)

@@ -91,7 +91,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("approve_survey_responses", SurveyResponse.Type),
 		edge.To("mission_failed_feedbacks", MissionFailedFeedback.Type),
 		edge.To("api_tokens", ApiToken.Type),
-		edge.To("star_model", Model.Type).Through("model_star", ModelStar.Type),
+		edge.To("star_model", Model.Type).Through("model_star", UserModel.Type),
 	}
 }
 

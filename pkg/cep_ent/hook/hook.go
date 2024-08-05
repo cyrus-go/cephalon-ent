@@ -597,18 +597,6 @@ func (f ModelPriceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModelPriceMutation", m)
 }
 
-// The ModelStarFunc type is an adapter to allow the use of ordinary
-// function as ModelStar mutator.
-type ModelStarFunc func(context.Context, *cep_ent.ModelStarMutation) (cep_ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ModelStarFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
-	if mv, ok := m.(*cep_ent.ModelStarMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.ModelStarMutation", m)
-}
-
 // The OutputLogFunc type is an adapter to allow the use of ordinary
 // function as OutputLog mutator.
 type OutputLogFunc func(context.Context, *cep_ent.OutputLogMutation) (cep_ent.Value, error)
@@ -811,6 +799,18 @@ func (f UserDeviceFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.UserDeviceMutation", m)
+}
+
+// The UserModelFunc type is an adapter to allow the use of ordinary
+// function as UserModel mutator.
+type UserModelFunc func(context.Context, *cep_ent.UserModelMutation) (cep_ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserModelFunc) Mutate(ctx context.Context, m cep_ent.Mutation) (cep_ent.Value, error) {
+	if mv, ok := m.(*cep_ent.UserModelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *cep_ent.UserModelMutation", m)
 }
 
 // The VXAccountFunc type is an adapter to allow the use of ordinary

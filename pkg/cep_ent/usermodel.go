@@ -10,13 +10,13 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/enums"
 )
 
-// ModelStar is the model entity for the ModelStar schema.
-type ModelStar struct {
+// UserModel is the model entity for the UserModel schema.
+type UserModel struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 19 位雪花 ID
@@ -35,16 +35,18 @@ type ModelStar struct {
 	UserID int64 `json:"user_id"`
 	// 模型ID
 	ModelID int64 `json:"model_id"`
-	// 收藏状态
-	Status enums.StarStatus `json:"status"`
+	// 关系
+	Relation enums.UserModelRelation `json:"relation"`
+	// 状态
+	Status enums.UserModelRelationStatus `json:"status"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ModelStarQuery when eager-loading is set.
-	Edges        ModelStarEdges `json:"edges"`
+	// The values are being populated by the UserModelQuery when eager-loading is set.
+	Edges        UserModelEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// ModelStarEdges holds the relations/edges for other nodes in the graph.
-type ModelStarEdges struct {
+// UserModelEdges holds the relations/edges for other nodes in the graph.
+type UserModelEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// Model holds the value of the model edge.
@@ -56,7 +58,7 @@ type ModelStarEdges struct {
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ModelStarEdges) UserOrErr() (*User, error) {
+func (e UserModelEdges) UserOrErr() (*User, error) {
 	if e.loadedTypes[0] {
 		if e.User == nil {
 			// Edge was loaded but was not found.
@@ -69,7 +71,7 @@ func (e ModelStarEdges) UserOrErr() (*User, error) {
 
 // ModelOrErr returns the Model value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ModelStarEdges) ModelOrErr() (*Model, error) {
+func (e UserModelEdges) ModelOrErr() (*Model, error) {
 	if e.loadedTypes[1] {
 		if e.Model == nil {
 			// Edge was loaded but was not found.
@@ -81,15 +83,15 @@ func (e ModelStarEdges) ModelOrErr() (*Model, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ModelStar) scanValues(columns []string) ([]any, error) {
+func (*UserModel) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case modelstar.FieldID, modelstar.FieldCreatedBy, modelstar.FieldUpdatedBy, modelstar.FieldUserID, modelstar.FieldModelID:
+		case usermodel.FieldID, usermodel.FieldCreatedBy, usermodel.FieldUpdatedBy, usermodel.FieldUserID, usermodel.FieldModelID:
 			values[i] = new(sql.NullInt64)
-		case modelstar.FieldStatus:
+		case usermodel.FieldRelation, usermodel.FieldStatus:
 			values[i] = new(sql.NullString)
-		case modelstar.FieldCreatedAt, modelstar.FieldUpdatedAt, modelstar.FieldDeletedAt:
+		case usermodel.FieldCreatedAt, usermodel.FieldUpdatedAt, usermodel.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -99,139 +101,148 @@ func (*ModelStar) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ModelStar fields.
-func (ms *ModelStar) assignValues(columns []string, values []any) error {
+// to the UserModel fields.
+func (um *UserModel) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case modelstar.FieldID:
+		case usermodel.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ms.ID = int64(value.Int64)
-		case modelstar.FieldCreatedBy:
+			um.ID = int64(value.Int64)
+		case usermodel.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				ms.CreatedBy = value.Int64
+				um.CreatedBy = value.Int64
 			}
-		case modelstar.FieldUpdatedBy:
+		case usermodel.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				ms.UpdatedBy = value.Int64
+				um.UpdatedBy = value.Int64
 			}
-		case modelstar.FieldCreatedAt:
+		case usermodel.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				ms.CreatedAt = value.Time
+				um.CreatedAt = value.Time
 			}
-		case modelstar.FieldUpdatedAt:
+		case usermodel.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				ms.UpdatedAt = value.Time
+				um.UpdatedAt = value.Time
 			}
-		case modelstar.FieldDeletedAt:
+		case usermodel.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				ms.DeletedAt = value.Time
+				um.DeletedAt = value.Time
 			}
-		case modelstar.FieldUserID:
+		case usermodel.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				ms.UserID = value.Int64
+				um.UserID = value.Int64
 			}
-		case modelstar.FieldModelID:
+		case usermodel.FieldModelID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field model_id", values[i])
 			} else if value.Valid {
-				ms.ModelID = value.Int64
+				um.ModelID = value.Int64
 			}
-		case modelstar.FieldStatus:
+		case usermodel.FieldRelation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field relation", values[i])
+			} else if value.Valid {
+				um.Relation = enums.UserModelRelation(value.String)
+			}
+		case usermodel.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				ms.Status = enums.StarStatus(value.String)
+				um.Status = enums.UserModelRelationStatus(value.String)
 			}
 		default:
-			ms.selectValues.Set(columns[i], values[i])
+			um.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ModelStar.
+// Value returns the ent.Value that was dynamically selected and assigned to the UserModel.
 // This includes values selected through modifiers, order, etc.
-func (ms *ModelStar) Value(name string) (ent.Value, error) {
-	return ms.selectValues.Get(name)
+func (um *UserModel) Value(name string) (ent.Value, error) {
+	return um.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the ModelStar entity.
-func (ms *ModelStar) QueryUser() *UserQuery {
-	return NewModelStarClient(ms.config).QueryUser(ms)
+// QueryUser queries the "user" edge of the UserModel entity.
+func (um *UserModel) QueryUser() *UserQuery {
+	return NewUserModelClient(um.config).QueryUser(um)
 }
 
-// QueryModel queries the "model" edge of the ModelStar entity.
-func (ms *ModelStar) QueryModel() *ModelQuery {
-	return NewModelStarClient(ms.config).QueryModel(ms)
+// QueryModel queries the "model" edge of the UserModel entity.
+func (um *UserModel) QueryModel() *ModelQuery {
+	return NewUserModelClient(um.config).QueryModel(um)
 }
 
-// Update returns a builder for updating this ModelStar.
-// Note that you need to call ModelStar.Unwrap() before calling this method if this ModelStar
+// Update returns a builder for updating this UserModel.
+// Note that you need to call UserModel.Unwrap() before calling this method if this UserModel
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ms *ModelStar) Update() *ModelStarUpdateOne {
-	return NewModelStarClient(ms.config).UpdateOne(ms)
+func (um *UserModel) Update() *UserModelUpdateOne {
+	return NewUserModelClient(um.config).UpdateOne(um)
 }
 
-// Unwrap unwraps the ModelStar entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the UserModel entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (ms *ModelStar) Unwrap() *ModelStar {
-	_tx, ok := ms.config.driver.(*txDriver)
+func (um *UserModel) Unwrap() *UserModel {
+	_tx, ok := um.config.driver.(*txDriver)
 	if !ok {
-		panic("cep_ent: ModelStar is not a transactional entity")
+		panic("cep_ent: UserModel is not a transactional entity")
 	}
-	ms.config.driver = _tx.drv
-	return ms
+	um.config.driver = _tx.drv
+	return um
 }
 
 // String implements the fmt.Stringer.
-func (ms *ModelStar) String() string {
+func (um *UserModel) String() string {
 	var builder strings.Builder
-	builder.WriteString("ModelStar(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", ms.ID))
+	builder.WriteString("UserModel(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", um.ID))
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", ms.CreatedBy))
+	builder.WriteString(fmt.Sprintf("%v", um.CreatedBy))
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", ms.UpdatedBy))
+	builder.WriteString(fmt.Sprintf("%v", um.UpdatedBy))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
-	builder.WriteString(ms.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(um.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(ms.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(um.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
-	builder.WriteString(ms.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(um.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", ms.UserID))
+	builder.WriteString(fmt.Sprintf("%v", um.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("model_id=")
-	builder.WriteString(fmt.Sprintf("%v", ms.ModelID))
+	builder.WriteString(fmt.Sprintf("%v", um.ModelID))
+	builder.WriteString(", ")
+	builder.WriteString("relation=")
+	builder.WriteString(fmt.Sprintf("%v", um.Relation))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
-	builder.WriteString(fmt.Sprintf("%v", ms.Status))
+	builder.WriteString(fmt.Sprintf("%v", um.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// ModelStars is a parsable slice of ModelStar.
-type ModelStars []*ModelStar
+// UserModels is a parsable slice of UserModel.
+type UserModels []*UserModel

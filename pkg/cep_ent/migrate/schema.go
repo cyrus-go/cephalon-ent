@@ -2101,45 +2101,6 @@ var (
 			},
 		},
 	}
-	// ModelStarsColumns holds the columns for the "model_stars" table.
-	ModelStarsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
-		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
-		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
-		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
-		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
-		{Name: "status", Type: field.TypeEnum, Comment: "收藏状态", Enums: []string{"unknown", "star", "unstar"}, Default: "unknown"},
-		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
-		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
-	}
-	// ModelStarsTable holds the schema information for the "model_stars" table.
-	ModelStarsTable = &schema.Table{
-		Name:       "model_stars",
-		Columns:    ModelStarsColumns,
-		PrimaryKey: []*schema.Column{ModelStarsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "model_stars_users_user",
-				Columns:    []*schema.Column{ModelStarsColumns[7]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "model_stars_models_model",
-				Columns:    []*schema.Column{ModelStarsColumns[8]},
-				RefColumns: []*schema.Column{ModelsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "modelstar_user_id_model_id",
-				Unique:  true,
-				Columns: []*schema.Column{ModelStarsColumns[7], ModelStarsColumns[8]},
-			},
-		},
-	}
 	// OutputLogsColumns holds the columns for the "output_logs" table.
 	OutputLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -2810,6 +2771,46 @@ var (
 			},
 		},
 	}
+	// UserModelsColumns holds the columns for the "user_models" table.
+	UserModelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
+		{Name: "created_by", Type: field.TypeInt64, Comment: "创建者 ID", Default: 0},
+		{Name: "updated_by", Type: field.TypeInt64, Comment: "更新者 ID", Default: 0},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时刻，带时区"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时刻，带时区"},
+		{Name: "deleted_at", Type: field.TypeTime, Comment: "软删除时刻，带时区"},
+		{Name: "relation", Type: field.TypeEnum, Comment: "关系", Enums: []string{"star", "used", "unknown"}, Default: "unknown"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"unknown", "star", "unstar", "used"}, Default: "unknown"},
+		{Name: "user_id", Type: field.TypeInt64, Comment: "用户ID"},
+		{Name: "model_id", Type: field.TypeInt64, Comment: "模型ID"},
+	}
+	// UserModelsTable holds the schema information for the "user_models" table.
+	UserModelsTable = &schema.Table{
+		Name:       "user_models",
+		Columns:    UserModelsColumns,
+		PrimaryKey: []*schema.Column{UserModelsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_models_users_user",
+				Columns:    []*schema.Column{UserModelsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_models_models_model",
+				Columns:    []*schema.Column{UserModelsColumns[9]},
+				RefColumns: []*schema.Column{ModelsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "usermodel_user_id_model_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserModelsColumns[8], UserModelsColumns[9]},
+			},
+		},
+	}
 	// VxAccountsColumns holds the columns for the "vx_accounts" table.
 	VxAccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Comment: "19 位雪花 ID"},
@@ -3087,7 +3088,6 @@ var (
 		MissionProductionsTable,
 		ModelsTable,
 		ModelPricesTable,
-		ModelStarsTable,
 		OutputLogsTable,
 		PlatformAccountsTable,
 		PricesTable,
@@ -3105,6 +3105,7 @@ var (
 		TroubleDeductsTable,
 		UsersTable,
 		UserDevicesTable,
+		UserModelsTable,
 		VxAccountsTable,
 		VxSocialsTable,
 		WalletsTable,
@@ -3255,9 +3256,6 @@ func init() {
 	ModelsTable.Annotation = &entsql.Annotation{}
 	ModelPricesTable.ForeignKeys[0].RefTable = ModelsTable
 	ModelPricesTable.Annotation = &entsql.Annotation{}
-	ModelStarsTable.ForeignKeys[0].RefTable = UsersTable
-	ModelStarsTable.ForeignKeys[1].RefTable = ModelsTable
-	ModelStarsTable.Annotation = &entsql.Annotation{}
 	OutputLogsTable.Annotation = &entsql.Annotation{}
 	PlatformAccountsTable.Annotation = &entsql.Annotation{}
 	PricesTable.ForeignKeys[0].RefTable = GpusTable
@@ -3299,6 +3297,9 @@ func init() {
 	UserDevicesTable.ForeignKeys[0].RefTable = DevicesTable
 	UserDevicesTable.ForeignKeys[1].RefTable = UsersTable
 	UserDevicesTable.Annotation = &entsql.Annotation{}
+	UserModelsTable.ForeignKeys[0].RefTable = UsersTable
+	UserModelsTable.ForeignKeys[1].RefTable = ModelsTable
+	UserModelsTable.Annotation = &entsql.Annotation{}
 	VxAccountsTable.ForeignKeys[0].RefTable = UsersTable
 	VxAccountsTable.Annotation = &entsql.Annotation{}
 	VxSocialsTable.ForeignKeys[0].RefTable = UsersTable

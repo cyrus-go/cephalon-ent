@@ -55,7 +55,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelprice"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/outputlog"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/platformaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/price"
@@ -74,6 +73,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -2795,37 +2795,6 @@ func init() {
 	modelpriceDescID := modelpriceMixinFields0[0].Descriptor()
 	// modelprice.DefaultID holds the default value on creation for the id field.
 	modelprice.DefaultID = modelpriceDescID.Default.(func() int64)
-	modelstarMixin := schema.ModelStar{}.Mixin()
-	modelstarMixinFields0 := modelstarMixin[0].Fields()
-	_ = modelstarMixinFields0
-	modelstarFields := schema.ModelStar{}.Fields()
-	_ = modelstarFields
-	// modelstarDescCreatedBy is the schema descriptor for created_by field.
-	modelstarDescCreatedBy := modelstarMixinFields0[1].Descriptor()
-	// modelstar.DefaultCreatedBy holds the default value on creation for the created_by field.
-	modelstar.DefaultCreatedBy = modelstarDescCreatedBy.Default.(int64)
-	// modelstarDescUpdatedBy is the schema descriptor for updated_by field.
-	modelstarDescUpdatedBy := modelstarMixinFields0[2].Descriptor()
-	// modelstar.DefaultUpdatedBy holds the default value on creation for the updated_by field.
-	modelstar.DefaultUpdatedBy = modelstarDescUpdatedBy.Default.(int64)
-	// modelstarDescCreatedAt is the schema descriptor for created_at field.
-	modelstarDescCreatedAt := modelstarMixinFields0[3].Descriptor()
-	// modelstar.DefaultCreatedAt holds the default value on creation for the created_at field.
-	modelstar.DefaultCreatedAt = modelstarDescCreatedAt.Default.(func() time.Time)
-	// modelstarDescUpdatedAt is the schema descriptor for updated_at field.
-	modelstarDescUpdatedAt := modelstarMixinFields0[4].Descriptor()
-	// modelstar.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	modelstar.DefaultUpdatedAt = modelstarDescUpdatedAt.Default.(func() time.Time)
-	// modelstar.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	modelstar.UpdateDefaultUpdatedAt = modelstarDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// modelstarDescDeletedAt is the schema descriptor for deleted_at field.
-	modelstarDescDeletedAt := modelstarMixinFields0[5].Descriptor()
-	// modelstar.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	modelstar.DefaultDeletedAt = modelstarDescDeletedAt.Default.(time.Time)
-	// modelstarDescID is the schema descriptor for id field.
-	modelstarDescID := modelstarMixinFields0[0].Descriptor()
-	// modelstar.DefaultID holds the default value on creation for the id field.
-	modelstar.DefaultID = modelstarDescID.Default.(func() int64)
 	outputlogMixin := schema.OutputLog{}.Mixin()
 	outputlogMixinFields0 := outputlogMixin[0].Fields()
 	_ = outputlogMixinFields0
@@ -3760,6 +3729,37 @@ func init() {
 	userdeviceDescID := userdeviceMixinFields0[0].Descriptor()
 	// userdevice.DefaultID holds the default value on creation for the id field.
 	userdevice.DefaultID = userdeviceDescID.Default.(func() int64)
+	usermodelMixin := schema.UserModel{}.Mixin()
+	usermodelMixinFields0 := usermodelMixin[0].Fields()
+	_ = usermodelMixinFields0
+	usermodelFields := schema.UserModel{}.Fields()
+	_ = usermodelFields
+	// usermodelDescCreatedBy is the schema descriptor for created_by field.
+	usermodelDescCreatedBy := usermodelMixinFields0[1].Descriptor()
+	// usermodel.DefaultCreatedBy holds the default value on creation for the created_by field.
+	usermodel.DefaultCreatedBy = usermodelDescCreatedBy.Default.(int64)
+	// usermodelDescUpdatedBy is the schema descriptor for updated_by field.
+	usermodelDescUpdatedBy := usermodelMixinFields0[2].Descriptor()
+	// usermodel.DefaultUpdatedBy holds the default value on creation for the updated_by field.
+	usermodel.DefaultUpdatedBy = usermodelDescUpdatedBy.Default.(int64)
+	// usermodelDescCreatedAt is the schema descriptor for created_at field.
+	usermodelDescCreatedAt := usermodelMixinFields0[3].Descriptor()
+	// usermodel.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usermodel.DefaultCreatedAt = usermodelDescCreatedAt.Default.(func() time.Time)
+	// usermodelDescUpdatedAt is the schema descriptor for updated_at field.
+	usermodelDescUpdatedAt := usermodelMixinFields0[4].Descriptor()
+	// usermodel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usermodel.DefaultUpdatedAt = usermodelDescUpdatedAt.Default.(func() time.Time)
+	// usermodel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usermodel.UpdateDefaultUpdatedAt = usermodelDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// usermodelDescDeletedAt is the schema descriptor for deleted_at field.
+	usermodelDescDeletedAt := usermodelMixinFields0[5].Descriptor()
+	// usermodel.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	usermodel.DefaultDeletedAt = usermodelDescDeletedAt.Default.(time.Time)
+	// usermodelDescID is the schema descriptor for id field.
+	usermodelDescID := usermodelMixinFields0[0].Descriptor()
+	// usermodel.DefaultID holds the default value on creation for the id field.
+	usermodel.DefaultID = usermodelDescID.Default.(func() int64)
 	vxaccountMixin := schema.VXAccount{}.Mixin()
 	vxaccountMixinFields0 := vxaccountMixin[0].Fields()
 	_ = vxaccountMixinFields0

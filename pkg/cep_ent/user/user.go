@@ -502,15 +502,15 @@ const (
 	// APITokensColumn is the table column denoting the api_tokens relation/edge.
 	APITokensColumn = "user_id"
 	// StarModelTable is the table that holds the star_model relation/edge. The primary key declared below.
-	StarModelTable = "model_stars"
+	StarModelTable = "user_models"
 	// StarModelInverseTable is the table name for the Model entity.
 	// It exists in this package in order to avoid circular dependency with the "model" package.
 	StarModelInverseTable = "models"
 	// ModelStarTable is the table that holds the model_star relation/edge.
-	ModelStarTable = "model_stars"
-	// ModelStarInverseTable is the table name for the ModelStar entity.
-	// It exists in this package in order to avoid circular dependency with the "modelstar" package.
-	ModelStarInverseTable = "model_stars"
+	ModelStarTable = "user_models"
+	// ModelStarInverseTable is the table name for the UserModel entity.
+	// It exists in this package in order to avoid circular dependency with the "usermodel" package.
+	ModelStarInverseTable = "user_models"
 	// ModelStarColumn is the table column denoting the model_star relation/edge.
 	ModelStarColumn = "user_id"
 )

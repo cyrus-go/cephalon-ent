@@ -37,7 +37,6 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduceorder"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/missionproduction"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/model"
-	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/modelstar"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/profitsetting"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/rechargeorder"
@@ -47,6 +46,7 @@ import (
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/troublededuct"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/user"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/userdevice"
+	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/usermodel"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxaccount"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/vxsocial"
 	"github.com/stark-sim/cephalon-ent/pkg/cep_ent/wallet"
@@ -1169,17 +1169,17 @@ func (uc *UserCreate) AddStarModel(m ...*Model) *UserCreate {
 	return uc.AddStarModelIDs(ids...)
 }
 
-// AddModelStarIDs adds the "model_star" edge to the ModelStar entity by IDs.
+// AddModelStarIDs adds the "model_star" edge to the UserModel entity by IDs.
 func (uc *UserCreate) AddModelStarIDs(ids ...int64) *UserCreate {
 	uc.mutation.AddModelStarIDs(ids...)
 	return uc
 }
 
-// AddModelStar adds the "model_star" edges to the ModelStar entity.
-func (uc *UserCreate) AddModelStar(m ...*ModelStar) *UserCreate {
-	ids := make([]int64, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddModelStar adds the "model_star" edges to the UserModel entity.
+func (uc *UserCreate) AddModelStar(u ...*UserModel) *UserCreate {
+	ids := make([]int64, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
 	return uc.AddModelStarIDs(ids...)
 }
@@ -2340,7 +2340,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		createE := &ModelStarCreate{config: uc.config, mutation: newModelStarMutation(uc.config, OpCreate)}
+		createE := &UserModelCreate{config: uc.config, mutation: newUserModelMutation(uc.config, OpCreate)}
 		createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
@@ -2357,7 +2357,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.ModelStarColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(modelstar.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(usermodel.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
